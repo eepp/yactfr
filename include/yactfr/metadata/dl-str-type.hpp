@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_DL_STR_TYPE_HPP
 #define _YACTFR_METADATA_DL_STR_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "non-nt-str-type.hpp"
 #include "data-loc.hpp"
 #include "dt-visitor.hpp"
@@ -32,6 +35,10 @@ class DynamicLengthStringType final :
     public NonNullTerminatedStringType
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant dynamic-length string type.
+    using UP = std::unique_ptr<const DynamicLengthStringType>;
 
 public:
     /*!
@@ -79,6 +86,27 @@ public:
     */
     explicit DynamicLengthStringType(DataLocation maximumLengthLocation,
                                      MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant dynamic-length string type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the dynamic-length string type
+        constructor.
+
+    @returns
+        Created constant dynamic-length string type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Location of maximum lengths (UTF-8 bytes) of data stream
     /// dynamic-length strings described by this type.

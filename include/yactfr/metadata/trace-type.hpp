@@ -9,6 +9,7 @@
 #define _YACTFR_METADATA_TRACE_TYPE_HPP
 
 #include <memory>
+#include <utility>
 #include <boost/uuid/uuid.hpp>
 #include <boost/optional.hpp>
 
@@ -74,7 +75,7 @@ class TraceType final :
     friend class ElementSequenceIterator;
 
 public:
-    /// Unique pointer to trace type.
+    /// Unique pointer to constant trace type.
     using UP = std::unique_ptr<const TraceType>;
 
 public:
@@ -182,6 +183,26 @@ public:
                        boost::optional<boost::uuids::uuid> uuid,
                        StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
                        DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant trace type unique pointer, forwarding \p args
+        to the constructor.
+
+    @param[in] args
+        Arguments to forward to the trace type constructor.
+
+    @returns
+        Created constant trace type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /*
      * Required because `internal::TraceTypeImpl` has no known size at

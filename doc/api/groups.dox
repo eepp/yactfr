@@ -71,7 +71,7 @@ You can build any data type directly with
 as compound data types only accept this:
 
 @code
-auto myIntType = std::make_unique<const FixedLengthSignedIntegerType>(
+auto myIntType = FixedLengthSignedIntegerType::create(
     8, 32, ByteOrder::LITTLE, DisplayBase::HEXADECIMAL, boost::none
 );
 @endcode

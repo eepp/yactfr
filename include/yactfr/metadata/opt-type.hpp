@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <string>
+#include <memory>
+#include <utility>
 
 #include "data-loc.hpp"
 #include "var-type-opt.hpp"
@@ -91,6 +93,11 @@ class OptionalWithBooleanSelectorType :
     friend class internal::TraceTypeImpl;
 
 public:
+    /// Unique pointer to constant type of data stream optionals
+    /// with a boolean selector.
+    using UP = std::unique_ptr<const OptionalWithBooleanSelectorType>;
+
+public:
     /*!
     @brief
         Builds a type of data stream optionals with a boolean selector.
@@ -150,6 +157,29 @@ public:
     explicit OptionalWithBooleanSelectorType(DataType::UP dataType, DataLocation selectorLocation,
                                              MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Creates a unique pointer to constant type of data stream
+        optionals with a boolean selector, forwarding \p args to the
+        constructor.
+
+    @param[in] args
+        Arguments to forward to the constructor of the type of data
+        stream optionals with a boolean selector.
+
+    @returns
+        Created unique pointer to constant type of data stream optionals
+        with a boolean selector.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
 private:
     DataType::UP _clone() const override;
 
@@ -208,6 +238,11 @@ class OptionalWithUnsignedIntegerSelectorType :
     public OptionalWithIntegerSelectorType<unsigned long long>
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant type of data stream optionals
+    /// with an unsigned integer selector.
+    using UP = std::unique_ptr<const OptionalWithUnsignedIntegerSelectorType>;
 
 public:
     /*!
@@ -278,6 +313,29 @@ public:
                                                      SelectorRangeSet selectorRanges,
                                                      MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Creates a unique pointer to constant type of data stream
+        optionals with an unsigned integer selector, forwarding \p args
+        to the constructor.
+
+    @param[in] args
+        Arguments to forward to the constructor of the type of data
+        stream optionals with an unsigned integer selector.
+
+    @returns
+        Created unique pointer to constant type of data stream optionals
+        with an unsigned integer selector.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
 private:
     DataType::UP _clone() const override;
 
@@ -297,6 +355,11 @@ class OptionalWithSignedIntegerSelectorType :
     public OptionalWithIntegerSelectorType<long long>
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant type of data stream optionals
+    /// with a signed integer selector.
+    using UP = std::unique_ptr<const OptionalWithSignedIntegerSelectorType>;
 
 public:
     /*!
@@ -366,6 +429,29 @@ public:
                                                    DataLocation selectorLocation,
                                                    SelectorRangeSet selectorRanges,
                                                    MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a unique pointer to constant type of data stream
+        optionals with a signed integer selector, forwarding \p args
+        to the constructor.
+
+    @param[in] args
+        Arguments to forward to the constructor of the type of data
+        stream optionals with a signed integer selector.
+
+    @returns
+        Created unique pointer to constant type of data stream optionals
+        with a signed integer selector.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
 private:
     DataType::UP _clone() const override;

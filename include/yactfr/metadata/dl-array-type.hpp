@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_DL_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_DL_ARRAY_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "array-type.hpp"
 #include "data-loc.hpp"
 #include "dt-visitor.hpp"
@@ -33,6 +36,10 @@ class DynamicLengthArrayType final :
     public ArrayType
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant dynamic-length array type.
+    using UP = std::unique_ptr<const DynamicLengthArrayType>;
 
 public:
     /*!
@@ -93,6 +100,27 @@ public:
     */
     explicit DynamicLengthArrayType(DataType::UP elementType, DataLocation lengthLocation,
                                     MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant dynamic-length array type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the dynamic-length array type
+        constructor.
+
+    @returns
+        Created constant dynamic-length array type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Location of lengths of data stream dynamic-length arrays
     /// described by this type.

@@ -37,8 +37,8 @@ bool VariableLengthBitArrayType::_isEqual(const DataType&) const noexcept
 
 DataType::UP VariableLengthBitArrayType::_clone() const
 {
-    return std::make_unique<VariableLengthBitArrayType>(this->alignment(),
-                                                        internal::tryCloneUserAttrs(this->userAttributes()));
+    return VariableLengthBitArrayType::create(this->alignment(),
+                                              internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

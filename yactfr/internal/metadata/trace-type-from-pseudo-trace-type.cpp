@@ -52,12 +52,10 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
                                                             Scope::PACKET_HEADER);
 
     // create yactfr trace type
-    return std::make_unique<const TraceType>(_pseudoTraceType->majorVersion(),
-                                             _pseudoTraceType->minorVersion(),
-                                             _pseudoTraceType->uuid(), std::move(pktHeaderType),
-                                             std::move(_pseudoTraceType->clkTypes()),
-                                             std::move(dstSet),
-                                             tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
+    return TraceType::create(_pseudoTraceType->majorVersion(), _pseudoTraceType->minorVersion(),
+                             _pseudoTraceType->uuid(), std::move(pktHeaderType),
+                             std::move(_pseudoTraceType->clkTypes()), std::move(dstSet),
+                             tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
 }
 
 StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(const PseudoDt * const pseudoDt,
@@ -104,12 +102,10 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
                                                               &pseudoDst);
 
     // create yactfr data stream type
-    return std::make_unique<const DataStreamType>(pseudoDst.id(), pseudoDst.ns(), pseudoDst.name(),
-                                                  std::move(ertSet), std::move(pseudoPktCtxType),
-                                                  std::move(erHeaderType),
-                                                  std::move(erCommonCtxType),
-                                                  pseudoDst.defClkType(),
-                                                  tryCloneUserAttrs(pseudoDst.userAttrs()));
+    return DataStreamType::create(pseudoDst.id(), pseudoDst.ns(), pseudoDst.name(),
+                                  std::move(ertSet), std::move(pseudoPktCtxType),
+                                  std::move(erHeaderType), std::move(erCommonCtxType),
+                                  pseudoDst.defClkType(), tryCloneUserAttrs(pseudoDst.userAttrs()));
 }
 
 std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_ertFromPseudoErt(const PseudoErt& pseudoErt,
@@ -127,10 +123,10 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
                                                           &curPseudoDst, &pseudoErt);
 
     // create yactfr event record type
-    return std::make_unique<const EventRecordType>(pseudoErt.id(), pseudoErt.ns(), pseudoErt.name(),
-                                                   pseudoErt.logLevel(), pseudoErt.emfUri(),
-                                                   std::move(specCtxType), std::move(payloadType),
-                                                   tryCloneUserAttrs(pseudoErt.userAttrs()));
+    return EventRecordType::create(pseudoErt.id(), pseudoErt.ns(), pseudoErt.name(),
+                                   pseudoErt.logLevel(), pseudoErt.emfUri(),
+                                   std::move(specCtxType), std::move(payloadType),
+                                   tryCloneUserAttrs(pseudoErt.userAttrs()));
 }
 
 } // namespace internal

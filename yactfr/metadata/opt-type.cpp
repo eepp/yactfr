@@ -49,10 +49,10 @@ OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(DataType::UP dt
 
 DataType::UP OptionalWithBooleanSelectorType::_clone() const
 {
-    return std::make_unique<OptionalWithBooleanSelectorType>(this->minimumAlignment(),
-                                                             this->dataType().clone(),
-                                                             this->selectorLocation(),
-                                                             internal::tryCloneUserAttrs(this->userAttributes()));
+    return OptionalWithBooleanSelectorType::create(this->minimumAlignment(),
+                                                   this->dataType().clone(),
+                                                   this->selectorLocation(),
+                                                   internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(const unsigned int minAlign,
@@ -79,11 +79,11 @@ OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType
 
 DataType::UP OptionalWithUnsignedIntegerSelectorType::_clone() const
 {
-    return std::make_unique<OptionalWithUnsignedIntegerSelectorType>(this->minimumAlignment(),
-                                                                     this->dataType().clone(),
-                                                                     this->selectorLocation(),
-                                                                     this->selectorRanges(),
-                                                                     internal::tryCloneUserAttrs(this->userAttributes()));
+    return OptionalWithUnsignedIntegerSelectorType::create(this->minimumAlignment(),
+                                                           this->dataType().clone(),
+                                                           this->selectorLocation(),
+                                                           this->selectorRanges(),
+                                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(const unsigned int minAlign,
@@ -110,11 +110,11 @@ OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(Dat
 
 DataType::UP OptionalWithSignedIntegerSelectorType::_clone() const
 {
-    return std::make_unique<OptionalWithSignedIntegerSelectorType>(this->minimumAlignment(),
-                                                                   this->dataType().clone(),
-                                                                   this->selectorLocation(),
-                                                                   this->selectorRanges(),
-                                                                   internal::tryCloneUserAttrs(this->userAttributes()));
+    return OptionalWithSignedIntegerSelectorType::create(this->minimumAlignment(),
+                                                         this->dataType().clone(),
+                                                         this->selectorLocation(),
+                                                         this->selectorRanges(),
+                                                         internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

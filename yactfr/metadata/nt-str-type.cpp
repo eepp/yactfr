@@ -32,8 +32,8 @@ NullTerminatedStringType::NullTerminatedStringType(const NullTerminatedStringTyp
 
 DataType::UP NullTerminatedStringType::_clone() const
 {
-    return std::make_unique<NullTerminatedStringType>(this->alignment(),
-                                                      internal::tryCloneUserAttrs(this->userAttributes()));
+    return NullTerminatedStringType::create(this->alignment(),
+                                            internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool NullTerminatedStringType::_isEqual(const DataType&) const noexcept

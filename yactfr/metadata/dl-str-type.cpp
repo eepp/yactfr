@@ -25,8 +25,8 @@ DynamicLengthStringType::DynamicLengthStringType(DataLocation maxLenLoc, MapItem
 
 DataType::UP DynamicLengthStringType::_clone() const
 {
-    return std::make_unique<DynamicLengthStringType>(this->alignment(), _maxLenLoc,
-                                                     internal::tryCloneUserAttrs(this->userAttributes()));
+    return DynamicLengthStringType::create(this->alignment(), _maxLenLoc,
+                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool DynamicLengthStringType::_isEqual(const DataType& other) const noexcept

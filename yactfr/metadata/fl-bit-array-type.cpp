@@ -70,9 +70,8 @@ bool FixedLengthBitArrayType::_isEqual(const DataType& other) const noexcept
 
 DataType::UP FixedLengthBitArrayType::_clone() const
 {
-    return std::make_unique<FixedLengthBitArrayType>(this->alignment(), this->length(),
-                                                     this->byteOrder(),
-                                                     internal::tryCloneUserAttrs(this->userAttributes()));
+    return FixedLengthBitArrayType::create(this->alignment(), this->length(), this->byteOrder(),
+                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

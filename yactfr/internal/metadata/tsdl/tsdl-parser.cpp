@@ -41,8 +41,8 @@ void TsdlParser::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
 
         if (_pseudoTraceType->clkTypes().empty()) {
             // create implicit 1-GHz clock type
-            _pseudoTraceType->clkTypes().insert(std::make_unique<const ClockType>(1'000'000'000ULL,
-                                                                                  std::string {"default"}));
+            _pseudoTraceType->clkTypes().insert(ClockType::create(1'000'000'000ULL,
+                                                                  std::string {"default"}));
         }
 
         if (_pseudoTraceType->clkTypes().size() != 1) {
@@ -1273,7 +1273,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
                                 *mapAttrLoc);
         }
 
-        auto intType = std::make_unique<const FixedLengthSignedIntegerType>(align, size, bo, dispBase);
+        auto intType = FixedLengthSignedIntegerType::create(align, size, bo, dispBase);
 
         pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), hasEncoding,
                                                            beforeKwLoc);
@@ -1371,9 +1371,7 @@ PseudoDt::UP TsdlParser::_tryParseFlFloatType()
         throwTextParseError(ss.str(), beginLoc);
     }
 
-    auto floatType = std::make_unique<const FixedLengthFloatingPointNumberType>(align,
-                                                                                expDig + mantDig,
-                                                                                bo);
+    auto floatType = FixedLengthFloatingPointNumberType::create(align, expDig + mantDig, bo);
 
     return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), beginLoc);
 }
@@ -1547,11 +1545,10 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                                               [](const auto& pseudoDt,
                                                                                  const auto& mappings) {
             auto& intType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthIntegerType();
-            auto enumType = std::make_unique<FixedLengthSignedEnumerationType>(intType.alignment(),
-                                                                               intType.length(),
-                                                                               intType.byteOrder(),
-                                                                               mappings,
-                                                                               intType.preferredDisplayBase());
+            auto enumType = FixedLengthSignedEnumerationType::create(intType.alignment(),
+                                                                     intType.length(),
+                                                                     intType.byteOrder(), mappings,
+                                                                     intType.preferredDisplayBase());
 
             return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), pseudoDt.loc());
         });
@@ -2014,9 +2011,8 @@ bool TsdlParser::_tryParseClkTypeBlock()
     // TODO: throw if this would cause a `long long` overflow
     offsetSecs += completeSecsInOffsetCycles;
 
-    auto clkType = std::make_unique<const ClockType>(freq, name, descr, uuid, precision,
-                                                     ClockOffset {offsetSecs, offsetCycles},
-                                                     originIsUnixEpoch);
+    auto clkType = ClockType::create(freq, name, descr, uuid, precision, ClockOffset {offsetSecs,
+                                     offsetCycles}, originIsUnixEpoch);
 
     _pseudoTraceType->clkTypes().insert(std::move(clkType));
     return true;

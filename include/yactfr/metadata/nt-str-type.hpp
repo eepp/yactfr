@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_NT_STR_TYPE_HPP
 #define _YACTFR_METADATA_NT_STR_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "dt.hpp"
 #include "scalar-dt.hpp"
 #include "dt-visitor.hpp"
@@ -26,6 +29,10 @@ strings.
 class NullTerminatedStringType final :
     public ScalarDataType
 {
+public:
+    /// Unique pointer to constant null-terminated string type.
+    using UP = std::unique_ptr<const NullTerminatedStringType>;
+
 public:
     /*!
     @brief
@@ -72,6 +79,27 @@ public:
         Null-terminated string type to copy.
     */
     NullTerminatedStringType(const NullTerminatedStringType& other);
+
+    /*!
+    @brief
+        Creates a constant null-terminated string type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the null-terminated string type
+        constructor.
+
+    @returns
+        Created constant null-terminated string type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /*!
     @brief

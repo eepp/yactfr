@@ -25,9 +25,8 @@ DynamicLengthArrayType::DynamicLengthArrayType(DataType::UP elemType, DataLocati
 
 DataType::UP DynamicLengthArrayType::_clone() const
 {
-    return std::make_unique<DynamicLengthArrayType>(this->alignment(), this->elementType().clone(),
-                                                    _lenLoc,
-                                                    internal::tryCloneUserAttrs(this->userAttributes()));
+    return DynamicLengthArrayType::create(this->alignment(), this->elementType().clone(), _lenLoc,
+                                          internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool DynamicLengthArrayType::_isEqual(const DataType& other) const noexcept

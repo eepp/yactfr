@@ -34,10 +34,9 @@ VariableLengthSignedEnumerationType::VariableLengthSignedEnumerationType(Mapping
 
 DataType::UP VariableLengthSignedEnumerationType::_clone() const
 {
-    return std::make_unique<VariableLengthSignedEnumerationType>(this->alignment(),
-                                                                 this->mappings(),
-                                                                 this->preferredDisplayBase(),
-                                                                 internal::tryCloneUserAttrs(this->userAttributes()));
+    return VariableLengthSignedEnumerationType::create(this->alignment(), this->mappings(),
+                                                       this->preferredDisplayBase(),
+                                                       internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 VariableLengthUnsignedEnumerationType::VariableLengthUnsignedEnumerationType(const unsigned int align,
@@ -64,11 +63,10 @@ VariableLengthUnsignedEnumerationType::VariableLengthUnsignedEnumerationType(Map
 
 DataType::UP VariableLengthUnsignedEnumerationType::_clone() const
 {
-    return std::make_unique<VariableLengthUnsignedEnumerationType>(this->alignment(),
-                                                                   this->mappings(),
-                                                                   this->preferredDisplayBase(),
-                                                                   internal::tryCloneUserAttrs(this->userAttributes()),
-                                                                   this->roles());
+    return VariableLengthUnsignedEnumerationType::create(this->alignment(), this->mappings(),
+                                                         this->preferredDisplayBase(),
+                                                         internal::tryCloneUserAttrs(this->userAttributes()),
+                                                         this->roles());
 }
 
 } // namespace yactfr

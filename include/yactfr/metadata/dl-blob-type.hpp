@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_DL_BLOB_TYPE_HPP
 #define _YACTFR_METADATA_DL_BLOB_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "blob-type.hpp"
 #include "data-loc.hpp"
 #include "dt-visitor.hpp"
@@ -32,6 +35,10 @@ class DynamicLengthBlobType final :
     public BlobType
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant dynamic-length BLOB type.
+    using UP = std::unique_ptr<const DynamicLengthBlobType>;
 
 public:
     /*!
@@ -123,6 +130,27 @@ public:
     */
     explicit DynamicLengthBlobType(DataLocation lengthLocation,
                                    MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant dynamic-length BLOB type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the dynamic-length BLOB type
+        constructor.
+
+    @returns
+        Created constant dynamic-length BLOB type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Location of lengths (bytes) of data stream dynamic-length BLOBs
     /// described by this type.

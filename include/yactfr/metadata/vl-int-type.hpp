@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_VL_INT_TYPE_HPP
 #define _YACTFR_METADATA_VL_INT_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "vl-bit-array-type.hpp"
 #include "int-type-common.hpp"
 #include "dt.hpp"
@@ -56,6 +59,10 @@ class VariableLengthUnsignedIntegerType :
     public VariableLengthIntegerType,
     public UnsignedIntegerTypeCommon
 {
+public:
+    /// Unique pointer to constant variable-length unsigned integer type.
+    using UP = std::unique_ptr<const VariableLengthUnsignedIntegerType>;
+
 protected:
     explicit VariableLengthUnsignedIntegerType(_Kind kind, unsigned int align,
                                                DisplayBase prefDispBase,
@@ -117,6 +124,28 @@ public:
                                                MapItem::UP userAttributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
+    /*!
+    @brief
+        Creates a constant variable-length unsigned integer type unique
+        pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the variable-length unsigned integer
+        type constructor.
+
+    @returns
+        Created constant variable-length unsigned integer type unique
+        pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
 protected:
     bool _isEqual(const DataType& other) const noexcept override;
 
@@ -141,6 +170,10 @@ variable-length signed integers.
 class VariableLengthSignedIntegerType :
     public VariableLengthIntegerType
 {
+public:
+    /// Unique pointer to constant variable-length signed integer type.
+    using UP = std::unique_ptr<const VariableLengthSignedIntegerType>;
+
 protected:
     explicit VariableLengthSignedIntegerType(_Kind kind, unsigned int align,
                                              DisplayBase prefDispBase, MapItem::UP userAttrs);
@@ -191,6 +224,28 @@ public:
     */
     explicit VariableLengthSignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                              MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant variable-length signed integer type unique
+        pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the variable-length signed integer type
+        constructor.
+
+    @returns
+        Created constant variable-length signed integer type unique
+        pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
 private:
     DataType::UP _clone() const override;

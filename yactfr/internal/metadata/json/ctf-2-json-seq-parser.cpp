@@ -171,13 +171,12 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
     const auto offsetCycles = jsonOffsetVal.getRawVal(strs::CYCLES, 0ULL);
 
     // create corresponding clock type
-    auto clkType = std::make_unique<const ClockType>(jsonFrag.getRawUIntVal(strs::FREQ),
-                                                     std::move(name), std::move(descr),
-                                                     uuidOfObj(jsonFrag),
-                                                     jsonFrag.getRawVal(strs::PREC, 0ULL),
-                                                     ClockOffset {offsetSecs, offsetCycles},
-                                                     jsonFrag.getRawVal(strs::ORIG_IS_UNIX_EPOCH, true),
-                                                     userAttrsOfObj(jsonFrag));
+    auto clkType = ClockType::create(jsonFrag.getRawUIntVal(strs::FREQ), std::move(name),
+                                     std::move(descr), uuidOfObj(jsonFrag),
+                                     jsonFrag.getRawVal(strs::PREC, 0ULL), ClockOffset {offsetSecs,
+                                     offsetCycles},
+                                     jsonFrag.getRawVal(strs::ORIG_IS_UNIX_EPOCH, true),
+                                     userAttrsOfObj(jsonFrag));
 
     // add to pseudo trace type
     _pseudoTraceType->clkTypes().insert(std::move(clkType));

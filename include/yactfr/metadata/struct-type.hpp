@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
+#include <utility>
 
 #include "compound-dt.hpp"
 #include "struct-member-type.hpp"
@@ -84,6 +86,26 @@ public:
         @endparblock
     */
     explicit StructureType(MemberTypes&& memberTypes, MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant structure type unique pointer, forwarding \p
+        args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the structure type constructor.
+
+    @returns
+        Created constant structure type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Member types contained in this structure type.
     const MemberTypes& memberTypes() const noexcept

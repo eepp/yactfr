@@ -53,8 +53,8 @@ DataType::UP StructureType::_clone() const
         memberTypes.push_back(memberType->clone());
     }
 
-    return std::make_unique<StructureType>(this->minimumAlignment(), std::move(memberTypes),
-                                           internal::tryCloneUserAttrs(this->userAttributes()));
+    return StructureType::create(this->minimumAlignment(), std::move(memberTypes),
+                                 internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StructureType::_isEqual(const DataType& other) const noexcept

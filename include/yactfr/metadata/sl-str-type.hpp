@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_SL_STR_TYPE_HPP
 #define _YACTFR_METADATA_SL_STR_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "non-nt-str-type.hpp"
 #include "dt-visitor.hpp"
 #include "../aliases.hpp"
@@ -25,6 +28,10 @@ A static-length string type describes data stream static-length strings.
 class StaticLengthStringType final :
     public NonNullTerminatedStringType
 {
+public:
+    /// Unique pointer to constant static-length string type.
+    using UP = std::unique_ptr<const StaticLengthStringType>;
+
 public:
     /*!
     @brief
@@ -69,6 +76,27 @@ public:
         @endparblock
     */
     explicit StaticLengthStringType(Size maximumLength, MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant static-length string type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the static-length string type
+        constructor.
+
+    @returns
+        Created constant static-length string type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Maximum length (UTF-8 bytes) of data stream static-length
     /// strings described by this type.

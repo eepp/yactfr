@@ -28,10 +28,9 @@ StaticLengthArrayType::StaticLengthArrayType(DataType::UP elemType, const Size l
 
 DataType::UP StaticLengthArrayType::_clone() const
 {
-    return std::make_unique<StaticLengthArrayType>(this->minimumAlignment(),
-                                                   this->elementType().clone(), _len,
-                                                   internal::tryCloneUserAttrs(this->userAttributes()),
-                                                   _hasTraceTypeUuidRole);
+    return StaticLengthArrayType::create(this->minimumAlignment(), this->elementType().clone(),
+                                         _len, internal::tryCloneUserAttrs(this->userAttributes()),
+                                         _hasTraceTypeUuidRole);
 }
 
 bool StaticLengthArrayType::_isEqual(const DataType& other) const noexcept

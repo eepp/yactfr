@@ -26,8 +26,8 @@ StaticLengthStringType::StaticLengthStringType(const Size maxLen, MapItem::UP us
 
 DataType::UP StaticLengthStringType::_clone() const
 {
-    return std::make_unique<StaticLengthStringType>(this->alignment(), _maxLen,
-                                                    internal::tryCloneUserAttrs(this->userAttributes()));
+    return StaticLengthStringType::create(this->alignment(), _maxLen,
+                                          internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StaticLengthStringType::_isEqual(const DataType& other) const noexcept

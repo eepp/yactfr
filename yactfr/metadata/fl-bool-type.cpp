@@ -31,9 +31,8 @@ FixedLengthBooleanType::FixedLengthBooleanType(const FixedLengthBooleanType& oth
 
 DataType::UP FixedLengthBooleanType::_clone() const
 {
-    return std::make_unique<FixedLengthBooleanType>(this->alignment(), this->length(),
-                                                    this->byteOrder(),
-                                                    internal::tryCloneUserAttrs(this->userAttributes()));
+    return FixedLengthBooleanType::create(this->alignment(), this->length(), this->byteOrder(),
+                                          internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

@@ -9,6 +9,8 @@
 #define _YACTFR_METADATA_CLK_TYPE_HPP
 
 #include <string>
+#include <memory>
+#include <utility>
 #include <boost/core/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -31,6 +33,10 @@ A clock type describes data stream clocks.
 class ClockType final :
     boost::noncopyable
 {
+public:
+    /// Unique pointer to constant clock type.
+    using UP = std::unique_ptr<const ClockType>;
+
 public:
     /*!
     @brief
@@ -69,6 +75,26 @@ public:
                        boost::optional<boost::uuids::uuid> uuid = boost::none,
                        Cycles precision = 0, const ClockOffset& offset = ClockOffset {},
                        bool originIsUnixEpoch = true, MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant clock type unique pointer, forwarding \p args
+        to the constructor.
+
+    @param[in] args
+        Arguments to forward to the clock type constructor.
+
+    @returns
+        Created constant clock type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Name.
     const boost::optional<std::string>& name() const noexcept

@@ -42,10 +42,10 @@ VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(O
 
 DataType::UP VariantWithUnsignedIntegerSelectorType::_clone() const
 {
-    return std::make_unique<VariantWithUnsignedIntegerSelectorType>(this->minimumAlignment(),
-                                                                    this->_cloneOpts(),
-                                                                    this->selectorLocation(),
-                                                                    internal::tryCloneUserAttrs(this->userAttributes()));
+    return VariantWithUnsignedIntegerSelectorType::create(this->minimumAlignment(),
+                                                          this->_cloneOpts(),
+                                                          this->selectorLocation(),
+                                                          internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(const unsigned int minAlign,
@@ -70,10 +70,10 @@ VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(Optio
 
 DataType::UP VariantWithSignedIntegerSelectorType::_clone() const
 {
-    return std::make_unique<VariantWithSignedIntegerSelectorType>(this->minimumAlignment(),
-                                                                  this->_cloneOpts(),
-                                                                  this->selectorLocation(),
-                                                                  internal::tryCloneUserAttrs(this->userAttributes()));
+    return VariantWithSignedIntegerSelectorType::create(this->minimumAlignment(),
+                                                        this->_cloneOpts(),
+                                                        this->selectorLocation(),
+                                                        internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

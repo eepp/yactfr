@@ -38,10 +38,10 @@ FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigne
 
 DataType::UP FixedLengthSignedEnumerationType::_clone() const
 {
-    return std::make_unique<FixedLengthSignedEnumerationType>(this->alignment(), this->length(),
-                                                              this->byteOrder(), this->mappings(),
-                                                              this->preferredDisplayBase(),
-                                                              internal::tryCloneUserAttrs(this->userAttributes()));
+    return FixedLengthSignedEnumerationType::create(this->alignment(), this->length(),
+                                                    this->byteOrder(), this->mappings(),
+                                                    this->preferredDisplayBase(),
+                                                    internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const unsigned int align,
@@ -72,12 +72,11 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
 
 DataType::UP FixedLengthUnsignedEnumerationType::_clone() const
 {
-    return std::make_unique<FixedLengthUnsignedEnumerationType>(this->alignment(), this->length(),
-                                                                this->byteOrder(),
-                                                                this->mappings(),
-                                                                this->preferredDisplayBase(),
-                                                                internal::tryCloneUserAttrs(this->userAttributes()),
-                                                                this->roles());
+    return FixedLengthUnsignedEnumerationType::create(this->alignment(), this->length(),
+                                                      this->byteOrder(), this->mappings(),
+                                                      this->preferredDisplayBase(),
+                                                      internal::tryCloneUserAttrs(this->userAttributes()),
+                                                      this->roles());
 }
 
 } // namespace yactfr

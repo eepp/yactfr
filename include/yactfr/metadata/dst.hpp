@@ -9,6 +9,7 @@
 #define _YACTFR_METADATA_DST_HPP
 
 #include <memory>
+#include <utility>
 #include <unordered_map>
 #include <set>
 #include <boost/noncopyable.hpp>
@@ -59,6 +60,10 @@ class DataStreamType final :
     boost::noncopyable
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant data stream type.
+    using UP = std::unique_ptr<const DataStreamType>;
 
 public:
     /*!
@@ -158,6 +163,26 @@ public:
                             StructureType::UP eventRecordCommonContextType,
                             const ClockType *defaultClockType = nullptr,
                             MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant data stream type unique pointer, forwarding
+        \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the data stream type constructor.
+
+    @returns
+        Created constant data stream type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Numeric ID, unique amongst the IDs of all the data stream types
     /// which are part of the same \link TraceType trace type\endlink.

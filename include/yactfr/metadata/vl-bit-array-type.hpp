@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_VL_BIT_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_VL_BIT_ARRAY_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "scalar-dt.hpp"
 #include "dt.hpp"
 #include "dt-visitor.hpp"
@@ -26,6 +29,10 @@ bit arrays.
 class VariableLengthBitArrayType :
     public ScalarDataType
 {
+public:
+    /// Unique pointer to constant variable-length bit array type.
+    using UP = std::unique_ptr<const VariableLengthBitArrayType>;
+
 protected:
     explicit VariableLengthBitArrayType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
 
@@ -68,6 +75,26 @@ public:
     */
     explicit VariableLengthBitArrayType(MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Creates a constant variable-length bit array type unique
+        pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the variable-length bit array type
+        constructor.
+
+    @returns
+        Created constant variable-length bit array type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
 protected:
     bool _isEqual(const DataType& other) const noexcept override;

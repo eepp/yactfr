@@ -41,9 +41,9 @@ StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::UP userAttrs
 
 DataType::UP StaticLengthBlobType::_clone() const
 {
-    return std::make_unique<StaticLengthBlobType>(this->alignment(), _len, this->mediaType(),
-                                                  internal::tryCloneUserAttrs(this->userAttributes()),
-                                                  _hasTraceTypeUuidRole);
+    return StaticLengthBlobType::create(this->alignment(), _len, this->mediaType(),
+                                        internal::tryCloneUserAttrs(this->userAttributes()),
+                                        _hasTraceTypeUuidRole);
 }
 
 bool StaticLengthBlobType::_isEqual(const DataType& other) const noexcept

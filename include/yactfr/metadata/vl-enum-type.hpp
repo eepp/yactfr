@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_VL_ENUM_TYPE_HPP
 #define _YACTFR_METADATA_VL_ENUM_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "vl-int-type.hpp"
 #include "enum-type.hpp"
 
@@ -26,6 +29,10 @@ class VariableLengthSignedEnumerationType final :
     public EnumerationType<VariableLengthSignedIntegerType,
                            internal::SignedEnumerationTypeValue>
 {
+public:
+    /// Unique pointer to constant variable-length signed enumeration type.
+    using UP = std::unique_ptr<const VariableLengthSignedEnumerationType>;
+
 public:
     /*!
     @brief
@@ -87,6 +94,28 @@ public:
                                                  DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                  MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Creates a constant variable-length signed enumeration type
+        unique pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the variable-length signed enumeration
+        type constructor.
+
+    @returns
+        Created constant variable-length signed enumeration type unique
+        pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
 private:
     DataType::UP _clone() const override;
 
@@ -109,6 +138,10 @@ class VariableLengthUnsignedEnumerationType final :
     public EnumerationType<VariableLengthUnsignedIntegerType,
                            internal::UnsignedEnumerationTypeValue>
 {
+public:
+    /// Unique pointer to constant variable-length unsigned enumeration type.
+    using UP = std::unique_ptr<const VariableLengthUnsignedEnumerationType>;
+
 public:
     /*!
     @brief
@@ -177,6 +210,28 @@ public:
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                    MapItem::UP userAttributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});
+
+    /*!
+    @brief
+        Creates a constant variable-length unsigned enumeration type
+        unique pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the variable-length unsigned enumeration
+        type constructor.
+
+    @returns
+        Created constant variable-length unsigned enumeration type
+        unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
 private:
     DataType::UP _clone() const override;

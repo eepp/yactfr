@@ -37,8 +37,8 @@ DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, MapItem::UP us
 
 DataType::UP DynamicLengthBlobType::_clone() const
 {
-    return std::make_unique<DynamicLengthBlobType>(this->alignment(), _lenLoc, this->mediaType(),
-                                                   internal::tryCloneUserAttrs(this->userAttributes()));
+    return DynamicLengthBlobType::create(this->alignment(), _lenLoc, this->mediaType(),
+                                         internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool DynamicLengthBlobType::_isEqual(const DataType& other) const noexcept

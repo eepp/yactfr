@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <string>
+#include <memory>
+#include <utility>
 
 #include "data-loc.hpp"
 #include "var-type-opt.hpp"
@@ -227,6 +229,11 @@ class VariantWithUnsignedIntegerSelectorType final :
     public VariantWithIntegerSelectorType<VariantWithUnsignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
+    /// Unique pointer to constant type of data stream variants
+    /// with an unsigned integer selector.
+    using UP = std::unique_ptr<const VariantWithUnsignedIntegerSelectorType>;
+
+public:
     /*!
     @brief
         Builds a type of data stream variants with an unsigned integer
@@ -293,6 +300,29 @@ public:
                                                     DataLocation selectorLocation,
                                                     MapItem::UP userAttributes);
 
+    /*!
+    @brief
+        Creates a unique pointer to constant type of data stream
+        variants with an unsigned integer selector, forwarding \p args
+        to the constructor.
+
+    @param[in] args
+        Arguments to forward to the constructor of the type of data
+        stream variants with an unsigned integer selector.
+
+    @returns
+        Created unique pointer to constant type of data stream variants
+        with an unsigned integer selector.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
 private:
     DataType::UP _clone() const override;
 
@@ -311,6 +341,11 @@ private:
 class VariantWithSignedIntegerSelectorType final :
     public VariantWithIntegerSelectorType<VariantWithSignedIntegerSelectorTypeOption::SelectorValue>
 {
+public:
+    /// Unique pointer to constant type of data stream variants
+    /// with a signed integer selector.
+    using UP = std::unique_ptr<const VariantWithSignedIntegerSelectorType>;
+
 public:
     /*!
     @brief
@@ -375,6 +410,29 @@ public:
     */
     explicit VariantWithSignedIntegerSelectorType(Options&& options, DataLocation selectorLocation,
                                                   MapItem::UP userAttributes);
+
+    /*!
+    @brief
+        Creates a unique pointer to constant type of data stream
+        variants with a signed integer selector, forwarding \p args
+        to the constructor.
+
+    @param[in] args
+        Arguments to forward to the constructor of the type of data
+        stream variants with a signed integer selector.
+
+    @returns
+        Created unique pointer to constant type of data stream variants
+        with a signed integer selector.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
 private:
     DataType::UP _clone() const override;

@@ -11,6 +11,9 @@
 #include <string>
 #include <boost/optional.hpp>
 
+#include <memory>
+#include <utility>
+
 #include "fl-bit-array-type.hpp"
 #include "int-type-common.hpp"
 #include "bo.hpp"
@@ -79,6 +82,10 @@ integers.
 class FixedLengthSignedIntegerType :
     public FixedLengthIntegerType
 {
+public:
+    /// Unique pointer to constant fixed-length signed integer type.
+    using UP = std::unique_ptr<const FixedLengthSignedIntegerType>;
+
 protected:
     explicit FixedLengthSignedIntegerType(_Kind kind, unsigned int align, unsigned int len,
                                           ByteOrder bo, DisplayBase prefDispBase,
@@ -152,6 +159,28 @@ public:
 
     /*!
     @brief
+        Creates a constant fixed-length signed integer type unique
+        pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the fixed-length signed integer type
+        constructor.
+
+    @returns
+        Created constant fixed-length signed integer type unique
+        pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
+    /*!
+    @brief
         Less-than operator.
 
     @attention
@@ -191,6 +220,10 @@ class FixedLengthUnsignedIntegerType :
     public FixedLengthIntegerType,
     public UnsignedIntegerTypeCommon
 {
+public:
+    /// Unique pointer to constant fixed-length unsigned integer type.
+    using UP = std::unique_ptr<const FixedLengthUnsignedIntegerType>;
+
 protected:
     explicit FixedLengthUnsignedIntegerType(_Kind kind, unsigned int align, unsigned int len,
                                             ByteOrder bo, DisplayBase prefDispBase,
@@ -268,6 +301,28 @@ public:
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                             MapItem::UP userAttributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});
+
+    /*!
+    @brief
+        Creates a constant fixed-length unsigned integer type unique
+        pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the fixed-length unsigned integer type
+        constructor.
+
+    @returns
+        Created constant fixed-length unsigned integer type unique
+        pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /*!
     @brief

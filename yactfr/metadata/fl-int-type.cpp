@@ -68,10 +68,9 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int le
 
 DataType::UP FixedLengthSignedIntegerType::_clone() const
 {
-    return std::make_unique<FixedLengthSignedIntegerType>(this->alignment(), this->length(),
-                                                          this->byteOrder(),
-                                                          this->preferredDisplayBase(),
-                                                          internal::tryCloneUserAttrs(this->userAttributes()));
+    return FixedLengthSignedIntegerType::create(this->alignment(), this->length(),
+                                                this->byteOrder(), this->preferredDisplayBase(),
+                                                internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const _Kind kind,
@@ -120,11 +119,10 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const FixedLength
 
 DataType::UP FixedLengthUnsignedIntegerType::_clone() const
 {
-    return std::make_unique<FixedLengthUnsignedIntegerType>(this->alignment(), this->length(),
-                                                            this->byteOrder(),
-                                                            this->preferredDisplayBase(),
-                                                            internal::tryCloneUserAttrs(this->userAttributes()),
-                                                            this->roles());
+    return FixedLengthUnsignedIntegerType::create(this->alignment(), this->length(),
+                                                  this->byteOrder(), this->preferredDisplayBase(),
+                                                  internal::tryCloneUserAttrs(this->userAttributes()),
+                                                  this->roles());
 }
 
 bool FixedLengthUnsignedIntegerType::_isEqual(const DataType& other) const noexcept

@@ -9,6 +9,8 @@
 #define _YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP
 
 #include <string>
+#include <memory>
+#include <utility>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 
@@ -35,6 +37,10 @@ class StructureMemberType final :
     boost::noncopyable
 {
     friend class internal::TraceTypeImpl;
+
+public:
+    /// Unique pointer to constant structure member type.
+    using UP = std::unique_ptr<const StructureMemberType>;
 
 public:
     /*!
@@ -64,6 +70,27 @@ public:
     const std::string& name() const noexcept
     {
         return _name;
+    }
+
+    /*!
+    @brief
+        Creates a constant structure member type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the structure member type
+        constructor.
+
+    @returns
+        Created constant structure member type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!

@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_SL_BLOB_TYPE_HPP
 #define _YACTFR_METADATA_SL_BLOB_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "../aliases.hpp"
 #include "blob-type.hpp"
 #include "dt-visitor.hpp"
@@ -26,6 +29,10 @@ A static-length BLOB type describes data stream static-length BLOBs.
 class StaticLengthBlobType final :
     public BlobType
 {
+public:
+    /// Unique pointer to constant static-length BLOB type.
+    using UP = std::unique_ptr<const StaticLengthBlobType>;
+
 public:
     /*!
     @brief
@@ -149,6 +156,27 @@ public:
     explicit StaticLengthBlobType(Size length, std::string mediaType,
                                   MapItem::UP userAttributes = nullptr,
                                   bool hasTraceTypeUuidRole = false);
+
+    /*!
+    @brief
+        Creates a constant static-length BLOB type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the static-length BLOB type
+        constructor.
+
+    @returns
+        Created constant static-length BLOB type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Length (bytes) of data stream static-length BLOBs described by
     /// this type.

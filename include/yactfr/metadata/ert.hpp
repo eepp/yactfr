@@ -10,6 +10,7 @@
 
 #include <string>
 #include <memory>
+#include <utility>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 
@@ -50,6 +51,10 @@ class EventRecordType final :
     friend class internal::TraceTypeImpl;
 
 public:
+    /// Unique pointer to constant event record type.
+    using UP = std::unique_ptr<const EventRecordType>;
+
+public:
     /*!
     @brief
         Builds an event record type.
@@ -88,6 +93,26 @@ public:
                              std::unique_ptr<const StructureType> specificContextType,
                              std::unique_ptr<const StructureType> payloadType,
                              MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant event record type unique pointer, forwarding
+        \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the event record type constructor.
+
+    @returns
+        Created constant event record type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Numeric ID, unique amongst the IDs of all the event record types
     /// which are part of the same \link DataStreamType data stream

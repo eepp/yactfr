@@ -35,9 +35,9 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const Fix
 
 DataType::UP FixedLengthFloatingPointNumberType::_clone() const
 {
-    return std::make_unique<FixedLengthFloatingPointNumberType>(this->alignment(), this->length(),
-                                                                this->byteOrder(),
-                                                                internal::tryCloneUserAttrs(this->userAttributes()));
+    return FixedLengthFloatingPointNumberType::create(this->alignment(), this->length(),
+                                                      this->byteOrder(),
+                                                      internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

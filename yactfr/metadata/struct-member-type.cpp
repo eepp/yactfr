@@ -21,8 +21,8 @@ StructureMemberType::StructureMemberType(std::string name, DataType::UP dt, MapI
 
 std::unique_ptr<const StructureMemberType> StructureMemberType::clone() const
 {
-    return std::make_unique<StructureMemberType>(_name, _dt->clone(),
-                                                 internal::tryCloneUserAttrs(this->userAttributes()));
+    return StructureMemberType::create(_name, _dt->clone(),
+                                       internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StructureMemberType::operator==(const StructureMemberType& other) const noexcept

@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "../aliases.hpp"
 #include "array-type.hpp"
 #include "dt-visitor.hpp"
@@ -26,6 +29,10 @@ A static-length array type describes data stream static-length arrays.
 class StaticLengthArrayType final :
     public ArrayType
 {
+public:
+    /// Unique pointer to constant static-length array type.
+    using UP = std::unique_ptr<const StaticLengthArrayType>;
+
 public:
     /*!
     @brief
@@ -106,6 +113,27 @@ public:
     explicit StaticLengthArrayType(DataType::UP elementType, Size length,
                                    MapItem::UP userAttributes = nullptr,
                                    bool hasTraceTypeUuidRole = false);
+
+    /*!
+    @brief
+        Creates a constant static-length array type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the static-length array type
+        constructor.
+
+    @returns
+        Created constant static-length array type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Length of data stream static-length arrays described by this
     /// type (count of element).

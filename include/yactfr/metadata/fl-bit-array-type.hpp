@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_FL_BIT_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_FL_BIT_ARRAY_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "bo.hpp"
 #include "scalar-dt.hpp"
 #include "dt.hpp"
@@ -27,6 +30,10 @@ arrays.
 class FixedLengthBitArrayType :
     public ScalarDataType
 {
+public:
+    /// Unique pointer to constant fixed-length bit array type.
+    using UP = std::unique_ptr<const FixedLengthBitArrayType>;
+
 protected:
     explicit FixedLengthBitArrayType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
                                      MapItem::UP userAttrs);
@@ -88,6 +95,27 @@ public:
     */
     explicit FixedLengthBitArrayType(unsigned int length, ByteOrder byteOrder,
                                      MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant fixed-length bit array type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the fixed-length bit array type
+        constructor.
+
+    @returns
+        Created constant fixed-length bit array type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /// Length of data stream fixed-length bit arrays (bits) described
     /// by this type.

@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <utility>
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -40,6 +41,9 @@ class VariantTypeOption final :
     friend class internal::TraceTypeImpl;
 
 public:
+    /// Unique pointer to constant variant type option.
+    using UP = std::unique_ptr<const VariantTypeOption>;
+
     /// Type of the value of a selector.
     using SelectorValue = SelectorValueT;
 
@@ -109,7 +113,26 @@ public:
     {
     }
 
-public:
+    /*!
+    @brief
+        Creates a constant variant type option unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the variant type option constructor.
+
+    @returns
+        Created constant variant type option unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<typename UP::element_type>(std::forward<ArgTs>(args)...);
+    }
+
     /// Name of this variant type option.
     const boost::optional<std::string>& name() const noexcept
     {
@@ -166,11 +189,10 @@ public:
     }
 
     /// Clone (deep copy) of this variant type option.
-    std::unique_ptr<const VariantTypeOption<SelectorValueT>> clone() const
+    UP clone() const
     {
-        return std::make_unique<const VariantTypeOption<SelectorValueT>>(_name, _dt->clone(),
-                                                                         _selRanges,
-                                                                         internal::tryCloneUserAttrs(this->userAttributes()));
+        return VariantTypeOption::create(_name, _dt->clone(), _selRanges,
+                                         internal::tryCloneUserAttrs(this->userAttributes()));
     }
 
     /*!

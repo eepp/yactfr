@@ -143,25 +143,23 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUIntType(const PseudoDt
 {
     auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoDt);
 
-    return std::make_unique<const FixedLengthUnsignedIntegerType>(pseudoUIntType.align(),
-                                                                  pseudoUIntType.len(),
-                                                                  pseudoUIntType.bo(),
-                                                                  pseudoUIntType.prefDispBase(),
-                                                                  tryCloneUserAttrs(pseudoUIntType.userAttrs()),
-                                                                  pseudoUIntType.roles());
+    return FixedLengthUnsignedIntegerType::create(pseudoUIntType.align(), pseudoUIntType.len(),
+                                                  pseudoUIntType.bo(),
+                                                  pseudoUIntType.prefDispBase(),
+                                                  tryCloneUserAttrs(pseudoUIntType.userAttrs()),
+                                                  pseudoUIntType.roles());
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoDt& pseudoDt) const
 {
     auto& pseudoUEnumType = static_cast<const PseudoFlUEnumType&>(pseudoDt);
 
-    return std::make_unique<const FixedLengthUnsignedEnumerationType>(pseudoUEnumType.align(),
-                                                                      pseudoUEnumType.len(),
-                                                                      pseudoUEnumType.bo(),
-                                                                      pseudoUEnumType.mappings(),
-                                                                      pseudoUEnumType.prefDispBase(),
-                                                                      tryCloneUserAttrs(pseudoUEnumType.userAttrs()),
-                                                                      pseudoUEnumType.roles());
+    return FixedLengthUnsignedEnumerationType::create(pseudoUEnumType.align(),
+                                                      pseudoUEnumType.len(), pseudoUEnumType.bo(),
+                                                      pseudoUEnumType.mappings(),
+                                                      pseudoUEnumType.prefDispBase(),
+                                                      tryCloneUserAttrs(pseudoUEnumType.userAttrs()),
+                                                      pseudoUEnumType.roles());
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoDt& pseudoDt)
@@ -179,10 +177,10 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
         return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
     });
 
-    return std::make_unique<const StaticLengthArrayType>(pseudoArrayType.minAlign(),
-                                                         std::move(elemDt), pseudoArrayType.len(),
-                                                         tryCloneUserAttrs(pseudoArrayType.userAttrs()),
-                                                         pseudoArrayType.hasTraceTypeUuidRole());
+    return StaticLengthArrayType::create(pseudoArrayType.minAlign(), std::move(elemDt),
+                                         pseudoArrayType.len(),
+                                         tryCloneUserAttrs(pseudoArrayType.userAttrs()),
+                                         pseudoArrayType.hasTraceTypeUuidRole());
 }
 
 const DataLocation& DtFromPseudoRootDtConverter::_getLenLoc(const PseudoDt& pseudoDt) const
@@ -218,9 +216,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
         return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
     });
 
-    return std::make_unique<const DynamicLengthArrayType>(pseudoArrayType.minAlign(),
-                                                          std::move(elemDt), lenLoc,
-                                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()));
+    return DynamicLengthArrayType::create(pseudoArrayType.minAlign(), std::move(elemDt), lenLoc,
+                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()));
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt& pseudoDt)
@@ -229,12 +226,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt
     auto& pseudoBlobType = static_cast<const PseudoDlBlobType&>(pseudoDt);
 
     if (pseudoBlobType.mediaType()) {
-        return std::make_unique<const DynamicLengthBlobType>(8, lenLoc,
-                                                             *pseudoBlobType.mediaType(),
-                                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
+        return DynamicLengthBlobType::create(8, lenLoc, *pseudoBlobType.mediaType(),
+                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
     } else {
-        return std::make_unique<const DynamicLengthBlobType>(8, lenLoc,
-                                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
+        return DynamicLengthBlobType::create(8, lenLoc,
+                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
     }
 }
 
@@ -246,14 +242,13 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt
     for (const auto& pseudoMemberType : pseudoStructType.pseudoMemberTypes()) {
         auto memberDt = this->_dtFromPseudoDt(pseudoMemberType->pseudoDt());
 
-        memberTypes.push_back(std::make_unique<const StructureMemberType>(*pseudoMemberType->name(),
-                                                                          std::move(memberDt),
-                                                                          tryCloneUserAttrs(pseudoMemberType->userAttrs())));
+        memberTypes.push_back(StructureMemberType::create(*pseudoMemberType->name(),
+                                                          std::move(memberDt),
+                                                          tryCloneUserAttrs(pseudoMemberType->userAttrs())));
     }
 
-    return std::make_unique<const StructureType>(pseudoStructType.minAlign(),
-                                                 std::move(memberTypes),
-                                                 tryCloneUserAttrs(pseudoStructType.userAttrs()));
+    return StructureType::create(pseudoStructType.minAlign(), std::move(memberTypes),
+                                 tryCloneUserAttrs(pseudoStructType.userAttrs()));
 }
 
 void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
@@ -551,9 +546,9 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
         return this->_dtFromPseudoDt(pseudoOptType.pseudoDt());
     });
 
-    return std::make_unique<const OptionalWithBooleanSelectorType>(1, std::move(containedDt),
-                                                                   std::move(selLocPseudoDtsPair.first),
-                                                                   tryCloneUserAttrs(pseudoOptType.userAttrs()));
+    return OptionalWithBooleanSelectorType::create(1, std::move(containedDt),
+                                                   std::move(selLocPseudoDtsPair.first),
+                                                   tryCloneUserAttrs(pseudoOptType.userAttrs()));
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt)
@@ -572,10 +567,10 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
     assert(!pseudoSelDts.empty());
 
     if ((*pseudoSelDts.begin())->isUInt()) {
-        return std::make_unique<OptionalWithUnsignedIntegerSelectorType>(1, std::move(containedDt),
-                                                                         std::move(selLoc),
-                                                                         pseudoOptType.selRanges(),
-                                                                         tryCloneUserAttrs(pseudoOptType.userAttrs()));
+        return OptionalWithUnsignedIntegerSelectorType::create(1, std::move(containedDt),
+                                                               std::move(selLoc),
+                                                               pseudoOptType.selRanges(),
+                                                               tryCloneUserAttrs(pseudoOptType.userAttrs()));
     } else {
         using SInt = long long;
 
@@ -588,10 +583,10 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
             });
         }
 
-        return std::make_unique<OptionalWithSignedIntegerSelectorType>(1, std::move(containedDt),
-                                                                       std::move(selLoc),
-                                                                       IntegerRangeSet<SInt> {std::move(ranges)},
-                                                                       tryCloneUserAttrs(pseudoOptType.userAttrs()));
+        return OptionalWithSignedIntegerSelectorType::create(1, std::move(containedDt),
+                                                             std::move(selLoc),
+                                                             IntegerRangeSet<SInt> {std::move(ranges)},
+                                                             tryCloneUserAttrs(pseudoOptType.userAttrs()));
     }
 
     return nullptr;

@@ -56,10 +56,10 @@ VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const Displ
 
 DataType::UP VariableLengthUnsignedIntegerType::_clone() const
 {
-    return std::make_unique<VariableLengthUnsignedIntegerType>(this->alignment(),
-                                                               this->preferredDisplayBase(),
-                                                               internal::tryCloneUserAttrs(this->userAttributes()),
-                                                               this->roles());
+    return VariableLengthUnsignedIntegerType::create(this->alignment(),
+                                                     this->preferredDisplayBase(),
+                                                     internal::tryCloneUserAttrs(this->userAttributes()),
+                                                     this->roles());
 }
 
 bool VariableLengthUnsignedIntegerType::_isEqual(const DataType& other) const noexcept
@@ -92,9 +92,8 @@ VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const DisplayBa
 
 DataType::UP VariableLengthSignedIntegerType::_clone() const
 {
-    return std::make_unique<VariableLengthSignedIntegerType>(this->alignment(),
-                                                             this->preferredDisplayBase(),
-                                                             internal::tryCloneUserAttrs(this->userAttributes()));
+    return VariableLengthSignedIntegerType::create(this->alignment(), this->preferredDisplayBase(),
+                                                   internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_FL_FLOAT_TYPE_HPP
 #define _YACTFR_METADATA_FL_FLOAT_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "fl-bit-array-type.hpp"
 #include "bo.hpp"
 #include "dt.hpp"
@@ -30,6 +33,10 @@ numbers.
 class FixedLengthFloatingPointNumberType final :
     public FixedLengthBitArrayType
 {
+public:
+    /// Unique pointer to constant fixed-length floating point number type.
+    using UP = std::unique_ptr<const FixedLengthFloatingPointNumberType>;
+
 public:
     /*!
     @brief
@@ -87,6 +94,28 @@ public:
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int length, ByteOrder byteOrder,
                                                 MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Creates a constant fixed-length floating point number type
+        unique pointer, forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the fixed-length floating point number
+        type constructor.
+
+    @returns
+        Created constant fixed-length floating point number type unique
+        pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /*!
     @brief

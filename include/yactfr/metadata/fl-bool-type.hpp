@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_FL_BOOL_TYPE_HPP
 #define _YACTFR_METADATA_FL_BOOL_TYPE_HPP
 
+#include <memory>
+#include <utility>
+
 #include "fl-bit-array-type.hpp"
 #include "bo.hpp"
 #include "dt.hpp"
@@ -28,6 +31,10 @@ A fixed-length boolean type describes data stream fixed-length booleans.
 class FixedLengthBooleanType final :
     public FixedLengthBitArrayType
 {
+public:
+    /// Unique pointer to constant fixed-length boolean type.
+    using UP = std::unique_ptr<const FixedLengthBooleanType>;
+
 public:
     /*!
     @brief
@@ -85,6 +92,26 @@ public:
     explicit FixedLengthBooleanType(unsigned int length, ByteOrder byteOrder,
                                     MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Creates a constant fixed-length boolean type unique pointer,
+        forwarding \p args to the constructor.
+
+    @param[in] args
+        Arguments to forward to the fixed-length boolean type
+        constructor.
+
+    @returns
+        Created constant fixed-length boolean type unique pointer.
+
+    @pre
+        See the preconditions of the constructor.
+    */
+    template <typename... ArgTs>
+    static UP create(ArgTs&&... args)
+    {
+        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+    }
 
     /*!
     @brief
