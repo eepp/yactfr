@@ -128,6 +128,10 @@ public:
             *_os << ':' << *elem.sequenceNumber();
         }
 
+        if (elem.discardedEventRecordCounterSnapshot()) {
+            *_os << ':' << *elem.discardedEventRecordCounterSnapshot();
+        }
+
         *_os << '\n';
     }
 

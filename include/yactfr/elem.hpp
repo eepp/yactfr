@@ -627,6 +627,17 @@ public:
 
     /*!
     @brief
+        Count of total discarded event records at the end of the current
+        packet since the beginning of its <em>data stream</em> (\em not
+        its element sequence).
+    */
+    const boost::optional<Size>& discardedEventRecordCounterSnapshot() const noexcept
+    {
+        return _discErCounterSnap;
+    }
+
+    /*!
+    @brief
         Expected total length, in bits, of the current packet.
 
     This length \em includes the packet padding bits before the end of
@@ -669,6 +680,7 @@ private:
     void _reset() noexcept
     {
         _seqNum = boost::none;
+        _discErCounterSnap = boost::none;
         _expectedTotalLen = boost::none;
         _expectedContentLen = boost::none;
         _endDefClkVal = boost::none;
@@ -676,6 +688,7 @@ private:
 
 private:
     boost::optional<Index> _seqNum;
+    boost::optional<Size> _discErCounterSnap;
     boost::optional<Size> _expectedTotalLen;
     boost::optional<Size> _expectedContentLen;
     boost::optional<Cycles> _endDefClkVal;

@@ -524,6 +524,10 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "SET_PKT_SEQ_NUM";
         break;
 
+    case Kind::SET_PKT_DISC_ER_COUNTER_SNAP:
+        kindStr = "SET_PKT_DISC_ER_COUNTER_SNAP";
+        break;
+
     case Kind::SET_PKT_TOTAL_LEN:
         kindStr = "SET_PKT_TOTAL_LEN";
         break;
@@ -1439,6 +1443,11 @@ SetErtInstr::SetErtInstr(boost::optional<TypeId> fixedId) :
 
 SetPktSeqNumInstr::SetPktSeqNumInstr() :
     Instr {Kind::SET_PKT_SEQ_NUM}
+{
+}
+
+SetPktDiscErCounterSnapInstr::SetPktDiscErCounterSnapInstr() :
+    Instr {Kind::SET_PKT_DISC_ER_COUNTER_SNAP}
 {
 }
 

@@ -414,6 +414,14 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
 
         InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT,
+            [](auto& instrLoc) {
+                instrLoc.proc->insert(std::next(instrLoc.it),
+                                      std::make_shared<SetPktDiscErCounterSnapInstr>());
+            }
+        };
+
+        InstrFinder {
             readScopeInstr.proc(),
             UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
             insertUpdateDefClkValInstr

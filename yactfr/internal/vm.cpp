@@ -297,6 +297,7 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::SET_ERT>(&Vm::_execSetErt);
     this->_initExecFunc<Instr::Kind::SET_DS_ID>(&Vm::_execSetDsId);
     this->_initExecFunc<Instr::Kind::SET_PKT_SEQ_NUM>(&Vm::_execSetPktSeqNum);
+    this->_initExecFunc<Instr::Kind::SET_PKT_DISC_ER_COUNTER_SNAP>(&Vm::_execSetPktDiscErCounterSnap);
     this->_initExecFunc<Instr::Kind::SET_PKT_TOTAL_LEN>(&Vm::_execSetPktTotalLen);
     this->_initExecFunc<Instr::Kind::SET_PKT_CONTENT_LEN>(&Vm::_execSetPktContentLen);
     this->_initExecFunc<Instr::Kind::SET_PKT_MAGIC_NUMBER>(&Vm::_execSetPktMagicNumber);
@@ -1061,6 +1062,12 @@ Vm::_ExecReaction Vm::_execSetDsId(const Instr& instr)
 Vm::_ExecReaction Vm::_execSetPktSeqNum(const Instr& instr)
 {
     _pos.elems.pktInfo._seqNum = _pos.lastIntVal.u;
+    return _ExecReaction::EXEC_NEXT_INSTR;
+}
+
+Vm::_ExecReaction Vm::_execSetPktDiscErCounterSnap(const Instr& instr)
+{
+    _pos.elems.pktInfo._discErCounterSnap = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 

@@ -139,6 +139,7 @@ class SetExpectedPktContentLenInstr;
 class SetPktEndDefClkValInstr;
 class SetPktMagicNumberInstr;
 class SetPktSeqNumInstr;
+class SetPktDiscErCounterSnapInstr;
 class SetExpectedPktTotalLenInstr;
 class SetPktInfoInstr;
 class UpdateDefClkValInstr;
@@ -289,6 +290,10 @@ public:
     }
 
     virtual void visit(SetPktSeqNumInstr& instr)
+    {
+    }
+
+    virtual void visit(SetPktDiscErCounterSnapInstr& instr)
     {
     }
 
@@ -533,6 +538,7 @@ public:
         SET_PKT_END_DEF_CLK_VAL,
         SET_PKT_MAGIC_NUMBER,
         SET_PKT_SEQ_NUM,
+        SET_PKT_DISC_ER_COUNTER_SNAP,
         SET_PKT_TOTAL_LEN,
         SET_PKT_INFO,
         UPDATE_DEF_CLK_VAL,
@@ -2025,6 +2031,25 @@ class SetPktSeqNumInstr final :
 {
 public:
     explicit SetPktSeqNumInstr();
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Set packet discarded event record counter snapshot" procedure
+ * instruction.
+ *
+ * This instruction requires the VM to set the packet discarded event
+ * record counter snapshot to the last decoded value.
+ */
+class SetPktDiscErCounterSnapInstr final :
+    public Instr
+{
+public:
+    explicit SetPktDiscErCounterSnapInstr();
 
     void accept(InstrVisitor& visitor) override
     {
