@@ -23,6 +23,9 @@ namespace yactfr {
 
 @ingroup trace
 
+This method automatically discovers whether the text between \p begin
+and \p end is a CTF&nbsp;1.8 or CTF&nbsp;2 metadata text.
+
 @param[in] begin
     Beginning of metadata text.
 @param[in] end
@@ -33,7 +36,8 @@ namespace yactfr {
     Pair of:
 
     -# \link TraceType Trace type\endlink
-    -# \link TraceEnvironment Trace environment\endlink
+    -# \link TraceEnvironment Trace environment\endlink (always empty
+       with a CTF 2 metadata text)
     @endparblock
 
 @throws TextParseError
@@ -48,6 +52,9 @@ std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const char *begin, c
 
 @ingroup trace
 
+This method automatically discovers whether \p text is a CTF&nbsp;1.8 or
+CTF&nbsp;2 metadata text.
+
 @param[in] text
     Metadata text.
 
@@ -56,7 +63,8 @@ std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const char *begin, c
     Pair of:
 
     -# \link TraceType Trace type\endlink
-    -# \link TraceEnvironment Trace environment\endlink
+    -# \link TraceEnvironment Trace environment\endlink (always empty
+       with a CTF 2 metadata text)
     @endparblock
 
 @throws TextParseError

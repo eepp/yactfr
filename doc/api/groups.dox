@@ -17,8 +17,9 @@ types and eventually get a complete \link TraceType trace
 type\endlink which you can then use to build an
 \link ElementSequence element sequence\endlink. However, it should
 be much more convenient to use fromMetadataText() to
-build a trace type and a \link TraceEnvironment trace environment\endlink
-from a TSDL document.
+build a trace type and a \link TraceEnvironment trace
+environment\endlink from a TSDL (CTF&nbsp;1.8) or JSON text sequence
+(CTF&nbsp;2) document.
 
 Use createMetadataStream() to create a metadata stream from
 an
@@ -33,9 +34,10 @@ text\endlink.
 
 @ingroup metadata
 
-A metadata stream object contains the plain TSDL text. When the stream
-is packetized, the object also contains other properties like the native
-byte order, the version, the number of packets, and the rest.
+A metadata stream object contains the plain TSDL (CTF&nbsp;1.8) or JSON
+text sequence (CTF&nbsp;2) text. When the stream is packetized, the
+object also contains other properties like the native byte order, the
+version, the number of packets, and the rest.
 
 Use createMetadataStream() to create a metadata stream from an
 <a href="http://en.cppreference.com/w/cpp/io/basic_istream">input stream</a>.
@@ -81,14 +83,14 @@ auto myIntType = std::make_unique<const FixedLengthSignedIntegerType>(
 The trace API is both the fromMetadataText() function and the
 TraceEnvironment class.
 
-Conceptually, everything found in a
+Conceptually, everything found in a CTF&nbsp;1.8
 \link metadata_stream metadata stream\endlink forms a single
 \link TraceType trace type\endlink, except the environment which really
 belongs to the \em trace itself (the conceptual instance of the trace
 type).
 
 Therefore, fromMetadataText() returns both a trace type and a trace
-environment.
+environment to accomodate CTF&nbsp;1.8.
 
 @defgroup item Item
 @brief
@@ -157,7 +159,7 @@ ElementSequence::ElementSequence() %construction\endlink:
 - A \link DataSourceFactory data source factory\endlink.
 
 You can use fromMetadataText() to build a trace type from a TSDL
-document.
+(CTF&nbsp;1.8) or JSON text sequence (CTF&nbsp;2) document.
 
 A data source factory is a factory of \link DataSource data
 sources\endlink. Each \link ElementSequenceIterator element sequence

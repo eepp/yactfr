@@ -208,46 +208,49 @@ example, an event record type object has this member:
 mutable const DataStreamType *_dst;
 ----
 
-== TSDL document parsing
+== Metadata text parsing
 
 While you can build a trace type object manually, the most interesting
-use case is probably to get one out of a standard TSDL metadata
-document.
+use case is probably to get one out of a standard TSDL metadata document
+(CTF{nbsp}1.8) or JSON text sequence document (CTF{nbsp}2).
 
-The `fromMetadataText()` function does exactly that. This is a templated
-function which accepts two character iterators (beginning and end) to
-synthesize a pair of trace type and trace environment objects out of the
-parsed text.
+The `fromMetadataText()` functions do exactly that. Those functions
+accept either two character pointers (beginning and end) or an
+`std::string` object to synthesize a pair of trace type and trace
+environment objects out of the parsed text.
 
 Although the environment entries are part of a TSDL document, they
 conceptually belong to a single trace, which is why they're not part of
 a yactfr trace type object. It's just a convenience to have an `env`
-block in the `metadata` file of a CTF trace as each CTF{nbsp}1.8 trace
-has its own `metadata` file.
+block in the `metadata` file of a CTF{nbsp}1.8 trace as each trace has
+its own `metadata` file.
 
-`fromMetadataText()` requires a _textual_ (non-packetized) version
-of the document. If the TSDL content is packetized, you can use
-`createMetadataStream()` to get a metadata stream object which contains
-a metadata plain text accessor.
+`fromMetadataText()` requires a _textual_ (non-packetized) version of
+the document (for CTF{nbsp}1.8). If the TSDL content is packetized, you
+can use `createMetadataStream()` to get a metadata stream object which
+contains a metadata plain text accessor.
 
 A metadata stream object decodes all the contents on construction and
 keeps it, so it can get heavy with a heavy metadata stream. That being
-said, note that a very large https://lttng.org/[LTTng] kernel trace
+said, note that a fairly large https://lttng.org/[LTTng] kernel trace
 metadata stream is about 500{nbsp}kib: not the end of the world.
 
-The generic parser is of the non-predictive recursive descent type.
-There is one method for each construct, and the parser can sometimes
-backtrack if it doesn't reach what it expects. Some parser logic is
-exposed (but in the `yactfr::internal` namespace) because of the generic
-character iterators, and some is part of the compiled library. The
-parser gets its tokens from a _string scanner_ which is just a
-specialized lexer with a built-in stack to be able to backtrack.
+The TSDL parser is of the non-predictive recursive descent type. There's
+one method for each construct, and the parser can sometimes backtrack if
+it doesn't reach what it expects. The parser gets its tokens from a
+_string scanner_ (`internal::StrScanner`) which is just a specialized
+lexer with a built-in stack to be able to backtrack.
 
-This is not the fastest parser in the world, but it's good enough
-considering the application: the main work is decoding data streams when
-reading a CTF trace, not parsing its metadata stream. The fact that it's
-a recursive descent parser (with helpers like an RAII lexical scope
-object) also makes it straightforward to understand, debug, and modify.
+`internal::TsdlParser` isn't the fastest parser in the world, but it's
+good enough considering the application: the main work is decoding data
+streams when reading a CTF trace, not parsing its metadata stream. The
+fact that it's a recursive descent parser (with helpers like an RAII
+lexical scope object) also makes it straightforward to understand,
+debug, and modify.
+
+`internal::Ctf2JsonSeqParser` is the CTF{nbsp}2 metadata stream parser.
+Its validation relies a lot on `internal::JsonAnyFragValReq`, a JSON
+value requirement to validate a single CTF{nbsp}2 fragment.
 
 [[pkt-proc]]
 == Packet procedure

@@ -12,21 +12,21 @@ _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
 The yactfr library is written in pass:[C++14] and offers a (🥁...)
 pass:[C++14] API.
 
-While the CTF reading libraries that I know about focus on decoding and
-providing you with complete, ordered event record objects, the yactfr
-API offers a lower level of CTF processing: you iterate individual
-element sequences to get _elements_: beginning/end of packet,
-beginning/end of event record, beggining/end of structure, individual
-data stream scalar values like fixed-length integers, fixed-length
-floating point numbers, and null-terminated strings, specific clock
-value update, known data stream ID, and the rest. This means the sizes
-of event records and packets don't influence the performance or memory
-usage of yactfr.
+While the https://diamon.org/ctf/[CTF] reading libraries that I know
+about focus on decoding and providing you with complete, ordered event
+record objects, the yactfr API offers a lower level of CTF processing:
+you iterate individual element sequences to obtain _elements_:
+beginning/end of packet, beginning/end of event record, beggining/end of
+structure, individual data stream scalar values like fixed-length
+integers, fixed-length floating point numbers, and null-terminated
+strings, specific clock value update, known data stream ID, and the
+rest. This means the sizes of event records and packets don't influence
+the performance or memory usage of yactfr.
 
 Some use cases where this library can prove useful:
 
-* Trace inspection programs, for example when you need to debug a
-  custom CTF producer.
+* Trace inspection programs, for example when you need to debug a custom
+  CTF producer.
 
 * Foundation of an API with a higher level of abstraction.
 
@@ -40,6 +40,11 @@ WARNING: yactfr is not mature yet! Its API is still experimental:
 the interface could change at any time.
 
 == Notable features
+
+* Full https://diamon.org/ctf/v1.8.3/[CTF{nbsp}1.8.3] and
+  CTF{nbsp}2 (as of
+  https://diamon.org/ctf/files/CTF2-SPECRC-4.0rA.html[**CTF2-SPECRC-4.0**])
+  support.
 
 * Only depends on http://www.boost.org/[Boost] at _build time_, and
   nothing at run time (except for your pass:[C++] runtime library):
@@ -60,7 +65,7 @@ $ ldd libyactfr.so
   pointer reference count change, zero virtual method call, and zero
   copy during an element sequence iteration.
 
-** A data stream fixed-length integer is decoded in-place and is
+** A data stream fixed-length bit array is decoded in-place and is
    available as an element member.
 
 ** A data stream string is available as one or more substrings in
@@ -68,8 +73,8 @@ $ ldd libyactfr.so
    current data block of the data source (for example, from a memory
    mapped region), which means zero string copy.
 +
-This is possible because, as per CTF{nbsp}1.8.2, data stream strings
-must have an 8-bit alignment.
+This is possible because, as per CTF{nbsp}1.8.2 and **CTF2-SPECRC-4.0**,
+data stream strings have an 8-bit alignment requirement.
 
 * Decodes CTF packets of any size and event records of any size with
   steady memory usage and performance.
@@ -81,8 +86,8 @@ must have an 8-bit alignment.
   in two different threads.
 
 * Full CTF metadata text inspection and validation: a parsing error
-  exception contains a list of locations (line number, column number)
-  with associated context messages.
+  exception contains a list of locations (offset in bytes, line number,
+  and column number) with associated context messages.
 
 * Full data stream packet decoding information with the
   http://en.cppreference.com/w/cpp/concept/InputIterator[input iterator]
@@ -129,17 +134,21 @@ functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 `madvise()`.
 
 * Decodes up to, and including, 64-bit signed/unsigned CTF fixed-length
-  integers and enumerations (no "`big integers`").
+  bit arrays, integers, and enumerations (no "`big integers`").
+
+* Decodes up to, and including, 63-bit (effective, which means
+  72{nbsp}total) signed/unsigned CTF variable-length bit arrays,
+  integers, and enumerations.
 
 * Only decodes 32-bit and 64-bit CTF fixed-length floating point
   numbers.
 
-* Packet sizes must be multiples of 8 bits (I'm still not sure, but this
-  could be enforced by the specification anyway), and be at least
+* Packet lengths must be multiples of 8 bits (I'm still not sure, but
+  this could be enforced by the specification anyway), and be at least
   8{nbsp}bits.
 
-* TSDL: Doesn't handle single-line comment continuation when the line
-  ends with `\`:
+* TSDL (CTF{nbsp}1.8): Doesn't handle single-line comment continuation
+  when the line ends with `\`:
 +
 --
 ----
@@ -152,9 +161,9 @@ event {
 ----
 --
 
-* TSDL: Doesn't support relative dynamic-length array type lengths and
-  variant type selectors in data type aliases (or named
-  structure/variant type) which target structure member types outside
+* TSDL (CTF{nbsp}1.8): Doesn't support relative dynamic-length array
+  type lengths and variant type selectors in data type aliases (or named
+  structure/variant types) which target structure member types outside
   this data type alias.
 +
 For example, this is not supported (TSDL):
@@ -213,10 +222,7 @@ fields := struct {
 ----
 --
 
-* Although I'm willing to keep the yactfr API stable, I won't make any
-  effort to ensure ABI backward compatibility. There are too many
-  aspects involved to achieve this, and it can seriously affect the
-  quality of the API.
+* API and ABI backward compatibility is not guaranteed at this point.
 +
 Please rebuild your project if you change the yactfr version.
 
@@ -258,7 +264,7 @@ directory.
 For example, this is how I run `cmake` for development:
 
 ----
-CC=clang CXX=clang++ CXXFLAGS='-Wextra -Wall' cmake .. -DCMAKE_BUILD_TYPE=debug -DOPT_BUILD_DOC=ON
+CC=clang CXX=clang++ CXXFLAGS='-Wextra -Wall -pedantic' cmake .. -DCMAKE_BUILD_TYPE=debug -DOPT_BUILD_DOC=ON
 ----
 
 For production, you should make a release build:

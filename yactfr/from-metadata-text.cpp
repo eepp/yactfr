@@ -6,17 +6,31 @@
  */
 
 #include <yactfr/from-metadata-text.hpp>
+#include <yactfr/text-parse-error.hpp>
 
 #include "internal/metadata/tsdl/tsdl-parser.hpp"
+#include "internal/metadata/json/ctf-2-json-seq-parser.hpp"
 
 namespace yactfr {
 
 std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const char * const begin,
                                                             const char * const end)
 {
-    internal::TsdlParser parser {begin, end};
+    if (begin == end) {
+        internal::throwTextParseError("Empty metadata text.", TextLocation {});
+    }
 
-    return std::make_pair(parser.releaseTraceType(), parser.traceEnv());
+    if (*begin == 30) {
+        // starts with the RS byte: expect CTF 2
+        internal::Ctf2JsonSeqParser parser {begin, end};
+
+        return std::make_pair(parser.releaseTraceType(), TraceEnvironment {});
+    } else {
+        // fall back to CTF 1.8
+        internal::TsdlParser parser {begin, end};
+
+        return std::make_pair(parser.releaseTraceType(), parser.traceEnv());
+    }
 }
 
 } // namespace yactfr
