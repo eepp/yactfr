@@ -209,6 +209,12 @@ const StructureType& DataType::asStructureType() const noexcept
     return static_cast<const StructureType&>(*this);
 }
 
+const VariantType& DataType::asVariantType() const noexcept
+{
+    assert(this->isVariantType());
+    return static_cast<const VariantType&>(*this);
+}
+
 const VariantWithUnsignedIntegerSelectorType& DataType::asVariantWithUnsignedIntegerSelectorType() const noexcept
 {
     assert(this->isVariantWithUnsignedIntegerSelectorType());

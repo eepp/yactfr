@@ -13,11 +13,18 @@
 
 namespace yactfr {
 
+VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLocation selLoc,
+                         MapItem::UP userAttrs) :
+    CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
+    _selLoc {std::move(selLoc)}
+{
+}
+
 VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(const unsigned int minAlign,
                                                                                Options&& opts,
                                                                                DataLocation selLoc,
                                                                                MapItem::UP userAttrs) :
-    VariantType {
+    VariantWithIntegerSelectorType {
         DataType::_KIND_VAR_UINT_SEL, minAlign, std::move(opts),
         std::move(selLoc), std::move(userAttrs)
     }
@@ -45,7 +52,7 @@ VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(const
                                                                            Options&& opts,
                                                                            DataLocation selLoc,
                                                                            MapItem::UP userAttrs) :
-    VariantType {
+    VariantWithIntegerSelectorType {
         DataType::_KIND_VAR_SINT_SEL, minAlign, std::move(opts),
         std::move(selLoc), std::move(userAttrs)
     }

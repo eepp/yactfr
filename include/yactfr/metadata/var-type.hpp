@@ -27,33 +27,20 @@ class TraceTypeImpl;
 
 /*!
 @brief
-    Generic variant type.
+    Variant type.
 
 @ingroup metadata_dt
 
-A variant type describes data stream variants.
+An variant type describes data stream variants.
 */
-template <typename SelectorValueT>
 class VariantType :
     public CompoundDataType
 {
     friend class internal::TraceTypeImpl;
 
-public:
-    /// Type of options of this variant type.
-    using Option = VariantTypeOption<SelectorValueT>;
-
-    /// Vector of options of this variant type.
-    using Options = std::vector<std::unique_ptr<const Option>>;
-
 protected:
-    explicit VariantType(const _Kind kind, const unsigned int minAlign, Options&& opts,
-                         DataLocation selLoc, MapItem::UP userAttrs) :
-        CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
-        _opts {std::move(opts)},
-        _selLoc {std::move(selLoc)}
-    {
-    }
+    explicit VariantType(_Kind kind, unsigned int minAlign, DataLocation selLoc,
+                         MapItem::UP userAttrs);
 
 public:
     /// Location of selectors of data stream variants described by this
@@ -71,6 +58,54 @@ public:
         return _theSelTypes;
     }
 
+protected:
+    bool _isEqual(const DataType& other) const noexcept override
+    {
+        const auto& otherVariantType = static_cast<const VariantType&>(other);
+
+        return CompoundDataType::_isEqual(other) && _selLoc == otherVariantType._selLoc;
+    }
+
+private:
+    DataTypeSet& _selTypes() const noexcept
+    {
+        return _theSelTypes;
+    }
+
+private:
+    const DataLocation _selLoc;
+    mutable DataTypeSet _theSelTypes;
+};
+
+/*!
+@brief
+    Type of data stream optionals with an integer selector.
+
+@ingroup metadata_dt
+*/
+template <typename SelectorValueT>
+class VariantWithIntegerSelectorType :
+    public VariantType
+{
+    friend class internal::TraceTypeImpl;
+
+public:
+    /// Type of options of this variant type.
+    using Option = VariantTypeOption<SelectorValueT>;
+
+    /// Vector of options of this variant type.
+    using Options = std::vector<std::unique_ptr<const Option>>;
+
+protected:
+    explicit VariantWithIntegerSelectorType(const _Kind kind, const unsigned int minAlign,
+                                            Options&& opts, DataLocation selLoc,
+                                            MapItem::UP userAttrs) :
+        VariantType {kind, minAlign, std::move(selLoc), std::move(userAttrs)},
+        _opts {std::move(opts)}
+    {
+    }
+
+public:
     /// Options offered by this type.
     const Options& options() const noexcept
     {
@@ -158,13 +193,12 @@ protected:
 private:
     bool _isEqual(const DataType& other) const noexcept override
     {
-        const auto& otherVariantType = static_cast<const VariantType<SelectorValueT>&>(other);
+        const auto& otherVariantType = static_cast<const VariantWithIntegerSelectorType&>(other);
 
-        return CompoundDataType::_isEqual(other) &&
-               this->_optsAreEqual(otherVariantType) && _selLoc == otherVariantType._selLoc;
+        return VariantType::_isEqual(other) && this->_optsAreEqual(otherVariantType);
     }
 
-    bool _optsAreEqual(const VariantType<SelectorValueT>& other) const noexcept
+    bool _optsAreEqual(const VariantWithIntegerSelectorType& other) const noexcept
     {
         if (_opts.size() != other.size()) {
             return false;
@@ -179,15 +213,8 @@ private:
         return true;
     }
 
-    DataTypeSet& _selTypes() const noexcept
-    {
-        return _theSelTypes;
-    }
-
 private:
     Options _opts;
-    const DataLocation _selLoc;
-    mutable DataTypeSet _theSelTypes;
 };
 
 /*!
@@ -197,7 +224,7 @@ private:
 @ingroup metadata_dt
 */
 class VariantWithUnsignedIntegerSelectorType final :
-    public VariantType<VariantWithUnsignedIntegerSelectorTypeOption::SelectorValue>
+    public VariantWithIntegerSelectorType<VariantWithUnsignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
     /*!
@@ -282,7 +309,7 @@ private:
 @ingroup metadata_dt
 */
 class VariantWithSignedIntegerSelectorType final :
-    public VariantType<VariantWithSignedIntegerSelectorTypeOption::SelectorValue>
+    public VariantWithIntegerSelectorType<VariantWithSignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
     /*!

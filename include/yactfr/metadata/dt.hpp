@@ -625,6 +625,15 @@ public:
 
     /*!
     @brief
+        Returns this type as a variant type.
+
+    @pre
+        This type is a variant type.
+    */
+    const VariantType& asVariantType() const noexcept;
+
+    /*!
+    @brief
         Returns this type as the type of data stream variants with an
         unsigned integer selector.
 

@@ -60,6 +60,7 @@ class VariableLengthSignedEnumerationType;
 class VariableLengthSignedIntegerType;
 class VariableLengthUnsignedEnumerationType;
 class VariableLengthUnsignedIntegerType;
+class VariantType;
 class VariantWithSignedIntegerSelectorType;
 class VariantWithUnsignedIntegerSelectorType;
 

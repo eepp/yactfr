@@ -3697,6 +3697,13 @@ protected:
         BeginningElement {kind}
     {
     }
+
+public:
+    /// Variant type.
+    const VariantType& type() const noexcept
+    {
+        return this->dataType().asVariantType();
+    }
 };
 
 /*!
