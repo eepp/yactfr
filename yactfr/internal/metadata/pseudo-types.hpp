@@ -347,12 +347,12 @@ private:
 };
 
 /*
- * Pseudo static-length type.
+ * Pseudo static-length data type mixin.
  */
-class PseudoSlType
+class PseudoSlDtMixin
 {
 protected:
-    explicit PseudoSlType(Size len);
+    explicit PseudoSlDtMixin(Size len);
 
 public:
     Size len() const noexcept
@@ -365,12 +365,12 @@ protected:
 };
 
 /*
- * Pseudo dynamic-length type.
+ * Pseudo dynamic-length data type mixin.
  */
-class PseudoDlType
+class PseudoDlDtMixin
 {
 protected:
-    explicit PseudoDlType(PseudoDataLoc pseudoLenLoc);
+    explicit PseudoDlDtMixin(PseudoDataLoc pseudoLenLoc);
 
 public:
     const PseudoDataLoc& pseudoLenLoc() const noexcept
@@ -412,7 +412,7 @@ private:
  */
 class PseudoSlArrayType final :
     public PseudoArrayType,
-    public PseudoSlType
+    public PseudoSlDtMixin
 {
 public:
     explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
@@ -449,7 +449,7 @@ private:
  */
 class PseudoDlArrayType final :
     public PseudoArrayType,
-    public PseudoDlType
+    public PseudoDlDtMixin
 {
 public:
     explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
@@ -494,7 +494,7 @@ private:
  */
 class PseudoDlBlobType final :
     public PseudoBlobType,
-    public PseudoDlType
+    public PseudoDlDtMixin
 {
 public:
     explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, boost::optional<std::string> mediaType,

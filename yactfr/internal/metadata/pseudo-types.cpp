@@ -192,12 +192,12 @@ void PseudoFlUEnumType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoSlType::PseudoSlType(const Size len) :
+PseudoSlDtMixin::PseudoSlDtMixin(const Size len) :
     _len {len}
 {
 }
 
-PseudoDlType::PseudoDlType(PseudoDataLoc pseudoLenLoc) :
+PseudoDlDtMixin::PseudoDlDtMixin(PseudoDataLoc pseudoLenLoc) :
     _pseudoLenLoc {std::move(pseudoLenLoc)}
 {
 }
@@ -212,7 +212,7 @@ PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAt
 PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType,
                                      MapItem::UP userAttrs, TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
-    PseudoSlType {len}
+    PseudoSlDtMixin {len}
 {
 }
 
@@ -244,7 +244,7 @@ void PseudoSlArrayType::accept(ConstPseudoDtVisitor& visitor) const
 PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
                                      MapItem::UP userAttrs, TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
-    PseudoDlType {std::move(pseudoLenLoc)}
+    PseudoDlDtMixin {std::move(pseudoLenLoc)}
 {
 }
 
@@ -280,7 +280,7 @@ PseudoDlBlobType::PseudoDlBlobType(PseudoDataLoc pseudoLenLoc,
                                    boost::optional<std::string> mediaType, MapItem::UP userAttrs,
                                    TextLocation loc) :
     PseudoBlobType {std::move(mediaType), std::move(userAttrs), std::move(loc)},
-    PseudoDlType {std::move(pseudoLenLoc)}
+    PseudoDlDtMixin {std::move(pseudoLenLoc)}
 {
 }
 
