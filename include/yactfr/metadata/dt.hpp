@@ -616,10 +616,10 @@ public:
 
     /*!
     @brief
-        Clones this type and returns it.
+        Creates and returns a clone (deep copy) of this type.
 
     @returns
-        Clone of this type.
+        Clone (deep copy) of this type.
     */
     DataType::UP clone() const;
 
