@@ -7,7 +7,7 @@
 
 #include "tsdl-parser.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
-#include "../../../internal/utils.hpp"
+#include "../../utils.hpp"
 
 namespace yactfr {
 namespace internal {

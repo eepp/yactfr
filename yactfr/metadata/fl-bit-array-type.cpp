@@ -9,7 +9,7 @@
 
 #include <yactfr/metadata/fl-bit-array-type.hpp>
 
-#include "internal/utils.hpp"
+#include "../internal/metadata/utils.hpp"
 
 namespace yactfr {
 

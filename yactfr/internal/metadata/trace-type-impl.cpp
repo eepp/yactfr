@@ -14,9 +14,9 @@
 #include <yactfr/aliases.hpp>
 
 #include "trace-type-impl.hpp"
-#include "../../internal/proc.hpp"
-#include "../../internal/pkt-proc-builder.hpp"
-#include "../../internal/utils.hpp"
+#include "../proc.hpp"
+#include "../pkt-proc-builder.hpp"
+#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {

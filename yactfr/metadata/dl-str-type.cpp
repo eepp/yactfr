@@ -8,7 +8,7 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/bo.hpp>
 
-#include "internal/utils.hpp"
+#include "../internal/metadata/utils.hpp"
 
 namespace yactfr {
 

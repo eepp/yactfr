@@ -20,7 +20,7 @@
 #include <yactfr/text-parse-error.hpp>
 
 #include "tsdl-attr.hpp"
-#include "../../../internal/utils.hpp"
+#include "../../utils.hpp"
 
 namespace yactfr {
 namespace internal {

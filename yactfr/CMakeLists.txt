@@ -19,6 +19,19 @@ add_library (
     elem-seq.cpp
     elem-visitor.cpp
     from-metadata-text.cpp
+    internal/metadata/data-loc-map.cpp
+    internal/metadata/dt-from-pseudo-root-dt.cpp
+    internal/metadata/json/item-from-json-val.cpp
+    internal/metadata/json/json-val-from-text.cpp
+    internal/metadata/json/json-val-req.cpp
+    internal/metadata/json/json-val.cpp
+    internal/metadata/pseudo-types.cpp
+    internal/metadata/str-scanner.cpp
+    internal/metadata/trace-type-from-pseudo-trace-type.cpp
+    internal/metadata/trace-type-impl.cpp
+    internal/metadata/tsdl/tsdl-attr.cpp
+    internal/metadata/tsdl/tsdl-parser.cpp
+    internal/metadata/utils.cpp
     internal/mmap-file-view-factory-impl.cpp
     internal/pkt-proc-builder.cpp
     internal/proc.cpp
@@ -43,19 +56,6 @@ add_library (
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp
     metadata/int-type-common.cpp
-    metadata/internal/data-loc-map.cpp
-    metadata/internal/dt-from-pseudo-root-dt.cpp
-    metadata/internal/json/item-from-json-val.cpp
-    metadata/internal/json/json-val-from-text.cpp
-    metadata/internal/json/json-val-req.cpp
-    metadata/internal/json/json-val.cpp
-    metadata/internal/pseudo-types.cpp
-    metadata/internal/str-scanner.cpp
-    metadata/internal/trace-type-from-pseudo-trace-type.cpp
-    metadata/internal/trace-type-impl.cpp
-    metadata/internal/tsdl/tsdl-attr.cpp
-    metadata/internal/tsdl/tsdl-parser.cpp
-    metadata/internal/utils.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
     metadata/non-nt-str-type.cpp

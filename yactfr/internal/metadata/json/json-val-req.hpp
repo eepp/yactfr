@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_JSON_JSON_VAL_REQ_HPP
-#define _YACTFR_METADATA_INTERNAL_JSON_JSON_VAL_REQ_HPP
+#ifndef _YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
+#define _YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
 
 #include <cassert>
 #include <string>
@@ -581,4 +581,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_JSON_JSON_VAL_REQ_HPP
+#endif // _YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP

@@ -22,7 +22,7 @@
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/aliases.hpp>
 
-#include "internal/trace-type-impl.hpp"
+#include "../internal/metadata/trace-type-impl.hpp"
 #include "../internal/proc.hpp"
 #include "../internal/pkt-proc-builder.hpp"
 

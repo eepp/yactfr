@@ -7,7 +7,7 @@
 
 #include <yactfr/metadata/sl-blob-type.hpp>
 
-#include "internal/utils.hpp"
+#include "../internal/metadata/utils.hpp"
 
 namespace yactfr {
 

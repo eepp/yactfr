@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_STR_SCANNER_HPP
-#define _YACTFR_METADATA_INTERNAL_STR_SCANNER_HPP
+#ifndef _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
+#define _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -872,4 +872,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_STR_SCANNER_HPP
+#endif // _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP

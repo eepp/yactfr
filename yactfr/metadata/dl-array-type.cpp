@@ -7,7 +7,7 @@
 
 #include <yactfr/metadata/dl-array-type.hpp>
 
-#include "internal/utils.hpp"
+#include "../internal/metadata/utils.hpp"
 
 namespace yactfr {
 
