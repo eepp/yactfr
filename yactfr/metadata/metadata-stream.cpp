@@ -16,6 +16,11 @@ MetadataStream::MetadataStream(std::string&& text) :
 {
 }
 
+unsigned int MetadataStream::majorVersion() const noexcept
+{
+    return 1;
+}
+
 bool MetadataStream::hasCtf1Signature() const noexcept
 {
     static const std::string sig {"/* CTF 1.8"};

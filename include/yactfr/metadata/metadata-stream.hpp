@@ -35,6 +35,9 @@ public:
         return _text;
     }
 
+    /// Major CTF version (always 1).
+    unsigned int majorVersion() const noexcept;
+
     /// \c true if the metadata text has a recognized initial CTF&nbsp;1
     /// signature, that is, <code>/* CTF 1.8</code>.
     bool hasCtf1Signature() const noexcept;
