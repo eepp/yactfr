@@ -37,16 +37,21 @@ documented uses unabbreviated names.
 |BO |Byte order
 |Bool |Boolean
 |Cand |Candidate
+|CC |Clock class (CTF{nbsp}2)
 |Clk |Clock
+|Cls |Class (CTF{nbsp}2)
 |Col |Column
 |Conv |Conversion
 |Ctx |Context
 |Cur |Current
 |Decr |Decrement
 |Def |Default
+|Descr |Description
+|Disc |Discarded
 |Disp |Display
 |DL |Dynamic-length
 |DS |Data stream
+|DSC |Data stream class (CTF{nbsp}2)
 |DST |Data stream type
 |DT |Data type
 |Dup |Duplicate
@@ -54,10 +59,13 @@ documented uses unabbreviated names.
 |Elem |Element
 |Enum |Enumeration
 |ER |Event record
+|ERC |Event record class (CTF{nbsp}2)
 |ERT |Event record type
 |Exc |Exception
+|FC |Field class (CTF{nbsp}2)
 |FL |Fixed-length
 |Float |Floating point number
+|Freq |Frequency
 |Id |Identifier (numeric)
 |Ident |Identifier (language)
 |Incr |Increment
@@ -70,11 +78,14 @@ documented uses unabbreviated names.
 |Loc |Location
 |Max |Maximum
 |Min |Minimum
+|NS |Namespace
 |NT |Null-terminated
 |Opt |Option, optional
+|Orig |Origin
 |Pkt |Packet
 |Pos |Position
 |Pow |Power
+|Prec |Precision
 |Proc |Procedure
 |Rec |Recursive
 |Ref |Reference
@@ -86,6 +97,7 @@ documented uses unabbreviated names.
 |Seq |Sequence
 |SInt |Signed integer
 |SL |Static-length
+|Snap |Snapshot
 |SP |Shared pointer
 |Spec |Specific
 |Src |Source
@@ -94,7 +106,9 @@ documented uses unabbreviated names.
 |Std |Standard
 |Str |String
 |Struct |Structure
+|TC |Trace class (CTF{nbsp}2)
 |Tgt |Target
+|TS |Timestamp (CTF{nbsp}2)
 |UEnum |Unsigned enumeration
 |UInt |Unsigned integer
 |UP |Unique pointer
