@@ -8,7 +8,7 @@
 #ifndef _YACTFR_TRACE_ENV_HPP
 #define _YACTFR_TRACE_ENV_HPP
 
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <boost/variant.hpp>
 
@@ -27,7 +27,7 @@ public:
     using Entry = boost::variant<std::string, long long>;
 
     /// A collection of trace environment entries.
-    using Entries = std::unordered_map<std::string, Entry>;
+    using Entries = std::map<std::string, Entry>;
 
 public:
     /// Builds an empty trace type environment.
