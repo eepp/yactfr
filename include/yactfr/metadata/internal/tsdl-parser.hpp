@@ -1587,12 +1587,12 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
                                                        pseudoDt.loc());
         });
     } else {
-        return this->_finishParseFlEnumType<SignedFixedLengthEnumerationType>(std::move(pseudoDt), addDtAlias,
+        return this->_finishParseFlEnumType<FixedLengthSignedEnumerationType>(std::move(pseudoDt), addDtAlias,
                                                                               std::move(potDtAliasName),
                                                                               [](const auto& pseudoDt,
                                                                                  const auto& mappings) {
             auto& intType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthIntegerType();
-            auto enumType = std::make_unique<SignedFixedLengthEnumerationType>(intType.alignment(),
+            auto enumType = std::make_unique<FixedLengthSignedEnumerationType>(intType.alignment(),
                                                                                intType.length(),
                                                                                intType.byteOrder(),
                                                                                mappings,

@@ -13,12 +13,12 @@ namespace yactfr {
 
 CompoundDataType::CompoundDataType(const int kind, const unsigned int minAlign,
                                    const unsigned int align) :
-    DataType {_KIND_COMPOUND | kind, std::max(minAlign, align)},
+    DataType {kind, std::max(minAlign, align)},
     _minAlign {minAlign}
 {
 }
 
-bool CompoundDataType::_compare(const DataType& other) const noexcept
+bool CompoundDataType::_isEqual(const DataType& other) const noexcept
 {
     const auto& otherCompoundDt = static_cast<const CompoundDataType&>(other);
 

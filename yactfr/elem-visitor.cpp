@@ -96,6 +96,30 @@ void ElementVisitor::visit(const FixedLengthFloatingPointNumberElement& elem)
     this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));
 }
 
+void ElementVisitor::visit(const VariableLengthBitArrayElement& elem)
+{
+}
+
+void ElementVisitor::visit(const VariableLengthSignedIntegerElement& elem)
+{
+    this->visit(static_cast<const VariableLengthBitArrayElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthUnsignedIntegerElement& elem)
+{
+    this->visit(static_cast<const VariableLengthBitArrayElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthSignedEnumerationElement& elem)
+{
+   this->visit(static_cast<const VariableLengthSignedIntegerElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthUnsignedEnumerationElement& elem)
+{
+   this->visit(static_cast<const VariableLengthUnsignedIntegerElement&>(elem));
+}
+
 void ElementVisitor::visit(const NullTerminatedStringBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));

@@ -21,7 +21,7 @@ DataType::UP DynamicLengthStringType::_clone() const
     return std::make_unique<DynamicLengthStringType>(this->alignment(), _maxLenLoc);
 }
 
-bool DynamicLengthStringType::_compare(const DataType& other) const noexcept
+bool DynamicLengthStringType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherDlStrType = static_cast<const DynamicLengthStringType&>(other);
 

@@ -510,6 +510,33 @@ private:
     unsigned long long _selVal;
 };
 
+/*!
+@brief
+    Oversized variable-length bit array decoding error.
+
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink needs is
+in the process of decoding a variable-length bit array, but it contains
+more than nine bytes.
+*/
+class OversizedVariableLengthBitArrayDecodingError final :
+    public DecodingError
+{
+    friend class internal::Vm;
+
+private:
+    explicit OversizedVariableLengthBitArrayDecodingError(Index offset);
+
+public:
+    /// Default copy constructor.
+    OversizedVariableLengthBitArrayDecodingError(const OversizedVariableLengthBitArrayDecodingError&) = default;
+
+    /// Default copy assignment operator.
+    OversizedVariableLengthBitArrayDecodingError& operator=(const OversizedVariableLengthBitArrayDecodingError&) = default;
+};
+
 } // namespace yactfr
 
 #endif // _YACTFR_DECODING_ERRORS_HPP

@@ -27,11 +27,11 @@ DataType::UP StaticLengthBlobType::_clone() const
     return std::make_unique<StaticLengthBlobType>(this->alignment(), _len, this->mediaType());
 }
 
-bool StaticLengthBlobType::_compare(const DataType& other) const noexcept
+bool StaticLengthBlobType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherSlBlobType = static_cast<const StaticLengthBlobType&>(other);
 
-    return BlobType::_compare(other) && _len == otherSlBlobType._len;
+    return BlobType::_isEqual(other) && _len == otherSlBlobType._len;
 }
 
 } // namespace yactfr

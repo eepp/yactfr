@@ -34,7 +34,7 @@ public:
     }
 
 protected:
-    bool _compare(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override;
 
 private:
     const DataType::UP _elemType;

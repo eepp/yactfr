@@ -27,11 +27,11 @@ DataType::UP DynamicLengthBlobType::_clone() const
     return std::make_unique<DynamicLengthBlobType>(this->alignment(), _lenLoc, this->mediaType());
 }
 
-bool DynamicLengthBlobType::_compare(const DataType& other) const noexcept
+bool DynamicLengthBlobType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherDlBlobType = static_cast<const DynamicLengthBlobType&>(other);
 
-    return BlobType::_compare(other) && _lenLoc == otherDlBlobType._lenLoc;
+    return BlobType::_isEqual(other) && _lenLoc == otherDlBlobType._lenLoc;
 }
 
 } // namespace yactfr

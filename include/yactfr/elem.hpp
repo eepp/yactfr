@@ -14,7 +14,15 @@
 #include <boost/optional/optional.hpp>
 
 #include "metadata/fwd.hpp"
+#include "metadata/dt.hpp"
+#include "metadata/fl-bit-array-type.hpp"
+#include "metadata/fl-bool-type.hpp"
+#include "metadata/fl-float-type.hpp"
+#include "metadata/fl-int-type.hpp"
 #include "metadata/fl-enum-type.hpp"
+#include "metadata/vl-bit-array-type.hpp"
+#include "metadata/vl-int-type.hpp"
+#include "metadata/vl-enum-type.hpp"
 #include "metadata/sl-array-type.hpp"
 #include "metadata/dl-array-type.hpp"
 #include "metadata/sl-str-type.hpp"
@@ -105,7 +113,22 @@ public:
         FIXED_LENGTH_SIGNED_ENUMERATION,
 
         /// FixedLengthUnsignedEnumerationElement
-        FIXED_LENGTH_UNFIXED_LENGTH_SIGNED_ENUMERATION,
+        FIXED_LENGTH_UNSIGNED_ENUMERATION,
+
+        /// VariableLengthBitArrayElement
+        VARIABLE_LENGTH_BIT_ARRAY,
+
+        /// VariableLengthSignedIntegerElement
+        VARIABLE_LENGTH_SIGNED_INTEGER,
+
+        /// VariableLengthUnsignedIntegerElement
+        VARIABLE_LENGTH_UNSIGNED_INTEGER,
+
+        /// VariableLengthSignedEnumerationElement
+        VARIABLE_LENGTH_SIGNED_ENUMERATION,
+
+        /// VariableLengthUnsignedEnumerationElement
+        VARIABLE_LENGTH_UNSIGNED_ENUMERATION,
 
         /// NullTerminatedStringBeginningElement
         NULL_TERMINATED_STRING_BEGINNING,
@@ -709,6 +732,9 @@ class DataElement
     friend class internal::Vm;
     friend class internal::VmPos;
 
+protected:
+    explicit DataElement() = default;
+
 public:
     /// Type of the immediate structure member containing this element,
     /// or \c nullptr if none (scope).
@@ -723,13 +749,78 @@ private:
 
 /*!
 @brief
+    Bit array base element.
+
+@ingroup elems
+*/
+class BitArrayElement :
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit BitArrayElement() = default;
+
+public:
+    /// Value as an unsigned integer.
+    std::uint64_t unsignedIntegerValue() const noexcept
+    {
+        return _theVal.u;
+    }
+
+    /*!
+    @brief
+        Returns the value of the bit at the index \p index, where
+        0 is the index of the least significant bit.
+
+    @param[in] index
+        Index of the bit to return.
+
+    @returns
+        Bit at the index \p index.
+
+    @pre
+        \p index < <code>type().length()</code>
+    */
+    bool operator[](const Index index) const noexcept
+    {
+        return static_cast<bool>((_theVal.u >> index) & 1);
+    }
+
+private:
+    void _val(const std::uint64_t val) noexcept
+    {
+        _theVal.u = val;
+    }
+
+    void _val(const std::int64_t val) noexcept
+    {
+        _theVal.i = val;
+    }
+
+    void _val(const double val) noexcept
+    {
+        _theVal.d = val;
+    }
+
+protected:
+    union {
+        std::uint64_t u;
+        std::int64_t i;
+        double d;
+    } _theVal;
+};
+
+/*!
+@brief
     Fixed-length bit array element.
 
 @ingroup elems
 */
 class FixedLengthBitArrayElement :
     public Element,
-    public DataElement
+    public BitArrayElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -753,12 +844,6 @@ public:
         return *_dt;
     }
 
-    /// Value as an unsigned integer.
-    std::uint64_t unsignedIntegerValue() const noexcept
-    {
-        return _theVal.u;
-    }
-
     /*!
     @brief
         Returns the value of the bit at the index \p index, where
@@ -776,7 +861,7 @@ public:
     bool operator[](const Index index) const noexcept
     {
         assert(index < _dt->length());
-        return static_cast<bool>((_theVal.u >> index) & 1);
+        return BitArrayElement::operator[](index);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -846,7 +931,7 @@ public:
         visitor.visit(*this);
     }
 
-private:
+protected:
     const FixedLengthBooleanType *_dt;
 };
 
@@ -878,7 +963,7 @@ public:
     /// Fixed-length signed integer type.
     const FixedLengthSignedIntegerType& type() const noexcept
     {
-        return *_dt;
+        return _dt->asFixedLengthSignedIntegerType();
     }
 
     /// Integral value.
@@ -891,9 +976,6 @@ public:
     {
         visitor.visit(*this);
     }
-
-protected:
-    const FixedLengthSignedIntegerType *_dt;
 };
 
 /*!
@@ -924,7 +1006,7 @@ public:
     /// Fixed-length unsigned integer type.
     const FixedLengthUnsignedIntegerType& type() const noexcept
     {
-        return *_dt;
+        return _dt->asFixedLengthUnsignedIntegerType();
     }
 
     /// Integral value.
@@ -937,9 +1019,6 @@ public:
     {
         visitor.visit(*this);
     }
-
-protected:
-    const FixedLengthUnsignedIntegerType *_dt;
 };
 
 /*!
@@ -962,9 +1041,9 @@ private:
 
 public:
     /// Fixed-length signed enumeration type.
-    const SignedFixedLengthEnumerationType& type() const noexcept
+    const FixedLengthSignedEnumerationType& type() const noexcept
     {
-        return *static_cast<const SignedFixedLengthEnumerationType *>(_dt);
+        return _dt->asFixedLengthSignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -987,7 +1066,7 @@ class FixedLengthUnsignedEnumerationElement final :
 
 private:
     explicit FixedLengthUnsignedEnumerationElement() :
-        FixedLengthUnsignedIntegerElement {Kind::FIXED_LENGTH_UNFIXED_LENGTH_SIGNED_ENUMERATION}
+        FixedLengthUnsignedIntegerElement {Kind::FIXED_LENGTH_UNSIGNED_ENUMERATION}
     {
     }
 
@@ -995,7 +1074,7 @@ public:
     /// Fixed-length unsigned enumeration type.
     const FixedLengthUnsignedEnumerationType& type() const noexcept
     {
-        return *static_cast<const FixedLengthUnsignedEnumerationType *>(_dt);
+        return _dt->asFixedLengthUnsignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1026,7 +1105,7 @@ public:
     /// Fixed-length floating point number type.
     const FixedLengthFloatingPointNumberType& type() const noexcept
     {
-        return *_dt;
+        return _dt->asFixedLengthFloatingPointNumberType();
     }
 
     /// Real value.
@@ -1039,9 +1118,227 @@ public:
     {
         visitor.visit(*this);
     }
+};
+
+/*!
+@brief
+    Variable-length bit array element.
+
+@ingroup elems
+*/
+class VariableLengthBitArrayElement :
+    public Element,
+    public BitArrayElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit VariableLengthBitArrayElement(const Kind kind) :
+        Element {kind}
+    {
+    }
 
 private:
-    const FixedLengthFloatingPointNumberType *_dt;
+    explicit VariableLengthBitArrayElement() :
+        VariableLengthBitArrayElement {Kind::VARIABLE_LENGTH_BIT_ARRAY}
+    {
+    }
+
+public:
+    /// Variable-length bit array type.
+    const VariableLengthBitArrayType& type() const noexcept
+    {
+        return *_dt;
+    }
+
+    /// Bit-array length (bits).
+    Size length() const noexcept
+    {
+        return _len;
+    }
+
+    /*!
+    @brief
+        Returns the value of the bit at the index \p index, where
+        0 is the index of the least significant bit.
+
+    @param[in] index
+        Index of the bit to return.
+
+    @returns
+        Bit at the index \p index.
+
+    @pre
+        \p index < <code>length()</code>
+    */
+    bool operator[](const Index index) const noexcept
+    {
+        assert(index < _len);
+        return BitArrayElement::operator[](index);
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+protected:
+    const VariableLengthBitArrayType *_dt;
+
+private:
+    Size _len;
+};
+
+/*!
+@brief
+    Variable-length signed integer element.
+
+@ingroup elems
+*/
+class VariableLengthSignedIntegerElement :
+    public VariableLengthBitArrayElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit VariableLengthSignedIntegerElement(const Kind kind) :
+        VariableLengthBitArrayElement {kind}
+    {
+    }
+
+private:
+    explicit VariableLengthSignedIntegerElement() :
+        VariableLengthSignedIntegerElement {Kind::VARIABLE_LENGTH_SIGNED_INTEGER}
+    {
+    }
+
+public:
+    /// Variable-length signed integer type.
+    const VariableLengthSignedIntegerType& type() const noexcept
+    {
+        return _dt->asVariableLengthSignedIntegerType();
+    }
+
+    /// Integral value.
+    long long value() const noexcept
+    {
+        return static_cast<long long>(_theVal.i);
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Variable-length unsigned integer element.
+
+@ingroup elems
+*/
+class VariableLengthUnsignedIntegerElement :
+    public VariableLengthBitArrayElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit VariableLengthUnsignedIntegerElement(const Kind kind) :
+        VariableLengthBitArrayElement {kind}
+    {
+    }
+
+private:
+    explicit VariableLengthUnsignedIntegerElement() :
+        VariableLengthUnsignedIntegerElement {Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER}
+    {
+    }
+
+public:
+    /// Variable-length unsigned integer type.
+    const VariableLengthUnsignedIntegerType& type() const noexcept
+    {
+        return _dt->asVariableLengthUnsignedIntegerType();
+    }
+
+    /// Integral value.
+    unsigned long long value() const noexcept
+    {
+        return static_cast<unsigned long long>(_theVal.u);
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+protected:
+    const VariableLengthUnsignedIntegerType *_dt;
+};
+
+/*!
+@brief
+    Variable-length signed enumeration element.
+
+@ingroup elems
+*/
+class VariableLengthSignedEnumerationElement final :
+    public VariableLengthSignedIntegerElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit VariableLengthSignedEnumerationElement() :
+        VariableLengthSignedIntegerElement {Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION}
+    {
+    }
+
+public:
+    /// Variable-length signed enumeration type.
+    const VariableLengthSignedEnumerationType& type() const noexcept
+    {
+        return _dt->asVariableLengthSignedEnumerationType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Variable-length unsigned enumeration element.
+
+@ingroup elems
+*/
+class VariableLengthUnsignedEnumerationElement final :
+    public VariableLengthUnsignedIntegerElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit VariableLengthUnsignedEnumerationElement() :
+        VariableLengthUnsignedIntegerElement {Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION}
+    {
+    }
+
+public:
+    /// Variable-length unsigned enumeration type.
+    const VariableLengthUnsignedEnumerationType& type() const noexcept
+    {
+        return _dt->asVariableLengthUnsignedEnumerationType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
 };
 
 /*!

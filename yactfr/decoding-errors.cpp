@@ -207,4 +207,12 @@ InvalidVariantUnsignedSelectorValueDecodingError::InvalidVariantUnsignedSelector
 {
 }
 
+OversizedVariableLengthBitArrayDecodingError::OversizedVariableLengthBitArrayDecodingError(const Index offset) :
+    DecodingError {
+        "Oversized variable-length bit array.",
+        offset
+    }
+{
+}
+
 } // namespace yactfr

@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    using _FlIntTypeReadFlIntInstrMap = std::unordered_map<const DataType *, InstrLoc>;
+    using _IntTypeReadIntInstrMap = std::unordered_map<const DataType *, InstrLoc>;
 
 private:
     void _buildPktProc();
@@ -59,7 +59,7 @@ private:
     void _insertSpecialPktProcPreambleProcInstrs();
     void _insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc);
     void _insertUpdateDefClkValInstrs();
-    _FlIntTypeReadFlIntInstrMap _createFlIntTypeReadFlIntInstrMap() const;
+    _IntTypeReadIntInstrMap _createIntTypeReadIntInstrMap() const;
     void _setSavedValPoss();
     void _insertEndInstrs();
     std::unique_ptr<DsPktProc> _buildDsPktProc(const DataStreamType& dst);
@@ -87,6 +87,9 @@ private:
 
     void _buildReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt,
                                 Proc& baseProc);
+
+    void _buildReadVlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
 
     void _buildReadNtStrInstr(const StructureMemberType *memberType, const DataType& dt,
                               Proc& baseProc);

@@ -58,6 +58,11 @@ bool PseudoDt::isUInt() const noexcept
     return false;
 }
 
+bool PseudoDt::isFlUInt() const noexcept
+{
+    return false;
+}
+
 PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) :
     PseudoDt {std::move(loc)},
     _dt {std::move(dt)}
@@ -89,6 +94,11 @@ void PseudoScalarDtWrapper::accept(ConstPseudoDtVisitor& visitor) const
 bool PseudoScalarDtWrapper::isInt() const noexcept
 {
     return _dt->isFixedLengthIntegerType();
+}
+
+bool PseudoScalarDtWrapper::isUInt() const noexcept
+{
+    return _dt->isUnsignedIntegerType();
 }
 
 PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
@@ -128,6 +138,11 @@ bool PseudoFlUIntType::isInt() const noexcept
 }
 
 bool PseudoFlUIntType::isUInt() const noexcept
+{
+    return true;
+}
+
+bool PseudoFlUIntType::isFlUInt() const noexcept
 {
     return true;
 }
@@ -445,9 +460,12 @@ void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
 
 static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
 {
-    const auto pseudoDts = findPseudoFlUIntTypes(basePseudoDt,
-                                                 [](auto& pseudoIntType, auto) {
-        return pseudoIntType.mappedClkTypeName();
+    const auto pseudoDts = findPseudoUIntTypes(basePseudoDt, [](auto& pseudoIntType, auto) {
+        if (!pseudoIntType.isFlUInt()) {
+            return false;
+        }
+
+        return static_cast<const PseudoFlUIntType&>(pseudoIntType).mappedClkTypeName().has_value();
     });
 
     if (!pseudoDts.empty()) {
@@ -525,11 +543,19 @@ static auto findPseudoSlArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseu
     });
 }
 
-static auto findPseudoFlUIntTypesByRole(const PseudoDt& basePseudoDt,
-                                        const UnsignedIntegerTypeRole role)
+static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
+                                      const UnsignedIntegerTypeRole role)
 {
-    return findPseudoFlUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
-        return pseudoIntType.hasRole(role);
+    return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
+        if (pseudoIntType.isFlUInt()) {
+            return static_cast<const PseudoFlUIntType&>(pseudoIntType).hasRole(role);
+        } else {
+            assert(pseudoIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+
+            auto& pseudoVlIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoIntType);
+
+            return pseudoVlIntType.dt().asVariableLengthUnsignedIntegerType().hasRole(role);
+        }
     });
 }
 
@@ -538,11 +564,11 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
     if (_pseudoErHeaderType) {
         try {
             /*
-             * Validate pseudo fixed-length unsigned integer types with
-             * an "event record type ID" role.
+             * Validate pseudo unsigned integer types with an "event
+             * record type ID" role.
              */
-            const auto idPseudoDts = findPseudoFlUIntTypesByRole(*_pseudoErHeaderType,
-                                                                 UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
+            const auto idPseudoDts = findPseudoUIntTypesByRole(*_pseudoErHeaderType,
+                                                               UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
 
             /*
              * Without any pseudo fixed-length unsigned integer type
@@ -639,7 +665,7 @@ void PseudoTraceType::validate() const
                                                 pseudoUuidDt->loc());
                     }
 
-                    if (!pseudoUuidArrayType.pseudoElemType().isUInt()) {
+                    if (!pseudoUuidArrayType.pseudoElemType().isFlUInt()) {
                         throwMetadataParseError("Expecting a fixed-length integer type.",
                                                 pseudoUuidArrayType.pseudoElemType().loc());
                     }
@@ -660,14 +686,23 @@ void PseudoTraceType::validate() const
             }
 
             /*
-             * Validate pseudo fixed-length unsigned integer types with
-             * the "packet magic number" role.
+             * Validate pseudo unsigned integer types with the "packet
+             * magic number" role.
              */
-            const auto pseudoMagicDts = findPseudoFlUIntTypesByRole(*_pseudoPktHeaderType,
+            const auto pseudoMagicDts = findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
                                                                     UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
 
             if (pseudoMagicDts.size() == 1) {
-                auto& pseudoMagicDt = static_cast<const PseudoFlUIntType&>(**pseudoMagicDts.begin());
+                auto& firstPseudoDt = **pseudoMagicDts.begin();
+
+                if (!firstPseudoDt.isFlUInt()) {
+                    throwMetadataParseError("Unsigned integer type with the "
+                                            "\"packet magic number\" role must be a "
+                                            "fixed-length integer type.",
+                                            firstPseudoDt.loc());
+                }
+
+                auto& pseudoMagicDt = static_cast<const PseudoFlUIntType&>(firstPseudoDt);
                 auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
 
                 if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &pseudoMagicDt) {
@@ -695,8 +730,8 @@ void PseudoTraceType::validate() const
              * (implicit) data stream type.
              */
             if (_pseudoDsts.size() > 1 &&
-                    findPseudoFlUIntTypesByRole(*_pseudoPktHeaderType,
-                                                UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
+                    findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
+                                              UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
                 throwMetadataParseError("No structure member type with the "
                                         "\"data stream type ID\" role, "
                                         "but the trace type contains "

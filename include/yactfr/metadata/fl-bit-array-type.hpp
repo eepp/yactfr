@@ -81,7 +81,7 @@ public:
     bool operator<(const FixedLengthBitArrayType& other) const noexcept;
 
 protected:
-    bool _compare(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override;
 
 private:
     const unsigned int _len;

@@ -173,6 +173,36 @@ public:
         *_os << ':' << std::setprecision(6) << elem.value() << '\n';
     }
 
+    void visit(const yactfr::VariableLengthBitArrayElement& elem) override
+    {
+        this->_visitDataElem(elem, "VLBA");
+        *_os << ':' << elem.unsignedIntegerValue() << '\n';
+    }
+
+    void visit(const yactfr::VariableLengthSignedIntegerElement& elem) override
+    {
+        this->_visitDataElem(elem, "VLSI");
+        *_os << ':' << elem.value() << '\n';
+    }
+
+    void visit(const yactfr::VariableLengthUnsignedIntegerElement& elem) override
+    {
+        this->_visitDataElem(elem, "VLUI");
+        *_os << ':' << elem.value() << '\n';
+    }
+
+    void visit(const yactfr::VariableLengthSignedEnumerationElement& elem) override
+    {
+        this->_visitDataElem(elem, "VLSE");
+        *_os << ':' << elem.value() << '\n';
+    }
+
+    void visit(const yactfr::VariableLengthUnsignedEnumerationElement& elem) override
+    {
+        this->_visitDataElem(elem, "VLUE");
+        *_os << ':' << elem.value() << '\n';
+    }
+
     void visit(const yactfr::NullTerminatedStringBeginningElement& elem) override
     {
         this->_visitDataElem(elem, "NTS");

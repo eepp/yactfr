@@ -364,6 +364,26 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_FL_UENUM_A64_BE";
         break;
 
+    case Kind::READ_VL_BIT_ARRAY:
+        kindStr = "READ_VL_BIT_ARRAY";
+        break;
+
+    case Kind::READ_VL_UINT:
+        kindStr = "READ_VL_UINT";
+        break;
+
+    case Kind::READ_VL_SINT:
+        kindStr = "READ_VL_SINT";
+        break;
+
+    case Kind::READ_VL_UENUM:
+        kindStr = "READ_VL_UENUM";
+        break;
+
+    case Kind::READ_VL_SENUM:
+        kindStr = "READ_VL_SENUM";
+        break;
+
     case Kind::READ_NT_STR:
         kindStr = "READ_NT_STR";
         break;
@@ -458,6 +478,10 @@ std::string Instr::toStr(const Size indent) const
 
     case Kind::UPDATE_DEF_CLK_VAL:
         kindStr = "UPDATE_DEF_CLK_VAL";
+        break;
+
+    case Kind::UPDATE_DEF_CLK_VAL_FL:
+        kindStr = "UPDATE_DEF_CLK_VAL_FL";
         break;
 
     case Kind::SET_CUR_ID:
@@ -571,7 +595,6 @@ std::string ReadDataInstr::_commonToStr() const
     }
 
     ss << " " << _strProp("dt-addr") << _dt << " " << _strProp("align") << _align;
-
     return ss.str();
 }
 
@@ -598,7 +621,7 @@ static inline Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitArrayType());
 
-    Instr::Kind kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::UNSET;
     auto& bitArrayType = dt.asFixedLengthBitArrayType();
 
     if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
@@ -684,7 +707,7 @@ static inline Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBooleanType());
 
-    Instr::Kind kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::UNSET;
     auto& boolType = dt.asFixedLengthBooleanType();
 
     if (boolType.byteOrder() == ByteOrder::LITTLE) {
@@ -752,7 +775,7 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthIntegerType());
 
-    Instr::Kind kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::UNSET;
     const auto& intType = dt.asFixedLengthIntegerType();
 
     if (dt.isFixedLengthUnsignedIntegerType()) {
@@ -1017,7 +1040,7 @@ static inline Instr::Kind kindFromFlEnumType(const DataType& dt) noexcept
 ReadFlSEnumInstr::ReadFlSEnumInstr(const StructureMemberType * const member, const DataType& dt) :
     ReadFlSIntInstr {kindFromFlEnumType(dt), member, dt}
 {
-    assert(dt.isSignedFixedLengthEnumerationType());
+    assert(dt.isFixedLengthSignedEnumerationType());
 }
 
 std::string ReadFlSEnumInstr::_toStr(const Size indent) const
@@ -1035,6 +1058,39 @@ ReadFlUEnumInstr::ReadFlUEnumInstr(const StructureMemberType * const member, con
 }
 
 std::string ReadFlUEnumInstr::_toStr(const Size indent) const
+{
+    std::ostringstream ss;
+
+    ss << this->_commonToStr() << std::endl;
+    return ss.str();
+}
+
+static inline Instr::Kind kindFromVlBitArrayType(const DataType& dt) noexcept
+{
+    assert(dt.isVariableLengthBitArrayType());
+
+    auto kind = Instr::Kind::READ_VL_BIT_ARRAY;
+
+    if (dt.isVariableLengthUnsignedEnumerationType()) {
+        kind = Instr::Kind::READ_VL_UENUM;
+    } else if (dt.isVariableLengthSignedEnumerationType()) {
+        kind = Instr::Kind::READ_VL_SENUM;
+    } else if (dt.isVariableLengthUnsignedIntegerType()) {
+        kind = Instr::Kind::READ_VL_UINT;
+    } else if (dt.isVariableLengthSignedIntegerType()) {
+        kind = Instr::Kind::READ_VL_SINT;
+    }
+
+    return kind;
+}
+
+ReadVlBitArrayInstr::ReadVlBitArrayInstr(const StructureMemberType * const member,
+                                         const DataType& dt) :
+    ReadDataInstr {kindFromVlBitArrayType(dt), member, dt}
+{
+}
+
+std::string ReadVlBitArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -1350,14 +1406,25 @@ SetExpectedPktContentLenInstr::SetExpectedPktContentLenInstr() :
 {
 }
 
-UpdateDefClkValInstr::UpdateDefClkValInstr(const Size len) :
-    Instr {Kind::UPDATE_DEF_CLK_VAL},
+UpdateDefClkValInstr::UpdateDefClkValInstr() :
+    Instr {Kind::UPDATE_DEF_CLK_VAL}
+{
+}
+
+UpdateDefClkValInstr::UpdateDefClkValInstr(const Instr::Kind kind) :
+    Instr {kind}
+{
+}
+
+
+UpdateDefClkValFlInstr::UpdateDefClkValFlInstr(const Size len) :
+    UpdateDefClkValInstr {Kind::UPDATE_DEF_CLK_VAL_FL},
     _len {len}
 {
     assert(len <= 64);
 }
 
-std::string UpdateDefClkValInstr::_toStr(const Size indent) const
+std::string UpdateDefClkValFlInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 

@@ -10,7 +10,7 @@
 namespace yactfr {
 
 ScalarDataType::ScalarDataType(const int kind, const unsigned int align) :
-    DataType {_KIND_SCALAR | kind, align}
+    DataType {kind, align}
 {
 }
 

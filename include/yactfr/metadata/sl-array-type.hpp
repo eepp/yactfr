@@ -35,7 +35,7 @@ public:
         Minimum alignment of data stream static-length arrays described
         by this type.
     @param[in] elementType
-        Element type.
+        %Element type.
     @param[in] length
         Length of data stream static-length arrays described by this
         type (count of element).
@@ -82,7 +82,7 @@ private:
         visitor.visit(*this);
     }
 
-    bool _compare(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override;
 
 private:
     const Size _len;

@@ -100,6 +100,7 @@ documented uses unabbreviated names.
 |USel |Unsigned selector
 |Val |Value
 |Var |Variant
+|VL |Variable-length
 |VM |Virtual machine
 |===
 

@@ -12,17 +12,17 @@
 namespace yactfr {
 
 ArrayType::ArrayType(const int kind, const unsigned int minAlign, DataType::UP elemType) :
-    CompoundDataType {kind | _KIND_ARRAY, minAlign, elemType->alignment()},
+    CompoundDataType {kind, minAlign, elemType->alignment()},
     _elemType {std::move(elemType)}
 {
     assert(_elemType);
 }
 
-bool ArrayType::_compare(const DataType& other) const noexcept
+bool ArrayType::_isEqual(const DataType& other) const noexcept
 {
     const auto& otherArrayType = static_cast<const ArrayType&>(other);
 
-    return CompoundDataType::_compare(other) && *_elemType == *otherArrayType._elemType;
+    return CompoundDataType::_isEqual(other) && *_elemType == *otherArrayType._elemType;
 }
 
 } // namespace yactfr

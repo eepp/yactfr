@@ -20,6 +20,7 @@
 #include "../../aliases.hpp"
 #include "../data-loc.hpp"
 #include "../fl-enum-type.hpp"
+#include "../vl-int-type.hpp"
 #include "../trace-type.hpp"
 #include "../aliases.hpp"
 
@@ -128,6 +129,7 @@ public:
     virtual void accept(ConstPseudoDtVisitor& visitor) const = 0;
     virtual bool isInt() const noexcept;
     virtual bool isUInt() const noexcept;
+    virtual bool isFlUInt() const noexcept;
 
     /*
      * Fully clones this pseudo data type, meaning the returned object
@@ -180,6 +182,7 @@ public:
     void accept(ConstPseudoDtVisitor& visitor) const override;
     PseudoDt::UP clone() const override;
     bool isInt() const noexcept override;
+    bool isUInt() const noexcept override;
 
     const DataType& dt() const noexcept
     {
@@ -234,6 +237,7 @@ public:
     void accept(ConstPseudoDtVisitor& visitor) const override;
     bool isInt() const noexcept override;
     bool isUInt() const noexcept override;
+    bool isFlUInt() const noexcept override;
 
     unsigned int align() const noexcept
     {

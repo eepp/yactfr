@@ -484,7 +484,8 @@ void TsdlParserBase::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
                                                const std::string& memberTypeName,
                                                const UnsignedIntegerTypeRole role)
 {
-    for (auto& pseudoDt : findPseudoFlUIntTypesByName(basePseudoDt, memberTypeName)) {
+    for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
+        assert(pseudoDt->isFlUInt());
         auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
         if (OnlyIfMappedClkTypeName && !pseudoIntType.mappedClkTypeName()) {

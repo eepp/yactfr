@@ -69,7 +69,7 @@ public:
 
 private:
     DataType::UP _clone() const override;
-    bool _compare(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {

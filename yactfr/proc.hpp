@@ -113,8 +113,8 @@ class EndPktPreambleProcInstr;
 class EndReadDataInstr;
 class EndReadScopeInstr;
 class Instr;
-class ReadFlBitArrayInstr;
 class ReadDataInstr;
+class ReadFlBitArrayInstr;
 class ReadFlBoolInstr;
 class ReadFlFloatInstr;
 class ReadFlSEnumInstr;
@@ -122,6 +122,7 @@ class ReadFlSIntInstr;
 class ReadNtStrInstr;
 class ReadFlUEnumInstr;
 class ReadFlUIntInstr;
+class ReadVlBitArrayInstr;
 class SaveValInstr;
 class SetCurIdInstr;
 class SetDsIdInstr;
@@ -175,6 +176,10 @@ public:
     }
 
     virtual void visit(ReadFlUEnumInstr& instr)
+    {
+    }
+
+    virtual void visit(ReadVlBitArrayInstr& instr)
     {
     }
 
@@ -486,6 +491,11 @@ public:
         READ_FL_BOOL_A8,
         READ_FL_BOOL_BE,
         READ_FL_BOOL_LE,
+        READ_VL_BIT_ARRAY,
+        READ_VL_UINT,
+        READ_VL_SINT,
+        READ_VL_UENUM,
+        READ_VL_SENUM,
         SAVE_VAL,
         SET_CUR_ID,
         SET_DS_ID,
@@ -500,6 +510,7 @@ public:
         SET_PKT_TOTAL_LEN,
         SET_PKT_INFO,
         UPDATE_DEF_CLK_VAL,
+        UPDATE_DEF_CLK_VAL_FL,
     };
 
 public:
@@ -535,7 +546,8 @@ public:
     bool isReadData() const noexcept
     {
         return this->isReadFlBitArray() ||
-               this->isReadStr() ||
+               this->isReadVlBitArray() ||
+               this->isReadNtStr() ||
                this->isBeginReadCompound() ||
                this->isBeginReadVar();
     }
@@ -659,7 +671,35 @@ public:
                _theKind == Kind::READ_FL_UENUM_A64_BE;
     }
 
-    bool isReadStr() const noexcept
+    bool isReadVlBitArray() const noexcept
+    {
+        return _theKind == Kind::READ_VL_BIT_ARRAY ||
+               this->isReadVlInt();
+    }
+
+    bool isReadVlInt() const noexcept
+    {
+        return this->isReadVlUInt() || this->isReadVlSInt();
+    }
+
+    bool isReadVlUInt() const noexcept
+    {
+        return _theKind == Kind::READ_VL_UINT ||
+               _theKind == Kind::READ_VL_UENUM;
+    }
+
+    bool isReadVlSInt() const noexcept
+    {
+        return _theKind == Kind::READ_VL_SINT ||
+               _theKind == Kind::READ_VL_SENUM;
+    }
+
+    bool isReadUInt() const noexcept
+    {
+        return this->isReadFlUInt() || this->isReadVlUInt();
+    }
+
+    bool isReadNtStr() const noexcept
     {
         return _theKind == Kind::READ_NT_STR;
     }
@@ -866,6 +906,11 @@ public:
         visitor.visit(*this);
     }
 
+    const FixedLengthBitArrayType& flBitArrayType() const noexcept
+    {
+        return static_cast<const FixedLengthBitArrayType&>(this->dt());
+    }
+
 protected:
     std::string _commonToStr() const;
 
@@ -1001,9 +1046,9 @@ public:
         visitor.visit(*this);
     }
 
-    const SignedFixedLengthEnumerationType& sEnumType() const noexcept
+    const FixedLengthSignedEnumerationType& sEnumType() const noexcept
     {
-        return static_cast<const SignedFixedLengthEnumerationType&>(this->dt());
+        return static_cast<const FixedLengthSignedEnumerationType&>(this->dt());
     }
 
 private:
@@ -1027,6 +1072,29 @@ public:
     const FixedLengthUnsignedEnumerationType& uEnumType() const noexcept
     {
         return static_cast<const FixedLengthUnsignedEnumerationType&>(this->dt());
+    }
+
+private:
+    std::string _toStr(Size indent = 0) const override;
+};
+
+/*
+ * "Read variable-length bit array" procedure instruction.
+ */
+class ReadVlBitArrayInstr :
+    public ReadDataInstr
+{
+public:
+    explicit ReadVlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+
+    const VariableLengthBitArrayType& vlBitArrayType() const noexcept
+    {
+        return static_cast<const VariableLengthBitArrayType&>(this->dt());
     }
 
 private:
@@ -1864,13 +1932,35 @@ public:
  * "Update clock value" procedure instruction.
  *
  * This instruction requires the VM to update the value of the default
- * clock from the last decoded value.
+ * clock from the last decoded unsigned integer value.
  */
-class UpdateDefClkValInstr final :
+class UpdateDefClkValInstr :
     public Instr
 {
+protected:
+    explicit UpdateDefClkValInstr(Instr::Kind kind);
+
 public:
-    explicit UpdateDefClkValInstr(Size len);
+    explicit UpdateDefClkValInstr();
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Update clock value from fixed-length unsigned integer" procedure
+ * instruction.
+ *
+ * This instruction requires the VM to update the value of the default
+ * clock from the last decoded fixed-length unsigned integer value.
+ */
+class UpdateDefClkValFlInstr final :
+    public UpdateDefClkValInstr
+{
+public:
+    explicit UpdateDefClkValFlInstr(Size len);
 
     Size len() const noexcept
     {

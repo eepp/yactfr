@@ -49,7 +49,7 @@ public:
 protected:
     explicit VariantType(const int kind, const unsigned int minAlign, Options&& opts,
                          DataLocation selLoc) :
-        CompoundDataType {DataType::_KIND_VAR | kind, minAlign, 1},
+        CompoundDataType {kind, minAlign, 1},
         _opts {std::move(opts)},
         _selLoc {std::move(selLoc)}
     {
@@ -151,15 +151,15 @@ protected:
     }
 
 private:
-    bool _compare(const DataType& other) const noexcept override
+    bool _isEqual(const DataType& other) const noexcept override
     {
         const auto& otherVariantType = static_cast<const VariantType<SelectorValueT>&>(other);
 
-        return CompoundDataType::_compare(other) &&
-               this->_compareOpts(otherVariantType) && _selLoc == otherVariantType._selLoc;
+        return CompoundDataType::_isEqual(other) &&
+               this->_optsAreEqual(otherVariantType) && _selLoc == otherVariantType._selLoc;
     }
 
-    bool _compareOpts(const VariantType<SelectorValueT>& other) const noexcept
+    bool _optsAreEqual(const VariantType<SelectorValueT>& other) const noexcept
     {
         if (_opts.size() != other.size()) {
             return false;

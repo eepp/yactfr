@@ -13,13 +13,13 @@
 namespace yactfr {
 
 BlobType::BlobType(const int kind, const unsigned int align, std::string mediaType) :
-    ScalarDataType {kind | _KIND_BLOB, align},
+    ScalarDataType {kind, align},
     _mediaType {std::move(mediaType)}
 {
     assert(align >= 8);
 }
 
-bool BlobType::_compare(const DataType& other) const noexcept
+bool BlobType::_isEqual(const DataType& other) const noexcept
 {
     const auto& otherBlobType = static_cast<const BlobType&>(other);
 

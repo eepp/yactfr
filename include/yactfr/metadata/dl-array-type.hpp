@@ -43,7 +43,7 @@ public:
         Minimum alignment of data stream dynamic-length arrays described
         by this type.
     @param[in] elementType
-        Element type.
+        %Element type.
     @param[in] lengthLocation
         Location of lengths of data stream dynamic-length arrays
         described by this type (number of elements).
@@ -75,7 +75,7 @@ public:
 
 private:
     DataType::UP _clone() const override;
-    bool _compare(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {

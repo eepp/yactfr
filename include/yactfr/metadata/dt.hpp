@@ -37,31 +37,53 @@ protected:
     // kind of data type
     enum _Kind
     {
-        _KIND_FL_BIT_ARRAY          = 1 << 1,
-        _KIND_FL_BOOL               = 1 << 2,
-        _KIND_FL_INT                = 1 << 3,
-        _KIND_FL_SINT               = 1 << 4,
-        _KIND_FL_UINT               = 1 << 5,
-        _KIND_FL_ENUM               = 1 << 6,
-        _KIND_FL_SENUM              = 1 << 7,
-        _KIND_FL_UENUM              = 1 << 8,
-        _KIND_FL_FLOAT              = 1 << 9,
-        _KIND_NT_STR                = 1 << 10,
-        _KIND_SCALAR                = 1 << 11,
-        _KIND_STRUCT                = 1 << 12,
-        _KIND_ARRAY                 = 1 << 13,
-        _KIND_SL_ARRAY              = 1 << 14,
-        _KIND_DL_ARRAY              = 1 << 15,
-        _KIND_NON_NT_STRING         = 1 << 16,
-        _KIND_SL_STR                = 1 << 17,
-        _KIND_DL_STR                = 1 << 18,
-        _KIND_BLOB                  = 1 << 19,
-        _KIND_SL_BLOB               = 1 << 20,
-        _KIND_DL_BLOB               = 1 << 21,
-        _KIND_VAR                   = 1 << 22,
-        _KIND_VAR_USEL              = 1 << 23,
-        _KIND_VAR_SSEL              = 1 << 24,
-        _KIND_COMPOUND              = 1 << 25,
+        _KIND_SCALAR                = 1 << 1,
+        _KIND_BIT_ARRAY             = (1 << 2) | _KIND_SCALAR,
+        _KIND_S                     = (1 << 3) | _KIND_SCALAR,
+        _KIND_U                     = (1 << 4) | _KIND_SCALAR,
+        _KIND_FL                    = (1 << 5) | _KIND_SCALAR,
+        _KIND_INT                   = (1 << 6) | _KIND_BIT_ARRAY,
+        _KIND_UINT                  = _KIND_U | _KIND_INT,
+        _KIND_SINT                  = _KIND_S | _KIND_INT,
+        _KIND_ENUM                  = (1 << 7) | _KIND_INT,
+        _KIND_UENUM                 = _KIND_U | _KIND_ENUM,
+        _KIND_SENUM                 = _KIND_S | _KIND_ENUM,
+        _KIND_FL_BIT_ARRAY          = _KIND_FL | _KIND_BIT_ARRAY,
+        _KIND_FL_BOOL               = (1 << 8) | _KIND_FL_BIT_ARRAY,
+        _KIND_FL_INT                = _KIND_FL | _KIND_INT,
+        _KIND_FL_SINT               = _KIND_FL | _KIND_SINT,
+        _KIND_FL_UINT               = _KIND_FL | _KIND_UINT,
+        _KIND_FL_ENUM               = _KIND_FL | _KIND_ENUM,
+        _KIND_FL_SENUM              = _KIND_FL | _KIND_SENUM,
+        _KIND_FL_UENUM              = _KIND_FL | _KIND_UENUM,
+        _KIND_FL_FLOAT              = (1 << 9) | _KIND_FL_BIT_ARRAY,
+        _KIND_VL                    = (1 << 10) | _KIND_SCALAR,
+        _KIND_VL_BIT_ARRAY          = _KIND_VL | _KIND_BIT_ARRAY,
+        _KIND_VL_INT                = _KIND_VL | _KIND_INT,
+        _KIND_VL_SINT               = _KIND_VL | _KIND_SINT,
+        _KIND_VL_UINT               = _KIND_VL | _KIND_UINT,
+        _KIND_VL_ENUM               = _KIND_VL | _KIND_ENUM,
+        _KIND_VL_SENUM              = _KIND_VL | _KIND_SENUM,
+        _KIND_VL_UENUM              = _KIND_VL | _KIND_SENUM,
+        _KIND_NT_STR                = (1 << 11) | _KIND_SCALAR,
+        _KIND_COMPOUND              = 1 << 12,
+        _KIND_STRUCT                = (1 << 13) | _KIND_COMPOUND,
+        _KIND_ARRAY                 = (1 << 14) | _KIND_COMPOUND,
+        _KIND_SL                    = 1 << 15,
+        _KIND_DL                    = 1 << 16,
+        _KIND_SL_ARRAY              = _KIND_SL | _KIND_ARRAY,
+        _KIND_DL_ARRAY              = _KIND_DL | _KIND_ARRAY,
+        _KIND_NON_NT_STR            = (1 << 17) | _KIND_SCALAR,
+        _KIND_SL_STR                = _KIND_SL | _KIND_NON_NT_STR,
+        _KIND_DL_STR                = _KIND_DL | _KIND_NON_NT_STR,
+        _KIND_BLOB                  = (1 << 18) | _KIND_SCALAR,
+        _KIND_SL_BLOB               = _KIND_SL | _KIND_BLOB,
+        _KIND_DL_BLOB               = _KIND_DL | _KIND_BLOB,
+        _KIND_VAR                   = (1 << 19) | _KIND_COMPOUND,
+        _KIND_USEL                  = 1 << 20,
+        _KIND_SSEL                  = 1 << 21,
+        _KIND_VAR_USEL              = _KIND_VAR | _KIND_USEL,
+        _KIND_VAR_SSEL              = _KIND_VAR | _KIND_SSEL,
     };
 
 protected:
@@ -75,6 +97,48 @@ public:
     unsigned int alignment() const noexcept
     {
         return _align;
+    }
+
+    /// \c true if this type is a bit array type.
+    bool isBitArrayType() const noexcept
+    {
+        return this->_isKind(_KIND_BIT_ARRAY);
+    }
+
+    /// \c true if this type is an integer type.
+    bool isIntegerType() const noexcept
+    {
+        return this->_isKind(_KIND_INT);
+    }
+
+    /// \c true if this type is a signed integer type.
+    bool isSignedIntegerType() const noexcept
+    {
+        return this->_isKind(_KIND_SINT);
+    }
+
+    /// \c true if this type is an unsigned integer type.
+    bool isUnsignedIntegerType() const noexcept
+    {
+        return this->_isKind(_KIND_UINT);
+    }
+
+    /// \c true if this type is an enumeration type.
+    bool isEnumerationType() const noexcept
+    {
+        return this->_isKind(_KIND_ENUM);
+    }
+
+    /// \c true if this type is a signed enumeration type.
+    bool isSignedEnumerationType() const noexcept
+    {
+        return this->_isKind(_KIND_SENUM);
+    }
+
+    /// \c true if this type is an unsigned enumeration type.
+    bool isUnsignedEnumerationType() const noexcept
+    {
+        return this->_isKind(_KIND_UENUM);
     }
 
     /// \c true if this type is a fixed-length bit array type.
@@ -107,7 +171,8 @@ public:
         return this->_isKind(_KIND_FL_UINT);
     }
 
-    /// \c true if this type is a fixed-length floating point number type.
+    /// \c true if this type is a fixed-length floating point number
+    /// type.
     bool isFixedLengthFloatingPointNumberType() const noexcept
     {
         return this->_isKind(_KIND_FL_FLOAT);
@@ -120,15 +185,60 @@ public:
     }
 
     /// \c true if this type is a fixed-length signed enumeration type.
-    bool isSignedFixedLengthEnumerationType() const noexcept
+    bool isFixedLengthSignedEnumerationType() const noexcept
     {
         return this->_isKind(_KIND_FL_SENUM);
     }
 
-    /// \c true if this type is a fixed-length unsigned enumeration type.
+    /// \c true if this type is a fixed-length unsigned enumeration
+    /// type.
     bool isFixedLengthUnsignedEnumerationType() const noexcept
     {
         return this->_isKind(_KIND_FL_UENUM);
+    }
+
+    /// \c true if this type is a variable-length bit array type.
+    bool isVariableLengthBitArrayType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY);
+    }
+
+    /// \c true if this type is a variable-length integer type.
+    bool isVariableLengthIntegerType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_INT);
+    }
+
+    /// \c true if this type is a variable-length signed integer type.
+    bool isVariableLengthSignedIntegerType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_SINT);
+    }
+
+    /// \c true if this type is a variable-length unsigned integer type.
+    bool isVariableLengthUnsignedIntegerType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_UINT);
+    }
+
+    /// \c true if this type is a variable-length enumeration type.
+    bool isVariableLengthEnumerationType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_ENUM);
+    }
+
+    /// \c true if this type is a variable-length signed enumeration
+    /// type.
+    bool isVariableLengthSignedEnumerationType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_SENUM);
+    }
+
+    /// \c true if this type is a variable-length unsigned enumeration
+    /// type.
+    bool isVariableLengthUnsignedEnumerationType() const noexcept
+    {
+        return this->_isKind(_KIND_VL_UENUM);
     }
 
     /// \c true if this type is a null-terminated string type.
@@ -159,7 +269,7 @@ public:
     /// null-terminated string type.
     bool isNonNullTerminatedStringType() const noexcept
     {
-        return this->_isKind(_KIND_NON_NT_STRING);
+        return this->_isKind(_KIND_NON_NT_STR);
     }
 
     /// \c true if this type is a static-length string type.
@@ -218,6 +328,13 @@ public:
         return this->_isKind(_KIND_VAR_SSEL);
     }
 
+    /// \c true if this type is a scalar type (doesn't contains another
+    /// data type).
+    bool isScalarDataType() const noexcept
+    {
+        return this->_isKind(_KIND_SCALAR);
+    }
+
     /// \c true if this type is a compound type (contains another data
     /// type).
     bool isCompoundDataType() const noexcept
@@ -245,7 +362,7 @@ public:
 
     /*!
     @brief
-        This type as a fixed-length integer type.
+        Returns this type as a fixed-length integer type.
 
     @pre
         This type is a fixed-length integer type.
@@ -254,7 +371,7 @@ public:
 
     /*!
     @brief
-        This type as a fixed-length signed integer type.
+        Returns this type as a fixed-length signed integer type.
 
     @pre
         This type is a fixed-length signed integer type.
@@ -263,7 +380,7 @@ public:
 
     /*!
     @brief
-        This type as a fixed-length unsigned integer type.
+        Returns this type as a fixed-length unsigned integer type.
 
     @pre
         This type is a fixed-length unsigned integer type.
@@ -272,7 +389,7 @@ public:
 
     /*!
     @brief
-        This type as a fixed-length floating point number type.
+        Returns this type as a fixed-length floating point number type.
 
     @pre
         This type is a fixed-length floating point number type.
@@ -281,16 +398,16 @@ public:
 
     /*!
     @brief
-        This type as a fixed-length signed enumeration type.
+        Returns this type as a fixed-length signed enumeration type.
 
     @pre
         This type is a fixed-length signed enumeration type.
     */
-    const SignedFixedLengthEnumerationType& asFixedLengthSignedEnumerationType() const noexcept;
+    const FixedLengthSignedEnumerationType& asFixedLengthSignedEnumerationType() const noexcept;
 
     /*!
     @brief
-        This type as a fixed-length unsigned enumeration type.
+        Returns this type as a fixed-length unsigned enumeration type.
 
     @pre
         This type is a fixed-length unsigned enumeration type.
@@ -299,7 +416,62 @@ public:
 
     /*!
     @brief
-        This type as a null-terminated string type.
+        Returns this type as a variable-length bit array type.
+
+    @pre
+        This type is a variable-length bit array type.
+    */
+    const VariableLengthBitArrayType& asVariableLengthBitArrayType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a variable-length integer type.
+
+    @pre
+        This type is a variable-length integer type.
+    */
+    const VariableLengthIntegerType& asVariableLengthIntegerType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a variable-length signed integer type.
+
+    @pre
+        This type is a variable-length signed integer type.
+    */
+    const VariableLengthSignedIntegerType& asVariableLengthSignedIntegerType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a variable-length unsigned integer type.
+
+    @pre
+        This type is a variable-length unsigned integer type.
+    */
+    const VariableLengthUnsignedIntegerType& asVariableLengthUnsignedIntegerType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a variable-length signed enumeration type.
+
+    @pre
+        This type is a variable-length signed enumeration type.
+    */
+    const VariableLengthSignedEnumerationType& asVariableLengthSignedEnumerationType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a variable-length unsigned enumeration
+        type.
+
+    @pre
+        This type is a variable-length unsigned enumeration type.
+    */
+    const VariableLengthUnsignedEnumerationType& asVariableLengthUnsignedEnumerationType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a null-terminated string type.
 
     @pre
         This type is a null-terminated string type.
@@ -308,7 +480,7 @@ public:
 
     /*!
     @brief
-        This type as an array type.
+        Returns this type as an array type.
 
     @pre
         This type is an array type.
@@ -317,7 +489,7 @@ public:
 
     /*!
     @brief
-        This type as a static-length array type.
+        Returns this type as a static-length array type.
 
     @pre
         This type is a static-length array type.
@@ -326,7 +498,7 @@ public:
 
     /*!
     @brief
-        This type as a dynamic-length array type.
+        Returns this type as a dynamic-length array type.
 
     @pre
         This type is a dynamic-length array type.
@@ -335,7 +507,7 @@ public:
 
     /*!
     @brief
-        This type as a non null-terminated string type.
+        Returns this type as a non null-terminated string type.
 
     @pre
         This type is a non null-terminated string type.
@@ -344,7 +516,7 @@ public:
 
     /*!
     @brief
-        This type as a static-length string type.
+        Returns this type as a static-length string type.
 
     @pre
         This type is a static-length string type.
@@ -353,7 +525,7 @@ public:
 
     /*!
     @brief
-        This type as a dynamic-length string type.
+        Returns this type as a dynamic-length string type.
 
     @pre
         This type is a dynamic-length string type.
@@ -362,7 +534,7 @@ public:
 
     /*!
     @brief
-        This type as a BLOB type.
+        Returns this type as a BLOB type.
 
     @pre
         This type is a BLOB type.
@@ -371,7 +543,7 @@ public:
 
     /*!
     @brief
-        This type as a static-length BLOB type.
+        Returns this type as a static-length BLOB type.
 
     @pre
         This type is a static-length BLOB type.
@@ -380,7 +552,7 @@ public:
 
     /*!
     @brief
-        This type as a dynamic-length BLOB type.
+        Returns this type as a dynamic-length BLOB type.
 
     @pre
         This type is a dynamic-length BLOB type.
@@ -389,7 +561,7 @@ public:
 
     /*!
     @brief
-        This type as a structure type.
+        Returns this type as a structure type.
 
     @pre
         This type is a structure type.
@@ -398,7 +570,7 @@ public:
 
     /*!
     @brief
-        This type as the type of data stream variants with an
+        Returns this type as the type of data stream variants with an
         unsigned selector.
 
     @pre
@@ -409,8 +581,8 @@ public:
 
     /*!
     @brief
-        This type as the type of data stream variants with a signed
-        selector.
+        Returns this type as the type of data stream variants with a
+        signed selector.
 
     @pre
         This type is the type of data stream variants with a signed
@@ -463,7 +635,7 @@ public:
 protected:
     virtual DataType::UP _clone() const = 0;
     virtual void _accept(DataTypeVisitor& visitor) const = 0;
-    virtual bool _compare(const DataType& other) const noexcept = 0;
+    virtual bool _isEqual(const DataType& other) const noexcept = 0;
 
     _Kind _kind() const noexcept
     {
@@ -473,7 +645,7 @@ protected:
 private:
     bool _isKind(const _Kind kind) const noexcept
     {
-        return _theKind & kind;
+        return (_theKind & kind) == kind;
     }
 
 private:

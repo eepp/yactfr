@@ -51,9 +51,9 @@ DataType::UP StructureType::_clone() const
     return std::make_unique<StructureType>(this->minimumAlignment(), std::move(memberTypes));
 }
 
-bool StructureType::_compare(const DataType& other) const noexcept
+bool StructureType::_isEqual(const DataType& other) const noexcept
 {
-    if (!CompoundDataType::_compare(other)) {
+    if (!CompoundDataType::_isEqual(other)) {
         return false;
     }
 

@@ -185,7 +185,12 @@ descriptions below easier to read and to allow recursion.
 <pre>
 (
   (
-    (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement)
+    (
+      FixedLengthUnsignedIntegerElement |
+      FixedLengthUnsignedEnumerationElement |
+      VariableLengthUnsignedIntegerElement |
+      VariableLengthUnsignedEnumerationElement
+    )
     [DefaultClockValueElement]
   ) |
   FixedLengthBitArrayElement |
@@ -193,6 +198,9 @@ descriptions below easier to read and to allow recursion.
   FixedLengthSignedIntegerElement |
   FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
+  VariableLengthBitArrayElement |
+  VariableLengthSignedIntegerElement |
+  VariableLengthSignedEnumerationElement |
   (NullTerminatedStringBeginningElement SubstringElement * EndElement) |
   (StaticLengthArrayBeginningElement DATA * EndElement) |
   (DynamicLengthArrayBeginningElement DATA * EndElement) |
@@ -342,15 +350,26 @@ when the current element of the iterator is:
 
   <dt>EndElement</dt>
   <dd>
-    If the last element was a fixed-length bit array
-    (FixedLengthBitArrayElement, FixedLengthBooleanElement,
-    FixedLengthUnsignedIntegerElement, FixedLengthSignedIntegerElement,
-    FixedLengthFloatingPointNumberElement,
-    FixedLengthUnsignedEnumerationElement, or
-    FixedLengthSignedEnumerationElement) or a SubstringElement, the
-    offset is the one of the last element plus its length. If it was a
-    container end element, offset is the same as it was at the last
-    element.
+    If the last element was an instance of one of:
+
+    * FixedLengthBitArrayElement
+    * FixedLengthBooleanElement
+    * FixedLengthUnsignedIntegerElement
+    * FixedLengthSignedIntegerElement
+    * FixedLengthFloatingPointNumberElement
+    * FixedLengthUnsignedEnumerationElement
+    * FixedLengthSignedEnumerationElement
+    * VariableLengthBitArrayElement
+    * VariableLengthUnsignedIntegerElement
+    * VariableLengthSignedIntegerElement
+    * VariableLengthUnsignedEnumerationElement
+    * VariableLengthSignedEnumerationElement
+    * SubstringElement
+    * BlobSectionElement
+
+    then the offset is the one of the last element plus its length. If
+    it was an instance of EndElement, the offset is the same as it was
+    at the last element.
   </dd>
 </dl>
 

@@ -22,7 +22,7 @@ DataType::UP StaticLengthStringType::_clone() const
     return std::make_unique<StaticLengthStringType>(this->alignment(), _maxLen);
 }
 
-bool StaticLengthStringType::_compare(const DataType& other) const noexcept
+bool StaticLengthStringType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherSlStrType = static_cast<const StaticLengthStringType&>(other);
 

@@ -48,6 +48,8 @@ enum class VmState {
     READ_SUBSTR_UNTIL_NULL,
     READ_SUBSTR,
     READ_BLOB_SECTION,
+    CONTINUE_READ_VL_UINT,
+    CONTINUE_READ_VL_SINT,
     END_STR,
     SET_TRACE_TYPE_UUID,
     CONTINUE_SKIP_PADDING_BITS,
@@ -232,7 +234,7 @@ public:
     {
         headOffsetInCurPktBits = 0;
         theState = VmState::BEGIN_PKT;
-        lastBo = boost::none;
+        lastFlBitArrayBo = boost::none;
         curDsPktProc = nullptr;
         curErProc = nullptr;
         curExpectedPktTotalLenBits = SIZE_UNSET;
@@ -249,6 +251,17 @@ public:
          */
         elems.pktInfo._reset();
         elems.erInfo._reset();
+    }
+
+    template <typename ElemT>
+    ElemT& elemFromOther(const VmPos& otherPos, const ElemT& otherElem) const noexcept
+    {
+        const auto otherElemAddr = reinterpret_cast<std::uintptr_t>(&otherElem);
+        const auto otherPosAddr = reinterpret_cast<std::uintptr_t>(&otherPos);
+        const auto diff = otherElemAddr - otherPosAddr;
+        const auto thisAddr = reinterpret_cast<std::uintptr_t>(this);
+
+        return *reinterpret_cast<ElemT *>(thisAddr + diff);
     }
 
 private:
@@ -283,6 +296,11 @@ public:
         FixedLengthSignedEnumerationElement flSEnum;
         FixedLengthUnsignedEnumerationElement flUEnum;
         FixedLengthFloatingPointNumberElement flFloat;
+        VariableLengthBitArrayElement vlBitArray;
+        VariableLengthSignedIntegerElement vlSInt;
+        VariableLengthUnsignedIntegerElement vlUInt;
+        VariableLengthSignedEnumerationElement vlSEnum;
+        VariableLengthUnsignedEnumerationElement vlUEnum;
         NullTerminatedStringBeginningElement ntStrBeginning;
         SubstringElement substr;
         BlobSectionElement blobSection;
@@ -300,14 +318,11 @@ public:
     // next state to handle
     VmState theState = VmState::BEGIN_PKT;
 
-    // state after aligning
-    VmState postSkipBitsState;
-
-    // state after reading string (until null)
-    VmState postEndStrState;
+    // next immediate state
+    VmState nextState;
 
     // last fixed-length bit array byte order
-    boost::optional<ByteOrder> lastBo;
+    boost::optional<ByteOrder> lastFlBitArrayBo;
 
     // remaining padding bits to skip for alignment
     Size remBitsToSkip = 0;
@@ -317,6 +332,12 @@ public:
         std::uint64_t u;
         std::int64_t i;
     } lastIntVal;
+
+    // current variable-length bit array length (bits)
+    Size curVlBitArrayLenBits;
+
+    // current variable-length bit array element
+    VariableLengthBitArrayElement *curVlBitArrayElem;
 
     // current ID (event record or data stream type)
     TypeId curId;
@@ -354,12 +375,7 @@ class ItInfos final
 public:
     void elemFromOther(const VmPos& myPos, const VmPos& otherPos, const Element& otherElem)
     {
-        const auto otherElemAddr = reinterpret_cast<std::uintptr_t>(&otherElem);
-        const auto otherPosAddr = reinterpret_cast<std::uintptr_t>(&otherPos);
-        const auto diff = otherElemAddr - otherPosAddr;
-        const auto myPosAddr = reinterpret_cast<std::uintptr_t>(&myPos);
-
-        elem = reinterpret_cast<const Element *>(myPosAddr + diff);
+        elem = &myPos.elemFromOther(otherPos, otherElem);
     }
 
     bool operator==(const ItInfos& other) const noexcept
@@ -486,6 +502,12 @@ private:
         case VmState::READ_BLOB_SECTION:
             return this->_stateReadBlobSection();
 
+        case VmState::CONTINUE_READ_VL_UINT:
+            return this->_stateContinueReadVlInt<false>();
+
+        case VmState::CONTINUE_READ_VL_SINT:
+            return this->_stateContinueReadVlInt<true>();
+
         case VmState::READ_SUBSTR_UNTIL_NULL:
             return this->_stateReadSubstrUntilNull();
 
@@ -590,6 +612,9 @@ private:
                 _pos.gotoNextInstr();
                 break;
 
+            case _ExecReaction::CHANGE_STATE:
+                return false;
+
             default:
                 std::abort();
             }
@@ -601,7 +626,7 @@ private:
     bool _stateContinueSkipPaddingBits()
     {
         this->_continueSkipPaddingBits(_pos.state() == VmState::CONTINUE_SKIP_CONTENT_PADDING_BITS);
-        _pos.state(_pos.postSkipBitsState);
+        _pos.state(_pos.nextState);
 
         // not done: handle next state immediately
         return false;
@@ -656,7 +681,7 @@ private:
 
         if (bitsToSkip > 0) {
             _pos.remBitsToSkip = bitsToSkip;
-            _pos.postSkipBitsState = VmState::END_PKT;
+            _pos.nextState = VmState::END_PKT;
             _pos.state(VmState::CONTINUE_SKIP_PADDING_BITS);
         } else {
             // nothing to skip, go to end directly
@@ -804,6 +829,93 @@ private:
         return this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection);
     }
 
+    void _signExtendVlSIntVal() noexcept
+    {
+        const auto mask = UINT64_C(1) << (_pos.curVlBitArrayLenBits - 1);
+
+        _pos.lastIntVal.u = _pos.lastIntVal.u & ((UINT64_C(1) << _pos.curVlBitArrayLenBits) - 1);
+        _pos.lastIntVal.u = (_pos.lastIntVal.u ^ mask) - mask;
+    }
+
+    void _appendVlIntByte(std::uint8_t byte)
+    {
+        // validate future variable-length bit-array length
+        if ((_pos.curVlBitArrayLenBits + 7) > 64) {
+
+            throw OversizedVariableLengthBitArrayDecodingError {_pos.headOffsetInElemSeqBits()};
+        }
+
+        // mark this byte as consumed immediately
+        this->_consumeExistingBits(8);
+
+        // update unsigned integer value, clearing continuation bit
+        _pos.lastIntVal.u |= (static_cast<std::uint64_t>(byte & 0b0111'1111) <<
+                              _pos.curVlBitArrayLenBits);
+
+        // update current variable-length bit-array length
+        _pos.curVlBitArrayLenBits += 7;
+    }
+
+    template <bool IsSignedV>
+    bool _stateContinueReadVlInt()
+    {
+        /*
+         * Read a single byte, and then:
+         *
+         * If the variable-length bit array is not ended:
+         *     Keep this state.
+         *
+         * Otherwise:
+         *     Set the variable-length bit array element and set the
+         *     state to the previous value.
+         *
+         * See <https://en.wikipedia.org/wiki/LEB128>.
+         */
+        assert((_pos.headOffsetInCurPktBits & 7) == 0);
+
+        // require at least one byte
+        this->_requireContentBits(8);
+
+        // read current byte
+        const auto byte = *this->_bufAtHead();
+
+        // mark this byte as consumed immediately
+        this->_consumeExistingBits(8);
+
+        if ((byte & 0b1000'0000) == 0) {
+            // this is the last byte
+            this->_appendVlIntByte(byte);
+
+            /*
+             * When calling _setBitArrayElemBase() below,
+             * `**_pos.stackTop().it` is the current
+             * `ReadVlBitArrayInstr` instruction.
+             */
+            assert(_pos.curVlBitArrayElem);
+            _pos.curVlBitArrayElem->_len = _pos.curVlBitArrayLenBits;
+
+            if (IsSignedV) {
+                this->_signExtendVlSIntVal();
+                this->_setBitArrayElemBase(_pos.lastIntVal.i, **_pos.stackTop().it,
+                                           *_pos.curVlBitArrayElem);
+            } else {
+                this->_setBitArrayElemBase(_pos.lastIntVal.u, **_pos.stackTop().it,
+                                           *_pos.curVlBitArrayElem);
+            }
+
+            // we're done with this instruction and this state
+            _pos.gotoNextInstr();
+            _pos.state(_pos.nextState);
+            assert(_pos.state() == VmState::EXEC_INSTR ||
+                   _pos.state() == VmState::EXEC_ARRAY_INSTR);
+            return true;
+        }
+
+        // not the last byte
+        this->_appendVlIntByte(byte);
+        return false;
+    }
+
     bool _stateReadSubstrUntilNull()
     {
         assert((_pos.headOffsetInCurPktBits & 7) == 0);
@@ -854,7 +966,7 @@ private:
     bool _stateEndStr()
     {
         this->_updateItCurOffset(_pos.elems.end);
-        _pos.state(_pos.postEndStrState);
+        _pos.state(_pos.nextState);
         assert(_pos.state() == VmState::EXEC_INSTR || _pos.state() == VmState::EXEC_ARRAY_INSTR);
         return true;
     }
@@ -907,7 +1019,7 @@ private:
         }
 
         _pos.remBitsToSkip = bitsToSkip;
-        _pos.postSkipBitsState = _pos.state();
+        _pos.nextState = _pos.state();
         _pos.state(VmState::CONTINUE_SKIP_CONTENT_PADDING_BITS);
         this->_continueSkipPaddingBits(true);
     }
@@ -933,7 +1045,7 @@ private:
         }
 
         // we're done now!
-        _pos.state(_pos.postSkipBitsState);
+        _pos.state(_pos.nextState);
     }
 
     bool _tryHaveBits(const Size bits)
@@ -1071,6 +1183,11 @@ private:
     _ExecReaction _execReadFlUEnumA16Be(const Instr& instr);
     _ExecReaction _execReadFlUEnumA32Be(const Instr& instr);
     _ExecReaction _execReadFlUEnumA64Be(const Instr& instr);
+    _ExecReaction _execReadVlBitArray(const Instr& instr);
+    _ExecReaction _execReadVlUInt(const Instr& instr);
+    _ExecReaction _execReadVlSInt(const Instr& instr);
+    _ExecReaction _execReadVlUEnum(const Instr& instr);
+    _ExecReaction _execReadVlSEnum(const Instr& instr);
     _ExecReaction _execReadNtStr(const Instr& instr);
     _ExecReaction _execBeginReadScope(const Instr& instr);
     _ExecReaction _execEndReadScope(const Instr& instr);
@@ -1094,6 +1211,7 @@ private:
     _ExecReaction _execEndReadVar(const Instr& instr);
     _ExecReaction _execSaveVal(const Instr& instr);
     _ExecReaction _execSetPktEndDefClkVal(const Instr& instr);
+    _ExecReaction _execUpdateDefClkValFl(const Instr& instr);
     _ExecReaction _execUpdateDefClkVal(const Instr& instr);
     _ExecReaction _execSetCurrentId(const Instr& instr);
     _ExecReaction _execSetDst(const Instr& instr);
@@ -1116,8 +1234,18 @@ private:
         elem._structMemberType = readDataInstr.memberType();
     }
 
+    void _setLastIntVal(const std::int64_t val) noexcept
+    {
+        _pos.lastIntVal.i = val;
+    }
+
+    void _setLastIntVal(const std::uint64_t val) noexcept
+    {
+        _pos.lastIntVal.u = val;
+    }
+
     template <typename ValT, typename ElemT>
-    void _setFlBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
+    void _setBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
     {
         using DataTypeT = typename std::remove_const<typename std::remove_reference<decltype(elem.type())>::type>::type;
 
@@ -1125,35 +1253,29 @@ private:
 
         Vm::_setDataElemFromInstr(elem, readDataInstr);
         elem._dt = static_cast<const DataTypeT *>(&readDataInstr.dt());
-
-        if (std::is_signed<ValT>::value) {
-            _pos.lastIntVal.i = val;
-        } else {
-            _pos.lastIntVal.u = val;
-        }
-
+        this->_setLastIntVal(val);
         elem._val(val);
         this->_updateItCurOffset(elem);
     }
 
-    template <typename ValT>
-    void _setFlIntElem(const ValT val, const Instr& instr) noexcept
+    void _setFlIntElem(const std::uint64_t val, const Instr& instr) noexcept
     {
-        if (std::is_signed<ValT>::value) {
-            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flSInt);
-        } else {
-            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flUInt);
-        }
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flUInt);
     }
 
-    template <typename ValT>
-    void _setFlEnumElem(const ValT val, const Instr& instr) noexcept
+    void _setFlIntElem(const std::int64_t val, const Instr& instr) noexcept
     {
-        if (std::is_signed<ValT>::value) {
-            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flSEnum);
-        } else {
-            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flUEnum);
-        }
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flSInt);
+    }
+
+    void _setFlEnumElem(const std::uint64_t val, const Instr& instr) noexcept
+    {
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flUEnum);
+    }
+
+    void _setFlEnumElem(const std::int64_t val, const Instr& instr) noexcept
+    {
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flSEnum);
     }
 
     void _setFlFloatVal(const double val, const ReadDataInstr& instr) noexcept
@@ -1178,7 +1300,7 @@ private:
         auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
         this->_execReadFlBitArrayPreamble(instr, LenBits);
-        _pos.lastBo = readFlBitArrayInstr.bo();
+        _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
         return Func(this->_bufAtHead());
     }
 
@@ -1187,7 +1309,7 @@ private:
     {
         const auto val = this->_readStdFlInt<std::uint64_t, LenBits, Func>(instr);
 
-        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBitArray);
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(LenBits);
     }
 
@@ -1196,7 +1318,7 @@ private:
     {
         const auto val = this->_readStdFlInt<std::uint64_t, LenBits, Func>(instr);
 
-        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBool);
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flBool);
         this->_consumeExistingBits(LenBits);
     }
 
@@ -1225,24 +1347,24 @@ private:
 
         this->_execReadFlBitArrayPreamble(instr, readFlBitArrayInstr.len());
 
-        if (static_cast<bool>(_pos.lastBo)) {
+        if (static_cast<bool>(_pos.lastFlBitArrayBo)) {
             if ((_pos.headOffsetInCurPktBits & 7) != 0) {
                 /*
                  * A fixed-length bit array which does not start on a
                  * byte boundary must have the same byte order as the
                  * previous fixed-length bit array.
                  */
-                if (readFlBitArrayInstr.bo() != *_pos.lastBo) {
+                if (readFlBitArrayInstr.bo() != *_pos.lastFlBitArrayBo) {
                     throw ByteOrderChangeWithinByteDecodingError {
                         _pos.headOffsetInElemSeqBits(),
-                        *_pos.lastBo,
+                        *_pos.lastFlBitArrayBo,
                         readFlBitArrayInstr.bo()
                     };
                 }
             }
         }
 
-        _pos.lastBo = readFlBitArrayInstr.bo();
+        _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
 
         const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
 
@@ -1254,7 +1376,7 @@ private:
     {
         const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
 
-        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBitArray);
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
@@ -1263,7 +1385,7 @@ private:
     {
         const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
 
-        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBool);
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flBool);
         this->_consumeExistingBits(static_cast<const ReadFlBoolInstr&>(instr).len());
     }
 
@@ -1321,6 +1443,19 @@ private:
         const auto val = this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, Func>(instr);
 
         this->_execReadFlFloatPost<FloatT>(val, instr);
+    }
+
+    _ExecReaction _execReadVlBitArrayCommon(const Instr& instr,
+                                            VariableLengthBitArrayElement& elem,
+                                            const VmState nextState)
+    {
+        this->_alignHead(instr);
+        _pos.curVlBitArrayElem = &elem;
+        _pos.curVlBitArrayLenBits = 0;
+        _pos.lastIntVal.u = 0;
+        _pos.nextState = _pos.state();
+        _pos.state(nextState);
+        return _ExecReaction::CHANGE_STATE;
     }
 
     template <typename ReadVarInstrT, typename ElemT>
@@ -1394,6 +1529,15 @@ private:
         _pos.stackPush(proc);
         _pos.stackTop().rem = len;
         _pos.state(nextState);
+    }
+
+    _ExecReaction _execUpdateDefClkValCommon(const Size len) noexcept
+    {
+        const auto newVal = _pos.updateDefClkVal(len);
+
+        _pos.elems.defClkVal._cycles = newVal;
+        this->_updateItCurOffset(_pos.elems.defClkVal);
+        return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
     }
 
 private:

@@ -37,6 +37,7 @@ add_library (
     metadata/fl-enum-type.cpp
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp
+    metadata/int-type-common.cpp
     metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
@@ -57,6 +58,9 @@ add_library (
     metadata/tsdl-attr.cpp
     metadata/tsdl-parser-base.cpp
     metadata/var-type.cpp
+    metadata/vl-bit-array-type.cpp
+    metadata/vl-enum-type.cpp
+    metadata/vl-int-type.cpp
     mmap-file-view-factory-impl.cpp
     mmap-file-view-factory.cpp
     pkt-proc-builder.cpp

@@ -27,7 +27,7 @@ DataType::UP NullTerminatedStringType::_clone() const
     return std::make_unique<NullTerminatedStringType>(this->alignment());
 }
 
-bool NullTerminatedStringType::_compare(const DataType& other) const noexcept
+bool NullTerminatedStringType::_isEqual(const DataType& other) const noexcept
 {
     return true;
 }

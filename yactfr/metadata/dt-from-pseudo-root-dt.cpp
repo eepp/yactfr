@@ -187,7 +187,7 @@ const DataLocation& DtFromPseudoRootDtConverter::_getLenLoc(const PseudoDt& pseu
 
         for (const auto pseudoLenType : pseudoLenTypes) {
             if (!pseudoLenType->isUInt()) {
-                throwMetadataParseError("Length type isn't a fixed-length unsigned integer type.",
+                throwMetadataParseError("Length type isn't an unsigned integer type.",
                                         pseudoLenType->loc());
             }
         }
@@ -405,7 +405,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
     const auto& selLoc = _locMap[pseudoDt];
     const PseudoDt *pseudoSelDt = nullptr;
-    bool selIsUEnumType;
+    bool selIsFlUEnumType;
 
     try {
         const auto pseudoSelDts = this->_findPseudoDts(selLoc, pseudoDt.loc());
@@ -428,19 +428,19 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
                                     pseudoSelDt->loc());
         }
 
-        bool isEnumType;
+        bool isFlEnumType;
 
         if (pseudoSelDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
             auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
 
-            isEnumType = pseudoScalarDtWrapper.dt().isFixedLengthEnumerationType();
-            selIsUEnumType = false;
+            isFlEnumType = pseudoScalarDtWrapper.dt().isFixedLengthEnumerationType();
+            selIsFlUEnumType = pseudoScalarDtWrapper.dt().isFixedLengthUnsignedEnumerationType();
         } else {
-            isEnumType = pseudoSelDt->kind() == PseudoDt::Kind::FL_UENUM;
-            selIsUEnumType = true;
+            isFlEnumType = pseudoSelDt->kind() == PseudoDt::Kind::FL_UENUM;
+            selIsFlUEnumType = true;
         }
 
-        if (!isEnumType) {
+        if (!isFlEnumType) {
             throwMetadataParseError("Selector type of variant type isn't a fixed-length enumeration type.",
                                     pseudoSelDt->loc());
         }
@@ -456,7 +456,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
 
     assert(pseudoSelDt);
 
-    if (selIsUEnumType) {
+    if (selIsFlUEnumType) {
         auto& pseudoUEnumSelType = static_cast<const PseudoFlUEnumType&>(*pseudoSelDt);
 
         return this->_dtFromPseudoVarType<VariantWithUnsignedSelectorType>(pseudoVarType,

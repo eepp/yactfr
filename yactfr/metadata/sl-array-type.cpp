@@ -24,11 +24,11 @@ DataType::UP StaticLengthArrayType::_clone() const
                                                    _hasTraceTypeUuidRole);
 }
 
-bool StaticLengthArrayType::_compare(const DataType& other) const noexcept
+bool StaticLengthArrayType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherStaticLengthArrayType = static_cast<const StaticLengthArrayType&>(other);
 
-    return ArrayType::_compare(other) && _len == otherStaticLengthArrayType._len &&
+    return ArrayType::_isEqual(other) && _len == otherStaticLengthArrayType._len &&
            otherStaticLengthArrayType._hasTraceTypeUuidRole == _hasTraceTypeUuidRole;
 }
 

@@ -13,7 +13,7 @@ namespace yactfr {
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo) :
-    ScalarDataType {_KIND_FL_BIT_ARRAY | kind, align},
+    ScalarDataType {kind, align},
     _len {len},
     _bo {bo}
 {
@@ -52,7 +52,7 @@ bool FixedLengthBitArrayType::operator<(const FixedLengthBitArrayType& other) co
     return false;
 }
 
-bool FixedLengthBitArrayType::_compare(const DataType& other) const noexcept
+bool FixedLengthBitArrayType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherBitArrayType = static_cast<const FixedLengthBitArrayType&>(other);
 

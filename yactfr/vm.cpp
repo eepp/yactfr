@@ -46,11 +46,12 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     headOffsetInCurPktBits = other.headOffsetInCurPktBits;
     elems = other.elems;
     theState = other.theState;
-    lastBo = other.lastBo;
+    nextState = other.nextState;
+    lastFlBitArrayBo = other.lastFlBitArrayBo;
     remBitsToSkip = other.remBitsToSkip;
-    postSkipBitsState = other.postSkipBitsState;
-    postEndStrState = other.postEndStrState;
     lastIntVal = other.lastIntVal;
+    curVlBitArrayLenBits = other.curVlBitArrayLenBits;
+    curVlBitArrayElem = &this->elemFromOther(other, *other.curVlBitArrayElem);
     curId = other.curId;
     pktProc = other.pktProc;
     curDsPktProc = other.curDsPktProc;
@@ -256,6 +257,11 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A16_BE>(&Vm::_execReadFlUEnumA16Be);
     this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A32_BE>(&Vm::_execReadFlUEnumA32Be);
     this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A64_BE>(&Vm::_execReadFlUEnumA64Be);
+    this->_initExecFunc<Instr::Kind::READ_VL_BIT_ARRAY>(&Vm::_execReadVlBitArray);
+    this->_initExecFunc<Instr::Kind::READ_VL_UINT>(&Vm::_execReadVlUInt);
+    this->_initExecFunc<Instr::Kind::READ_VL_SINT>(&Vm::_execReadVlSInt);
+    this->_initExecFunc<Instr::Kind::READ_VL_UENUM>(&Vm::_execReadVlUEnum);
+    this->_initExecFunc<Instr::Kind::READ_VL_SENUM>(&Vm::_execReadVlSEnum);
     this->_initExecFunc<Instr::Kind::READ_NT_STR>(&Vm::_execReadNtStr);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_SCOPE>(&Vm::_execBeginReadScope);
     this->_initExecFunc<Instr::Kind::END_READ_SCOPE>(&Vm::_execEndReadScope);
@@ -279,6 +285,7 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::END_READ_VAR>(&Vm::_execEndReadVar);
     this->_initExecFunc<Instr::Kind::SAVE_VAL>(&Vm::_execSaveVal);
     this->_initExecFunc<Instr::Kind::SET_PKT_END_DEF_CLK_VAL>(&Vm::_execSetPktEndDefClkVal);
+    this->_initExecFunc<Instr::Kind::UPDATE_DEF_CLK_VAL_FL>(&Vm::_execUpdateDefClkValFl);
     this->_initExecFunc<Instr::Kind::UPDATE_DEF_CLK_VAL>(&Vm::_execUpdateDefClkVal);
     this->_initExecFunc<Instr::Kind::SET_CUR_ID>(&Vm::_execSetCurrentId);
     this->_initExecFunc<Instr::Kind::SET_DST>(&Vm::_execSetDst);
@@ -732,6 +739,36 @@ Vm::_ExecReaction Vm::_execReadFlUEnumA64Be(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
+Vm::_ExecReaction Vm::_execReadVlBitArray(const Instr& instr)
+{
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlBitArray,
+                                           VmState::CONTINUE_READ_VL_UINT);
+}
+
+Vm::_ExecReaction Vm::_execReadVlUInt(const Instr& instr)
+{
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUInt,
+                                           VmState::CONTINUE_READ_VL_UINT);
+}
+
+Vm::_ExecReaction Vm::_execReadVlSInt(const Instr& instr)
+{
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSInt,
+                                           VmState::CONTINUE_READ_VL_SINT);
+}
+
+Vm::_ExecReaction Vm::_execReadVlUEnum(const Instr& instr)
+{
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUEnum,
+                                           VmState::CONTINUE_READ_VL_UINT);
+}
+
+Vm::_ExecReaction Vm::_execReadVlSEnum(const Instr& instr)
+{
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSEnum,
+                                           VmState::CONTINUE_READ_VL_SINT);
+}
+
 Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)
 {
     const auto& readNtStrInstr = static_cast<const ReadNtStrInstr&>(instr);
@@ -740,7 +777,7 @@ Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)
     this->_setDataElemFromInstr(_pos.elems.ntStrBeginning, readNtStrInstr);
     _pos.elems.ntStrBeginning._dt = &readNtStrInstr.strType();
     this->_updateItCurOffset(_pos.elems.ntStrBeginning);
-    _pos.postEndStrState = _pos.state();
+    _pos.nextState = _pos.state();
     _pos.state(VmState::READ_SUBSTR_UNTIL_NULL);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
@@ -926,14 +963,16 @@ Vm::_ExecReaction Vm::_execSetPktEndDefClkVal(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
+Vm::_ExecReaction Vm::_execUpdateDefClkValFl(const Instr& instr)
+{
+    const auto& updateDefClkValFlInstr = static_cast<const UpdateDefClkValFlInstr&>(instr);
+
+    return this->_execUpdateDefClkValCommon(updateDefClkValFlInstr.len());
+}
+
 Vm::_ExecReaction Vm::_execUpdateDefClkVal(const Instr& instr)
 {
-    const auto& updateDefClkValInstr = static_cast<const UpdateDefClkValInstr&>(instr);
-    const auto newVal = _pos.updateDefClkVal(updateDefClkValInstr.len());
-
-    _pos.elems.defClkVal._cycles = newVal;
-    this->_updateItCurOffset(_pos.elems.defClkVal);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    return this->_execUpdateDefClkValCommon(_pos.lastIntVal.u);
 }
 
 Vm::_ExecReaction Vm::_execSetCurrentId(const Instr& instr)

@@ -11,10 +11,10 @@
 
 namespace yactfr {
 
-NonNullTerminatedStringType::NonNullTerminatedStringType(const int kind,
-                                                         const unsigned int align) :
-    ScalarDataType {kind | _KIND_NON_NT_STRING, align}
+NonNullTerminatedStringType::NonNullTerminatedStringType(const int kind, const unsigned int align) :
+    ScalarDataType {kind, align}
 {
+    assert(align >= 8);
 }
 
 } // namespace yactfr
