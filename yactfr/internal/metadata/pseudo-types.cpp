@@ -757,12 +757,10 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 }
 
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                                 const ByteOrder nativeBo,
                                  boost::optional<boost::uuids::uuid> uuid,
                                  PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
-    _nativeBo {nativeBo},
     _uuid {std::move(uuid)},
     _pseudoPktHeaderType {std::move(pseudoPktHeaderType)},
     _userAttrs {std::move(userAttrs)}

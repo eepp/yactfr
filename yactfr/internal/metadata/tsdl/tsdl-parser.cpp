@@ -2156,8 +2156,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     if (_nativeBo) {
         // second time we parse this: create pseudo trace type
         _pseudoTraceType = PseudoTraceType {
-            *majorVersion, *minorVersion, *nativeBo,
-            std::move(uuid), std::move(pseudoPktHeaderType)
+            *majorVersion, *minorVersion, std::move(uuid), std::move(pseudoPktHeaderType)
         };
     } else {
         /*

@@ -1032,7 +1032,7 @@ public:
 
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
-                             ByteOrder nativeBo, boost::optional<boost::uuids::uuid> uuid,
+                             boost::optional<boost::uuids::uuid> uuid,
                              PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs = nullptr);
 
     /*
@@ -1049,11 +1049,6 @@ public:
     unsigned int minorVersion() const noexcept
     {
         return _minorVersion;
-    }
-
-    ByteOrder nativeBo() const noexcept
-    {
-        return _nativeBo;
     }
 
     const boost::optional<boost::uuids::uuid>& uuid() const noexcept
@@ -1111,7 +1106,6 @@ public:
 private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
-    ByteOrder _nativeBo;
     boost::optional<boost::uuids::uuid> _uuid;
     PseudoDt::UP _pseudoPktHeaderType;
     ClockTypeSet _clkTypes;
