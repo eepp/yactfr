@@ -26,15 +26,22 @@ configure_file (
 )
 set (YACTFR_DOC_WORKDIR "${CMAKE_BINARY_DIR}/doc/api")
 set (YACTFR_DOC_CMD "${DOXYGEN_EXECUTABLE}" Doxyfile)
+set (YACTFR_DOC_INDEX_HTML "${CMAKE_BINARY_DIR}/doc/api/output/html/index.html")
+file (
+    GLOB_RECURSE YACTFR_DOC_DEPS
+    "${CMAKE_SOURCE_DIR}/include/*.hpp"
+    "${CMAKE_SOURCE_DIR}/doc/api/*.dox"
+)
 add_custom_command (
-    OUTPUT "${CMAKE_BINARY_DIR}/doc/api/output/html/index.html"
+    OUTPUT "${YACTFR_DOC_INDEX_HTML}"
     COMMAND ${YACTFR_DOC_CMD}
+    DEPENDS ${YACTFR_DOC_DEPS}
     WORKING_DIRECTORY "${YACTFR_DOC_WORKDIR}"
     COMMENT "Building API documentation with Doxygen"
     VERBATIM
 )
 add_custom_target (
-    doc ALL DEPENDS "${CMAKE_BINARY_DIR}/doc/api/output/html/index.html"
+    doc ALL DEPENDS "${YACTFR_DOC_INDEX_HTML}"
 )
 add_custom_target (
     force-doc
