@@ -276,17 +276,6 @@ public:
 
     /*!
     @brief
-        Visits the type of data stream optionals \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const OptionalType& type)
-    {
-    }
-
-    /*!
-    @brief
         Visits the type of data stream optionals with a boolean selector
         \p type.
 
