@@ -42,7 +42,6 @@ void StructureType::_initNamesToMemberTypes()
     for (const auto& member : _memberTypes) {
         assert(_namesToMemberTypes.find(member->name()) == _namesToMemberTypes.end());
         _namesToMemberTypes[member->name()] = member.get();
-        _dispNamesToMemberTypes[member->displayName()] = member.get();
     }
 }
 
@@ -87,20 +86,6 @@ const StructureMemberType *StructureType::operator[](const std::string& name) co
     const auto it = std::find_if(_memberTypes.begin(), _memberTypes.end(),
                                  [&name](const auto& member) {
         return member->name() == name;
-    });
-
-    if (it == _memberTypes.end()) {
-        return nullptr;
-    }
-
-    return it->get();
-}
-
-const StructureMemberType *StructureType::memberTypeByDisplayName(const std::string& dispName) const noexcept
-{
-    const auto it = std::find_if(_memberTypes.begin(), _memberTypes.end(),
-                                 [&dispName](const auto& member) {
-        return member->displayName() == dispName;
     });
 
     if (it == _memberTypes.end()) {

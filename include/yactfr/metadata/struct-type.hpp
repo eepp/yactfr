@@ -148,20 +148,6 @@ public:
     */
     const StructureMemberType *operator[](const std::string& name) const noexcept;
 
-    /*!
-    @brief
-        Returns the member type having the display name \p displayName,
-        or \c nullptr if not found.
-
-    @param[in] displayName
-        Display name of the member type to find.
-
-    @returns
-        Member type having the display name \p displayName,
-        or \c nullptr if not found.
-    */
-    const StructureMemberType *memberTypeByDisplayName(const std::string& displayName) const noexcept;
-
 private:
     DataType::UP _clone() const override;
 
@@ -176,7 +162,6 @@ private:
 private:
     const MemberTypes _memberTypes;
     NamesToMemberTypes _namesToMemberTypes;
-    NamesToMemberTypes _dispNamesToMemberTypes;
 };
 
 } // namespace yactfr
