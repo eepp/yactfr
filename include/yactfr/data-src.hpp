@@ -86,8 +86,7 @@ public:
 
     @post
         On success, the last returned
-        \link DataBlock data block\endlink</strong>, if any,
-        is invalidated.
+        \link DataBlock data block\endlink, if any, is invalidated.
 
     @throws DataNotAvailable
         The requested minimum number of bytes (\p minimumSize) at the
@@ -141,7 +140,7 @@ private:
 
     @post
         On success, the last returned
-        \link DataBlock data block\endlink</strong>, if any,
+        \link DataBlock data block\endlink, if any,
         is invalidated.
 
     @throws DataNotAvailable
