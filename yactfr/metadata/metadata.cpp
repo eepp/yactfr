@@ -201,34 +201,40 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
     _origStreamMask = stream.exceptions();
     stream.exceptions(std::ios_base::goodbit);
 
-    /*
-     * Let's read the first 4 bytes of the stream first. This indicates
-     * if the metadata is packetized or not. If it's not, we append
-     * those 4 bytes as the first 4 characters of the metadata text and
-     * read the whole stream directly. Otherwise, we decode each packet,
-     * except for the first packet's magic number which is already
-     * decoded.
-     */
-    std::array<char, sizeof(std::uint32_t)> magicBuf;
+    try {
+        /*
+         * Let's read the first 4 bytes of the stream first.
+         *
+         * This indicates if the metadata is packetized or not. If it's
+         * not, we append those 4 bytes as the first 4 characters of the
+         * metadata text and read the whole stream directly.
+         *
+         * Otherwise, we decode each packet, except for the magic number
+         * of the first packet which is already decoded.
+         *
+         * It's okay to require 4 bytes at this point: the size of a
+         * valid metadata stream, plain text or packetized, cannot be
+         * under 4 bytes.
+         */
+        std::array<char, sizeof(std::uint32_t)> magicBuf;
 
-    this->_read(magicBuf.data(), magicBuf.size());
+        this->_read(magicBuf.data(), magicBuf.size());
 
-    const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
+        const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
 
-    if (*magic == _PKT_MAGIC) {
-        _bo = bendian::order::native;
-        _isPacketized = true;
-    } else if (bendian::endian_reverse(*magic) == _PKT_MAGIC) {
-        if (bendian::order::native == bendian::order::big) {
-            _bo = bendian::order::little;
-        } else {
-            _bo = bendian::order::big;
+        if (*magic == _PKT_MAGIC) {
+            _bo = bendian::order::native;
+            _isPacketized = true;
+        } else if (bendian::endian_reverse(*magic) == _PKT_MAGIC) {
+            if (bendian::order::native == bendian::order::big) {
+                _bo = bendian::order::little;
+            } else {
+                _bo = bendian::order::big;
+            }
+
+            _isPacketized = true;
         }
 
-        _isPacketized = true;
-    }
-
-    try {
         if (_isPacketized) {
             this->_readPacketized();
         } else {
