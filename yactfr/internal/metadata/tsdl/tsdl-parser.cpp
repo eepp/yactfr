@@ -31,7 +31,7 @@ void TsdlParser::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
      *     Leave it as is (no mapped clock type name).
      */
     for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
-        assert(pseudoDt->isFlUInt());
+        assert(pseudoDt->isFlUInt() && pseudoDt->kind() != PseudoDt::Kind::SCALAR_DT_WRAPPER);
 
         auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
@@ -91,7 +91,8 @@ void TsdlParser::_setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
             return false;
         }
 
-        assert(pseudoArrayType.pseudoElemType().isFlUInt());
+        assert(pseudoArrayType.pseudoElemType().isFlUInt() &&
+               pseudoArrayType.pseudoElemType().kind() != PseudoDt::Kind::SCALAR_DT_WRAPPER);
 
         auto& pseudoElemDt = static_cast<const PseudoFlUIntType&>(pseudoArrayType.pseudoElemType());
 

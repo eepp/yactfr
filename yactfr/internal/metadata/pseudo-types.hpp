@@ -189,6 +189,7 @@ public:
     PseudoDt::UP clone() const override;
     bool isInt() const noexcept override;
     bool isUInt() const noexcept override;
+    bool isFlUInt() const noexcept override;
     bool isEmpty() const override;
 
     const DataType& dt() const noexcept

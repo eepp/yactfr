@@ -108,6 +108,11 @@ bool PseudoScalarDtWrapper::isUInt() const noexcept
     return _dt->isUnsignedIntegerType();
 }
 
+bool PseudoScalarDtWrapper::isFlUInt() const noexcept
+{
+    return _dt->isFixedLengthUnsignedIntegerType();
+}
+
 WithUserAttrsMixin::WithUserAttrsMixin(MapItem::UP userAttrs) :
     _userAttrs {std::move(userAttrs)}
 {
@@ -599,10 +604,16 @@ void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
     throwTextParseError(ss.str());
 }
 
+static bool isFlUIntNotDtWrapper(const PseudoDt& pseudoDt) noexcept
+{
+    return pseudoDt.kind() == PseudoDt::Kind::FL_UINT ||
+           pseudoDt.kind() == PseudoDt::Kind::FL_UENUM;
+}
+
 static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
 {
     const auto pseudoDts = findPseudoUIntTypes(basePseudoDt, [](auto& pseudoIntType, auto) {
-        if (!pseudoIntType.isFlUInt()) {
+        if (!isFlUIntNotDtWrapper(pseudoIntType)) {
             return false;
         }
 
@@ -683,14 +694,19 @@ static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
                                       const UnsignedIntegerTypeRole role)
 {
     return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
-        if (pseudoIntType.isFlUInt()) {
+        if (isFlUIntNotDtWrapper(pseudoIntType)) {
             return static_cast<const PseudoFlUIntType&>(pseudoIntType).hasRole(role);
         } else {
             assert(pseudoIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
 
-            auto& pseudoVlIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoIntType);
+            auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoIntType).dt();
 
-            return pseudoVlIntType.dt().asVariableLengthUnsignedIntegerType().hasRole(role);
+            if (dt.isFixedLengthUnsignedIntegerType()) {
+                return dt.asFixedLengthUnsignedIntegerType().hasRole(role);
+            } else {
+                assert(dt.isVariableLengthUnsignedIntegerType());
+                return dt.asVariableLengthUnsignedIntegerType().hasRole(role);
+            }
         }
     });
 }
@@ -742,14 +758,19 @@ static void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
     const auto set = findPseudoUIntTypes(*pseudoDt, [&allowedRoles](auto& pseudoUIntType, auto) {
         // get roles
         auto& roles = [&pseudoUIntType]() -> const UnsignedIntegerTypeRoleSet& {
-            if (pseudoUIntType.isFlUInt()) {
+            if (isFlUIntNotDtWrapper(pseudoUIntType)) {
                 return static_cast<const PseudoFlUIntType&>(pseudoUIntType).roles();
             } else {
                 assert(pseudoUIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
 
-                auto& pseudoVlIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoUIntType);
+                auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoUIntType).dt();
 
-                return pseudoVlIntType.dt().asVariableLengthUnsignedIntegerType().roles();
+                if (dt.isFixedLengthUnsignedIntegerType()) {
+                    return dt.asFixedLengthUnsignedIntegerType().roles();
+                } else {
+                    assert(dt.isVariableLengthUnsignedIntegerType());
+                    return dt.asVariableLengthUnsignedIntegerType().roles();
+                }
             }
         }();
 
@@ -1023,6 +1044,22 @@ bool PseudoTraceType::hasPseudoOrphanErt(const TypeId dstId, const TypeId ertId)
     return it->second.find(ertId) != it->second.end();
 }
 
+static Size flUIntTypeLen(const PseudoDt& pseudoDt) noexcept
+{
+    assert(pseudoDt.isFlUInt());
+
+    if (isFlUIntNotDtWrapper(pseudoDt)) {
+        return static_cast<const PseudoFlUIntType&>(pseudoDt).len();
+    } else {
+        assert(pseudoDt.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+
+        auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt();
+
+        assert(dt.isFixedLengthUnsignedIntegerType());
+        return dt.asFixedLengthUnsignedIntegerType().length();
+    }
+}
+
 void PseudoTraceType::validate() const
 {
     // validate that all orphan ERTs match the real ERTs
@@ -1063,12 +1100,12 @@ void PseudoTraceType::validate() const
                                             pseudoUuidArrayType.pseudoElemType().loc());
                     }
 
-                    auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoUuidArrayType.pseudoElemType());
+                    auto& pseudoElemType = pseudoUuidArrayType.pseudoElemType();
 
-                    if (pseudoUIntType.len() != 8) {
+                    if (flUIntTypeLen(pseudoElemType) != 8) {
                         throwTextParseError("Expecting a fixed-length unsigned integer type "
                                             "with a length of 8 bits.",
-                                            pseudoUIntType.loc());
+                                            pseudoElemType.loc());
                     }
                 } catch (TextParseError& exc) {
                     appendMsgToTextParseError(exc,
@@ -1095,21 +1132,20 @@ void PseudoTraceType::validate() const
                                         firstPseudoDt.loc());
                 }
 
-                auto& pseudoMagicDt = static_cast<const PseudoFlUIntType&>(firstPseudoDt);
                 auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
 
-                if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &pseudoMagicDt) {
+                if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &firstPseudoDt) {
                     throwTextParseError("Fixed-length unsigned integer type with the "
                                         "\"packet magic number\" role must be within the "
                                         "first member type of the packet header structure type.",
-                                        pseudoMagicDt.loc());
+                                        firstPseudoDt.loc());
                 }
 
-                if (pseudoMagicDt.len() != 32) {
+                if (flUIntTypeLen(firstPseudoDt) != 32) {
                     throwTextParseError("Fixed-length unsigned integer type with the "
                                         "\"packet magic number\" role must have a length of "
                                         "32 bits.",
-                                        pseudoMagicDt.loc());
+                                        firstPseudoDt.loc());
                 }
             } else if (pseudoMagicDts.size() > 1) {
                 throwTextParseError("More than one fixed-length unsigned integer type with the "
