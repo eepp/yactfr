@@ -112,7 +112,7 @@ public:
                        DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
 
     /*
-     * Required because internal::TraceTypeImpl has no known size at
+     * Required because `internal::TraceTypeImpl` has no known size at
      * this point.
      */
     ~TraceType();
