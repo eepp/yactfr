@@ -229,11 +229,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt
     auto& pseudoBlobType = static_cast<const PseudoDlBlobType&>(pseudoDt);
 
     if (pseudoBlobType.mediaType()) {
-        return std::make_unique<const DynamicLengthBlobType>(1, lenLoc,
+        return std::make_unique<const DynamicLengthBlobType>(8, lenLoc,
                                                              *pseudoBlobType.mediaType(),
                                                              tryCloneUserAttrs(pseudoBlobType.userAttrs()));
     } else {
-        return std::make_unique<const DynamicLengthBlobType>(1, lenLoc,
+        return std::make_unique<const DynamicLengthBlobType>(8, lenLoc,
                                                              tryCloneUserAttrs(pseudoBlobType.userAttrs()));
     }
 }
