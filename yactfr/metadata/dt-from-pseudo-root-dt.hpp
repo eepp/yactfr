@@ -269,36 +269,41 @@ std::string DtFromPseudoRootDtConverter::_dataLocStr(const Scope scope, const It
 
     switch (scope) {
     case Scope::PACKET_HEADER:
-        str = "packet.header";
+        str = "packet header";
         break;
 
     case Scope::PACKET_CONTEXT:
-        str = "packet.context";
+        str = "packet context";
         break;
 
     case Scope::EVENT_RECORD_HEADER:
-        str = "stream.event.header";
+        str = "event record header";
         break;
 
     case Scope::EVENT_RECORD_COMMON_CONTEXT:
-        str = "stream.event.context";
+        str = "event record common context";
         break;
 
     case Scope::EVENT_RECORD_SPECIFIC_CONTEXT:
-        str = "event.context";
+        str = "event record specific context";
         break;
 
     case Scope::EVENT_RECORD_PAYLOAD:
-        str = "event.fields";
+        str = "event record payload";
         break;
 
     default:
         std::abort();
     }
 
-    for (auto it = begin; it != end; ++it) {
-        str += '.';
+    str += ": `";
+    str += *begin;
+    str += '`';
+
+    for (auto it = begin + 1; it != end; ++it) {
+        str += "/`";
         str += *it;
+        str += '`';
     }
 
     return str;

@@ -270,7 +270,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
         if (locIt != loc.pathElements().end()) {
             std::ostringstream ss;
 
-            ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
+            ss << "Data location [" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "]: "
                   "nothing past scalar data type.";
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
@@ -285,7 +285,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
         if (!pseudoMemberType) {
             std::ostringstream ss;
 
-            ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt + 1) << "`: "
+            ss << "Data location [" << this->_dataLocStr(loc.scope(), loc.begin(), locIt + 1) << "]: "
                   "cannot find `" << *locIt << "` (last element).";
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
@@ -300,7 +300,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
         if (_current.find(&pseudoDt) == _current.end()) {
             std::ostringstream ss;
 
-            ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
+            ss << "Data location [" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "]: "
                   "unreachable array element.";
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
@@ -337,7 +337,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
         if (_current.find(&pseudoDt) == _current.end()) {
             std::ostringstream ss;
 
-            ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
+            ss << "Data location [" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "]: "
                   "unreachable optional data.";
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
@@ -359,7 +359,7 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
     if (static_cast<int>(loc.scope()) > static_cast<int>(_scope)) {
         std::ostringstream ss;
 
-        ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "`: "
+        ss << "Data location [" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "]: "
               "data would be unreachable.";
         throwTextParseError(ss.str(), srcLoc);
     }
@@ -398,7 +398,7 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
     if (!pseudoDt) {
         std::ostringstream ss;
 
-        ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "`: "
+        ss << "Data location [" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "]: "
               "cannot find scope data type.";
         throwTextParseError(ss.str(), srcLoc);
     }
@@ -609,8 +609,8 @@ void DtFromPseudoRootDtConverter::_throwInvalDataLoc(const std::string& initMsg,
     } catch (TextParseError& exc) {
         std::ostringstream ss;
 
-        ss << "Invalid data location (`" <<
-              this->_dataLocStr(dataLoc.scope(), dataLoc.begin(), dataLoc.end()) << "`):";
+        ss << "Invalid data location (" <<
+              this->_dataLocStr(dataLoc.scope(), dataLoc.begin(), dataLoc.end()) << "):";
         appendMsgToTextParseError(exc, ss.str(), loc);
         throw;
     }
