@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <yactfr/text-parse-error.hpp>
+
 #include "str-scanner.hpp"
 
 namespace yactfr {
@@ -67,7 +69,7 @@ void StrScanner::_appendEscapedUnicodeChar(const char * const at)
             std::ostringstream ss;
 
             ss << "In `\\u` escape sequence: unexpected character `" << ch << "`.";
-            throw InvalEscapeSeq {ss.str(), this->loc()};
+            throwTextParseError(ss.str(), this->loc());
         }
     }
 
@@ -84,7 +86,7 @@ void StrScanner::_appendEscapedUnicodeChar(const char * const at)
         std::ostringstream ss;
 
         ss << "In `\\u` escape sequence: invalid codepoint " << cp << ".";
-        throw InvalEscapeSeq {ss.str(), this->loc()};
+        throwTextParseError(ss.str(), this->loc());
     } else if (cp <= 0xffff) {
         _strBuf.push_back(static_cast<char>((cp >> 12) + 224));
         _strBuf.push_back(static_cast<char>(((cp >> 6) & 63) + 128));
@@ -113,10 +115,8 @@ bool StrScanner::_tryAppendEscapedChar(const char * const escapeSeqStartList)
         if (_at[1] == '"' || _at[1] == *escapeSeqStart) {
             if (_at[1] == 'u') {
                 if (this->charsLeft() < 6) {
-                    throw InvalEscapeSeq {
-                        "`\\u` escape sequence needs four hexadecimal digits.",
-                        this->loc()
-                    };
+                    throwTextParseError("`\\u` escape sequence needs four hexadecimal digits.",
+                                        this->loc());
                 }
 
                 this->_appendEscapedUnicodeChar(_at + 2);

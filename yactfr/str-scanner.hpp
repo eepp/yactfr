@@ -24,28 +24,6 @@ namespace yactfr {
 namespace internal {
 
 /*
- * Invalid escape sequence error.
- */
-class InvalEscapeSeq final :
-    public std::runtime_error
-{
-public:
-    explicit InvalEscapeSeq(std::string msg, TextLocation loc) :
-        std::runtime_error {std::move(msg)},
-        _loc {std::move(loc)}
-    {
-    }
-
-    const TextLocation& loc() const noexcept
-    {
-        return _loc;
-    }
-
-private:
-    TextLocation _loc;
-};
-
-/*
  * String scanner.
  *
  * A string scanner wraps an input string using two `const char`
