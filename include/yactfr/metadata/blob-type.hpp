@@ -26,7 +26,7 @@ class BlobType :
 {
 protected:
     explicit BlobType(int kind, unsigned int align, MapItem::UP userAttrs,
-                      std::string mediaType = "application/octet-stream");
+                      std::string mediaType = BlobType::defaultMediaType());
 
 public:
     /// <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
@@ -34,6 +34,12 @@ public:
     const std::string& mediaType() const
     {
         return _mediaType;
+    }
+
+    /// Default BLOB type media type.
+    static constexpr const char *defaultMediaType() noexcept
+    {
+        return "application/octet-stream";
     }
 
 protected:
