@@ -20,20 +20,21 @@ add_library (
     elem-visitor.cpp
     from-metadata-text.cpp
     item.cpp
-    logging/zf_log.c
+    json-val-from-text.cpp
     json-val.cpp
+    logging/zf_log.c
     metadata/array-type.cpp
     metadata/blob-type.cpp
     metadata/clk-type.cpp
     metadata/compound-dt.cpp
     metadata/data-loc-map.cpp
     metadata/data-loc.cpp
-    metadata/dst.cpp
-    metadata/dt-from-pseudo-root-dt.cpp
-    metadata/dt.cpp
     metadata/dl-array-type.cpp
     metadata/dl-blob-type.cpp
     metadata/dl-str-type.cpp
+    metadata/dst.cpp
+    metadata/dt-from-pseudo-root-dt.cpp
+    metadata/dt.cpp
     metadata/ert.cpp
     metadata/fl-bit-array-type.cpp
     metadata/fl-bool-type.cpp
