@@ -89,9 +89,9 @@ void Proc::pushBack(std::shared_ptr<Instr> instr)
     _sharedProc.push_back(instr);
 }
 
-void Proc::insert(SharedIt it, std::shared_ptr<Instr> instr)
+Proc::SharedIt Proc::insert(SharedIt it, std::shared_ptr<Instr> instr)
 {
-    _sharedProc.insert(it, instr);
+    return _sharedProc.insert(it, instr);
 }
 
 Instr::Instr(const Kind kind) noexcept :

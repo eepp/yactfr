@@ -304,7 +304,7 @@ public:
     void buildRawProcFromShared();
     std::string toStr(Size indent = 0) const;
     void pushBack(std::shared_ptr<Instr> instr);
-    void insert(SharedIt it, std::shared_ptr<Instr> instr);
+    SharedIt insert(SharedIt it, std::shared_ptr<Instr> instr);
 
     Shared& sharedProc() noexcept
     {
