@@ -337,7 +337,8 @@ void PseudoDlBlobType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoNamedDt::PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt, MapItem::UP userAttrs) :
+PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::UP pseudoDt,
+                             MapItem::UP userAttrs) :
     WithUserAttrsMixin {std::move(userAttrs)},
     _name {std::move(name)},
     _pseudoDt {std::move(pseudoDt)}
@@ -358,7 +359,7 @@ PseudoDt::UP PseudoStructType::clone() const
     PseudoNamedDts newPseudoMembers;
 
     for (const auto& pseudoMemberType : _pseudoMemberTypes) {
-        auto newPseudoMemberType = std::make_unique<PseudoNamedDt>(pseudoMemberType->name(),
+        auto newPseudoMemberType = std::make_unique<PseudoNamedDt>(*pseudoMemberType->name(),
                                                                    pseudoMemberType->pseudoDt().clone(),
                                                                    tryCloneUserAttrs(pseudoMemberType->userAttrs()));
 
@@ -398,7 +399,7 @@ const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const
 {
     const auto it = std::find_if(_pseudoMemberTypes.begin(), _pseudoMemberTypes.end(),
                                  [&name](const auto& pseudoMember) {
-        return pseudoMember->name() == name;
+        return *pseudoMember->name() == name;
     });
 
     if (it == _pseudoMemberTypes.end()) {
@@ -1018,7 +1019,8 @@ const ClockType *PseudoTraceType::findClkType(const std::string& name) const noe
 {
     const auto it = std::find_if(_clkTypes.begin(), _clkTypes.end(),
                                  [&name](auto& clkType) {
-        return clkType->name() == name;
+        assert(clkType->name());
+        return *clkType->name() == name;
     });
 
     if (it == _clkTypes.end()) {

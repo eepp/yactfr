@@ -341,7 +341,7 @@ private:
         *_os << id;
 
         if (elem.structureMemberType()) {
-            *_os << ':' << elem.structureMemberType()->displayName();
+            *_os << ':' << *elem.structureMemberType()->displayName();
         }
     }
 

@@ -246,7 +246,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt
     for (const auto& pseudoMemberType : pseudoStructType.pseudoMemberTypes()) {
         auto memberDt = this->_dtFromPseudoDt(pseudoMemberType->pseudoDt());
 
-        memberTypes.push_back(std::make_unique<const StructureMemberType>(pseudoMemberType->name(),
+        memberTypes.push_back(std::make_unique<const StructureMemberType>(*pseudoMemberType->name(),
                                                                           std::move(memberDt),
                                                                           tryCloneUserAttrs(pseudoMemberType->userAttrs())));
     }

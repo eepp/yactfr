@@ -37,6 +37,7 @@ TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int
 {
     this->_buildDstMap();
     this->_createParentLinks(traceType);
+    this->_setDispNames();
     this->_setTypeDeps();
 }
 
@@ -314,6 +315,124 @@ void TraceTypeImpl::_setTypeDeps() const
             if (ert->payloadType()) {
                 SetTypeDepsDtVisitor visitor {*this, dst.get(), ert.get()};
 
+                ert->payloadType()->accept(visitor);
+            }
+        }
+    }
+}
+
+class SetDispNamesDtVisitor :
+    public DataTypeVisitor
+{
+public:
+    explicit SetDispNamesDtVisitor(const bool removeUnderscore) :
+        _removeUnderscore {removeUnderscore}
+    {
+    }
+
+    void visit(const StructureType& structType) override
+    {
+        for (const auto& memberType : structType) {
+            this->_setDispName(*memberType, memberType->name());
+            memberType->dataType().accept(*this);
+        }
+    }
+
+    void visit(const StaticLengthArrayType& dt) override
+    {
+        this->_visit(dt);
+    }
+
+    void visit(const DynamicLengthArrayType& dt) override
+    {
+        this->_visit(dt);
+    }
+
+    void visit(const VariantWithUnsignedIntegerSelectorType& dt) override
+    {
+        this->_visitVarType(dt);
+    }
+
+    void visit(const VariantWithSignedIntegerSelectorType& dt) override
+    {
+        this->_visitVarType(dt);
+    }
+
+    void visit(const OptionalWithBooleanSelectorType& dt) override
+    {
+        this->_visit(dt);
+    }
+
+    void visit(const OptionalWithUnsignedIntegerSelectorType& dt) override
+    {
+        this->_visit(dt);
+    }
+
+    void visit(const OptionalWithSignedIntegerSelectorType& dt) override
+    {
+        this->_visit(dt);
+    }
+
+private:
+    template <typename ObjT>
+    void _setDispName(const ObjT& obj, const std::string& name) const noexcept
+    {
+        TraceTypeImpl::setDispName(obj, name, _removeUnderscore);
+    }
+
+    void _visit(const ArrayType& arrayType)
+    {
+        arrayType.elementType().accept(*this);
+    }
+
+    template <typename VarTypeT>
+    void _visitVarType(const VarTypeT& varType)
+    {
+        for (auto& opt : varType) {
+            if (opt->name()) {
+                this->_setDispName(*opt, *opt->name());
+            }
+
+            opt->dataType().accept(*this);
+        }
+    }
+
+    void _visit(const OptionalType& optType)
+    {
+        optType.dataType().accept(*this);
+    }
+
+private:
+    bool _removeUnderscore;
+};
+
+void TraceTypeImpl::_setDispNames() const
+{
+    SetDispNamesDtVisitor visitor {_majorVersion == 1};
+
+    if (_pktHeaderType) {
+        _pktHeaderType->accept(visitor);
+    }
+
+    for (auto& dst : _dsts) {
+        if (dst->packetContextType()) {
+            dst->packetContextType()->accept(visitor);
+        }
+
+        if (dst->eventRecordHeaderType()) {
+            dst->eventRecordHeaderType()->accept(visitor);
+        }
+
+        if (dst->eventRecordCommonContextType()) {
+            dst->eventRecordCommonContextType()->accept(visitor);
+        }
+
+        for (auto& ert : dst->eventRecordTypes()) {
+            if (ert->specificContextType()) {
+                ert->specificContextType()->accept(visitor);
+            }
+
+            if (ert->payloadType()) {
                 ert->payloadType()->accept(visitor);
             }
         }

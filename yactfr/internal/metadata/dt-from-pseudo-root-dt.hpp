@@ -376,18 +376,21 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
 
         const auto& pseudoOpt = pseudoVarType.pseudoOpts()[i];
         auto optDt = this->_dtFromPseudoDt(pseudoOpt->pseudoDt());
-        const auto rangesIt = selTypeMappings.find(pseudoOpt->name());
+
+        assert(pseudoOpt->name());
+
+        const auto rangesIt = selTypeMappings.find(*pseudoOpt->name());
 
         // validate that the range set exists
         if (rangesIt == selTypeMappings.end()) {
             std::ostringstream ss;
 
             ss << "Selector type of variant type has no mapping named `" <<
-                  pseudoOpt->name() << "`.";
+                  *pseudoOpt->name() << "`.";
             this->_throwInvalDataLoc(ss.str(), pseudoVarType.loc(), selLoc, pseudoVarType.loc());
         }
 
-        opts.push_back(std::make_unique<const typename VarTypeT::Option>(pseudoOpt->name(),
+        opts.push_back(std::make_unique<const typename VarTypeT::Option>(*pseudoOpt->name(),
                                                                          std::move(optDt),
                                                                          rangesIt->second,
                                                                          this->_tryCloneUserAttrs(pseudoOpt->userAttrs())));

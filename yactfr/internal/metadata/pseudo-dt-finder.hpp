@@ -79,7 +79,8 @@ public:
         this->_tryAdd(pseudoDt);
 
         for (const auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
-            _curMemberTypeName = &pseudoMemberType->name();
+            assert(pseudoMemberType->name());
+            _curMemberTypeName = &(*pseudoMemberType->name());
             pseudoMemberType->pseudoDt().accept(*this);
         }
     }

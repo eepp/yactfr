@@ -640,7 +640,7 @@ std::string ReadDataInstr::_commonToStr() const
 
         if (_memberType->name() != _memberType->displayName()) {
             ss << " " << _strProp("member-type-disp-name") << "`" <<
-                  _memberType->displayName() << "`";
+                  *_memberType->displayName() << "`";
         }
     }
 

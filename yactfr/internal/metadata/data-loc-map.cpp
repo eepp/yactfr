@@ -121,6 +121,15 @@ void DataLocMap::_create(const PseudoDt& pseudoDt)
         break;
     }
 
+    case PseudoDt::Kind::DL_BLOB:
+    {
+        auto& pseudoBlobType = static_cast<const PseudoDlBlobType&>(pseudoDt);
+
+        _map.emplace(std::make_pair(&pseudoBlobType,
+                                    this->_dataLocFromPseudoDataLoc(pseudoBlobType.pseudoLenLoc())));
+        break;
+    }
+
     case PseudoDt::Kind::STRUCT:
     {
         auto& pseudoStructType = static_cast<const PseudoStructType&>(pseudoDt);
@@ -133,7 +142,8 @@ void DataLocMap::_create(const PseudoDt& pseudoDt)
              * Append this name before so that _createLocMap() can
              * access the ancestor names.
              */
-            _memberNames.back().push_back(&pseudoMemberType->name());
+            assert(pseudoMemberType->name());
+            _memberNames.back().push_back(&(*pseudoMemberType->name()));
             this->_create(pseudoMemberType->pseudoDt());
         }
 
@@ -142,6 +152,7 @@ void DataLocMap::_create(const PseudoDt& pseudoDt)
     }
 
     case PseudoDt::Kind::VAR:
+    case PseudoDt::Kind::VAR_WITH_INT_RANGES:
     {
         auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
 
@@ -153,6 +164,17 @@ void DataLocMap::_create(const PseudoDt& pseudoDt)
             this->_create(pseudoOpt->pseudoDt());
         }
 
+        break;
+    }
+
+    case PseudoDt::Kind::OPT_WITH_BOOL_SEL:
+    case PseudoDt::Kind::OPT_WITH_INT_SEL:
+    {
+        auto& pseudoOptType = static_cast<const PseudoOptType&>(pseudoDt);
+
+        _map.emplace(std::make_pair(&pseudoOptType,
+                                    this->_dataLocFromPseudoDataLoc(pseudoOptType.pseudoSelLoc())));
+        this->_create(pseudoOptType.pseudoDt());
         break;
     }
 

@@ -12,17 +12,7 @@
 
 namespace yactfr {
 
-static std::string dispNameFromName(const std::string& name)
-{
-    if (name[0] == '_') {
-        return name.substr(1);
-    } else {
-        return name;
-    }
-}
-
 StructureMemberType::StructureMemberType(std::string name, DataType::UP dt, MapItem::UP userAttrs) :
-    _dispName {dispNameFromName(name)},
     _name {std::move(name)},
     _dt {std::move(dt)},
     _userAttrs {std::move(userAttrs)}

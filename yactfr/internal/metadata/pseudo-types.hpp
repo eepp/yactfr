@@ -552,10 +552,11 @@ public:
 
 public:
     explicit PseudoNamedDt() = default;
-    explicit PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt,
+
+    explicit PseudoNamedDt(boost::optional<std::string> name, PseudoDt::UP pseudoDt,
                            MapItem::UP userAttrs = nullptr);
 
-    const std::string& name() const noexcept
+    const boost::optional<std::string>& name() const noexcept
     {
         return _name;
     }
@@ -571,7 +572,7 @@ public:
     }
 
 private:
-    std::string _name;
+    boost::optional<std::string> _name;
     PseudoDt::UP _pseudoDt;
 };
 

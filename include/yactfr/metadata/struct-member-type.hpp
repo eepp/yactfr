@@ -10,11 +10,17 @@
 
 #include <string>
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 
 #include "dt.hpp"
 #include "item.hpp"
 
 namespace yactfr {
+namespace internal {
+
+class TraceTypeImpl;
+
+} // namespace internal
 
 /*!
 @brief
@@ -28,6 +34,8 @@ decribed by \link StructureType structure types\endlink).
 class StructureMemberType final :
     boost::noncopyable
 {
+    friend class internal::TraceTypeImpl;
+
 public:
     /*!
     @brief
@@ -58,9 +66,24 @@ public:
         return _name;
     }
 
-    /// Display name (name() with first underscore removed, if any)
-    /// of data stream structure members described by this type.
-    const std::string& displayName() const noexcept
+    /*!
+     * @brief
+     *     Display name, or \c boost::none if this type is
+     *     not part of a \link TraceType trace type\endlink yet.
+     *
+     * When the returned value is set, it's, depending on the
+     * \link TraceType::majorVersion() major version\endlink of
+     * the containing trace type:
+     *
+     * <dl>
+     *   <dt>1
+     *   <dd>name() with the first underscore removed, if any.
+     *
+     *   <dt>2
+     *   <dd>name()
+     * </dl>
+     */
+    const boost::optional<std::string>& displayName() const noexcept
     {
         return _dispName;
     }
@@ -124,7 +147,7 @@ public:
     }
 
 private:
-    const std::string _dispName;
+    mutable boost::optional<std::string> _dispName;
     const std::string _name;
     const DataType::UP _dt;
     const MapItem::UP _userAttrs;

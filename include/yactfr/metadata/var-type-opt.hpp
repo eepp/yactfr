@@ -21,6 +21,11 @@
 #include "item.hpp"
 
 namespace yactfr {
+namespace internal {
+
+class TraceTypeImpl;
+
+} // namespace internal
 
 /*!
 @brief
@@ -32,6 +37,8 @@ template <typename SelectorValueT>
 class VariantTypeOption final :
     boost::noncopyable
 {
+    friend class internal::TraceTypeImpl;
+
 public:
     /// Type of the value of a selector.
     using SelectorValue = SelectorValueT;
@@ -71,7 +78,6 @@ public:
         _selRanges {std::move(selectorRanges)},
         _userAttrs {std::move(userAttributes)}
     {
-        this->_setDispName();
     }
 
     /*!
@@ -110,8 +116,23 @@ public:
         return _name;
     }
 
-    /// Display name (name() with first underscore removed, if any)
-    /// of this variant type option.
+    /*!
+     * @brief
+     *     Display name, or \c boost::none if missing or if this type is
+     *     not part of a \link TraceType trace type\endlink yet.
+     *
+     * When the returned value is set, it's, depending on the
+     * \link TraceType::majorVersion() major version\endlink of
+     * the containing trace type:
+     *
+     * <dl>
+     *   <dt>1
+     *   <dd>name() with the first underscore removed, if any.
+     *
+     *   <dt>2
+     *   <dd>name()
+     * </dl>
+     */
     const boost::optional<std::string>& displayName() const noexcept
     {
         return _dispName;
@@ -183,20 +204,8 @@ public:
     }
 
 private:
-    void _setDispName()
-    {
-        if (_name) {
-            if ((*_name)[0] == '_') {
-                _dispName = _name->substr(1);
-            } else {
-                _dispName = _name;
-            }
-        }
-    }
-
-private:
     const boost::optional<std::string> _name;
-    boost::optional<std::string> _dispName;
+    mutable boost::optional<std::string> _dispName;
     const DataType::UP _dt;
     const SelectorRangeSet _selRanges;
     const MapItem::UP _userAttrs;

@@ -401,14 +401,16 @@ void TsdlParser::_checkDupPseudoNamedDt(const PseudoNamedDts& entries, const Tex
     std::set<std::string> entryNames;
 
     for (const auto& entry : entries) {
-        if (entryNames.find(entry->name()) != entryNames.end()) {
+        assert(entry->name());
+
+        if (entryNames.find(*entry->name()) != entryNames.end()) {
             std::ostringstream ss;
 
-            ss << "Duplicate identifier (member type or option name) `" << entry->name() << "`.";
+            ss << "Duplicate identifier (member type or option name) `" << *entry->name() << "`.";
             throwTextParseError(ss.str(), loc);
         }
 
-        entryNames.insert(entry->name());
+        entryNames.insert(*entry->name());
     }
 }
 

@@ -97,6 +97,16 @@ public:
         return dt._selTypes();
     }
 
+    template <typename ObjT>
+    static void setDispName(const ObjT& obj, const std::string& name, const bool removeUnderscore)
+    {
+        if (removeUnderscore && name.c_str()[0] == '_') {
+            obj._dispName = name.substr(1);
+        } else {
+            obj._dispName = name;
+        }
+    }
+
 private:
     struct _StackFrame final
     {
@@ -108,6 +118,7 @@ private:
     void _buildDstMap();
     void _createParentLinks(const TraceType& traceType) const;
     void _setTypeDeps() const;
+    void _setDispNames() const;
 
 private:
     const unsigned int _majorVersion;
