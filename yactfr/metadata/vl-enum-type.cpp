@@ -45,7 +45,7 @@ VariableLengthUnsignedEnumerationType::VariableLengthUnsignedEnumerationType(con
                                                                              MapItem::UP userAttrs,
                                                                              UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<VariableLengthUnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
-        _KIND_FL_UENUM, std::move(mappings), align, prefDispBase,
+        _KIND_VL_UENUM, std::move(mappings), align, prefDispBase,
         std::move(userAttrs), std::move(roles)
     }
 {
