@@ -70,6 +70,7 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
+#include <yactfr/metadata/fl-bit-array-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
@@ -142,6 +143,10 @@ protected:
 
 public:
     virtual ~InstrVisitor() = default;
+
+    virtual void visit(ReadFlBitArrayInstr& instr)
+    {
+    }
 
     virtual void visit(ReadFlSIntInstr& instr)
     {
@@ -396,6 +401,15 @@ public:
         END_READ_DL_STR,
         END_READ_STRUCT,
         END_READ_VAR,
+        READ_FL_BIT_ARRAY_A16_BE,
+        READ_FL_BIT_ARRAY_A16_LE,
+        READ_FL_BIT_ARRAY_A32_BE,
+        READ_FL_BIT_ARRAY_A32_LE,
+        READ_FL_BIT_ARRAY_A64_BE,
+        READ_FL_BIT_ARRAY_A64_LE,
+        READ_FL_BIT_ARRAY_A8,
+        READ_FL_BIT_ARRAY_BE,
+        READ_FL_BIT_ARRAY_LE,
         READ_FL_FLOAT_32_BE,
         READ_FL_FLOAT_32_LE,
         READ_FL_FLOAT_64_BE,
@@ -489,8 +503,7 @@ public:
 
     bool isReadData() const noexcept
     {
-        return this->isReadFlInt() ||
-               this->isReadFlFloat() ||
+        return this->isReadFlBitArray() ||
                this->isReadStr() ||
                this->isBeginReadCompound() ||
                this->isBeginReadVar();
@@ -507,6 +520,21 @@ public:
                _theKind == Kind::BEGIN_READ_SL_ARRAY ||
                _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY ||
                _theKind == Kind::BEGIN_READ_DL_ARRAY;
+    }
+
+    bool isReadFlBitArray() const noexcept
+    {
+        return _theKind == Kind::READ_FL_BIT_ARRAY_LE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_BE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A8 ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A16_LE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A32_LE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A64_LE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A16_BE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A32_BE ||
+               _theKind == Kind::READ_FL_BIT_ARRAY_A64_BE ||
+               this->isReadFlInt() ||
+               this->isReadFlFloat();
     }
 
     bool isReadFlInt() const noexcept
@@ -766,6 +794,8 @@ protected:
                                  const DataType& dt);
 
 public:
+    explicit ReadFlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt);
+
     unsigned int len() const noexcept
     {
         return _len;
@@ -774,6 +804,11 @@ public:
     ByteOrder bo() const noexcept
     {
         return _bo;
+    }
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
     }
 
 protected:

@@ -272,6 +272,7 @@ public:
         PacketInfoElement pktInfo;
         EventRecordInfoElement erInfo;
         DefaultClockValueElement defClkVal;
+        FixedLengthBitArrayElement flBitArray;
         FixedLengthSignedIntegerElement flSInt;
         FixedLengthUnsignedIntegerElement flUInt;
         FixedLengthSignedEnumerationElement flSEnum;
@@ -983,6 +984,15 @@ private:
     }
 
     // instruction handlers
+    _ExecReaction _execReadFlBitArrayLe(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayBe(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA8(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA16Le(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA32Le(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA64Le(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA16Be(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA32Be(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA64Be(const Instr& instr);
     _ExecReaction _execReadFlSIntLe(const Instr& instr);
     _ExecReaction _execReadFlSIntBe(const Instr& instr);
     _ExecReaction _execReadFlSIntA8(const Instr& instr);
@@ -1069,7 +1079,7 @@ private:
     }
 
     template <typename ValT, typename ElemT>
-    void _setFlIntElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
+    void _setFlBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
     {
         using DataTypeT = typename std::remove_const<typename std::remove_reference<decltype(elem.type())>::type>::type;
 
@@ -1084,7 +1094,7 @@ private:
             _pos.lastIntVal.u = val;
         }
 
-        elem._val = val;
+        elem._val(val);
         this->_updateItCurOffset(elem);
     }
 
@@ -1092,9 +1102,9 @@ private:
     void _setFlIntElem(const ValT val, const Instr& instr) noexcept
     {
         if (std::is_signed<ValT>::value) {
-            this->_setFlIntElemBase(val, instr, _pos.elems.flSInt);
+            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flSInt);
         } else {
-            this->_setFlIntElemBase(val, instr, _pos.elems.flUInt);
+            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flUInt);
         }
     }
 
@@ -1102,9 +1112,9 @@ private:
     void _setFlEnumElem(const ValT val, const Instr& instr) noexcept
     {
         if (std::is_signed<ValT>::value) {
-            this->_setFlIntElemBase(val, instr, _pos.elems.flSEnum);
+            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flSEnum);
         } else {
-            this->_setFlIntElemBase(val, instr, _pos.elems.flUEnum);
+            this->_setFlBitArrayElemBase(val, instr, _pos.elems.flUEnum);
         }
     }
 
@@ -1112,7 +1122,7 @@ private:
     {
         Vm::_setDataElemFromInstr(_pos.elems.flFloat, instr);
         _pos.elems.flFloat._dt = static_cast<const FixedLengthFloatingPointNumberType *>(&instr.dt());
-        _pos.elems.flFloat._val = val;
+        _pos.elems.flFloat._val(val);
         this->_updateItCurOffset(_pos.elems.flFloat);
     }
 
@@ -1132,6 +1142,15 @@ private:
         this->_execReadFlBitArrayPreamble(instr, LenBits);
         _pos.lastBo = readFlBitArrayInstr.bo();
         return Func(this->_bufAtHead());
+    }
+
+    template <Size LenBits, std::uint64_t (*Func)(const std::uint8_t *)>
+    void _execReadStdFlBitArray(const Instr& instr)
+    {
+        const auto val = this->_readStdFlInt<std::uint64_t, LenBits, Func>(instr);
+
+        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBitArray);
+        this->_consumeExistingBits(LenBits);
     }
 
     template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
@@ -1181,6 +1200,15 @@ private:
         const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
 
         return Funcs[index](this->_bufAtHead());
+    }
+
+    template <std::uint64_t (*Funcs[])(const std::uint8_t *)>
+    void _execReadFlBitArray(const Instr& instr)
+    {
+        const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
+
+        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBitArray);
+        this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
     template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
@@ -1329,7 +1357,7 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<_ExecReaction (Vm::*)(const Instr&), 85> _execFuncs;
+    std::array<_ExecReaction (Vm::*)(const Instr&), 96> _execFuncs;
 
     // position (whole VM's state)
     VmPos _pos;

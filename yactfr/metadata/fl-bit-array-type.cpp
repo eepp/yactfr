@@ -21,6 +21,12 @@ FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned 
     assert(_len <= 64);
 }
 
+FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int align,
+                                                 const unsigned int len, const ByteOrder bo) :
+    FixedLengthBitArrayType {_KIND_FL_BIT_ARRAY, align, len, bo}
+{
+}
+
 bool FixedLengthBitArrayType::operator<(const FixedLengthBitArrayType& other) const noexcept
 {
     if (this->alignment() < other.alignment()) {

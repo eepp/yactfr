@@ -67,6 +67,9 @@ private:
     void _buildReadScopeInstr(Scope scope, const DataType *dt, Proc& baseProc);
     void _buildReadInstr(const StructureMemberType *memberType, const DataType& dt, Proc& baseProc);
 
+    void _buildReadFlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
+
     void _buildReadFlSIntInstr(const StructureMemberType *memberType, const DataType& dt,
                                Proc& baseProc);
 

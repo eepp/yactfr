@@ -116,6 +116,42 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "UNSET";
         break;
 
+    case Kind::READ_FL_BIT_ARRAY_LE:
+        kindStr = "READ_FL_BIT_ARRAY_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_BE:
+        kindStr = "READ_FL_BIT_ARRAY_BE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A8:
+        kindStr = "READ_FL_BIT_ARRAY_A8";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A16_LE:
+        kindStr = "READ_FL_BIT_ARRAY_A16_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A32_LE:
+        kindStr = "READ_FL_BIT_ARRAY_A32_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A64_LE:
+        kindStr = "READ_FL_BIT_ARRAY_A64_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A16_BE:
+        kindStr = "READ_FL_BIT_ARRAY_A16_BE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A32_BE:
+        kindStr = "READ_FL_BIT_ARRAY_A32_BE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A64_BE:
+        kindStr = "READ_FL_BIT_ARRAY_A64_BE";
+        break;
+
     case Kind::READ_FL_SINT_LE:
         kindStr = "READ_FL_SINT_LE";
         break;
@@ -506,11 +542,72 @@ SetPktEndDefClkValInstr::SetPktEndDefClkValInstr() :
 {
 }
 
+static inline Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
+{
+    assert(dt.isFixedLengthBitArrayType());
+
+    Instr::Kind kind = Instr::Kind::UNSET;
+    auto& bitArrayType = dt.asFixedLengthBitArrayType();
+
+    if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
+        kind = Instr::Kind::READ_FL_BIT_ARRAY_LE;
+
+        if (dt.alignment() % 8 == 0) {
+            switch (bitArrayType.length()) {
+            case 8:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+
+            case 16:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A16_LE;
+
+            case 32:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A32_LE;
+
+            case 64:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A64_LE;
+
+            default:
+                break;
+            }
+        }
+    } else {
+        kind = Instr::Kind::READ_FL_BIT_ARRAY_BE;
+
+        if (dt.alignment() % 8 == 0) {
+            switch (bitArrayType.length()) {
+            case 8:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+
+            case 16:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A16_BE;
+
+            case 32:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A32_BE;
+
+            case 64:
+                return Instr::Kind::READ_FL_BIT_ARRAY_A64_BE;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    assert(kind != Instr::Kind::UNSET);
+    return kind;
+}
+
 ReadFlBitArrayInstr::ReadFlBitArrayInstr(const Kind kind, const StructureMemberType * const member,
-                                     const DataType& dt) :
+                                         const DataType& dt) :
     ReadDataInstr {kind, member, dt},
     _len {dt.asFixedLengthBitArrayType().length()},
     _bo {dt.asFixedLengthBitArrayType().byteOrder()}
+{
+}
+
+ReadFlBitArrayInstr::ReadFlBitArrayInstr(const StructureMemberType * const member,
+                                         const DataType& dt) :
+    ReadFlBitArrayInstr {kindFromFlBitArrayType(dt), member, dt}
 {
 }
 

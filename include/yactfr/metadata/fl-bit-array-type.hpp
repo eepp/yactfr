@@ -30,6 +30,29 @@ protected:
     explicit FixedLengthBitArrayType(int kind, unsigned int align, unsigned int len, ByteOrder bo);
 
 public:
+    /*!
+    @brief
+        Builds a fixed-length bit array type.
+
+    @param[in] alignment
+        Alignment of data stream fixed-length bit arrays described by
+        this type.
+    @param[in] length
+        Length of data stream fixed-length bit arrays (bits) described
+        by this type.
+    @param[in] byteOrder
+        Byte order of data stream fixed-length bit arrays described by
+        this type.
+
+    @pre
+        \p alignment > 0.
+    @pre
+        \p alignment is a power of two.
+    @pre
+        \p length > 0.
+    */
+    explicit FixedLengthBitArrayType(unsigned int alignment, unsigned int length, ByteOrder byteOrder);
+
     /// Length of data stream fixed-length bit arrays (bits) described
     /// by this type.
     unsigned int length() const noexcept

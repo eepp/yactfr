@@ -130,6 +130,12 @@ public:
         *_os << '\n';
     }
 
+    void visit(const yactfr::FixedLengthBitArrayElement& elem) override
+    {
+        this->_visitDataElem(elem, "FLBA");
+        *_os << ':' << elem.unsignedIntegerValue() << '\n';
+    }
+
     void visit(const yactfr::FixedLengthSignedIntegerElement& elem) override
     {
         this->_visitDataElem(elem, "FLSI");

@@ -764,6 +764,11 @@ public:
     {
     }
 
+    void visit(const FixedLengthBitArrayType& dt) override
+    {
+        _pktProcBuilder->_buildReadFlBitArrayInstr(_memberType, dt, *_baseProc);
+    }
+
     void visit(const FixedLengthSignedIntegerType& dt) override
     {
         _pktProcBuilder->_buildReadFlSIntInstr(_memberType, dt, *_baseProc);
@@ -848,6 +853,13 @@ static void buildBasicReadInstr(const StructureMemberType * const memberType, co
                                 Proc& baseProc)
 {
     baseProc.pushBack(std::make_shared<ReadInstrT>(memberType, dt));
+}
+
+void PktProcBuilder::_buildReadFlBitArrayInstr(const StructureMemberType * const memberType,
+                                               const DataType& dt, Proc& baseProc)
+{
+    assert(dt.isFixedLengthBitArrayType());
+    buildBasicReadInstr<ReadFlBitArrayInstr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadFlSIntInstr(const StructureMemberType * const memberType,

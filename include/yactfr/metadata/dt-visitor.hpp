@@ -32,6 +32,17 @@ public:
 
     /*!
     @brief
+        Visits the fixed-length bit array type \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const FixedLengthBitArrayType& type)
+    {
+    }
+
+    /*!
+    @brief
         Visits the fixed-length signed integer type \p type.
 
     @param[in] type

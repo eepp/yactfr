@@ -18,6 +18,7 @@ class DynamicLengthStringBeginningElement;
 class EndElement;
 class EventRecordBeginningElement;
 class EventRecordInfoElement;
+class FixedLengthBitArrayElement;
 class FixedLengthFloatingPointNumberElement;
 class FixedLengthSignedEnumerationElement;
 class FixedLengthSignedIntegerElement;
@@ -60,6 +61,7 @@ public:
     virtual void visit(const EndElement& elem);
     virtual void visit(const EventRecordBeginningElement& elem);
     virtual void visit(const EventRecordInfoElement& elem);
+    virtual void visit(const FixedLengthBitArrayElement& elem);
     virtual void visit(const FixedLengthFloatingPointNumberElement& elem);
     virtual void visit(const FixedLengthSignedEnumerationElement& elem);
     virtual void visit(const FixedLengthSignedIntegerElement& elem);

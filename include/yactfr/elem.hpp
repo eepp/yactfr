@@ -84,6 +84,9 @@ public:
         /// EventRecordInfoElement
         EVENT_RECORD_INFO,
 
+        /// FixedLengthBitArrayElement
+        FIXED_LENGTH_BIT_ARRAY,
+
         /// FixedLengthSignedIntegerElement
         FIXED_LENGTH_SIGNED_INTEGER,
 
@@ -706,11 +709,11 @@ private:
 
 /*!
 @brief
-    Fixed-length signed integer element.
+    Fixed-length bit array element.
 
 @ingroup elems
 */
-class FixedLengthSignedIntegerElement :
+class FixedLengthBitArrayElement :
     public Element,
     public DataElement
 {
@@ -718,8 +721,96 @@ class FixedLengthSignedIntegerElement :
     friend class internal::VmPos;
 
 protected:
-    explicit FixedLengthSignedIntegerElement(const Kind kind) :
+    explicit FixedLengthBitArrayElement(const Kind kind) :
         Element {kind}
+    {
+    }
+
+private:
+    explicit FixedLengthBitArrayElement() :
+        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_BIT_ARRAY}
+    {
+    }
+
+public:
+    /// Fixed-length bit array type.
+    const FixedLengthBitArrayType& type() const noexcept
+    {
+        return *_dt;
+    }
+
+    /// Value as an unsigned integer.
+    std::uint64_t unsignedIntegerValue() const noexcept
+    {
+        return _theVal.u;
+    }
+
+    /*!
+    @brief
+        Returns the value of the bit at the index \p index, where
+        0 is the index of the least significant bit.
+
+    @param[in] index
+        Index of the bit to return.
+
+    @returns
+        Bit at the index \p index.
+
+    @pre
+        \p index < <code>type().length()</code>
+    */
+    bool operator[](const Index index) const noexcept
+    {
+        assert(index < _dt->length());
+        return static_cast<bool>((_theVal.u >> index) & 1);
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+private:
+    void _val(const std::uint64_t val) noexcept
+    {
+        _theVal.u = val;
+    }
+
+    void _val(const std::int64_t val) noexcept
+    {
+        _theVal.i = val;
+    }
+
+    void _val(const double val) noexcept
+    {
+        _theVal.d = val;
+    }
+
+protected:
+    const FixedLengthBitArrayType *_dt;
+
+    union {
+        std::uint64_t u;
+        std::int64_t i;
+        double d;
+    } _theVal;
+};
+
+/*!
+@brief
+    Fixed-length signed integer element.
+
+@ingroup elems
+*/
+class FixedLengthSignedIntegerElement :
+    public FixedLengthBitArrayElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit FixedLengthSignedIntegerElement(const Kind kind) :
+        FixedLengthBitArrayElement {kind}
     {
     }
 
@@ -739,7 +830,7 @@ public:
     /// Integral value.
     long long value() const noexcept
     {
-        return _val;
+        return static_cast<long long>(_theVal.i);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -749,7 +840,6 @@ public:
 
 protected:
     const FixedLengthSignedIntegerType *_dt;
-    long long _val;
 };
 
 /*!
@@ -759,15 +849,14 @@ protected:
 @ingroup elems
 */
 class FixedLengthUnsignedIntegerElement :
-    public Element,
-    public DataElement
+    public FixedLengthBitArrayElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
     explicit FixedLengthUnsignedIntegerElement(const Kind kind) :
-        Element {kind}
+        FixedLengthBitArrayElement {kind}
     {
     }
 
@@ -787,7 +876,7 @@ public:
     /// Integral value.
     unsigned long long value() const noexcept
     {
-        return _val;
+        return static_cast<unsigned long long>(_theVal.u);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -797,7 +886,6 @@ public:
 
 protected:
     const FixedLengthUnsignedIntegerType *_dt;
-    unsigned long long _val;
 };
 
 /*!
@@ -869,15 +957,14 @@ public:
 @ingroup elems
 */
 class FixedLengthFloatingPointNumberElement final :
-    public Element,
-    public DataElement
+    public FixedLengthBitArrayElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
     explicit FixedLengthFloatingPointNumberElement() :
-        Element {Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER}
+        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER}
     {
     }
 
@@ -891,7 +978,7 @@ public:
     /// Real value.
     double value() const noexcept
     {
-        return _val;
+        return _theVal.d;
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -901,7 +988,6 @@ public:
 
 private:
     const FixedLengthFloatingPointNumberType *_dt;
-    double _val;
 };
 
 /*!
