@@ -179,8 +179,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
         return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
     });
 
-    return std::make_unique<const StaticLengthArrayType>(1, std::move(elemDt),
-                                                         pseudoArrayType.len(),
+    return std::make_unique<const StaticLengthArrayType>(pseudoArrayType.minAlign(),
+                                                         std::move(elemDt), pseudoArrayType.len(),
                                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()),
                                                          pseudoArrayType.hasTraceTypeUuidRole());
 }
@@ -218,7 +218,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
         return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
     });
 
-    return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemDt), lenLoc,
+    return std::make_unique<const DynamicLengthArrayType>(pseudoArrayType.minAlign(),
+                                                          std::move(elemDt), lenLoc,
                                                           tryCloneUserAttrs(pseudoArrayType.userAttrs()));
 }
 

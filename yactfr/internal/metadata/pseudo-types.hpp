@@ -405,8 +405,8 @@ struct PseudoArrayType :
     public WithUserAttrsMixin
 {
 protected:
-    explicit PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAttrs = nullptr,
-                             TextLocation loc = TextLocation {});
+    explicit PseudoArrayType(unsigned int minAlign, PseudoDt::UP pseudoElemType,
+                             MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
     PseudoDt& pseudoElemType() noexcept
@@ -419,7 +419,13 @@ public:
         return *_pseudoElemType;
     }
 
+    unsigned int minAlign() const noexcept
+    {
+        return _minAlign;
+    }
+
 private:
+    unsigned int _minAlign;
     PseudoDt::UP _pseudoElemType;
 };
 
@@ -431,6 +437,9 @@ class PseudoSlArrayType final :
     public PseudoSlDtMixin
 {
 public:
+    explicit PseudoSlArrayType(unsigned int minAlign, Size len, PseudoDt::UP pseudoElemType,
+                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+
     explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
                                MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
@@ -468,6 +477,10 @@ class PseudoDlArrayType final :
     public PseudoDlDtMixin
 {
 public:
+    explicit PseudoDlArrayType(unsigned int minAlign, PseudoDataLoc pseudoLenLoc,
+                               PseudoDt::UP pseudoElemType, MapItem::UP userAttrs = nullptr,
+                               TextLocation loc = TextLocation {});
+
     explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
                                MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 

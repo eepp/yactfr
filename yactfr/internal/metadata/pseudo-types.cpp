@@ -209,25 +209,39 @@ PseudoDlDtMixin::PseudoDlDtMixin(PseudoDataLoc pseudoLenLoc) :
 {
 }
 
-PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAttrs,
-                                 TextLocation loc) :
+PseudoArrayType::PseudoArrayType(const unsigned int minAlign, PseudoDt::UP pseudoElemType,
+                                 MapItem::UP userAttrs, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithUserAttrsMixin {std::move(userAttrs)},
+    _minAlign {minAlign},
     _pseudoElemType {std::move(pseudoElemType)}
+{
+}
+
+PseudoSlArrayType::PseudoSlArrayType(const unsigned int minAlign, const Size len,
+                                     PseudoDt::UP pseudoElemType, MapItem::UP userAttrs,
+                                     TextLocation loc) :
+    PseudoArrayType {minAlign, std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
+    PseudoSlDtMixin {len}
 {
 }
 
 PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType,
                                      MapItem::UP userAttrs, TextLocation loc) :
-    PseudoArrayType {std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
-    PseudoSlDtMixin {len}
+    PseudoSlArrayType {1, len, std::move(pseudoElemType), std::move(userAttrs), std::move(loc)}
+
 {
 }
 
 PseudoDt::UP PseudoSlArrayType::clone() const
 {
-    return std::make_unique<PseudoSlArrayType>(_len, this->pseudoElemType().clone(),
-                                               tryCloneUserAttrs(this->userAttrs()), this->loc());
+    auto pseudoDt = std::make_unique<PseudoSlArrayType>(this->minAlign(), _len,
+                                                        this->pseudoElemType().clone(),
+                                                        tryCloneUserAttrs(this->userAttrs()),
+                                                        this->loc());
+
+    pseudoDt->hasTraceTypeUuidRole(_hasTraceTypeUuidRole);
+    return pseudoDt;
 }
 
 bool PseudoSlArrayType::isEmpty() const
@@ -249,16 +263,25 @@ void PseudoSlArrayType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
+PseudoDlArrayType::PseudoDlArrayType(const unsigned int minAlign, PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
+                                     MapItem::UP userAttrs, TextLocation loc) :
+    PseudoArrayType {minAlign, std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
+    PseudoDlDtMixin {std::move(pseudoLenLoc)}
+{
+}
+
 PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
                                      MapItem::UP userAttrs, TextLocation loc) :
-    PseudoArrayType {std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
-    PseudoDlDtMixin {std::move(pseudoLenLoc)}
+    PseudoDlArrayType {
+        1, std::move(pseudoLenLoc), std::move(pseudoElemType), std::move(userAttrs), std::move(loc)
+    }
 {
 }
 
 PseudoDt::UP PseudoDlArrayType::clone() const
 {
-    return std::make_unique<PseudoDlArrayType>(_pseudoLenLoc, this->pseudoElemType().clone(),
+    return std::make_unique<PseudoDlArrayType>(this->minAlign(), _pseudoLenLoc,
+                                               this->pseudoElemType().clone(),
                                                tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
