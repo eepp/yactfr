@@ -87,6 +87,38 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
+
+    @pre
+        @parblock
+        If set, no data type in \p eventRecordCommonContextType,
+        recursively, has a role (UnsignedIntegerTypeRole or "trace type
+        UUID" role).
+
+        If set, no data type in \p packetContextType, recursively,
+        has a "trace type UUID" role.
+
+        If set, no data type in \p eventRecordHeaderType, recursively,
+        has a "trace type UUID" role.
+
+        If set, any unsigned integer type within \p packetContextType,
+        recursively, may only have the following roles:
+
+        - UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH
+        - UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH
+        - UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT
+        - UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER
+        - When \p defaultClockType is not \c nullptr:
+          - UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP
+          - UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP
+
+        If set, any unsigned integer type within
+        \p eventRecordHeaderType, recursively, may only have the
+        following roles:
+
+        - UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID
+        - When \p defaultClockType is not \c nullptr:
+          UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP
+        @endparblock
     */
     explicit DataStreamType(TypeId id, boost::optional<std::string> nameSpace,
                             boost::optional<std::string> name,

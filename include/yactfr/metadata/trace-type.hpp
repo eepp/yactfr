@@ -102,9 +102,81 @@ public:
         @endparblock
 
     @pre
-        \p majorVersion is 1.
-    @pre
-        \p minorVersion is 8.
+        @parblock
+        \p majorVersion and \p minorVersion are resp. 1 and 8, or
+        2 and 0.
+
+        If set, any unsigned integer type within \p packetHeaderType,
+        recursively, may only have the following roles:
+
+        - UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER
+        - UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID
+        - UnsignedIntegerTypeRole::DATA_STREAM_ID
+
+        If any data type within \p packetHeaderType or
+        \p dataStreamTypes has a "trace type UUID" role, then
+        \p uuid is set.
+
+        For each \link DataStreamType data stream type\endlink \em DST
+        of \p dataStreamTypes, if \em DST has a default clock type, it
+        points to one of the clock types of \p clockTypes.
+
+        The data types of \p packetHeaderType and of
+        \p dataStreamTypes, recursively, have
+        \link DataLocation data locations\endlink which satisfy the
+        requirements of \yactfr_ctf2.
+
+        <strong>If \p majorVersion is 1</strong>, then:
+
+        - \p packetHeaderType and all the data types within
+          \p dataStreamTypes don't contain the following data types:
+
+          - VariableLengthBitArrayType
+          - VariableLengthUnsignedIntegerType
+          - VariableLengthSignedIntegerType
+          - VariableLengthUnsignedEnumerationType
+          - VariableLengthSignedEnumerationType
+          - StaticLengthBlobType
+          - DynamicLengthBlobType
+          - OptionalWithBooleanSelectorType
+          - OptionalWithUnsignedIntegerSelectorType
+          - OptionalWithSignedIntegerSelectorType
+
+        - \p userAttributes is not set.
+
+        - All the \link ClockType clock types\endlink
+          within \p clockTypes have no user attributes
+          (ClockType::userAttributes() returns \c nullptr).
+
+        - All the \link DataStreamType data stream types\endlink
+          within \p dataStreamTypes have no user attributes
+          (DataStreamType::userAttributes() returns \c nullptr).
+
+        - All the \link EventRecordType event record types\endlink
+          within \p dataStreamTypes have no user attributes
+          (EventRecordType::userAttributes() returns \c nullptr).
+
+        - All the \link DataType data types\endlink
+          within \p dataStreamTypes have no user attributes
+          (DataType::userAttributes() returns \c nullptr).
+
+        <strong>If \p majorVersion is 2</strong>, then:
+
+        - All contained \link EventRecordType event record types\endlink
+          (in \p dataStreamTypes) have \em no log level
+          (EventRecordType::logLevel() returns
+          <code>boost::none</code>).
+
+        - All contained \link EventRecordType event record types\endlink
+          (in \p dataStreamTypes) have \em no EMF URI
+          (EventRecordType::emfUri() returns <code>boost::none</code>).
+
+        - If set, any
+          \link StaticLengthArrayType static-length array type\endlink
+          within \p packetHeaderType, recursively, doesn't have a "trace
+          type UUID" role (StaticLengthArrayType::hasTraceTypeUuidRole()
+          returns \c false).
+        @endparblock
     */
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
                        boost::optional<boost::uuids::uuid> uuid,
