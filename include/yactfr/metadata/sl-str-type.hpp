@@ -34,8 +34,8 @@ public:
         Alignment of data stream static-length strings described by this
         type.
     @param[in] maximumLength
-        Maximum length (bytes) of data stream static-length strings
-        described by this type.
+        Maximum length (UTF-8 bytes) of data stream static-length
+        strings described by this type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream static-length strings described
@@ -58,8 +58,8 @@ public:
         property (8).
 
     @param[in] maximumLength
-        Maximum length (bytes) of data stream static-length strings
-        described by this type.
+        Maximum length (UTF-8 bytes) of data stream static-length
+        strings described by this type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream static-length strings described
@@ -70,8 +70,8 @@ public:
     */
     explicit StaticLengthStringType(Size maximumLength, MapItem::UP userAttributes = nullptr);
 
-    /// Maximum length (bytes) of data stream static-length strings
-    /// described by this type.
+    /// Maximum length (UTF-8 bytes) of data stream static-length
+    /// strings described by this type.
     Size maximumLength() const noexcept
     {
         return _maxLen;

@@ -42,7 +42,7 @@ public:
         Alignment of data stream dynamic-length strings described by
         this type.
     @param[in] maximumLengthLocation
-        Location of maximum lengths (bytes) of data stream
+        Location of maximum lengths (UTF-8 bytes) of data stream
         dynamic-length strings described by this type.
     @param[in] userAttributes
         @parblock
@@ -67,7 +67,7 @@ public:
         alignment property (8).
 
     @param[in] maximumLengthLocation
-        Location of maximum lengths (bytes) of data stream
+        Location of maximum lengths (UTF-8 bytes) of data stream
         dynamic-length strings described by this type.
     @param[in] userAttributes
         @parblock
@@ -80,7 +80,7 @@ public:
     explicit DynamicLengthStringType(DataLocation maximumLengthLocation,
                                      MapItem::UP userAttributes = nullptr);
 
-    /// Location of maximum lengths (bytes) of data stream
+    /// Location of maximum lengths (UTF-8 bytes) of data stream
     /// dynamic-length strings described by this type.
     const DataLocation& maximumLengthLocation() const noexcept
     {
