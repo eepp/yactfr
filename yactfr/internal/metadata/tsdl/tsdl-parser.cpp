@@ -41,7 +41,8 @@ void TsdlParser::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
 
         if (_pseudoTraceType->clkTypes().empty()) {
             // create implicit 1-GHz clock type
-            _pseudoTraceType->clkTypes().insert(std::make_unique<const ClockType>(1'000'000'000ULL));
+            _pseudoTraceType->clkTypes().insert(std::make_unique<const ClockType>(1'000'000'000ULL,
+                                                                                  std::string {"default"}));
         }
 
         if (_pseudoTraceType->clkTypes().size() != 1) {
