@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -138,7 +139,21 @@ JsonVal::UP parseJson(const char * const begin, const char * const end, const Si
 {
     JsonValBuilder builder {baseOffset};
 
-    parseJson(begin, end, builder);
+    try {
+        parseJson(begin, end, builder);
+    } catch (const TextParseError& exc) {
+        // parseJson() only throws single-message text parse errors
+        assert(exc.messages().size() == 1);
+
+        auto& firstMsg = exc.messages().front();
+
+        throwTextParseError(firstMsg.message(), TextLocation {
+            firstMsg.location().offset() + baseOffset,
+            firstMsg.location().lineNumber(),
+            firstMsg.location().columnNumber()
+        });
+    }
+
     return builder.releaseVal();
 }
 
