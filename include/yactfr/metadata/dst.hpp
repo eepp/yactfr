@@ -186,6 +186,10 @@ public:
         User attributes.
 
     If set, each key of the returned map item is a namespace.
+
+    @note
+        Even if the return value isn't \c nullptr, the returned map
+        item may still be empty (which also means no user attributes).
     */
     const MapItem *userAttributes() const noexcept
     {
