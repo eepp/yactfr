@@ -2,7 +2,8 @@
 
 = yactfr
 Philippe Proulx
-15 February 2022
+15 March 2022
+:toc: left
 
 image::https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
 
@@ -269,11 +270,22 @@ CC=clang CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=release -DOPT_BUILD_DOC=ON
 == Run the tests
 
 Once you have <<build,built>> the project in the build directory, you
-can run the tests. You need Bash and Python{nbsp}3.
+can run the tests. You need Python{nbsp}3 and
+https://pytest.org/[pytest].
 
-.Run the yactfr tests (from the build directory):
+.Run the yactfr tests from the build directory.
 ----
 make check
+----
+
+If you're in a hurry and you have the
+https://pypi.org/project/pytest-xdist/[pytest-xdist] package, you can
+parallelize the testing. You need to set the `YACTFR_BINARY_DIR` to the
+build directory (absolute path), for example:
+
+.Run the yactfr tests in parallel (eight processes) from the root directory of the source tree.
+----
+YACTFR_BINARY_DIR=$(pwd)/build py.test -n8
 ----
 
 == Usage examples

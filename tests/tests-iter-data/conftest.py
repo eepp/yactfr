@@ -1,16 +1,33 @@
-# Copyright (C) 2018 Philippe Proulx <eepp.ca>
+# The MIT License (MIT)
 #
-# This software may be modified and distributed under the terms
-# of the MIT license. See the LICENSE file for details.
+# Copyright (c) 2015-2022 Philippe Proulx <pproulx@efficios.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import os
 import os.path
+import pytest
 import re
-import sys
-
-
-def _error(msg):
-    print('Error: ' + msg, file=sys.stderr)
-    sys.exit(1)
+import subprocess
+import tempfile
+import pathlib
 
 
 def _split(path):
@@ -40,7 +57,7 @@ def _read_bin_bytes(tbytes, index):
 
     while True:
         if index == len(tbytes):
-            _error('Missing `]` at the end.')
+            raise RuntimeError('Missing `]` at the end.')
 
         ch = tbytes[index]
 
@@ -56,7 +73,7 @@ def _read_bin_bytes(tbytes, index):
             index += 1
         elif ch == ']':
             if len(cur_byte) > 0:
-                _error('Missing bits before `]`.')
+                raise RuntimeError('Missing bits before `]`.')
 
             index += 1
             return index, content
@@ -64,7 +81,7 @@ def _read_bin_bytes(tbytes, index):
             index += 1
 
     if len(cur_byte) > 0:
-        _error('Missing bits at the end.')
+        raise RuntimeError('Missing bits at the end.')
 
 
 def _read_str_bytes(tbytes, index):
@@ -72,7 +89,7 @@ def _read_str_bytes(tbytes, index):
 
     while True:
         if index == len(tbytes):
-            _error('Missing `"` at the end.')
+            raise RuntimeError('Missing `"` at the end.')
 
         ch = tbytes[index]
 
@@ -107,14 +124,14 @@ def _create_data_stream(lines, out_dir_path):
             index += 1
         elif ch == '[':
             if last_nibble is not None:
-                _error('Missing nibble before `[`.')
+                raise RuntimeError('Missing nibble before `[`.')
 
             index += 1
             index, bytes = _read_bin_bytes(tbytes, index)
             content += bytes
         elif ch == '"':
             if last_nibble is not None:
-                _error('Missing nibble before `"`.')
+                raise RuntimeError('Missing nibble before `"`.')
 
             index += 1
             index, bytes = _read_str_bytes(tbytes, index)
@@ -123,7 +140,7 @@ def _create_data_stream(lines, out_dir_path):
             index += 1
 
     if last_nibble is not None:
-        _error('Missing nibble at the end.')
+        raise RuntimeError('Missing nibble at the end.')
 
     with open(os.path.join(out_dir_path, 'stream'), 'wb') as f:
         f.write(content)
@@ -159,9 +176,51 @@ typealias integer { signed = true; size = 32; byte_order = be; } := i32be;
 typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
 ''')
     _create_file_from_lines('metadata', metadata_lines, out_dir_path)
-    _create_file_from_lines('.expect', expect_lines, out_dir_path)
     _create_data_stream(data_lines, out_dir_path)
+    return '\n'.join(expect_lines)
 
 
-if __name__ == '__main__':
-    _create_streams(sys.argv[1], sys.argv[2])
+class _StreamsItem(pytest.Item):
+    def __init__(self, parent, path):
+        super().__init__(parent=parent, name=os.path.splitext(os.path.basename(path))[0])
+        self._path = path
+
+    def runtest(self):
+        # create a temporary directory to contain the trace
+        trace_tmp_dir = tempfile.TemporaryDirectory(prefix='pytest-yactfr')
+
+        # create the streams and get the expected lines
+        expect = _create_streams(self._path, trace_tmp_dir.name)
+
+        # run the tester, keeping the output
+        tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests', 'testers',
+                                   'iter-data-tester')
+        output = subprocess.check_output([tester_path, trace_tmp_dir.name], text=True)
+
+        # compare to the expected lines
+        assert(output.strip('\n') == expect.strip('\n'))
+
+        # delete temporary directory
+        trace_tmp_dir.cleanup()
+
+    def repr_failure(self, excinfo, style=None):
+        return f'`{self._path}` failed: {excinfo}.'
+
+    def reportinfo(self):
+        return self._path, None, self.name
+
+
+class _StreamsFile(pytest.File):
+    def collect(self):
+        yield _StreamsItem.from_parent(self, path=self.path)
+
+
+def pytest_collect_file(parent, path):
+    ext = '.streams'
+
+    if path.ext != ext:
+        # not a streams file: don't collect
+        return
+
+    # create the file node
+    return _StreamsFile.from_parent(parent, path=pathlib.Path(path))
