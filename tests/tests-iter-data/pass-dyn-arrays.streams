@@ -45,10 +45,10 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           UI:len:7
+     0           FLUI:len:7
     32           DA:seq {
     32             ST {
-    32               UI:len2:3
+    32               FLUI:len2:3
     48               DA:seq {
     48                 STR {
     48                   SS:7:copper
@@ -62,7 +62,7 @@ event {
    216               }
    216             }
    216             ST {
-   216               UI:len2:2
+   216               FLUI:len2:2
    232               DA:seq {
    232                 STR {
    232                   SS:5:neat
@@ -73,12 +73,12 @@ event {
    336               }
    336             }
    336             ST {
-   336               UI:len2:0
+   336               FLUI:len2:0
    352               DA:seq {
    352               }
    352             }
    352             ST {
-   352               UI:len2:2
+   352               FLUI:len2:2
    368               DA:seq {
    368                 STR {
    368                   SS:9:decisive
@@ -89,7 +89,7 @@ event {
    496               }
    496             }
    496             ST {
-   496               UI:len2:1
+   496               FLUI:len2:1
    512               DA:seq {
    512                 STR {
    512                   SS:4:hum
@@ -97,7 +97,7 @@ event {
    544               }
    544             }
    544             ST {
-   544               UI:len2:1
+   544               FLUI:len2:1
    560               DA:seq {
    560                 STR {
    560                   SS:1:
@@ -105,7 +105,7 @@ event {
    568               }
    568             }
    568             ST {
-   568               UI:len2:2
+   568               FLUI:len2:2
    584               DA:seq {
    584                 STR {
    584                   SS:6:nerve
@@ -116,21 +116,21 @@ event {
    688               }
    688             }
    688           }
-   688           UI:zz:0
-   696           UI:a:1
-   704           UI:b:2
-   712           UI:c:3
+   688           FLUI:zz:0
+   696           FLUI:a:1
+   704           FLUI:b:2
+   712           FLUI:c:3
    720           DA:seq3 {
    720             DA {
    720               DA {
-   720                 UI:17
-   728                 UI:34
-   736                 UI:51
+   720                 FLUI:17
+   728                 FLUI:34
+   736                 FLUI:51
    744               }
    744               DA {
-   744                 UI:68
-   752                 UI:85
-   760                 UI:102
+   744                 FLUI:68
+   752                 FLUI:85
+   760                 FLUI:102
    768               }
    768             }
    768           }

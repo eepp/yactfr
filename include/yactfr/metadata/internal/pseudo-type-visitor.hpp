@@ -27,11 +27,11 @@ public:
     {
     }
 
-    virtual void visit(PseudoUIntType&)
+    virtual void visit(PseudoFlUIntType&)
     {
     }
 
-    virtual void visit(PseudoUEnumType&)
+    virtual void visit(PseudoFlUEnumType&)
     {
     }
 
@@ -66,11 +66,11 @@ public:
     {
     }
 
-    virtual void visit(const PseudoUIntType&)
+    virtual void visit(const PseudoFlUIntType&)
     {
     }
 
-    virtual void visit(const PseudoUEnumType&)
+    virtual void visit(const PseudoFlUEnumType&)
     {
     }
 

@@ -43,24 +43,24 @@ test_iter_data() {
   test_iter_data fail-be-to-le-change-in-byte
 }
 
-@test 'floating point number beyond data -> fail' {
-  test_iter_data fail-float-beyond-data
+@test 'fixed-length floating point number beyond data -> fail' {
+  test_iter_data fail-fl-float-beyond-data
 }
 
-@test 'integer beyond content -> fail' {
-  test_iter_data fail-int-beyond-content
+@test 'fixed-length integer beyond content -> fail' {
+  test_iter_data fail-fl-int-beyond-content
 }
 
-@test 'integer beyond data -> fail' {
-  test_iter_data fail-int-beyond-data
+@test 'fixed-length integer beyond data -> fail' {
+  test_iter_data fail-fl-int-beyond-data
 }
 
-@test '1-bit integer beyond content -> fail' {
-  test_iter_data fail-int-one-bit-beyond-content
+@test '1-bit fixed-length integer beyond content -> fail' {
+  test_iter_data fail-fl-int-one-bit-beyond-content
 }
 
-@test '1-bit integer beyond data -> fail' {
-  test_iter_data fail-int-one-bit-beyond-data
+@test '1-bit fixed-length integer beyond data -> fail' {
+  test_iter_data fail-fl-int-one-bit-beyond-data
 }
 
 @test 'LE to BE byte order change within same byte -> fail' {
@@ -189,40 +189,40 @@ test_iter_data() {
   test_iter_data pass-empty-data
 }
 
-@test 'various floating point numbers -> pass' {
-  test_iter_data pass-floats
+@test 'various fixed-length floating point numbers -> pass' {
+  test_iter_data pass-fl-floats
 }
 
-@test 'multiple `id` integers -> pass' {
-  test_iter_data pass-multiple-ert-id-ints
+@test 'multiple `id` fixed-length integers -> pass' {
+  test_iter_data pass-multiple-ert-id-fl-ints
 }
 
-@test 'multiple `stream_id` integers -> pass' {
-  test_iter_data pass-multiple-dst-id-ints
+@test 'multiple `stream_id` fixed-length integers -> pass' {
+  test_iter_data pass-multiple-dst-id-fl-ints
 }
 
-@test 'no event records, no `stream_id` field -> pass' {
-  test_iter_data pass-no-ers-no-dst-id-ints
+@test 'no event records, no `stream_id` fixed-length integers -> pass' {
+  test_iter_data pass-no-ers-no-dst-id-fl-ints
 }
 
-@test 'no event records, with `stream_id` field -> pass' {
-  test_iter_data pass-no-ers-with-dst-id
+@test 'no event records, with `stream_id` fixed-length integers -> pass' {
+  test_iter_data pass-no-ers-with-dst-id-fl-ints
 }
 
-@test 'various odd integers -> pass' {
-  test_iter_data pass-odd-ints
+@test 'various odd fixed-length integers -> pass' {
+  test_iter_data pass-odd-fl-ints
 }
 
-@test 'various odd enumerations -> pass' {
-  test_iter_data pass-odd-enums
+@test 'various odd fixed-length enumerations -> pass' {
+  test_iter_data pass-odd-fl-enums
 }
 
-@test 'various standard integers -> pass' {
-  test_iter_data pass-std-ints
+@test 'various standard fixed-length integers -> pass' {
+  test_iter_data pass-std-fl-ints
 }
 
-@test 'various standard enumerations -> pass' {
-  test_iter_data pass-std-enums
+@test 'various standard fixed-length enumerations -> pass' {
+  test_iter_data pass-std-fl-enums
 }
 
 @test 'packet content length without packet total length -> pass' {

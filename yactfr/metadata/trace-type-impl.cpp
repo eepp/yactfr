@@ -167,7 +167,7 @@ private:
     void _setTypeDeps(const DataType& dt, const DataLocation& loc,
                       const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
     {
-        if (dt.isIntegerType()) {
+        if (dt.isFixedLengthIntegerType()) {
             assert(locIt == loc.pathElements().end());
             dts.insert(&dt);
         } else if (dt.isStructureType()) {

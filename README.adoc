@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-14 February 2022
+15 February 2022
 
 image::https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
 
@@ -16,10 +16,10 @@ providing you with complete, ordered event record objects, the yactfr
 API offers a lower level of CTF processing: you iterate individual
 element sequences to get _elements_: beginning/end of packet,
 beginning/end of event record, beggining/end of structure, individual
-data stream scalar values like integers, floating point numbers, and
-strings, specific clock value update, known data stream ID, and the
-rest. This means the sizes of event records and packets don't influence
-the performance or memory usage of yactfr.
+data stream scalar values like fixed-length integers, fixed-length
+floating point numbers, and strings, specific clock value update, known
+data stream ID, and the rest. This means the sizes of event records and
+packets don't influence the performance or memory usage of yactfr.
 
 Some use cases where this library can prove useful:
 
@@ -58,8 +58,8 @@ $ ldd libyactfr.so
   pointer reference count change, zero virtual method call, and zero
   copy during an element sequence iteration.
 
-** A data stream integer is decoded in-place and is available as an
-   element member.
+** A data stream fixed-length integer is decoded in-place and is
+   available as an element member.
 
 ** A data stream string is available as one or more substrings in
    consecutive elements. The actual substring is a pointer to the
@@ -126,10 +126,11 @@ The non-portable part is the memory mapped file source which uses system
 functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 `madvise()`.
 
-* Decodes up to, and including, 64-bit signed/unsigned CTF integers and
-  enumerations (no "`big integers`").
+* Decodes up to, and including, 64-bit signed/unsigned CTF fixed-length
+  integers and enumerations (no "`big integers`").
 
-* Only decodes 32-bit and 64-bit CTF floating point numbers.
+* Only decodes 32-bit and 64-bit CTF fixed-length floating point
+  numbers.
 
 * Packet sizes must be multiples of 8 bits (I'm still not sure, but this
   could be enforced by the specification anyway), and be at least
@@ -334,7 +335,7 @@ int main(const int argc, const char * const argv[])
 ----
 ====
 
-.Print all the signed integers of the `sched_switch` event records and their offset.
+.Print all the fixed-length signed integers of the `sched_switch` event records and their offset.
 ====
 [source,cpp]
 ----
@@ -366,7 +367,7 @@ int main(const int argc, const char * const argv[])
     // create an element sequence from the trace type and data source factory
     yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
 
-    // print all the signed integers of the `sched_switch` event records
+    // print all the fixed-length signed integers of the `sched_switch` ERs
     const auto endIt = seq.end();
     bool inSchedSwitchEventRecord = false;
 
@@ -385,10 +386,10 @@ int main(const int argc, const char * const argv[])
             continue;
         }
 
-        if (inSchedSwitchEventRecord && it->kind() == yactfr::Element::Kind::SIGNED_INTEGER) {
+        if (inSchedSwitchEventRecord && it->kind() == yactfr::Element::Kind::FIXED_LENGTH_SIGNED_INTEGER) {
             std::cout << it.offset() << ": ";
 
-            auto& intElem = static_cast<const yactfr::SignedIntegerElement&>(*it);
+            auto& intElem = static_cast<const yactfr::FixedLengthSignedIntegerElement&>(*it);
 
             if (intElem.structureMemberType()) {
                 std::cout << intElem.structureMemberType()->displayName() << ": ";
@@ -494,15 +495,15 @@ This is a faster version of the previous example.
 
 Instead of decoding the whole packet to find its length, we use the
 "`expected packet total length`" element. This element is available
-after the decoder reads the expected packet total length unsigned
-integer from the packet context. Then, we make the iterator seek the
-next packet directly.
+after the decoder reads the expected packet total length fixed-length
+unsigned integer from the packet context. Then, we make the iterator
+seek the next packet directly.
 
 Note that this example doesn't work if the packet context type does not
-contain an expected packet total length unsigned integer, in which case
-the data stream _must_ contain a single packet. This could be detected
-by inspecting the metadata (trace type) and using the size of the whole
-data stream file as the unique packet total length.
+contain an expected packet total length fixed-length unsigned integer,
+in which case the data stream _must_ contain a single packet. This could
+be detected by inspecting the metadata (trace type) and using the size
+of the whole data stream file as the unique packet total length.
 
 [source,cpp]
 ----

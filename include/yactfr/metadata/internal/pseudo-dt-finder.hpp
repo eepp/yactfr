@@ -49,12 +49,12 @@ public:
         this->_tryAdd(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoUIntType>& pseudoDt) override
+    void visit(_PseudoDt<PseudoFlUIntType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoUEnumType>& pseudoDt) override
+    void visit(_PseudoDt<PseudoFlUEnumType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
     }

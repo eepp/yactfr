@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,13 +7,13 @@
 
 #include <cassert>
 
-#include <yactfr/metadata/bit-array-type.hpp>
+#include <yactfr/metadata/fl-bit-array-type.hpp>
 
 namespace yactfr {
 
-BitArrayType::BitArrayType(const int kind, const unsigned int align, const unsigned int len,
-                           const ByteOrder bo) :
-    ScalarDataType {_KIND_BIT_ARRAY | kind, align},
+FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned int align,
+                                                 const unsigned int len, const ByteOrder bo) :
+    ScalarDataType {_KIND_FL_BIT_ARRAY | kind, align},
     _len {len},
     _bo {bo}
 {
@@ -21,7 +21,7 @@ BitArrayType::BitArrayType(const int kind, const unsigned int align, const unsig
     assert(_len <= 64);
 }
 
-bool BitArrayType::operator<(const BitArrayType& other) const noexcept
+bool FixedLengthBitArrayType::operator<(const FixedLengthBitArrayType& other) const noexcept
 {
     if (this->alignment() < other.alignment()) {
         return true;
@@ -46,9 +46,9 @@ bool BitArrayType::operator<(const BitArrayType& other) const noexcept
     return false;
 }
 
-bool BitArrayType::_compare(const DataType& other) const noexcept
+bool FixedLengthBitArrayType::_compare(const DataType& other) const noexcept
 {
-    auto& otherBitArrayType = static_cast<const BitArrayType&>(other);
+    auto& otherBitArrayType = static_cast<const FixedLengthBitArrayType&>(other);
 
     return _len == otherBitArrayType._len && _bo == otherBitArrayType._bo;
 }

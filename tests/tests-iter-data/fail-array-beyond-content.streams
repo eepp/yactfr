@@ -27,7 +27,7 @@ a8
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         UI:content_size:168
+     0         FLUI:content_size:168
      8       }
      8     }
      8     PI:168
@@ -36,9 +36,9 @@ a8
      8       SC:5 {
      8         ST {
      8           SA:yy {
-     8             UI:3735928559
-    40             UI:4277009102
-    72             UI:3131746989
+     8             FLUI:3735928559
+    40             FLUI:4277009102
+    72             FLUI:3131746989
    104           }
    104         }
    104       }
@@ -48,6 +48,6 @@ a8
    104       SC:5 {
    104         ST {
    104           SA:yy {
-   104             UI:4208909997
-   136             UI:3452816845
+   104             FLUI:4208909997
+   136             FLUI:3452816845
    168 Cannot read 32 bits at this point: would move beyond the content of the current packet (0 bits remaining).

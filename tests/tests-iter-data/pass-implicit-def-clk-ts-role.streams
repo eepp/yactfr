@@ -33,16 +33,16 @@ aabbccdd aabbeeff
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         UI:timestamp_begin:2864434397
+     0         FLUI:timestamp_begin:2864434397
     32         DCV:2864434397
-    32         UI:timestamp_end:2864443135
+    32         FLUI:timestamp_end:2864443135
     64       }
     64     }
     64     PI:2864443135
     64     ER {
     64       SC:2 {
     64         ST {
-    64           UI:timestamp:2864434414
+    64           FLUI:timestamp:2864434414
     96           DCV:2864434414
     96         }
     96       }
@@ -51,7 +51,7 @@ aabbccdd aabbeeff
     96     ER {
     96       SC:2 {
     96         ST {
-    96           UI:timestamp:2864434431
+    96           FLUI:timestamp:2864434431
    128           DCV:2864434431
    128         }
    128       }
@@ -60,7 +60,7 @@ aabbccdd aabbeeff
    128     ER {
    128       SC:2 {
    128         ST {
-   128           UI:timestamp:2864438698
+   128           FLUI:timestamp:2864438698
    160           DCV:2864438698
    160         }
    160       }

@@ -14,7 +14,7 @@
 #include <boost/optional/optional.hpp>
 
 #include "metadata/fwd.hpp"
-#include "metadata/enum-type.hpp"
+#include "metadata/fl-enum-type.hpp"
 #include "metadata/static-text-array-type.hpp"
 #include "metadata/dyn-text-array-type.hpp"
 #include "metadata/var-type.hpp"
@@ -82,20 +82,20 @@ public:
         /// EventRecordInfoElement
         EVENT_RECORD_INFO,
 
-        /// SignedIntegerElement
-        SIGNED_INTEGER,
+        /// FixedLengthSignedIntegerElement
+        FIXED_LENGTH_SIGNED_INTEGER,
 
-        /// UnsignedIntegerElement
-        UNSIGNED_INTEGER,
+        /// FixedLengthUnsignedIntegerElement
+        FIXED_LENGTH_UNSIGNED_INTEGER,
 
-        /// FloatingPointNumberElement
-        FLOATING_POINT_NUMBER,
+        /// FixedLengthFloatingPointNumberElement
+        FIXED_LENGTH_FLOATING_POINT_NUMBER,
 
-        /// SignedEnumerationElement
-        SIGNED_ENUMERATION,
+        /// FixedLengthSignedEnumerationElement
+        FIXED_LENGTH_SIGNED_ENUMERATION,
 
-        /// UnsignedEnumerationElement
-        UNSIGNED_ENUMERATION,
+        /// FixedLengthUnsignedEnumerationElement
+        FIXED_LENGTH_UNFIXED_LENGTH_SIGNED_ENUMERATION,
 
         /// StringBeginningElement
         STRING_BEGINNING,
@@ -380,7 +380,7 @@ private:
 This element contains the decoded trace type UUID as well as the expected
 trace type UUID.
 
-Call isValid() to get whether or not the decoded UUID is valid, that is,
+isValid() indicates whether or not the decoded UUID is valid, that is,
 that it's equal to TraceType::uuid().
 */
 class TraceTypeUuidElement final :
@@ -704,11 +704,11 @@ private:
 
 /*!
 @brief
-    Signed integer element.
+    Fixed-length signed integer element.
 
 @ingroup elems
 */
-class SignedIntegerElement :
+class FixedLengthSignedIntegerElement :
     public Element,
     public DataElement
 {
@@ -716,25 +716,25 @@ class SignedIntegerElement :
     friend class internal::VmPos;
 
 protected:
-    explicit SignedIntegerElement(const Kind kind) :
+    explicit FixedLengthSignedIntegerElement(const Kind kind) :
         Element {kind}
     {
     }
 
 private:
-    explicit SignedIntegerElement() :
-        SignedIntegerElement {Kind::SIGNED_INTEGER}
+    explicit FixedLengthSignedIntegerElement() :
+        FixedLengthSignedIntegerElement {Kind::FIXED_LENGTH_SIGNED_INTEGER}
     {
     }
 
 public:
-    /// Signed integer type.
-    const SignedIntegerType& type() const noexcept
+    /// Fixed-length signed integer type.
+    const FixedLengthSignedIntegerType& type() const noexcept
     {
         return *_dt;
     }
 
-    /// Signed integer value.
+    /// Integral value.
     long long value() const noexcept
     {
         return _val;
@@ -746,17 +746,17 @@ public:
     }
 
 protected:
-    const SignedIntegerType *_dt;
+    const FixedLengthSignedIntegerType *_dt;
     long long _val;
 };
 
 /*!
 @brief
-    Unsigned integer element.
+    Fixed-length unsigned integer element.
 
 @ingroup elems
 */
-class UnsignedIntegerElement :
+class FixedLengthUnsignedIntegerElement :
     public Element,
     public DataElement
 {
@@ -764,25 +764,25 @@ class UnsignedIntegerElement :
     friend class internal::VmPos;
 
 protected:
-    explicit UnsignedIntegerElement(const Kind kind) :
+    explicit FixedLengthUnsignedIntegerElement(const Kind kind) :
         Element {kind}
     {
     }
 
 private:
-    explicit UnsignedIntegerElement() :
-        UnsignedIntegerElement {Kind::UNSIGNED_INTEGER}
+    explicit FixedLengthUnsignedIntegerElement() :
+        FixedLengthUnsignedIntegerElement {Kind::FIXED_LENGTH_UNSIGNED_INTEGER}
     {
     }
 
 public:
-    /// Unsigned integer type.
-    const UnsignedIntegerType& type() const noexcept
+    /// Fixed-length unsigned integer type.
+    const FixedLengthUnsignedIntegerType& type() const noexcept
     {
         return *_dt;
     }
 
-    /// Unsigned integer value.
+    /// Integral value.
     unsigned long long value() const noexcept
     {
         return _val;
@@ -794,33 +794,33 @@ public:
     }
 
 protected:
-    const UnsignedIntegerType *_dt;
+    const FixedLengthUnsignedIntegerType *_dt;
     unsigned long long _val;
 };
 
 /*!
 @brief
-    Signed enumeration element.
+    Fixed-length signed enumeration element.
 
 @ingroup elems
 */
-class SignedEnumerationElement final :
-    public SignedIntegerElement
+class FixedLengthSignedEnumerationElement final :
+    public FixedLengthSignedIntegerElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit SignedEnumerationElement() :
-        SignedIntegerElement {Kind::SIGNED_ENUMERATION}
+    explicit FixedLengthSignedEnumerationElement() :
+        FixedLengthSignedIntegerElement {Kind::FIXED_LENGTH_SIGNED_ENUMERATION}
     {
     }
 
 public:
-    /// Signed enumeration type.
-    const SignedEnumerationType& type() const noexcept
+    /// Fixed-length signed enumeration type.
+    const SignedFixedLengthEnumerationType& type() const noexcept
     {
-        return *static_cast<const SignedEnumerationType *>(_dt);
+        return *static_cast<const SignedFixedLengthEnumerationType *>(_dt);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -831,27 +831,27 @@ public:
 
 /*!
 @brief
-    Unsigned enumeration element.
+    Fixed-length unsigned enumeration element.
 
 @ingroup elems
 */
-class UnsignedEnumerationElement final :
-    public UnsignedIntegerElement
+class FixedLengthUnsignedEnumerationElement final :
+    public FixedLengthUnsignedIntegerElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit UnsignedEnumerationElement() :
-        UnsignedIntegerElement {Kind::UNSIGNED_ENUMERATION}
+    explicit FixedLengthUnsignedEnumerationElement() :
+        FixedLengthUnsignedIntegerElement {Kind::FIXED_LENGTH_UNFIXED_LENGTH_SIGNED_ENUMERATION}
     {
     }
 
 public:
-    /// Unsigned enumeration type.
-    const UnsignedEnumerationType& type() const noexcept
+    /// Fixed-length unsigned enumeration type.
+    const FixedLengthUnsignedEnumerationType& type() const noexcept
     {
-        return *static_cast<const UnsignedEnumerationType *>(_dt);
+        return *static_cast<const FixedLengthUnsignedEnumerationType *>(_dt);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -862,11 +862,11 @@ public:
 
 /*!
 @brief
-    Floating point number element.
+    Fixed-length floating point number element.
 
 @ingroup elems
 */
-class FloatingPointNumberElement final :
+class FixedLengthFloatingPointNumberElement final :
     public Element,
     public DataElement
 {
@@ -874,19 +874,19 @@ class FloatingPointNumberElement final :
     friend class internal::VmPos;
 
 private:
-    explicit FloatingPointNumberElement() :
-        Element {Kind::FLOATING_POINT_NUMBER}
+    explicit FixedLengthFloatingPointNumberElement() :
+        Element {Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER}
     {
     }
 
 public:
-    /// Floating point number type.
-    const FloatingPointNumberType& type() const noexcept
+    /// Fixed-length floating point number type.
+    const FixedLengthFloatingPointNumberType& type() const noexcept
     {
         return *_dt;
     }
 
-    /// Floating point number value.
+    /// Real value.
     double value() const noexcept
     {
         return _val;
@@ -898,7 +898,7 @@ public:
     }
 
 private:
-    const FloatingPointNumberType *_dt;
+    const FixedLengthFloatingPointNumberType *_dt;
     double _val;
 };
 

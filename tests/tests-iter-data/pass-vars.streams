@@ -136,29 +136,29 @@ V_ABS     cd
      0   PC {
      0     SC:0 {
      0       ST {
-     0         UE:tag:11
+     0         FLUE:tag:11
      8         VU:v:11 {
      8           STR {
      8             SS:9:ethereal
     80           }
     80         }
-    80         SE:ph_tag:2
+    80         FLSE:ph_tag:2
     88         VS:v_rel:2 {
-    88           UI:254
+    88           FLUI:254
     96         }
     96       }
     96     }
     96     DSI:0
     96     SC:1 {
     96       ST {
-    96         UE:pc_tag:0
+    96         FLUE:pc_tag:0
    104         VU:v_rel:0 {
    104           STR {
    104             SS:6:faded
    152           }
    152         }
    152         VS:v_abs:2 {
-   152           UI:136
+   152           FLUI:136
    160         }
    160       }
    160     }
@@ -166,9 +166,9 @@ V_ABS     cd
    160     ER {
    160       SC:2 {
    160         ST {
-   160           UE:eh_tag:1
+   160           FLUE:eh_tag:1
    168           VU:v_rel:1 {
-   168             UI:305419896
+   168             FLUI:305419896
    200           }
    200           VU:v_abs:0 {
    200             STR {
@@ -180,22 +180,22 @@ V_ABS     cd
    240       ERI:0:test
    240       SC:3 {
    240         ST {
-   240           UE:e1c_tag:0
+   240           FLUE:e1c_tag:0
    248           VU:v_rel:0 {
    248             STR {
    248               SS:9:cultured
    320             }
    320           }
    320           VU:v_abs:1 {
-   320             UI:3735928559
+   320             FLUI:3735928559
    352           }
    352         }
    352       }
    352       SC:4 {
    352         ST {
-   352           UE:e2c_tag:2
+   352           FLUE:e2c_tag:2
    360           VU:v_rel:2 {
-   360             UI:23
+   360             FLUI:23
    368           }
    368           VU:v_abs:0 {
    368             STR {
@@ -206,12 +206,12 @@ V_ABS     cd
    408       }
    408       SC:5 {
    408         ST {
-   408           UE:ep_tag:1
+   408           FLUE:ep_tag:1
    416           VU:v_rel:1 {
-   416             UI:3131746989
+   416             FLUI:3131746989
    448           }
    448           VU:v_abs:2 {
-   448             UI:205
+   448             FLUI:205
    456           }
    456         }
    456       }

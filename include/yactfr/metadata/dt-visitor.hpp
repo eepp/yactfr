@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,7 +18,7 @@ namespace yactfr {
 
 @ingroup metadata_dt
 
-A subclass instance can be passed to DataType::accept().
+You can pass a subclass instance to DataType::accept().
 */
 class DataTypeVisitor
 {
@@ -32,56 +32,56 @@ public:
 
     /*!
     @brief
-        Visits the signed integer type \p type.
+        Visits the fixed-length signed integer type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const SignedIntegerType& type)
+    virtual void visit(const FixedLengthSignedIntegerType& type)
     {
     }
 
     /*!
     @brief
-        Visits the unsigned integer type \p type.
+        Visits the fixed-length unsigned integer type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const UnsignedIntegerType& type)
+    virtual void visit(const FixedLengthUnsignedIntegerType& type)
     {
     }
 
     /*!
     @brief
-        Visits the floating point number type \p type.
+        Visits the fixed-length floating point number type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const FloatingPointNumberType& type)
+    virtual void visit(const FixedLengthFloatingPointNumberType& type)
     {
     }
 
     /*!
     @brief
-        Visits the signed enumeration type \p type.
+        Visits the fixed-length signed enumeration type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const SignedEnumerationType& type)
+    virtual void visit(const SignedFixedLengthEnumerationType& type)
     {
     }
 
     /*!
     @brief
-        Visits the unsigned enumeration type \p type.
+        Visits the fixed-length unsigned enumeration type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const UnsignedEnumerationType& type)
+    virtual void visit(const FixedLengthUnsignedEnumerationType& type)
     {
     }
 

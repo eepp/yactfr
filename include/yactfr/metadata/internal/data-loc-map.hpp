@@ -28,7 +28,7 @@
 #include "../data-loc.hpp"
 #include "../dst.hpp"
 #include "../ert.hpp"
-#include "../enum-type.hpp"
+#include "../fl-enum-type.hpp"
 #include "../int-range.hpp"
 #include "../aliases.hpp"
 #include "../metadata-parse-error.hpp"

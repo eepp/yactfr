@@ -25,6 +25,6 @@ f219 f218 01 02 03
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         UI:content_size:61977
-    16         UI:packet_size:61976
+     0         FLUI:content_size:61977
+    16         FLUI:packet_size:61976
     32 Expected packet total length (61976) is less than expected packet content length (61977).

@@ -25,14 +25,14 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           UI:len:3
+     0           FLUI:len:3
      8           STR:salut {
      8             SS:15:salut les mecs
    128           }
    128           DA:meow {
-   128             UI:17
-   136             UI:34
-   144             UI:51
+   128             FLUI:17
+   136             FLUI:34
+   144             FLUI:51
    152           }
    152         }
    152       }
@@ -41,13 +41,13 @@ event {
    152       ERI:0:test
    152       SC:5 {
    152         ST {
-   152           UI:len:2
+   152           FLUI:len:2
    160           STR:salut {
    160             SS:9:tomatoes
    232           }
    232           DA:meow {
-   232             UI:170
-   240             UI:187
+   232             FLUI:170
+   240             FLUI:187
    248           }
    248         }
    248       }
@@ -56,12 +56,12 @@ event {
    248       ERI:0:test
    248       SC:5 {
    248         ST {
-   248           UI:len:4
+   248           FLUI:len:4
    256           STR:salut {
    256             SS:6:madly
    304           }
    304           DA:meow {
-   304             UI:1
-   312             UI:2
-   320             UI:3
+   304             FLUI:1
+   312             FLUI:2
+   320             FLUI:3
    328 Cannot read 8 bits at this point: reaching end of data source.

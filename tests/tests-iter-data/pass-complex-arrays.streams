@@ -40,22 +40,22 @@ event {
      0         ST {
      0           SA:hope {
      0             ST {
-     0               UE:tag:67
+     0               FLUE:tag:67
      8               SA:point {
      8                 ST {
      8                   SA:v {
      8                     VU:67 {
      8                       SA {
-     8                         UI:1
-    16                         UI:2
-    24                         UI:3
+     8                         FLUI:1
+    16                         FLUI:2
+    24                         FLUI:3
     32                       }
     32                     }
     32                     VU:67 {
     32                       SA {
-    32                         UI:4
-    40                         UI:5
-    48                         UI:6
+    32                         FLUI:4
+    40                         FLUI:5
+    48                         FLUI:6
     56                       }
     56                     }
     56                   }
@@ -65,7 +65,7 @@ event {
     56               }
     56             }
     56             ST {
-    56               UE:tag:66
+    56               FLUE:tag:66
     64               SA:point {
     64                 ST {
     64                   SA:v {

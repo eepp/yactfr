@@ -28,10 +28,10 @@ event {
      0             SS:15:salut les mecs
    120           }
    120           SA:meow {
-   120             UI:17
-   128             UI:34
-   136             UI:51
-   144             UI:68
+   120             FLUI:17
+   128             FLUI:34
+   136             FLUI:51
+   144             FLUI:68
    152           }
    152         }
    152       }
@@ -44,10 +44,10 @@ event {
    152             SS:9:tomatoes
    224           }
    224           SA:meow {
-   224             UI:170
-   232             UI:187
-   240             UI:204
-   248             UI:221
+   224             FLUI:170
+   232             FLUI:187
+   240             FLUI:204
+   248             FLUI:221
    256           }
    256         }
    256       }
@@ -60,7 +60,7 @@ event {
    256             SS:6:madly
    304           }
    304           SA:meow {
-   304             UI:1
-   312             UI:2
-   320             UI:3
+   304             FLUI:1
+   312             FLUI:2
+   320             FLUI:3
    328 Cannot read 8 bits at this point: reaching end of data source.

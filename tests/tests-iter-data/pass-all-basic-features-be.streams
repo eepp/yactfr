@@ -144,53 +144,53 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
      0   PC {
      0     SC:0 {
      0       ST {
-     0         UI:magic:3254525889
+     0         FLUI:magic:3254525889
     32         PMN:3254525889
     32         SA:uuid {
-    32           UI:77
-    40           UI:134
-    48           UI:224
-    56           UI:44
-    64           UI:245
-    72           UI:39
-    80           UI:73
-    88           UI:113
-    96           UI:185
-   104           UI:96
-   112           UI:151
-   120           UI:29
-   128           UI:38
-   136           UI:7
-   144           UI:75
-   152           UI:212
+    32           FLUI:77
+    40           FLUI:134
+    48           FLUI:224
+    56           FLUI:44
+    64           FLUI:245
+    72           FLUI:39
+    80           FLUI:73
+    88           FLUI:113
+    96           FLUI:185
+   104           FLUI:96
+   112           FLUI:151
+   120           FLUI:29
+   128           FLUI:38
+   136           FLUI:7
+   144           FLUI:75
+   152           FLUI:212
    160           TTU:4d86e02c-f527-4971-b960-971d26074bd4
    160         }
-   160         UI:stream_id:35
+   160         FLUI:stream_id:35
    168       }
    168     }
    168     DSI:35
    168     SC:1 {
    168       ST {
-   168         UI:packet_size:864
-   184         UI:content_size:856
-   200         UI:timestamp_begin:19712
+   168         FLUI:packet_size:864
+   184         FLUI:content_size:856
+   200         FLUI:timestamp_begin:19712
    216         DCV:19712
-   216         UI:timestamp_end:36864
+   216         FLUI:timestamp_end:36864
    232       }
    232     }
    232     PI:864:856:36864
    232     ER {
    232       SC:2 {
    232         ST {
-   232           UI:id:29
-   240           UI:ts:0
+   232           FLUI:id:29
+   240           FLUI:ts:0
    248           DCV:19712
    248         }
    248       }
    248       ERI:29:coronin
    248       SC:3 {
    248         ST {
-   248           UE:ctx1:602918315
+   248           FLUE:ctx1:602918315
    280           STR:ctx2 {
    280             SS:12:hello hello
    376           }
@@ -198,7 +198,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    376       }
    384       SC:4 {
    384         ST {
-   384           UI:a:591751049
+   384           FLUI:a:591751049
    416         }
    416       }
    416       SC:5 {
@@ -212,15 +212,15 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    488     ER {
    488       SC:2 {
    488         ST {
-   488           UI:id:119
-   496           UI:ts:5
+   488           FLUI:id:119
+   496           FLUI:ts:5
    504           DCV:19717
    504         }
    504       }
    504       ERI:119:keratin
    504       SC:3 {
    504         ST {
-   504           UE:ctx1:1
+   504           FLUE:ctx1:1
    536           STR:ctx2 {
    536             SS:10:submarine
    616           }
@@ -228,22 +228,22 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    616       }
    616       SC:5 {
    616         ST {
-   616           FPN:fff:2.71828
+   616           FLFPN:fff:2.71828
    648         }
    648       }
    648     }
    648     ER {
    648       SC:2 {
    648         ST {
-   648           UI:id:29
-   656           UI:ts:4
+   648           FLUI:id:29
+   656           FLUI:ts:4
    664           DCV:19972
    664         }
    664       }
    664       ERI:29:coronin
    664       SC:3 {
    664         ST {
-   664           UE:ctx1:1147574528
+   664           FLUE:ctx1:1147574528
    696           STR:ctx2 {
    696             SS:4:lel
    728           }
@@ -251,7 +251,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    728       }
    768       SC:4 {
    768         ST {
-   768           UI:a:4022250974
+   768           FLUI:a:4022250974
    800         }
    800       }
    800       SC:5 {
@@ -268,35 +268,35 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    864   PC {
    864     SC:0 {
    864       ST {
-   864         UI:magic:3254525889
+   864         FLUI:magic:3254525889
    896         PMN:3254525889
    896         SA:uuid {
-   896           UI:77
-   904           UI:134
-   912           UI:224
-   920           UI:44
-   928           UI:245
-   936           UI:39
-   944           UI:73
-   952           UI:113
-   960           UI:185
-   968           UI:96
-   976           UI:151
-   984           UI:29
-   992           UI:38
-  1000           UI:7
-  1008           UI:75
-  1016           UI:212
+   896           FLUI:77
+   904           FLUI:134
+   912           FLUI:224
+   920           FLUI:44
+   928           FLUI:245
+   936           FLUI:39
+   944           FLUI:73
+   952           FLUI:113
+   960           FLUI:185
+   968           FLUI:96
+   976           FLUI:151
+   984           FLUI:29
+   992           FLUI:38
+  1000           FLUI:7
+  1008           FLUI:75
+  1016           FLUI:212
   1024           TTU:4d86e02c-f527-4971-b960-971d26074bd4
   1024         }
-  1024         UI:stream_id:255
+  1024         FLUI:stream_id:255
   1032       }
   1032     }
   1032     DSI:255
   1032     SC:1 {
   1032       ST {
-  1032         UI:packet_size:664
-  1064         UI:len:7
+  1032         FLUI:packet_size:664
+  1064         FLUI:len:7
   1080       }
   1080     }
   1080     PI:664:664
@@ -304,15 +304,15 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1080       ERI:0:coucou les coucous
   1080       SC:5 {
   1080         ST {
-  1080           UI:len:3
+  1080           FLUI:len:3
   1112           DA:seq1 {
-  1112             UI:1
-  1120             UI:2
-  1128             UI:3
-  1136             UI:4
-  1144             UI:5
-  1152             UI:6
-  1160             UI:7
+  1112             FLUI:1
+  1120             FLUI:2
+  1128             FLUI:3
+  1136             FLUI:4
+  1144             FLUI:5
+  1152             FLUI:6
+  1160             FLUI:7
   1168           }
   1168           DA:seq2 {
   1168             STR {
@@ -332,15 +332,15 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1288       ERI:0:coucou les coucous
   1288       SC:5 {
   1288         ST {
-  1288           UI:len:4
+  1288           FLUI:len:4
   1320           DA:seq1 {
-  1320             UI:170
-  1328             UI:187
-  1336             UI:204
-  1344             UI:221
-  1352             UI:238
-  1360             UI:255
-  1368             UI:0
+  1320             FLUI:170
+  1328             FLUI:187
+  1336             FLUI:204
+  1344             FLUI:221
+  1352             FLUI:238
+  1360             FLUI:255
+  1368             FLUI:0
   1376           }
   1376           DA:seq2 {
   1376             STR {
@@ -365,53 +365,53 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1528   PC {
   1528     SC:0 {
   1528       ST {
-  1528         UI:magic:3254525889
+  1528         FLUI:magic:3254525889
   1560         PMN:3254525889
   1560         SA:uuid {
-  1560           UI:77
-  1568           UI:134
-  1576           UI:224
-  1584           UI:44
-  1592           UI:245
-  1600           UI:39
-  1608           UI:73
-  1616           UI:113
-  1624           UI:185
-  1632           UI:96
-  1640           UI:151
-  1648           UI:29
-  1656           UI:38
-  1664           UI:7
-  1672           UI:75
-  1680           UI:212
+  1560           FLUI:77
+  1568           FLUI:134
+  1576           FLUI:224
+  1584           FLUI:44
+  1592           FLUI:245
+  1600           FLUI:39
+  1608           FLUI:73
+  1616           FLUI:113
+  1624           FLUI:185
+  1632           FLUI:96
+  1640           FLUI:151
+  1648           FLUI:29
+  1656           FLUI:38
+  1664           FLUI:7
+  1672           FLUI:75
+  1680           FLUI:212
   1688           TTU:4d86e02c-f527-4971-b960-971d26074bd4
   1688         }
-  1688         UI:stream_id:35
+  1688         FLUI:stream_id:35
   1696       }
   1696     }
   1696     DSI:35
   1696     SC:1 {
   1696       ST {
-  1696         UI:packet_size:864
-  1712         UI:content_size:848
-  1728         UI:timestamp_begin:12032
+  1696         FLUI:packet_size:864
+  1712         FLUI:content_size:848
+  1728         FLUI:timestamp_begin:12032
   1744         DCV:12032
-  1744         UI:timestamp_end:36864
+  1744         FLUI:timestamp_end:36864
   1760       }
   1760     }
   1760     PI:864:848:36864
   1760     ER {
   1760       SC:2 {
   1760         ST {
-  1760           UI:id:5
-  1768           UI:ts:3
+  1760           FLUI:id:5
+  1768           FLUI:ts:3
   1776           DCV:12035
   1776         }
   1776       }
   1776       ERI:5:the variant event
   1776       SC:3 {
   1776         ST {
-  1776           UE:ctx1:1146447479
+  1776           FLUE:ctx1:1146447479
   1808           STR:ctx2 {
   1808             SS:8:mystery
   1872           }
@@ -419,14 +419,14 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1872       }
   1872       SC:5 {
   1872         ST {
-  1872           UE:tag:192
+  1872           FLUE:tag:192
   1880           VU:vvv:1146447479 {
   1880             STR {
   1880               SS:13:it's my life
   1984             }
   1984           }
   1984           VU:zigzag:192 {
-  1984             FPN:0.577216
+  1984             FLFPN:0.577216
   2048           }
   2048         }
   2048       }
@@ -434,15 +434,15 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2048     ER {
   2048       SC:2 {
   2048         ST {
-  2048           UI:id:5
-  2056           UI:ts:9
+  2048           FLUI:id:5
+  2056           FLUI:ts:9
   2064           DCV:12041
   2064         }
   2064       }
   2064       ERI:5:the variant event
   2064       SC:3 {
   2064         ST {
-  2064           UE:ctx1:1146447480
+  2064           FLUE:ctx1:1146447480
   2096           STR:ctx2 {
   2096             SS:12:parenthesis
   2192           }
@@ -450,18 +450,18 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2192       }
   2192       SC:5 {
   2192         ST {
-  2192           UE:tag:69
+  2192           FLUE:tag:69
   2200           VU:vvv:1146447480 {
   2200             DA {
-  2200               UI:0
-  2232               UI:286331153
-  2264               UI:572662306
-  2296               UI:858993459
-  2328               UI:1145324612
+  2200               FLUI:0
+  2232               FLUI:286331153
+  2264               FLUI:572662306
+  2296               FLUI:858993459
+  2328               FLUI:1145324612
   2360             }
   2360           }
   2360           VU:zigzag:69 {
-  2360             SI:-2
+  2360             FLSI:-2
   2376           }
   2376         }
   2376       }

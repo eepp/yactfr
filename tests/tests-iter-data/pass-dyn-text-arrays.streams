@@ -31,12 +31,12 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           UI:len2:11
-     8           UI:len1:42
+     0           FLUI:len2:11
+     8           FLUI:len1:42
     16           DTA:text1 {
     16             SS:42:I've tasted both the fantasy
    352           }
-   352           UI:zlen:0
+   352           FLUI:zlen:0
    360           DTA:text2 {
    360           }
    360           DTA:text3 {

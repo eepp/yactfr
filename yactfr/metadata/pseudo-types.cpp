@@ -88,13 +88,14 @@ void PseudoScalarDtWrapper::accept(ConstPseudoDtVisitor& visitor) const
 
 bool PseudoScalarDtWrapper::isInt() const noexcept
 {
-    return _dt->isIntegerType();
+    return _dt->isFixedLengthIntegerType();
 }
 
-PseudoUIntType::PseudoUIntType(const unsigned int align, const unsigned int len,
-                               const ByteOrder bo, const DisplayBase prefDispBase,
-                               const bool hasEncoding,
-                               boost::optional<std::string> mappedClkTypeName, TextLocation loc) :
+PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
+                                   const ByteOrder bo, const DisplayBase prefDispBase,
+                                   const bool hasEncoding,
+                                   boost::optional<std::string> mappedClkTypeName,
+                                   TextLocation loc) :
     PseudoDt {std::move(loc)},
     _align {align},
     _len {len},
@@ -105,38 +106,39 @@ PseudoUIntType::PseudoUIntType(const unsigned int align, const unsigned int len,
 {
 }
 
-PseudoDt::UP PseudoUIntType::clone() const
+PseudoDt::UP PseudoFlUIntType::clone() const
 {
-    return std::make_unique<PseudoUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
-                                            _mappedClkTypeName, this->loc());
+    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
+                                              _mappedClkTypeName, this->loc());
 }
 
-void PseudoUIntType::accept(PseudoDtVisitor& visitor)
-{
-    visitor.visit(*this);
-}
-
-void PseudoUIntType::accept(ConstPseudoDtVisitor& visitor) const
+void PseudoFlUIntType::accept(PseudoDtVisitor& visitor)
 {
     visitor.visit(*this);
 }
 
-bool PseudoUIntType::isInt() const noexcept
+void PseudoFlUIntType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+bool PseudoFlUIntType::isInt() const noexcept
 {
     return true;
 }
 
-bool PseudoUIntType::isUInt() const noexcept
+bool PseudoFlUIntType::isUInt() const noexcept
 {
     return true;
 }
 
-PseudoUEnumType::PseudoUEnumType(const unsigned int align, const unsigned int len,
-                                 const ByteOrder bo, const DisplayBase prefDispBase,
-                                 UnsignedEnumerationType::Mappings mappings,
-                                 const bool hasEncoding,
-                                 boost::optional<std::string> mappedClkTypeName, TextLocation loc) :
-    PseudoUIntType {
+PseudoFlUEnumType::PseudoFlUEnumType(const unsigned int align, const unsigned int len,
+                                     const ByteOrder bo, const DisplayBase prefDispBase,
+                                     FixedLengthUnsignedEnumerationType::Mappings mappings,
+                                     const bool hasEncoding,
+                                     boost::optional<std::string> mappedClkTypeName,
+                                     TextLocation loc) :
+    PseudoFlUIntType {
         align, len, bo, prefDispBase, hasEncoding,
         std::move(mappedClkTypeName), std::move(loc)
     },
@@ -144,19 +146,20 @@ PseudoUEnumType::PseudoUEnumType(const unsigned int align, const unsigned int le
 {
 }
 
-PseudoDt::UP PseudoUEnumType::clone() const
+PseudoDt::UP PseudoFlUEnumType::clone() const
 {
-    return std::make_unique<PseudoUEnumType>(this->align(), this->len(), this->bo(),
-                                             this->prefDispBase(), _mappings, this->hasEncoding(),
-                                             this->mappedClkTypeName(), this->loc());
+    return std::make_unique<PseudoFlUEnumType>(this->align(), this->len(), this->bo(),
+                                               this->prefDispBase(), _mappings,
+                                               this->hasEncoding(), this->mappedClkTypeName(),
+                                               this->loc());
 }
 
-void PseudoUEnumType::accept(PseudoDtVisitor& visitor)
+void PseudoFlUEnumType::accept(PseudoDtVisitor& visitor)
 {
     visitor.visit(*this);
 }
 
-void PseudoUEnumType::accept(ConstPseudoDtVisitor& visitor) const
+void PseudoFlUEnumType::accept(ConstPseudoDtVisitor& visitor) const
 {
     visitor.visit(*this);
 }
@@ -379,12 +382,14 @@ void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
 
 static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
 {
-    const auto pseudoDts = findPseudoUIntTypes(basePseudoDt, [](auto& pseudoIntType, auto) {
+    const auto pseudoDts = findPseudoFlUIntTypes(basePseudoDt,
+                                                 [](auto& pseudoIntType, auto) {
         return pseudoIntType.mappedClkTypeName();
     });
 
     if (!pseudoDts.empty()) {
-        throwMetadataParseError("At least one unsigned integer type is mapped to a clock type; "
+        throwMetadataParseError("At least one fixed-length unsigned integer type "
+                                "is mapped to a clock type; "
                                 "this isn't not supported within this scope.",
                                 basePseudoDt.loc());
     }
@@ -457,10 +462,10 @@ static auto findPseudoStaticArrayTypesWithTraceTypeUuidRole(const PseudoDt& base
     });
 }
 
-static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
-                                      const UnsignedIntegerTypeRole role)
+static auto findPseudoFlUIntTypesByRole(const PseudoDt& basePseudoDt,
+                                        const UnsignedIntegerTypeRole role)
 {
-    return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
+    return findPseudoFlUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
         return pseudoIntType.hasRole(role);
     });
 }
@@ -470,16 +475,16 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
     if (_pseudoErHeaderType) {
         try {
             /*
-             * Validate pseudo unsigned integer types with an "event
-             * record type ID" role.
+             * Validate pseudo fixed-length unsigned integer types with
+             * an "event record type ID" role.
              */
-            const auto idPseudoDts = findPseudoUIntTypesByRole(*_pseudoErHeaderType,
-                                                               UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
+            const auto idPseudoDts = findPseudoFlUIntTypesByRole(*_pseudoErHeaderType,
+                                                                 UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
 
             /*
-             * Without any pseudo unsigned integer type with an "event
-             * record type ID" role, there may be only one (implicit)
-             * event record type.
+             * Without any pseudo fixed-length unsigned integer type
+             * with an "event record type ID" role, there may be only
+             * one (implicit) event record type.
              */
             if (idPseudoDts.empty() && pseudoErts.size() > 1) {
                 throwMetadataParseError("No structure member type with the "
@@ -572,15 +577,15 @@ void PseudoTraceType::validate() const
                     }
 
                     if (!pseudoUuidArrayType.pseudoElemType().isUInt()) {
-                        throwMetadataParseError("Expecting an integer type.",
+                        throwMetadataParseError("Expecting a fixed-length integer type.",
                                                 pseudoUuidArrayType.pseudoElemType().loc());
                     }
 
-                    auto& pseudoUIntType = static_cast<const PseudoUIntType&>(pseudoUuidArrayType.pseudoElemType());
+                    auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoUuidArrayType.pseudoElemType());
 
                     if (pseudoUIntType.len() != 8) {
-                        throwMetadataParseError("Expecting an unsigned integer type with a "
-                                                "length of 8 bits.",
+                        throwMetadataParseError("Expecting a fixed-length unsigned integer type "
+                                                "with a length of 8 bits.",
                                                 pseudoUIntType.loc());
                     }
                 } catch (MetadataParseError& exc) {
@@ -592,43 +597,43 @@ void PseudoTraceType::validate() const
             }
 
             /*
-             * Validate pseudo unsigned integer types with the "packet
-             * magic number" role.
+             * Validate pseudo fixed-length unsigned integer types with
+             * the "packet magic number" role.
              */
-            const auto pseudoMagicDts = findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
-                                                                  UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
+            const auto pseudoMagicDts = findPseudoFlUIntTypesByRole(*_pseudoPktHeaderType,
+                                                                    UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
 
             if (pseudoMagicDts.size() == 1) {
-                auto& pseudoMagicDt = static_cast<const PseudoUIntType&>(**pseudoMagicDts.begin());
+                auto& pseudoMagicDt = static_cast<const PseudoFlUIntType&>(**pseudoMagicDts.begin());
                 auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
 
                 if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &pseudoMagicDt) {
-                    throwMetadataParseError("Unsigned integer type with the "
+                    throwMetadataParseError("Fixed-length unsigned integer type with the "
                                             "\"packet magic number\" role must be within the "
                                             "first member type of the packet header structure type.",
                                             pseudoMagicDt.loc());
                 }
 
                 if (pseudoMagicDt.len() != 32) {
-                    throwMetadataParseError("Unsigned integer type with the "
+                    throwMetadataParseError("Fixed-length unsigned integer type with the "
                                             "\"packet magic number\" role must have a length of "
                                             "32 bits.",
                                             pseudoMagicDt.loc());
                 }
             } else if (pseudoMagicDts.size() > 1) {
-                throwMetadataParseError("More than one unsigned integer type with the "
+                throwMetadataParseError("More than one fixed-length unsigned integer type with the "
                                         "\"packet magic number\" role found.",
                                         _pseudoPktHeaderType->loc());
             }
 
             /*
-             * Without any pseudo unsigned integer type with a "data
-             * stream type ID" role, there may be only one (implicit)
-             * data stream type.
+             * Without any pseudo fixed-length unsigned integer type
+             * with a "data stream type ID" role, there may be only one
+             * (implicit) data stream type.
              */
             if (_pseudoDsts.size() > 1 &&
-                    findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
-                                              UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
+                    findPseudoFlUIntTypesByRole(*_pseudoPktHeaderType,
+                                                UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
                 throwMetadataParseError("No structure member type with the "
                                         "\"data stream type ID\" role, "
                                         "but the trace type contains "

@@ -30,5 +30,5 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           UE:tag:3
+     0           FLUE:tag:3
      8 Selector value 3 doesn't select a valid variant option.

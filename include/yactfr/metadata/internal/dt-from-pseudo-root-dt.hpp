@@ -29,7 +29,7 @@
 #include "../data-loc.hpp"
 #include "../dst.hpp"
 #include "../ert.hpp"
-#include "../enum-type.hpp"
+#include "../fl-enum-type.hpp"
 #include "../int-range.hpp"
 #include "../aliases.hpp"
 #include "../metadata-parse-error.hpp"
@@ -107,13 +107,13 @@ private:
      * Converts the pseudo unsigned integer type wrapper `pseudoDt` to a
      * yactfr data type.
      */
-    DataType::UP _dtFromPseudoUIntType(const PseudoDt& pseudoDt) const;
+    DataType::UP _dtFromPseudoFlUIntType(const PseudoDt& pseudoDt) const;
 
     /*
      * Converts the pseudo unsigned enumeration type wrapper `pseudoDt`
      * to a yactfr data type.
      */
-    DataType::UP _dtFromPseudoUEnumType(const PseudoDt& pseudoDt) const;
+    DataType::UP _dtFromPseudoFlUEnumType(const PseudoDt& pseudoDt) const;
 
     /*
      * Tries to convert the pseudo array type `pseudoArrayType` to a
@@ -250,14 +250,14 @@ DataType::UP DtFromPseudoRootDtConverter::_tryTextArrayDtFromPseudoArrayType(con
         unsigned int elemLen;
 
         if (pseudoElemType.isUInt()) {
-            auto& pseudoIntElemType = static_cast<const PseudoUIntType&>(pseudoElemType);
+            auto& pseudoIntElemType = static_cast<const PseudoFlUIntType&>(pseudoElemType);
 
             hasEncoding = pseudoIntElemType.hasEncoding();
             align = pseudoIntElemType.align();
             elemLen = pseudoIntElemType.len();
         } else {
             auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(pseudoElemType);
-            auto& intType = pseudoScalarDtWrapper.dt().asSignedIntegerType();
+            auto& intType = pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType();
 
             hasEncoding = pseudoScalarDtWrapper.hasEncoding();
             align = intType.alignment();

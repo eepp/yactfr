@@ -28,13 +28,13 @@ ff 78 "heille Lynda" 00
      0   PC {
      0     SC:0 {
      0       ST {
-     0         UI:stream_instance_id:2
+     0         FLUI:stream_instance_id:2
      8       }
      8     }
      8     DSI:0:2
      8     SC:1 {
      8       ST {
-     8         UI:packet_size:120
+     8         FLUI:packet_size:120
     16       }
     16     }
     16     PI:120:120
@@ -54,13 +54,13 @@ ff 78 "heille Lynda" 00
    120   PC {
    120     SC:0 {
    120       ST {
-   120         UI:stream_instance_id:5
+   120         FLUI:stream_instance_id:5
    128       }
    128     }
    128     DSI:0:5
    128     SC:1 {
    128       ST {
-   128         UI:packet_size:120
+   128         FLUI:packet_size:120
    136       }
    136     }
    136     PI:120:120
@@ -80,13 +80,13 @@ ff 78 "heille Lynda" 00
    240   PC {
    240     SC:0 {
    240       ST {
-   240         UI:stream_instance_id:255
+   240         FLUI:stream_instance_id:255
    248       }
    248     }
    248     DSI:0:255
    248     SC:1 {
    248       ST {
-   248         UI:packet_size:120
+   248         FLUI:packet_size:120
    256       }
    256     }
    256     PI:120:120

@@ -212,7 +212,7 @@ public:
     iterator, of the first bit of the current element of the iterator.
     It is possible that two consecutive elements have the same offset,
     as not all elements are data elements (for example, an
-    UnsignedIntegerElement followed by a PacketMagicNumberElement would
+    FixedLengthUnsignedIntegerElement followed by a PacketMagicNumberElement would
     have the same offset).
 
     @returns

@@ -28,7 +28,7 @@ event {
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         UI:content_size:80
+     0         FLUI:content_size:80
      8       }
      8     }
      8     PI:80
@@ -36,8 +36,8 @@ event {
     32       ERI:0:test
     32       SC:5 {
     32         ST {
-    32           UI:xx:51
-    64           UI:yy:239
+    32           FLUI:xx:51
+    64           FLUI:yy:239
     72         }
     72       }
     72     }

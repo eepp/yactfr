@@ -37,14 +37,14 @@ protected:
     // kind of data type
     enum _Kind
     {
-        _KIND_SENUM                 = 1 << 0,
-        _KIND_UENUM                 = 1 << 1,
-        _KIND_SINT                  = 1 << 2,
-        _KIND_UINT                  = 1 << 3,
-        _KIND_INT                   = 1 << 4,
-        _KIND_ENUM                  = 1 << 5,
-        _KIND_BIT_ARRAY             = 1 << 6,
-        _KIND_FLOAT                 = 1 << 7,
+        _KIND_FL_SENUM              = 1 << 0,
+        _KIND_FL_UENUM              = 1 << 1,
+        _KIND_FL_SINT               = 1 << 2,
+        _KIND_FL_UINT               = 1 << 3,
+        _KIND_FL_INT                = 1 << 4,
+        _KIND_FL_ENUM               = 1 << 5,
+        _KIND_FL_BIT_ARRAY          = 1 << 6,
+        _KIND_FL_FLOAT              = 1 << 7,
         _KIND_STR                   = 1 << 8,
         _KIND_SCALAR                = 1 << 9,
         _KIND_STRUCT                = 1 << 10,
@@ -72,52 +72,52 @@ public:
         return _align;
     }
 
-    /// \c true if this type is a bit array type.
-    bool isBitArrayType() const noexcept
+    /// \c true if this type is a fixed-length bit array type.
+    bool isFixedLengthBitArrayType() const noexcept
     {
-        return this->_isKind(_KIND_BIT_ARRAY);
+        return this->_isKind(_KIND_FL_BIT_ARRAY);
     }
 
-    /// \c true if this type is an integer type.
-    bool isIntegerType() const noexcept
+    /// \c true if this type is a fixed-length integer type.
+    bool isFixedLengthIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_INT);
+        return this->_isKind(_KIND_FL_INT);
     }
 
-    /// \c true if this type is a signed integer type.
-    bool isSignedIntegerType() const noexcept
+    /// \c true if this type is a fixed-length signed integer type.
+    bool isFixedLengthSignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_SINT);
+        return this->_isKind(_KIND_FL_SINT);
     }
 
-    /// \c true if this type is an unsigned integer type.
-    bool isUnsignedIntegerType() const noexcept
+    /// \c true if this type is a fixed-length unsigned integer type.
+    bool isFixedLengthUnsignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_UINT);
+        return this->_isKind(_KIND_FL_UINT);
     }
 
-    /// \c true if this type is a floating point number type.
-    bool isFloatingPointNumberType() const noexcept
+    /// \c true if this type is a fixed-length floating point number type.
+    bool isFixedLengthFloatingPointNumberType() const noexcept
     {
-        return this->_isKind(_KIND_FLOAT);
+        return this->_isKind(_KIND_FL_FLOAT);
     }
 
-    /// \c true if this type is an enumeration type.
-    bool isEnumerationType() const noexcept
+    /// \c true if this type is a fixed-length enumeration type.
+    bool isFixedLengthEnumerationType() const noexcept
     {
-        return this->_isKind(_KIND_ENUM);
+        return this->_isKind(_KIND_FL_ENUM);
     }
 
-    /// \c true if this type is a signed enumeration type.
-    bool isSignedEnumerationType() const noexcept
+    /// \c true if this type is a fixed-length signed enumeration type.
+    bool isSignedFixedLengthEnumerationType() const noexcept
     {
-        return this->_isKind(_KIND_SENUM);
+        return this->_isKind(_KIND_FL_SENUM);
     }
 
-    /// \c true if this type is an unsigned enumeration type.
-    bool isUnsignedEnumerationType() const noexcept
+    /// \c true if this type is a fixed-length unsigned enumeration type.
+    bool isFixedLengthUnsignedEnumerationType() const noexcept
     {
-        return this->_isKind(_KIND_UENUM);
+        return this->_isKind(_KIND_FL_UENUM);
     }
 
     /// \c true if this type is a string type.
@@ -191,66 +191,66 @@ public:
 
     /*!
     @brief
-        Returns this type as a bit array type.
+        Returns this type as a fixed-length bit array type.
 
     @pre
-        This type is a bit array type.
+        This type is a fixed-length bit array type.
     */
-    const BitArrayType& asBitArrayType() const noexcept;
+    const FixedLengthBitArrayType& asFixedLengthBitArrayType() const noexcept;
 
     /*!
     @brief
-        This type as an integer type.
+        This type as a fixed-length integer type.
 
     @pre
-        This type is an integer type.
+        This type is a fixed-length integer type.
     */
-    const IntegerType& asIntegerType() const noexcept;
+    const FixedLengthIntegerType& asFixedLengthIntegerType() const noexcept;
 
     /*!
     @brief
-        This type as a signed integer type.
+        This type as a fixed-length signed integer type.
 
     @pre
-        This type is a signed integer type.
+        This type is a fixed-length signed integer type.
     */
-    const SignedIntegerType& asSignedIntegerType() const noexcept;
+    const FixedLengthSignedIntegerType& asFixedLengthSignedIntegerType() const noexcept;
 
     /*!
     @brief
-        This type as a unsigned integer type.
+        This type as a fixed-length unsigned integer type.
 
     @pre
-        This type is an unsigned integer type.
+        This type is a fixed-length unsigned integer type.
     */
-    const UnsignedIntegerType& asUnsignedIntegerType() const noexcept;
+    const FixedLengthUnsignedIntegerType& asFixedLengthUnsignedIntegerType() const noexcept;
 
     /*!
     @brief
-        This type as a floating point number type.
+        This type as a fixed-length floating point number type.
 
     @pre
-        This type is a floating point number type.
+        This type is a fixed-length floating point number type.
     */
-    const FloatingPointNumberType& asFloatingPointNumberType() const noexcept;
+    const FixedLengthFloatingPointNumberType& asFixedLengthFloatingPointNumberType() const noexcept;
 
     /*!
     @brief
-        This type as a signed enumeration type.
+        This type as a fixed-length signed enumeration type.
 
     @pre
-        This type is a signed enumeration type.
+        This type is a fixed-length signed enumeration type.
     */
-    const SignedEnumerationType& asSignedEnumerationType() const noexcept;
+    const SignedFixedLengthEnumerationType& asFixedLengthSignedEnumerationType() const noexcept;
 
     /*!
     @brief
-        This type as an unsigned enumeration type.
+        This type as a fixed-length unsigned enumeration type.
 
     @pre
-        This type is an unsigned enumeration type.
+        This type is a fixed-length unsigned enumeration type.
     */
-    const UnsignedEnumerationType& asUnsignedEnumerationType() const noexcept;
+    const FixedLengthUnsignedEnumerationType& asFixedLengthUnsignedEnumerationType() const noexcept;
 
     /*!
     @brief

@@ -30,7 +30,7 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           UE:tag:1
+     0           FLUE:tag:1
      8           VU:v:1 {
      8             STR {
      8               SS:6:blabli

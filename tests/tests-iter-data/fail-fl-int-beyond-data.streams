@@ -8,13 +8,13 @@ event {
     name = test;
     fields := struct {
         string salut;
-        floating_point { exp_dig = 8; mant_dig = 24; } meow;
+        u32 meow;
     };
 };
 ----
-"salut les mecs" 00 00000000
-"tomatoes" 00 c1b80000
-"madly" 00 40
+"salut les mecs" 00 deadbeef
+"tomatoes" 00 deadc0de
+"madly" 00 baaaad
 ----
      0 P {
      0   PC {
@@ -27,7 +27,7 @@ event {
      0           STR:salut {
      0             SS:15:salut les mecs
    120           }
-   120           FPN:meow:0
+   120           FLUI:meow:3735928559
    152         }
    152       }
    152     }
@@ -38,7 +38,7 @@ event {
    152           STR:salut {
    152             SS:9:tomatoes
    224           }
-   224           FPN:meow:-23
+   224           FLUI:meow:3735929054
    256         }
    256       }
    256     }

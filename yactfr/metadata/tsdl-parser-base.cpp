@@ -46,8 +46,8 @@ void TsdlParserBase::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
      * If there's more than one clock type in the pseudo trace type:
      *     Leave it as is (no mapped clock type name).
      */
-    for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
-        auto& pseudoIntType = static_cast<PseudoUIntType&>(*pseudoDt);
+    for (auto& pseudoDt : findPseudoFlUIntTypesByName(basePseudoDt, memberTypeName)) {
+        auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
         if (pseudoIntType.mappedClkTypeName()) {
             continue;
@@ -105,7 +105,7 @@ void TsdlParserBase::_setPseudoStaticArrayTypeTraceTypeUuidRole(PseudoDt& basePs
             return false;
         }
 
-        auto& pseudoElemDt = static_cast<const PseudoUIntType&>(pseudoArrayType.pseudoElemType());
+        auto& pseudoElemDt = static_cast<const PseudoFlUIntType&>(pseudoArrayType.pseudoElemType());
 
         if (pseudoElemDt.len() != 8) {
             return false;
@@ -131,7 +131,7 @@ class DefClkTsRoleAdder :
 public:
     explicit DefClkTsRoleAdder() = default;
 
-    void visit(PseudoUIntType& pseudoDt) override
+    void visit(PseudoFlUIntType& pseudoDt) override
     {
         if (pseudoDt.mappedClkTypeName() &&
                 !pseudoDt.hasRole(UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP)) {
@@ -139,9 +139,9 @@ public:
         }
     }
 
-    void visit(PseudoUEnumType& pseudoDt) override
+    void visit(PseudoFlUEnumType& pseudoDt) override
     {
-        this->visit(static_cast<PseudoUIntType&>(pseudoDt));
+        this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
     }
 
     void visit(PseudoStaticArrayType& pseudoDt) override
@@ -178,26 +178,26 @@ private:
 void TsdlParserBase::_addPseudoDtRoles()
 {
     /*
-     * First, set an implicit mapped clock type name on specific
-     * pseudo unsigned integer types.
+     * First, set an implicit mapped clock type name on specific pseudo
+     * fixed-length unsigned integer types.
      *
-     * For example, if the current pseudo trace type contains a
-     * single clock type, then any pseudo unsigned integer type
-     * named `timestamp` within pseudo event record header types,
-     * which are not already mapped to a clock type, are mapped to
-     * this single clock type.
+     * For example, if the current pseudo trace type contains a single
+     * clock type, then any pseudo fixed-length unsigned integer type
+     * named `timestamp` within pseudo event record header types, which
+     * are not already mapped to a clock type, are mapped to this single
+     * clock type.
      */
     this->_setImplicitMappedClkTypeName();
 
     // add/set simple roles
     if (_pseudoTraceType->pseudoPktHeaderType()) {
-        this->_addPseudoUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "magic",
-                                      UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
-        this->_addPseudoUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "stream_id",
-                                      UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID);
-        this->_addPseudoUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(),
-                                      "stream_instance_id",
-                                      UnsignedIntegerTypeRole::DATA_STREAM_ID);
+        this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "magic",
+                                        UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
+        this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "stream_id",
+                                        UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID);
+        this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(),
+                                        "stream_instance_id",
+                                        UnsignedIntegerTypeRole::DATA_STREAM_ID);
         this->_setPseudoStaticArrayTypeTraceTypeUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
                                                          "uuid");
     }
@@ -206,23 +206,23 @@ void TsdlParserBase::_addPseudoDtRoles()
         auto& pseudoDst = idPseudoDstPair.second;
 
         if (pseudoDst->pseudoPktCtxType()) {
-            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
-                                          UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
-            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "content_size",
-                                          UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH);
-            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
-                                          UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
-            this->_addPseudoUIntTypeRoles<true>(*pseudoDst->pseudoPktCtxType(), "timestamp_end",
-                                                UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
-            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "discarded_events",
-                                          UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT);
-            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_seq_num",
-                                          UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
+                                            UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "content_size",
+                                            UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
+                                            UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
+            this->_addPseudoFlUIntTypeRoles<true>(*pseudoDst->pseudoPktCtxType(), "timestamp_end",
+                                                  UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "discarded_events",
+                                            UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_seq_num",
+                                            UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX);
         }
 
         if (pseudoDst->pseudoErHeaderType()) {
-            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoErHeaderType(), "id",
-                                          UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoErHeaderType(), "id",
+                                            UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
         }
     }
 
@@ -252,7 +252,7 @@ public:
     {
     }
 
-    void visit(PseudoUIntType& pseudoDt) override
+    void visit(PseudoFlUIntType& pseudoDt) override
     {
         if (pseudoDt.mappedClkTypeName()) {
             if (!_clkTypeName) {
@@ -262,7 +262,7 @@ public:
             if (*pseudoDt.mappedClkTypeName() != *_clkTypeName) {
                 std::ostringstream ss;
 
-                ss << "Unsigned integer type is mapped to a clock type (`" <<
+                ss << "Unsigned fixed-length integer type is mapped to a clock type (`" <<
                       *pseudoDt.mappedClkTypeName() << "` which is "
                       "different than another mapped clock type (`" <<
                       *_clkTypeName << "`) within the same data stream type.";
@@ -289,9 +289,9 @@ public:
         }
     }
 
-    void visit(PseudoUEnumType& pseudoDt) override
+    void visit(PseudoFlUEnumType& pseudoDt) override
     {
-        this->visit(static_cast<PseudoUIntType&>(pseudoDt));
+        this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
     }
 
     void visit(PseudoStaticArrayType& pseudoDt) override

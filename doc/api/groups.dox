@@ -69,7 +69,7 @@ You can build any data type directly with
 as compound data types only accept this:
 
 @code
-auto myIntType = std::make_unique<const SignedIntegerType>(
+auto myIntType = std::make_unique<const FixedLengthSignedIntegerType>(
     8, 32, ByteOrder::LITTLE, DisplayBase::HEXADECIMAL, boost::none
 );
 @endcode
@@ -185,12 +185,12 @@ descriptions below easier to read and to allow recursion.
 <pre>
 (
   (
-    (UnsignedIntegerElement | UnsignedEnumerationElement)
+    (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement)
     [DefaultClockValueElement]
   ) |
-  SignedIntegerElement |
-  SignedEnumerationElement |
-  FloatingPointNumberElement |
+  FixedLengthSignedIntegerElement |
+  FixedLengthSignedEnumerationElement |
+  FixedLengthFloatingPointNumberElement |
   (StringBeginningElement SubstringElement * EndElement) |
   (StaticArrayBeginningElement DATA * EndElement) |
   (StaticTextArrayBeginningElement SubstringElement * EndElement) |
@@ -230,12 +230,12 @@ descriptions below easier to read and to allow recursion.
     StructureBeginningElement
     (
       (
-        (UnsignedIntegerElement | UnsignedEnumerationElement)
+        (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement)
         PacketMagicNumberElement
       ) |
       (
         StaticArrayBeginningElement
-        (UnsignedIntegerElement | UnsignedEnumerationElement){16}
+        (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement){16}
         TraceTypeUuidElement
         EndElement
       ) |
@@ -338,22 +338,25 @@ when the current element of the iterator is:
 
   <dt>EndElement</dt>
   <dd>
-    If the last element was a bit array (UnsignedIntegerElement,
-    SignedIntegerElement, FloatingPointNumberElement,
-    UnsignedEnumerationElement, or SignedEnumerationElement) or a
-    SubstringElement, the offset is the one of the last element plus its
-    length. If it was a container end element, offset is the same as it
-    was at the last element.
+    If the last element was a bit array
+    (FixedLengthUnsignedIntegerElement, FixedLengthSignedIntegerElement,
+    FixedLengthFloatingPointNumberElement,
+    FixedLengthUnsignedEnumerationElement, or
+    FixedLengthSignedEnumerationElement) or a SubstringElement, the
+    offset is the one of the last element plus its length. If it was a
+    container end element, offset is the same as it was at the last
+    element.
   </dd>
 </dl>
 
 You can obtain the offset and length of a padding region by considering
 the kind of the previous element, the offset, and the length. For
-example, if a given FloatingPointNumberElement is at offset 64 and its
-length is 32&nbsp;bits, and the offset of the next element is 128, then
-there are 64&nbsp;bits of padding between offsets 64 and 128. As such,
-if the offset of a PacketContentEndElement is 8,387,154 and the offset
-of the corresponding EndElement is 8,388,608, then there's 1454 padding
-bits between those two offsets. */
+example, if a given FixedLengthFloatingPointNumberElement is at offset
+64 and its length is 32&nbsp;bits, and the offset of the next element is
+128, then there are 64&nbsp;bits of padding between offsets 64 and 128.
+As such, if the offset of a PacketContentEndElement is 8,387,154 and the
+offset of the corresponding EndElement is 8,388,608, then there's 1454
+padding bits between those two offsets.
+*/
 
 } // namespace yactfr

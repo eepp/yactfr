@@ -52,8 +52,8 @@ public:
         If \p hasTraceTypeUuidRole is true, then \p length is 16 and
         all of the following are true:
 
-        * <code>elementType->isUnsignedIntegerType()</code>
-        * <code>elementType->asUnsignedIntegerType().length() == 8</code>
+        * <code>elementType->isFixedLengthUnsignedIntegerType()</code>
+        * <code>elementType->asFixedLengthUnsignedIntegerType().length() == 8</code>
         @endparblock
     */
     explicit StaticArrayType(unsigned int minimumAlignment, DataType::UP elementType, Size length,

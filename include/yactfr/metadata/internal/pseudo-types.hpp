@@ -19,7 +19,7 @@
 
 #include "../../aliases.hpp"
 #include "../data-loc.hpp"
-#include "../enum-type.hpp"
+#include "../fl-enum-type.hpp"
 #include "../trace-type.hpp"
 #include "../aliases.hpp"
 
@@ -109,8 +109,8 @@ public:
     enum class Kind
     {
         SCALAR_DT_WRAPPER,
-        UINT,
-        UENUM,
+        FL_UINT,
+        FL_UENUM,
         STATIC_ARRAY,
         DYN_ARRAY,
         STRUCT,
@@ -195,36 +195,36 @@ private:
 };
 
 /*
- * Pseudo unsigned integer type.
+ * Pseudo fixed-length unsigned integer type.
  *
  * This is needed because:
  *
- * * During the decoding process, a TSDL unsigned integer type may be
- *   mapped to a clock type by name, and we want to keep this name for
- *   validation and role creation purposes.
+ * * During the decoding process, a TSDL fixed-length unsigned integer
+ *   type may be mapped to a clock type by name, and we want to keep
+ *   this name for validation and role creation purposes.
  *
- * * A TSDL unsigned integer type may have an implicit role, but we need
- *   its structure member type name to assign it.
+ * * A TSDL fixed-length unsigned integer type may have an implicit
+ *   role, but we need its structure member type name to assign it.
  *
- * * A TSDL unsigned integer type may have an encoding: this is only
- *   needed to detect text array types; a yactfr integer type has no
- *   encoding.
+ * * A TSDL fixed-length unsigned integer type may have an encoding:
+ *   this is only needed to detect text array types; a yactfr
+ *   fixed-length integer type has no encoding.
  *
- * Keep an unmapped unsigned integer type here as well as the _name_ of
- * the mapped clock type, if any.
+ * Keep an unmapped fixed-length unsigned integer type here as well as
+ * the _name_ of the mapped clock type, if any.
  */
-class PseudoUIntType :
+class PseudoFlUIntType :
     public PseudoDt
 {
 public:
-    explicit PseudoUIntType(unsigned int align, unsigned int len, ByteOrder bo,
-                            DisplayBase prefDispBase, bool hasEncoding = false,
-                            boost::optional<std::string> mappedClkTypeName = boost::none,
-                            TextLocation loc = TextLocation {});
+    explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
+                              DisplayBase prefDispBase, bool hasEncoding = false,
+                              boost::optional<std::string> mappedClkTypeName = boost::none,
+                              TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::UINT;
+        return PseudoDt::Kind::FL_UINT;
     }
 
     PseudoDt::UP clone() const override;
@@ -294,34 +294,35 @@ private:
 };
 
 /*
- * Pseudo unsigned enumeration type.
+ * Pseudo fixed-length unsigned enumeration type.
  */
-class PseudoUEnumType final :
-    public PseudoUIntType
+class PseudoFlUEnumType final :
+    public PseudoFlUIntType
 {
 public:
-    explicit PseudoUEnumType(unsigned int align, unsigned int len, ByteOrder bo,
-                             DisplayBase prefDispBase, UnsignedEnumerationType::Mappings mappings,
-                             bool hasEncoding = false,
-                             boost::optional<std::string> mappedClkTypeName = boost::none,
-                             TextLocation loc = TextLocation {});
+    explicit PseudoFlUEnumType(unsigned int align, unsigned int len, ByteOrder bo,
+                               DisplayBase prefDispBase,
+                               FixedLengthUnsignedEnumerationType::Mappings mappings,
+                               bool hasEncoding = false,
+                               boost::optional<std::string> mappedClkTypeName = boost::none,
+                               TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::UENUM;
+        return PseudoDt::Kind::FL_UENUM;
     }
 
     PseudoDt::UP clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
-    const UnsignedEnumerationType::Mappings& mappings() const noexcept
+    const FixedLengthUnsignedEnumerationType::Mappings& mappings() const noexcept
     {
         return _mappings;
     }
 
 private:
-    UnsignedEnumerationType::Mappings _mappings;
+    FixedLengthUnsignedEnumerationType::Mappings _mappings;
 };
 
 /*

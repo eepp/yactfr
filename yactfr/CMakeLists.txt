@@ -11,8 +11,15 @@ endif ()
 # yactfr shared library
 add_library (
     yactfr SHARED
+    data-blk.cpp
+    data-src-factory.cpp
+    data-src.cpp
+    decoding-errors.cpp
+    elem-seq-it.cpp
+    elem-seq.cpp
+    elem-visitor.cpp
+    logging/zf_log.c
     metadata/array-type.cpp
-    metadata/bit-array-type.cpp
     metadata/clk-type.cpp
     metadata/compound-dt.cpp
     metadata/data-loc-map.cpp
@@ -22,10 +29,11 @@ add_library (
     metadata/dt.cpp
     metadata/dyn-array-type.cpp
     metadata/dyn-text-array-type.cpp
-    metadata/enum-type.cpp
     metadata/ert.cpp
-    metadata/float-type.cpp
-    metadata/int-type.cpp
+    metadata/fl-bit-array-type.cpp
+    metadata/fl-enum-type.cpp
+    metadata/fl-float-type.cpp
+    metadata/fl-int-type.cpp
     metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
@@ -44,20 +52,12 @@ add_library (
     metadata/tsdl-attr.cpp
     metadata/tsdl-parser-base.cpp
     metadata/var-type.cpp
-    text-loc.cpp
-    trace-env.cpp
-    logging/zf_log.c
-    data-blk.cpp
-    data-src-factory.cpp
-    data-src.cpp
-    decoding-errors.cpp
-    elem-visitor.cpp
     mmap-file-view-factory-impl.cpp
     mmap-file-view-factory.cpp
     pkt-proc-builder.cpp
-    elem-seq.cpp
-    elem-seq-it.cpp
     proc.cpp
+    text-loc.cpp
+    trace-env.cpp
     utils.cpp
     vm.cpp
 )

@@ -24,7 +24,7 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           UI:x:1
-     8           UI:y:18
-    16           UI:ube:0
+     0           FLUI:x:1
+     8           FLUI:y:18
+    16           FLUI:ube:0
     19 Changing byte order within a byte from little-endian to big-endian.

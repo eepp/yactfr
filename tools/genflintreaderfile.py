@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
+# Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
 #
 # This software may be modified and distributed under the terms
 # of the MIT license. See the LICENSE file for details.
@@ -6,7 +6,7 @@
 def _func_name(size, at, is_le, is_signed):
     bo = 'Le' if is_le else 'Be'
     sign = 'S' if is_signed else 'U'
-    return f'read{sign}Int{bo}{size}At{at}'
+    return f'readFl{sign}Int{bo}{size}At{at}'
 
 
 def _ret_type(is_signed):
@@ -107,7 +107,7 @@ def _gen_funcs(is_le, is_signed):
 def _gen_table(is_le, is_signed):
     bo = 'Le' if is_le else 'Be'
     sign = 'S' if is_signed else 'U'
-    name = f'read{sign}Int{bo}Funcs'
+    name = f'readFl{sign}Int{bo}Funcs'
     print(f'static {_ret_type(is_signed)} (*{name}[])(const std::uint8_t *) = {{')
 
     for size in range(1, 65):
@@ -130,14 +130,14 @@ def _gen_tables():
 
 if __name__ == '__main__':
     print('''/*
- * Copyright (C) 2021 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INT_READER_HPP
-#define _YACTFR_INT_READER_HPP
+#ifndef _YACTFR_FL_INT_READER_HPP
+#define _YACTFR_FL_INT_READER_HPP
 
 #include <cstdint>
 #include <cassert>
@@ -154,4 +154,4 @@ namespace internal {
     print('''} // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INT_READER_HPP''')
+#endif // _YACTFR_FL_INT_READER_HPP''')

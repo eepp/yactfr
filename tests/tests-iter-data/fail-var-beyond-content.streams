@@ -33,7 +33,7 @@ event {
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         UI:content_size:40
+     0         FLUI:content_size:40
      8       }
      8     }
      8     PI:40
@@ -41,7 +41,7 @@ event {
      8       ERI:0:test
      8       SC:5 {
      8         ST {
-     8           UE:tag:1
+     8           FLUE:tag:1
     16           VU:v:1 {
     16             STR {
     16 Cannot read 48 bits at this point: would move beyond the content of the current packet (24 bits remaining).

@@ -29,7 +29,7 @@
 #include "../data-loc.hpp"
 #include "../dst.hpp"
 #include "../ert.hpp"
-#include "../enum-type.hpp"
+#include "../fl-enum-type.hpp"
 #include "../int-range.hpp"
 #include "../aliases.hpp"
 #include "../metadata-parse-error.hpp"
@@ -303,9 +303,9 @@ protected:
      * reaching said block.
      *
      * We just need at least something because
-     * IntegerType::IntegerType() expects a concrete byte order. What
-     * could be done in the future is to avoid creating pseudo types
-     * until we reach the `trace` block and reset.
+     * FixedLengthIntegerType::FixedLengthIntegerType() expects a
+     * concrete byte order. What could be done in the future is to avoid
+     * creating pseudo types until we reach the `trace` block and reset.
      */
     ByteOrder _absNativeBo() const noexcept
     {
@@ -342,36 +342,37 @@ protected:
      */
     static boost::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
 
-    template <typename EnumTypeT>
-    void _validateEnumTypeMapping(Size len, const TextLocation& loc, const std::string& name,
-                                  const typename EnumTypeT::RangeSet& ranges) const;
+    template <typename FlEnumTypeT>
+    void _validateFlEnumTypeMapping(Size len, const TextLocation& loc, const std::string& name,
+                                    const typename FlEnumTypeT::RangeSet& ranges) const;
 
-    template <typename EnumTypeT>
-    void _validateEnumTypeMappings(Size len, const TextLocation& loc,
-                                   const typename EnumTypeT::Mappings& mappings) const;
+    template <typename FlEnumTypeT>
+    void _validateFlEnumTypeMappings(Size len, const TextLocation& loc,
+                                     const typename FlEnumTypeT::Mappings& mappings) const;
 
 private:
     /*
      * Sets an implicit mapped clock type name for specific pseudo
-     * unsigned integer types named `memberTypeName` within `basePseudoDt`.
+     * fixed-length unsigned integer types named `memberTypeName` within
+     * `basePseudoDt`.
      */
     void _setImplicitMappedClkTypeName(PseudoDt& basePseudoDt, const std::string& memberTypeName);
 
     /*
      * Sets an implicit mapped clock type name for specific pseudo
-     * unsigned integer types.
+     * fixed-length unsigned integer types.
      */
     void _setImplicitMappedClkTypeName();
 
     /*
-     * Add the role `role` to all pseudo unsigned integer types named
-     * `name` within `basePseudoDt`.
+     * Add the role `role` to all pseudo fixed-length unsigned integer
+     * types named `name` within `basePseudoDt`.
      */
     template <bool OnlyIfMappedClkTypeName = false>
-    void _addPseudoUIntTypeRoles(PseudoDt& basePseudoDt, const std::string& name,
-                                 UnsignedIntegerTypeRole role);
+    void _addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt, const std::string& name,
+                                   UnsignedIntegerTypeRole role);
 
-    void _addPseudoUIntTypeDefClkTsRole(PseudoDt& basePseudoDt, const std::string& name);
+    void _addPseudoFlUIntTypeDefClkTsRole(PseudoDt& basePseudoDt, const std::string& name);
 
     /*
      * Sets the "has trace type UUID role" property of all pseudo static
@@ -398,7 +399,7 @@ private:
 
 protected:
     static const char * const _EMF_URI_ATTR_NAME;
-    static constexpr Size _MAX_FAST_INT_FT_STR_SIZE = 256;
+    static constexpr Size _MAX_FAST_FL_INT_TYPE_STR_SIZE = 256;
 
 protected:
     // final trace type
@@ -418,12 +419,12 @@ protected:
 };
 
 
-template <typename EnumTypeT>
-void TsdlParserBase::_validateEnumTypeMapping(const Size len, const TextLocation& loc,
-                                              const std::string& name,
-                                              const typename EnumTypeT::RangeSet& ranges) const
+template <typename FlEnumTypeT>
+void TsdlParserBase::_validateFlEnumTypeMapping(const Size len, const TextLocation& loc,
+                                                const std::string& name,
+                                                const typename FlEnumTypeT::RangeSet& ranges) const
 {
-    using Value = typename EnumTypeT::RangeSet::Value;
+    using Value = typename FlEnumTypeT::RangeSet::Value;
 
     const auto lenUnitSuffix = (len == 1) ? "" : "s";
 
@@ -462,30 +463,30 @@ void TsdlParserBase::_validateEnumTypeMapping(const Size len, const TextLocation
     }
 }
 
-template <typename EnumTypeT>
-void TsdlParserBase::_validateEnumTypeMappings(const Size len, const TextLocation& loc,
-                                               const typename EnumTypeT::Mappings& mappings) const
+template <typename FlEnumTypeT>
+void TsdlParserBase::_validateFlEnumTypeMappings(const Size len, const TextLocation& loc,
+                                                 const typename FlEnumTypeT::Mappings& mappings) const
 {
     assert(len > 0);
     assert(len <= 64);
 
     if (mappings.empty()) {
-        throwMetadataParseError("Enumeration type has no mappings.", loc);
+        throwMetadataParseError("Fixed-length enumeration type has no mappings.", loc);
     }
 
     for (const auto& nameRangesPair : mappings) {
-        this->_validateEnumTypeMapping<EnumTypeT>(len, loc, nameRangesPair.first,
-                                                  nameRangesPair.second);
+        this->_validateFlEnumTypeMapping<FlEnumTypeT>(len, loc, nameRangesPair.first,
+                                                      nameRangesPair.second);
     }
 }
 
 template <bool OnlyIfMappedClkTypeName>
-void TsdlParserBase::_addPseudoUIntTypeRoles(PseudoDt& basePseudoDt,
-                                             const std::string& memberTypeName,
-                                             const UnsignedIntegerTypeRole role)
+void TsdlParserBase::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
+                                               const std::string& memberTypeName,
+                                               const UnsignedIntegerTypeRole role)
 {
-    for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
-        auto& pseudoIntType = static_cast<PseudoUIntType&>(*pseudoDt);
+    for (auto& pseudoDt : findPseudoFlUIntTypesByName(basePseudoDt, memberTypeName)) {
+        auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
         if (OnlyIfMappedClkTypeName && !pseudoIntType.mappedClkTypeName()) {
             continue;

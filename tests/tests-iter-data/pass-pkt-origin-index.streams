@@ -27,8 +27,8 @@ event {
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         UI:packet_size:72
-     8         UI:packet_seq_num:2
+     0         FLUI:packet_size:72
+     8         FLUI:packet_seq_num:2
     16       }
     16     }
     16     PI:72:72:2
@@ -49,8 +49,8 @@ event {
     72     DSI:0
     72     SC:1 {
     72       ST {
-    72         UI:packet_size:64
-    80         UI:packet_seq_num:180
+    72         FLUI:packet_size:64
+    80         FLUI:packet_seq_num:180
     88       }
     88     }
     88     PI:64:64:180
@@ -71,8 +71,8 @@ event {
    136     DSI:0
    136     SC:1 {
    136       ST {
-   136         UI:packet_size:88
-   144         UI:packet_seq_num:23
+   136         FLUI:packet_size:88
+   144         FLUI:packet_seq_num:23
    152       }
    152     }
    152     PI:88:88:23

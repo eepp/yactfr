@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,6 @@
 namespace yactfr {
 
 class ArrayType;
-class BitArrayType;
 class ClockOffset;
 class ClockType;
 class ClockValueInterval;
@@ -27,8 +26,12 @@ class DataTypeVisitor;
 class DynamicArrayType;
 class DynamicTextArrayType;
 class EventRecordType;
-class FloatingPointNumberType;
-class IntegerType;
+class FixedLengthBitArrayType;
+class FixedLengthFloatingPointNumberType;
+class FixedLengthIntegerType;
+class FixedLengthSignedIntegerType;
+class FixedLengthUnsignedEnumerationType;
+class FixedLengthUnsignedIntegerType;
 class InvalidMetadataStream;
 class MetadataParseError;
 class MetadataParseErrorMessage;
@@ -38,16 +41,13 @@ class PacketizedMetadataStream;
 class ParseError;
 class PlainTextMetadataStream;
 class ScalarDataType;
-class SignedEnumerationType;
-class SignedIntegerType;
+class SignedFixedLengthEnumerationType;
 class StaticArrayType;
 class StaticTextArrayType;
 class StringType;
-class StructureType;
 class StructureMemberType;
+class StructureType;
 class TraceType;
-class UnsignedEnumerationType;
-class UnsignedIntegerType;
 class VariantWithSignedSelectorType;
 class VariantWithUnsignedSelectorType;
 

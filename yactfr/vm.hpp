@@ -25,7 +25,7 @@
 #include <yactfr/decoding-errors.hpp>
 
 #include "proc.hpp"
-#include "std-int-reader.hpp"
+#include "std-fl-int-reader.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -258,11 +258,11 @@ public:
         PacketInfoElement pktInfo;
         EventRecordInfoElement erInfo;
         DefaultClockValueElement defClkVal;
-        SignedIntegerElement sInt;
-        UnsignedIntegerElement uInt;
-        SignedEnumerationElement sEnum;
-        UnsignedEnumerationElement uEnum;
-        FloatingPointNumberElement flt;
+        FixedLengthSignedIntegerElement flSInt;
+        FixedLengthUnsignedIntegerElement flUInt;
+        FixedLengthSignedEnumerationElement flSEnum;
+        FixedLengthUnsignedEnumerationElement flUEnum;
+        FixedLengthFloatingPointNumberElement flFloat;
         StringBeginningElement strBeginning;
         SubstringElement substr;
         StaticArrayBeginningElement staticArrayBeginning;
@@ -283,7 +283,7 @@ public:
     // state after reading string (until null)
     VmState postEndStrState;
 
-    // last bit array byte order
+    // last fixed-length bit array byte order
     boost::optional<ByteOrder> lastBo;
 
     // remaining padding bits to skip for alignment
@@ -714,7 +714,7 @@ private:
 
         auto& instr = **_pos.stackTop().it;
 
-        this->_execReadStdInt<std::uint64_t, 8, readUInt8>(instr);
+        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8>(instr);
         _pos.uuid.data[16 - _pos.stackTop().remElems] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
         --_pos.stackTop().remElems;
         return true;
@@ -969,50 +969,50 @@ private:
     }
 
     // instruction handlers
-    _ExecReaction _execReadSIntLe(const Instr& instr);
-    _ExecReaction _execReadSIntBe(const Instr& instr);
-    _ExecReaction _execReadSIntA8(const Instr& instr);
-    _ExecReaction _execReadSIntA16Le(const Instr& instr);
-    _ExecReaction _execReadSIntA32Le(const Instr& instr);
-    _ExecReaction _execReadSIntA64Le(const Instr& instr);
-    _ExecReaction _execReadSIntA16Be(const Instr& instr);
-    _ExecReaction _execReadSIntA32Be(const Instr& instr);
-    _ExecReaction _execReadSIntA64Be(const Instr& instr);
-    _ExecReaction _execReadUIntLe(const Instr& instr);
-    _ExecReaction _execReadUIntBe(const Instr& instr);
-    _ExecReaction _execReadUIntA8(const Instr& instr);
-    _ExecReaction _execReadUIntA16Le(const Instr& instr);
-    _ExecReaction _execReadUIntA32Le(const Instr& instr);
-    _ExecReaction _execReadUIntA64Le(const Instr& instr);
-    _ExecReaction _execReadUIntA16Be(const Instr& instr);
-    _ExecReaction _execReadUIntA32Be(const Instr& instr);
-    _ExecReaction _execReadUIntA64Be(const Instr& instr);
-    _ExecReaction _execReadFloat32Le(const Instr& instr);
-    _ExecReaction _execReadFloat32Be(const Instr& instr);
-    _ExecReaction _execReadFloatA32Le(const Instr& instr);
-    _ExecReaction _execReadFloatA32Be(const Instr& instr);
-    _ExecReaction _execReadFloat64Le(const Instr& instr);
-    _ExecReaction _execReadFloat64Be(const Instr& instr);
-    _ExecReaction _execReadFloatA64Le(const Instr& instr);
-    _ExecReaction _execReadFloatA64Be(const Instr& instr);
-    _ExecReaction _execReadSEnumLe(const Instr& instr);
-    _ExecReaction _execReadSEnumBe(const Instr& instr);
-    _ExecReaction _execReadSEnumA8(const Instr& instr);
-    _ExecReaction _execReadSEnumA16Le(const Instr& instr);
-    _ExecReaction _execReadSEnumA32Le(const Instr& instr);
-    _ExecReaction _execReadSEnumA64Le(const Instr& instr);
-    _ExecReaction _execReadSEnumA16Be(const Instr& instr);
-    _ExecReaction _execReadSEnumA32Be(const Instr& instr);
-    _ExecReaction _execReadSEnumA64Be(const Instr& instr);
-    _ExecReaction _execReadUEnumLe(const Instr& instr);
-    _ExecReaction _execReadUEnumBe(const Instr& instr);
-    _ExecReaction _execReadUEnumA8(const Instr& instr);
-    _ExecReaction _execReadUEnumA16Le(const Instr& instr);
-    _ExecReaction _execReadUEnumA32Le(const Instr& instr);
-    _ExecReaction _execReadUEnumA64Le(const Instr& instr);
-    _ExecReaction _execReadUEnumA16Be(const Instr& instr);
-    _ExecReaction _execReadUEnumA32Be(const Instr& instr);
-    _ExecReaction _execReadUEnumA64Be(const Instr& instr);
+    _ExecReaction _execReadFlSIntLe(const Instr& instr);
+    _ExecReaction _execReadFlSIntBe(const Instr& instr);
+    _ExecReaction _execReadFlSIntA8(const Instr& instr);
+    _ExecReaction _execReadFlSIntA16Le(const Instr& instr);
+    _ExecReaction _execReadFlSIntA32Le(const Instr& instr);
+    _ExecReaction _execReadFlSIntA64Le(const Instr& instr);
+    _ExecReaction _execReadFlSIntA16Be(const Instr& instr);
+    _ExecReaction _execReadFlSIntA32Be(const Instr& instr);
+    _ExecReaction _execReadFlSIntA64Be(const Instr& instr);
+    _ExecReaction _execReadFlUIntLe(const Instr& instr);
+    _ExecReaction _execReadFlUIntBe(const Instr& instr);
+    _ExecReaction _execReadFlUIntA8(const Instr& instr);
+    _ExecReaction _execReadFlUIntA16Le(const Instr& instr);
+    _ExecReaction _execReadFlUIntA32Le(const Instr& instr);
+    _ExecReaction _execReadFlUIntA64Le(const Instr& instr);
+    _ExecReaction _execReadFlUIntA16Be(const Instr& instr);
+    _ExecReaction _execReadFlUIntA32Be(const Instr& instr);
+    _ExecReaction _execReadFlUIntA64Be(const Instr& instr);
+    _ExecReaction _execReadFlFloat32Le(const Instr& instr);
+    _ExecReaction _execReadFlFloat32Be(const Instr& instr);
+    _ExecReaction _execReadFlFloatA32Le(const Instr& instr);
+    _ExecReaction _execReadFlFloatA32Be(const Instr& instr);
+    _ExecReaction _execReadFlFloat64Le(const Instr& instr);
+    _ExecReaction _execReadFlFloat64Be(const Instr& instr);
+    _ExecReaction _execReadFlFloatA64Le(const Instr& instr);
+    _ExecReaction _execReadFlFloatA64Be(const Instr& instr);
+    _ExecReaction _execReadFlSEnumLe(const Instr& instr);
+    _ExecReaction _execReadFlSEnumBe(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA8(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA16Le(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA32Le(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA64Le(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA16Be(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA32Be(const Instr& instr);
+    _ExecReaction _execReadFlSEnumA64Be(const Instr& instr);
+    _ExecReaction _execReadFlUEnumLe(const Instr& instr);
+    _ExecReaction _execReadFlUEnumBe(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA8(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA16Le(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA32Le(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA64Le(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA16Be(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA32Be(const Instr& instr);
+    _ExecReaction _execReadFlUEnumA64Be(const Instr& instr);
     _ExecReaction _execReadStr(const Instr& instr);
     _ExecReaction _execBeginReadScope(const Instr& instr);
     _ExecReaction _execEndReadScope(const Instr& instr);
@@ -1055,7 +1055,7 @@ private:
     }
 
     template <typename ValT, typename ElemT>
-    void _setIntElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
+    void _setFlIntElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
     {
         using DataTypeT = typename std::remove_const<typename std::remove_reference<decltype(elem.type())>::type>::type;
 
@@ -1075,120 +1075,120 @@ private:
     }
 
     template <typename ValT>
-    void _setIntElem(const ValT val, const Instr& instr) noexcept
+    void _setFlIntElem(const ValT val, const Instr& instr) noexcept
     {
         if (std::is_signed<ValT>::value) {
-            this->_setIntElemBase(val, instr, _pos.elems.sInt);
+            this->_setFlIntElemBase(val, instr, _pos.elems.flSInt);
         } else {
-            this->_setIntElemBase(val, instr, _pos.elems.uInt);
+            this->_setFlIntElemBase(val, instr, _pos.elems.flUInt);
         }
     }
 
     template <typename ValT>
-    void _setEnumElem(const ValT val, const Instr& instr) noexcept
+    void _setFlEnumElem(const ValT val, const Instr& instr) noexcept
     {
         if (std::is_signed<ValT>::value) {
-            this->_setIntElemBase(val, instr, _pos.elems.sEnum);
+            this->_setFlIntElemBase(val, instr, _pos.elems.flSEnum);
         } else {
-            this->_setIntElemBase(val, instr, _pos.elems.uEnum);
+            this->_setFlIntElemBase(val, instr, _pos.elems.flUEnum);
         }
     }
 
-    void _setFloatVal(const double val, const ReadDataInstr& instr) noexcept
+    void _setFlFloatVal(const double val, const ReadDataInstr& instr) noexcept
     {
-        Vm::_setDataElemFromInstr(_pos.elems.flt, instr);
-        _pos.elems.flt._dt = static_cast<const FloatingPointNumberType *>(&instr.dt());
-        _pos.elems.flt._val = val;
-        this->_updateItCurOffset(_pos.elems.flt);
+        Vm::_setDataElemFromInstr(_pos.elems.flFloat, instr);
+        _pos.elems.flFloat._dt = static_cast<const FixedLengthFloatingPointNumberType *>(&instr.dt());
+        _pos.elems.flFloat._val = val;
+        this->_updateItCurOffset(_pos.elems.flFloat);
     }
 
-    void _execReadBitArrayPreamble(const Instr& instr, const Size len)
+    void _execReadFlBitArrayPreamble(const Instr& instr, const Size len)
     {
-        auto& readBitArrayInstr = static_cast<const ReadBitArrayInstr&>(instr);
+        auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
-        this->_alignHead(readBitArrayInstr);
+        this->_alignHead(readFlBitArrayInstr);
         this->_requireContentBits(len);
     }
 
     template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
-    RetT _readStdInt(const Instr& instr)
+    RetT _readStdFlInt(const Instr& instr)
     {
-        auto& readBitArrayInstr = static_cast<const ReadBitArrayInstr&>(instr);
+        auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
-        this->_execReadBitArrayPreamble(instr, LenBits);
-        _pos.lastBo = readBitArrayInstr.bo();
+        this->_execReadFlBitArrayPreamble(instr, LenBits);
+        _pos.lastBo = readFlBitArrayInstr.bo();
         return Func(this->_bufAtHead());
     }
 
     template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
-    void _execReadStdInt(const Instr& instr)
+    void _execReadStdFlInt(const Instr& instr)
     {
-        const auto val = this->_readStdInt<RetT, LenBits, Func>(instr);
+        const auto val = this->_readStdFlInt<RetT, LenBits, Func>(instr);
 
-        this->_setIntElem(val, instr);
+        this->_setFlIntElem(val, instr);
         this->_consumeExistingBits(LenBits);
     }
 
     template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
-    void _execReadStdEnum(const Instr& instr)
+    void _execReadStdFlEnum(const Instr& instr)
     {
-        const auto val = this->_readStdInt<RetT, LenBits, Func>(instr);
+        const auto val = this->_readStdFlInt<RetT, LenBits, Func>(instr);
 
-        this->_setEnumElem(val, instr);
+        this->_setFlEnumElem(val, instr);
         this->_consumeExistingBits(LenBits);
     }
 
     template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
-    RetT _readInt(const Instr& instr)
+    RetT _readFlInt(const Instr& instr)
     {
-        auto& readBitArrayInstr = static_cast<const ReadBitArrayInstr&>(instr);
+        auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
-        this->_execReadBitArrayPreamble(instr, readBitArrayInstr.len());
+        this->_execReadFlBitArrayPreamble(instr, readFlBitArrayInstr.len());
 
         if (static_cast<bool>(_pos.lastBo)) {
             if ((_pos.headOffsetInCurPktBits & 7) != 0) {
                 /*
-                 * A bit array which does not start on a byte boundary
-                 * must have the same byte order as the previous bit
-                 * array.
+                 * A fixed-length bit array which does not start on a
+                 * byte boundary must have the same byte order as the
+                 * previous fixed-length bit array.
                  */
-                if (readBitArrayInstr.bo() != *_pos.lastBo) {
+                if (readFlBitArrayInstr.bo() != *_pos.lastBo) {
                     throw ByteOrderChangeWithinByteDecodingError {
                         _pos.headOffsetInElemSeqBits(),
                         *_pos.lastBo,
-                        readBitArrayInstr.bo()
+                        readFlBitArrayInstr.bo()
                     };
                 }
             }
         }
 
-        _pos.lastBo = readBitArrayInstr.bo();
+        _pos.lastBo = readFlBitArrayInstr.bo();
 
-        const auto index = (readBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
+        const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
 
         return Funcs[index](this->_bufAtHead());
     }
 
     template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
-    void _execReadInt(const Instr& instr)
+    void _execReadFlInt(const Instr& instr)
     {
-        const auto val = this->_readInt<RetT, Funcs>(instr);
+        const auto val = this->_readFlInt<RetT, Funcs>(instr);
 
-        this->_setIntElem(val, instr);
-        this->_consumeExistingBits(static_cast<const ReadBitArrayInstr&>(instr).len());
+        this->_setFlIntElem(val, instr);
+        this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
     template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
-    void _execReadEnum(const Instr& instr)
+    void _execReadFlEnum(const Instr& instr)
     {
-        const auto val = this->_readInt<RetT, Funcs>(instr);
+        const auto val = this->_readFlInt<RetT, Funcs>(instr);
 
-        this->_setEnumElem(val, instr);
-        this->_consumeExistingBits(static_cast<const ReadBitArrayInstr&>(instr).len());
+        this->_setFlEnumElem(val, instr);
+        this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
     template <typename FloatT>
-    void _execReadFloatPost(const std::uint64_t val, const Instr& instr) noexcept
+    void _execReadFlFloatPost(const std::uint64_t val, const Instr& instr) noexcept
     {
         // is there a better way to do this?
         using UIntT = std::conditional_t<sizeof(FloatT) == sizeof(std::uint32_t),
@@ -1200,29 +1200,29 @@ private:
                       "Floating point number and integer alignments match in union.");
 
         union {
-            FloatT flt;
-            UIntT uInt;
+            FloatT flFloat;
+            UIntT flUInt;
         } u;
 
-        u.uInt = static_cast<UIntT>(val);
-        this->_setFloatVal(u.flt, static_cast<const ReadDataInstr&>(instr));
+        u.flUInt = static_cast<UIntT>(val);
+        this->_setFlFloatVal(u.flFloat, static_cast<const ReadDataInstr&>(instr));
         this->_consumeExistingBits(sizeof(FloatT) * 8);
     }
 
     template <typename FloatT, std::uint64_t (*Funcs[])(const std::uint8_t *)>
-    void _execReadFloat(const Instr& instr)
+    void _execReadFlFloat(const Instr& instr)
     {
-        const auto val = this->_readInt<std::uint64_t, Funcs>(instr);
+        const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
 
-        this->_execReadFloatPost<FloatT>(val, instr);
+        this->_execReadFlFloatPost<FloatT>(val, instr);
     }
 
     template <typename FloatT, std::uint64_t (*Func)(const std::uint8_t *)>
-    void _execReadStdFloat(const Instr& instr)
+    void _execReadStdFlFloat(const Instr& instr)
     {
-        const auto val = this->_readStdInt<std::uint64_t, sizeof(FloatT) * 8, Func>(instr);
+        const auto val = this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, Func>(instr);
 
-        this->_execReadFloatPost<FloatT>(val, instr);
+        this->_execReadFlFloatPost<FloatT>(val, instr);
     }
 
     template <typename ReadVarInstrT, typename ElemT>

@@ -62,25 +62,25 @@ void ElementVisitor::visit(const EventRecordInfoElement& elem)
 {
 }
 
-void ElementVisitor::visit(const SignedIntegerElement& elem)
+void ElementVisitor::visit(const FixedLengthSignedIntegerElement& elem)
 {
 }
 
-void ElementVisitor::visit(const UnsignedIntegerElement& elem)
+void ElementVisitor::visit(const FixedLengthUnsignedIntegerElement& elem)
 {
 }
 
-void ElementVisitor::visit(const SignedEnumerationElement& elem)
+void ElementVisitor::visit(const FixedLengthSignedEnumerationElement& elem)
 {
-   this->visit(static_cast<const SignedIntegerElement&>(elem));
+   this->visit(static_cast<const FixedLengthSignedIntegerElement&>(elem));
 }
 
-void ElementVisitor::visit(const UnsignedEnumerationElement& elem)
+void ElementVisitor::visit(const FixedLengthUnsignedEnumerationElement& elem)
 {
-   this->visit(static_cast<const UnsignedIntegerElement&>(elem));
+   this->visit(static_cast<const FixedLengthUnsignedIntegerElement&>(elem));
 }
 
-void ElementVisitor::visit(const FloatingPointNumberElement& elem)
+void ElementVisitor::visit(const FixedLengthFloatingPointNumberElement& elem)
 {
 }
 

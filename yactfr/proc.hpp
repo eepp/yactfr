@@ -70,9 +70,9 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
-#include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/float-type.hpp>
-#include <yactfr/metadata/enum-type.hpp>
+#include <yactfr/metadata/fl-int-type.hpp>
+#include <yactfr/metadata/fl-float-type.hpp>
+#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
@@ -107,14 +107,14 @@ class EndPktPreambleProcInstr;
 class EndReadCompoundInstr;
 class EndReadScopeInstr;
 class Instr;
-class ReadBitArrayInstr;
+class ReadFlBitArrayInstr;
 class ReadDataInstr;
-class ReadFloatInstr;
-class ReadSEnumInstr;
-class ReadSIntInstr;
+class ReadFlFloatInstr;
+class ReadFlSEnumInstr;
+class ReadFlSIntInstr;
 class ReadStrInstr;
-class ReadUEnumInstr;
-class ReadUIntInstr;
+class ReadFlUEnumInstr;
+class ReadFlUIntInstr;
 class SaveValInstr;
 class SetCurIdInstr;
 class SetDsIdInstr;
@@ -143,23 +143,23 @@ protected:
 public:
     virtual ~InstrVisitor() = default;
 
-    virtual void visit(ReadSIntInstr& instr)
+    virtual void visit(ReadFlSIntInstr& instr)
     {
     }
 
-    virtual void visit(ReadUIntInstr& instr)
+    virtual void visit(ReadFlUIntInstr& instr)
     {
     }
 
-    virtual void visit(ReadFloatInstr& instr)
+    virtual void visit(ReadFlFloatInstr& instr)
     {
     }
 
-    virtual void visit(ReadSEnumInstr& instr)
+    virtual void visit(ReadFlSEnumInstr& instr)
     {
     }
 
-    virtual void visit(ReadUEnumInstr& instr)
+    virtual void visit(ReadFlUEnumInstr& instr)
     {
     }
 
@@ -396,51 +396,51 @@ public:
         END_READ_STATIC_TEXT_ARRAY,
         END_READ_STRUCT,
         END_READ_VAR,
-        READ_FLOAT_32_BE,
-        READ_FLOAT_32_LE,
-        READ_FLOAT_64_BE,
-        READ_FLOAT_64_LE,
-        READ_FLOAT_A32_BE,
-        READ_FLOAT_A32_LE,
-        READ_FLOAT_A64_BE,
-        READ_FLOAT_A64_LE,
-        READ_SENUM_A16_BE,
-        READ_SENUM_A16_LE,
-        READ_SENUM_A32_BE,
-        READ_SENUM_A32_LE,
-        READ_SENUM_A64_BE,
-        READ_SENUM_A64_LE,
-        READ_SENUM_A8,
-        READ_SENUM_BE,
-        READ_SENUM_LE,
-        READ_SINT_A16_BE,
-        READ_SINT_A16_LE,
-        READ_SINT_A32_BE,
-        READ_SINT_A32_LE,
-        READ_SINT_A64_BE,
-        READ_SINT_A64_LE,
-        READ_SINT_A8,
-        READ_SINT_BE,
-        READ_SINT_LE,
+        READ_FL_FLOAT_32_BE,
+        READ_FL_FLOAT_32_LE,
+        READ_FL_FLOAT_64_BE,
+        READ_FL_FLOAT_64_LE,
+        READ_FL_FLOAT_A32_BE,
+        READ_FL_FLOAT_A32_LE,
+        READ_FL_FLOAT_A64_BE,
+        READ_FL_FLOAT_A64_LE,
+        READ_FL_SENUM_A16_BE,
+        READ_FL_SENUM_A16_LE,
+        READ_FL_SENUM_A32_BE,
+        READ_FL_SENUM_A32_LE,
+        READ_FL_SENUM_A64_BE,
+        READ_FL_SENUM_A64_LE,
+        READ_FL_SENUM_A8,
+        READ_FL_SENUM_BE,
+        READ_FL_SENUM_LE,
+        READ_FL_SINT_A16_BE,
+        READ_FL_SINT_A16_LE,
+        READ_FL_SINT_A32_BE,
+        READ_FL_SINT_A32_LE,
+        READ_FL_SINT_A64_BE,
+        READ_FL_SINT_A64_LE,
+        READ_FL_SINT_A8,
+        READ_FL_SINT_BE,
+        READ_FL_SINT_LE,
         READ_STR,
-        READ_UENUM_A16_BE,
-        READ_UENUM_A16_LE,
-        READ_UENUM_A32_BE,
-        READ_UENUM_A32_LE,
-        READ_UENUM_A64_BE,
-        READ_UENUM_A64_LE,
-        READ_UENUM_A8,
-        READ_UENUM_BE,
-        READ_UENUM_LE,
-        READ_UINT_A16_BE,
-        READ_UINT_A16_LE,
-        READ_UINT_A32_BE,
-        READ_UINT_A32_LE,
-        READ_UINT_A64_BE,
-        READ_UINT_A64_LE,
-        READ_UINT_A8,
-        READ_UINT_BE,
-        READ_UINT_LE,
+        READ_FL_UENUM_A16_BE,
+        READ_FL_UENUM_A16_LE,
+        READ_FL_UENUM_A32_BE,
+        READ_FL_UENUM_A32_LE,
+        READ_FL_UENUM_A64_BE,
+        READ_FL_UENUM_A64_LE,
+        READ_FL_UENUM_A8,
+        READ_FL_UENUM_BE,
+        READ_FL_UENUM_LE,
+        READ_FL_UINT_A16_BE,
+        READ_FL_UINT_A16_LE,
+        READ_FL_UINT_A32_BE,
+        READ_FL_UINT_A32_LE,
+        READ_FL_UINT_A64_BE,
+        READ_FL_UINT_A64_LE,
+        READ_FL_UINT_A8,
+        READ_FL_UINT_BE,
+        READ_FL_UINT_LE,
         SAVE_VAL,
         SET_CUR_ID,
         SET_DS_ID,
@@ -489,8 +489,8 @@ public:
 
     bool isReadData() const noexcept
     {
-        return this->isReadInt() ||
-               this->isReadFloat() ||
+        return this->isReadFlInt() ||
+               this->isReadFlFloat() ||
                this->isReadStr() ||
                this->isBeginReadCompound() ||
                this->isBeginReadVar();
@@ -511,81 +511,81 @@ public:
                _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
     }
 
-    bool isReadInt() const noexcept
+    bool isReadFlInt() const noexcept
     {
-        return this->isReadSInt() || this->isReadUInt();
+        return this->isReadFlSInt() || this->isReadFlUInt();
     }
 
-    bool isReadSInt() const noexcept
+    bool isReadFlSInt() const noexcept
     {
-        return _theKind == Kind::READ_SINT_LE ||
-               _theKind == Kind::READ_SINT_BE ||
-               _theKind == Kind::READ_SINT_A8 ||
-               _theKind == Kind::READ_SINT_A16_LE ||
-               _theKind == Kind::READ_SINT_A32_LE ||
-               _theKind == Kind::READ_SINT_A64_LE ||
-               _theKind == Kind::READ_SINT_A16_BE ||
-               _theKind == Kind::READ_SINT_A32_BE ||
-               _theKind == Kind::READ_SINT_A64_BE ||
-               this->isReadSEnum();
+        return _theKind == Kind::READ_FL_SINT_LE ||
+               _theKind == Kind::READ_FL_SINT_BE ||
+               _theKind == Kind::READ_FL_SINT_A8 ||
+               _theKind == Kind::READ_FL_SINT_A16_LE ||
+               _theKind == Kind::READ_FL_SINT_A32_LE ||
+               _theKind == Kind::READ_FL_SINT_A64_LE ||
+               _theKind == Kind::READ_FL_SINT_A16_BE ||
+               _theKind == Kind::READ_FL_SINT_A32_BE ||
+               _theKind == Kind::READ_FL_SINT_A64_BE ||
+               this->isReadFlSEnum();
     }
 
-    bool isReadUInt() const noexcept
+    bool isReadFlUInt() const noexcept
     {
-        return _theKind == Kind::READ_UINT_LE ||
-               _theKind == Kind::READ_UINT_BE ||
-               _theKind == Kind::READ_UINT_A8 ||
-               _theKind == Kind::READ_UINT_A16_LE ||
-               _theKind == Kind::READ_UINT_A32_LE ||
-               _theKind == Kind::READ_UINT_A64_LE ||
-               _theKind == Kind::READ_UINT_A16_BE ||
-               _theKind == Kind::READ_UINT_A32_BE ||
-               _theKind == Kind::READ_UINT_A64_BE ||
-               this->isReadUEnum();
+        return _theKind == Kind::READ_FL_UINT_LE ||
+               _theKind == Kind::READ_FL_UINT_BE ||
+               _theKind == Kind::READ_FL_UINT_A8 ||
+               _theKind == Kind::READ_FL_UINT_A16_LE ||
+               _theKind == Kind::READ_FL_UINT_A32_LE ||
+               _theKind == Kind::READ_FL_UINT_A64_LE ||
+               _theKind == Kind::READ_FL_UINT_A16_BE ||
+               _theKind == Kind::READ_FL_UINT_A32_BE ||
+               _theKind == Kind::READ_FL_UINT_A64_BE ||
+               this->isReadFlUEnum();
     }
 
-    bool isReadFloat() const noexcept
+    bool isReadFlFloat() const noexcept
     {
-        return _theKind == Kind::READ_FLOAT_32_LE ||
-               _theKind == Kind::READ_FLOAT_32_BE ||
-               _theKind == Kind::READ_FLOAT_A32_LE ||
-               _theKind == Kind::READ_FLOAT_A32_BE ||
-               _theKind == Kind::READ_FLOAT_64_LE ||
-               _theKind == Kind::READ_FLOAT_64_BE ||
-               _theKind == Kind::READ_FLOAT_A64_LE ||
-               _theKind == Kind::READ_FLOAT_A64_BE;
+        return _theKind == Kind::READ_FL_FLOAT_32_LE ||
+               _theKind == Kind::READ_FL_FLOAT_32_BE ||
+               _theKind == Kind::READ_FL_FLOAT_A32_LE ||
+               _theKind == Kind::READ_FL_FLOAT_A32_BE ||
+               _theKind == Kind::READ_FL_FLOAT_64_LE ||
+               _theKind == Kind::READ_FL_FLOAT_64_BE ||
+               _theKind == Kind::READ_FL_FLOAT_A64_LE ||
+               _theKind == Kind::READ_FL_FLOAT_A64_BE;
     }
 
-    bool isReadEnum() const noexcept
+    bool isReadFlEnum() const noexcept
     {
-        return this->isReadSEnum() || this->isReadUEnum();
+        return this->isReadFlSEnum() || this->isReadFlUEnum();
     }
 
-    bool isReadSEnum() const noexcept
+    bool isReadFlSEnum() const noexcept
     {
-        return _theKind == Kind::READ_SENUM_LE ||
-               _theKind == Kind::READ_SENUM_BE ||
-               _theKind == Kind::READ_SENUM_A8 ||
-               _theKind == Kind::READ_SENUM_A16_LE ||
-               _theKind == Kind::READ_SENUM_A32_LE ||
-               _theKind == Kind::READ_SENUM_A64_LE ||
-               _theKind == Kind::READ_SENUM_A16_BE ||
-               _theKind == Kind::READ_SENUM_A32_BE ||
-               _theKind == Kind::READ_SENUM_A64_BE;
+        return _theKind == Kind::READ_FL_SENUM_LE ||
+               _theKind == Kind::READ_FL_SENUM_BE ||
+               _theKind == Kind::READ_FL_SENUM_A8 ||
+               _theKind == Kind::READ_FL_SENUM_A16_LE ||
+               _theKind == Kind::READ_FL_SENUM_A32_LE ||
+               _theKind == Kind::READ_FL_SENUM_A64_LE ||
+               _theKind == Kind::READ_FL_SENUM_A16_BE ||
+               _theKind == Kind::READ_FL_SENUM_A32_BE ||
+               _theKind == Kind::READ_FL_SENUM_A64_BE;
     }
 
-    bool isReadUEnum() const noexcept
+    bool isReadFlUEnum() const noexcept
     {
 
-        return _theKind == Kind::READ_UENUM_LE ||
-               _theKind == Kind::READ_UENUM_BE ||
-               _theKind == Kind::READ_UENUM_A8 ||
-               _theKind == Kind::READ_UENUM_A16_LE ||
-               _theKind == Kind::READ_UENUM_A32_LE ||
-               _theKind == Kind::READ_UENUM_A64_LE ||
-               _theKind == Kind::READ_UENUM_A16_BE ||
-               _theKind == Kind::READ_UENUM_A32_BE ||
-               _theKind == Kind::READ_UENUM_A64_BE;
+        return _theKind == Kind::READ_FL_UENUM_LE ||
+               _theKind == Kind::READ_FL_UENUM_BE ||
+               _theKind == Kind::READ_FL_UENUM_A8 ||
+               _theKind == Kind::READ_FL_UENUM_A16_LE ||
+               _theKind == Kind::READ_FL_UENUM_A32_LE ||
+               _theKind == Kind::READ_FL_UENUM_A64_LE ||
+               _theKind == Kind::READ_FL_UENUM_A16_BE ||
+               _theKind == Kind::READ_FL_UENUM_A32_BE ||
+               _theKind == Kind::READ_FL_UENUM_A64_BE;
     }
 
     bool isReadStr() const noexcept
@@ -762,14 +762,14 @@ public:
 };
 
 /*
- * "Read bit array" procedure instruction abstract class.
+ * "Read fixed-length bit array" procedure instruction.
  */
-class ReadBitArrayInstr :
+class ReadFlBitArrayInstr :
     public ReadDataInstr
 {
 protected:
-    explicit ReadBitArrayInstr(Kind kind, const StructureMemberType *memberType,
-                               const DataType& dt);
+    explicit ReadFlBitArrayInstr(Kind kind, const StructureMemberType *memberType,
+                                 const DataType& dt);
 
 public:
     unsigned int len() const noexcept
@@ -794,43 +794,43 @@ private:
 };
 
 /*
- * "Read integer" procedure instruction abstract class.
+ * "Read fixed-length integer" procedure instruction.
  */
-class ReadIntInstr :
-    public ReadBitArrayInstr
+class ReadFlIntInstr :
+    public ReadFlBitArrayInstr
 {
 protected:
-    explicit ReadIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
 
 public:
-    explicit ReadIntInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlIntInstr(const StructureMemberType *memberType, const DataType& dt);
 
-    const IntegerType& intType() const noexcept
+    const FixedLengthIntegerType& intType() const noexcept
     {
-        return static_cast<const IntegerType&>(this->dt());
+        return static_cast<const FixedLengthIntegerType&>(this->dt());
     }
 };
 
 /*
- * "Read signed integer" procedure instruction.
+ * "Read fixed-length signed integer" procedure instruction.
  */
-class ReadSIntInstr :
-    public ReadIntInstr
+class ReadFlSIntInstr :
+    public ReadFlIntInstr
 {
 protected:
-    explicit ReadSIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlSIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
 
 public:
-    explicit ReadSIntInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlSIntInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const SignedIntegerType& sIntType() const noexcept
+    const FixedLengthSignedIntegerType& sIntType() const noexcept
     {
-        return static_cast<const SignedIntegerType&>(this->dt());
+        return static_cast<const FixedLengthSignedIntegerType&>(this->dt());
     }
 
 private:
@@ -838,25 +838,25 @@ private:
 };
 
 /*
- * "Read unsigned integer" procedure instruction.
+ * "Read fixed-length unsigned integer" procedure instruction.
  */
-class ReadUIntInstr :
-    public ReadIntInstr
+class ReadFlUIntInstr :
+    public ReadFlIntInstr
 {
 protected:
-    explicit ReadUIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlUIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
 
 public:
-    explicit ReadUIntInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlUIntInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const UnsignedIntegerType& uIntType() const noexcept
+    const FixedLengthUnsignedIntegerType& uIntType() const noexcept
     {
-        return static_cast<const UnsignedIntegerType&>(this->dt());
+        return static_cast<const FixedLengthUnsignedIntegerType&>(this->dt());
     }
 
 private:
@@ -864,22 +864,22 @@ private:
 };
 
 /*
- * "Read floating point number" procedure instruction.
+ * "Read fixed-length floating point number" procedure instruction.
  */
-class ReadFloatInstr :
-    public ReadBitArrayInstr
+class ReadFlFloatInstr :
+    public ReadFlBitArrayInstr
 {
 public:
-    explicit ReadFloatInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlFloatInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const FloatingPointNumberType& floatType() const noexcept
+    const FixedLengthFloatingPointNumberType& floatType() const noexcept
     {
-        return static_cast<const FloatingPointNumberType&>(this->dt());
+        return static_cast<const FixedLengthFloatingPointNumberType&>(this->dt());
     }
 
 private:
@@ -887,22 +887,22 @@ private:
 };
 
 /*
- * "Read signed enumeration" procedure instruction.
+ * "Read fixed-length signed enumeration" procedure instruction.
  */
-class ReadSEnumInstr :
-    public ReadSIntInstr
+class ReadFlSEnumInstr :
+    public ReadFlSIntInstr
 {
 public:
-    explicit ReadSEnumInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlSEnumInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const SignedEnumerationType& sEnumType() const noexcept
+    const SignedFixedLengthEnumerationType& sEnumType() const noexcept
     {
-        return static_cast<const SignedEnumerationType&>(this->dt());
+        return static_cast<const SignedFixedLengthEnumerationType&>(this->dt());
     }
 
 private:
@@ -910,22 +910,22 @@ private:
 };
 
 /*
- * "Read unsigned enumeration" procedure instruction.
+ * "Read fixed-length unsigned enumeration" procedure instruction.
  */
-class ReadUEnumInstr :
-    public ReadUIntInstr
+class ReadFlUEnumInstr :
+    public ReadFlUIntInstr
 {
 public:
-    explicit ReadUEnumInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const UnsignedEnumerationType& uEnumType() const noexcept
+    const FixedLengthUnsignedEnumerationType& uEnumType() const noexcept
     {
-        return static_cast<const UnsignedEnumerationType&>(this->dt());
+        return static_cast<const FixedLengthUnsignedEnumerationType&>(this->dt());
     }
 
 private:

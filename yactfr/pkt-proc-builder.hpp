@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    using _IntTypeReadIntInstrMap = std::unordered_map<const DataType *, InstrLoc>;
+    using _FlIntTypeReadFlIntInstrMap = std::unordered_map<const DataType *, InstrLoc>;
 
 private:
     void _buildPktProc();
@@ -59,7 +59,7 @@ private:
     void _insertSpecialPktProcPreambleProcInstrs();
     void _insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc);
     void _insertUpdateDefClkValInstrs();
-    _IntTypeReadIntInstrMap _createIntTypeReadIntInstrMap() const;
+    _FlIntTypeReadFlIntInstrMap _createFlIntTypeReadFlIntInstrMap() const;
     void _setSavedValPoss();
     void _insertEndInstrs();
     std::unique_ptr<DsPktProc> _buildDsPktProc(const DataStreamType& dst);
@@ -67,20 +67,20 @@ private:
     void _buildReadScopeInstr(Scope scope, const DataType *dt, Proc& baseProc);
     void _buildReadInstr(const StructureMemberType *memberType, const DataType& dt, Proc& baseProc);
 
-    void _buildReadSIntInstr(const StructureMemberType *memberType, const DataType& dt,
-                             Proc& baseProc);
+    void _buildReadFlSIntInstr(const StructureMemberType *memberType, const DataType& dt,
+                               Proc& baseProc);
 
-    void _buildReadUIntInstr(const StructureMemberType *memberType, const DataType& dt,
-                             Proc& baseProc);
+    void _buildReadFlUIntInstr(const StructureMemberType *memberType, const DataType& dt,
+                               Proc& baseProc);
 
-    void _buildReadFloatInstr(const StructureMemberType *memberType, const DataType& dt,
-                              Proc& baseProc);
+    void _buildReadFlFloatInstr(const StructureMemberType *memberType, const DataType& dt,
+                                Proc& baseProc);
 
-    void _buildReadSEnumInstr(const StructureMemberType *memberType, const DataType& dt,
-                              Proc& baseProc);
+    void _buildReadFlSEnumInstr(const StructureMemberType *memberType, const DataType& dt,
+                                Proc& baseProc);
 
-    void _buildReadUEnumInstr(const StructureMemberType *memberType, const DataType& dt,
-                              Proc& baseProc);
+    void _buildReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt,
+                                Proc& baseProc);
 
     void _buildReadStrInstr(const StructureMemberType *memberType, const DataType& dt,
                             Proc& baseProc);

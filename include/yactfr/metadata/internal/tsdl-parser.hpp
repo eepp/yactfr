@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -28,9 +28,9 @@
 
 #include "../../aliases.hpp"
 #include "../trace-type.hpp"
-#include "../int-type.hpp"
-#include "../float-type.hpp"
-#include "../enum-type.hpp"
+#include "../fl-int-type.hpp"
+#include "../fl-float-type.hpp"
+#include "../fl-enum-type.hpp"
 #include "../str-type.hpp"
 #include "../static-array-type.hpp"
 #include "../static-text-array-type.hpp"
@@ -90,11 +90,12 @@ private:
     using _StrScannerRejecter = StrScannerRejecter<CharIt>;
 
     /*
-     * A "fast" pseudo integer type entry.
+     * A "fast" pseudo fixed-length integer type entry.
      *
-     * Often, integer types, which are usually the most used data types,
-     * are written exactly the same in the metadata string. For example,
-     * LTTng-modules 2.7 emits a whole bunch of this exact string:
+     * Often, fixed-length integer types, which are usually the most
+     * used data types, are written exactly the same in the metadata
+     * string. For example, LTTng-modules 2.7 emits a whole bunch of
+     * this exact string:
      *
      *     integer { size = 32; align = 8; signed = 1; encoding = none; base = 10; }
      *
@@ -103,16 +104,16 @@ private:
      *
      * This cache associates a substring, from `begin` to `end`, to the
      * parsed pseudo data type. If it is found using
-     * _fastPseudoIntType(), then you can clone the cached pseudo data
+     * _fastPseudoFlIntType(), then you can clone the cached pseudo data
      * type to have your own copy.
      *
      * The maximum size from `begin` to `end` is
-     * `_MAX_FAST_INT_FT_STR_SIZE`.
+     * `_MAX_FAST_FL_INT_TYPE_STR_SIZE`.
      *
      * Is it really worth it? I don't know! Is it a cool idea even
      * without benchmarks? I think so.
      */
-    struct _FastPseudoIntTypeEntry final
+    struct _FastPseudoFlIntTypeEntry final
     {
         CharIt begin;
         CharIt end;
@@ -165,7 +166,7 @@ private:
      *         ...
      *     };
      */
-    bool _tryParseEnumStructVarDtAlias();
+    bool _tryParseFlEnumStructVarDtAlias();
 
     /*
      * Tries to parse a `typealias` or `typedef` block, adding it to the
@@ -398,7 +399,7 @@ private:
     PseudoDt::UP _tryParseFullDt();
 
     /*
-     * Tries to parse an integer data type block.
+     * Tries to parse a fixed-length integer type block.
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      *
@@ -411,10 +412,10 @@ private:
      *         byte_order = be;
      *     }
      */
-    PseudoDt::UP _tryParseIntType();
+    PseudoDt::UP _tryParseFlIntType();
 
     /*
-     * Tries to parse a floating point number type block.
+     * Tries to parse a fixed-length floating point number type block.
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      *
@@ -426,7 +427,7 @@ private:
      *         byte_order = le;
      *     }
      */
-    PseudoDt::UP _tryParseFloatType();
+    PseudoDt::UP _tryParseFlFloatType();
 
     /*
      * Tries to parse a string type block.
@@ -444,15 +445,15 @@ private:
     PseudoDt::UP _tryParseStrType();
 
     /*
-     * Tries to parse an enumeration type block.
+     * Tries to parse a fixed-length enumeration type block.
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      *
      * If the parser makes it to the `:` or `{` token and the
-     * enumeration type is named, this method adds a data type alias to
-     * the map of aliased data types of the current frame if
-     * `addDtAlias` is true, and sets `*dtAliasName` to the name of the
-     * data type alias.
+     * fixed-length enumeration type is named, this method adds a data
+     * type alias to the map of aliased data types of the current frame
+     * if `addDtAlias` is true, and sets `*dtAliasName` to the name of
+     * the data type alias.
      *
      * Example:
      *
@@ -463,12 +464,12 @@ private:
      *         "HAR TENVAR" = -17 ... 28,
      *     }
      */
-    PseudoDt::UP _tryParseEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    PseudoDt::UP _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
-    template <typename EnumTypeT, typename CreatePseudoDtFuncT>
-    PseudoDt::UP _finishParseEnumType(PseudoDt::UP pseudoDt, bool addDtAlias,
-                                      std::string&& potDtAliasName,
-                                      CreatePseudoDtFuncT&& createPseudoDtFunc);
+    template <typename FlEnumTypeT, typename CreatePseudoDtFuncT>
+    PseudoDt::UP _finishParseFlEnumType(PseudoDt::UP pseudoDt, bool addDtAlias,
+                                        std::string&& potDtAliasName,
+                                        CreatePseudoDtFuncT&& createPseudoDtFunc);
 
     /*
      * Tries to parse a structure type block.
@@ -625,10 +626,11 @@ private:
     bool _tryParseErtBlock();
 
     /*
-     * Returns a fast integer pseudo data type clone from the fast
-     * integer pseudo data type cache, or `nullptr` if not found.
+     * Returns a fast pseudo fixed-length integer type clone from the
+     * fast pseudo fixed-length integer type cache, or `nullptr` if not
+     * found.
      */
-    PseudoDt::UP _fastPseudoIntType(TextLocation loc);
+    PseudoDt::UP _fastPseudoFlIntType(TextLocation loc);
 
     TextLocation _curLoc() const
     {
@@ -636,11 +638,12 @@ private:
     }
 
     /*
-     * Inserts a clone of the pseudo integer type `pseudoIntType` having
-     * the corresponding TSDL string from `begin` (inclusive) to `end`
-     * (exclusive) into the fast pseudo integer type cache.
+     * Inserts a clone of the pseudo fixed-length integer type
+     * `pseudoIntType` having the corresponding TSDL string from `begin`
+     * (inclusive) to `end` (exclusive) into the fast pseudo
+     * fixed-length integer type cache.
      */
-    void _insertFastPseudoIntType(CharIt begin, CharIt end, const PseudoDt& pseudoIntType);
+    void _insertFastPseudoFlIntType(CharIt begin, CharIt end, const PseudoDt& pseudoIntType);
 
     Index _at() const
     {
@@ -748,8 +751,8 @@ private:
     // underlying string scanner
     StrScanner<CharIt> _ss;
 
-    // cache of TSDL substrings to pseudo integer types
-    std::vector<_FastPseudoIntTypeEntry> _fastPseudoIntTypes;
+    // cache of TSDL substrings to pseudo fixed-length integer types
+    std::vector<_FastPseudoFlIntTypeEntry> _fastPseudoFlIntTypes;
 };
 
 template <typename CharIt>
@@ -869,7 +872,7 @@ void TsdlParser<CharIt>::_expectToken(const std::string& token)
 }
 
 template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseEnumStructVarDtAlias()
+bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 {
     PseudoDt::UP pseudoDt;
     std::string dtAliasName;
@@ -878,12 +881,12 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVarDtAlias()
 
     const auto loc = this->_curLoc();
 
-    // try enumeration type alias
+    // try fixed-length enumeration type alias
     {
         _StrScannerRejecter ssRej {_ss};
 
         try {
-            pseudoDt = this->_tryParseEnumType(false, &dtAliasName);
+            pseudoDt = this->_tryParseFlEnumType(false, &dtAliasName);
         } catch (MetadataParseError& error) {
             appendMsgToMetadataParseError(error, "In `enum` block:", loc);
             throw;
@@ -1053,7 +1056,7 @@ bool TsdlParser<CharIt>::_tryParseDtAlias()
         throw;
     }
 
-    if (this->_tryParseEnumStructVarDtAlias()) {
+    if (this->_tryParseFlEnumStructVarDtAlias()) {
         return true;
     }
 
@@ -1087,7 +1090,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
     PseudoDt::UP pseudoDt;
 
     try {
-        pseudoDt = this->_tryParseIntType();
+        pseudoDt = this->_tryParseFlIntType();
 
         if (pseudoDt) {
             return pseudoDt;
@@ -1109,7 +1112,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseEnumType();
+        pseudoDt = this->_tryParseFlEnumType();
 
         if (pseudoDt) {
             return pseudoDt;
@@ -1120,7 +1123,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseFloatType();
+        pseudoDt = this->_tryParseFlFloatType();
 
         if (pseudoDt) {
             return pseudoDt;
@@ -1156,22 +1159,22 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
 }
 
 template <typename CharIt>
-void TsdlParser<CharIt>::_insertFastPseudoIntType(CharIt begin, CharIt end,
-                                                  const PseudoDt& pseudoDt)
+void TsdlParser<CharIt>::_insertFastPseudoFlIntType(CharIt begin, CharIt end,
+                                                    const PseudoDt& pseudoDt)
 {
     assert(end >= begin);
 
-    if (static_cast<Size>(std::distance(begin, end)) > TsdlParser::_MAX_FAST_INT_FT_STR_SIZE) {
+    if (static_cast<Size>(std::distance(begin, end)) > TsdlParser::_MAX_FAST_FL_INT_TYPE_STR_SIZE) {
         return;
     }
 
-    _fastPseudoIntTypes.push_back({begin, end, pseudoDt.clone()});
+    _fastPseudoFlIntTypes.push_back({begin, end, pseudoDt.clone()});
 }
 
 template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_fastPseudoIntType(TextLocation loc)
+PseudoDt::UP TsdlParser<CharIt>::_fastPseudoFlIntType(TextLocation loc)
 {
-    for (const auto& entry : _fastPseudoIntTypes) {
+    for (const auto& entry : _fastPseudoFlIntTypes) {
         const auto entrySize = std::distance(entry.begin, entry.end);
 
         if (_ss.charsLeft() < static_cast<Size>(entrySize)) {
@@ -1194,7 +1197,7 @@ PseudoDt::UP TsdlParser<CharIt>::_fastPseudoIntType(TextLocation loc)
 }
 
 template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseIntType()
+PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1207,10 +1210,10 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIntType()
 
     _ss.skipCommentsAndWhitespaces();
 
-    auto fastPseudoIntType = this->_fastPseudoIntType(beforeKwLoc);
+    auto fastPseudoFlIntType = this->_fastPseudoFlIntType(beforeKwLoc);
 
-    if (fastPseudoIntType) {
-        return fastPseudoIntType;
+    if (fastPseudoFlIntType) {
+        return fastPseudoFlIntType;
     }
 
     const auto beginLoc = this->_curLoc();
@@ -1310,31 +1313,34 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIntType()
 
     if (isSigned) {
         if (mappedClkTypeName) {
-            throwMetadataParseError("Illegal `map` attribute for a signed integer type.",
+            throwMetadataParseError("Illegal `map` attribute for a fixed-length signed integer type.",
                                     *mapAttrLoc);
         }
 
-        auto intType = std::make_unique<const SignedIntegerType>(align, size, bo, dispBase);
+        auto intType = std::make_unique<const FixedLengthSignedIntegerType>(align, size, bo, dispBase);
 
         pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), hasEncoding,
                                                            beforeKwLoc);
     } else {
-        pseudoDt = std::make_unique<PseudoUIntType>(align, size, bo, dispBase, hasEncoding,
+        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, hasEncoding,
                                                     mappedClkTypeName, beforeKwLoc);
     }
 
     assert(pseudoDt);
 
     if (beginLoc.lineNumber() == this->_curLoc().lineNumber()) {
-        // fast pseudo integer type cache only supported for single lines
-        this->_insertFastPseudoIntType(beginAt, endAt, *pseudoDt);
+        /*
+         * Fast pseudo fixed-length integer type cache only supported
+         * for single lines.
+         */
+        this->_insertFastPseudoFlIntType(beginAt, endAt, *pseudoDt);
     }
 
     return pseudoDt;
 }
 
 template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseFloatType()
+PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1409,7 +1415,9 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFloatType()
         throwMetadataParseError(ss.str(), beginLoc);
     }
 
-    auto floatType = std::make_unique<const FloatingPointNumberType>(align, expDig + mantDig, bo);
+    auto floatType = std::make_unique<const FixedLengthFloatingPointNumberType>(align,
+                                                                                expDig + mantDig,
+                                                                                bo);
 
     return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), beginLoc);
 }
@@ -1464,8 +1472,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStrType()
 }
 
 template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
-                                                   std::string * const dtAliasName)
+PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
+                                                     std::string * const dtAliasName)
 {
     _StrScannerRejecter ssRej {_ss};
 
@@ -1499,13 +1507,13 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
         }
     }
 
-    // accept the enumeration type so far
+    // accept the fixed-length enumeration type so far
     ssRej.accept();
     _ss.skipCommentsAndWhitespaces();
 
     PseudoDt::UP pseudoDt;
 
-    // try to parse the integer type
+    // try to parse the fixed-length integer type
     if (_ss.scanToken(":")) {
         _ss.skipCommentsAndWhitespaces();
 
@@ -1534,10 +1542,10 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
             }
         } else {
             // fall back to expecting `integer`
-            pseudoDt = this->_tryParseIntType();
+            pseudoDt = this->_tryParseFlIntType();
 
             if (!pseudoDt) {
-                throwMetadataParseError("Expecting `integer` or existing integer type alias name.",
+                throwMetadataParseError("Expecting `integer` or existing fixed-length integer type alias name.",
                                         loc);
             }
 
@@ -1553,7 +1561,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
         }
 
         if (!pseudoDt->isInt()) {
-            throwMetadataParseError("Implicit `int` data type alias isn't an integer type.",
+            throwMetadataParseError("Implicit `int` data type alias isn't a fixed-length integer type.",
                                     beginLoc);
         }
     }
@@ -1565,29 +1573,31 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
     assert(pseudoDt->isInt());
 
     if (pseudoDt->isUInt()) {
-        return this->_finishParseEnumType<UnsignedEnumerationType>(std::move(pseudoDt), addDtAlias,
-                                                                   std::move(potDtAliasName),
-                                                                   [](const auto& pseudoDt,
-                                                                      const auto& mappings) {
-            const auto& pseudoUIntType = static_cast<const PseudoUIntType&>(pseudoDt);
+        return this->_finishParseFlEnumType<FixedLengthUnsignedEnumerationType>(std::move(pseudoDt), addDtAlias,
+                                                                                std::move(potDtAliasName),
+                                                                                [](const auto& pseudoDt,
+                                                                                   const auto& mappings) {
+            const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoDt);
 
-            return std::make_unique<PseudoUEnumType>(pseudoUIntType.align(), pseudoUIntType.len(),
-                                                     pseudoUIntType.bo(),
-                                                     pseudoUIntType.prefDispBase(), mappings,
-                                                     pseudoUIntType.hasEncoding(),
-                                                     pseudoUIntType.mappedClkTypeName(),
-                                                     pseudoDt.loc());
+            return std::make_unique<PseudoFlUEnumType>(pseudoUIntType.align(),
+                                                       pseudoUIntType.len(), pseudoUIntType.bo(),
+                                                       pseudoUIntType.prefDispBase(), mappings,
+                                                       pseudoUIntType.hasEncoding(),
+                                                       pseudoUIntType.mappedClkTypeName(),
+                                                       pseudoDt.loc());
         });
     } else {
-        return this->_finishParseEnumType<SignedEnumerationType>(std::move(pseudoDt), addDtAlias,
-                                                                 std::move(potDtAliasName),
-                                                                 [](const auto& pseudoDt,
-                                                                    const auto& mappings) {
-            auto& intType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asIntegerType();
-            auto enumType = std::make_unique<SignedEnumerationType>(intType.alignment(),
-                                                                    intType.length(),
-                                                                    intType.byteOrder(), mappings,
-                                                                    intType.preferredDisplayBase());
+        return this->_finishParseFlEnumType<SignedFixedLengthEnumerationType>(std::move(pseudoDt), addDtAlias,
+                                                                              std::move(potDtAliasName),
+                                                                              [](const auto& pseudoDt,
+                                                                                 const auto& mappings) {
+            auto& intType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthIntegerType();
+            auto enumType = std::make_unique<SignedFixedLengthEnumerationType>(intType.alignment(),
+                                                                               intType.length(),
+                                                                               intType.byteOrder(),
+                                                                               mappings,
+                                                                               intType.preferredDisplayBase());
+
             return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), pseudoDt.loc());
         });
     }
@@ -2226,7 +2236,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
          */
         assert(nativeBo);
         _nativeBo = *nativeBo;
-        _fastPseudoIntTypes.clear();
+        _fastPseudoFlIntTypes.clear();
         assert(_stack.size() == 2);
         _stack[0].dtAliases.clear();
         _ss.reset();
@@ -3030,14 +3040,15 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
 }
 
 template <typename CharIt>
-template <typename EnumTypeT, typename CreatePseudoDtFuncT>
-PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, const bool addDtAlias,
-                                                      std::string&& potDtAliasName,
-                                                      CreatePseudoDtFuncT&& createPseudoDtFunc)
+template <typename FlEnumTypeT, typename CreatePseudoDtFuncT>
+PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
+                                                        const bool addDtAlias,
+                                                        std::string&& potDtAliasName,
+                                                        CreatePseudoDtFuncT&& createPseudoDtFunc)
 {
     // parse mappings (we're after `{`)
-    std::unordered_map<std::string, std::set<typename EnumTypeT::RangeSet::Range>> pseudoMappings;
-    typename EnumTypeT::RangeSet::Value curVal = 0;
+    std::unordered_map<std::string, std::set<typename FlEnumTypeT::RangeSet::Range>> pseudoMappings;
+    typename FlEnumTypeT::RangeSet::Value curVal = 0;
 
     while (true) {
         CharIt begin, end;
@@ -3106,7 +3117,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
             throwMetadataParseError(ss.str(), *loc);
         }
 
-        pseudoMappings[name].insert(typename EnumTypeT::RangeSet::Range {lower, upper});
+        pseudoMappings[name].insert(typename FlEnumTypeT::RangeSet::Range {lower, upper});
 
         const bool gotComma = _ss.scanToken(",");
 
@@ -3124,10 +3135,10 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
         throwMetadataParseError("Expecting at least one mapping.", pseudoDt->loc());
     }
 
-    typename EnumTypeT::Mappings mappings;
+    typename FlEnumTypeT::Mappings mappings;
 
     for (const auto& nameRangesPair : pseudoMappings) {
-        mappings[nameRangesPair.first] = typename EnumTypeT::RangeSet {
+        mappings[nameRangesPair.first] = typename FlEnumTypeT::RangeSet {
             std::move(nameRangesPair.second)
         };
     }
@@ -3138,23 +3149,23 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
     if (pseudoDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
         const auto& pseudoDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoDt);
 
-        assert(pseudoDtWrapper.dt().isSignedIntegerType());
-        len = pseudoDtWrapper.dt().asIntegerType().length();
+        assert(pseudoDtWrapper.dt().isFixedLengthSignedIntegerType());
+        len = pseudoDtWrapper.dt().asFixedLengthIntegerType().length();
     } else {
-        assert(pseudoDt->kind() == PseudoDt::Kind::UINT);
+        assert(pseudoDt->kind() == PseudoDt::Kind::FL_UINT);
 
-        const auto& pseudoUIntType = static_cast<const PseudoUIntType&>(*pseudoDt);
+        const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(*pseudoDt);
 
         len = pseudoUIntType.len();
     }
 
-    this->_validateEnumTypeMappings<EnumTypeT>(len, pseudoDt->loc(), mappings);
+    this->_validateFlEnumTypeMappings<FlEnumTypeT>(len, pseudoDt->loc(), mappings);
 
-    // create pseudo enumeration type
+    // create pseudo fixed-length enumeration type
     auto pseudoEnumType = std::forward<CreatePseudoDtFuncT>(createPseudoDtFunc)(*pseudoDt,
                                                                                 mappings);
 
-    // add type alias if this enumeration type has a name
+    // add data type alias if this fixed-length enumeration type has a name
     if (addDtAlias && !potDtAliasName.empty()) {
         this->_addDtAlias(std::move(potDtAliasName), *pseudoEnumType);
     }
@@ -3175,7 +3186,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
      *            align = 8;
      *        } := hello;
      *
-     * 2. Enumeration data type alias:
+     * 2. Fixed-length enumeration data type alias:
      *
      *        enum my_enum : some_int {
      *            ...
@@ -3197,7 +3208,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
      *            ...
      *        };
      *
-     * 5. Identifier using an enumeration type alias:
+     * 5. Identifier using a fixed-length enumeration type alias:
      *
      *        enum state my_state;
      *        enum state my_state[2];

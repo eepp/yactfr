@@ -151,16 +151,16 @@ public:
         this->_visitProc(proc);
     }
 
-    void visit(ReadUIntInstr& instr) override
+    void visit(ReadFlUIntInstr& instr) override
     {
         if (_uIntTypeRole && instr.uIntType().hasRole(*_uIntTypeRole)) {
             _func(_curInstrLoc);
         }
     }
 
-    void visit(ReadUEnumInstr& instr) override
+    void visit(ReadFlUEnumInstr& instr) override
     {
-        this->visit(static_cast<ReadUIntInstr&>(instr));
+        this->visit(static_cast<ReadFlUIntInstr&>(instr));
     }
 
     void visit(BeginReadStructInstr& instr) override
@@ -335,12 +335,12 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 
     const auto insertUpdateDefClkValInstr = [&dsPktProc](auto& instrLoc) {
         assert(dsPktProc.dst().defaultClockType());
-        assert((*instrLoc.it)->isReadUInt());
+        assert((*instrLoc.it)->isReadFlUInt());
 
-        const auto& readBitArrayInstr = static_cast<const ReadBitArrayInstr&>(**instrLoc.it);
+        const auto& readFixedLengthBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(**instrLoc.it);
 
         instrLoc.proc->insert(std::next(instrLoc.it),
-                              std::make_shared<UpdateDefClkValInstr>(readBitArrayInstr.len()));
+                              std::make_shared<UpdateDefClkValInstr>(readFixedLengthBitArrayInstr.len()));
     };
 
     if (readScopeInstrIt != dsPktProc.pktPreambleProc().end()) {
@@ -430,35 +430,35 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
     dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErInfoInstr>());
 }
 
-class IntTypeReadIntInstrMapCreator :
+class FlIntTypeReadFlIntInstrMapCreator :
     public CallerInstrVisitor
 {
 public:
     using Func = std::function<void (InstrLoc&)>;
 
 public:
-    explicit IntTypeReadIntInstrMapCreator(Proc& proc, Func func) :
+    explicit FlIntTypeReadFlIntInstrMapCreator(Proc& proc, Func func) :
         _func {std::move(func)}
     {
         this->_visitProc(proc);
     }
 
-    void visit(ReadSIntInstr& instr) override
+    void visit(ReadFlSIntInstr& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(ReadUIntInstr& instr) override
+    void visit(ReadFlUIntInstr& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(ReadSEnumInstr& instr) override
+    void visit(ReadFlSEnumInstr& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(ReadUEnumInstr& instr) override
+    void visit(ReadFlUEnumInstr& instr) override
     {
         this->_visit(instr);
     }
@@ -507,7 +507,7 @@ private:
         this->_visitProc(instr.proc());
     }
 
-    void _visit(ReadIntInstr& instr)
+    void _visit(ReadFlIntInstr& instr)
     {
         _func(_curInstrLoc);
     }
@@ -516,9 +516,9 @@ private:
     const Func _func;
 };
 
-PktProcBuilder::_IntTypeReadIntInstrMap PktProcBuilder::_createIntTypeReadIntInstrMap() const
+PktProcBuilder::_FlIntTypeReadFlIntInstrMap PktProcBuilder::_createFlIntTypeReadFlIntInstrMap() const
 {
-    _IntTypeReadIntInstrMap map;
+    _FlIntTypeReadFlIntInstrMap map;
 
     const auto insertFunc = [&map](InstrLoc& instrLoc) {
         auto& readDataInstr = static_cast<const ReadDataInstr&>(**instrLoc.it);
@@ -526,16 +526,16 @@ PktProcBuilder::_IntTypeReadIntInstrMap PktProcBuilder::_createIntTypeReadIntIns
         map[&readDataInstr.dt()] = instrLoc;
     };
 
-    IntTypeReadIntInstrMapCreator {_pktProc->preambleProc(), insertFunc};
+    FlIntTypeReadFlIntInstrMapCreator {_pktProc->preambleProc(), insertFunc};
 
     for (auto& dsPktProcPair : _pktProc->dsPktProcs()) {
         auto& dsPktProc = dsPktProcPair.second;
 
-        IntTypeReadIntInstrMapCreator {dsPktProc->pktPreambleProc(), insertFunc};
-        IntTypeReadIntInstrMapCreator {dsPktProc->erPreambleProc(), insertFunc};
+        FlIntTypeReadFlIntInstrMapCreator {dsPktProc->pktPreambleProc(), insertFunc};
+        FlIntTypeReadFlIntInstrMapCreator {dsPktProc->erPreambleProc(), insertFunc};
 
         dsPktProcPair.second->forEachErProc([&insertFunc](ErProc& erProc) {
-            IntTypeReadIntInstrMapCreator {erProc.proc(), insertFunc};
+            FlIntTypeReadFlIntInstrMapCreator {erProc.proc(), insertFunc};
         });
     }
 
@@ -621,28 +621,31 @@ void PktProcBuilder::_setSavedValPoss()
      * which having a data type containing the lenght/selector types.
      *
      * For a given length/selector type, we can find the corresponding
-     * "read integer" instruction as data types are unique.
+     * "read fixed-length integer" instruction as data types are unique.
      *
      * We insert "save value" instructions at the appropriate locations
      * in the associated procedure and then return the saved value
      * position to the visitor so that it changes the requesting
      * instruction.
      */
-    auto intTypeReadIntInstrMap = this->_createIntTypeReadIntInstrMap();
+    auto flIntTypeReadFlIntInstrMap = this->_createFlIntTypeReadFlIntInstrMap();
     Index nextPos = 0;
 
-    const auto getPosFunc = [&intTypeReadIntInstrMap, &nextPos](const DataTypeSet& dts) {
+    const auto getPosFunc = [&flIntTypeReadFlIntInstrMap, &nextPos](const DataTypeSet& dts) {
         // saved value position to update
         const auto pos = nextPos;
 
         /*
          * For each data type of `dts`, insert a "save value"
-         * instruction after its corresponding "read integer"
-         * instruction.
+         * instruction after its corresponding "read fixed-length
+         * integer" instruction.
          */
         for (auto& dt : dts) {
-            // find corresponding "read integer" instruction location
-            auto& instrLoc = intTypeReadIntInstrMap[dt];
+            /*
+             * Find corresponding "read fixed-length integer"
+             * instruction location.
+             */
+            auto& instrLoc = flIntTypeReadFlIntInstrMap[dt];
 
             // insert "save value" instruction just after
             instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SaveValInstr>(pos));
@@ -769,29 +772,29 @@ public:
     {
     }
 
-    void visit(const SignedIntegerType& dt) override
+    void visit(const FixedLengthSignedIntegerType& dt) override
     {
-        _pktProcBuilder->_buildReadSIntInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadFlSIntInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const UnsignedIntegerType& dt) override
+    void visit(const FixedLengthUnsignedIntegerType& dt) override
     {
-        _pktProcBuilder->_buildReadUIntInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadFlUIntInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const FloatingPointNumberType& dt) override
+    void visit(const FixedLengthFloatingPointNumberType& dt) override
     {
-        _pktProcBuilder->_buildReadFloatInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadFlFloatInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const SignedEnumerationType& dt) override
+    void visit(const SignedFixedLengthEnumerationType& dt) override
     {
-        _pktProcBuilder->_buildReadSEnumInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadFlSEnumInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const UnsignedEnumerationType& dt) override
+    void visit(const FixedLengthUnsignedEnumerationType& dt) override
     {
-        _pktProcBuilder->_buildReadUEnumInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadFlUEnumInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const StringType& dt) override
@@ -855,39 +858,39 @@ static void buildBasicReadInstr(const StructureMemberType * const memberType, co
     baseProc.pushBack(std::make_shared<ReadInstrT>(memberType, dt));
 }
 
-void PktProcBuilder::_buildReadSIntInstr(const StructureMemberType * const memberType,
-                                         const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadFlSIntInstr(const StructureMemberType * const memberType,
+                                           const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isSignedIntegerType());
-    buildBasicReadInstr<ReadSIntInstr>(memberType, dt, baseProc);
+    assert(dt.isFixedLengthSignedIntegerType());
+    buildBasicReadInstr<ReadFlSIntInstr>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadUIntInstr(const StructureMemberType * const memberType,
-                                         const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadFlUIntInstr(const StructureMemberType * const memberType,
+                                           const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isUnsignedIntegerType());
-    buildBasicReadInstr<ReadUIntInstr>(memberType, dt, baseProc);
+    assert(dt.isFixedLengthUnsignedIntegerType());
+    buildBasicReadInstr<ReadFlUIntInstr>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadFloatInstr(const StructureMemberType * const memberType,
-                                         const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadFlFloatInstr(const StructureMemberType * const memberType,
+                                            const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isFloatingPointNumberType());
-    buildBasicReadInstr<ReadFloatInstr>(memberType, dt, baseProc);
+    assert(dt.isFixedLengthFloatingPointNumberType());
+    buildBasicReadInstr<ReadFlFloatInstr>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadSEnumInstr(const StructureMemberType * const memberType,
-                                          const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadFlSEnumInstr(const StructureMemberType * const memberType,
+                                            const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isSignedEnumerationType());
-    buildBasicReadInstr<ReadSEnumInstr>(memberType, dt, baseProc);
+    assert(dt.isSignedFixedLengthEnumerationType());
+    buildBasicReadInstr<ReadFlSEnumInstr>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadUEnumInstr(const StructureMemberType * const memberType,
-                                          const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadFlUEnumInstr(const StructureMemberType * const memberType,
+                                            const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isUnsignedEnumerationType());
-    buildBasicReadInstr<ReadUEnumInstr>(memberType, dt, baseProc);
+    assert(dt.isFixedLengthUnsignedEnumerationType());
+    buildBasicReadInstr<ReadFlUEnumInstr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadStrInstr(const StructureMemberType * const memberType,

@@ -43,12 +43,12 @@ deadbeef
      0     ER {
      0       SC:2 {
      0         ST {
-     0           UI:id:67
+     0           FLUI:id:67
      8           ST:s {
      8             STR:aaa {
      8               SS:6:paste
     56             }
-    56             UI:id:66
+    56             FLUI:id:66
     64           }
     64         }
     64       }
@@ -64,19 +64,19 @@ deadbeef
    136     ER {
    136       SC:2 {
    136         ST {
-   136           UI:id:66
+   136           FLUI:id:66
    144           ST:s {
    144             STR:aaa {
    144               SS:6:paste
    192             }
-   192             UI:id:67
+   192             FLUI:id:67
    200           }
    200         }
    200       }
    200       ERI:67:test1
    200       SC:5 {
    200         ST {
-   200           UI:salut:4022250974
+   200           FLUI:salut:4022250974
    232         }
    232       }
    232     }

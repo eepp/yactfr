@@ -55,22 +55,22 @@ e6357a669ea0f63f
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           FPN:flt32le1:-3.14159
-    32           FPN:flt32le2:2.71828
-    64           FPN:flt32be1:0
-    96           FPN:flt32be2:-1
-   128           FPN:flt64le1:1.41421
-   192           FPN:flt64le2:0
-   256           FPN:flt64be1:1.20206
-   320           FPN:flt64be2:1.61803
-   384           UI:pad:7
-   387           FPN:flt32bedis3:-2.68545
-   419           FPN:flt64bedis3:1.28243
-   512           FPN:flt32lealigned:8.31446
-   544           UI:pad2:7
-   547           FPN:flt32ledis3:-22.5
-   579           FPN:flt64ledis3:299.792
-   643           UI:pad3:31
+     0           FLFPN:flt32le1:-3.14159
+    32           FLFPN:flt32le2:2.71828
+    64           FLFPN:flt32be1:0
+    96           FLFPN:flt32be2:-1
+   128           FLFPN:flt64le1:1.41421
+   192           FLFPN:flt64le2:0
+   256           FLFPN:flt64be1:1.20206
+   320           FLFPN:flt64be2:1.61803
+   384           FLUI:pad:7
+   387           FLFPN:flt32bedis3:-2.68545
+   419           FLFPN:flt64bedis3:1.28243
+   512           FLFPN:flt32lealigned:8.31446
+   544           FLUI:pad2:7
+   547           FLFPN:flt32ledis3:-22.5
+   579           FLFPN:flt64ledis3:299.792
+   643           FLUI:pad3:31
    648         }
    648       }
    648     }

@@ -8,7 +8,7 @@
 #include <cstdint>
 
 #include "vm.hpp"
-#include "int-reader.hpp"
+#include "fl-int-reader.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -194,50 +194,50 @@ Vm& Vm::operator=(const Vm& other)
 
 void Vm::_initExecFuncs()
 {
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_LE)] = &Vm::_execReadSIntLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_BE)] = &Vm::_execReadSIntBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A8)] = &Vm::_execReadSIntA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A16_LE)] = &Vm::_execReadSIntA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A32_LE)] = &Vm::_execReadSIntA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A64_LE)] = &Vm::_execReadSIntA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A16_BE)] = &Vm::_execReadSIntA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A32_BE)] = &Vm::_execReadSIntA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A64_BE)] = &Vm::_execReadSIntA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_LE)] = &Vm::_execReadUIntLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_BE)] = &Vm::_execReadUIntBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A8)] = &Vm::_execReadUIntA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A16_LE)] = &Vm::_execReadUIntA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A32_LE)] = &Vm::_execReadUIntA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A64_LE)] = &Vm::_execReadUIntA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A16_BE)] = &Vm::_execReadUIntA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A32_BE)] = &Vm::_execReadUIntA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A64_BE)] = &Vm::_execReadUIntA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_32_LE)] = &Vm::_execReadFloat32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_32_BE)] = &Vm::_execReadFloat32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A32_LE)] = &Vm::_execReadFloatA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A32_BE)] = &Vm::_execReadFloatA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_64_LE)] = &Vm::_execReadFloat64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_64_BE)] = &Vm::_execReadFloat64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A64_LE)] = &Vm::_execReadFloatA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A64_BE)] = &Vm::_execReadFloatA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_LE)] = &Vm::_execReadSEnumLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_BE)] = &Vm::_execReadSEnumBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A8)] = &Vm::_execReadSEnumA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A16_LE)] = &Vm::_execReadSEnumA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A32_LE)] = &Vm::_execReadSEnumA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A64_LE)] = &Vm::_execReadSEnumA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A16_BE)] = &Vm::_execReadSEnumA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A32_BE)] = &Vm::_execReadSEnumA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A64_BE)] = &Vm::_execReadSEnumA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_LE)] = &Vm::_execReadUEnumLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_BE)] = &Vm::_execReadUEnumBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A8)] = &Vm::_execReadUEnumA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A16_LE)] = &Vm::_execReadUEnumA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A32_LE)] = &Vm::_execReadUEnumA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A64_LE)] = &Vm::_execReadUEnumA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A16_BE)] = &Vm::_execReadUEnumA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A32_BE)] = &Vm::_execReadUEnumA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A64_BE)] = &Vm::_execReadUEnumA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_LE)] = &Vm::_execReadFlSIntLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_BE)] = &Vm::_execReadFlSIntBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A8)] = &Vm::_execReadFlSIntA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A16_LE)] = &Vm::_execReadFlSIntA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A32_LE)] = &Vm::_execReadFlSIntA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A64_LE)] = &Vm::_execReadFlSIntA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A16_BE)] = &Vm::_execReadFlSIntA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A32_BE)] = &Vm::_execReadFlSIntA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A64_BE)] = &Vm::_execReadFlSIntA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_LE)] = &Vm::_execReadFlUIntLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_BE)] = &Vm::_execReadFlUIntBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A8)] = &Vm::_execReadFlUIntA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A16_LE)] = &Vm::_execReadFlUIntA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A32_LE)] = &Vm::_execReadFlUIntA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A64_LE)] = &Vm::_execReadFlUIntA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A16_BE)] = &Vm::_execReadFlUIntA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A32_BE)] = &Vm::_execReadFlUIntA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A64_BE)] = &Vm::_execReadFlUIntA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_32_LE)] = &Vm::_execReadFlFloat32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_32_BE)] = &Vm::_execReadFlFloat32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A32_LE)] = &Vm::_execReadFlFloatA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A32_BE)] = &Vm::_execReadFlFloatA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_64_LE)] = &Vm::_execReadFlFloat64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_64_BE)] = &Vm::_execReadFlFloat64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A64_LE)] = &Vm::_execReadFlFloatA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A64_BE)] = &Vm::_execReadFlFloatA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_LE)] = &Vm::_execReadFlSEnumLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_BE)] = &Vm::_execReadFlSEnumBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A8)] = &Vm::_execReadFlSEnumA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A16_LE)] = &Vm::_execReadFlSEnumA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A32_LE)] = &Vm::_execReadFlSEnumA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A64_LE)] = &Vm::_execReadFlSEnumA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A16_BE)] = &Vm::_execReadFlSEnumA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A32_BE)] = &Vm::_execReadFlSEnumA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A64_BE)] = &Vm::_execReadFlSEnumA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_LE)] = &Vm::_execReadFlUEnumLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_BE)] = &Vm::_execReadFlUEnumBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A8)] = &Vm::_execReadFlUEnumA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A16_LE)] = &Vm::_execReadFlUEnumA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A32_LE)] = &Vm::_execReadFlUEnumA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A64_LE)] = &Vm::_execReadFlUEnumA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A16_BE)] = &Vm::_execReadFlUEnumA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A32_BE)] = &Vm::_execReadFlUEnumA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A64_BE)] = &Vm::_execReadFlUEnumA64Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_STR)] = &Vm::_execReadStr;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SCOPE)] = &Vm::_execBeginReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_SCOPE)] = &Vm::_execEndReadScope;
@@ -338,267 +338,267 @@ void Vm::restorePos(const ElementSequenceIteratorPosition& pos)
     this->_resetBuffer();
 }
 
-Vm::_ExecReaction Vm::_execReadSIntLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntLe(const Instr& instr)
 {
-    this->_execReadInt<std::int64_t, readSIntLeFuncs>(instr);
+    this->_execReadFlInt<std::int64_t, readFlSIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntBe(const Instr& instr)
 {
-    this->_execReadInt<std::int64_t, readSIntBeFuncs>(instr);
+    this->_execReadFlInt<std::int64_t, readFlSIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA8(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 8, readSInt8>(instr);
+    this->_execReadStdFlInt<std::int64_t, 8, readFlSInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA16Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 16, readSIntLe16>(instr);
+    this->_execReadStdFlInt<std::int64_t, 16, readFlSIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA32Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 32, readSIntLe32>(instr);
+    this->_execReadStdFlInt<std::int64_t, 32, readFlSIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA64Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 64, readSIntLe64>(instr);
+    this->_execReadStdFlInt<std::int64_t, 64, readFlSIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA16Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 16, readSIntBe16>(instr);
+    this->_execReadStdFlInt<std::int64_t, 16, readFlSIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA32Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 32, readSIntBe32>(instr);
+    this->_execReadStdFlInt<std::int64_t, 32, readFlSIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSIntA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSIntA64Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 64, readSIntBe64>(instr);
+    this->_execReadStdFlInt<std::int64_t, 64, readFlSIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntLe(const Instr& instr)
 {
-    this->_execReadInt<std::uint64_t, readUIntLeFuncs>(instr);
+    this->_execReadFlInt<std::uint64_t, readFlUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntBe(const Instr& instr)
 {
-    this->_execReadInt<std::uint64_t, readUIntBeFuncs>(instr);
+    this->_execReadFlInt<std::uint64_t, readFlUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA8(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 8, readUInt8>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA16Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 16, readUIntLe16>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 16, readFlUIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA32Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 32, readUIntLe32>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 32, readFlUIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA64Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 64, readUIntLe64>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 64, readFlUIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA16Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 16, readUIntBe16>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 16, readFlUIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA32Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 32, readUIntBe32>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 32, readFlUIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUIntA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUIntA64Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 64, readUIntBe64>(instr);
+    this->_execReadStdFlInt<std::uint64_t, 64, readFlUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloat32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloat32Le(const Instr& instr)
 {
-    this->_execReadFloat<float, readUIntLeFuncs>(instr);
+    this->_execReadFlFloat<float, readFlUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloat32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloat32Be(const Instr& instr)
 {
-    this->_execReadFloat<float, readUIntBeFuncs>(instr);
+    this->_execReadFlFloat<float, readFlUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloatA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloatA32Le(const Instr& instr)
 {
-    this->_execReadStdFloat<float, readUIntLe32>(instr);
+    this->_execReadStdFlFloat<float, readFlUIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloatA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloatA32Be(const Instr& instr)
 {
-    this->_execReadStdFloat<float, readUIntBe32>(instr);
+    this->_execReadStdFlFloat<float, readFlUIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloat64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloat64Le(const Instr& instr)
 {
-    this->_execReadFloat<double, readUIntLeFuncs>(instr);
+    this->_execReadFlFloat<double, readFlUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloat64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloat64Be(const Instr& instr)
 {
-    this->_execReadFloat<double, readUIntBeFuncs>(instr);
+    this->_execReadFlFloat<double, readFlUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloatA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloatA64Le(const Instr& instr)
 {
-    this->_execReadStdFloat<double, readUIntLe64>(instr);
+    this->_execReadStdFlFloat<double, readFlUIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFloatA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlFloatA64Be(const Instr& instr)
 {
-    this->_execReadStdFloat<double, readUIntBe64>(instr);
+    this->_execReadStdFlFloat<double, readFlUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumLe(const Instr& instr)
 {
-    this->_execReadEnum<std::int64_t, readSIntLeFuncs>(instr);
+    this->_execReadFlEnum<std::int64_t, readFlSIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumBe(const Instr& instr)
 {
-    this->_execReadEnum<std::int64_t, readSIntBeFuncs>(instr);
+    this->_execReadFlEnum<std::int64_t, readFlSIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA8(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 8, readSInt8>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 8, readFlSInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA16Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 16, readSIntLe16>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 16, readFlSIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA32Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 32, readSIntLe32>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 32, readFlSIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA64Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 64, readSIntLe64>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 64, readFlSIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA16Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 16, readSIntBe16>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 16, readFlSIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA32Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 32, readSIntBe32>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 32, readFlSIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSEnumA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlSEnumA64Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 64, readSIntBe64>(instr);
+    this->_execReadStdFlEnum<std::int64_t, 64, readFlSIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumLe(const Instr& instr)
 {
-    this->_execReadEnum<std::uint64_t, readUIntLeFuncs>(instr);
+    this->_execReadFlEnum<std::uint64_t, readFlUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumBe(const Instr& instr)
 {
-    this->_execReadEnum<std::uint64_t, readUIntBeFuncs>(instr);
+    this->_execReadFlEnum<std::uint64_t, readFlUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA8(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 8, readUInt8>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 8, readFlUInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA16Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 16, readUIntLe16>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 16, readFlUIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA32Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 32, readUIntLe32>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 32, readFlUIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA64Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 64, readUIntLe64>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 64, readFlUIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA16Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 16, readUIntBe16>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 16, readFlUIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA32Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 32, readUIntBe32>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 32, readFlUIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUEnumA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadFlUEnumA64Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 64, readUIntBe64>(instr);
+    this->_execReadStdFlEnum<std::uint64_t, 64, readFlUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

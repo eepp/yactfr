@@ -10,10 +10,10 @@
 #include <cassert>
 
 #include <yactfr/metadata/dt.hpp>
-#include <yactfr/metadata/bit-array-type.hpp>
-#include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/float-type.hpp>
-#include <yactfr/metadata/enum-type.hpp>
+#include <yactfr/metadata/fl-bit-array-type.hpp>
+#include <yactfr/metadata/fl-int-type.hpp>
+#include <yactfr/metadata/fl-float-type.hpp>
+#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
@@ -56,46 +56,46 @@ void DataType::accept(DataTypeVisitor& visitor) const
     this->_accept(visitor);
 }
 
-const BitArrayType& DataType::asBitArrayType() const noexcept
+const FixedLengthBitArrayType& DataType::asFixedLengthBitArrayType() const noexcept
 {
-    assert(this->isBitArrayType());
-    return static_cast<const BitArrayType&>(*this);
+    assert(this->isFixedLengthBitArrayType());
+    return static_cast<const FixedLengthBitArrayType&>(*this);
 }
 
-const IntegerType& DataType::asIntegerType() const noexcept
+const FixedLengthIntegerType& DataType::asFixedLengthIntegerType() const noexcept
 {
-    assert(this->isIntegerType());
-    return static_cast<const IntegerType&>(*this);
+    assert(this->isFixedLengthIntegerType());
+    return static_cast<const FixedLengthIntegerType&>(*this);
 }
 
-const SignedIntegerType& DataType::asSignedIntegerType() const noexcept
+const FixedLengthSignedIntegerType& DataType::asFixedLengthSignedIntegerType() const noexcept
 {
-    assert(this->isSignedIntegerType());
-    return static_cast<const SignedIntegerType&>(*this);
+    assert(this->isFixedLengthSignedIntegerType());
+    return static_cast<const FixedLengthSignedIntegerType&>(*this);
 }
 
-const UnsignedIntegerType& DataType::asUnsignedIntegerType() const noexcept
+const FixedLengthUnsignedIntegerType& DataType::asFixedLengthUnsignedIntegerType() const noexcept
 {
-    assert(this->isUnsignedIntegerType());
-    return static_cast<const UnsignedIntegerType&>(*this);
+    assert(this->isFixedLengthUnsignedIntegerType());
+    return static_cast<const FixedLengthUnsignedIntegerType&>(*this);
 }
 
-const FloatingPointNumberType& DataType::asFloatingPointNumberType() const noexcept
+const FixedLengthFloatingPointNumberType& DataType::asFixedLengthFloatingPointNumberType() const noexcept
 {
-    assert(this->isFloatingPointNumberType());
-    return static_cast<const FloatingPointNumberType&>(*this);
+    assert(this->isFixedLengthFloatingPointNumberType());
+    return static_cast<const FixedLengthFloatingPointNumberType&>(*this);
 }
 
-const SignedEnumerationType& DataType::asSignedEnumerationType() const noexcept
+const SignedFixedLengthEnumerationType& DataType::asFixedLengthSignedEnumerationType() const noexcept
 {
-    assert(this->isSignedEnumerationType());
-    return static_cast<const SignedEnumerationType&>(*this);
+    assert(this->isSignedFixedLengthEnumerationType());
+    return static_cast<const SignedFixedLengthEnumerationType&>(*this);
 }
 
-const UnsignedEnumerationType& DataType::asUnsignedEnumerationType() const noexcept
+const FixedLengthUnsignedEnumerationType& DataType::asFixedLengthUnsignedEnumerationType() const noexcept
 {
-    assert(this->isUnsignedEnumerationType());
-    return static_cast<const UnsignedEnumerationType&>(*this);
+    assert(this->isFixedLengthUnsignedEnumerationType());
+    return static_cast<const FixedLengthUnsignedEnumerationType&>(*this);
 }
 
 const StringType& DataType::asStringType() const noexcept

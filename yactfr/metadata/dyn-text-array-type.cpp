@@ -7,7 +7,7 @@
 
 #include <yactfr/metadata/dyn-text-array-type.hpp>
 #include <yactfr/metadata/bo.hpp>
-#include <yactfr/metadata/int-type.hpp>
+#include <yactfr/metadata/fl-int-type.hpp>
 
 namespace yactfr {
 
@@ -15,7 +15,7 @@ DynamicTextArrayType::DynamicTextArrayType(const unsigned int minAlign,
                                            DataLocation lenLoc) :
     DynamicArrayType {
         _KIND_DYN_TEXT_ARRAY, minAlign,
-        std::make_unique<UnsignedIntegerType>(8, 8, ByteOrder::LITTLE),
+        std::make_unique<FixedLengthUnsignedIntegerType>(8, 8, ByteOrder::LITTLE),
         std::move(lenLoc)
     }
 {

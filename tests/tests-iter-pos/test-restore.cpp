@@ -19,7 +19,7 @@
 #include <common-trace.hpp>
 
 static const auto expected =
-    "UI:142\n"
+    "FLUI:142\n"
     "PMN:3254525889\n";
 
 int main()

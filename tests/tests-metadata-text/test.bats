@@ -458,128 +458,128 @@ test_metadata_pass() {
   test_metadata_fail syntax-dt-alias-block-reserved-name-11
 }
 
-@test 'integer type: negative `align` attribute -> fail' {
-  test_metadata_fail int-type-align-attr-neg
+@test 'fixed-length integer type: negative `align` attribute -> fail' {
+  test_metadata_fail fl-int-type-align-attr-neg
 }
 
-@test 'integer type: non-power-of-two `align` attribute -> fail' {
-  test_metadata_fail int-type-align-attr-non-pow2
+@test 'fixed-length integer type: non-power-of-two `align` attribute -> fail' {
+  test_metadata_fail fl-int-type-align-attr-non-pow2
 }
 
-@test 'integer type: zero `align` attribute -> fail' {
-  test_metadata_fail int-type-align-attr-zero
+@test 'fixed-length integer type: zero `align` attribute -> fail' {
+  test_metadata_fail fl-int-type-align-attr-zero
 }
 
-@test 'integer type: duplicate attribute -> fail' {
-  test_metadata_fail int-type-dup-attr
+@test 'fixed-length integer type: duplicate attribute -> fail' {
+  test_metadata_fail fl-int-type-dup-attr
 }
 
-@test 'integer type: unknown mapped clock type name (`map` attribute) -> fail' {
-  test_metadata_fail int-type-map-attr-unknown-clk-type-name
+@test 'fixed-length integer type: unknown mapped clock type name (`map` attribute) -> fail' {
+  test_metadata_fail fl-int-type-map-attr-unknown-clk-type-name
 }
 
-@test 'integer type: missing `size` attribute -> fail' {
-  test_metadata_fail int-type-missing-size-attr
+@test 'fixed-length integer type: missing `size` attribute -> fail' {
+  test_metadata_fail fl-int-type-missing-size-attr
 }
 
-@test 'integer type: negative `size` attribute -> fail' {
-  test_metadata_fail int-type-size-attr-neg
+@test 'fixed-length integer type: negative `size` attribute -> fail' {
+  test_metadata_fail fl-int-type-size-attr-neg
 }
 
-@test 'integer type: zero `size` attribute -> fail' {
-  test_metadata_fail int-type-size-attr-zero
+@test 'fixed-length integer type: zero `size` attribute -> fail' {
+  test_metadata_fail fl-int-type-size-attr-zero
 }
 
-@test 'integer type: `size` attribute is too large -> fail' {
-  test_metadata_fail int-type-size-attr-too-large
+@test 'fixed-length integer type: `size` attribute is too large -> fail' {
+  test_metadata_fail fl-int-type-size-attr-too-large
 }
 
-@test 'integer type: unknown attribute -> fail' {
-  test_metadata_fail int-type-unknown-attr
+@test 'fixed-length integer type: unknown attribute -> fail' {
+  test_metadata_fail fl-int-type-unknown-attr
 }
 
-@test 'integer type: wrong `base` attribute (1) -> fail' {
-  test_metadata_fail int-type-wrong-base-attr-1
+@test 'fixed-length integer type: wrong `base` attribute (1) -> fail' {
+  test_metadata_fail fl-int-type-wrong-base-attr-1
 }
 
-@test 'integer type: wrong `base` attribute (2) -> fail' {
-  test_metadata_fail int-type-wrong-base-attr-2
+@test 'fixed-length integer type: wrong `base` attribute (2) -> fail' {
+  test_metadata_fail fl-int-type-wrong-base-attr-2
 }
 
-@test 'integer type: wrong `base` attribute (3) -> fail' {
-  test_metadata_fail int-type-wrong-base-attr-3
+@test 'fixed-length integer type: wrong `base` attribute (3) -> fail' {
+  test_metadata_fail fl-int-type-wrong-base-attr-3
 }
 
-@test 'integer type: wrong `byte_order` attribute (1) -> fail' {
-  test_metadata_fail int-type-wrong-bo-attr-1
+@test 'fixed-length integer type: wrong `byte_order` attribute (1) -> fail' {
+  test_metadata_fail fl-int-type-wrong-bo-attr-1
 }
 
-@test 'integer type: wrong `byte_order` attribute (2) -> fail' {
-  test_metadata_fail int-type-wrong-bo-attr-2
+@test 'fixed-length integer type: wrong `byte_order` attribute (2) -> fail' {
+  test_metadata_fail fl-int-type-wrong-bo-attr-2
 }
 
-@test 'integer type: wrong `encoding` attribute (1) -> fail' {
-  test_metadata_fail int-type-wrong-encoding-attr-1
+@test 'fixed-length integer type: wrong `encoding` attribute (1) -> fail' {
+  test_metadata_fail fl-int-type-wrong-encoding-attr-1
 }
 
-@test 'integer type: wrong `encoding` attribute (2) -> fail' {
-  test_metadata_fail int-type-wrong-encoding-attr-2
+@test 'fixed-length integer type: wrong `encoding` attribute (2) -> fail' {
+  test_metadata_fail fl-int-type-wrong-encoding-attr-2
 }
 
-@test 'integer type: wrong `map` attribute (1) -> fail' {
-  test_metadata_fail int-type-wrong-map-attr-1
+@test 'fixed-length integer type: wrong `map` attribute (1) -> fail' {
+  test_metadata_fail fl-int-type-wrong-map-attr-1
 }
 
-@test 'integer type: wrong `map` attribute (2) -> fail' {
-  test_metadata_fail int-type-wrong-map-attr-2
+@test 'fixed-length integer type: wrong `map` attribute (2) -> fail' {
+  test_metadata_fail fl-int-type-wrong-map-attr-2
 }
 
-@test 'integer type: wrong `signed` attribute (1) -> fail' {
-  test_metadata_fail int-type-wrong-signed-attr-1
+@test 'fixed-length integer type: wrong `signed` attribute (1) -> fail' {
+  test_metadata_fail fl-int-type-wrong-signed-attr-1
 }
 
-@test 'integer type: wrong `signed` attribute (2) -> fail' {
-  test_metadata_fail int-type-wrong-signed-attr-2
+@test 'fixed-length integer type: wrong `signed` attribute (2) -> fail' {
+  test_metadata_fail fl-int-type-wrong-signed-attr-2
 }
 
-@test 'integer type: wrong `signed` attribute (3) -> fail' {
-  test_metadata_fail int-type-wrong-signed-attr-3
+@test 'fixed-length integer type: wrong `signed` attribute (3) -> fail' {
+  test_metadata_fail fl-int-type-wrong-signed-attr-3
 }
 
-@test 'integer type: wrong `size` attribute -> fail' {
-  test_metadata_fail int-type-wrong-size-attr
+@test 'fixed-length integer type: wrong `size` attribute -> fail' {
+  test_metadata_fail fl-int-type-wrong-size-attr
 }
 
-@test 'floating point number type: duplicate attribute -> fail' {
-  test_metadata_fail float-type-dup-attr
+@test 'fixed-length floating point number type: duplicate attribute -> fail' {
+  test_metadata_fail fl-float-type-dup-attr
 }
 
-@test 'floating point number type: missing `exp_dig` attribute -> fail' {
-  test_metadata_fail float-type-missing-exp-dig-attr
+@test 'fixed-length floating point number type: missing `exp_dig` attribute -> fail' {
+  test_metadata_fail fl-float-type-missing-exp-dig-attr
 }
 
-@test 'floating point number type: missing `mant_dig` attribute -> fail' {
-  test_metadata_fail float-type-missing-mant-dig-attr
+@test 'fixed-length floating point number type: missing `mant_dig` attribute -> fail' {
+  test_metadata_fail fl-float-type-missing-mant-dig-attr
 }
 
-@test 'floating point number type: unknown attribute -> fail' {
-  test_metadata_fail float-type-unknown-attr
+@test 'fixed-length floating point number type: unknown attribute -> fail' {
+  test_metadata_fail fl-float-type-unknown-attr
 }
 
-@test 'floating point number type: wrong `exp_dig` attribute (1) -> fail' {
-  test_metadata_fail float-type-wrong-exp-dig-attr-1
+@test 'fixed-length floating point number type: wrong `exp_dig` attribute (1) -> fail' {
+  test_metadata_fail fl-float-type-wrong-exp-dig-attr-1
 }
 
-@test 'floating point number type: wrong `exp_dig` attribute (2) -> fail' {
-  test_metadata_fail float-type-wrong-exp-dig-attr-2
+@test 'fixed-length floating point number type: wrong `exp_dig` attribute (2) -> fail' {
+  test_metadata_fail fl-float-type-wrong-exp-dig-attr-2
 }
 
-@test 'floating point number type: wrong `mant_dig` attribute (1) -> fail' {
-  test_metadata_fail float-type-wrong-mant-dig-attr-1
+@test 'fixed-length floating point number type: wrong `mant_dig` attribute (1) -> fail' {
+  test_metadata_fail fl-float-type-wrong-mant-dig-attr-1
 }
 
-@test 'floating point number type: wrong `mant_dig` attribute (2) -> fail' {
-  test_metadata_fail float-type-wrong-mant-dig-attr-2
+@test 'fixed-length floating point number type: wrong `mant_dig` attribute (2) -> fail' {
+  test_metadata_fail fl-float-type-wrong-mant-dig-attr-2
 }
 
 @test 'string type: duplicate attribute -> fail' {
@@ -622,52 +622,52 @@ test_metadata_pass() {
   test_metadata_fail struct-type-member-type-unknown-dt-alias
 }
 
-@test 'enumeration type: inversed lower and upper enumerator value -> fail' {
-  test_metadata_fail enum-type-inversed-lower-upper-vals
+@test 'fixed-length enumeration type: inversed lower and upper enumerator value -> fail' {
+  test_metadata_fail fl-enum-type-inversed-lower-upper-vals
 }
 
-@test 'enumeration type: length is too small (1) -> fail' {
-  test_metadata_fail enum-type-len-too-small-1
+@test 'fixed-length enumeration type: length is too small (1) -> fail' {
+  test_metadata_fail fl-enum-type-len-too-small-1
 }
 
-@test 'enumeration type: length is too small (2) -> fail' {
-  test_metadata_fail enum-type-len-too-small-2
+@test 'fixed-length enumeration type: length is too small (2) -> fail' {
+  test_metadata_fail fl-enum-type-len-too-small-2
 }
 
-@test 'enumeration type: missing `int` data type alias -> fail' {
-  test_metadata_fail enum-type-missing-int-dt-alias
+@test 'fixed-length enumeration type: missing `int` data type alias -> fail' {
+  test_metadata_fail fl-enum-type-missing-int-dt-alias
 }
 
-@test 'enumeration type: integer type alias is not an integer type -> fail' {
-  test_metadata_fail enum-type-wrong-int-dt-alias
+@test 'fixed-length enumeration type: integer type alias is not an integer type -> fail' {
+  test_metadata_fail fl-enum-type-wrong-int-dt-alias
 }
 
-@test 'enumeration type: enumerator value is out of range (1) -> fail' {
-  test_metadata_fail enum-type-val-out-of-range-1
+@test 'fixed-length enumeration type: enumerator value is out of range (1) -> fail' {
+  test_metadata_fail fl-enum-type-val-out-of-range-1
 }
 
-@test 'enumeration type: enumerator value is out of range (2) -> fail' {
-  test_metadata_fail enum-type-val-out-of-range-2
+@test 'fixed-length enumeration type: enumerator value is out of range (2) -> fail' {
+  test_metadata_fail fl-enum-type-val-out-of-range-2
 }
 
-@test 'enumeration type: enumerator value is out of range (3) -> fail' {
-  test_metadata_fail enum-type-val-out-of-range-3
+@test 'fixed-length enumeration type: enumerator value is out of range (3) -> fail' {
+  test_metadata_fail fl-enum-type-val-out-of-range-3
 }
 
-@test 'enumeration type: enumerator value is out of range (4) -> fail' {
-  test_metadata_fail enum-type-val-out-of-range-4
+@test 'fixed-length enumeration type: enumerator value is out of range (4) -> fail' {
+  test_metadata_fail fl-enum-type-val-out-of-range-4
 }
 
-@test 'enumeration type: enumerator value is out of range (5) -> fail' {
-  test_metadata_fail enum-type-val-out-of-range-5
+@test 'fixed-length enumeration type: enumerator value is out of range (5) -> fail' {
+  test_metadata_fail fl-enum-type-val-out-of-range-5
 }
 
-@test 'enumeration type: unknown integer type alias -> fail' {
-  test_metadata_fail enum-type-unknown-int-dt-alias
+@test 'fixed-length enumeration type: unknown integer type alias -> fail' {
+  test_metadata_fail fl-enum-type-unknown-int-dt-alias
 }
 
-@test 'enumeration type: wrong integer type -> fail' {
-  test_metadata_fail enum-type-wrong-int-type
+@test 'fixed-length enumeration type: wrong integer type -> fail' {
+  test_metadata_fail fl-enum-type-wrong-fl-int-type
 }
 
 @test 'variant type: empty body (no options) -> fail' {
@@ -687,7 +687,7 @@ test_metadata_pass() {
 }
 
 @test 'variant type: selector type is not an enumeration type -> fail' {
-  test_metadata_fail var-type-sel-type-not-enum-type
+  test_metadata_fail var-type-sel-type-not-fl-enum-type
 }
 
 @test 'variant type: invalid selector location (1) -> fail' {
@@ -1158,7 +1158,7 @@ test_metadata_pass() {
   test_metadata_fail ctf-testsuite-struct-inner-struct-undefined
 }
 
-@test 'CTF test suite: `struct-int-type-undefined` -> fail' {
+@test 'CTF test suite: `struct-fl-int-type-undefined` -> fail' {
   test_metadata_fail ctf-testsuite-struct-int-type-undefined
 }
 
@@ -1224,56 +1224,56 @@ test_metadata_pass() {
   test_metadata_pass lttng-ust-2.11.0-rc1-40-gf82f93a1-dst-after-ert
 }
 
-@test 'integer type: full -> pass' {
-  test_metadata_pass int-type-full
+@test 'fixed-length integer type: full -> pass' {
+  test_metadata_pass fl-int-type-full
 }
 
-@test 'integer type: signed with encoding -> pass' {
-  test_metadata_pass int-type-signed-encoding
+@test 'fixed-length integer type: signed with encoding -> pass' {
+  test_metadata_pass fl-int-type-signed-encoding
 }
 
-@test 'floating point number type: full -> pass' {
-  test_metadata_pass float-type-full
+@test 'fixed-length floating point number type: full -> pass' {
+  test_metadata_pass fl-float-type-full
 }
 
 @test 'string type: full -> pass' {
   test_metadata_pass str-type-full
 }
 
-@test 'enumeration type: maximum value (unsigned 64-bit, decimal) -> pass' {
-  test_metadata_pass enum-type-ranges-u64-dec
+@test 'fixed-length enumeration type: maximum value (unsigned 64-bit, decimal) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-u64-dec
 }
 
-@test 'enumeration type: maximum value (unsigned 64-bit, hexadecimal) -> pass' {
-  test_metadata_pass enum-type-ranges-u64-hex
+@test 'fixed-length enumeration type: maximum value (unsigned 64-bit, hexadecimal) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-u64-hex
 }
 
-@test 'enumeration type: maximum value (unsigned 64-bit, octal) -> pass' {
-  test_metadata_pass enum-type-ranges-u64-oct
+@test 'fixed-length enumeration type: maximum value (unsigned 64-bit, octal) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-u64-oct
 }
 
-@test 'enumeration type: maximum value (unsigned 64-bit, binary) -> pass' {
-  test_metadata_pass enum-type-ranges-u64-bin
+@test 'fixed-length enumeration type: maximum value (unsigned 64-bit, binary) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-u64-bin
 }
 
-@test 'enumeration type: maximum value (signed 64-bit, decimal) -> pass' {
-  test_metadata_pass enum-type-ranges-s64-dec
+@test 'fixed-length enumeration type: maximum value (signed 64-bit, decimal) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-s64-dec
 }
 
-@test 'enumeration type: maximum value (signed 64-bit, hexadecimal) -> pass' {
-  test_metadata_pass enum-type-ranges-s64-hex
+@test 'fixed-length enumeration type: maximum value (signed 64-bit, hexadecimal) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-s64-hex
 }
 
-@test 'enumeration type: maximum value (signed 64-bit, octal) -> pass' {
-  test_metadata_pass enum-type-ranges-s64-oct
+@test 'fixed-length enumeration type: maximum value (signed 64-bit, octal) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-s64-oct
 }
 
-@test 'enumeration type: maximum value (signed 64-bit, binary) -> pass' {
-  test_metadata_pass enum-type-ranges-s64-bin
+@test 'fixed-length enumeration type: maximum value (signed 64-bit, binary) -> pass' {
+  test_metadata_pass fl-enum-type-ranges-s64-bin
 }
 
-@test 'enumeration type: named alias -> pass' {
-  test_metadata_pass enum-type-alias
+@test 'fixed-length enumeration type: named alias -> pass' {
+  test_metadata_pass fl-enum-type-alias
 }
 
 @test 'dynamic array type: valid length location (1) -> pass' {

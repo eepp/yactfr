@@ -66,25 +66,25 @@ stream {
      0   PC {
      0     SC:0 {
      0       ST {
-     0         UI:stream_id:2
+     0         FLUI:stream_id:2
      8       }
      8     }
      8     DSI:2
      8     SC:1 {
      8       ST {
-     8         UI:packet_size:152
-    40         UI:timestamp_begin:1320211
+     8         FLUI:packet_size:152
+    40         FLUI:timestamp_begin:1320211
     72         DCV:1320211
-    72         UI:timestamp_end:262917615
+    72         FLUI:timestamp_end:262917615
    104       }
    104     }
    104     PI:152:152:262917615
    104     ER {
    104       SC:2 {
    104         ST {
-   104           UI:a:13591
+   104           FLUI:a:13591
    120           DCV:1324311
-   120           UI:c:255
+   120           FLUI:c:255
    128           DCV:1324543
    128         }
    128       }
@@ -93,9 +93,9 @@ stream {
    128     ER {
    128       SC:2 {
    128         ST {
-   128           UI:a:8738
+   128           FLUI:a:8738
    144           DCV:1384994
-   144           UI:c:33
+   144           FLUI:c:33
    152           DCV:1385249
    152         }
    152       }
@@ -107,25 +107,25 @@ stream {
    152   PC {
    152     SC:0 {
    152       ST {
-   152         UI:stream_id:2
+   152         FLUI:stream_id:2
    160       }
    160     }
    160     DSI:2
    160     SC:1 {
    160       ST {
-   160         UI:packet_size:128
-   192         UI:timestamp_begin:11259375
+   160         FLUI:packet_size:128
+   192         FLUI:timestamp_begin:11259375
    224         DCV:11259375
-   224         UI:timestamp_end:4289449455
+   224         FLUI:timestamp_end:4289449455
    256       }
    256     }
    256     PI:128:128:4289449455
    256     ER {
    256       SC:2 {
    256         ST {
-   256           UI:a:52719
+   256           FLUI:a:52719
    272           DCV:11259375
-   272           UI:c:255
+   272           FLUI:c:255
    280           DCV:11259391
    280         }
    280       }
@@ -137,15 +137,15 @@ stream {
    280   PC {
    280     SC:0 {
    280       ST {
-   280         UI:stream_id:5
+   280         FLUI:stream_id:5
    288       }
    288     }
    288     DSI:5
    288     SC:1 {
    288       ST {
-   288         UI:clk1:8669655694347378906
+   288         FLUI:clk1:8669655694347378906
    352         DCV:8669655694347378906
-   352         UI:clk2:3480294008477179590
+   352         FLUI:clk2:3480294008477179590
    416         DCV:3480294008477179590
    416       }
    416     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -116,180 +116,180 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "UNSET";
         break;
 
-    case Kind::READ_SINT_LE:
-        kindStr = "READ_SINT_LE";
+    case Kind::READ_FL_SINT_LE:
+        kindStr = "READ_FL_SINT_LE";
         break;
 
-    case Kind::READ_SINT_BE:
-        kindStr = "READ_SINT_BE";
+    case Kind::READ_FL_SINT_BE:
+        kindStr = "READ_FL_SINT_BE";
         break;
 
-    case Kind::READ_SINT_A8:
-        kindStr = "READ_SINT_A8";
+    case Kind::READ_FL_SINT_A8:
+        kindStr = "READ_FL_SINT_A8";
         break;
 
-    case Kind::READ_SINT_A16_LE:
-        kindStr = "READ_SINT_A16_LE";
+    case Kind::READ_FL_SINT_A16_LE:
+        kindStr = "READ_FL_SINT_A16_LE";
         break;
 
-    case Kind::READ_SINT_A32_LE:
-        kindStr = "READ_SINT_A32_LE";
+    case Kind::READ_FL_SINT_A32_LE:
+        kindStr = "READ_FL_SINT_A32_LE";
         break;
 
-    case Kind::READ_SINT_A64_LE:
-        kindStr = "READ_SINT_A64_LE";
+    case Kind::READ_FL_SINT_A64_LE:
+        kindStr = "READ_FL_SINT_A64_LE";
         break;
 
-    case Kind::READ_SINT_A16_BE:
-        kindStr = "READ_SINT_A16_BE";
+    case Kind::READ_FL_SINT_A16_BE:
+        kindStr = "READ_FL_SINT_A16_BE";
         break;
 
-    case Kind::READ_SINT_A32_BE:
-        kindStr = "READ_SINT_A32_BE";
+    case Kind::READ_FL_SINT_A32_BE:
+        kindStr = "READ_FL_SINT_A32_BE";
         break;
 
-    case Kind::READ_SINT_A64_BE:
-        kindStr = "READ_SINT_A64_BE";
+    case Kind::READ_FL_SINT_A64_BE:
+        kindStr = "READ_FL_SINT_A64_BE";
         break;
 
-    case Kind::READ_UINT_LE:
-        kindStr = "READ_UINT_LE";
+    case Kind::READ_FL_UINT_LE:
+        kindStr = "READ_FL_UINT_LE";
         break;
 
-    case Kind::READ_UINT_BE:
-        kindStr = "READ_UINT_BE";
+    case Kind::READ_FL_UINT_BE:
+        kindStr = "READ_FL_UINT_BE";
         break;
 
-    case Kind::READ_UINT_A8:
-        kindStr = "READ_UINT_A8";
+    case Kind::READ_FL_UINT_A8:
+        kindStr = "READ_FL_UINT_A8";
         break;
 
-    case Kind::READ_UINT_A16_LE:
-        kindStr = "READ_UINT_A16_LE";
+    case Kind::READ_FL_UINT_A16_LE:
+        kindStr = "READ_FL_UINT_A16_LE";
         break;
 
-    case Kind::READ_UINT_A32_LE:
-        kindStr = "READ_UINT_A32_LE";
+    case Kind::READ_FL_UINT_A32_LE:
+        kindStr = "READ_FL_UINT_A32_LE";
         break;
 
-    case Kind::READ_UINT_A64_LE:
-        kindStr = "READ_UINT_A64_LE";
+    case Kind::READ_FL_UINT_A64_LE:
+        kindStr = "READ_FL_UINT_A64_LE";
         break;
 
-    case Kind::READ_UINT_A16_BE:
-        kindStr = "READ_UINT_A16_BE";
+    case Kind::READ_FL_UINT_A16_BE:
+        kindStr = "READ_FL_UINT_A16_BE";
         break;
 
-    case Kind::READ_UINT_A32_BE:
-        kindStr = "READ_UINT_A32_BE";
+    case Kind::READ_FL_UINT_A32_BE:
+        kindStr = "READ_FL_UINT_A32_BE";
         break;
 
-    case Kind::READ_UINT_A64_BE:
-        kindStr = "READ_UINT_A64_BE";
+    case Kind::READ_FL_UINT_A64_BE:
+        kindStr = "READ_FL_UINT_A64_BE";
         break;
 
-    case Kind::READ_FLOAT_32_LE:
-        kindStr = "READ_FLOAT_32_LE";
+    case Kind::READ_FL_FLOAT_32_LE:
+        kindStr = "READ_FL_FLOAT_32_LE";
         break;
 
-    case Kind::READ_FLOAT_32_BE:
-        kindStr = "READ_FLOAT_32_BE";
+    case Kind::READ_FL_FLOAT_32_BE:
+        kindStr = "READ_FL_FLOAT_32_BE";
         break;
 
-    case Kind::READ_FLOAT_A32_LE:
-        kindStr = "READ_FLOAT_A32_LE";
+    case Kind::READ_FL_FLOAT_A32_LE:
+        kindStr = "READ_FL_FLOAT_A32_LE";
         break;
 
-    case Kind::READ_FLOAT_A32_BE:
-        kindStr = "READ_FLOAT_A32_BE";
+    case Kind::READ_FL_FLOAT_A32_BE:
+        kindStr = "READ_FL_FLOAT_A32_BE";
         break;
 
-    case Kind::READ_FLOAT_64_LE:
-        kindStr = "READ_FLOAT_64_LE";
+    case Kind::READ_FL_FLOAT_64_LE:
+        kindStr = "READ_FL_FLOAT_64_LE";
         break;
 
-    case Kind::READ_FLOAT_64_BE:
-        kindStr = "READ_FLOAT_64_BE";
+    case Kind::READ_FL_FLOAT_64_BE:
+        kindStr = "READ_FL_FLOAT_64_BE";
         break;
 
-    case Kind::READ_FLOAT_A64_LE:
-        kindStr = "READ_FLOAT_A64_LE";
+    case Kind::READ_FL_FLOAT_A64_LE:
+        kindStr = "READ_FL_FLOAT_A64_LE";
         break;
 
-    case Kind::READ_FLOAT_A64_BE:
-        kindStr = "READ_FLOAT_A64_BE";
+    case Kind::READ_FL_FLOAT_A64_BE:
+        kindStr = "READ_FL_FLOAT_A64_BE";
         break;
 
-    case Kind::READ_SENUM_LE:
-        kindStr = "READ_SENUM_LE";
+    case Kind::READ_FL_SENUM_LE:
+        kindStr = "READ_FL_SENUM_LE";
         break;
 
-    case Kind::READ_SENUM_BE:
-        kindStr = "READ_SENUM_BE";
+    case Kind::READ_FL_SENUM_BE:
+        kindStr = "READ_FL_SENUM_BE";
         break;
 
-    case Kind::READ_SENUM_A8:
-        kindStr = "READ_SENUM_A8";
+    case Kind::READ_FL_SENUM_A8:
+        kindStr = "READ_FL_SENUM_A8";
         break;
 
-    case Kind::READ_SENUM_A16_LE:
-        kindStr = "READ_SENUM_A16_LE";
+    case Kind::READ_FL_SENUM_A16_LE:
+        kindStr = "READ_FL_SENUM_A16_LE";
         break;
 
-    case Kind::READ_SENUM_A32_LE:
-        kindStr = "READ_SENUM_A32_LE";
+    case Kind::READ_FL_SENUM_A32_LE:
+        kindStr = "READ_FL_SENUM_A32_LE";
         break;
 
-    case Kind::READ_SENUM_A64_LE:
-        kindStr = "READ_SENUM_A64_LE";
+    case Kind::READ_FL_SENUM_A64_LE:
+        kindStr = "READ_FL_SENUM_A64_LE";
         break;
 
-    case Kind::READ_SENUM_A16_BE:
-        kindStr = "READ_SENUM_A16_BE";
+    case Kind::READ_FL_SENUM_A16_BE:
+        kindStr = "READ_FL_SENUM_A16_BE";
         break;
 
-    case Kind::READ_SENUM_A32_BE:
-        kindStr = "READ_SENUM_A32_BE";
+    case Kind::READ_FL_SENUM_A32_BE:
+        kindStr = "READ_FL_SENUM_A32_BE";
         break;
 
-    case Kind::READ_SENUM_A64_BE:
-        kindStr = "READ_SENUM_A64_BE";
+    case Kind::READ_FL_SENUM_A64_BE:
+        kindStr = "READ_FL_SENUM_A64_BE";
         break;
 
-    case Kind::READ_UENUM_LE:
-        kindStr = "READ_UENUM_LE";
+    case Kind::READ_FL_UENUM_LE:
+        kindStr = "READ_FL_UENUM_LE";
         break;
 
-    case Kind::READ_UENUM_BE:
-        kindStr = "READ_UENUM_BE";
+    case Kind::READ_FL_UENUM_BE:
+        kindStr = "READ_FL_UENUM_BE";
         break;
 
-    case Kind::READ_UENUM_A8:
-        kindStr = "READ_UENUM_A8";
+    case Kind::READ_FL_UENUM_A8:
+        kindStr = "READ_FL_UENUM_A8";
         break;
 
-    case Kind::READ_UENUM_A16_LE:
-        kindStr = "READ_UENUM_A16_LE";
+    case Kind::READ_FL_UENUM_A16_LE:
+        kindStr = "READ_FL_UENUM_A16_LE";
         break;
 
-    case Kind::READ_UENUM_A32_LE:
-        kindStr = "READ_UENUM_A32_LE";
+    case Kind::READ_FL_UENUM_A32_LE:
+        kindStr = "READ_FL_UENUM_A32_LE";
         break;
 
-    case Kind::READ_UENUM_A64_LE:
-        kindStr = "READ_UENUM_A64_LE";
+    case Kind::READ_FL_UENUM_A64_LE:
+        kindStr = "READ_FL_UENUM_A64_LE";
         break;
 
-    case Kind::READ_UENUM_A16_BE:
-        kindStr = "READ_UENUM_A16_BE";
+    case Kind::READ_FL_UENUM_A16_BE:
+        kindStr = "READ_FL_UENUM_A16_BE";
         break;
 
-    case Kind::READ_UENUM_A32_BE:
-        kindStr = "READ_UENUM_A32_BE";
+    case Kind::READ_FL_UENUM_A32_BE:
+        kindStr = "READ_FL_UENUM_A32_BE";
         break;
 
-    case Kind::READ_UENUM_A64_BE:
-        kindStr = "READ_UENUM_A64_BE";
+    case Kind::READ_FL_UENUM_A64_BE:
+        kindStr = "READ_FL_UENUM_A64_BE";
         break;
 
     case Kind::READ_STR:
@@ -506,15 +506,15 @@ SetPktEndDefClkValInstr::SetPktEndDefClkValInstr() :
 {
 }
 
-ReadBitArrayInstr::ReadBitArrayInstr(const Kind kind, const StructureMemberType * const member,
+ReadFlBitArrayInstr::ReadFlBitArrayInstr(const Kind kind, const StructureMemberType * const member,
                                      const DataType& dt) :
     ReadDataInstr {kind, member, dt},
-    _len {dt.asBitArrayType().length()},
-    _bo {dt.asBitArrayType().byteOrder()}
+    _len {dt.asFixedLengthBitArrayType().length()},
+    _bo {dt.asFixedLengthBitArrayType().byteOrder()}
 {
 }
 
-std::string ReadBitArrayInstr::_toStr(const Size indent) const
+std::string ReadFlBitArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -522,7 +522,7 @@ std::string ReadBitArrayInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-std::string ReadBitArrayInstr::_commonToStr() const
+std::string ReadFlBitArrayInstr::_commonToStr() const
 {
     std::ostringstream ss;
 
@@ -531,58 +531,58 @@ std::string ReadBitArrayInstr::_commonToStr() const
     return ss.str();
 }
 
-ReadIntInstr::ReadIntInstr(const Kind kind, const StructureMemberType * const member,
-                           const DataType& dt) :
-    ReadBitArrayInstr {kind, member, dt}
+ReadFlIntInstr::ReadFlIntInstr(const Kind kind, const StructureMemberType * const member,
+                               const DataType& dt) :
+    ReadFlBitArrayInstr {kind, member, dt}
 {
-    assert(dt.isIntegerType());
+    assert(dt.isFixedLengthIntegerType());
 }
 
-static inline Instr::Kind kindFromIntType(const DataType& dt) noexcept
+static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
 {
-    assert(dt.isIntegerType());
+    assert(dt.isFixedLengthIntegerType());
 
     Instr::Kind kind = Instr::Kind::UNSET;
-    const auto& intType = dt.asIntegerType();
+    const auto& intType = dt.asFixedLengthIntegerType();
 
-    if (dt.isUnsignedIntegerType()) {
+    if (dt.isFixedLengthUnsignedIntegerType()) {
         if (intType.byteOrder() == ByteOrder::LITTLE) {
-            kind = Instr::Kind::READ_UINT_LE;
+            kind = Instr::Kind::READ_FL_UINT_LE;
 
             if (dt.alignment() % 8 == 0) {
                 switch (intType.length()) {
                 case 8:
-                    return Instr::Kind::READ_UINT_A8;
+                    return Instr::Kind::READ_FL_UINT_A8;
 
                 case 16:
-                    return Instr::Kind::READ_UINT_A16_LE;
+                    return Instr::Kind::READ_FL_UINT_A16_LE;
 
                 case 32:
-                    return Instr::Kind::READ_UINT_A32_LE;
+                    return Instr::Kind::READ_FL_UINT_A32_LE;
 
                 case 64:
-                    return Instr::Kind::READ_UINT_A64_LE;
+                    return Instr::Kind::READ_FL_UINT_A64_LE;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_UINT_BE;
+            kind = Instr::Kind::READ_FL_UINT_BE;
 
             if (dt.alignment() % 8 == 0) {
                 switch (intType.length()) {
                 case 8:
-                    return Instr::Kind::READ_UINT_A8;
+                    return Instr::Kind::READ_FL_UINT_A8;
 
                 case 16:
-                    return Instr::Kind::READ_UINT_A16_BE;
+                    return Instr::Kind::READ_FL_UINT_A16_BE;
 
                 case 32:
-                    return Instr::Kind::READ_UINT_A32_BE;
+                    return Instr::Kind::READ_FL_UINT_A32_BE;
 
                 case 64:
-                    return Instr::Kind::READ_UINT_A64_BE;
+                    return Instr::Kind::READ_FL_UINT_A64_BE;
 
                 default:
                     break;
@@ -591,42 +591,42 @@ static inline Instr::Kind kindFromIntType(const DataType& dt) noexcept
         }
     } else {
         if (intType.byteOrder() == ByteOrder::LITTLE) {
-            kind = Instr::Kind::READ_SINT_LE;
+            kind = Instr::Kind::READ_FL_SINT_LE;
 
             if (dt.alignment() % 8 == 0) {
                 switch (intType.length()) {
                 case 8:
-                    return Instr::Kind::READ_SINT_A8;
+                    return Instr::Kind::READ_FL_SINT_A8;
 
                 case 16:
-                    return Instr::Kind::READ_SINT_A16_LE;
+                    return Instr::Kind::READ_FL_SINT_A16_LE;
 
                 case 32:
-                    return Instr::Kind::READ_SINT_A32_LE;
+                    return Instr::Kind::READ_FL_SINT_A32_LE;
 
                 case 64:
-                    return Instr::Kind::READ_SINT_A64_LE;
+                    return Instr::Kind::READ_FL_SINT_A64_LE;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_SINT_BE;
+            kind = Instr::Kind::READ_FL_SINT_BE;
 
             if (dt.alignment() % 8 == 0) {
                 switch (intType.length()) {
                 case 8:
-                    return Instr::Kind::READ_SINT_A8;
+                    return Instr::Kind::READ_FL_SINT_A8;
 
                 case 16:
-                    return Instr::Kind::READ_SINT_A16_BE;
+                    return Instr::Kind::READ_FL_SINT_A16_BE;
 
                 case 32:
-                    return Instr::Kind::READ_SINT_A32_BE;
+                    return Instr::Kind::READ_FL_SINT_A32_BE;
 
                 case 64:
-                    return Instr::Kind::READ_SINT_A64_BE;
+                    return Instr::Kind::READ_FL_SINT_A64_BE;
 
                 default:
                     break;
@@ -639,19 +639,19 @@ static inline Instr::Kind kindFromIntType(const DataType& dt) noexcept
     return kind;
 }
 
-ReadSIntInstr::ReadSIntInstr(const Kind kind, const StructureMemberType * const member,
-                             const DataType& dt) :
-    ReadIntInstr {kind, member, dt}
+ReadFlSIntInstr::ReadFlSIntInstr(const Kind kind, const StructureMemberType * const member,
+                                 const DataType& dt) :
+    ReadFlIntInstr {kind, member, dt}
 {
-    assert(dt.isSignedIntegerType());
+    assert(dt.isFixedLengthSignedIntegerType());
 }
 
-ReadSIntInstr::ReadSIntInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadSIntInstr {kindFromIntType(dt), member, dt}
+ReadFlSIntInstr::ReadFlSIntInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlSIntInstr {kindFromFlIntType(dt), member, dt}
 {
 }
 
-std::string ReadSIntInstr::_toStr(const Size indent) const
+std::string ReadFlSIntInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -659,19 +659,19 @@ std::string ReadSIntInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-ReadUIntInstr::ReadUIntInstr(const Kind kind, const StructureMemberType * const member,
-                             const DataType& dt) :
-    ReadIntInstr {kind, member, dt}
+ReadFlUIntInstr::ReadFlUIntInstr(const Kind kind, const StructureMemberType * const member,
+                                 const DataType& dt) :
+    ReadFlIntInstr {kind, member, dt}
 {
-    assert(dt.isUnsignedIntegerType());
+    assert(dt.isFixedLengthUnsignedIntegerType());
 }
 
-ReadUIntInstr::ReadUIntInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadUIntInstr {kindFromIntType(dt), member, dt}
+ReadFlUIntInstr::ReadFlUIntInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlUIntInstr {kindFromFlIntType(dt), member, dt}
 {
 }
 
-std::string ReadUIntInstr::_toStr(const Size indent) const
+std::string ReadFlUIntInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -679,20 +679,20 @@ std::string ReadUIntInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-static inline Instr::Kind kindFromFloatType(const DataType& dt) noexcept
+static inline Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
 {
-    assert(dt.isFloatingPointNumberType());
+    assert(dt.isFixedLengthFloatingPointNumberType());
 
-    const auto& floatType = dt.asFloatingPointNumberType();
+    const auto& floatType = dt.asFixedLengthFloatingPointNumberType();
 
     if (floatType.byteOrder() == ByteOrder::LITTLE) {
         if (dt.alignment() % 8 == 0) {
             switch (floatType.length()) {
             case 32:
-                return Instr::Kind::READ_FLOAT_A32_LE;
+                return Instr::Kind::READ_FL_FLOAT_A32_LE;
 
             case 64:
-                return Instr::Kind::READ_FLOAT_A64_LE;
+                return Instr::Kind::READ_FL_FLOAT_A64_LE;
 
             default:
                 std::abort();
@@ -700,10 +700,10 @@ static inline Instr::Kind kindFromFloatType(const DataType& dt) noexcept
         } else {
             switch (floatType.length()) {
             case 32:
-                return Instr::Kind::READ_FLOAT_32_LE;
+                return Instr::Kind::READ_FL_FLOAT_32_LE;
 
             case 64:
-                return Instr::Kind::READ_FLOAT_64_LE;
+                return Instr::Kind::READ_FL_FLOAT_64_LE;
 
             default:
                 std::abort();
@@ -713,10 +713,10 @@ static inline Instr::Kind kindFromFloatType(const DataType& dt) noexcept
         if (dt.alignment() % 8 == 0) {
             switch (floatType.length()) {
             case 32:
-                return Instr::Kind::READ_FLOAT_A32_BE;
+                return Instr::Kind::READ_FL_FLOAT_A32_BE;
 
             case 64:
-                return Instr::Kind::READ_FLOAT_A64_BE;
+                return Instr::Kind::READ_FL_FLOAT_A64_BE;
 
             default:
                 std::abort();
@@ -724,10 +724,10 @@ static inline Instr::Kind kindFromFloatType(const DataType& dt) noexcept
         } else {
             switch (floatType.length()) {
             case 32:
-                return Instr::Kind::READ_FLOAT_32_BE;
+                return Instr::Kind::READ_FL_FLOAT_32_BE;
 
             case 64:
-                return Instr::Kind::READ_FLOAT_64_BE;
+                return Instr::Kind::READ_FL_FLOAT_64_BE;
 
             default:
                 std::abort();
@@ -736,13 +736,13 @@ static inline Instr::Kind kindFromFloatType(const DataType& dt) noexcept
     }
 }
 
-ReadFloatInstr::ReadFloatInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadBitArrayInstr {kindFromFloatType(dt), member, dt}
+ReadFlFloatInstr::ReadFlFloatInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlBitArrayInstr {kindFromFlFloatType(dt), member, dt}
 {
-    assert(dt.isFloatingPointNumberType());
+    assert(dt.isFixedLengthFloatingPointNumberType());
 }
 
-std::string ReadFloatInstr::_toStr(const Size indent) const
+std::string ReadFlFloatInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -750,75 +750,75 @@ std::string ReadFloatInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-static inline Instr::Kind kindFromEnumType(const DataType& dt) noexcept
+static inline Instr::Kind kindFromFlEnumType(const DataType& dt) noexcept
 {
-    switch (kindFromIntType(dt)) {
-    case Instr::Kind::READ_SINT_LE:
-        return Instr::Kind::READ_SENUM_LE;
+    switch (kindFromFlIntType(dt)) {
+    case Instr::Kind::READ_FL_SINT_LE:
+        return Instr::Kind::READ_FL_SENUM_LE;
 
-    case Instr::Kind::READ_SINT_BE:
-        return Instr::Kind::READ_SENUM_BE;
+    case Instr::Kind::READ_FL_SINT_BE:
+        return Instr::Kind::READ_FL_SENUM_BE;
 
-    case Instr::Kind::READ_SINT_A8:
-        return Instr::Kind::READ_SENUM_A8;
+    case Instr::Kind::READ_FL_SINT_A8:
+        return Instr::Kind::READ_FL_SENUM_A8;
 
-    case Instr::Kind::READ_SINT_A16_LE:
-        return Instr::Kind::READ_SENUM_A16_LE;
+    case Instr::Kind::READ_FL_SINT_A16_LE:
+        return Instr::Kind::READ_FL_SENUM_A16_LE;
 
-    case Instr::Kind::READ_SINT_A32_LE:
-        return Instr::Kind::READ_SENUM_A32_LE;
+    case Instr::Kind::READ_FL_SINT_A32_LE:
+        return Instr::Kind::READ_FL_SENUM_A32_LE;
 
-    case Instr::Kind::READ_SINT_A64_LE:
-        return Instr::Kind::READ_SENUM_A64_LE;
+    case Instr::Kind::READ_FL_SINT_A64_LE:
+        return Instr::Kind::READ_FL_SENUM_A64_LE;
 
-    case Instr::Kind::READ_SINT_A16_BE:
-        return Instr::Kind::READ_SENUM_A16_BE;
+    case Instr::Kind::READ_FL_SINT_A16_BE:
+        return Instr::Kind::READ_FL_SENUM_A16_BE;
 
-    case Instr::Kind::READ_SINT_A32_BE:
-        return Instr::Kind::READ_SENUM_A32_BE;
+    case Instr::Kind::READ_FL_SINT_A32_BE:
+        return Instr::Kind::READ_FL_SENUM_A32_BE;
 
-    case Instr::Kind::READ_SINT_A64_BE:
-        return Instr::Kind::READ_SENUM_A64_BE;
+    case Instr::Kind::READ_FL_SINT_A64_BE:
+        return Instr::Kind::READ_FL_SENUM_A64_BE;
 
-    case Instr::Kind::READ_UINT_LE:
-        return Instr::Kind::READ_UENUM_LE;
+    case Instr::Kind::READ_FL_UINT_LE:
+        return Instr::Kind::READ_FL_UENUM_LE;
 
-    case Instr::Kind::READ_UINT_BE:
-        return Instr::Kind::READ_UENUM_BE;
+    case Instr::Kind::READ_FL_UINT_BE:
+        return Instr::Kind::READ_FL_UENUM_BE;
 
-    case Instr::Kind::READ_UINT_A8:
-        return Instr::Kind::READ_UENUM_A8;
+    case Instr::Kind::READ_FL_UINT_A8:
+        return Instr::Kind::READ_FL_UENUM_A8;
 
-    case Instr::Kind::READ_UINT_A16_LE:
-        return Instr::Kind::READ_UENUM_A16_LE;
+    case Instr::Kind::READ_FL_UINT_A16_LE:
+        return Instr::Kind::READ_FL_UENUM_A16_LE;
 
-    case Instr::Kind::READ_UINT_A32_LE:
-        return Instr::Kind::READ_UENUM_A32_LE;
+    case Instr::Kind::READ_FL_UINT_A32_LE:
+        return Instr::Kind::READ_FL_UENUM_A32_LE;
 
-    case Instr::Kind::READ_UINT_A64_LE:
-        return Instr::Kind::READ_UENUM_A64_LE;
+    case Instr::Kind::READ_FL_UINT_A64_LE:
+        return Instr::Kind::READ_FL_UENUM_A64_LE;
 
-    case Instr::Kind::READ_UINT_A16_BE:
-        return Instr::Kind::READ_UENUM_A16_BE;
+    case Instr::Kind::READ_FL_UINT_A16_BE:
+        return Instr::Kind::READ_FL_UENUM_A16_BE;
 
-    case Instr::Kind::READ_UINT_A32_BE:
-        return Instr::Kind::READ_UENUM_A32_BE;
+    case Instr::Kind::READ_FL_UINT_A32_BE:
+        return Instr::Kind::READ_FL_UENUM_A32_BE;
 
-    case Instr::Kind::READ_UINT_A64_BE:
-        return Instr::Kind::READ_UENUM_A64_BE;
+    case Instr::Kind::READ_FL_UINT_A64_BE:
+        return Instr::Kind::READ_FL_UENUM_A64_BE;
 
     default:
         std::abort();
     }
 }
 
-ReadSEnumInstr::ReadSEnumInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadSIntInstr {kindFromEnumType(dt), member, dt}
+ReadFlSEnumInstr::ReadFlSEnumInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlSIntInstr {kindFromFlEnumType(dt), member, dt}
 {
-    assert(dt.isSignedEnumerationType());
+    assert(dt.isSignedFixedLengthEnumerationType());
 }
 
-std::string ReadSEnumInstr::_toStr(const Size indent) const
+std::string ReadFlSEnumInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -826,13 +826,13 @@ std::string ReadSEnumInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-ReadUEnumInstr::ReadUEnumInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadUIntInstr {kindFromEnumType(dt), member, dt}
+ReadFlUEnumInstr::ReadFlUEnumInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlUIntInstr {kindFromFlEnumType(dt), member, dt}
 {
-    assert(dt.isUnsignedEnumerationType());
+    assert(dt.isFixedLengthUnsignedEnumerationType());
 }
 
-std::string ReadUEnumInstr::_toStr(const Size indent) const
+std::string ReadFlUEnumInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 

@@ -130,33 +130,33 @@ public:
         *_os << '\n';
     }
 
-    void visit(const yactfr::SignedIntegerElement& elem) override
+    void visit(const yactfr::FixedLengthSignedIntegerElement& elem) override
     {
-        this->_visitDataElem(elem, "SI");
+        this->_visitDataElem(elem, "FLSI");
         *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::UnsignedIntegerElement& elem) override
+    void visit(const yactfr::FixedLengthUnsignedIntegerElement& elem) override
     {
-        this->_visitDataElem(elem, "UI");
+        this->_visitDataElem(elem, "FLUI");
         *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::SignedEnumerationElement& elem) override
+    void visit(const yactfr::FixedLengthSignedEnumerationElement& elem) override
     {
-        this->_visitDataElem(elem, "SE");
+        this->_visitDataElem(elem, "FLSE");
         *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::UnsignedEnumerationElement& elem) override
+    void visit(const yactfr::FixedLengthUnsignedEnumerationElement& elem) override
     {
-        this->_visitDataElem(elem, "UE");
+        this->_visitDataElem(elem, "FLUE");
         *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::FloatingPointNumberElement& elem) override
+    void visit(const yactfr::FixedLengthFloatingPointNumberElement& elem) override
     {
-        this->_visitDataElem(elem, "FPN");
+        this->_visitDataElem(elem, "FLFPN");
         *_os << ':' << std::setprecision(6) << elem.value() << '\n';
     }
 
