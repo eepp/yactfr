@@ -66,13 +66,6 @@ To include all the yactfr API:
 @code
 #include <yactfr/yactfr.hpp>
 @endcode
-
-To include all the yactfr API except the metadata text parsing part
-(which can be heavy to compile):
-
-@code
-#include <yactfr/yactfr-without-metadata-text-parser.hpp>
-@endcode
 */
 
 }

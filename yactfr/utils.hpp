@@ -13,14 +13,17 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
-#include <yactfr/internal/utils.hpp>
 
 namespace yactfr {
 namespace internal {
 
 std::string indent(Size indent);
-
 std::string strError();
+
+static inline bool isPowOfTwo(const unsigned long long x)
+{
+        return (x != 0) && ((x & (~x + 1)) == x);
+}
 
 } // namespace internal
 } // namespace yactfr

@@ -5,712 +5,729 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_TSDL_PARSER_HPP
-#define _YACTFR_METADATA_INTERNAL_TSDL_PARSER_HPP
-
-#include <cstdlib>
-#include <memory>
-#include <vector>
-#include <algorithm>
-#include <map>
-#include <cstring>
-#include <cassert>
-#include <utility>
-#include <unordered_map>
-#include <boost/utility.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
-#include <boost/range/adaptor/reversed.hpp>
-
-#include "../../aliases.hpp"
-#include "../trace-type.hpp"
-#include "../fl-int-type.hpp"
-#include "../fl-float-type.hpp"
-#include "../fl-enum-type.hpp"
-#include "../nt-str-type.hpp"
-#include "../sl-array-type.hpp"
-#include "../sl-str-type.hpp"
-#include "../dl-array-type.hpp"
-#include "../dl-str-type.hpp"
-#include "../struct-type.hpp"
-#include "../struct-member-type.hpp"
-#include "../var-type.hpp"
-#include "../var-type-opt.hpp"
-#include "../data-loc.hpp"
-#include "../../text-parse-error.hpp"
-#include "../aliases.hpp"
-#include "../../internal/utils.hpp"
-#include "tsdl-parser-base.hpp"
-#include "tsdl-attr.hpp"
-#include "../../internal/str-scanner.hpp"
+#include "tsdl-parser.hpp"
+#include "trace-type-from-pseudo-trace-type.hpp"
+#include "../utils.hpp"
 
 namespace yactfr {
-
-template <typename ParserCharIt>
-std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(ParserCharIt, ParserCharIt);
-
 namespace internal {
 
-/*
- * TSDL metadata stream parser.
- *
- * This parser parses a CTF (TSDL) metadata string and then contains:
- *
- * * A corresponding trace type object.
- * * A corresponding trace environment object.
- *
- * Parsing methods which return `bool` can backtrack: if they return
- * `false`, then the state of the parser is as it was when calling them.
- */
-template <typename CharIt>
-class TsdlParser final :
-    public TsdlParserBase
+TsdlParser::_StackFrame::_StackFrame(const Kind kind) :
+    kind {kind}
 {
-    template <typename ParserCharIt>
-    friend std::pair<TraceType::UP, TraceEnvironment> yactfr::fromMetadataText(ParserCharIt,
-                                                                               ParserCharIt);
+}
 
-private:
+void TsdlParser::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
+                                               const std::string& memberTypeName)
+{
     /*
-     * Builds a metadata parser, wrapping a string between `begin`
-     * (included) and `end` (excluded) and parses it.
+     * If there's exactly one clock type in the pseudo trace type:
+     *     Use the name of this clock type.
      *
-     * You can release the resulting trace type from this parser with
-     * releaseTraceType() and get the trace environment with traceEnv().
+     * If there's no clock type in the pseudo trace type:
+     *     Create a default 1-GHz clock type and use this name.
      *
-     * Throws `TextParseError` when there was a parsing error.
+     * If there's more than one clock type in the pseudo trace type:
+     *     Leave it as is (no mapped clock type name).
      */
-    explicit TsdlParser(CharIt begin, CharIt end);
+    for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
+        assert(pseudoDt->isFlUInt());
 
-private:
-    using _StrScannerRejecter = StrScannerRejecter<CharIt>;
+        auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
-    /*
-     * A "fast" pseudo fixed-length integer type entry.
-     *
-     * Often, fixed-length integer types, which are usually the most
-     * used data types, are written exactly the same in the metadata
-     * string. For example, LTTng-modules 2.7 emits a whole bunch of
-     * this exact string:
-     *
-     *     integer { size = 32; align = 8; signed = 1; encoding = none; base = 10; }
-     *
-     * To avoid parsing this substring as 5 attributes each time, we
-     * keep it in a cache after the first time we parse it.
-     *
-     * This cache associates a substring, from `begin` to `end`, to the
-     * parsed pseudo data type. If it is found using
-     * _fastPseudoFlIntType(), then you can clone the cached pseudo data
-     * type to have your own copy.
-     *
-     * The maximum size from `begin` to `end` is
-     * `_MAX_FAST_FL_INT_TYPE_STR_SIZE`.
-     *
-     * Is it really worth it? I don't know! Is it a cool idea even
-     * without benchmarks? I think so.
-     */
-    struct _FastPseudoFlIntTypeEntry final
+        if (pseudoIntType.mappedClkTypeName()) {
+            continue;
+        }
+
+        if (_pseudoTraceType->clkTypes().empty()) {
+            // create implicit 1-GHz clock type
+            _pseudoTraceType->clkTypes().insert(std::make_unique<const ClockType>(1'000'000'000ULL));
+        }
+
+        if (_pseudoTraceType->clkTypes().size() != 1) {
+            // we don't know which clock type to choose: leave it unmapped
+            continue;
+        }
+
+        const auto& clkType = *_pseudoTraceType->clkTypes().begin();
+
+        assert(clkType->name());
+        pseudoIntType.mappedClkTypeName(*clkType->name());
+    }
+}
+
+void TsdlParser::_setImplicitMappedClkTypeName()
+{
+   for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        if (pseudoDst->pseudoErHeaderType()) {
+            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoErHeaderType(), "timestamp");
+        }
+
+        if (pseudoDst->pseudoPktCtxType()) {
+            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoPktCtxType(), "timestamp_begin");
+            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoPktCtxType(), "timestamp_end");
+        }
+    }
+}
+
+void TsdlParser::_setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
+                                                        const std::string& memberTypeName)
+{
+    const auto pseudoDts = findPseudoDtsByName(basePseudoDt, memberTypeName,
+                                               [](auto& pseudoDt) {
+        if (pseudoDt.kind() != PseudoDt::Kind::SL_ARRAY) {
+            return false;
+        }
+
+        auto& pseudoArrayType = static_cast<const PseudoSlArrayType&>(pseudoDt);
+
+        if (pseudoArrayType.len() != 16) {
+            return false;
+        }
+
+        if (!pseudoArrayType.pseudoElemType().isUInt()) {
+            return false;
+        }
+
+        assert(pseudoArrayType.pseudoElemType().isFlUInt());
+
+        auto& pseudoElemDt = static_cast<const PseudoFlUIntType&>(pseudoArrayType.pseudoElemType());
+
+        if (pseudoElemDt.len() != 8) {
+            return false;
+        }
+
+        if (pseudoElemDt.align() != 8) {
+            return false;
+        }
+
+        return true;
+    });
+
+    for (auto& pseudoDt : pseudoDts) {
+        auto& pseudoArrayType = static_cast<PseudoSlArrayType&>(*pseudoDt);
+
+        pseudoArrayType.hasTraceTypeUuidRole(true);
+    }
+}
+
+class DefClkTsRoleAdder :
+    public PseudoDtVisitor
+{
+public:
+    explicit DefClkTsRoleAdder() = default;
+
+    void visit(PseudoFlUIntType& pseudoDt) override
     {
-        CharIt begin;
-        CharIt end;
-        PseudoDt::UP pseudoDt;
-    };
+        if (pseudoDt.mappedClkTypeName() &&
+                !pseudoDt.hasRole(UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP)) {
+            pseudoDt.addRole(UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP);
+        }
+    }
+
+    void visit(PseudoFlUEnumType& pseudoDt) override
+    {
+        this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
+    }
+
+    void visit(PseudoSlArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoDlArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoStructType& pseudoDt) override
+    {
+        for (const auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
+            pseudoMemberType->pseudoDt().accept(*this);
+        }
+    }
+
+    void visit(PseudoVarType& pseudoDt) override
+    {
+        for (const auto& pseudoOpt : pseudoDt.pseudoOpts()) {
+            pseudoOpt->pseudoDt().accept(*this);
+        }
+    }
 
 private:
+    void _visit(PseudoArrayType& pseudoDt)
+    {
+        pseudoDt.pseudoElemType().accept(*this);
+    }
+};
+
+void TsdlParser::_addPseudoDtRoles()
+{
     /*
-     * Parses the whole metadata string, creating the resulting trace
-     * type and trace environment on success, throwing an exception
-     * otherwise.
+     * First, set an implicit mapped clock type name on specific pseudo
+     * fixed-length unsigned integer types.
+     *
+     * For example, if the current pseudo trace type contains a single
+     * clock type, then any pseudo fixed-length unsigned integer type
+     * named `timestamp` within pseudo event record header types, which
+     * are not already mapped to a clock type, are mapped to this single
+     * clock type.
      */
-    void _parseMetadata();
+    this->_setImplicitMappedClkTypeName();
+
+    // add/set simple roles
+    if (_pseudoTraceType->pseudoPktHeaderType()) {
+        this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "magic",
+                                        UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
+        this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "stream_id",
+                                        UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID);
+        this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(),
+                                        "stream_instance_id",
+                                        UnsignedIntegerTypeRole::DATA_STREAM_ID);
+        this->_setPseudoSlArrayTypeTraceTypeUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
+                                                     "uuid");
+    }
+
+    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        if (pseudoDst->pseudoPktCtxType()) {
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
+                                            UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "content_size",
+                                            UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
+                                            UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
+            this->_addPseudoFlUIntTypeRoles<true>(*pseudoDst->pseudoPktCtxType(), "timestamp_end",
+                                                  UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "discarded_events",
+                                            UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT);
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_seq_num",
+                                            UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX);
+        }
+
+        if (pseudoDst->pseudoErHeaderType()) {
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoErHeaderType(), "id",
+                                            UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
+        }
+    }
+
+    // add "default clock timestamp" role
+    DefClkTsRoleAdder visitor;
+
+    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        if (pseudoDst->pseudoPktCtxType()) {
+            pseudoDst->pseudoPktCtxType()->accept(visitor);
+        }
+
+        if (pseudoDst->pseudoErHeaderType()) {
+            pseudoDst->pseudoErHeaderType()->accept(visitor);
+        }
+    }
+}
+
+class PseudoDstDefClkTypeSetter :
+    public PseudoDtVisitor
+{
+public:
+    explicit PseudoDstDefClkTypeSetter(PseudoTraceType& pseudoTraceType, PseudoDst& pseudoDst) :
+        _pseudoTraceType {&pseudoTraceType},
+        _pseudoDst {&pseudoDst}
+    {
+    }
+
+    void visit(PseudoFlUIntType& pseudoDt) override
+    {
+        if (pseudoDt.mappedClkTypeName()) {
+            if (!_clkTypeName) {
+                _clkTypeName = &*pseudoDt.mappedClkTypeName();
+            }
+
+            if (*pseudoDt.mappedClkTypeName() != *_clkTypeName) {
+                std::ostringstream ss;
+
+                ss << "Unsigned fixed-length integer type is mapped to a clock type (`" <<
+                      *pseudoDt.mappedClkTypeName() << "` which is "
+                      "different than another mapped clock type (`" <<
+                      *_clkTypeName << "`) within the same data stream type.";
+                throwTextParseError(ss.str(), pseudoDt.loc());
+            }
+
+            if (!_pseudoDst->defClkType()) {
+                for (auto& clkType : _pseudoTraceType->clkTypes()) {
+                    assert(clkType->name());
+
+                    if (*clkType->name() == *_clkTypeName) {
+                        _pseudoDst->defClkType(*clkType);
+                    }
+                }
+
+                if (!_pseudoDst->defClkType()) {
+                    // not found
+                    std::ostringstream ss;
+
+                    ss << "`" << *_clkTypeName << "` doesn't name an existing clock type.";
+                    throwTextParseError(ss.str(), pseudoDt.loc());
+                }
+            }
+        }
+    }
+
+    void visit(PseudoFlUEnumType& pseudoDt) override
+    {
+        this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
+    }
+
+    void visit(PseudoSlArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoDlArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoStructType& pseudoDt) override
+    {
+        for (const auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
+            pseudoMemberType->pseudoDt().accept(*this);
+        }
+    }
+
+    void visit(PseudoVarType& pseudoDt) override
+    {
+        for (const auto& pseudoOpt : pseudoDt.pseudoOpts()) {
+            pseudoOpt->pseudoDt().accept(*this);
+        }
+    }
+
+private:
+    void _visit(PseudoArrayType& pseudoDt)
+    {
+        pseudoDt.pseudoElemType().accept(*this);
+    }
+
+private:
+    PseudoTraceType * const _pseudoTraceType;
+    PseudoDst * const _pseudoDst;
+    const std::string *_clkTypeName = nullptr;
+};
+
+void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
+{
+    PseudoDstDefClkTypeSetter visitor {*_pseudoTraceType, pseudoDst};
+
+    try {
+        if (pseudoDst.pseudoPktCtxType()) {
+            try {
+                pseudoDst.pseudoPktCtxType()->accept(visitor);
+            } catch (TextParseError& exc) {
+                appendMsgToTextParseError(exc, "In the packet context type:",
+                                          pseudoDst.pseudoPktCtxType()->loc());
+                throw;
+            }
+        }
+
+        if (pseudoDst.pseudoErHeaderType()) {
+            try {
+                pseudoDst.pseudoErHeaderType()->accept(visitor);
+            } catch (TextParseError& exc) {
+                appendMsgToTextParseError(exc, "In the event record header type:",
+                                          pseudoDst.pseudoErHeaderType()->loc());
+                throw;
+            }
+        }
+    } catch (TextParseError& exc) {
+        std::ostringstream ss;
+
+        ss << "In the data stream type with ID " << pseudoDst.id() << ":";
+        appendMsgToTextParseError(exc, ss.str());
+        throw;
+    }
+}
+
+void TsdlParser::_setPseudoDstDefClkType()
+{
+    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        this->_setPseudoDstDefClkType(*pseudoDst);
+    }
+}
+
+void TsdlParser::_stackPush(const _StackFrame::Kind kind)
+{
+    _stack.push_back(_StackFrame {kind});
+}
+
+void TsdlParser::_stackPop()
+{
+    assert(!_stack.empty());
+    _stack.pop_back();
+}
+
+void TsdlParser::_createTraceType()
+{
+    /*
+     * Create default pseudo data stream type if there's at least one
+     * orphan pseudo event record type for the DST ID 0 _and_ there's no
+     * pseudo data stream types.
+     */
+    const auto it = _pseudoTraceType->pseudoOrphanErts().find(0);
+
+    if (it != _pseudoTraceType->pseudoOrphanErts().end() && !it->second.empty() &&
+            _pseudoTraceType->pseudoDsts().empty()) {
+        _pseudoTraceType->pseudoDsts()[0] = std::make_unique<PseudoDst>();
+    }
+
+    // add roles to specific pseudo data types
+    this->_addPseudoDtRoles();
+
+    // set default clock type of pseudo data stream types
+    this->_setPseudoDstDefClkType();
+
+    // create yactfr trace type
+    _traceType = traceTypeFromPseudoTraceType(*_pseudoTraceType);
+}
+
+void TsdlParser::_checkDupPseudoNamedDt(const PseudoNamedDts& entries, const TextLocation& loc)
+{
+    std::set<std::string> entryNames;
+
+    for (const auto& entry : entries) {
+        if (entryNames.find(entry->name()) != entryNames.end()) {
+            std::ostringstream ss;
+
+            ss << "Duplicate identifier (member type or option name) `" << entry->name() << "`.";
+            throwTextParseError(ss.str(), loc);
+        }
+
+        entryNames.insert(entry->name());
+    }
+}
+
+bool TsdlParser::_isPseudoVarTypeWithoutSelLocRec(const PseudoDt& pseudoDt)
+{
+    if (pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY ||
+            pseudoDt.kind() == PseudoDt::Kind::DL_ARRAY) {
+        auto& pseudoArrayType = static_cast<const PseudoArrayType&>(pseudoDt);
+
+        return TsdlParser::_isPseudoVarTypeWithoutSelLocRec(pseudoArrayType.pseudoElemType());
+    }
+
+    if (pseudoDt.kind() != PseudoDt::Kind::VAR) {
+        return false;
+    }
+
+    auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
+
+    return !pseudoVarType.pseudoSelLoc().has_value();
+}
+
+void TsdlParser::_checkDupAttr(const _Attrs& attrs)
+{
+    std::set<std::string> attrSet;
+
+    for (const auto& attr : attrs) {
+        if (attrSet.find(attr.name) != attrSet.end()) {
+            std::ostringstream ss;
+
+            ss << "Duplicate attribute `" << attr.name << "`.";
+            throwTextParseError(ss.str(), attr.nameTextLoc());
+        }
+
+        attrSet.insert(attr.name);
+    }
+}
+
+void TsdlParser::_throwMissingAttr(const std::string& name, const TextLocation& loc)
+{
+    std::ostringstream ss;
+
+    ss << "Missing attribute `" << name << "`.";
+    throwTextParseError(ss.str(), loc);
+}
+
+boost::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& str)
+{
+    try {
+        return boost::uuids::string_generator {}(str);
+    } catch (const std::runtime_error&) {
+        return boost::none;
+    }
+}
+
+boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const DataLocation::PathElements& allPathElems,
+                                                                                 const TextLocation& loc)
+{
+    bool isAbs = false;
+    bool isEnv = false;
+    Scope scope;
+    DataLocation::PathElements pathElems;
+    auto restPos = allPathElems.begin();
+
+    if (allPathElems.size() >= 3) {
+        if (allPathElems[0] == "trace") {
+            if (allPathElems[1] == "packet") {
+                if (allPathElems[2] == "header") {
+                    scope = Scope::PACKET_HEADER;
+                    isAbs = true;
+                }
+            }
+
+            if (!isAbs) {
+                throwTextParseError("Expecting `packet.header` after `trace.`.", loc);
+            }
+        } else if (allPathElems[0] == "stream") {
+            if (allPathElems[1] == "packet") {
+                if (allPathElems[2] == "context") {
+                    scope = Scope::PACKET_CONTEXT;
+                    isAbs = true;
+                }
+            } else if (allPathElems[1] == "event") {
+                if (allPathElems[2] == "header") {
+                    scope = Scope::EVENT_RECORD_HEADER;
+                    isAbs = true;
+                } else if (allPathElems[2] == "context") {
+                    scope = Scope::EVENT_RECORD_COMMON_CONTEXT;
+                    isAbs = true;
+                }
+            }
+
+            if (!isAbs) {
+                throwTextParseError("Expecting `packet.context`, `event.header`, or "
+                                    "`event.context` after `stream.`.", loc);
+            }
+        }
+
+        if (isAbs) {
+            restPos = allPathElems.begin() + 3;
+        }
+    }
+
+    if (!isAbs && allPathElems.size() >= 2) {
+        if (allPathElems[0] == "event") {
+            if (allPathElems[1] == "context") {
+                scope = Scope::EVENT_RECORD_SPECIFIC_CONTEXT;
+                isAbs = true;
+            } else if (allPathElems[1] == "fields") {
+                scope = Scope::EVENT_RECORD_PAYLOAD;
+                isAbs = true;
+            }
+
+            if (!isAbs) {
+                throwTextParseError("Expecting `context` or `fields` after `event.`.", loc);
+            }
+        }
+
+        if (isAbs) {
+            restPos = allPathElems.begin() + 2;
+        }
+    }
+
+    if (!isAbs && allPathElems.size() >= 1 && allPathElems[0] == "env") {
+        isAbs = true;
+        isEnv = true;
+        restPos = allPathElems.begin() + 1;
+    }
+
+    if (!isAbs) {
+        return boost::none;
+    }
 
     /*
-     * Tries to parse one individual root block with a terminating `;`.
-     * Root blocks can be explicit data type aliases (including data
-     * type definitions), named enumeration/structure/variant types,
-     * `trace`, `env`, `clock`, `stream`, `event`, and `callsite`
-     * blocks.
-     *
-     * Returns whether or not a root block was parsed.
+     * Data location is already absolute: skip the root scope part (or
+     * `env`) to create the path elements.
      */
-    bool _tryParseRootBlock();
+    std::copy(restPos, allPathElems.end(), std::back_inserter(pathElems));
 
-    /*
-     * Tries to parse a data type alias given by a named
-     * enumeration/structure/variant type, terminating with `;`, adding
-     * it to the map of aliased pseudo data types of the current frame
-     * on success.
-     *
-     * Returns whether or not a named enumeration/structure/variant type
-     * was parsed.
-     *
-     * Examples:
-     *
-     *     struct hello {
-     *         ...
-     *     };
-     *
-     *     enum my_enum : some_int {
-     *         ...
-     *     };
-     *
-     *     variant my_variant {
-     *         ...
-     *     };
-     *
-     *     variant my_variant <event.fields.some.tag> {
-     *         ...
-     *     };
-     */
-    bool _tryParseFlEnumStructVarDtAlias();
+    return PseudoDataLoc {isEnv, isAbs, scope, std::move(pathElems), loc};
+}
 
+boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const DataLocation::PathElements& allPathElems,
+                                                                                 const TextLocation& loc)
+{
     /*
-     * Tries to parse a `typealias` or `typedef` block, adding it to the
-     * map of aliased pseudo data types of the current frame on success.
+     * In this method, we only want to make sure that the relative data
+     * location doesn't target a datum which is outside the topmost data
+     * type alias scope, if any, within the current stack.
      *
-     * Returns whether or not a generic data type alias block was
-     * parsed.
-     *
-     * Examples:
-     *
-     *     typealias integer {
-     *         size = 23;
-     *         align = 8;
-     *     } := const unsigned int;
-     *
-     *     typealias string := my_string;
+     * For example, this is okay:
      *
      *     typealias struct {
      *         int a;
-     *         int b;
-     *     } align(16) := my_struct;
-     *
-     *     typedef integer {
-     *         size = 23;
-     *         align = 8;
-     *     } const unsigned int;
-     *
-     *     typedef string my_string;
-     *
-     *     typedef struct {
-     *         int a;
-     *         int b;
-     *     } align(16) my_struct;
-     */
-    bool _tryParseGenericDtAlias();
-
-    /*
-     * Tries to parse any data type alias, generic (`typealias`,
-     * `typedef` keywords) or named enumeration/structure/variant type,
-     * adding it to the map of aliased data types of the current frame
-     * on success.
-     *
-     * Returns whether or not a data type alias was parsed.
-     */
-    bool _tryParseDtAlias();
-
-    /*
-     * Expects a generic attribute, with a terminating `;`.
-     *
-     * Returns the parsed attribute.
-     *
-     * Examples:
-     *
-     *     size = 23;
-     *
-     *     byte_order = be;
-     *
-     *     map = clock.name.value;
-     *
-     *     name = "my event";
-     */
-    TsdlAttr _expectAttr();
-
-    /*
-     * Tries to parse a scope data type with a terminating `;` and
-     * returns it.
-     *
-     * `scopeDtStackFrameKind` is the kind of stack frame to push for
-     * this scope data type.
-     *
-     * `firstName` and optional `secondName` are the one or two words
-     * naming the scope, e.g., `event` and `header`, or just `context`.
-     *
-     * If `expect` is true, then the method throws if it cannot parse
-     * the scope data type successfully. Otherwise, the method can
-     * return `nullptr` if it cannot parse the scope data type.
-     *
-     * Examples:
-     *
-     *     packet.context := struct { ... };
-     *
-     *     fields := event_fields;
-     *
-     *     event.header := struct my_event_header;
-     */
-    PseudoDt::UP _tryParseScopeDt(const _StackFrame::Kind scopeDtStackFrameKind,
-                                  const char *firstName, const char *secondName = nullptr,
-                                  bool expect = true);
-
-    /*
-     * Tries to parse an identifier followed by zero or more array
-     * subscripts.
-     *
-     * This method sets `ident` to the parsed identifier.
-     *
-     * `innerPseudoDt` is the most nested pseudo data type to wrap. This
-     * method returns it as is if there's only an identifier not
-     * followed by an opening square bracket.
-     *
-     * Examples:
-     *
-     *     my_field
-     *
-     *     my_field[1]
-     *
-     *     my_field[event.context.some.location][23][len]
-     */
-    PseudoDt::UP _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::UP innerPseudoDt);
-
-    /*
-     * Like _tryParseIdentArraySubscripts(), but without the identifier
-     * part.
-     *
-     * Examples:
-     *
-     *     [1]
-     *
-     *     [length]
-     *
-     *     [event.context.some.location][23][len];
-     */
-    PseudoDt::UP _parseArraySubscripts(PseudoDt::UP innerType);
-
-    /*
-     * Parses a data type alias name, without parsing an identifier name
-     * that would follow.
-     *
-     * On success, `dtAliasName` contains the name of the alias.
-     *
-     * If `expect` is true, then the method throws if it fails to parse
-     * a data type alias name. Otherwise, returns whether or not a data
-     * type alias name was parsed.
-     *
-     * Examples:
-     *
-     *     my_alias
-     *
-     *     const unsigned int
-     *
-     *     signed long long
-     */
-    bool _parseDtAliasName(std::string& dtAliasName, bool expect);
-
-    /*
-     * Expects a data location, returning a corresponding
-     * pseudo data location on success.
-     *
-     * Throws if it cannot parse a data location successfully.
-     *
-     * Examples:
-     *
-     *     trace.packet.header.some_size
-     *
-     *     my.len
-     *
-     *     env.some_key
-     */
-    PseudoDataLoc _expectDataLoc();
-
-    /*
-     * Parses a reference to a data type alias, that is, one of:
-     *
-     * * `enum NAME` not followed by `:` or `{`
-     * * `struct NAME` not followed by `{`
-     * * `variant NAME` or `variant NAME <ABS-TAG>` not followed by `{`
-     * * `some_alias_name` (keywords are excluded)
-     *
-     * This method returns the aliased pseudo data type, or `nullptr` if
-     * it cannot find it.
-     *
-     * Examples:
-     *
-     *     enum my_enum
-     *
-     *     struct my_struct
-     *
-     *     variant my_variant
-     *
-     *     variant my_variant <stream.packet.context.my.tag>;
-     *
-     * Not supported (named variant type with relative selector
-     * location):
-     *
-     *     variant my_variant <my.tag>;
-     */
-    PseudoDt::UP _tryParseDtAliasRef();
-
-    /*
-     * Expects the specific token `token`, throwing an exception if not
-     * found.
-     */
-    void _expectToken(const char *token);
-
-    /*
-     * Tries to parse a member type/option or a data type alias, with a
-     * terminating `;`, adding the result to `entries` if found, and
-     * adding any parsed data type alias to the map of aliased data
-     * types of the current frame on success.
-     *
-     * Examples:
-     *
-     *     integer { size = 23; } my_field[34];
-     *
-     *     struct some_struct {
-     *         ...
-     *     };
-     *
-     *     variant hello <stream.packet.context.tag> {
-     *         ...
-     *     } the_var;
-     *
-     *     typealias string := string_t;
-     */
-    bool _tryParseNamedDtOrDtAlias(PseudoNamedDts& entries);
-
-    /*
-     * Tries to parse a data type, which also includes a data type alias
-     * reference.
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     */
-    PseudoDt::UP _tryParseDt();
-
-    /*
-     * Tries to parse a data type block (excludes data type alias
-     * references).
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     */
-    PseudoDt::UP _tryParseFullDt();
-
-    /*
-     * Tries to parse a fixed-length integer type block.
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     *
-     * Example:
-     *
-     *     integer {
-     *         size = 32;
-     *         align = 32;
-     *         base = x;
-     *         byte_order = be;
-     *     }
-     */
-    PseudoDt::UP _tryParseFlIntType();
-
-    /*
-     * Tries to parse a fixed-length floating point number type block.
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     *
-     * Example:
-     *
-     *     floating_point {
-     *         mant_dig = 24;
-     *         exp_dig = 8;
-     *         byte_order = le;
-     *     }
-     */
-    PseudoDt::UP _tryParseFlFloatType();
-
-    /*
-     * Tries to parse a null-terminated string type block.
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     *
-     * Examples:
-     *
-     *     string
-     *
-     *     string {
-     *         encoding = ascii;
-     *     }
-     */
-    PseudoDt::UP _tryParseNtStrType();
-
-    /*
-     * Tries to parse a fixed-length enumeration type block.
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     *
-     * If the parser makes it to the `:` or `{` token and the
-     * fixed-length enumeration type is named, this method adds a data
-     * type alias to the map of aliased data types of the current frame
-     * if `addDtAlias` is true, and sets `*dtAliasName` to the name of
-     * the data type alias.
-     *
-     * Example:
-     *
-     *     enum hello : my_int {
-     *         MEOW,
-     *         "MIX",
-     *         ZOOM = 34,
-     *         "HAR TENVAR" = -17 ... 28,
-     *     }
-     */
-    PseudoDt::UP _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
-
-    template <typename FlEnumTypeT, typename CreatePseudoDtFuncT>
-    PseudoDt::UP _finishParseFlEnumType(PseudoDt::UP pseudoDt, bool addDtAlias,
-                                        std::string&& potDtAliasName,
-                                        CreatePseudoDtFuncT&& createPseudoDtFunc);
-
-    /*
-     * Tries to parse a structure type block.
-     *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
-     *
-     * If the parser makes it to the opening `{` and the structure type
-     * is named, this method adds a data type alias to the map of
-     * aliased data types of the current frame if `addDtAlias` is true,
-     * and sets `*dtAliasName` to the name of the data type alias.
-     *
-     * Example:
-     *
-     *     struct {
-     *         my_int a;
-     *         floating_point {
-     *             mant_dig = 24;
-     *             exp_dig = 8;
-     *             align = 32;
-     *         } b;
      *         struct {
-     *             uint32 u;
-     *             string s;
-     *         } c;
-     *     } align(64)
-     */
-    PseudoDt::UP _tryParseStructType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
-
-    /*
-     * Tries to parse a variant type block.
+     *             string seq[a];
+     *         } b;
+     *     } := some_name;
      *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     * This isn't (it _should_, in fact, but it's not supported as of
+     * this version of yactfr):
      *
-     * If the parser makes it to the opening `{` and the variant type is
-     * named, this method adds a data type alias to the map of aliased
-     * data types of the current frame if `addDtAlias` is true, and sets
-     * `*dtAliasName` to the name of the data type alias.
+     *     typealias struct {
+     *         my_int a;
      *
-     * Example:
+     *         typealias struct {
+     *             string seq[a];
+     *         } := my_struct;
      *
-     *     variant <path.to.tag> {
-     *         string s;
-     *         integer { size = 32; align = 32; } i;
-     *     }
-     */
-    PseudoDt::UP _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
-
-    /*
-     * Tries to parse a trace environment block and sets `_traceEnv`
-     * accordingly.
-     *
-     * Returns whether or not a trace environment block was parsed.
-     *
-     * Example:
-     *
-     *     env {
-     *         some_int = -23;
-     *         some_str = "some string";
-     *     };
-     */
-    bool _tryParseEnvBlock();
-
-    /*
-     * Tries to parse a clock type block and appends it to the current
-     * pseudo trace type data.
-     *
-     * Returns whether or not a clock type block was parsed.
-     *
-     * Example:
-     *
-     *     clock {
-     *         name = "monotonic";
-     *         uuid = "6a16447b-5fc6-4870-9762-87e183306de7";
-     *         description = "Monotonic Clock";
-     *         freq = 1000000000;
-     *         offset = 1446222697389173303;
-     *     };
-     */
-    bool _tryParseClkTypeBlock();
-
-    /*
-     * Tries to parse a callsite block and ignores it.
-     *
-     * Returns whether or not a callsite block was parsed.
-     *
-     * Example:
-     *
-     *     callsite {
-     *         name = "event_name";
-     *         func = "func_name";
-     *         file = "myfile.c";
-     *         line = 39;
-     *         ip = 0x40096c;
-     *     };
-     */
-    bool _tryParseCallsiteBlock();
-
-    /*
-     * Tries to parse a trace type block and sets its properties in the
-     * current pseudo trace type data.
-     *
-     * Returns whether or not a trace type block was parsed.
-     *
-     * Example:
-     *
-     *     trace {
-     *         major = 1;
-     *         minor = 8;
-     *         byte_order = be;
-     *         packet.header := struct {
-     *             uint32_t magic;
-     *             uint8_t  uuid[16];
-     *             uint32_t stream_id;
-     *             uint64_t stream_instance_id;
+     *         struct {
+     *             int a;
+     *             my_struct b;
      *         };
-     *     };
+     *     } := some_name;
+     *
+     * In this last example, the location of the length data type for
+     * the dynamic-length array type `seq[a]` contained in `my_struct b`
+     * is NOT `int a` immediately before, but rather `my_int a`. In
+     * practice, this trick of using a data type which is external to a
+     * data type alias for dynamic-length array type lengths or variant
+     * type selectors is rarely, if ever, used.
+     *
+     * So this is easy to detect, because each time this parser "enters"
+     * a data type alias (with the `typealias` keyword or with a named
+     * structure/variant type), it pushes a data type alias frame onto
+     * the stack. We just need to check if we can find the first path
+     * element within the identifiers of the stack frames, from top to
+     * bottom, until we reach a data type alias or the root frame (both
+     * lead to an exception).
      */
-    bool _tryParseTraceTypeBlock();
+    assert(!_stack.empty());
+    assert(!allPathElems.empty());
 
-    /*
-     * Tries to parse a data stream type block and initializes a pseudo
-     * stream type.
-     *
-     * Returns whether or not a data stream type block was parsed.
-     *
-     * Example:
-     *
-     *     stream {
-     *         id = 2;
-     *         packet.context := ...;
-     *         event.header := ...;
-     *         event.context := ...;
-     *     };
-     */
-    bool _tryParseDstBlock();
+    // find position of first path element in stack from top to bottom
+    auto stackIt = _stack.cend() - 1;
+    const auto& firstPathElem = allPathElems.front();
 
-    /*
-     * Tries to parse an event record type block and inserts a resulting
-     * pseudo event record type into its pseudo data stream type.
-     *
-     * Returns whether or not an event record type block was parsed.
-     *
-     * Example:
-     *
-     *     event {
-     *         id = 2;
-     *         name = sched_switch;
-     *         loglevel = 23;
-     *         model.emf.uri = "something";
-     *         event.context := ...;
-     *         event.fields := ...;
-     *     };
-     */
-    bool _tryParseErtBlock();
+    while (true) {
+        if (stackIt->kind == _StackFrame::Kind::DT_ALIAS) {
+            std::ostringstream ss;
 
-    /*
-     * Returns a fast pseudo fixed-length integer type clone from the
-     * fast pseudo fixed-length integer type cache, or `nullptr` if not
-     * found.
-     */
-    PseudoDt::UP _fastPseudoFlIntType(TextLocation loc);
+            ss << "First element of data location, `" <<
+                  firstPathElem << "`, refers to an identifier which crosses a "
+                  "data type alias (or named structure/variant type) boundary. "
+                  "CTF 1.8 allows this, but this version of yactfr doesn't "
+                  "support it.";
+            throwTextParseError(ss.str(), loc);
+        } else if (stackIt->kind == _StackFrame::Kind::STRUCT_TYPE) {
+            const auto& frameIdents = stackIt->idents;
 
-    /*
-     * Inserts a clone of the pseudo fixed-length integer type
-     * `pseudoIntType` having the corresponding TSDL string from `begin`
-     * (inclusive) to `end` (exclusive) into the fast pseudo
-     * fixed-length integer type cache.
-     */
-    void _insertFastPseudoFlIntType(CharIt begin, CharIt end, const PseudoDt& pseudoIntType);
-
-    Index _at() const
-    {
-        return std::distance(_ss.begin(), _ss.at());
-    }
-
-    void _skipCommentsAndWhitespacesAndSemicolons()
-    {
-        while (true) {
-            _ss.skipCommentsAndWhitespaces();
-
-            if (!_ss.tryScanToken(";")) {
-                break;
-            }
-        }
-    }
-
-    const std::string *_tryScanLitStr()
-    {
-        const std::string *litStr = nullptr;
-
-        _ss.skipCommentsAndWhitespaces();
-
-        const auto loc = _ss.loc();
-
-        try {
-            litStr = _ss.tryScanLitStr("abfnrtv'?\\");
-        } catch (const InvalEscapeSeq& exc) {
-            throwTextParseError(exc.what(), exc.loc());
-        }
-
-        if (!litStr) {
-            return nullptr;
-        }
-
-        for (const auto ch : *litStr) {
-            if ((ch >= 0 && ch <= 8) || (ch >= 14 && ch <= 31) || ch == 127) {
-                // disallow those control characters in the metadata text
-                std::ostringstream ss;
-
-                ss << "Illegal character found in literal string: 0x" <<
-                      std::hex << static_cast<int>(ch) << ".";
-                throwTextParseError(ss.str(), loc);
+            if (std::find(frameIdents.begin(), frameIdents.end(), firstPathElem) != frameIdents.end()) {
+                // identifier found in this frame: win!
+                return PseudoDataLoc {false, false, Scope::PACKET_HEADER, allPathElems, loc};
             }
         }
 
-        return litStr;
+        // identifier isn't in this frame: try next (lower) stack frame
+        if (stackIt == _stack.cbegin()) {
+            // no more frames: not found
+            std::ostringstream ss;
+
+            ss << "Invalid relative data location (`";
+
+            for (auto it = allPathElems.begin(); it != allPathElems.end(); ++it) {
+                ss << *it;
+
+                if (it != allPathElems.end() - 1) {
+                    ss << ".";
+                }
+            }
+
+            ss << "`): cannot find `" << firstPathElem << "` (first element).";
+            throwTextParseError(ss.str(), loc);
+        }
+
+        --stackIt;
     }
 
-    void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt)
-    {
-        TsdlParserBase::_addDtAlias(std::move(name), pseudoDt, _ss.loc());
+    return boost::none;
+}
+
+PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const DataLocation::PathElements& allPathElems,
+                                                         const TextLocation& loc)
+{
+    assert(!allPathElems.empty());
+
+    auto pseudoDataLoc = this->_pseudoDataLocFromAbsAllPathElems(allPathElems, loc);
+
+    if (pseudoDataLoc) {
+        return *pseudoDataLoc;
     }
 
-private:
-    // underlying string scanner
-    StrScanner<CharIt> _ss;
+    pseudoDataLoc = this->_pseudoDataLocFromRelAllPathElems(allPathElems, loc);
 
-    // cache of TSDL substrings to pseudo fixed-length integer types
-    std::vector<_FastPseudoFlIntTypeEntry> _fastPseudoFlIntTypes;
-};
+    if (pseudoDataLoc) {
+        return *pseudoDataLoc;
+    }
 
-template <typename CharIt>
-TsdlParser<CharIt>::TsdlParser(CharIt begin, CharIt end) :
+    throwTextParseError("Invalid data location.", loc);
+}
+
+void TsdlParser::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
+                             const TextLocation& curLoc, _StackFrame& frame)
+{
+    assert(!name.empty());
+
+    /*
+     * Check for existing data type alias with this name. We only check
+     * in the top frame of the lexical scope stack because a data type
+     * alias with a given name can shadow a deeper one with the same
+     * name in TSDL.
+     */
+    if (frame.dtAliases.find(name) != frame.dtAliases.end()) {
+        std::ostringstream ss;
+
+        ss << "Duplicate data type alias: `" << name << "`.";
+        throwTextParseError(ss.str(), curLoc);
+    }
+
+    // add alias
+    frame.dtAliases[std::move(name)] = pseudoDt.clone();
+}
+
+void TsdlParser::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
+                             const TextLocation& curLoc)
+{
+    this->_addDtAlias(std::move(name), pseudoDt, curLoc, this->_stackTop());
+}
+
+void TsdlParser::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt)
+{
+    this->_addDtAlias(std::move(name), pseudoDt, _ss.loc());
+}
+
+PseudoDt::UP TsdlParser::_aliasedPseudoDt(const std::string& name, TextLocation loc) const
+{
+    for (auto it = _stack.crbegin(); it != _stack.crend(); ++it) {
+        const auto& frame = *it;
+        const auto findIt = frame.dtAliases.find(name);
+
+        if (findIt == frame.dtAliases.end()) {
+            continue;
+        }
+
+        auto dt = findIt->second->clone();
+
+        dt->loc(std::move(loc));
+        return dt;
+    }
+
+    return nullptr;
+}
+
+TsdlParser::TsdlParser(const char * const begin, const char * const end) :
     _ss {begin, end}
 {
     assert(end >= begin);
     this->_parseMetadata();
 }
 
-template <typename CharIt>
-void TsdlParser<CharIt>::_parseMetadata()
+void TsdlParser::_parseMetadata()
 {
     _LexicalScope lexScope {*this, _StackFrame::Kind::ROOT};
 
@@ -737,8 +754,7 @@ void TsdlParser<CharIt>::_parseMetadata()
     this->_createTraceType();
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseRootBlock()
+bool TsdlParser::_tryParseRootBlock()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
@@ -806,8 +822,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
     return false;
 }
 
-template <typename CharIt>
-void TsdlParser<CharIt>::_expectToken(const char * const token)
+void TsdlParser::_expectToken(const char * const token)
 {
     if (!_ss.tryScanToken(token)) {
         std::ostringstream ss;
@@ -817,8 +832,7 @@ void TsdlParser<CharIt>::_expectToken(const char * const token)
     }
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
+bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
 {
     PseudoDt::UP pseudoDt;
     std::string dtAliasName;
@@ -829,7 +843,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
     // try fixed-length enumeration type alias
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         try {
             pseudoDt = this->_tryParseFlEnumType(false, &dtAliasName);
@@ -859,7 +873,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
     // try structure type alias
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         try {
             pseudoDt = this->_tryParseStructType(false, &dtAliasName);
@@ -889,7 +903,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
     // try variant type alias
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         try {
             pseudoDt = this->_tryParseVarType(false, &dtAliasName);
@@ -920,8 +934,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
     return false;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
+bool TsdlParser::_tryParseGenericDtAlias()
 {
     bool isTypealias = false;
 
@@ -982,8 +995,7 @@ bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
     return true;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseDtAlias()
+bool TsdlParser::_tryParseDtAlias()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
@@ -1005,8 +1017,7 @@ bool TsdlParser<CharIt>::_tryParseDtAlias()
     return false;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseDt()
+PseudoDt::UP TsdlParser::_tryParseDt()
 {
     auto pseudoDt = this->_tryParseDtAliasRef();
 
@@ -1023,8 +1034,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDt()
     return nullptr;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
+PseudoDt::UP TsdlParser::_tryParseFullDt()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1100,21 +1110,19 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
     return nullptr;
 }
 
-template <typename CharIt>
-void TsdlParser<CharIt>::_insertFastPseudoFlIntType(CharIt begin, CharIt end,
-                                                    const PseudoDt& pseudoDt)
+void TsdlParser::_insertFastPseudoFlIntType(const char * const begin, const char * const end,
+                                            const PseudoDt& pseudoDt)
 {
     assert(end >= begin);
 
-    if (static_cast<Size>(std::distance(begin, end)) > TsdlParser::_MAX_FAST_FL_INT_TYPE_STR_SIZE) {
+    if (static_cast<Size>(end - begin) > TsdlParser::_MAX_FAST_FL_INT_TYPE_STR_SIZE) {
         return;
     }
 
     _fastPseudoFlIntTypes.push_back({begin, end, pseudoDt.clone()});
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_fastPseudoFlIntType(TextLocation loc)
+PseudoDt::UP TsdlParser::_fastPseudoFlIntType(TextLocation loc)
 {
     for (const auto& entry : _fastPseudoFlIntTypes) {
         const auto entrySize = std::distance(entry.begin, entry.end);
@@ -1138,8 +1146,7 @@ PseudoDt::UP TsdlParser<CharIt>::_fastPseudoFlIntType(TextLocation loc)
     return nullptr;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
+PseudoDt::UP TsdlParser::_tryParseFlIntType()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1281,8 +1288,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
     return pseudoDt;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
+PseudoDt::UP TsdlParser::_tryParseFlFloatType()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1364,8 +1370,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
     return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), nullptr, beginLoc);
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
+PseudoDt::UP TsdlParser::_tryParseNtStrType()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1414,11 +1419,10 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
                                                    nullptr, beginLoc);
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
-                                                     std::string * const dtAliasName)
+PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
+                                             std::string * const dtAliasName)
 {
-    _StrScannerRejecter ssRej {_ss};
+    StrScannerRejecter ssRej {_ss};
 
     _ss.skipCommentsAndWhitespaces();
 
@@ -1442,7 +1446,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
     }
 
     {
-        _StrScannerRejecter ssRejOp {_ss};
+        StrScannerRejecter ssRejOp {_ss};
 
         if (!_ss.tryScanToken(":") && !_ss.tryScanToken("{")) {
             return nullptr;
@@ -1546,11 +1550,10 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
     }
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
-                                                     std::string * const dtAliasName)
+PseudoDt::UP TsdlParser::_tryParseStructType(const bool addDtAlias,
+                                             std::string * const dtAliasName)
 {
-    _StrScannerRejecter ssRej {_ss};
+    StrScannerRejecter ssRej {_ss};
 
     _ss.skipCommentsAndWhitespaces();
 
@@ -1653,11 +1656,9 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
     return pseudoDt;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
-                                                  std::string * const dtAliasName)
+PseudoDt::UP TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * const dtAliasName)
 {
-    _StrScannerRejecter ssRej {_ss};
+    StrScannerRejecter ssRej {_ss};
 
     _ss.skipCommentsAndWhitespaces();
 
@@ -1755,8 +1756,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
     return pseudoDt;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseEnvBlock()
+bool TsdlParser::_tryParseEnvBlock()
 {
     // parse `env`
     if (!_ss.tryScanToken("env")) {
@@ -1830,8 +1830,7 @@ bool TsdlParser<CharIt>::_tryParseEnvBlock()
     return true;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseCallsiteBlock()
+bool TsdlParser::_tryParseCallsiteBlock()
 {
     // parse `callsite`
     if (!_ss.tryScanToken("callsite")) {
@@ -1862,8 +1861,7 @@ bool TsdlParser<CharIt>::_tryParseCallsiteBlock()
     return true;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
+bool TsdlParser::_tryParseClkTypeBlock()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
@@ -2022,8 +2020,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
     return true;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
+bool TsdlParser::_tryParseTraceTypeBlock()
 {
     _LexicalScope lexScope {*this, _StackFrame::Kind::TRACE_TYPE};
 
@@ -2187,8 +2184,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
     return true;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseDstBlock()
+bool TsdlParser::_tryParseDstBlock()
 {
     _LexicalScope lexScope {*this, _StackFrame::Kind::DST};
 
@@ -2308,8 +2304,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
     return true;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseErtBlock()
+bool TsdlParser::_tryParseErtBlock()
 {
     _LexicalScope lexScope {*this, _StackFrame::Kind::ERT};
 
@@ -2458,12 +2453,11 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
     return true;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeDtStackFrameKind,
+PseudoDt::UP TsdlParser::_tryParseScopeDt(const _StackFrame::Kind scopeDtStackFrameKind,
                                                   const char * const firstName,
                                                   const char * const secondName, const bool expect)
 {
-    _StrScannerRejecter ssRej {_ss};
+    StrScannerRejecter ssRej {_ss};
 
     _ss.skipCommentsAndWhitespaces();
 
@@ -2534,8 +2528,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
     }
 }
 
-template <typename CharIt>
-TsdlAttr TsdlParser<CharIt>::_expectAttr()
+TsdlAttr TsdlParser::_expectAttr()
 {
     TsdlAttr attr;
 
@@ -2545,9 +2538,9 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
     _ss.skipCommentsAndWhitespaces();
     attr.nameLoc = _ss.loc();
 
-    if (_ss.tryScanToken(TsdlParser::_EMF_URI_ATTR_NAME)) {
+    if (_ss.tryScanToken("model.emf.uri")) {
         nameIsFound = true;
-        attr.name = TsdlParser::_EMF_URI_ATTR_NAME;
+        attr.name = "model.emf.uri";
     } else if (const auto ident = _ss.tryScanIdent()) {
         nameIsFound = true;
         attr.name = *ident;
@@ -2621,8 +2614,7 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
     return attr;
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
+PseudoDt::UP TsdlParser::_tryParseDtAliasRef()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -2630,7 +2622,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
 
     // try `enum`/`struct` followed by name
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         if (auto ident = _ss.tryScanIdent()) {
             const std::string kw {*ident};
@@ -2657,7 +2649,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
 
     // try `variant` followed by name, followed by optional selector name
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         if (_ss.tryScanToken("variant")) {
             if (const auto ident = _ss.tryScanIdent()) {
@@ -2711,7 +2703,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
 
     // try data type alias name
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
         std::string dtAliasName;
 
         if (this->_parseDtAliasName(dtAliasName, false)) {
@@ -2727,14 +2719,13 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
     return nullptr;
 }
 
-template <typename CharIt>
-bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool expect)
+bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
 {
     bool isMulti = false;
     std::vector<std::string> parts;
 
     while (true) {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         _ss.skipCommentsAndWhitespaces();
 
@@ -2803,8 +2794,7 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
     return true;
 }
 
-template <typename CharIt>
-PseudoDataLoc TsdlParser<CharIt>::_expectDataLoc()
+PseudoDataLoc TsdlParser::_expectDataLoc()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -2832,8 +2822,7 @@ PseudoDataLoc TsdlParser<CharIt>::_expectDataLoc()
     return this->_pseudoDataLocFromAllPathElems(allPathElems, beginLoc);
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseIdentArraySubscripts(std::string& ident,
+PseudoDt::UP TsdlParser::_tryParseIdentArraySubscripts(std::string& ident,
                                                                PseudoDt::UP innerPseudoDt)
 {
     // parse identifier
@@ -2847,8 +2836,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIdentArraySubscripts(std::string& iden
     return this->_parseArraySubscripts(std::move(innerPseudoDt));
 }
 
-template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoDt)
+PseudoDt::UP TsdlParser::_parseArraySubscripts(PseudoDt::UP innerPseudoDt)
 {
     /*
      * A temporary array type subscript.
@@ -2981,145 +2969,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
     return innerPseudoDt;
 }
 
-template <typename CharIt>
-template <typename FlEnumTypeT, typename CreatePseudoDtFuncT>
-PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
-                                                        const bool addDtAlias,
-                                                        std::string&& potDtAliasName,
-                                                        CreatePseudoDtFuncT&& createPseudoDtFunc)
-{
-    // parse mappings (we're after `{`)
-    std::unordered_map<std::string, std::set<typename FlEnumTypeT::RangeSet::Range>> pseudoMappings;
-    typename FlEnumTypeT::RangeSet::Value curVal = 0;
-
-    while (true) {
-        std::string name;
-
-        _ss.skipCommentsAndWhitespaces();
-
-        boost::optional<TextLocation> loc {_ss.loc()};
-
-        if (const auto ident = _ss.tryScanIdent()) {
-            name = *ident;
-        } else if (const auto escapedStr = this->_tryScanLitStr()) {
-            name = *escapedStr;
-        } else {
-            throwTextParseError("Expecting mapping name (identifier or literal string).", *loc);
-        }
-
-        auto lower = curVal;
-        auto upper = curVal;
-
-        if (_ss.tryScanToken("=")) {
-            using Val = decltype(curVal);
-
-            _ss.skipCommentsAndWhitespaces();
-            loc = _ss.loc();
-
-            auto val = _ss.template tryScanConstInt<Val>();
-
-            if (!val) {
-                if (std::is_signed<Val>::value) {
-                    throwTextParseError("Expecting valid constant signed integer.",
-                                        _ss.loc());
-                } else {
-                    throwTextParseError("Expecting valid constant unsigned integer.",
-                                        _ss.loc());
-                }
-            }
-
-            lower = *val;
-            upper = lower;
-            curVal = lower;
-
-            if (_ss.tryScanToken("...")) {
-                val = _ss.template tryScanConstInt<Val>();
-
-                if (!val) {
-                    throwTextParseError("Expecting valid constant integer.", _ss.loc());
-                }
-
-                upper = *val;
-                curVal = upper;
-            }
-        }
-
-        ++curVal;
-
-        /*
-         * Insert integer range into pseudo mapping (create pseudo
-         * mapping if it doesn't exist).
-         */
-        if (pseudoMappings.find(name) == pseudoMappings.end()) {
-            pseudoMappings[name] = {};
-        }
-
-        if (lower > upper) {
-            std::ostringstream ss;
-
-            ss << "Lower value of range (" << lower << ") is greater than upper value (" <<
-                  upper << ").";
-            throwTextParseError(ss.str(), *loc);
-        }
-
-        pseudoMappings[name].insert(typename FlEnumTypeT::RangeSet::Range {lower, upper});
-
-        const bool gotComma = _ss.tryScanToken(",");
-
-        // end of member types?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        if (!gotComma) {
-            throwTextParseError("Expecting `,` or `}`.", _ss.loc());
-        }
-    }
-
-    if (pseudoMappings.empty()) {
-        throwTextParseError("Expecting at least one mapping.", pseudoDt->loc());
-    }
-
-    typename FlEnumTypeT::Mappings mappings;
-
-    for (const auto& nameRangesPair : pseudoMappings) {
-        mappings[nameRangesPair.first] = typename FlEnumTypeT::RangeSet {
-            std::move(nameRangesPair.second)
-        };
-    }
-
-    // validate mappings
-    Size len;
-
-    if (pseudoDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
-        const auto& pseudoDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoDt);
-
-        assert(pseudoDtWrapper.dt().isFixedLengthSignedIntegerType());
-        len = pseudoDtWrapper.dt().asFixedLengthIntegerType().length();
-    } else {
-        assert(pseudoDt->kind() == PseudoDt::Kind::FL_UINT);
-
-        const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(*pseudoDt);
-
-        len = pseudoUIntType.len();
-    }
-
-    this->_validateFlEnumTypeMappings<FlEnumTypeT>(len, pseudoDt->loc(), mappings);
-
-    // create pseudo fixed-length enumeration type
-    auto pseudoEnumType = std::forward<CreatePseudoDtFuncT>(createPseudoDtFunc)(*pseudoDt,
-                                                                                mappings);
-
-    // add data type alias if this fixed-length enumeration type has a name
-    if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::move(potDtAliasName), *pseudoEnumType);
-    }
-
-    return pseudoEnumType;
-}
-
-template <typename CharIt>
-bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
+bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
 {
     /*
      * Here are the possible cases:
@@ -3202,7 +3052,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
         const auto dtLoc = _ss.loc();
         auto pseudoDt = this->_tryParseDtAliasRef();
 
@@ -3234,7 +3084,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
 
     // try type alias (cases 1, 2, 3, 4)
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
 
         if (this->_tryParseDtAlias()) {
             ssRej.accept();
@@ -3244,7 +3094,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
 
     // try full type (cases 8)
     {
-        _StrScannerRejecter ssRej {_ss};
+        StrScannerRejecter ssRej {_ss};
         auto pseudoDt = this->_tryParseFullDt();
 
         if (pseudoDt) {
@@ -3285,7 +3135,48 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
     return false;
 }
 
+const std::string *TsdlParser::_tryScanLitStr()
+{
+    const std::string *litStr = nullptr;
+
+    _ss.skipCommentsAndWhitespaces();
+
+    const auto loc = _ss.loc();
+
+    try {
+        litStr = _ss.tryScanLitStr("abfnrtv'?\\");
+    } catch (const InvalEscapeSeq& exc) {
+        throwTextParseError(exc.what(), exc.loc());
+    }
+
+    if (!litStr) {
+        return nullptr;
+    }
+
+    for (const auto ch : *litStr) {
+        if ((ch >= 0 && ch <= 8) || (ch >= 14 && ch <= 31) || ch == 127) {
+            // disallow those control characters in the metadata text
+            std::ostringstream ss;
+
+            ss << "Illegal character found in literal string: 0x" <<
+                  std::hex << static_cast<int>(ch) << ".";
+            throwTextParseError(ss.str(), loc);
+        }
+    }
+
+    return litStr;
+}
+
+void TsdlParser::_skipCommentsAndWhitespacesAndSemicolons()
+{
+    while (true) {
+        _ss.skipCommentsAndWhitespaces();
+
+        if (!_ss.tryScanToken(";")) {
+            break;
+        }
+    }
+}
+
 } // namespace internal
 } // namespace yactfr
-
-#endif // _YACTFR_METADATA_INTERNAL_TSDL_PARSER_HPP

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_PSEUDO_TYPES_HPP
-#define _YACTFR_METADATA_INTERNAL_PSEUDO_TYPES_HPP
+#ifndef _YACTFR_METADATA_PSEUDO_TYPES_HPP
+#define _YACTFR_METADATA_PSEUDO_TYPES_HPP
 
 #include <memory>
 #include <vector>
@@ -17,13 +17,13 @@
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
 
-#include "../../aliases.hpp"
-#include "../data-loc.hpp"
-#include "../int-range-set.hpp"
-#include "../fl-enum-type.hpp"
-#include "../vl-int-type.hpp"
-#include "../trace-type.hpp"
-#include "../aliases.hpp"
+#include <yactfr/aliases.hpp>
+#include <yactfr/metadata/data-loc.hpp>
+#include <yactfr/metadata/int-range-set.hpp>
+#include <yactfr/metadata/fl-enum-type.hpp>
+#include <yactfr/metadata/vl-int-type.hpp>
+#include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/aliases.hpp>
 
 namespace yactfr {
 namespace internal {
@@ -1121,4 +1121,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_PSEUDO_TYPES_HPP
+#endif // _YACTFR_METADATA_PSEUDO_TYPES_HPP

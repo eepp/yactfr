@@ -28,7 +28,6 @@
 #include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/opt-type.hpp>
-#include <yactfr/internal/utils.hpp>
 
 namespace yactfr {
 

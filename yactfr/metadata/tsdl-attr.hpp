@@ -23,10 +23,10 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include "../../aliases.hpp"
-#include "../int-type-common.hpp"
-#include "../aliases.hpp"
-#include "../../text-parse-error.hpp"
+#include <yactfr/aliases.hpp>
+#include <yactfr/metadata/int-type-common.hpp>
+#include <yactfr/metadata/aliases.hpp>
+#include <yactfr/text-parse-error.hpp>
 
 namespace yactfr {
 namespace internal {

@@ -13,9 +13,6 @@
 #include <sstream>
 
 #include <yactfr/text-loc.hpp>
-#include <yactfr/metadata/internal/pseudo-types.hpp>
-#include <yactfr/metadata/internal/pseudo-type-visitor.hpp>
-#include <yactfr/metadata/internal/pseudo-dt-utils.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
@@ -24,8 +21,10 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/text-parse-error.hpp>
-#include <yactfr/internal/utils.hpp>
 
+#include "pseudo-types.hpp"
+#include "pseudo-type-visitor.hpp"
+#include "pseudo-dt-utils.hpp"
 #include "utils.hpp"
 
 namespace yactfr {

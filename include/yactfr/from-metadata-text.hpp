@@ -9,8 +9,8 @@
 #define _YACTFR_FROM_METADATA_TEXT_HPP
 
 #include <utility>
+#include <string>
 
-#include "metadata/internal/tsdl-parser.hpp"
 #include "metadata/trace-type.hpp"
 #include "trace-env.hpp"
 
@@ -23,21 +23,6 @@ namespace yactfr {
 
 @ingroup trace
 
-Because this template uses another, quite heavy template, it's
-recommended, if you are to use this function using the same
-\p CharIt template parameter in different translation units, that you
-create a non-templated, specialized version in its own source file, for
-example:
-
-@code
-std::pair<yactfr::Trace::UP, yactfr::TraceEnvironment> fromMetadataText(const std::string& str)
-{
-    return yactfr::fromMetadataText(str.begin(), str.end());
-}
-@endcode
-
-@tparam CharIt
-    Random access character iterator type.
 @param[in] begin
     Beginning of metadata text.
 @param[in] end
@@ -54,12 +39,32 @@ std::pair<yactfr::Trace::UP, yactfr::TraceEnvironment> fromMetadataText(const st
 @throws TextParseError
     An error occurred while parsing the document.
 */
-template <typename CharIt>
-std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const CharIt begin, const CharIt end)
-{
-    internal::TsdlParser<CharIt> parser {begin, end};
+std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const char *begin, const char *end);
 
-    return std::make_pair(parser.releaseTraceType(), parser.traceEnv());
+/*!
+@brief
+    Builds trace type and trace environment objects by parsing the
+    metadata text \p text.
+
+@ingroup trace
+
+@param[in] text
+    Metadata text.
+
+@returns
+    @parblock
+    Pair of:
+
+    -# \link TraceType Trace type\endlink
+    -# \link TraceEnvironment Trace environment\endlink
+    @endparblock
+
+@throws TextParseError
+    An error occurred while parsing the document.
+*/
+std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const std::string& text)
+{
+    return fromMetadataText(text.data(), text.data() + text.size());
 }
 
 } // namespace yactfr

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_DT_FROM_PSEUDO_ROOT_DT_CONVERTER_HPP
-#define _YACTFR_METADATA_INTERNAL_DT_FROM_PSEUDO_ROOT_DT_CONVERTER_HPP
+#ifndef _YACTFR_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
+#define _YACTFR_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -23,17 +23,18 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include "../../aliases.hpp"
-#include "../../trace-env.hpp"
-#include "../../item.hpp"
-#include "../trace-type.hpp"
-#include "../data-loc.hpp"
-#include "../dst.hpp"
-#include "../ert.hpp"
-#include "../fl-enum-type.hpp"
-#include "../int-range.hpp"
-#include "../aliases.hpp"
-#include "../../text-parse-error.hpp"
+#include <yactfr/aliases.hpp>
+#include <yactfr/trace-env.hpp>
+#include <yactfr/item.hpp>
+#include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/data-loc.hpp>
+#include <yactfr/metadata/dst.hpp>
+#include <yactfr/metadata/ert.hpp>
+#include <yactfr/metadata/fl-enum-type.hpp>
+#include <yactfr/metadata/int-range.hpp>
+#include <yactfr/metadata/aliases.hpp>
+#include <yactfr/text-parse-error.hpp>
+
 #include "pseudo-types.hpp"
 #include "data-loc-map.hpp"
 
@@ -443,4 +444,4 @@ DataType::UP DtFromPseudoRootDtConverter::_whileVisitingPseudoDt(const PseudoDtT
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_DT_FROM_PSEUDO_ROOT_DT_CONVERTER_HPP
+#endif // _YACTFR_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP

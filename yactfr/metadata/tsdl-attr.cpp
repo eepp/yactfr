@@ -11,7 +11,6 @@
 #include <set>
 
 #include <yactfr/text-loc.hpp>
-#include <yactfr/metadata/internal/tsdl-attr.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-array-type.hpp>
@@ -19,7 +18,9 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/text-parse-error.hpp>
-#include <yactfr/internal/utils.hpp>
+
+#include "tsdl-attr.hpp"
+#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {

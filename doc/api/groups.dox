@@ -87,8 +87,8 @@ Conceptually, everything found in a
 belongs to the \em trace itself (the conceptual instance of the trace
 type).
 
-Therefore, fromMetadataText() returns both a trace type and
-a trace environment.
+Therefore, fromMetadataText() returns both a trace type and a trace
+environment.
 
 @defgroup item Item
 @brief

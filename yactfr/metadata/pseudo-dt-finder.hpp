@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_PSEUDO_DT_FINDER_HPP
-#define _YACTFR_METADATA_INTERNAL_PSEUDO_DT_FINDER_HPP
+#ifndef _YACTFR_METADATA_PSEUDO_DT_FINDER_HPP
+#define _YACTFR_METADATA_PSEUDO_DT_FINDER_HPP
 
 #include <type_traits>
 #include <unordered_set>
@@ -161,4 +161,4 @@ static inline auto findPseudoDts(const PseudoDt& pseudoDt,
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_PSEUDO_DT_FINDER_HPP
+#endif // _YACTFR_METADATA_PSEUDO_DT_FINDER_HPP

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_DATA_LOC_MAP_HPP
-#define _YACTFR_METADATA_INTERNAL_DATA_LOC_MAP_HPP
+#ifndef _YACTFR_METADATA_DATA_LOC_MAP_HPP
+#define _YACTFR_METADATA_DATA_LOC_MAP_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -22,16 +22,17 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include "../../aliases.hpp"
-#include "../../trace-env.hpp"
-#include "../trace-type.hpp"
-#include "../data-loc.hpp"
-#include "../dst.hpp"
-#include "../ert.hpp"
-#include "../fl-enum-type.hpp"
-#include "../int-range.hpp"
-#include "../aliases.hpp"
-#include "../../text-parse-error.hpp"
+#include <yactfr/aliases.hpp>
+#include <yactfr/trace-env.hpp>
+#include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/data-loc.hpp>
+#include <yactfr/metadata/dst.hpp>
+#include <yactfr/metadata/ert.hpp>
+#include <yactfr/metadata/fl-enum-type.hpp>
+#include <yactfr/metadata/int-range.hpp>
+#include <yactfr/metadata/aliases.hpp>
+#include <yactfr/text-parse-error.hpp>
+
 #include "pseudo-types.hpp"
 
 namespace yactfr {
@@ -96,4 +97,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_DATA_LOC_MAP_HPP
+#endif // _YACTFR_METADATA_DATA_LOC_MAP_HPP

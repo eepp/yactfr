@@ -15,7 +15,7 @@ int main(const int argc, const char * const argv[])
     try {
         std::ifstream file {argv[1]};
         const auto metadataStream = yactfr::createMetadataStream(file);
-        yactfr::fromMetadataText(metadataStream->text().begin(), metadataStream->text().end());
+        yactfr::fromMetadataText(metadataStream->text());
     } catch (const yactfr::TextParseError& ex) {
         std::cerr << ex.what() << std::endl;
         return 2;

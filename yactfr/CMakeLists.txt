@@ -18,6 +18,7 @@ add_library (
     elem-seq-it.cpp
     elem-seq.cpp
     elem-visitor.cpp
+    from-metadata-text.cpp
     item.cpp
     logging/zf_log.c
     metadata/array-type.cpp
@@ -57,7 +58,7 @@ add_library (
     metadata/trace-type-impl.cpp
     metadata/trace-type.cpp
     metadata/tsdl-attr.cpp
-    metadata/tsdl-parser-base.cpp
+    metadata/tsdl-parser.cpp
     metadata/utils.cpp
     metadata/var-type.cpp
     metadata/vl-bit-array-type.cpp
@@ -67,6 +68,7 @@ add_library (
     mmap-file-view-factory.cpp
     pkt-proc-builder.cpp
     proc.cpp
+    str-scanner.cpp
     text-loc.cpp
     text-parse-error.cpp
     trace-env.cpp

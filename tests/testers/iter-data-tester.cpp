@@ -27,8 +27,7 @@ int main(const int argc, const char * const argv[])
 
     file.close();
 
-    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text().begin(),
-                                                           metadataStream->text().end());
+    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text());
     yactfr::MemoryMappedFileViewFactory factory {dsPath, 4096};
 
     yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};

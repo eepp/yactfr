@@ -11,7 +11,6 @@
 #include <set>
 
 #include <yactfr/text-loc.hpp>
-#include <yactfr/metadata/internal/data-loc-map.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
@@ -19,7 +18,8 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/text-parse-error.hpp>
-#include <yactfr/internal/utils.hpp>
+
+#include "data-loc-map.hpp"
 
 namespace yactfr {
 namespace internal {
