@@ -9,6 +9,8 @@
 
 #include <yactfr/metadata/vl-bit-array-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 VariableLengthBitArrayType::VariableLengthBitArrayType(const int kind, const unsigned int align,
@@ -27,6 +29,12 @@ VariableLengthBitArrayType::VariableLengthBitArrayType(const unsigned int align,
 bool VariableLengthBitArrayType::_isEqual(const DataType& other) const noexcept
 {
     return true;
+}
+
+DataType::UP VariableLengthBitArrayType::_clone() const
+{
+    return std::make_unique<VariableLengthBitArrayType>(this->alignment(),
+                                                        internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

@@ -9,6 +9,8 @@
 
 #include <yactfr/metadata/fl-bit-array-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned int align,
@@ -59,6 +61,13 @@ bool FixedLengthBitArrayType::_isEqual(const DataType& other) const noexcept
     auto& otherBitArrayType = static_cast<const FixedLengthBitArrayType&>(other);
 
     return _len == otherBitArrayType._len && _bo == otherBitArrayType._bo;
+}
+
+DataType::UP FixedLengthBitArrayType::_clone() const
+{
+    return std::make_unique<FixedLengthBitArrayType>(this->alignment(), this->length(),
+                                                     this->byteOrder(),
+                                                     internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

@@ -11,6 +11,7 @@
 #include "bo.hpp"
 #include "scalar-dt.hpp"
 #include "dt.hpp"
+#include "dt-visitor.hpp"
 
 namespace yactfr {
 
@@ -95,6 +96,14 @@ public:
 
 protected:
     bool _isEqual(const DataType& other) const noexcept override;
+
+private:
+    DataType::UP _clone() const override;
+
+    void _accept(DataTypeVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
 
 private:
     const unsigned int _len;
