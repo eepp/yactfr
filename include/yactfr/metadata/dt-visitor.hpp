@@ -30,6 +30,10 @@ public:
     {
     }
 
+// parameter names kept for Doxygen
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
     /*!
     @brief
         Visits the fixed-length bit array type \p type.
@@ -309,6 +313,8 @@ public:
     virtual void visit(const OptionalWithSignedIntegerSelectorType& type)
     {
     }
+
+#pragma GCC diagnostic pop
 };
 
 } // namespace yactfr
