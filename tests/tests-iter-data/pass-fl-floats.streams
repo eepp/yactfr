@@ -49,10 +49,10 @@ e6357a669ea0f63f
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     PI
      0     ER {
-     0       ERI:0:test
+     0       ERI:T0:#test
      0       SC:5 {
      0         ST {
      0           FLFPN:flt32le1:-3.14159

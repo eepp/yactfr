@@ -14,7 +14,7 @@ stream {
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     SC:1 {
      0       ST {
      0         NTS:content_size {

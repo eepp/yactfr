@@ -23,15 +23,15 @@ event {
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     SC:1 {
      0       ST {
      0         FLUI:content_size:37
      8       }
      8     }
-     8     PI:37
+     8     PI:C37
      8     ER {
-     8       ERI:0:test
+     8       ERI:T0:#test
      8       SC:5 {
      8         ST {
      8           SLS:text {

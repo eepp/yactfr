@@ -27,15 +27,15 @@ event {
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     SC:1 {
      0       ST {
      0         FLUI:content_size:344
     32       }
     32     }
-    32     PI:344
+    32     PI:C344
     32     ER {
-    32       ERI:0:test
+    32       ERI:T0:#test
     32       SC:5 {
     32         ST {
     32           NTS:str {
@@ -45,7 +45,7 @@ event {
    192       }
    192     }
    192     ER {
-   192       ERI:0:test
+   192       ERI:T0:#test
    192       SC:5 {
    192         ST {
    192           NTS:str {
@@ -55,7 +55,7 @@ event {
    272       }
    272     }
    272     ER {
-   272       ERI:0:test
+   272       ERI:T0:#test
    272       SC:5 {
    272         ST {
    272           NTS:str {

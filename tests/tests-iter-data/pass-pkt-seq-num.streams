@@ -24,16 +24,16 @@ event {
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     SC:1 {
      0       ST {
      0         FLUI:packet_size:72
      8         FLUI:packet_seq_num:2
     16       }
     16     }
-    16     PI:72:72:2
+    16     PI:T72:C72:S2
     16     ER {
-    16       ERI:0:test
+    16       ERI:T0:#test
     16       SC:5 {
     16         ST {
     16           NTS:str {
@@ -46,16 +46,16 @@ event {
     72 }
     72 P {
     72   PC {
-    72     DSI:0
+    72     DSI:T0
     72     SC:1 {
     72       ST {
     72         FLUI:packet_size:64
     80         FLUI:packet_seq_num:180
     88       }
     88     }
-    88     PI:64:64:180
+    88     PI:T64:C64:S180
     88     ER {
-    88       ERI:0:test
+    88       ERI:T0:#test
     88       SC:5 {
     88         ST {
     88           NTS:str {
@@ -68,16 +68,16 @@ event {
    136 }
    136 P {
    136   PC {
-   136     DSI:0
+   136     DSI:T0
    136     SC:1 {
    136       ST {
    136         FLUI:packet_size:88
    144         FLUI:packet_seq_num:23
    152       }
    152     }
-   152     PI:88:88:23
+   152     PI:T88:C88:S23
    152     ER {
-   152       ERI:0:test
+   152       ERI:T0:#test
    152       SC:5 {
    152         ST {
    152           NTS:str {

@@ -168,7 +168,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    160         FLUI:stream_id:35
    168       }
    168     }
-   168     DSI:35
+   168     DSI:T35
    168     SC:1 {
    168       ST {
    168         FLUI:packet_size:864
@@ -178,7 +178,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    216         FLUI:timestamp_end:36864
    232       }
    232     }
-   232     PI:864:856:36864
+   232     PI:T864:C856:E36864
    232     ER {
    232       SC:2 {
    232         ST {
@@ -187,7 +187,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    248           DCV:19712
    248         }
    248       }
-   248       ERI:29:coronin
+   248       ERI:T29:#coronin
    248       SC:3 {
    248         ST {
    248           FLUE:ctx1:602918315
@@ -217,7 +217,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    504           DCV:19717
    504         }
    504       }
-   504       ERI:119:keratin
+   504       ERI:T119:#keratin
    504       SC:3 {
    504         ST {
    504           FLUE:ctx1:1
@@ -240,7 +240,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    664           DCV:19972
    664         }
    664       }
-   664       ERI:29:coronin
+   664       ERI:T29:#coronin
    664       SC:3 {
    664         ST {
    664           FLUE:ctx1:1147574528
@@ -292,16 +292,16 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1024         FLUI:stream_id:255
   1032       }
   1032     }
-  1032     DSI:255
+  1032     DSI:T255
   1032     SC:1 {
   1032       ST {
   1032         FLUI:packet_size:664
   1064         FLUI:len:7
   1080       }
   1080     }
-  1080     PI:664:664
+  1080     PI:T664:C664
   1080     ER {
-  1080       ERI:0:coucou les coucous
+  1080       ERI:T0:#coucou les coucous
   1080       SC:5 {
   1080         ST {
   1080           FLUI:len:3
@@ -329,7 +329,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1288       }
   1288     }
   1288     ER {
-  1288       ERI:0:coucou les coucous
+  1288       ERI:T0:#coucou les coucous
   1288       SC:5 {
   1288         ST {
   1288           FLUI:len:4
@@ -389,7 +389,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1688         FLUI:stream_id:35
   1696       }
   1696     }
-  1696     DSI:35
+  1696     DSI:T35
   1696     SC:1 {
   1696       ST {
   1696         FLUI:packet_size:864
@@ -399,7 +399,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1744         FLUI:timestamp_end:36864
   1760       }
   1760     }
-  1760     PI:864:848:36864
+  1760     PI:T864:C848:E36864
   1760     ER {
   1760       SC:2 {
   1760         ST {
@@ -408,7 +408,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1776           DCV:12035
   1776         }
   1776       }
-  1776       ERI:5:the variant event
+  1776       ERI:T5:#the variant event
   1776       SC:3 {
   1776         ST {
   1776           FLUE:ctx1:1146447479
@@ -439,7 +439,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2064           DCV:12041
   2064         }
   2064       }
-  2064       ERI:5:the variant event
+  2064       ERI:T5:#the variant event
   2064       SC:3 {
   2064         ST {
   2064           FLUE:ctx1:1146447480

@@ -16,10 +16,10 @@ event {
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     PI
      0     ER {
-     0       ERI:0:test
+     0       ERI:T0:#test
      0       SC:5 {
      0         ST {
      0           FLUI:len:50
@@ -129,7 +129,7 @@ event {
      8       }
      8     }
      8     ER {
-     8       ERI:0:test
+     8       ERI:T0:#test
      8       SC:5 {
      8         ST {
      8           FLUI:len:20

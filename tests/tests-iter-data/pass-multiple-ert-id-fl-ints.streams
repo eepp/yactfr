@@ -38,7 +38,7 @@ deadbeef
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     PI
      0     ER {
      0       SC:2 {
@@ -52,7 +52,7 @@ deadbeef
     64           }
     64         }
     64       }
-    64       ERI:66:test1
+    64       ERI:T66:#test1
     64       SC:5 {
     64         ST {
     64           NTS:salut {
@@ -73,7 +73,7 @@ deadbeef
    200           }
    200         }
    200       }
-   200       ERI:67:test1
+   200       ERI:T67:#test1
    200       SC:5 {
    200         ST {
    200           FLUI:salut:4022250974

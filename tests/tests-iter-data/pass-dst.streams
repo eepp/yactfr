@@ -31,15 +31,15 @@ ff 78 "heille Lynda" 00
      0         FLUI:stream_instance_id:2
      8       }
      8     }
-     8     DSI:0:2
+     8     DSI:T0:I2
      8     SC:1 {
      8       ST {
      8         FLUI:packet_size:120
     16       }
     16     }
-    16     PI:120:120
+    16     PI:T120:C120
     16     ER {
-    16       ERI:0:test
+    16       ERI:T0:#test
     16       SC:5 {
     16         ST {
     16           NTS:str {
@@ -57,15 +57,15 @@ ff 78 "heille Lynda" 00
    120         FLUI:stream_instance_id:5
    128       }
    128     }
-   128     DSI:0:5
+   128     DSI:T0:I5
    128     SC:1 {
    128       ST {
    128         FLUI:packet_size:120
    136       }
    136     }
-   136     PI:120:120
+   136     PI:T120:C120
    136     ER {
-   136       ERI:0:test
+   136       ERI:T0:#test
    136       SC:5 {
    136         ST {
    136           NTS:str {
@@ -83,15 +83,15 @@ ff 78 "heille Lynda" 00
    240         FLUI:stream_instance_id:255
    248       }
    248     }
-   248     DSI:0:255
+   248     DSI:T0:I255
    248     SC:1 {
    248       ST {
    248         FLUI:packet_size:120
    256       }
    256     }
-   256     PI:120:120
+   256     PI:T120:C120
    256     ER {
-   256       ERI:0:test
+   256       ERI:T0:#test
    256       SC:5 {
    256         ST {
    256           NTS:str {

@@ -148,7 +148,7 @@ V_ABS     cd
     96         }
     96       }
     96     }
-    96     DSI:0
+    96     DSI:T0
     96     SC:1 {
     96       ST {
     96         FLUE:pc_tag:0
@@ -177,7 +177,7 @@ V_ABS     cd
    240           }
    240         }
    240       }
-   240       ERI:0:test
+   240       ERI:T0:#test
    240       SC:3 {
    240         ST {
    240           FLUE:e1c_tag:0

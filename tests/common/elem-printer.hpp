@@ -81,13 +81,10 @@ public:
         *_os << "DSI";
 
         if (elem.type()) {
-            *_os << ':' << elem.type()->id();
+            *_os << ":T" << elem.type()->id();
         }
 
-        if (elem.id()) {
-            *_os << ':' << *elem.id();
-        }
-
+        this->_tryAppendVal('I', elem.id());
         *_os << '\n';
     }
 
@@ -97,11 +94,8 @@ public:
         *_os << "ERI";
 
         if (elem.type()) {
-            *_os << ':' << elem.type()->id();
-
-            if (elem.type()->name()) {
-                *_os << ':' << *elem.type()->name();
-            }
+            *_os << ":T" << elem.type()->id();
+            this->_tryAppendVal('#', elem.type()->name());
         }
 
         *_os << '\n';
@@ -111,27 +105,11 @@ public:
     {
         this->_indent();
         *_os << "PI";
-
-        if (elem.expectedTotalLength()) {
-            *_os << ':' << *elem.expectedTotalLength();
-        }
-
-        if (elem.expectedContentLength()) {
-            *_os << ':' << *elem.expectedContentLength();
-        }
-
-        if (elem.endDefaultClockValue()) {
-            *_os << ':' << *elem.endDefaultClockValue();
-        }
-
-        if (elem.sequenceNumber()) {
-            *_os << ':' << *elem.sequenceNumber();
-        }
-
-        if (elem.discardedEventRecordCounterSnapshot()) {
-            *_os << ':' << *elem.discardedEventRecordCounterSnapshot();
-        }
-
+        this->_tryAppendVal('T', elem.expectedTotalLength());
+        this->_tryAppendVal('C', elem.expectedContentLength());
+        this->_tryAppendVal('E', elem.endDefaultClockValue());
+        this->_tryAppendVal('S', elem.sequenceNumber());
+        this->_tryAppendVal('D', elem.discardedEventRecordCounterSnapshot());
         *_os << '\n';
     }
 
@@ -328,6 +306,13 @@ public:
     }
 
 private:
+    template <typename OptValT>
+    void _tryAppendVal(const char type, const OptValT& optVal) {
+        if (optVal) {
+            *_os << ':' << type << *optVal;
+        }
+    }
+
     template <typename VarBegElemT>
     void _visitVarBegElem(const VarBegElemT& elem, const char * const id)
     {

@@ -19,10 +19,10 @@ event {
 ----
      0 P {
      0   PC {
-     0     DSI:0
+     0     DSI:T0
      0     PI
      0     ER {
-     0       ERI:0:test
+     0       ERI:T0:#test
      0       SC:5 {
      0         ST {
      0           NTS:salut {
@@ -34,7 +34,7 @@ event {
    153       }
    153     }
    160     ER {
-   160       ERI:0:test
+   160       ERI:T0:#test
    160       SC:5 {
    160         ST {
    160           NTS:salut {
@@ -46,7 +46,7 @@ event {
    265       }
    265     }
    272     ER {
-   272       ERI:0:test
+   272       ERI:T0:#test
    272       SC:5 {
    272         ST {
    272           NTS:salut {
