@@ -190,14 +190,10 @@ While you can build a trace type object manually, the most interesting
 use case is probably to get one out of a standard TSDL metadata
 document.
 
-The `traceFromMetadataText()` function does exactly that. This is a
-templated function which accepts two character iterators (beginning and
-end) to synthesize a trace object out of the parsed text.
-
-A trace object has:
-
-* A trace type object.
-* A trace environment object.
+The `fromMetadataText()` function does exactly that. This is a templated
+function which accepts two character iterators (beginning and end) to
+synthesize a pair of trace type and trace environment objects out of the
+parsed text.
 
 Although the environment entries are part of a TSDL document, they
 conceptually belong to a single trace, which is why they're not part of
@@ -205,7 +201,7 @@ a yactfr trace type object. It's just a convenience to have an `env`
 block in the `metadata` file of a CTF trace as each CTF{nbsp}1.8 trace
 has its own `metadata` file.
 
-`traceFromMetadataText()` requires a _textual_ (non-packetized) version
+`fromMetadataText()` requires a _textual_ (non-packetized) version
 of the document. If the TSDL content is packetized, you can use
 `createMetadataStream()` to get a metadata stream object which contains
 a metadata plain text accessor.

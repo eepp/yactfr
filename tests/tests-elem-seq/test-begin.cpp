@@ -21,9 +21,10 @@ static const auto expected = "P {\n";
 
 int main()
 {
-    const auto trace = yactfr::traceFromMetadataText(metadata, metadata + std::strlen(metadata));
+    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadata,
+                                                           metadata + std::strlen(metadata));
     MemDataSrcFactory factory {stream, sizeof stream};
-    yactfr::ElementSequence seq {trace->type(), factory};
+    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
     std::ostringstream ss;
     ElemPrinter printer {ss, 0};
     const auto it = seq.begin();

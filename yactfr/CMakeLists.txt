@@ -46,7 +46,6 @@ add_library (
     metadata/var-type.cpp
     text-loc.cpp
     trace-env.cpp
-    trace.cpp
     logging/zf_log.c
     data-blk.cpp
     data-src-factory.cpp

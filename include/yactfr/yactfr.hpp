@@ -15,6 +15,6 @@
 #define _YACTFR_YACTFR_HPP
 
 #include "yactfr-without-metadata-text-parser.hpp"
-#include "trace-from-metadata-text.hpp"
+#include "from-metadata-text.hpp"
 
 #endif // _YACTFR_YACTFR_HPP

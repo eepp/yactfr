@@ -13,6 +13,7 @@
 #include <vector>
 #include <cstring>
 #include <cassert>
+#include <utility>
 #include <unordered_map>
 #include <unordered_set>
 #include <boost/optional.hpp>
@@ -23,7 +24,6 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "../../aliases.hpp"
-#include "../../trace.hpp"
 #include "../../trace-env.hpp"
 #include "../trace-type.hpp"
 #include "../data-loc.hpp"
@@ -40,7 +40,7 @@
 namespace yactfr {
 
 template <typename ParserCharIt>
-Trace::UP traceFromMetadataText(ParserCharIt, ParserCharIt);
+std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(ParserCharIt, ParserCharIt);
 
 namespace internal {
 
@@ -55,7 +55,8 @@ class TsdlParserBase :
     boost::noncopyable
 {
     template <typename ParserCharIt>
-    friend Trace::UP yactfr::traceFromMetadataText(ParserCharIt, ParserCharIt);
+    friend std::pair<TraceType::UP, TraceEnvironment> yactfr::fromMetadataText(ParserCharIt,
+                                                                               ParserCharIt);
 
 public:
     /*

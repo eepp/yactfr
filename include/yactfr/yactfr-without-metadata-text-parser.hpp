@@ -63,6 +63,5 @@
 #include "metadata/var-type.hpp"
 #include "mmap-file-view-factory.hpp"
 #include "trace-env.hpp"
-#include "trace.hpp"
 
 #endif // _YACTFR_YACTFR_WITHOUT_METADATA_TEXT_PARSER_HPP

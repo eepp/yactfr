@@ -24,7 +24,6 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "../../aliases.hpp"
-#include "../../trace.hpp"
 #include "../../trace-env.hpp"
 #include "../trace-type.hpp"
 #include "../data-loc.hpp"

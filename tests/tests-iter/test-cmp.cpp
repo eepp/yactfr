@@ -78,9 +78,10 @@ static bool testOpsGt(const yactfr::ElementSequenceIterator& it1,
 
 int main()
 {
-    const auto trace = yactfr::traceFromMetadataText(metadata, metadata + std::strlen(metadata));
+    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadata,
+                                                           metadata + std::strlen(metadata));
     MemDataSrcFactory factory {stream, sizeof stream};
-    yactfr::ElementSequence seq {trace->type(), factory};
+    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
     auto it1 = seq.begin();
     auto it2 = seq.begin();
 

@@ -27,11 +27,11 @@ int main(const int argc, const char * const argv[])
 
     file.close();
 
-    const auto trace = yactfr::traceFromMetadataText(metadataStream->text().begin(),
-                                                     metadataStream->text().end());
+    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text().begin(),
+                                                           metadataStream->text().end());
     yactfr::MemoryMappedFileViewFactory factory {dsPath, 4096};
 
-    yactfr::ElementSequence seq {trace->type(), factory};
+    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
     ElemPrinter printer {std::cout};
 
     try {

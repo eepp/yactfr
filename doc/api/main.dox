@@ -38,11 +38,9 @@ The yactfr API is divided into three parts:
   The \ref metadata API is completely independent from the \ref
   element_seq API.
 
-- The \ref trace API makes it possible to obtain a Trace object from
-  metadata (TSDL) text with traceFromMetadataText().
-
-  A Trace object contains a \link TraceType trace type\endlink and
-  an \link TraceEnvironment environment\endlink.
+- The \ref trace API makes it possible to obtain TraceType and
+  TraceEnvironment objects from metadata (TSDL) text with
+  fromMetadataText().
 
 - The \ref element_seq API deals with CTF binary data stream decoding.
 
