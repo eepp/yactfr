@@ -2,7 +2,7 @@
 
 = How yactfr works
 Philippe Proulx
-15 February 2022
+9 March 2022
 :toc: left
 :nofooter:
 
@@ -80,6 +80,7 @@ documented uses unabbreviated names.
 |Ref |Reference
 |Rej |Rejecter
 |Rel |Relative
+|Req |Requirement, required
 |Sel |Selector
 |SEnum |Signed enumeration
 |Seq |Sequence

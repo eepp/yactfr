@@ -83,8 +83,8 @@ private:
 
     struct _StackFrame
     {
-        explicit _StackFrame(const _State state) :
-            state {state}
+        explicit _StackFrame(const _State stateParam) :
+            state {stateParam}
         {
         }
 

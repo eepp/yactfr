@@ -47,6 +47,7 @@ add_library (
     metadata/internal/dt-from-pseudo-root-dt.cpp
     metadata/internal/json/item-from-json-val.cpp
     metadata/internal/json/json-val-from-text.cpp
+    metadata/internal/json/json-val-req.cpp
     metadata/internal/json/json-val.cpp
     metadata/internal/pseudo-types.cpp
     metadata/internal/str-scanner.cpp
