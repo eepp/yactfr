@@ -206,38 +206,38 @@ In the following descriptions, consider this language:
 <dl>
 <dt><code>A B</code></dt>
 <dd>
-  Element of type <code>A</code> followed by element of type <code>B</code>
-  (two iterations).
+  %Element of type <code>A</code> followed by element of type
+  <code>B</code> (two iterations).
 </dd>
 
 <dt><code>A | B</code></dt>
 <dd>
-  Element of type <code>A</code> <em>or</em> element of type <code>B</code>
-  (single iteration).
+  %Element of type <code>A</code> <em>or</em> element of type
+  <code>B</code> (single iteration).
 </dd>
 
 <dt><code>A *</code></dt>
 <dd>
-  Element of type <code>A</code> occuring zero or more times
-  (zero or more iterations).
+  %Element of type <code>A</code> occuring zero or more times (zero or
+  more iterations).
 </dd>
 
 <dt><code>A ?</code></dt>
 <dd>
-  Element of type <code>A</code> occuring zero or one time
-  (zero or one iteration).
+  %Element of type <code>A</code> occuring zero or one time (zero or one
+  iteration).
 </dd>
 
 <dt><code>A{n}</code></dt>
 <dd>
-  Element of type <code>A</code> occuring \em n times
-  (\em n iterations).
+  %Element of type <code>A</code> occuring \em n times (\em n
+  iterations).
 </dd>
 
 <dt><code>ScopeBeginningElement&lt;SCOPE&gt;</code></dt>
 <dd>
-  Element of type <code>ScopeBeginningElement</code> with specific
-  scope <code>SCOPE</code>.
+  %Element of type <code>ScopeBeginningElement</code> with specific
+  \link #Scope scope\endlink <code>SCOPE</code>.
 </dd>
 
 <dt><code>( ... )</code></dt>
