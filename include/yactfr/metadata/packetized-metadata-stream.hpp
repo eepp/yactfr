@@ -18,7 +18,7 @@ namespace yactfr {
 
 /*!
 @brief
-    Packetized metadata stream.
+    Packetized (CTF 1) metadata stream.
 
 @ingroup metadata_stream
 */
