@@ -45,6 +45,49 @@ using JsonStrVal = JsonScalarVal<std::string, JsonValKind::STR>;
 
 class JsonArrayVal;
 class JsonObjVal;
+class JsonValVisitor;
+
+/*
+ * Visitor of JSON value.
+ */
+class JsonValVisitor
+{
+protected:
+    explicit JsonValVisitor() = default;
+
+public:
+    virtual void visit(const JsonNullVal&)
+    {
+    }
+
+    virtual void visit(const JsonBoolVal&)
+    {
+    }
+
+    virtual void visit(const JsonSIntVal&)
+    {
+    }
+
+    virtual void visit(const JsonUIntVal&)
+    {
+    }
+
+    virtual void visit(const JsonRealVal&)
+    {
+    }
+
+    virtual void visit(const JsonStrVal&)
+    {
+    }
+
+    virtual void visit(const JsonArrayVal&)
+    {
+    }
+
+    virtual void visit(const JsonObjVal&)
+    {
+    }
+};
 
 class JsonVal :
     public ItemMixin<JsonValKind>,
@@ -119,6 +162,7 @@ public:
     const JsonArrayVal& asArray() const noexcept;
     const JsonObjVal& asObj() const noexcept;
     UP clone() const;
+    void accept(JsonValVisitor& visitor) const;
     bool operator==(const JsonVal& other) const noexcept;
 
     bool operator!=(const JsonVal& other) const noexcept
@@ -128,6 +172,7 @@ public:
 
 private:
     virtual UP _clone() const = 0;
+    virtual void _accept(JsonValVisitor& visitor) const = 0;
     virtual bool _isEqual(const JsonVal& other) const noexcept = 0;
 
 private:
@@ -145,6 +190,7 @@ public:
 
 private:
     JsonVal::UP _clone() const override;
+    void _accept(JsonValVisitor& visitor) const override;
     bool _isEqual(const JsonVal& other) const noexcept override;
 };
 
@@ -178,6 +224,11 @@ private:
     JsonVal::UP _clone() const override
     {
         return std::make_unique<const JsonScalarVal<ValT, KindV>>(this->_val(), this->loc());
+    }
+
+    void _accept(JsonValVisitor& visitor) const override
+    {
+        visitor.visit(*this);
     }
 
     bool _isEqual(const JsonVal& other) const noexcept override
@@ -219,6 +270,7 @@ public:
 
 private:
     JsonVal::UP _clone() const override;
+    void _accept(JsonValVisitor& visitor) const override;
     bool _isEqual(const JsonVal& other) const noexcept override;
 };
 
@@ -336,6 +388,7 @@ public:
 
 private:
     JsonVal::UP _clone() const override;
+    void _accept(JsonValVisitor& visitor) const override;
     bool _isEqual(const JsonVal& other) const noexcept override;
 };
 

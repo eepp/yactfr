@@ -80,6 +80,11 @@ JsonVal::UP JsonVal::clone() const
     return this->_clone();
 }
 
+void JsonVal::accept(JsonValVisitor& visitor) const
+{
+    return this->_accept(visitor);
+}
+
 JsonNullVal::JsonNullVal(TextLocation loc) :
     JsonVal {Kind::NUL, std::move(loc)}
 {
@@ -88,6 +93,11 @@ JsonNullVal::JsonNullVal(TextLocation loc) :
 JsonVal::UP JsonNullVal::_clone() const
 {
     return std::make_unique<const JsonNullVal>(this->loc());
+}
+
+void JsonNullVal::_accept(JsonValVisitor& visitor) const
+{
+    visitor.visit(*this);
 }
 
 bool JsonNullVal::_isEqual(const JsonVal& other) const noexcept
@@ -112,6 +122,11 @@ JsonVal::UP JsonArrayVal::_clone() const
     return std::make_unique<const JsonArrayVal>(std::move(items), this->loc());
 }
 
+void JsonArrayVal::_accept(JsonValVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
 bool JsonArrayVal::_isEqual(const JsonVal& other) const noexcept
 {
     return internal::ArrayItemMixin<JsonVal>::_isEqual(other.asArray());
@@ -132,6 +147,11 @@ JsonVal::UP JsonObjVal::_clone() const
     }
 
     return std::make_unique<const JsonObjVal>(std::move(items), this->loc());
+}
+
+void JsonObjVal::_accept(JsonValVisitor& visitor) const
+{
+    visitor.visit(*this);
 }
 
 bool JsonObjVal::_isEqual(const JsonVal& other) const noexcept
