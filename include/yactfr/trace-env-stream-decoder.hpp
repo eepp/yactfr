@@ -68,6 +68,10 @@ a \link TraceType trace type\endlink and a
 Once you have built a trace environment stream decoder, call its
 decode() method which returns a TraceEnvironment object on success, or
 throws otherwise.
+
+You can also call isTraceEnvironmentStream() which inspects the header
+of the first packet of the data stream to return whether or not it's a
+trace environment data stream.
 */
 class TraceEnvironmentStreamDecoder final
 {
@@ -93,14 +97,49 @@ public:
 
     /*!
     @brief
+        Returns whether or not the data stream provided by a data source
+        of the factory provided at construction time is a trace
+        environment data stream.
+
+    This method internally creates an
+    \link ElementSequenceIterator element sequence iterator\endlink
+    to read the header of the first packet.
+
+    This method may throw a DataNotAvailable instance. In that case:
+
+    - This trace environment stream decoder retains the current data
+      stream decoding state so that it's safe to call this method again,
+      until it finally returns.
+
+    - You must not call decode(). It's safe to call decode() once
+      this method finally returns.
+
+    @returns
+        \c true if the decoded data stream is a trace environment
+        data stream.
+
+    @throws ?
+        Any exception which ElementSequence::begin() can throw.
+    @throws ?
+        Any exception which ElementSequenceIterator::operator++() can
+        throw.
+    */
+    bool isTraceEnvironmentStream();
+
+    /*!
+    @brief
         Decodes the whole data stream provided by a data source
         of the factory provided at construction time and returns the
         corresponding trace environment object.
 
-    This method may throw a DataNotAvailable instance. In that case,
-    this trace environment stream decoder retains the current data
-    stream decoding state so that it's safe to call this method again,
-    until it finally returns.
+    This method may throw a DataNotAvailable instance. In that case:
+
+    - This trace environment stream decoder retains the current data
+      stream decoding state so that it's safe to call this method again,
+      until it finally returns.
+
+    - You must not call isTraceEnvironmentStream(). It's safe to call
+      isTraceEnvironmentStream() once this method finally returns.
 
     @returns
         Trace environment object corresponding to the contents of the
@@ -115,13 +154,6 @@ public:
         Invalid trace environment stream.
     */
     TraceEnvironment decode();
-
-private:
-    enum class _State
-    {
-        INIT,
-        EXPECT_KEY
-    };
 
 private:
     /*

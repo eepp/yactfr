@@ -37,40 +37,77 @@ constexpr const char *stdNsStr = "std";
 constexpr const char *envKeyStr = "environment";
 
 /*
- * Validates that `dst` has the namespace `std` and the name
- * `environment`, throwing `InvalidTraceEnvironmentStream` otherwise.
+ * Depending on `doThrow`:
+ *
+ * False:
+ *     Returns whether or not the data stream type of `elem` exists and
+ *     has the namespace `std` and the name `environment`.
+ *
+ * True:
+ *     Throws `InvalidTraceEnvironmentStream` if the data stream type of
+ *     `elem` is missing or doesn't have the namespace `std` and the
+ *     name `environment`.
  */
-static void validateTraceEnvDst(const DataStreamType& dst, const Index offset)
+static bool dsInfoSuggestsTraceEnv(const DataStreamInfoElement& elem, const Index offset,
+                                   const bool doThrow)
 {
-    if (!dst.nameSpace()) {
-        std::ostringstream ss;
+    if (!elem.type()) {
+        if (doThrow) {
+            throw InvalidTraceEnvironmentStream {"No data stream type available.", offset};
+        } else {
+            return false;
+        }
+    }
 
-        ss << "Data stream type has no namespace (expecting `" << stdNsStr << "`).";
-        throw InvalidTraceEnvironmentStream {ss.str(), offset};
+    auto& dst = *elem.type();
+
+    if (!dst.nameSpace()) {
+        if (doThrow) {
+            std::ostringstream ss;
+
+            ss << "Data stream type has no namespace (expecting `" << stdNsStr << "`).";
+            throw InvalidTraceEnvironmentStream {ss.str(), offset};
+        } else {
+            return false;
+        }
     }
 
     if (*dst.nameSpace() != stdNsStr) {
-        std::ostringstream ss;
+        if (doThrow) {
+            std::ostringstream ss;
 
-        ss << "Unexpected data stream type namespace `" << *dst.nameSpace() << "`; " <<
-              "expecting " << stdNsStr << '.';
-        throw InvalidTraceEnvironmentStream {ss.str(), offset};
+            ss << "Unexpected data stream type namespace `" << *dst.nameSpace() << "`; " <<
+                  "expecting " << stdNsStr << '.';
+            throw InvalidTraceEnvironmentStream {ss.str(), offset};
+        } else {
+            return false;
+        }
     }
 
     if (!dst.name()) {
-        std::ostringstream ss;
+        if (doThrow) {
+            std::ostringstream ss;
 
-        ss << "Data stream type has no name (expecting `" << envKeyStr << "`).";
-        throw InvalidTraceEnvironmentStream {ss.str(), offset};
+            ss << "Data stream type has no name (expecting `" << envKeyStr << "`).";
+            throw InvalidTraceEnvironmentStream {ss.str(), offset};
+        } else {
+            return false;
+        }
     }
 
     if (*dst.name() != envKeyStr) {
-        std::ostringstream ss;
+        if (doThrow) {
+            std::ostringstream ss;
 
-        ss << "Unexpected data stream type name `" << *dst.name() << "`; " <<
-              "expecting " << envKeyStr << '.';
-        throw InvalidTraceEnvironmentStream {ss.str(), offset};
+            ss << "Unexpected data stream type name `" << *dst.name() << "`; " <<
+                  "expecting " << envKeyStr << '.';
+            throw InvalidTraceEnvironmentStream {ss.str(), offset};
+        } else {
+            return false;
+        }
     }
+
+    return true;
 }
 
 bool TraceEnvironmentStreamDecoder::_dtStdUserAttrsHasFlag(const DataType& dt, const char * const flagName) noexcept
@@ -128,16 +165,7 @@ TraceEnvironment TraceEnvironmentStreamDecoder::decode()
         switch (_it->kind()) {
         case Element::Kind::DATA_STREAM_INFO:
         {
-            auto& elem = _it->asDataStreamInfoElement();
-
-            if (!elem.type()) {
-                throw InvalidTraceEnvironmentStream {
-                    "No data stream type available.",
-                    _it.offset()
-                };
-            }
-
-            validateTraceEnvDst(*elem.type(), _it.offset());
+            dsInfoSuggestsTraceEnv(_it->asDataStreamInfoElement(), _it.offset(), true);
             break;
         }
 
@@ -253,6 +281,34 @@ TraceEnvironment TraceEnvironmentStreamDecoder::decode()
     // create corresponding trace environment
     _traceEnv = TraceEnvironment {std::move(_curEntries)};
     return *_traceEnv;
+}
+
+bool TraceEnvironmentStreamDecoder::isTraceEnvironmentStream()
+{
+    auto res = false;
+
+    if (_it == _elemSeq.end()) {
+        // initialize iterator
+        _it = _elemSeq.begin();
+    }
+
+    while (_it != _elemSeq.end()) {
+        switch (_it->kind()) {
+        case Element::Kind::DATA_STREAM_INFO:
+        {
+            res = dsInfoSuggestsTraceEnv(_it->asDataStreamInfoElement(), _it.offset(), false);
+
+            _it = _elemSeq.end();
+            break;
+        }
+
+        default:
+            ++_it;
+            break;
+        };
+    };
+
+    return res;
 }
 
 } // namespace yactfr
