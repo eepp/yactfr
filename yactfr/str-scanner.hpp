@@ -33,13 +33,13 @@ namespace internal {
  * It's a backtracking lexer.
  *
  * The string scanner automatically skips whitespaces and C/C++-style
- * comments when you call any tryScan*() method.
+ * comments when you call any tryScan*() method if needed.
  *
  * When you call the various tryScan*() methods to scan some contents,
- * the the method advances the current character pointer on success. You
- * can control the current character pointer with the save(), accept(),
- * and reject() methods. The latter methods operate on a character
- * pointer stack, a stack of saved positions which you can restore.
+ * they advance the current character pointer on success. You can
+ * control the current character pointer with the save(), accept(), and
+ * reject() methods. The latter methods operate on a character pointer
+ * stack, a stack of saved positions which you can restore.
  *
  * Before scanning anything that could be reverted, call save(). Then,
  * if you must revert the character pointer position, call reject(). If,
@@ -47,13 +47,9 @@ namespace internal {
  * call accept(). You must call exactly one accept() or reject() method
  * for each call to save().
  *
- * It is recommended to use an auto-rejecter instead of using save(),
+ * It's recommended to use an auto-rejecter instead of using save(),
  * accept(), and reject() manually (see StrScannerRejecter) when
  * possible.
- *
- * tryScanIdent() doesn't copy anything: the `begin` and `end` pointer
- * parameters are set to the limits of the parsed string, if any is
- * found.
  */
 class StrScanner final :
     private boost::noncopyable
@@ -63,9 +59,9 @@ public:
      * Builds a string scanner, wrapping a string between `begin`
      * (inclusive) and `end` (exclusive).
      *
-     * Note that this string scanner does NOT own the string between
-     * `begin` and `end`, so you must make sure that it's still alive
-     * when you call its scanning methods.
+     * NOTE: This string scanner does NOT own the string between `begin`
+     * and `end`, so you must make sure that it's still alive when you
+     * call its scanning methods.
      */
     explicit StrScanner(const char *begin, const char *end);
 
@@ -80,9 +76,9 @@ public:
     /*
      * Sets the current character pointer.
      *
-     * Note that this may corrupt the current location (loc()) if the
-     * string between the current position and new position includes one
-     * or more newline characters.
+     * NOTE: This may corrupt the current location (loc()) if the string
+     * between the current position and new position includes one or
+     * more newline characters.
      */
     void at(const char * const at)
     {
@@ -109,8 +105,7 @@ public:
     }
 
     /*
-     * Returns the number of characters left until the end of the
-     * wrapped string.
+     * Returns the number of characters left until end().
      */
     Size charsLeft() const
     {
@@ -255,10 +250,11 @@ public:
      * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
      * true.
      *
-     * Returns `boost::none` if it could not scan a constant integer.
+     * Returns `boost::none` if it could not scan a constant unsigned
+     * integer.
      *
      * The current character pointer is placed after this constant
-     * integer string on success.
+     * unsigned integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
     boost::optional<unsigned long long> tryScanConstUInt()
@@ -281,10 +277,11 @@ public:
      * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
      * true, and possibly negative.
      *
-     * Returns `boost::none` if it could not scan a constant integer.
+     * Returns `boost::none` if it could not scan a constant signed
+     * integer.
      *
      * The current character pointer is placed after this constant
-     * integer string on success.
+     * signed integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
     boost::optional<long long> tryScanConstSInt()
@@ -303,7 +300,7 @@ public:
     }
 
     /*
-     * Scans and decodes a constant real number string, returning
+     * Tries to scan and decode a constant real number string, returning
      * `boost::none` if not possible.
      *
      * The format of the real number string to scan is the JSON
@@ -371,7 +368,9 @@ public:
     }
 
 private:
-    // a frame of the character pointer stack
+    /*
+     * A frame of the character pointer stack.
+     */
     struct _StackFrame final
     {
         // position when save() was called
@@ -395,6 +394,7 @@ private:
     boost::optional<ValT> _tryScanConstInt(bool negate);
 
     void _skipComment();
+    void _skipWhitespaces();
     void _appendEscapedUnicodeChar(const char *at);
 
     /*
@@ -404,8 +404,6 @@ private:
      * characters.
      */
     bool _tryAppendEscapedChar(const char *escapeSeqStartList);
-
-    void _skipWhitespaces();
 
     int _scanAnyChar()
     {
@@ -596,7 +594,7 @@ boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ul
         }
     }
 
-    // success: cast, negate if needed, and update position
+    // success: cast and negate if needed
     auto val = static_cast<ValT>(ullVal);
 
     if (negate) {
