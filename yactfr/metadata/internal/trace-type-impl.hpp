@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_TRACE_TYPE_IMPL_HPP
-#define _YACTFR_METADATA_TRACE_TYPE_IMPL_HPP
+#ifndef _YACTFR_METADATA_INTERNAL_TRACE_TYPE_IMPL_HPP
+#define _YACTFR_METADATA_INTERNAL_TRACE_TYPE_IMPL_HPP
 
 #include <unordered_map>
 #include <unordered_set>
@@ -18,8 +18,8 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/item.hpp>
 
-#include "../proc.hpp"
-#include "../utils.hpp"
+#include "../../internal/proc.hpp"
+#include "../../internal/utils.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -127,4 +127,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_TRACE_TYPE_IMPL_HPP
+#endif // _YACTFR_METADATA_INTERNAL_TRACE_TYPE_IMPL_HPP

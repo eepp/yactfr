@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_TSDL_PARSER_HPP
-#define _YACTFR_METADATA_TSDL_PARSER_HPP
+#ifndef _YACTFR_METADATA_INTERNAL_TSDL_TSDL_PARSER_HPP
+#define _YACTFR_METADATA_INTERNAL_TSDL_TSDL_PARSER_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -45,10 +45,10 @@
 #include <yactfr/trace-env.hpp>
 #include <yactfr/metadata/aliases.hpp>
 
-#include "utils.hpp"
 #include "tsdl-attr.hpp"
-#include "pseudo-types.hpp"
-#include "pseudo-dt-utils.hpp"
+#include "../utils.hpp"
+#include "../pseudo-types.hpp"
+#include "../pseudo-dt-utils.hpp"
 #include "../str-scanner.hpp"
 
 namespace yactfr {
@@ -1213,4 +1213,4 @@ void TsdlParser::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_TSDL_PARSER_HPP
+#endif // _YACTFR_METADATA_INTERNAL_TSDL_TSDL_PARSER_HPP

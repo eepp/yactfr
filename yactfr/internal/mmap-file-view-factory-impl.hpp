@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_MMAP_FILE_VIEW_FACTORY_IMPL_HPP
-#define _YACTFR_MMAP_FILE_VIEW_FACTORY_IMPL_HPP
+#ifndef _YACTFR_INTERNAL_MMAP_FILE_VIEW_FACTORY_IMPL_HPP
+#define _YACTFR_INTERNAL_MMAP_FILE_VIEW_FACTORY_IMPL_HPP
 
 #include <string>
 #include <yactfr/aliases.hpp>
@@ -85,4 +85,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_MMAP_FILE_VIEW_FACTORY_IMPL_HPP
+#endif // _YACTFR_INTERNAL_MMAP_FILE_VIEW_FACTORY_IMPL_HPP

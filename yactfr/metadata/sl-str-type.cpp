@@ -9,7 +9,7 @@
 
 #include <yactfr/metadata/sl-str-type.hpp>
 
-#include "utils.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 

@@ -55,8 +55,8 @@
  * the implementation of the VM.
  */
 
-#ifndef _YACTFR_PROC_HPP
-#define _YACTFR_PROC_HPP
+#ifndef _YACTFR_INTERNAL_PROC_HPP
+#define _YACTFR_INTERNAL_PROC_HPP
 
 #include <cstdlib>
 #include <cassert>
@@ -2524,4 +2524,4 @@ static inline BeginReadStructInstr& instrAsBeginReadStruct(Instr& instr) noexcep
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_PROC_HPP
+#endif // _YACTFR_INTERNAL_PROC_HPP

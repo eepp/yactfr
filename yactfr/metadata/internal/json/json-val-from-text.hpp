@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_JSON_VAL_FROM_TEXT_HPP
-#define _YACTFR_JSON_VAL_FROM_TEXT_HPP
+#ifndef _YACTFR_METADATA_INTERNAL_JSON_VAL_FROM_TEXT_HPP
+#define _YACTFR_METADATA_INTERNAL_JSON_VAL_FROM_TEXT_HPP
 
 #include <string>
 
@@ -39,4 +39,4 @@ static inline JsonVal::UP parseJson(const std::string& str, const Size baseOffse
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_JSON_VAL_FROM_TEXT_HPP
+#endif // _YACTFR_METADATA_INTERNAL_JSON_VAL_FROM_TEXT_HPP

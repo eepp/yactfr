@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_PKT_PROC_BUILDER_HPP
-#define _YACTFR_PKT_PROC_BUILDER_HPP
+#ifndef _YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
+#define _YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
 
 #include <cstdlib>
 #include <cassert>
@@ -214,4 +214,4 @@ void PktProcBuilder::_buildReadOptIntSelInstr(const StructureMemberType * const 
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_PKT_PROC_BUILDER_HPP
+#endif // _YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP

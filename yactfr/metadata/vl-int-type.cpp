@@ -7,7 +7,7 @@
 
 #include <yactfr/metadata/vl-int-type.hpp>
 
-#include "utils.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 

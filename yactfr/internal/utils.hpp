@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_UTILS_HPP
-#define _YACTFR_UTILS_HPP
+#ifndef _YACTFR_INTERNAL_UTILS_HPP
+#define _YACTFR_INTERNAL_UTILS_HPP
 
 #include <string>
 #include <vector>
@@ -28,4 +28,4 @@ static inline bool isPowOfTwo(const unsigned long long x)
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_UTILS_HPP
+#endif // _YACTFR_INTERNAL_UTILS_HPP

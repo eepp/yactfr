@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_PSEUDO_TYPES_HPP
-#define _YACTFR_METADATA_PSEUDO_TYPES_HPP
+#ifndef _YACTFR_METADATA_INTERNAL_PSEUDO_TYPES_HPP
+#define _YACTFR_METADATA_INTERNAL_PSEUDO_TYPES_HPP
 
 #include <memory>
 #include <vector>
@@ -1121,4 +1121,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_PSEUDO_TYPES_HPP
+#endif // _YACTFR_METADATA_INTERNAL_PSEUDO_TYPES_HPP

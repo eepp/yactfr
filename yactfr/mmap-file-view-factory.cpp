@@ -12,8 +12,8 @@
 #include <yactfr/mmap-file-view-factory.hpp>
 #include <yactfr/io-error.hpp>
 
-#include "mmap-file-view-factory-impl.hpp"
-#include "utils.hpp"
+#include "internal/mmap-file-view-factory-impl.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 namespace internal {

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
-#define _YACTFR_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
+#ifndef _YACTFR_METADATA_INTERNAL_DT_FROM_PSEUDO_ROOT_DT_HPP
+#define _YACTFR_METADATA_INTERNAL_DT_FROM_PSEUDO_ROOT_DT_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -449,4 +449,4 @@ DataType::UP DtFromPseudoRootDtConverter::_whileVisitingPseudoDt(const PseudoDtT
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
+#endif // _YACTFR_METADATA_INTERNAL_DT_FROM_PSEUDO_ROOT_DT_HPP

@@ -7,8 +7,8 @@
 
 #include <yactfr/elem-seq-it.hpp>
 
-#include "vm.hpp"
-#include "metadata/trace-type-impl.hpp"
+#include "internal/vm.hpp"
+#include "metadata/internal/trace-type-impl.hpp"
 
 namespace yactfr {
 

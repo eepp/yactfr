@@ -9,7 +9,7 @@
 
 #include <yactfr/metadata/vl-bit-array-type.hpp>
 
-#include "utils.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 

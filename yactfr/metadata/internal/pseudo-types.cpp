@@ -23,7 +23,7 @@
 #include <yactfr/text-parse-error.hpp>
 
 #include "pseudo-types.hpp"
-#include "pseudo-type-visitor.hpp"
+#include "pseudo-dt-visitor.hpp"
 #include "pseudo-dt-utils.hpp"
 #include "utils.hpp"
 

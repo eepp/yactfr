@@ -9,7 +9,7 @@
 
 #include <yactfr/metadata/struct-member-type.hpp>
 
-#include "utils.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 

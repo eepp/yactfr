@@ -7,7 +7,7 @@
 
 #include <yactfr/from-metadata-text.hpp>
 
-#include "metadata/tsdl-parser.hpp"
+#include "metadata/internal/tsdl/tsdl-parser.hpp"
 
 namespace yactfr {
 

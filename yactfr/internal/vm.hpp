@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_VM_HPP
-#define _YACTFR_VM_HPP
+#ifndef _YACTFR_INTERNAL_VM_HPP
+#define _YACTFR_INTERNAL_VM_HPP
 
 #include <cassert>
 #include <string>
@@ -1664,4 +1664,4 @@ void Vm::_initExecFunc(const ExecFunc execFunc) noexcept
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_VM_HPP
+#endif // _YACTFR_INTERNAL_VM_HPP

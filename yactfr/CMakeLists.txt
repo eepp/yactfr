@@ -19,22 +19,22 @@ add_library (
     elem-seq.cpp
     elem-visitor.cpp
     from-metadata-text.cpp
-    item-from-json-val.cpp
+    internal/mmap-file-view-factory-impl.cpp
+    internal/pkt-proc-builder.cpp
+    internal/proc.cpp
+    internal/utils.cpp
+    internal/vm.cpp
     item.cpp
-    json-val-from-text.cpp
-    json-val.cpp
     logging/zf_log.c
     metadata/array-type.cpp
     metadata/blob-type.cpp
     metadata/clk-type.cpp
     metadata/compound-dt.cpp
-    metadata/data-loc-map.cpp
     metadata/data-loc.cpp
     metadata/dl-array-type.cpp
     metadata/dl-blob-type.cpp
     metadata/dl-str-type.cpp
     metadata/dst.cpp
-    metadata/dt-from-pseudo-root-dt.cpp
     metadata/dt.cpp
     metadata/ert.cpp
     metadata/fl-bit-array-type.cpp
@@ -43,6 +43,18 @@ add_library (
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp
     metadata/int-type-common.cpp
+    metadata/internal/data-loc-map.cpp
+    metadata/internal/dt-from-pseudo-root-dt.cpp
+    metadata/internal/json/item-from-json-val.cpp
+    metadata/internal/json/json-val-from-text.cpp
+    metadata/internal/json/json-val.cpp
+    metadata/internal/pseudo-types.cpp
+    metadata/internal/str-scanner.cpp
+    metadata/internal/trace-type-from-pseudo-trace-type.cpp
+    metadata/internal/trace-type-impl.cpp
+    metadata/internal/tsdl/tsdl-attr.cpp
+    metadata/internal/tsdl/tsdl-parser.cpp
+    metadata/internal/utils.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
     metadata/non-nt-str-type.cpp
@@ -50,33 +62,21 @@ add_library (
     metadata/opt-type.cpp
     metadata/packetized-metadata-stream.cpp
     metadata/plain-text-metadata-stream.cpp
-    metadata/pseudo-types.cpp
     metadata/scalar-dt.cpp
     metadata/sl-array-type.cpp
     metadata/sl-blob-type.cpp
     metadata/sl-str-type.cpp
     metadata/struct-member-type.cpp
     metadata/struct-type.cpp
-    metadata/trace-type-from-pseudo-trace-type.cpp
-    metadata/trace-type-impl.cpp
     metadata/trace-type.cpp
-    metadata/tsdl-attr.cpp
-    metadata/tsdl-parser.cpp
-    metadata/utils.cpp
     metadata/var-type.cpp
     metadata/vl-bit-array-type.cpp
     metadata/vl-enum-type.cpp
     metadata/vl-int-type.cpp
-    mmap-file-view-factory-impl.cpp
     mmap-file-view-factory.cpp
-    pkt-proc-builder.cpp
-    proc.cpp
-    str-scanner.cpp
     text-loc.cpp
     text-parse-error.cpp
     trace-env.cpp
-    utils.cpp
-    vm.cpp
 )
 set_target_properties (
     yactfr

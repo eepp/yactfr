@@ -10,7 +10,7 @@
 
 #include <yactfr/metadata/var-type.hpp>
 
-#include "utils.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 

@@ -10,7 +10,7 @@
 
 #include <yactfr/metadata/vl-enum-type.hpp>
 
-#include "utils.hpp"
+#include "internal/utils.hpp"
 
 namespace yactfr {
 
