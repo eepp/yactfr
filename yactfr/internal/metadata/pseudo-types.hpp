@@ -999,7 +999,9 @@ public:
     }
 
 private:
+    void _validatePktCtxType() const;
     void _validateErHeaderType(const PseudoErtSet& pseudoErts) const;
+    void _validateErCommonCtxType() const;
     void _validateNoMappedClkTypeName() const;
 
 private:

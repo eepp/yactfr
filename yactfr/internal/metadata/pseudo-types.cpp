@@ -671,11 +671,159 @@ static std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
     return ss.str();
 }
 
+static auto findPseudoSlArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseudoDt)
+{
+    return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
+        return pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
+            static_cast<const PseudoSlArrayType&>(pseudoDt).hasTraceTypeUuidRole();
+    });
+}
+
+static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
+                                      const UnsignedIntegerTypeRole role)
+{
+    return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
+        if (pseudoIntType.isFlUInt()) {
+            return static_cast<const PseudoFlUIntType&>(pseudoIntType).hasRole(role);
+        } else {
+            assert(pseudoIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+
+            auto& pseudoVlIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoIntType);
+
+            return pseudoVlIntType.dt().asVariableLengthUnsignedIntegerType().hasRole(role);
+        }
+    });
+}
+
+static void validateNoTraceTypeUuidRole(const PseudoDt * const pseudoDt)
+{
+    if (!pseudoDt) {
+        return;
+    }
+
+    const auto set = findPseudoDts(*pseudoDt, [](auto& pseudoDt, auto) {
+        if (pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
+                static_cast<const PseudoSlArrayType&>(pseudoDt).hasTraceTypeUuidRole()) {
+            return true;
+        }
+
+        if (pseudoDt.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
+            auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt();
+
+            if (dt.isStaticLengthBlobType() && dt.asStaticLengthBlobType().hasTraceTypeUuidRole()) {
+                return true;
+            }
+        }
+
+        return false;
+    });
+
+    if (!set.empty()) {
+        throwTextParseError("Invalid \"trace type UUID\" role within this scope.",
+                            (*set.begin())->loc());
+    }
+}
+
+/*
+ * Validates that, for any pseudo unsigned integer types T within
+ * `*pseudoDt` (if `pseudoDt` is set) having a role R, R is an element
+ * of `allowedRoles`.
+ *
+ * Throws `TextParseError` on error.
+ */
+static void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
+                                        const UnsignedIntegerTypeRoleSet& allowedRoles)
+{
+    if (!pseudoDt) {
+        return;
+    }
+
+    // find _invalid_ pseudo unsigned integer types
+    const auto set = findPseudoUIntTypes(*pseudoDt, [&allowedRoles](auto& pseudoUIntType, auto) {
+        // get roles
+        auto& roles = [&pseudoUIntType]() -> const UnsignedIntegerTypeRoleSet& {
+            if (pseudoUIntType.isFlUInt()) {
+                return static_cast<const PseudoFlUIntType&>(pseudoUIntType).roles();
+            } else {
+                assert(pseudoUIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+
+                auto& pseudoVlIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoUIntType);
+
+                return pseudoVlIntType.dt().asVariableLengthUnsignedIntegerType().roles();
+            }
+        }();
+
+        for (auto& role : roles) {
+            if (allowedRoles.count(role) == 0) {
+                // invalid: `role` is not an element of `allowedRoles`
+                return true;
+            }
+        }
+
+        return false;
+    });
+
+    if (!set.empty()) {
+        throwTextParseError("Unsigned integer type has at least one invalid role within its scope.",
+                            (*set.begin())->loc());
+    }
+}
+
+/*
+ * Validates that, for any pseudo unsigned integer types T within
+ * `*pseudoDt` (if `pseudoDt` is set), T has no
+ * `UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP` or
+ * `UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP` role.
+ *
+ * Throws `TextParseError` on error.
+ */
+static void validatePseudoUIntTypeNoClkTsRole(const PseudoDt * const pseudoDt)
+{
+    if (!pseudoDt) {
+        return;
+    }
+
+    // find _invalid_ pseudo unsigned integer types
+    auto set = findPseudoUIntTypesByRole(*pseudoDt,
+                                         UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP);
+    const auto otherSet = findPseudoUIntTypesByRole(*pseudoDt,
+                                                    UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
+
+    std::copy(otherSet.begin(), otherSet.end(), std::inserter(set, set.end()));
+
+    if (!set.empty()) {
+        throwTextParseError("Unsigned integer type has a default clock related role, but "
+                            "the containing data stream type has no default clock type.",
+                            (*set.begin())->loc());
+    }
+}
+
 void PseudoErt::validate(const PseudoDst& pseudoDst) const
 {
     try {
         this->_validateNotEmpty(pseudoDst);
         this->_validateNoMappedClkTypeName();
+
+        try {
+            // validate unsigned integer type roles
+            validatePseudoUIntTypeRoles(_pseudoSpecCtxType.get(), {});
+
+            // no "trace type UUID" role
+            validateNoTraceTypeUuidRole(_pseudoSpecCtxType.get());
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "In the specific context type:",
+                                      _pseudoSpecCtxType->loc());
+        }
+
+        try {
+            // validate unsigned integer type roles
+            validatePseudoUIntTypeRoles(_pseudoPayloadType.get(), {});
+
+            // no "trace type UUID" role
+            validateNoTraceTypeUuidRole(_pseudoPayloadType.get());
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "In the payload type:", _pseudoPayloadType->loc());
+        }
     } catch (TextParseError& exc) {
         std::ostringstream ss;
 
@@ -707,30 +855,6 @@ PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
 {
 }
 
-static auto findPseudoSlArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseudoDt)
-{
-    return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
-        return pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
-            static_cast<const PseudoSlArrayType&>(pseudoDt).hasTraceTypeUuidRole();
-    });
-}
-
-static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
-                                      const UnsignedIntegerTypeRole role)
-{
-    return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
-        if (pseudoIntType.isFlUInt()) {
-            return static_cast<const PseudoFlUIntType&>(pseudoIntType).hasRole(role);
-        } else {
-            assert(pseudoIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
-
-            auto& pseudoVlIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoIntType);
-
-            return pseudoVlIntType.dt().asVariableLengthUnsignedIntegerType().hasRole(role);
-        }
-    });
-}
-
 void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
 {
     if (_pseudoErHeaderType) {
@@ -754,9 +878,69 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
                                     "more than one event record type.",
                                     _pseudoErHeaderType->loc());
             }
+
+            // validate unsigned integer type roles
+            validatePseudoUIntTypeRoles(_pseudoErHeaderType.get(), {
+                UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
+                UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID,
+            });
+
+            // no "trace type UUID" role
+            validateNoTraceTypeUuidRole(_pseudoErHeaderType.get());
+
+            if (!_defClkType) {
+                // default clock related roles not allowed
+                validatePseudoUIntTypeNoClkTsRole(_pseudoErHeaderType.get());
+            }
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the event record header type:",
                                       _pseudoErHeaderType->loc());
+            throw;
+        }
+    }
+}
+
+void PseudoDst::_validatePktCtxType() const
+{
+    if (_pseudoPktCtxType) {
+        try {
+            // validate unsigned integer type roles
+            validatePseudoUIntTypeRoles(_pseudoPktCtxType.get(), {
+                UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH,
+                UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH,
+                UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
+                UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP,
+                UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT,
+                UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER,
+            });
+
+            // no "trace type UUID" role
+            validateNoTraceTypeUuidRole(_pseudoPktCtxType.get());
+
+            if (!_defClkType) {
+                // default clock related roles not allowed
+                validatePseudoUIntTypeNoClkTsRole(_pseudoPktCtxType.get());
+            }
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "In the packet context type:",
+                                      _pseudoPktCtxType->loc());
+            throw;
+        }
+    }
+}
+
+void PseudoDst::_validateErCommonCtxType() const
+{
+    if (_pseudoErCommonCtxType) {
+        try {
+            // validate unsigned integer type roles
+            validatePseudoUIntTypeRoles(_pseudoErCommonCtxType.get(), {});
+
+            // no "trace type UUID" role
+            validateNoTraceTypeUuidRole(_pseudoErCommonCtxType.get());
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "In the event record common context type:",
+                                      _pseudoErCommonCtxType->loc());
             throw;
         }
     }
@@ -780,7 +964,9 @@ void PseudoDst::_validateNoMappedClkTypeName() const
 void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 {
     try {
+        this->_validatePktCtxType();
         this->_validateErHeaderType(pseudoErts);
+        this->_validateErCommonCtxType();
         this->_validateNoMappedClkTypeName();
     } catch (TextParseError& exc) {
         std::ostringstream ss;
@@ -948,6 +1134,13 @@ void PseudoTraceType::validate() const
 
             // no mapped clock type within the packet header type
             validateNoMappedClkTypeName(*_pseudoPktHeaderType);
+
+            // validate unsigned integer type roles
+            validatePseudoUIntTypeRoles(_pseudoPktHeaderType.get(), {
+                UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER,
+                UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID,
+                UnsignedIntegerTypeRole::DATA_STREAM_ID,
+            });
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the packet header type:",
                                       _pseudoPktHeaderType->loc());
