@@ -1617,8 +1617,8 @@ class ReadVarInstrOpt final
 {
 public:
     using Opt = VarTypeOptT;
-    using RangeSet = typename Opt::RangeSet;
-    using Val = typename RangeSet::Value;
+    using SelRangeSet = typename Opt::SelectorRangeSet;
+    using Val = typename SelRangeSet::Value;
 
 public:
     explicit ReadVarInstrOpt() = default;
@@ -1639,7 +1639,7 @@ public:
 
     bool contains(const Val val) const noexcept
     {
-        return _opt->ranges().contains(val);
+        return _opt->selectorRanges().contains(val);
     }
 
     const Opt& opt() const noexcept
@@ -1647,9 +1647,9 @@ public:
         return *_opt;
     }
 
-    const RangeSet& ranges() const noexcept
+    const SelRangeSet& selRanges() const noexcept
     {
-        return _opt->ranges();
+        return _opt->selectorRanges();
     }
 
     const Proc& proc() const noexcept
@@ -1668,7 +1668,7 @@ public:
 
         ss << internal::indent(indent) << "<var opt>";
 
-        for (const auto& range : _opt->ranges()) {
+        for (const auto& range : _opt->selectorRanges()) {
             ss << " [" << range.lower() << ", " << range.upper() << "]";
         }
 

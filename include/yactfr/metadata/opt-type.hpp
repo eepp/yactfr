@@ -171,7 +171,7 @@ public:
     /// Type of the value of a selector.
     using SelectorValue = SelectorValueT;
 
-    /// Type of the integer range set.
+    /// Type of the selector range set.
     using SelectorRangeSet = IntegerRangeSet<SelectorValueT>;
 
 protected:
@@ -184,7 +184,7 @@ protected:
     }
 
 public:
-    /// Selector range set of this optional type.
+    /// Selector values for which an instance of this type is enabled.
     const SelectorRangeSet& selectorRanges() const noexcept
     {
         return _selRanges;
@@ -221,7 +221,7 @@ public:
         Location of selectors of data stream optionals described by this
         type.
     @param[in] selectorRanges
-        Selector range set of this optional type.
+        Selector values for which an instance of this type is enabled.
     @param[in] userAttributes
         @parblock
         User attributes of data stream optionals described by this type.
@@ -254,7 +254,7 @@ public:
         Location of selectors of data stream optionals described by this
         type.
     @param[in] selectorRanges
-        Selector range set of this optional type.
+        Selector values for which an instance of this type is enabled.
     @param[in] userAttributes
         @parblock
         User attributes of data stream optionals described by this type.
@@ -306,7 +306,7 @@ public:
         Location of selectors of data stream optionals described by this
         type.
     @param[in] selectorRanges
-        Selector range set of this optional type.
+        Selector values for which an instance of this type is enabled.
     @param[in] userAttributes
         @parblock
         User attributes of data stream optionals described by this type.
@@ -339,7 +339,7 @@ public:
         Location of selectors of data stream optionals described by this
         type.
     @param[in] selectorRanges
-        Selector range set of this optional type.
+        Selector values for which an instance of this type is enabled.
     @param[in] userAttributes
         @parblock
         User attributes of data stream optionals described by this type.

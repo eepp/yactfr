@@ -150,7 +150,7 @@ protected:
 
         for (const auto& opt : _opts) {
             opts.push_back(std::make_unique<const Option>(opt->name(), opt->type().clone(),
-                                                          opt->ranges()));
+                                                          opt->selectorRanges()));
         }
 
         return opts;
