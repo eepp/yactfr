@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-10 February 2022
+14 February 2022
 
 image::https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
 
@@ -321,12 +321,12 @@ int main(const int argc, const char * const argv[])
 
     // print all the event record names
     for (auto& elem : seq) {
-        if (elem.kind() == yactfr::Element::Kind::EVENT_RECORD_TYPE) {
-            auto& ertElem = static_cast<const yactfr::EventRecordTypeElement&>(elem);
+        if (elem.kind() == yactfr::Element::Kind::EVENT_RECORD_INFO) {
+            auto& erInfo = static_cast<const yactfr::EventRecordInfoElement&>(elem);
 
             // the name of an event record type is optional
-            if (ertElem.eventRecordType().name()) {
-                std::cout << *ertElem.eventRecordType().name() << std::endl;
+            if (erInfo.type()->name()) {
+                std::cout << *erInfo.type()->name() << std::endl;
             }
         }
     }
@@ -371,12 +371,11 @@ int main(const int argc, const char * const argv[])
     bool inSchedSwitchEventRecord = false;
 
     for (auto it = seq.begin(); it != endIt; ++it) {
-        if (it->kind() == yactfr::Element::Kind::EVENT_RECORD_TYPE) {
-            auto& ertElem = static_cast<const yactfr::EventRecordTypeElement&>(*it);
+        if (it->kind() == yactfr::Element::Kind::EVENT_RECORD_INFO) {
+            auto& ertElem = static_cast<const yactfr::EventRecordInfoElement&>(*it);
 
             // the name of an event record type is optional
-            if (ertElem.eventRecordType().name() &&
-                    *ertElem.eventRecordType().name() == "sched_switch") {
+            if (ertElem.type()->name() && *ertElem.type()->name() == "sched_switch") {
                 std::cout << "---" << std::endl;
                 inSchedSwitchEventRecord = true;
             } else {
@@ -546,13 +545,14 @@ int main(const int argc, const char * const argv[])
         if (it->kind() == yactfr::Element::Kind::PACKET_BEGINNING) {
             // save packet beginning offset
             curPktOffset = it.offset();
-        } else if (it->kind() == yactfr::Element::Kind::EXPECTED_PACKET_TOTAL_LENGTH) {
-            // this element indicates the expected total length of the current packet
-            auto& elem = static_cast<const yactfr::ExpectedPacketTotalLengthElement&>(*it);
+        } else if (it->kind() == yactfr::Element::Kind::PACKET_INFO) {
+            // this element contains the expected total length of the current packet
+            auto& elem = static_cast<const yactfr::PacketInfoElement&>(*it);
 
+            assert(elem.expectedTotalLength());
             std::cout << "Packet #" << curPktNumber << ":    " <<
                          "Offset: " << std::setw(10) << curPktOffset << "    " <<
-                         "Size: " << std::setw(10) << elem.expectedLength() <<
+                         "Size: " << std::setw(10) << *elem.expectedTotalLength() <<
                          std::endl;
             ++curPktNumber;
 
@@ -561,7 +561,7 @@ int main(const int argc, const char * const argv[])
              * elements. The expected offset is in bytes, so we need to
              * divide what we have by 8.
              */
-            it.seekPacket((curPktOffset + elem.expectedLength()) / 8);
+            it.seekPacket((curPktOffset + *elem.expectedTotalLength()) / 8);
             continue;
         }
 

@@ -270,6 +270,9 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::END_DS_PKT_PREAMBLE_PROC)] = &Vm::_execEndDsPktPreambleProc;
     _execFuncs[static_cast<int>(Instr::Kind::END_DS_ER_PREAMBLE_PROC)] = &Vm::_execEndDsErPreambleProc;
     _execFuncs[static_cast<int>(Instr::Kind::END_ER_PROC)] = &Vm::_execEndErProc;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_DS_INFO)] = &Vm::_execSetDsInfo;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_INFO)] = &Vm::_execSetPktInfo;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_ER_INFO)] = &Vm::_execSetErInfo;
 }
 
 void Vm::seekPkt(const Index offsetBytes)
@@ -762,9 +765,8 @@ Vm::_ExecReaction Vm::_execSetPktEndDefClkVal(const Instr& instr)
 {
     const auto& setPktEndDefClkValInstr = static_cast<const SetPktEndDefClkValInstr&>(instr);
 
-    _pos.elems.pktEndDefClkVal._cycles = _pos.lastIntVal.u;
-    this->_updateItCurOffset(_pos.elems.pktEndDefClkVal);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    _pos.elems.pktInfo._endDefClkVal = _pos.lastIntVal.u;
+    return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
 Vm::_ExecReaction Vm::_execUpdateDefClkVal(const Instr& instr)
@@ -796,9 +798,8 @@ Vm::_ExecReaction Vm::_execSetDst(const Instr& instr)
     }
 
     _pos.curDsPktProc = dstPacketProc;
-    _pos.elems.dst._dst = &dstPacketProc->dst();
-    this->_updateItCurOffset(_pos.elems.dst);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    _pos.elems.dsInfo._dst = &dstPacketProc->dst();
+    return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
 Vm::_ExecReaction Vm::_execSetErt(const Instr& instr)
@@ -819,23 +820,20 @@ Vm::_ExecReaction Vm::_execSetErt(const Instr& instr)
     }
 
     _pos.curErProc = erProc;
-    _pos.elems.ert._ert = &erProc->ert();
-    this->_updateItCurOffset(_pos.elems.ert);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    _pos.elems.erInfo._ert = &erProc->ert();
+    return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
 Vm::_ExecReaction Vm::_execSetDsId(const Instr& instr)
 {
-    _pos.elems.dsId._id = _pos.lastIntVal.u;
-    this->_updateItCurOffset(_pos.elems.dsId);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    _pos.elems.dsInfo._id = _pos.lastIntVal.u;
+    return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
 Vm::_ExecReaction Vm::_execSetPktOriginIndex(const Instr& instr)
 {
-    _pos.elems.pktOriginIndex._index = _pos.lastIntVal.u;
-    this->_updateItCurOffset(_pos.elems.pktOriginIndex);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    _pos.elems.pktInfo._originIndex = _pos.lastIntVal.u;
+    return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
 Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr& instr)
@@ -873,9 +871,7 @@ Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr& instr)
         _pos.curExpectedPktContentLenBits = _pos.curExpectedPktTotalLenBits;
     }
 
-    _pos.elems.expectedPktTotalLen._expectedLen = _pos.curExpectedPktTotalLenBits;
-    this->_updateItCurOffset(_pos.elems.expectedPktTotalLen);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+    return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
 Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr& instr)
@@ -901,8 +897,34 @@ Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr& instr)
     }
 
     _pos.curExpectedPktContentLenBits = pktContentSizeCandidateBits;
-    _pos.elems.expectedPktContentLen._expectedLen = _pos.curExpectedPktContentLenBits;
-    this->_updateItCurOffset(_pos.elems.expectedPktContentLen);
+    return _ExecReaction::EXEC_NEXT_INSTR;
+}
+
+Vm::_ExecReaction Vm::_execSetDsInfo(const Instr& instr)
+{
+    this->_updateItCurOffset(_pos.elems.dsInfo);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execSetPktInfo(const Instr& instr)
+{
+    _pos.elems.pktInfo._expectedTotalLen = boost::none;
+    _pos.elems.pktInfo._expectedContentLen = boost::none;
+
+    if (_pos.curExpectedPktTotalLenBits != SIZE_MAX) {
+        _pos.elems.pktInfo._expectedTotalLen = _pos.curExpectedPktTotalLenBits;
+    }
+
+    if (_pos.curExpectedPktContentLenBits != SIZE_MAX) {
+        _pos.elems.pktInfo._expectedContentLen = _pos.curExpectedPktContentLenBits;
+    }
+    this->_updateItCurOffset(_pos.elems.pktInfo);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execSetErInfo(const Instr& instr)
+{
+    this->_updateItCurOffset(_pos.elems.erInfo);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

@@ -38,22 +38,6 @@ void ElementVisitor::visit(const EventRecordBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const DataStreamIdElement& elem)
-{
-}
-
-void ElementVisitor::visit(const PacketOriginIndexElement& elem)
-{
-}
-
-void ElementVisitor::visit(const ExpectedPacketTotalLengthElement& elem)
-{
-}
-
-void ElementVisitor::visit(const ExpectedPacketContentLengthElement& elem)
-{
-}
-
 void ElementVisitor::visit(const PacketMagicNumberElement& elem)
 {
 }
@@ -66,15 +50,15 @@ void ElementVisitor::visit(const DefaultClockValueElement& elem)
 {
 }
 
-void ElementVisitor::visit(const PacketEndDefaultClockValueElement& elem)
+void ElementVisitor::visit(const DataStreamInfoElement& elem)
 {
 }
 
-void ElementVisitor::visit(const DataStreamTypeElement& elem)
+void ElementVisitor::visit(const PacketInfoElement& elem)
 {
 }
 
-void ElementVisitor::visit(const EventRecordTypeElement& elem)
+void ElementVisitor::visit(const EventRecordInfoElement& elem)
 {
 }
 

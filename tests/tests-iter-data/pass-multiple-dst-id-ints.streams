@@ -52,9 +52,10 @@ event {
     64         }
     64       }
     64     }
-    64     DST:66
+    64     DSI:66
+    64     PI
     64     ER {
-    64       ERT:0:test42
+    64       ERI:0:test42
     64       SC:5 {
     64         ST {
     64           STR:salut {

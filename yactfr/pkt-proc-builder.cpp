@@ -309,25 +309,22 @@ void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
         };
     }
 
-    Proc::SharedIt insertPoint;
-
-    if (readScopeInstrIt == _pktProc->preambleProc().end()) {
-        insertPoint = _pktProc->preambleProc().end();
-    } else {
-        insertPoint = std::next(readScopeInstrIt);
-    }
-
     if (hasDstId) {
-        _pktProc->preambleProc().insert(insertPoint, std::make_shared<SetDstInstr>());
+        _pktProc->preambleProc().insert(_pktProc->preambleProc().end(),
+                                        std::make_shared<SetDstInstr>());
     } else {
         if (!_traceType->dataStreamTypes().empty()) {
             assert(_traceType->dataStreamTypes().size() == 1);
 
             const auto fixedId = (*_traceType->dataStreamTypes().begin())->id();
 
-            _pktProc->preambleProc().insert(insertPoint, std::make_shared<SetDstInstr>(fixedId));
+            _pktProc->preambleProc().insert(_pktProc->preambleProc().end(),
+                                            std::make_shared<SetDstInstr>(fixedId));
         }
     }
+
+    _pktProc->preambleProc().insert(_pktProc->preambleProc().end(),
+                                    std::make_shared<SetDsInfoInstr>());
 }
 
 void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
@@ -390,6 +387,8 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
     }
 
+    dsPktProc.pktPreambleProc().insert(dsPktProc.pktPreambleProc().end(),
+                                       std::make_shared<SetPktInfoInstr>());
     readScopeInstrIt = firstBeginReadScopeInstr(dsPktProc.erPreambleProc(),
                                                 Scope::EVENT_RECORD_HEADER);
 
@@ -411,25 +410,24 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
     }
 
-    Proc::SharedIt insertPoint;
-
-    if (readScopeInstrIt == dsPktProc.erPreambleProc().end()) {
-        insertPoint = dsPktProc.erPreambleProc().begin();
-    } else {
-        insertPoint = std::next(readScopeInstrIt);
-    }
+    auto insertPoint = readScopeInstrIt == dsPktProc.erPreambleProc().end() ?
+                       dsPktProc.erPreambleProc().begin() : std::next(readScopeInstrIt);
 
     if (hasErtIdRole) {
-        dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErtInstr>());
+        insertPoint = std::next(dsPktProc.erPreambleProc().insert(insertPoint,
+                                                                  std::make_shared<SetErtInstr>()));
     } else {
         if (!dsPktProc.dst().eventRecordTypes().empty()) {
             assert(dsPktProc.dst().eventRecordTypes().size() == 1);
 
             const auto fixedId = (*dsPktProc.dst().eventRecordTypes().begin())->id();
 
-            dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErtInstr>(fixedId));
+            insertPoint = std::next(dsPktProc.erPreambleProc().insert(insertPoint,
+                                                                      std::make_shared<SetErtInstr>(fixedId)));
         }
     }
+
+    dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErInfoInstr>());
 }
 
 class IntTypeReadIntInstrMapCreator :

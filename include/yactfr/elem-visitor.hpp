@@ -11,22 +11,19 @@
 namespace yactfr {
 
 class BeginningElement;
-class DataStreamIdElement;
-class DataStreamTypeElement;
+class DataStreamInfoElement;
 class DefaultClockValueElement;
 class DynamicArrayBeginningElement;
 class DynamicTextArrayBeginningElement;
 class EndElement;
 class EventRecordBeginningElement;
-class EventRecordTypeElement;
-class ExpectedPacketContentLengthElement;
-class ExpectedPacketTotalLengthElement;
+class EventRecordInfoElement;
 class FloatingPointNumberElement;
 class PacketBeginningElement;
 class PacketContentBeginningElement;
 class PacketEndDefaultClockValueElement;
+class PacketInfoElement;
 class PacketMagicNumberElement;
-class PacketOriginIndexElement;
 class ScopeBeginningElement;
 class SignedEnumerationElement;
 class SignedIntegerElement;
@@ -56,22 +53,18 @@ class ElementVisitor
 public:
     virtual ~ElementVisitor() = default;
     virtual void visit(const BeginningElement& elem);
-    virtual void visit(const DataStreamIdElement& elem);
-    virtual void visit(const DataStreamTypeElement& elem);
+    virtual void visit(const DataStreamInfoElement& elem);
     virtual void visit(const DefaultClockValueElement& elem);
     virtual void visit(const DynamicArrayBeginningElement& elem);
     virtual void visit(const DynamicTextArrayBeginningElement& elem);
     virtual void visit(const EndElement& elem);
     virtual void visit(const EventRecordBeginningElement& elem);
-    virtual void visit(const EventRecordTypeElement& elem);
-    virtual void visit(const ExpectedPacketContentLengthElement& elem);
-    virtual void visit(const ExpectedPacketTotalLengthElement& elem);
+    virtual void visit(const EventRecordInfoElement& elem);
     virtual void visit(const FloatingPointNumberElement& elem);
     virtual void visit(const PacketBeginningElement& elem);
     virtual void visit(const PacketContentBeginningElement& elem);
-    virtual void visit(const PacketEndDefaultClockValueElement& elem);
+    virtual void visit(const PacketInfoElement& elem);
     virtual void visit(const PacketMagicNumberElement& elem);
-    virtual void visit(const PacketOriginIndexElement& elem);
     virtual void visit(const ScopeBeginningElement& elem);
     virtual void visit(const SignedEnumerationElement& elem);
     virtual void visit(const SignedIntegerElement& elem);

@@ -18,7 +18,8 @@ event {
 ----
      0 P {
      0   PC {
-     0     DST:0
+     0     DSI:0
+     0     PI
      0     ER {
      0       SC:2 {
      0         ST {
@@ -27,7 +28,7 @@ event {
     40           }
     40         }
     40       }
-    40       ERT:0:sup
+    40       ERI:0:sup
     40     }
     40   }
     40 }

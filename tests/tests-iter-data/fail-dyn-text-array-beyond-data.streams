@@ -19,9 +19,10 @@ event {
 ----
      0 P {
      0   PC {
-     0     DST:0
+     0     DSI:0
+     0     PI
      0     ER {
-     0       ERT:0:test
+     0       ERI:0:test
      0       SC:5 {
      0         ST {
      0           UI:len:3
@@ -35,7 +36,7 @@ event {
    152       }
    152     }
    152     ER {
-   152       ERT:0:test
+   152       ERI:0:test
    152       SC:5 {
    152         ST {
    152           UI:len:6
@@ -49,7 +50,7 @@ event {
    280       }
    280     }
    280     ER {
-   280       ERT:0:test
+   280       ERI:0:test
    280       SC:5 {
    280         ST {
    280           UI:len:4

@@ -222,6 +222,15 @@ public:
         stack.clear();
         defClkVal = 0;
         std::fill(savedVals.begin(), savedVals.end(), SAVED_VAL_UNSET);
+
+        /*
+         * Reset all information elements as a given element sequence
+         * may contain packets from data streams having different types,
+         * therefore having different packet context and event record
+         * header types.
+         */
+        elems.pktInfo._reset();
+        elems.erInfo._reset();
     }
 
 private:
@@ -243,16 +252,12 @@ public:
         ScopeBeginningElement scopeBeginning;
         PacketContentBeginningElement pktContentBeginning;
         EventRecordBeginningElement erBeginning;
-        DataStreamIdElement dsId;
-        PacketOriginIndexElement pktOriginIndex;
-        ExpectedPacketTotalLengthElement expectedPktTotalLen;
-        ExpectedPacketContentLengthElement expectedPktContentLen;
         PacketMagicNumberElement pktMagicNumber;
         TraceTypeUuidElement traceTypeUuid;
+        DataStreamInfoElement dsInfo;
+        PacketInfoElement pktInfo;
+        EventRecordInfoElement erInfo;
         DefaultClockValueElement defClkVal;
-        PacketEndDefaultClockValueElement pktEndDefClkVal;
-        DataStreamTypeElement dst;
-        EventRecordTypeElement ert;
         SignedIntegerElement sInt;
         UnsignedIntegerElement uInt;
         SignedEnumerationElement sEnum;
@@ -1040,6 +1045,9 @@ private:
     _ExecReaction _execEndDsPktPreambleProc(const Instr& instr);
     _ExecReaction _execEndDsErPreambleProc(const Instr& instr);
     _ExecReaction _execEndErProc(const Instr& instr);
+    _ExecReaction _execSetDsInfo(const Instr& instr);
+    _ExecReaction _execSetPktInfo(const Instr& instr);
+    _ExecReaction _execSetErInfo(const Instr& instr);
 
     static void _setDataElemFromInstr(DataElement& elem, const ReadDataInstr& readDataInstr) noexcept
     {
@@ -1303,7 +1311,7 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<_ExecReaction (Vm::*)(const Instr&), 80> _execFuncs;
+    std::array<_ExecReaction (Vm::*)(const Instr&), 85> _execFuncs;
 
     // position (whole VM's state)
     VmPos _pos;

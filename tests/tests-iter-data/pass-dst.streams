@@ -29,18 +29,17 @@ ff 78 "heille Lynda" 00
      0     SC:0 {
      0       ST {
      0         UI:stream_instance_id:2
-     8         DSID:2
      8       }
      8     }
-     8     DST:0
+     8     DSI:0:2
      8     SC:1 {
      8       ST {
      8         UI:packet_size:120
-    16         EPTL:120
     16       }
     16     }
+    16     PI:120:120
     16     ER {
-    16       ERT:0:test
+    16       ERI:0:test
     16       SC:5 {
     16         ST {
     16           STR:str {
@@ -56,18 +55,17 @@ ff 78 "heille Lynda" 00
    120     SC:0 {
    120       ST {
    120         UI:stream_instance_id:5
-   128         DSID:5
    128       }
    128     }
-   128     DST:0
+   128     DSI:0:5
    128     SC:1 {
    128       ST {
    128         UI:packet_size:120
-   136         EPTL:120
    136       }
    136     }
+   136     PI:120:120
    136     ER {
-   136       ERT:0:test
+   136       ERI:0:test
    136       SC:5 {
    136         ST {
    136           STR:str {
@@ -83,18 +81,17 @@ ff 78 "heille Lynda" 00
    240     SC:0 {
    240       ST {
    240         UI:stream_instance_id:255
-   248         DSID:255
    248       }
    248     }
-   248     DST:0
+   248     DSI:0:255
    248     SC:1 {
    248       ST {
    248         UI:packet_size:120
-   256         EPTL:120
    256       }
    256     }
+   256     PI:120:120
    256     ER {
-   256       ERT:0:test
+   256       ERI:0:test
    256       SC:5 {
    256         ST {
    256           STR:str {

@@ -424,6 +424,18 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "DECR_REMAINING_ELEMS";
         break;
 
+    case Kind::SET_DS_INFO:
+        kindStr = "SET_DS_INFO";
+        break;
+
+    case Kind::SET_PKT_INFO:
+        kindStr = "SET_PKT_INFO";
+        break;
+
+    case Kind::SET_ER_INFO:
+        kindStr = "SET_ER_INFO";
+        break;
+
     default:
         std::abort();
     }
@@ -1082,6 +1094,21 @@ SetPktOriginIndexInstr::SetPktOriginIndexInstr() :
 
 SetDsIdInstr::SetDsIdInstr() :
     Instr {Kind::SET_DS_ID}
+{
+}
+
+SetDsInfoInstr::SetDsInfoInstr() :
+    Instr {Kind::SET_DS_INFO}
+{
+}
+
+SetPktInfoInstr::SetPktInfoInstr() :
+    Instr {Kind::SET_PKT_INFO}
+{
+}
+
+SetErInfoInstr::SetErInfoInstr() :
+    Instr {Kind::SET_ER_INFO}
 {
 }
 

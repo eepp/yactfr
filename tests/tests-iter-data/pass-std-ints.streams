@@ -33,9 +33,10 @@ BE SIGNED   fd d154 ffff112f 2736abd7bda6bdf6
 ----
      0 P {
      0   PC {
-     0     DST:0
+     0     DSI:0
+     0     PI
      0     ER {
-     0       ERT:0:test
+     0       ERI:0:test
      0       SC:5 {
      0         ST {
      0           UI:u8le:254

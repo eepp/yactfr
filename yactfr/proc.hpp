@@ -119,12 +119,15 @@ class SaveValInstr;
 class SetCurIdInstr;
 class SetDsIdInstr;
 class SetDstInstr;
+class SetDsInfoInstr;
 class SetErtInstr;
+class SetErInfoInstr;
 class SetExpectedPktContentLenInstr;
 class SetPktEndDefClkValInstr;
 class SetPktMagicNumberInstr;
 class SetPktOriginIndexInstr;
 class SetExpectedPktTotalLenInstr;
+class SetPktInfoInstr;
 class UpdateDefClkValInstr;
 
 /*
@@ -224,7 +227,15 @@ public:
     {
     }
 
+    virtual void visit(SetErInfoInstr& instr)
+    {
+    }
+
     virtual void visit(SetDsIdInstr& instr)
+    {
+    }
+
+    virtual void visit(SetDsInfoInstr& instr)
     {
     }
 
@@ -245,6 +256,10 @@ public:
     }
 
     virtual void visit(SetPktEndDefClkValInstr& instr)
+    {
+    }
+
+    virtual void visit(SetPktInfoInstr& instr)
     {
     }
 
@@ -429,13 +444,16 @@ public:
         SAVE_VAL,
         SET_CUR_ID,
         SET_DS_ID,
+        SET_DS_INFO,
         SET_DST,
         SET_ERT,
+        SET_ER_INFO,
         SET_PKT_CONTENT_LEN,
         SET_PKT_END_DEF_CLK_VAL,
         SET_PKT_MAGIC_NUMBER,
         SET_PKT_ORIGIN_INDEX,
         SET_PKT_TOTAL_LEN,
+        SET_PKT_INFO,
         UPDATE_DEF_CLK_VAL,
     };
 
@@ -1552,6 +1570,60 @@ class SetDsIdInstr :
 {
 public:
     explicit SetDsIdInstr();
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Set data stream info" procedure instruction.
+ *
+ * This instruction requires the VM to set and emit the data stream
+ * info element.
+ */
+class SetDsInfoInstr :
+    public Instr
+{
+public:
+    explicit SetDsInfoInstr();
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Set packet info" procedure instruction.
+ *
+ * This instruction requires the VM to set and emit the packet info
+ * element.
+ */
+class SetPktInfoInstr :
+    public Instr
+{
+public:
+    explicit SetPktInfoInstr();
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Set event record info" procedure instruction.
+ *
+ * This instruction requires the VM to set and emit the event record
+ * info element.
+ */
+class SetErInfoInstr :
+    public Instr
+{
+public:
+    explicit SetErInfoInstr();
 
     void accept(InstrVisitor& visitor) override
     {

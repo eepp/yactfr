@@ -14,7 +14,7 @@ stream {
 ----
      0 P {
      0   PC {
-     0     DST:0
+     0     DSI:0
      0     SC:1 {
      0       ST {
      0         STR:packet_size {
@@ -22,5 +22,6 @@ stream {
     40         }
     40       }
     40     }
+    40     PI
     40   }
     40 }

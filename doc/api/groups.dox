@@ -211,7 +211,7 @@ descriptions below easier to read and to allow recursion.
 (
   EventRecordBeginningElement
   [ScopeBeginningElement&lt;EVENT_RECORD_HEADER&gt; DATA EndElement]
-  EventRecordTypeElement
+  EventRecordInfoElement
   [ScopeBeginningElement&lt;EVENT_RECORD_COMMON_CONTEXT&gt; DATA EndElement]
   [ScopeBeginningElement&lt;EVENT_RECORD_SPECIFIC_CONTEXT&gt; DATA EndElement]
   [ScopeBeginningElement&lt;EVENT_RECORD_PAYLOAD&gt; DATA EndElement]
@@ -231,12 +231,11 @@ descriptions below easier to read and to allow recursion.
     (
       (
         (UnsignedIntegerElement | UnsignedEnumerationElement)
-        [DefaultClockValueElement]
-        (PacketMagicNumberElement | DataStreamIdElement)
+        PacketMagicNumberElement
       ) |
       (
         StaticArrayBeginningElement
-        (UnsignedIntegerElement [DefaultClockValueElement]){16}
+        (UnsignedIntegerElement | UnsignedEnumerationElement){16}
         TraceTypeUuidElement
         EndElement
       ) |
@@ -245,56 +244,14 @@ descriptions below easier to read and to allow recursion.
     EndElement
     EndElement
   ]
-  DataStreamTypeElement
-  [
-    ScopeBeginningElement&lt;PACKET_CONTEXT&gt;
-    StructureBeginningElement
-    (
-      (
-        (UnsignedIntegerElement | UnsignedEnumerationElement)
-        PacketEndDefaultClockValueElement
-      ) |
-      (
-        (UnsignedIntegerElement | UnsignedEnumerationElement)
-        [DefaultClockValueElement]
-        (
-          PacketOriginIndexElement |
-          ExpectedPacketTotalLengthElement |
-          ExpectedPacketContentLengthElement |
-        )
-      ) |
-      DATA
-    ) *
-    EndElement
-    EndElement
-  ]
+  DataStreamInfoElement
+  [ScopeBeginningElement&lt;PACKET_CONTEXT&gt; DATA EndElement]
+  PacketInfoElement
   EVENT-RECORD *
   EndElement
   EndElement
 )
 </pre>
-
-As per the CTF rules, at the EndElement for the scope
-Scope::PACKET_CONTEXT:
-
-<ul>
-  <li>
-    <strong>If you didn't get both an ExpectedPacketTotalLengthElement and
-    an ExpectedPacketContentLengthElement</strong>: the total and content
-    lengths of this packet are the length of this data stream (this
-    packet is the only one within its data stream).
-  </li>
-  <li>
-    <strong>If you got an ExpectedPacketTotalLengthElement without an
-    ExpectedPacketContentLengthElement</strong>: the expected
-    content length of this packet is its expected total length.
-  </li>
-  <li>
-    <strong>If you got an ExpectedPacketContentLengthElement without an
-    ExpectedPacketTotalLengthElement</strong>: this expected total
-    length of this packet is its expected content length.
-  </li>
-</ul>
 
 <h4>Element sequence</h4>
 

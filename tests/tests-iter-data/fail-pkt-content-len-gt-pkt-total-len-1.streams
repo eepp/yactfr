@@ -22,10 +22,9 @@ f218 f219 01 02 03
 ----
      0 P {
      0   PC {
-     0     DST:0
+     0     DSI:0
      0     SC:1 {
      0       ST {
      0         UI:packet_size:61976
-    16         EPTL:61976
     16         UI:content_size:61977
     32 Expected packet total length (61976) is less than expected packet content length (61977).

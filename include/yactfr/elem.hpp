@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <string>
 #include <boost/uuid/uuid.hpp>
+#include <boost/optional/optional.hpp>
 
 #include "metadata/fwd.hpp"
 #include "metadata/enum-type.hpp"
@@ -63,35 +64,23 @@ public:
         /// EventRecordBeginningElement
         EVENT_RECORD_BEGINNING,
 
-        /// DataStreamIdElement
-        DATA_STREAM_ID,
-
-        /// PacketOriginIndexElement
-        PACKET_ORIGIN_INDEX,
-
-        /// DataStreamTypeElement
-        DATA_STREAM_TYPE,
-
-        /// EventRecordTypeElement
-        EVENT_RECORD_TYPE,
-
-        /// ExpectedPacketTotalLengthElement
-        EXPECTED_PACKET_TOTAL_LENGTH,
-
-        /// ExpectedPacketContentLengthElement
-        EXPECTED_PACKET_CONTENT_LENGTH,
-
         /// PacketMagicNumberElement
         PACKET_MAGIC_NUMBER,
 
         /// TraceTypeUuidElement
         TRACE_TYPE_UUID,
 
+        /// DataStreamInfoElement
+        DATA_STREAM_INFO,
+
         /// DefaultClockValueElement
         DEFAULT_CLOCK_VALUE,
 
-        /// PacketEndDefaultClockValueElement
-        PACKET_END_DEFAULT_CLOCK_VALUE,
+        /// PacketInfoElement
+        PACKET_INFO,
+
+        /// EventRecordInfoElement
+        EVENT_RECORD_INFO,
 
         /// SignedIntegerElement
         SIGNED_INTEGER,
@@ -331,181 +320,6 @@ public:
 
 /*!
 @brief
-    Data stream ID element.
-
-@ingroup elems
-
-This element contains the ID of the data stream of the current packet
-which is known at this point.
-
-This is not to be confused with the \em type ID of the data stream of
-the current packet which the DataStreamTypeElement element indicates.
-
-@note
-    This is sometimes called <em>stream instance ID</em> in the
-    specification terminology.
-
-@sa DataStreamTypeElement
-*/
-class DataStreamIdElement final :
-    public Element
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit DataStreamIdElement() :
-        Element {Kind::DATA_STREAM_ID}
-    {
-    }
-
-public:
-    /// Data stream ID.
-    unsigned long long id() const noexcept
-    {
-        return _id;
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-
-private:
-    unsigned long long _id;
-};
-
-/*!
-@brief
-    Packet origin index element.
-
-@ingroup elems
-
-This element contains the numeric origin index of the current packet
-within its <em>data stream</em> (\em NOT within its element sequence)
-which is known at this point.
-
-@note
-    This is sometimes called <em>packet sequence number</em> in the
-    specification terminology, although this term would be confusing
-    in yactfr's scope since an ElementSequence object can "contain"
-    packets from different data streams.
-*/
-class PacketOriginIndexElement final :
-    public Element
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit PacketOriginIndexElement() :
-        Element {Kind::PACKET_ORIGIN_INDEX}
-    {
-    }
-
-public:
-    /// Packet origin index.
-    Index index() const noexcept
-    {
-        return _index;
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-
-private:
-    Index _index;
-};
-
-/*!
-@brief
-    Expected total length of packet element.
-
-@ingroup elems
-
-This element contains the expected total length, in bits, of the current
-packet which is known at this point.
-
-This length \em includes the packet padding bits before the end of the
-packet, if any.
-
-@sa ExpectedPacketContentLengthElement
-*/
-class ExpectedPacketTotalLengthElement final :
-    public Element
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit ExpectedPacketTotalLengthElement() :
-        Element {Kind::EXPECTED_PACKET_TOTAL_LENGTH}
-    {
-    }
-
-public:
-    /// Expected total length of packet (bits, multiple of 8).
-    Size expectedLength() const noexcept
-    {
-        return _expectedLen;
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-
-private:
-    Size _expectedLen;
-};
-
-/*!
-@brief
-    Expected content length of packet element.
-
-@ingroup elems
-
-This element contains the expected content length, in bits, of the
-current packet which is known at this point.
-
-This length \em excludes the packet padding bits before the end of the
-packet, if any: the total length of the packet minus its content length
-provides its padding length.
-
-@sa ExpectedPacketTotalLengthElement
-*/
-class ExpectedPacketContentLengthElement final :
-    public Element
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit ExpectedPacketContentLengthElement() :
-        Element {Kind::EXPECTED_PACKET_CONTENT_LENGTH}
-    {
-    }
-
-public:
-    /// Expected content length of packet (bits).
-    Size expectedLength() const noexcept
-    {
-        return _expectedLen;
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-
-private:
-    Size _expectedLen;
-};
-
-/*!
-@brief
     Packet magic number element.
 
 @ingroup elems
@@ -612,6 +426,65 @@ private:
 
 /*!
 @brief
+    Data stream information element.
+
+@ingroup elems
+
+This element contains information about the current data stream, as
+found in the header of the current packet.
+*/
+class DataStreamInfoElement final :
+    public Element
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit DataStreamInfoElement() :
+        Element {Kind::DATA_STREAM_INFO}
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+    /// Type of the data stream of the current packet, or \c nullptr if
+    /// the trace type has no data stream types.
+    const DataStreamType *type() const noexcept
+    {
+        return _dst;
+    }
+
+    /*!
+    @brief
+        ID of the data stream of the current packet.
+
+    @note
+        Not to be confused with the \em type ID of the data stream of
+        the current packet: use type() and then DataStreamType::id().
+    */
+    const boost::optional<unsigned long long>& id() const noexcept
+    {
+        return _id;
+    }
+
+private:
+    void _reset() noexcept
+    {
+        _dst = nullptr;
+        _id = boost::none;
+    }
+
+private:
+    const DataStreamType *_dst = nullptr;
+    boost::optional<unsigned long long> _id;
+};
+
+/*!
+@brief
     Default clock value element.
 
 @ingroup elems
@@ -649,122 +522,161 @@ private:
 
 /*!
 @brief
-    Default clock value at end of packet element.
+    Packet information element.
 
 @ingroup elems
 
-This element provides the value of the default clock of the data stream
-of the current packet at its end.
+This element contains information about the current packet, as found in
+its context.
 
-During the packet decoding process, this default clock value is known
-\em before decoding the event records.
+As per the CTF rules:
 
-@sa DefaultClockValueElement
+- <strong>If expectedTotalLength() and expectedContentLength() are both
+  not set</strong>: the total and content lengths of this packet are the
+  length of the current data stream (this packet is the only one within
+  its data stream).
+
+- <strong>If expectedTotalLength() is set, but expectedContentLength()
+  isn't</strong>: the expected content length of this packet is its
+  expected total length (value of expectedTotalLength()).
+
+- <strong>If expectedContentLength() is set, but expectedTotalLength()
+  isn't</strong>: the expected total length of this packet is its
+  expected content length (value of expectedContentLength()).
 */
-class PacketEndDefaultClockValueElement final :
+class PacketInfoElement final :
     public Element
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit PacketEndDefaultClockValueElement() :
-        Element {Kind::PACKET_END_DEFAULT_CLOCK_VALUE}
+    explicit PacketInfoElement() :
+        Element {Kind::PACKET_INFO}
     {
     }
 
 public:
-    /// Value of the clock (cycles) at the end of the current packet.
-    Cycles cycles() const noexcept
-    {
-        return _cycles;
-    }
-
     void accept(ElementVisitor& visitor) const override
     {
         visitor.visit(*this);
     }
 
+    /*!
+    @brief
+        Numeric origin index of the current packet
+        within its <em>data stream</em> (\em not within its element
+        sequence).
+
+    @note
+        This is sometimes called <em>packet sequence number</em> in the
+        specification terminology, although this term would be confusing
+        in yactfr's scope since an ElementSequence object can "contain"
+        packets from different data streams.
+    */
+    const boost::optional<Index>& originIndex() const noexcept
+    {
+        return _originIndex;
+    }
+
+    /*!
+    @brief
+        Expected total length, in bits, of the current packet.
+
+    This length \em includes the packet padding bits before the end of
+    the packet, if any.
+    */
+    const boost::optional<Size>& expectedTotalLength() const noexcept
+    {
+        return _expectedTotalLen;
+    }
+
+    /*!
+    @brief
+        Expected content length, in bits, of the current packet.
+
+    This length \em excludes the packet padding bits before the end of
+    the packet, if any: the total length of the packet minus its content
+    length provides its padding length.
+    */
+    const boost::optional<Size>& expectedContentLength() const noexcept
+    {
+        return _expectedContentLen;
+    }
+
+    /*!
+    @brief
+        Value of the default clock of the data stream of the current
+        packet at its end
+
+    During the packet decoding process, this default clock value is
+    known \em before decoding the event records.
+
+    @sa DefaultClockValueElement
+    */
+    const boost::optional<Cycles>& endDefaultClockValue() const noexcept
+    {
+        return _endDefClkVal;
+    }
+
 private:
-    Cycles _cycles;
+    void _reset() noexcept
+    {
+        _originIndex = boost::none;
+        _expectedTotalLen = boost::none;
+        _expectedContentLen = boost::none;
+        _endDefClkVal = boost::none;
+    }
+
+private:
+    boost::optional<Index> _originIndex;
+    boost::optional<Size> _expectedTotalLen;
+    boost::optional<Size> _expectedContentLen;
+    boost::optional<Cycles> _endDefClkVal;
 };
 
 /*!
 @brief
-    Data stream type element.
+    Event record information element.
 
 @ingroup elems
 
-This element contains the data stream type of the current packet which
-is known at this point.
-
-@sa EventRecordTypeElement
+This element contains information about the current event record, as
+found in its header.
 */
-class DataStreamTypeElement final :
+class EventRecordInfoElement final :
     public Element
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit DataStreamTypeElement() :
-        Element {Kind::DATA_STREAM_TYPE}
+    explicit EventRecordInfoElement() :
+        Element {Kind::EVENT_RECORD_INFO}
     {
     }
 
 public:
-    /// Data stream type.
-    const DataStreamType& dataStreamType() const noexcept
-    {
-        return *_dst;
-    }
-
     void accept(ElementVisitor& visitor) const override
     {
         visitor.visit(*this);
     }
 
-private:
-    const DataStreamType *_dst;
-};
-
-/*!
-@brief
-    Event record type element.
-
-@ingroup elems
-
-This element contains the event record type of the current event record
-which is known at this point.
-
-@sa DataStreamTypeElement
-*/
-class EventRecordTypeElement final :
-    public Element
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit EventRecordTypeElement() :
-        Element {Kind::EVENT_RECORD_TYPE}
+    /// Type of the current event record, or \c nullptr if the dat
+    /// stream type has no event record types.
+    const EventRecordType *type() const noexcept
     {
-    }
-
-public:
-    /// Event record type.
-    const EventRecordType& eventRecordType() const noexcept
-    {
-        return *_ert;
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
+        return _ert;
     }
 
 private:
-    const EventRecordType *_ert;
+    void _reset() noexcept
+    {
+        _ert = nullptr;
+    }
+
+private:
+    const EventRecordType *_ert = nullptr;
 };
 
 /*!

@@ -56,30 +56,6 @@ public:
         ++_indentLevel;
     }
 
-    void visit(const yactfr::DataStreamIdElement& elem) override
-    {
-        this->_indent();
-        *_os << "DSID:" << elem.id() << '\n';
-    }
-
-    void visit(const yactfr::PacketOriginIndexElement& elem) override
-    {
-        this->_indent();
-        *_os << "POI:" << elem.index() << '\n';
-    }
-
-    void visit(const yactfr::ExpectedPacketTotalLengthElement& elem) override
-    {
-        this->_indent();
-        *_os << "EPTL:" << elem.expectedLength() << '\n';
-    }
-
-    void visit(const yactfr::ExpectedPacketContentLengthElement& elem) override
-    {
-        this->_indent();
-        *_os << "EPCL:" << elem.expectedLength() << '\n';
-    }
-
     void visit(const yactfr::PacketMagicNumberElement& elem) override
     {
         this->_indent();
@@ -98,25 +74,57 @@ public:
         *_os << "DCV:" << elem.cycles() << '\n';
     }
 
-    void visit(const yactfr::PacketEndDefaultClockValueElement& elem) override
+    void visit(const yactfr::DataStreamInfoElement& elem) override
     {
         this->_indent();
-        *_os << "PEDCV:" << elem.cycles() << '\n';
+        *_os << "DSI";
+
+        if (elem.type()) {
+            *_os << ':' << elem.type()->id();
+        }
+
+        if (elem.id()) {
+            *_os << ':' << *elem.id();
+        }
+
+        *_os << '\n';
     }
 
-    void visit(const yactfr::DataStreamTypeElement& elem) override
+    void visit(const yactfr::EventRecordInfoElement& elem) override
     {
         this->_indent();
-        *_os << "DST:" << elem.dataStreamType().id() << '\n';
+        *_os << "ERI";
+
+        if (elem.type()) {
+            *_os << ':' << elem.type()->id();
+
+            if (elem.type()->name()) {
+                *_os << ':' << *elem.type()->name();
+            }
+        }
+
+        *_os << '\n';
     }
 
-    void visit(const yactfr::EventRecordTypeElement& elem) override
+    void visit(const yactfr::PacketInfoElement& elem) override
     {
         this->_indent();
-        *_os << "ERT:" << elem.eventRecordType().id();
+        *_os << "PI";
 
-        if (elem.eventRecordType().name()) {
-            *_os << ':' << *elem.eventRecordType().name();
+        if (elem.expectedTotalLength()) {
+            *_os << ':' << *elem.expectedTotalLength();
+        }
+
+        if (elem.expectedContentLength()) {
+            *_os << ':' << *elem.expectedContentLength();
+        }
+
+        if (elem.endDefaultClockValue()) {
+            *_os << ':' << *elem.endDefaultClockValue();
+        }
+
+        if (elem.originIndex()) {
+            *_os << ':' << *elem.originIndex();
         }
 
         *_os << '\n';

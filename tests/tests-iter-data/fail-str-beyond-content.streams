@@ -25,15 +25,15 @@ event {
 ----
      0 P {
      0   PC {
-     0     DST:0
+     0     DSI:0
      0     SC:1 {
      0       ST {
      0         UI:content_size:144
-     8         EPCL:144
      8       }
      8     }
+     8     PI:144
      8     ER {
-     8       ERT:0:test
+     8       ERI:0:test
      8       SC:5 {
      8         ST {
      8           UI:yy:3735928559
@@ -44,7 +44,7 @@ event {
     88       }
     88     }
     88     ER {
-    88       ERT:0:test
+    88       ERI:0:test
     88       SC:5 {
     88         ST {
     88           UI:yy:4277009102

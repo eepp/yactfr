@@ -69,17 +69,16 @@ stream {
      0         UI:stream_id:2
      8       }
      8     }
-     8     DST:2
+     8     DSI:2
      8     SC:1 {
      8       ST {
      8         UI:packet_size:152
-    40         EPTL:152
     40         UI:timestamp_begin:1320211
     72         DCV:1320211
     72         UI:timestamp_end:262917615
-   104         PEDCV:262917615
    104       }
    104     }
+   104     PI:152:152:262917615
    104     ER {
    104       SC:2 {
    104         ST {
@@ -89,7 +88,7 @@ stream {
    128           DCV:1324543
    128         }
    128       }
-   128       ERT:0:test
+   128       ERI:0:test
    128     }
    128     ER {
    128       SC:2 {
@@ -100,7 +99,7 @@ stream {
    152           DCV:1385249
    152         }
    152       }
-   152       ERT:0:test
+   152       ERI:0:test
    152     }
    152   }
    152 }
@@ -111,17 +110,16 @@ stream {
    152         UI:stream_id:2
    160       }
    160     }
-   160     DST:2
+   160     DSI:2
    160     SC:1 {
    160       ST {
    160         UI:packet_size:128
-   192         EPTL:128
    192         UI:timestamp_begin:11259375
    224         DCV:11259375
    224         UI:timestamp_end:4289449455
-   256         PEDCV:4289449455
    256       }
    256     }
+   256     PI:128:128:4289449455
    256     ER {
    256       SC:2 {
    256         ST {
@@ -131,7 +129,7 @@ stream {
    280           DCV:11259391
    280         }
    280       }
-   280       ERT:0:test
+   280       ERI:0:test
    280     }
    280   }
    280 }
@@ -142,7 +140,7 @@ stream {
    280         UI:stream_id:5
    288       }
    288     }
-   288     DST:5
+   288     DSI:5
    288     SC:1 {
    288       ST {
    288         UI:clk1:8669655694347378906
@@ -151,5 +149,6 @@ stream {
    416         DCV:3480294008477179590
    416       }
    416     }
+   416     PI
    416   }
    416 }

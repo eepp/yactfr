@@ -168,19 +168,17 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    160         UI:stream_id:35
    168       }
    168     }
-   168     DST:35
+   168     DSI:35
    168     SC:1 {
    168       ST {
    168         UI:packet_size:864
-   184         EPTL:864
    184         UI:content_size:856
-   200         EPCL:856
    200         UI:timestamp_begin:19712
    216         DCV:19712
    216         UI:timestamp_end:36864
-   232         PEDCV:36864
    232       }
    232     }
+   232     PI:864:856:36864
    232     ER {
    232       SC:2 {
    232         ST {
@@ -189,7 +187,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    248           DCV:19712
    248         }
    248       }
-   248       ERT:29:coronin
+   248       ERI:29:coronin
    248       SC:3 {
    248         ST {
    248           UE:ctx1:602918315
@@ -219,7 +217,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    504           DCV:19717
    504         }
    504       }
-   504       ERT:119:keratin
+   504       ERI:119:keratin
    504       SC:3 {
    504         ST {
    504           UE:ctx1:1
@@ -242,7 +240,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    664           DCV:19972
    664         }
    664       }
-   664       ERT:29:coronin
+   664       ERI:29:coronin
    664       SC:3 {
    664         ST {
    664           UE:ctx1:1147574528
@@ -294,16 +292,16 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1024         UI:stream_id:255
   1032       }
   1032     }
-  1032     DST:255
+  1032     DSI:255
   1032     SC:1 {
   1032       ST {
   1032         UI:packet_size:664
-  1064         EPTL:664
   1064         UI:len:7
   1080       }
   1080     }
+  1080     PI:664:664
   1080     ER {
-  1080       ERT:0:coucou les coucous
+  1080       ERI:0:coucou les coucous
   1080       SC:5 {
   1080         ST {
   1080           UI:len:3
@@ -331,7 +329,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1288       }
   1288     }
   1288     ER {
-  1288       ERT:0:coucou les coucous
+  1288       ERI:0:coucou les coucous
   1288       SC:5 {
   1288         ST {
   1288           UI:len:4
@@ -391,19 +389,17 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1688         UI:stream_id:35
   1696       }
   1696     }
-  1696     DST:35
+  1696     DSI:35
   1696     SC:1 {
   1696       ST {
   1696         UI:packet_size:864
-  1712         EPTL:864
   1712         UI:content_size:848
-  1728         EPCL:848
   1728         UI:timestamp_begin:12032
   1744         DCV:12032
   1744         UI:timestamp_end:36864
-  1760         PEDCV:36864
   1760       }
   1760     }
+  1760     PI:864:848:36864
   1760     ER {
   1760       SC:2 {
   1760         ST {
@@ -412,7 +408,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1776           DCV:12035
   1776         }
   1776       }
-  1776       ERT:5:the variant event
+  1776       ERI:5:the variant event
   1776       SC:3 {
   1776         ST {
   1776           UE:ctx1:1146447479
@@ -443,7 +439,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2064           DCV:12041
   2064         }
   2064       }
-  2064       ERT:5:the variant event
+  2064       ERI:5:the variant event
   2064       SC:3 {
   2064         ST {
   2064           UE:ctx1:1146447480
