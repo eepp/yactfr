@@ -39,7 +39,7 @@ class VariantType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit VariantType(_Kind kind, unsigned int minAlign, DataLocation selLoc,
+    explicit VariantType(_Kind kind, unsigned int minAlign, DataLocation&& selLoc,
                          MapItem::UP userAttrs);
 
 public:
@@ -98,7 +98,7 @@ public:
 
 protected:
     explicit VariantWithIntegerSelectorType(const _Kind kind, const unsigned int minAlign,
-                                            Options&& opts, DataLocation selLoc,
+                                            Options&& opts, DataLocation&& selLoc,
                                             MapItem::UP userAttrs) :
         VariantType {kind, minAlign, std::move(selLoc), std::move(userAttrs)},
         _opts {std::move(opts)}

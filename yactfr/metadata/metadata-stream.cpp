@@ -12,7 +12,7 @@
 
 namespace yactfr {
 
-MetadataStream::MetadataStream(std::string text) :
+MetadataStream::MetadataStream(std::string&& text) :
     _text {std::move(text)}
 {
 }

@@ -19,7 +19,7 @@ bool IntegerTypeCommon::_isEqual(const IntegerTypeCommon& other) const noexcept
     return _prefDispBase == other._prefDispBase;
 }
 
-UnsignedIntegerTypeCommon::UnsignedIntegerTypeCommon(UnsignedIntegerTypeRoleSet roles) :
+UnsignedIntegerTypeCommon::UnsignedIntegerTypeCommon(UnsignedIntegerTypeRoleSet&& roles) :
     _roles {std::move(roles)}
 {
 }

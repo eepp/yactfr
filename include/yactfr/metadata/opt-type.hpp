@@ -40,7 +40,7 @@ class OptionalType :
 
 protected:
     explicit OptionalType(_Kind kind, const unsigned int minAlign, DataType::UP dt,
-                          DataLocation selLoc, MapItem::UP userAttrs);
+                          DataLocation&& selLoc, MapItem::UP userAttrs);
 
 public:
     /// Location of selectors of data stream optionals described by this
@@ -180,7 +180,7 @@ public:
 
 protected:
     explicit OptionalWithIntegerSelectorType(_Kind kind, unsigned int minAlign, DataType::UP dt,
-                                             DataLocation selLoc, SelectorRangeSet selRanges,
+                                             DataLocation&& selLoc, SelectorRangeSet&& selRanges,
                                              MapItem::UP userAttrs) :
         OptionalType {kind, minAlign, std::move(dt), std::move(selLoc), std::move(userAttrs)},
         _selRanges {std::move(selRanges)}

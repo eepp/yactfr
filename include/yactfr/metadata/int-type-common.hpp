@@ -120,7 +120,7 @@ using UnsignedIntegerTypeRoleSet = std::set<UnsignedIntegerTypeRole>;
 class UnsignedIntegerTypeCommon
 {
 protected:
-    explicit UnsignedIntegerTypeCommon(UnsignedIntegerTypeRoleSet roles);
+    explicit UnsignedIntegerTypeCommon(UnsignedIntegerTypeRoleSet&& roles);
 
 public:
     /// Roles of unsigned integers described by this type.

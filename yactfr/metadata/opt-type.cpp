@@ -14,7 +14,7 @@
 namespace yactfr {
 
 OptionalType::OptionalType(const _Kind kind, const unsigned int minAlign, DataType::UP dt,
-                           DataLocation selLoc, MapItem::UP userAttrs) :
+                           DataLocation&& selLoc, MapItem::UP userAttrs) :
     CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
     _dt {std::move(dt)},
     _selLoc {std::move(selLoc)}

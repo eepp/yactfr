@@ -26,7 +26,7 @@ class BlobType :
 {
 protected:
     explicit BlobType(_Kind kind, unsigned int align, MapItem::UP userAttrs,
-                      std::string mediaType = BlobType::defaultMediaType());
+                      std::string&& mediaType = BlobType::defaultMediaType());
 
 public:
     /// <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>

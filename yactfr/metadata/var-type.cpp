@@ -13,7 +13,7 @@
 
 namespace yactfr {
 
-VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLocation selLoc,
+VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLocation&& selLoc,
                          MapItem::UP userAttrs) :
     CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
     _selLoc {std::move(selLoc)}

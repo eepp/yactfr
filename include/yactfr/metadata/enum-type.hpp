@@ -61,7 +61,7 @@ public:
 
 protected:
     template <typename... ArgTs>
-    explicit EnumerationType(const typename IntegerTypeParentT::_Kind kind, Mappings mappings,
+    explicit EnumerationType(const typename IntegerTypeParentT::_Kind kind, Mappings&& mappings,
                              ArgTs&&... args) :
         IntegerTypeParentT {kind, std::forward<ArgTs>(args)...},
         _mappings {std::move(mappings)}

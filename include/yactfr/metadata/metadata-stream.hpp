@@ -24,7 +24,7 @@ namespace yactfr {
 class MetadataStream
 {
 protected:
-    explicit MetadataStream(std::string text);
+    explicit MetadataStream(std::string&& text);
 
 public:
     virtual ~MetadataStream() = default;
