@@ -92,7 +92,6 @@ public:
     explicit MemoryMappedFileViewFactory(std::string path,
                                          const boost::optional<Size>& preferredMmapSize = boost::none,
                                          AccessPattern expectedAccessPattern = AccessPattern::NORMAL);
-    ~MemoryMappedFileViewFactory();
 
     /// Current expected access pattern for future memory maps.
     AccessPattern expectedAccessPattern() const noexcept;

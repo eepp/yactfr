@@ -10,10 +10,6 @@
 
 namespace yactfr {
 
-ElementVisitor::~ElementVisitor()
-{
-}
-
 void ElementVisitor::visit(const BeginningElement& elem)
 {
 }

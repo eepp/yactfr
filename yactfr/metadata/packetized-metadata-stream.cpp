@@ -23,8 +23,4 @@ PacketizedMetadataStream::PacketizedMetadataStream(std::string&& text, const Siz
 {
 }
 
-PacketizedMetadataStream::~PacketizedMetadataStream()
-{
-}
-
 } // namespace yactfr

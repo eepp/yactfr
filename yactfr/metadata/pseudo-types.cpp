@@ -43,10 +43,6 @@ PseudoDt::PseudoDt(TextLocation loc) :
 {
 }
 
-PseudoDt::~PseudoDt()
-{
-}
-
 bool PseudoDt::isEmpty() const
 {
     return false;

@@ -31,9 +31,6 @@ class PlainTextMetadataStream final :
 
 private:
     explicit PlainTextMetadataStream(std::string&& text);
-
-public:
-    ~PlainTextMetadataStream();
 };
 
 } // namespace yactfr

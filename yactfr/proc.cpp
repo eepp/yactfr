@@ -62,10 +62,6 @@ static inline std::string _strScopeName(const std::string& name)
     return rName;
 }
 
-InstrVisitor::~InstrVisitor()
-{
-}
-
 void Proc::buildRawProcFromShared()
 {
     // in case we call this more than once...
@@ -446,10 +442,6 @@ std::string Instr::toStr(const Size indent) const
 
     ss << this->_toStr(indent);
     return ss.str();
-}
-
-Instr::~Instr()
-{
 }
 
 void Instr::buildRawProcFromShared()

@@ -15,8 +15,4 @@ PlainTextMetadataStream::PlainTextMetadataStream(std::string&& text) :
 {
 }
 
-PlainTextMetadataStream::~PlainTextMetadataStream()
-{
-}
-
 } // namespace yactfr

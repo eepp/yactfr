@@ -33,7 +33,7 @@ private:
                                       boost::uuids::uuid uuid);
 
 public:
-    ~PacketizedMetadataStream();
+    ~PacketizedMetadataStream() = default;
 
     /// Number of packets in this metadata stream.
     Size packetCount() const noexcept

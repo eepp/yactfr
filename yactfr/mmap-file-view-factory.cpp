@@ -146,10 +146,6 @@ MemoryMappedFileViewFactory::MemoryMappedFileViewFactory(std::string path,
 {
 }
 
-MemoryMappedFileViewFactory::~MemoryMappedFileViewFactory()
-{
-}
-
 MemoryMappedFileViewFactory::AccessPattern MemoryMappedFileViewFactory::expectedAccessPattern() const noexcept
 {
     return _pimpl->accessPattern();

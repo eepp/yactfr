@@ -54,7 +54,7 @@ Element::accept(ElementVisitor&) const.
 class ElementVisitor
 {
 public:
-    virtual ~ElementVisitor();
+    virtual ~ElementVisitor() = default;
     virtual void visit(const BeginningElement& elem);
     virtual void visit(const DataStreamIdElement& elem);
     virtual void visit(const DataStreamTypeElement& elem);

@@ -138,7 +138,7 @@ protected:
     explicit InstrVisitor() = default;
 
 public:
-    virtual ~InstrVisitor();
+    virtual ~InstrVisitor() = default;
 
     virtual void visit(ReadSIntInstr& instr)
     {
@@ -448,7 +448,7 @@ protected:
     explicit Instr(Kind kind) noexcept;
 
 public:
-    virtual ~Instr();
+    virtual ~Instr() = default;
     virtual void accept(InstrVisitor& visitor) = 0;
     virtual void buildRawProcFromShared();
 

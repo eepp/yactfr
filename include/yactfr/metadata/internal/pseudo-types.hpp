@@ -119,7 +119,7 @@ public:
 
 public:
     explicit PseudoDt(TextLocation loc);
-    virtual ~PseudoDt();
+    virtual ~PseudoDt() = default;
     virtual Kind kind() const noexcept = 0;
     virtual bool isEmpty() const;
     virtual void accept(PseudoDtVisitor& visitor) = 0;

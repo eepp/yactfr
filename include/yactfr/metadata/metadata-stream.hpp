@@ -27,7 +27,7 @@ protected:
     explicit MetadataStream(std::string&& text);
 
 public:
-    virtual ~MetadataStream();
+    virtual ~MetadataStream() = default;
 
     /// Metadata text.
     const std::string& text() const noexcept

@@ -16,10 +16,6 @@ MetadataStream::MetadataStream(std::string&& text) :
 {
 }
 
-MetadataStream::~MetadataStream()
-{
-}
-
 bool MetadataStream::hasSignature() const noexcept
 {
     static const std::string sig {"/* CTF 1.8"};
