@@ -14,6 +14,7 @@
 #include <vector>
 #include <limits>
 #include <boost/utility.hpp>
+#include <boost/optional.hpp>
 
 #include "../../aliases.hpp"
 #include "../../text-loc.hpp"
@@ -31,13 +32,13 @@ namespace internal {
  * It's a backtracking lexer.
  *
  * The string scanner automatically skips whitespaces and C/C++-style
- * comments when you call any scan*() method.
+ * comments when you call any tryScan*() method.
  *
- * When you call the various scan*() methods to scan some contents, the
- * the method advances the current iterator on success. You can control
- * the current iterator with the save(), accept(), and reject() methods.
- * The latter methods operate on an iterator stack, a stack of saved
- * positions which you can restore.
+ * When you call the various tryScan*() methods to scan some contents,
+ * the the method advances the current iterator on success. You can
+ * control the current iterator with the save(), accept(), and reject()
+ * methods. The latter methods operate on an iterator stack, a stack of
+ * saved positions which you can restore.
  *
  * Before scanning anything that could be reverted, call save(). Then,
  * if you must revert the iterator position, call reject(). If, on the
@@ -322,7 +323,17 @@ public:
      * string on success.
      */
     template <typename ValueT>
-    bool scanConstInt(ValueT& value);
+    boost::optional<ValueT> tryScanConstInt();
+
+    boost::optional<unsigned long long> tryScanConstUInt()
+    {
+        return this->tryScanConstInt<unsigned long long>();
+    }
+
+    boost::optional<long long> tryScanConstSInt()
+    {
+        return this->tryScanConstInt<long long>();
+    }
 
     /*
      * Tries to scan a specific token, placing the current iterator
@@ -567,7 +578,7 @@ private:
 
 template <typename CharIt>
 template <typename ValueT>
-bool StrScanner<CharIt>::scanConstInt(ValueT& value)
+boost::optional<ValueT> StrScanner<CharIt>::tryScanConstInt()
 {
     static_assert(std::is_same<ValueT, long long>::value ||
                   std::is_same<ValueT, unsigned long long>::value,
@@ -578,14 +589,14 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
     const auto c = this->_scanAnyChar();
 
     if (c < 0) {
-        return false;
+        return boost::none;
     }
 
     const bool negate = (c == '-');
 
     if (negate && !std::is_signed<ValueT>::value) {
         _at = at;
-        return false;
+        return boost::none;
     }
 
     if (!negate) {
@@ -594,6 +605,7 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
 
     auto convBufIt = _convBuf.begin();
     constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
+    ValueT value;
 
     if (this->charsLeft() >= 2) {
         if (*_at == '0' && (*(_at + 1) == 'b' || *(_at + 1) == 'B')) {
@@ -612,14 +624,14 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
                 if (std::distance(_convBuf.begin(), convBufIt) > 64) {
                     // too many bits!
                     _at = at;
-                    return false;
+                    return boost::none;
                 }
             }
 
             if (convBufIt == _convBuf.begin()) {
                 // `0b` followed by something else than `0` or `1`
                 _at = at;
-                return false;
+                return boost::none;
             }
 
             auto tmpValue = 0ULL;
@@ -645,12 +657,12 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
                 if (negate) {
                     if (tmpValue > llMaxAsUll + 1) {
                         _at = at;
-                        return false;
+                        return boost::none;
                     }
                 } else {
                     if (tmpValue > llMaxAsUll) {
                         _at = at;
-                        return false;
+                        return boost::none;
                     }
                 }
             }
@@ -661,7 +673,7 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
                 value *= static_cast<ValueT>(-1);
             }
 
-            return true;
+            return value;
         }
     }
 
@@ -671,19 +683,19 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
     if ((tmpValue == 0 && &(*_at) == strEnd) || errno == ERANGE) {
         _at = at;
         errno = 0;
-        return false;
+        return boost::none;
     }
 
     if (std::is_signed<ValueT>::value) {
         if (negate) {
             if (tmpValue > llMaxAsUll + 1) {
                 _at = at;
-                return false;
+                return boost::none;
             }
         } else {
             if (tmpValue > llMaxAsUll) {
                 _at = at;
-                return false;
+                return boost::none;
             }
         }
     }
@@ -695,7 +707,7 @@ bool StrScanner<CharIt>::scanConstInt(ValueT& value)
         value *= static_cast<ValueT>(-1);
     }
 
-    return true;
+    return value;
 }
 
 /*

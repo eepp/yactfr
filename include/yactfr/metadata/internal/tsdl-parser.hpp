@@ -1623,20 +1623,22 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
 
             if (_ss.tryScanToken("align")) {
                 this->_expectToken("(");
+                const auto optAlign = _ss.tryScanConstUInt();
 
-                if (!_ss.scanConstInt(align)) {
+                if (!optAlign) {
                     throwMetadataParseError("Expecting valid constant unsigned integer.",
                                             this->_curLoc());
                 }
 
-                if (!isPowOfTwo(align)) {
+                if (!isPowOfTwo(*optAlign)) {
                     std::ostringstream ss;
 
                     ss << "Invalid minimum alignment for `struct` block " <<
-                          "(must be a power of two): " << align << ".";
+                          "(must be a power of two): " << *optAlign << ".";
                     throwMetadataParseError(ss.str(), this->_curLoc());
                 }
 
+                align = *optAlign;
                 this->_expectToken(")");
             }
 
@@ -2604,11 +2606,13 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
         // identifier
         attr.strVal = *ident;
         attr.kind = TsdlAttr::Kind::IDENT;
-    } else if (_ss.scanConstInt(attr.uintVal)) {
+    } else if (const auto val = _ss.tryScanConstUInt()) {
         // constant unsigned integer
+        attr.uintVal = *val;
         attr.kind = TsdlAttr::Kind::UINT;
-    } else if (_ss.scanConstInt(attr.intVal)) {
+    } else if (const auto val = _ss.tryScanConstSInt()) {
         // constant signed integer
+        attr.intVal = *val;
         attr.kind = TsdlAttr::Kind::SINT;
         assert(attr.intVal != 0 && attr.intVal != 1);
     } else {
@@ -2876,17 +2880,16 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
         _ss.skipCommentsAndWhitespaces();
 
         const auto subscriptLoc = this->_curLoc();
-        long long value;
 
-        if (_ss.scanConstInt(value)) {
-            if (value < 0) {
+        if (const auto val = _ss.tryScanConstSInt()) {
+            if (*val < 0) {
                 std::ostringstream ss;
 
-                ss << "Length of array type cannot be negative: " << value << ".";
+                ss << "Length of array type cannot be negative: " << *val << ".";
                 throwMetadataParseError(ss.str(), subscriptLoc);
             }
 
-            lenDescrs.push_back({true, boost::none, static_cast<Size>(value), subscriptLoc});
+            lenDescrs.push_back({true, boost::none, static_cast<Size>(*val), subscriptLoc});
         } else {
             boost::optional<PseudoDataLoc> pseudoDataLoc;
 
@@ -3012,13 +3015,15 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
         auto upper = curVal;
 
         if (_ss.tryScanToken("=")) {
+            using Val = decltype(curVal);
+
             _ss.skipCommentsAndWhitespaces();
             loc = this->_curLoc();
 
-            decltype(curVal) value;
+            auto val = _ss.template tryScanConstInt<Val>();
 
-            if (!_ss.scanConstInt(value)) {
-                if (std::is_signed<decltype(value)>::value) {
+            if (!val) {
+                if (std::is_signed<Val>::value) {
                     throwMetadataParseError("Expecting valid constant signed integer.",
                                             this->_curLoc());
                 } else {
@@ -3027,16 +3032,18 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
                 }
             }
 
-            lower = value;
+            lower = *val;
             upper = lower;
             curVal = lower;
 
             if (_ss.tryScanToken("...")) {
-                if (!_ss.scanConstInt(value)) {
+                val = _ss.template tryScanConstInt<Val>();
+
+                if (!val) {
                     throwMetadataParseError("Expecting valid constant integer.", this->_curLoc());
                 }
 
-                upper = value;
+                upper = *val;
                 curVal = upper;
             }
         }
