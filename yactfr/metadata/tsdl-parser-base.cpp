@@ -111,7 +111,7 @@ void TsdlParserBase::_setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudo
             return false;
         }
 
-        if (pseudoElemDt.align() > 8) {
+        if (pseudoElemDt.align() != 8) {
             return false;
         }
 
