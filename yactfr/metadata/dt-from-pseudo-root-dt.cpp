@@ -91,9 +91,7 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoD
 
 StructureType::UP DtFromPseudoRootDtConverter::_structTypeFromPseudoDt(const PseudoDt& pseudoDt)
 {
-    auto dt = this->_dtFromPseudoDt(pseudoDt);
-
-    return StructureType::UP {static_cast<const StructureType *>(dt.release())};
+    return StructureType::UP {static_cast<const StructureType *>(this->_dtFromPseudoDt(pseudoDt).release())};
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudoDt)
