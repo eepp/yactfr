@@ -1,0 +1,210 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "element-field-class": {
+              "member-classes": [
+                {
+                  "field-class": {
+                    "alignment": 8,
+                    "byte-order": "big-endian",
+                    "length": 8,
+                    "mappings": {
+                      "I": [
+                        [
+                          67,
+                          67
+                        ]
+                      ],
+                      "K": [
+                        [
+                          66,
+                          66
+                        ]
+                      ]
+                    },
+                    "type": "fixed-length-unsigned-enumeration"
+                  },
+                  "name": "tag"
+                },
+                {
+                  "field-class": {
+                    "element-field-class": {
+                      "member-classes": [
+                        {
+                          "field-class": {
+                            "element-field-class": {
+                              "options": [
+                                {
+                                  "field-class": {
+                                    "element-field-class": {
+                                      "type": "null-terminated-string"
+                                    },
+                                    "length": 2,
+                                    "type": "static-length-array"
+                                  },
+                                  "name": "K",
+                                  "selector-field-ranges": [
+                                    [
+                                      66,
+                                      66
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "field-class": {
+                                    "element-field-class": {
+                                      "alignment": 8,
+                                      "byte-order": "big-endian",
+                                      "length": 8,
+                                      "type": "fixed-length-unsigned-integer"
+                                    },
+                                    "length": 3,
+                                    "type": "static-length-array"
+                                  },
+                                  "name": "I",
+                                  "selector-field-ranges": [
+                                    [
+                                      67,
+                                      67
+                                    ]
+                                  ]
+                                }
+                              ],
+                              "selector-field-location": [
+                                "event-record-payload",
+                                "hope",
+                                "tag"
+                              ],
+                              "type": "variant"
+                            },
+                            "length": 2,
+                            "type": "static-length-array"
+                          },
+                          "name": "v"
+                        },
+                        {
+                          "field-class": {
+                            "element-field-class": {
+                              "type": "null-terminated-string"
+                            },
+                            "length": 0,
+                            "type": "static-length-array"
+                          },
+                          "name": "zz"
+                        }
+                      ],
+                      "type": "structure"
+                    },
+                    "length": 1,
+                    "type": "static-length-array"
+                  },
+                  "name": "point"
+                }
+              ],
+              "type": "structure"
+            },
+            "length": 2,
+            "type": "static-length-array"
+          },
+          "name": "hope"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+43
+01 02 03
+04 05 06
+
+42
+"purple" 00 "unit" 00
+"planes" 00 "hate" 00
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           SLA:hope {
+     0             ST {
+     0               FLUE:tag:67
+     8               SLA:point {
+     8                 ST {
+     8                   SLA:v {
+     8                     VU:67 {
+     8                       SLA {
+     8                         FLUI:1
+    16                         FLUI:2
+    24                         FLUI:3
+    32                       }
+    32                     }
+    32                     VU:67 {
+    32                       SLA {
+    32                         FLUI:4
+    40                         FLUI:5
+    48                         FLUI:6
+    56                       }
+    56                     }
+    56                   }
+    56                   SLA:zz {
+    56                   }
+    56                 }
+    56               }
+    56             }
+    56             ST {
+    56               FLUE:tag:66
+    64               SLA:point {
+    64                 ST {
+    64                   SLA:v {
+    64                     VU:66 {
+    64                       SLA {
+    64                         NTS {
+    64                           SS:7:purple
+   120                         }
+   120                         NTS {
+   120                           SS:5:unit
+   160                         }
+   160                       }
+   160                     }
+   160                     VU:66 {
+   160                       SLA {
+   160                         NTS {
+   160                           SS:7:planes
+   216                         }
+   216                         NTS {
+   216                           SS:5:hate
+   256                         }
+   256                       }
+   256                     }
+   256                   }
+   256                   SLA:zz {
+   256                   }
+   256                 }
+   256               }
+   256             }
+   256           }
+   256         }
+   256       }
+   256     }
+   256   }
+   256 }

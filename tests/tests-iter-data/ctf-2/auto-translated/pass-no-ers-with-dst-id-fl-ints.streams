@@ -1,0 +1,90 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "roles": [
+              "packet-magic-number"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "magic"
+        },
+        {
+          "field-class": {
+            "length": 16,
+            "roles": [
+              "trace-class-uuid"
+            ],
+            "type": "static-length-blob"
+          },
+          "name": "uuid"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "data-stream-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "stream_id"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class",
+    "uuid": [
+      18,
+      37,
+      164,
+      76,
+      180,
+      57,
+      79,
+      3,
+      145,
+      43,
+      87,
+      125,
+      225,
+      29,
+      68,
+      211
+    ]
+  },
+  {
+    "id": 255,
+    "type": "data-stream-class"
+  }
+]
+----
+c1fc1fc1 1225a44c-b439-4f03-912b-577de11d44d3 ff
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3254525889
+    32         PMN:3254525889
+    32         SLB:uuid:application/octet-stream {
+    32           BS:16:1225a44cb4394f03912b577de11d44d3
+   160           TTU:1225a44c-b439-4f03-912b-577de11d44d3
+   160         }
+   160         FLUI:stream_id:255
+   168       }
+   168     }
+   168     DSI:T255
+   168     PI
+   168   }
+   168 }

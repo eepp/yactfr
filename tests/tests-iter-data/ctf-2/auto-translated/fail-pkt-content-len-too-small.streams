@@ -1,0 +1,57 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 16,
+            "roles": [
+              "packet-content-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "content_size"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "lel"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+0008 01 02 03
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         FLUI:content_size:8
+    16 Expected packet content length (8) is less then current position in packet (16).

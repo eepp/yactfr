@@ -1,0 +1,40 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "roles": [
+              "packet-magic-number"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "magic"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  }
+]
+----
+c1fc1fc1
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3254525889
+    32         PMN:3254525889
+    32       }
+    32     }
+    32     DSI
+    32   }
+    32 }

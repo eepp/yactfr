@@ -1,0 +1,108 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "len2"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "len1"
+        },
+        {
+          "field-class": {
+            "length-field-location": [
+              "event-record-payload",
+              "len1"
+            ],
+            "type": "dynamic-length-string"
+          },
+          "name": "text1"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "zlen"
+        },
+        {
+          "field-class": {
+            "length-field-location": [
+              "event-record-payload",
+              "zlen"
+            ],
+            "type": "dynamic-length-string"
+          },
+          "name": "text2"
+        },
+        {
+          "field-class": {
+            "length-field-location": [
+              "event-record-payload",
+              "len2"
+            ],
+            "type": "dynamic-length-string"
+          },
+          "name": "text3"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+0b 2a
+"I've tasted both the fantasy" 00 " and the deed"
+00
+"dan boucher"
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len2:11
+     8           FLUI:len1:42
+    16           DLS:text1 {
+    16             SS:42:I've tasted both the fantasy
+   352           }
+   352           FLUI:zlen:0
+   360           DLS:text2 {
+   360           }
+   360           DLS:text3 {
+   360             SS:11:dan boucher
+   448           }
+   448         }
+   448       }
+   448     }
+   448   }
+   448 }

@@ -1,0 +1,261 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "data-stream-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "stream_id"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  },
+  {
+    "frequency": 1000000000,
+    "name": "grandiose",
+    "origin-is-unix-epoch": false,
+    "type": "clock-class"
+  },
+  {
+    "frequency": 1000000000,
+    "name": "salut",
+    "origin-is-unix-epoch": false,
+    "type": "clock-class"
+  },
+  {
+    "frequency": 1000000000,
+    "name": "snails",
+    "origin-is-unix-epoch": false,
+    "type": "clock-class"
+  },
+  {
+    "default-clock-class-name": "grandiose",
+    "event-record-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 16,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "a"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "c"
+        }
+      ],
+      "type": "structure"
+    },
+    "id": 2,
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "timestamp_begin"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "roles": [
+              "packet-end-default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "timestamp_end"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 2,
+    "name": "test",
+    "type": "event-record-class"
+  },
+  {
+    "default-clock-class-name": "salut",
+    "id": 5,
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 64,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "clk1"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 64,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "clk2"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  }
+]
+----
+02 00000098 00142513 0fabcdef
+
+    3517 ff
+
+    2222 21
+
+02 00000080 00abcdef ffabcdef
+
+    cdef ff
+
+05 7850cdeb9284a0da 304c7cf61933dec6
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:stream_id:2
+     8       }
+     8     }
+     8     DSI:T2
+     8     SC:1 {
+     8       ST {
+     8         FLUI:packet_size:152
+    40         FLUI:timestamp_begin:1320211
+    72         DCV:1320211
+    72         FLUI:timestamp_end:262917615
+   104       }
+   104     }
+   104     PI:T152:C152:E262917615
+   104     ER {
+   104       SC:2 {
+   104         ST {
+   104           FLUI:a:13591
+   120           DCV:1324311
+   120           FLUI:c:255
+   128           DCV:1324543
+   128         }
+   128       }
+   128       ERI:T0:#test
+   128     }
+   128     ER {
+   128       SC:2 {
+   128         ST {
+   128           FLUI:a:8738
+   144           DCV:1384994
+   144           FLUI:c:33
+   152           DCV:1385249
+   152         }
+   152       }
+   152       ERI:T0:#test
+   152     }
+   152   }
+   152 }
+   152 P {
+   152   PC {
+   152     SC:0 {
+   152       ST {
+   152         FLUI:stream_id:2
+   160       }
+   160     }
+   160     DSI:T2
+   160     SC:1 {
+   160       ST {
+   160         FLUI:packet_size:128
+   192         FLUI:timestamp_begin:11259375
+   224         DCV:11259375
+   224         FLUI:timestamp_end:4289449455
+   256       }
+   256     }
+   256     PI:T128:C128:E4289449455
+   256     ER {
+   256       SC:2 {
+   256         ST {
+   256           FLUI:a:52719
+   272           DCV:11259375
+   272           FLUI:c:255
+   280           DCV:11259391
+   280         }
+   280       }
+   280       ERI:T0:#test
+   280     }
+   280   }
+   280 }
+   280 P {
+   280   PC {
+   280     SC:0 {
+   280       ST {
+   280         FLUI:stream_id:5
+   288       }
+   288     }
+   288     DSI:T5
+   288     SC:1 {
+   288       ST {
+   288         FLUI:clk1:8669655694347378906
+   352         DCV:8669655694347378906
+   352         FLUI:clk2:3480294008477179590
+   416         DCV:3480294008477179590
+   416       }
+   416     }
+   416     PI
+   416   }
+   416 }

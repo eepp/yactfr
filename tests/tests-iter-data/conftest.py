@@ -28,7 +28,50 @@ import re
 import subprocess
 import tempfile
 import pathlib
+import json
 
+
+def _metadata_lines(lines):
+    if lines[0].strip().startswith('['):
+        # CTF 2: convert to JSON text sequence
+        frags = json.loads('\n'.join(lines))
+        json_seq_lines = []
+
+        for frag in frags:
+            json_seq_lines.append('\x1e' + json.dumps(frag))
+
+        lines = json_seq_lines
+    else:
+        # CTF 1: add preamble
+        lines.insert(0, '''/* CTF 1.8 */
+
+typealias integer { size = 8; } := u8;
+typealias integer { size = 16; } := u16;
+typealias integer { size = 32; } := u32;
+typealias integer { size = 64; } := u64;
+typealias integer { size = 8; byte_order = le; } := u8le;
+typealias integer { size = 16; byte_order = le; } := u16le;
+typealias integer { size = 32; byte_order = le; } := u32le;
+typealias integer { size = 64; byte_order = le; } := u64le;
+typealias integer { size = 8; byte_order = be; } := u8be;
+typealias integer { size = 16; byte_order = be; } := u16be;
+typealias integer { size = 32; byte_order = be; } := u32be;
+typealias integer { size = 64; byte_order = be; } := u64be;
+typealias integer { signed = true; size = 8; } := i8;
+typealias integer { signed = true; size = 16; } := i16;
+typealias integer { signed = true; size = 32; } := i32;
+typealias integer { signed = true; size = 64; } := i64;
+typealias integer { signed = true; size = 8; byte_order = le; } := i8le;
+typealias integer { signed = true; size = 16; byte_order = le; } := i16le;
+typealias integer { signed = true; size = 32; byte_order = le; } := i32le;
+typealias integer { signed = true; size = 64; byte_order = le; } := i64le;
+typealias integer { signed = true; size = 8; byte_order = be; } := i8be;
+typealias integer { signed = true; size = 16; byte_order = be; } := i16be;
+typealias integer { signed = true; size = 32; byte_order = be; } := i32be;
+typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
+''')
+
+    return lines
 
 def _split(path):
     with open(path) as f:
@@ -40,7 +83,7 @@ def _split(path):
         if line.strip() == '----':
             split_indexes.append(index)
 
-    metadata_lines = lines[0:split_indexes[0]]
+    metadata_lines = _metadata_lines(lines[0:split_indexes[0]])
     data_lines = lines[split_indexes[0] + 1:split_indexes[1]]
     expect_lines = lines[split_indexes[1] + 1:]
     return metadata_lines, data_lines, expect_lines
@@ -148,33 +191,6 @@ def _create_data_stream(lines, out_dir_path):
 
 def _create_streams(descr_path, out_dir_path):
     metadata_lines, data_lines, expect_lines = _split(descr_path)
-    metadata_lines.insert(0, '''/* CTF 1.8 */
-
-typealias integer { size = 8; } := u8;
-typealias integer { size = 16; } := u16;
-typealias integer { size = 32; } := u32;
-typealias integer { size = 64; } := u64;
-typealias integer { size = 8; byte_order = le; } := u8le;
-typealias integer { size = 16; byte_order = le; } := u16le;
-typealias integer { size = 32; byte_order = le; } := u32le;
-typealias integer { size = 64; byte_order = le; } := u64le;
-typealias integer { size = 8; byte_order = be; } := u8be;
-typealias integer { size = 16; byte_order = be; } := u16be;
-typealias integer { size = 32; byte_order = be; } := u32be;
-typealias integer { size = 64; byte_order = be; } := u64be;
-typealias integer { signed = true; size = 8; } := i8;
-typealias integer { signed = true; size = 16; } := i16;
-typealias integer { signed = true; size = 32; } := i32;
-typealias integer { signed = true; size = 64; } := i64;
-typealias integer { signed = true; size = 8; byte_order = le; } := i8le;
-typealias integer { signed = true; size = 16; byte_order = le; } := i16le;
-typealias integer { signed = true; size = 32; byte_order = le; } := i32le;
-typealias integer { signed = true; size = 64; byte_order = le; } := i64le;
-typealias integer { signed = true; size = 8; byte_order = be; } := i8be;
-typealias integer { signed = true; size = 16; byte_order = be; } := i16be;
-typealias integer { signed = true; size = 32; byte_order = be; } := i32be;
-typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
-''')
     _create_file_from_lines('metadata', metadata_lines, out_dir_path)
     _create_data_stream(data_lines, out_dir_path)
     return '\n'.join(expect_lines)

@@ -1,0 +1,67 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "length": 42,
+            "type": "static-length-string"
+          },
+          "name": "text1"
+        },
+        {
+          "field-class": {
+            "length": 0,
+            "type": "static-length-string"
+          },
+          "name": "text2"
+        },
+        {
+          "field-class": {
+            "length": 11,
+            "type": "static-length-string"
+          },
+          "name": "text3"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+"I've tasted both the fantasy" 00 " and the deed"
+"dan boucher"
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           SLS:text1 {
+     0             SS:42:I've tasted both the fantasy
+   336           }
+   336           SLS:text2 {
+   336           }
+   336           SLS:text3 {
+   336             SS:11:dan boucher
+   424           }
+   424         }
+   424       }
+   424     }
+   424   }
+   424 }

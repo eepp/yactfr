@@ -1,0 +1,85 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "packet-content-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "content_size"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "yy"
+        },
+        {
+          "field-class": {
+            "byte-order": "big-endian",
+            "length": 1,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "rem"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+50
+
+    deadbeef 11
+    feedface 22
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         FLUI:content_size:80
+     8       }
+     8     }
+     8     PI:C80
+     8     ER {
+     8       ERI:T0:#test
+     8       SC:5 {
+     8         ST {
+     8           FLUI:yy:3735928559
+    40           FLUI:rem:0
+    41         }
+    41       }
+    41     }
+    48     ER {
+    48       ERI:T0:#test
+    48       SC:5 {
+    48         ST {
+    48           FLUI:yy:4277009102
+    80 Cannot read 1 bit at this point: would move beyond the content of the current packet (0 bits remaining).

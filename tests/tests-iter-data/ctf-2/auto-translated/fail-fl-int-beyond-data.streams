@@ -1,0 +1,75 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "meow"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+"salut les mecs" 00 deadbeef
+"tomatoes" 00 deadc0de
+"madly" 00 baaaad
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           NTS:salut {
+     0             SS:15:salut les mecs
+   120           }
+   120           FLUI:meow:3735928559
+   152         }
+   152       }
+   152     }
+   152     ER {
+   152       ERI:T0:#test
+   152       SC:5 {
+   152         ST {
+   152           NTS:salut {
+   152             SS:9:tomatoes
+   224           }
+   224           FLUI:meow:3735929054
+   256         }
+   256       }
+   256     }
+   256     ER {
+   256       ERI:T0:#test
+   256       SC:5 {
+   256         ST {
+   256           NTS:salut {
+   256             SS:6:madly
+   304           }
+   304 Cannot read 32 bits at this point: reaching end of data source.

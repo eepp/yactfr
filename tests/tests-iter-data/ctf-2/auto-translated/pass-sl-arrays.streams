@@ -1,0 +1,168 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "element-field-class": {
+              "member-classes": [
+                {
+                  "field-class": {
+                    "element-field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "length": 3,
+                    "type": "static-length-array"
+                  },
+                  "name": "arr"
+                }
+              ],
+              "type": "structure"
+            },
+            "length": 4,
+            "type": "static-length-array"
+          },
+          "name": "arr"
+        },
+        {
+          "field-class": {
+            "element-field-class": {
+              "element-field-class": {
+                "element-field-class": {
+                  "alignment": 8,
+                  "byte-order": "big-endian",
+                  "length": 8,
+                  "type": "fixed-length-unsigned-integer"
+                },
+                "length": 3,
+                "type": "static-length-array"
+              },
+              "length": 2,
+              "type": "static-length-array"
+            },
+            "length": 1,
+            "type": "static-length-array"
+          },
+          "name": "arr3"
+        },
+        {
+          "field-class": {
+            "element-field-class": {
+              "alignment": 8,
+              "byte-order": "big-endian",
+              "length": 8,
+              "type": "fixed-length-unsigned-integer"
+            },
+            "length": 0,
+            "type": "static-length-array"
+          },
+          "name": "arr0"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+"copper" 00 "explain" 00 "truck" 00
+"neat" 00 00 "decisive" 00
+"notice" 00 "hum" 00 "nerve" 00
+"" 00 "blood" 00 "calm" 00
+
+11 22 33 44 55 66
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           SLA:arr {
+     0             ST {
+     0               SLA:arr {
+     0                 NTS {
+     0                   SS:7:copper
+    56                 }
+    56                 NTS {
+    56                   SS:8:explain
+   120                 }
+   120                 NTS {
+   120                   SS:6:truck
+   168                 }
+   168               }
+   168             }
+   168             ST {
+   168               SLA:arr {
+   168                 NTS {
+   168                   SS:5:neat
+   208                 }
+   208                 NTS {
+   208                   SS:1:
+   216                 }
+   216                 NTS {
+   216                   SS:9:decisive
+   288                 }
+   288               }
+   288             }
+   288             ST {
+   288               SLA:arr {
+   288                 NTS {
+   288                   SS:7:notice
+   344                 }
+   344                 NTS {
+   344                   SS:4:hum
+   376                 }
+   376                 NTS {
+   376                   SS:6:nerve
+   424                 }
+   424               }
+   424             }
+   424             ST {
+   424               SLA:arr {
+   424                 NTS {
+   424                   SS:1:
+   432                 }
+   432                 NTS {
+   432                   SS:6:blood
+   480                 }
+   480                 NTS {
+   480                   SS:5:calm
+   520                 }
+   520               }
+   520             }
+   520           }
+   520           SLA:arr3 {
+   520             SLA {
+   520               SLA {
+   520                 FLUI:17
+   528                 FLUI:34
+   536                 FLUI:51
+   544               }
+   544               SLA {
+   544                 FLUI:68
+   552                 FLUI:85
+   560                 FLUI:102
+   568               }
+   568             }
+   568           }
+   568           SLA:arr0 {
+   568           }
+   568         }
+   568       }
+   568     }
+   568   }
+   568 }

@@ -1,0 +1,127 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "roles": [
+              "data-stream-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "stream_id"
+        },
+        {
+          "field-class": {
+            "member-classes": [
+              {
+                "field-class": {
+                  "type": "null-terminated-string"
+                },
+                "name": "aaa"
+              },
+              {
+                "field-class": {
+                  "alignment": 8,
+                  "byte-order": "little-endian",
+                  "length": 8,
+                  "roles": [
+                    "data-stream-class-id"
+                  ],
+                  "type": "fixed-length-unsigned-integer"
+                },
+                "name": "stream_id"
+              }
+            ],
+            "type": "structure"
+          },
+          "name": "s"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  },
+  {
+    "id": 66,
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 66,
+    "name": "test42",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  },
+  {
+    "id": 67,
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 67,
+    "name": "test43",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "hi"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+43 "paste" 00 42
+
+    "the string" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:stream_id:67
+     8         ST:s {
+     8           NTS:aaa {
+     8             SS:6:paste
+    56           }
+    56           FLUI:stream_id:66
+    64         }
+    64       }
+    64     }
+    64     DSI:T66
+    64     PI
+    64     ER {
+    64       ERI:T0:#test42
+    64       SC:5 {
+    64         ST {
+    64           NTS:salut {
+    64             SS:11:the string
+   152           }
+   152         }
+   152       }
+   152     }
+   152   }
+   152 }

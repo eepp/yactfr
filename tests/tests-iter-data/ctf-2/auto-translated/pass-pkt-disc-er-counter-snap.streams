@@ -1,0 +1,127 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "discarded-event-record-counter-snapshot"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "events_discarded"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "str"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+48 02 "coucou" 00
+40 17 "salut" 00
+58 b4 "meow mix" 00
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         FLUI:packet_size:72
+     8         FLUI:events_discarded:2
+    16       }
+    16     }
+    16     PI:T72:C72:D2
+    16     ER {
+    16       ERI:T0:#test
+    16       SC:5 {
+    16         ST {
+    16           NTS:str {
+    16             SS:7:coucou
+    72           }
+    72         }
+    72       }
+    72     }
+    72   }
+    72 }
+    72 P {
+    72   PC {
+    72     DSI:T0
+    72     SC:1 {
+    72       ST {
+    72         FLUI:packet_size:64
+    80         FLUI:events_discarded:23
+    88       }
+    88     }
+    88     PI:T64:C64:D23
+    88     ER {
+    88       ERI:T0:#test
+    88       SC:5 {
+    88         ST {
+    88           NTS:str {
+    88             SS:6:salut
+   136           }
+   136         }
+   136       }
+   136     }
+   136   }
+   136 }
+   136 P {
+   136   PC {
+   136     DSI:T0
+   136     SC:1 {
+   136       ST {
+   136         FLUI:packet_size:88
+   144         FLUI:events_discarded:180
+   152       }
+   152     }
+   152     PI:T88:C88:D180
+   152     ER {
+   152       ERI:T0:#test
+   152       SC:5 {
+   152         ST {
+   152           NTS:str {
+   152             SS:9:meow mix
+   224           }
+   224         }
+   224       }
+   224     }
+   224   }
+   224 }

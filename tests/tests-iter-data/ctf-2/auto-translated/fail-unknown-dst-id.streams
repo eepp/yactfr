@@ -1,0 +1,60 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "data-stream-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "stream_id"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  },
+  {
+    "id": 35,
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 35,
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "lel"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+24 01 02 03
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:stream_id:36
+     8       }
+     8     }
+     8 Data stream type ID 36 doesn't select an existing data stream type.

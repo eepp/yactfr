@@ -1,0 +1,39 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "stream_instance_id"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  }
+]
+----
+"salut" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         NTS:stream_instance_id {
+     0           SS:6:salut
+    48         }
+    48       }
+    48     }
+    48     DSI:T0
+    48     PI
+    48   }
+    48 }

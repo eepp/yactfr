@@ -1,0 +1,143 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "event-record-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "roles": [
+              "event-record-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "id"
+        },
+        {
+          "field-class": {
+            "member-classes": [
+              {
+                "field-class": {
+                  "type": "null-terminated-string"
+                },
+                "name": "aaa"
+              },
+              {
+                "field-class": {
+                  "alignment": 8,
+                  "byte-order": "little-endian",
+                  "length": 8,
+                  "roles": [
+                    "event-record-class-id"
+                  ],
+                  "type": "fixed-length-unsigned-integer"
+                },
+                "name": "id"
+              }
+            ],
+            "type": "structure"
+          },
+          "name": "s"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "id": 66,
+    "name": "test1",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  },
+  {
+    "id": 67,
+    "name": "test1",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "salut"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+43 "paste" 00 42
+"la lampe" 00
+
+42 "paste" 00 43
+deadbeef
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       SC:2 {
+     0         ST {
+     0           FLUI:id:67
+     8           ST:s {
+     8             NTS:aaa {
+     8               SS:6:paste
+    56             }
+    56             FLUI:id:66
+    64           }
+    64         }
+    64       }
+    64       ERI:T66:#test1
+    64       SC:5 {
+    64         ST {
+    64           NTS:salut {
+    64             SS:9:la lampe
+   136           }
+   136         }
+   136       }
+   136     }
+   136     ER {
+   136       SC:2 {
+   136         ST {
+   136           FLUI:id:66
+   144           ST:s {
+   144             NTS:aaa {
+   144               SS:6:paste
+   192             }
+   192             FLUI:id:67
+   200           }
+   200         }
+   200       }
+   200       ERI:T67:#test1
+   200       SC:5 {
+   200         ST {
+   200           FLUI:salut:4022250974
+   232         }
+   232       }
+   232     }
+   232   }
+   232 }

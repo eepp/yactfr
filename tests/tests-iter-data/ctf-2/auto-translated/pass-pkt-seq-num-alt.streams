@@ -1,0 +1,195 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "data-stream-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "stream_id"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "packet-sequence-number"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_seq_num"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "str"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  },
+  {
+    "id": 1,
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 1,
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "str"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+00 50 02 "coucou" 00
+01 40 "salut" 00
+00 60 17 "meow mix" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:stream_id:0
+     8       }
+     8     }
+     8     DSI:T0
+     8     SC:1 {
+     8       ST {
+     8         FLUI:packet_size:80
+    16         FLUI:packet_seq_num:2
+    24       }
+    24     }
+    24     PI:T80:C80:S2
+    24     ER {
+    24       ERI:T0:#test
+    24       SC:5 {
+    24         ST {
+    24           NTS:str {
+    24             SS:7:coucou
+    80           }
+    80         }
+    80       }
+    80     }
+    80   }
+    80 }
+    80 P {
+    80   PC {
+    80     SC:0 {
+    80       ST {
+    80         FLUI:stream_id:1
+    88       }
+    88     }
+    88     DSI:T1
+    88     SC:1 {
+    88       ST {
+    88         FLUI:packet_size:64
+    96       }
+    96     }
+    96     PI:T64:C64
+    96     ER {
+    96       ERI:T0:#test
+    96       SC:5 {
+    96         ST {
+    96           NTS:str {
+    96             SS:6:salut
+   144           }
+   144         }
+   144       }
+   144     }
+   144   }
+   144 }
+   144 P {
+   144   PC {
+   144     SC:0 {
+   144       ST {
+   144         FLUI:stream_id:0
+   152       }
+   152     }
+   152     DSI:T0
+   152     SC:1 {
+   152       ST {
+   152         FLUI:packet_size:96
+   160         FLUI:packet_seq_num:23
+   168       }
+   168     }
+   168     PI:T96:C96:S23
+   168     ER {
+   168       ERI:T0:#test
+   168       SC:5 {
+   168         ST {
+   168           NTS:str {
+   168             SS:9:meow mix
+   240           }
+   240         }
+   240       }
+   240     }
+   240   }
+   240 }

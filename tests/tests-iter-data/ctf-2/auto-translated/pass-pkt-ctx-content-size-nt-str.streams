@@ -1,0 +1,39 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "content_size"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  }
+]
+----
+"meow" 00
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         NTS:content_size {
+     0           SS:5:meow
+    40         }
+    40       }
+    40     }
+    40     PI
+    40   }
+    40 }

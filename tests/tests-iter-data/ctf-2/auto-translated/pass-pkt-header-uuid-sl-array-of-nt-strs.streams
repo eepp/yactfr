@@ -1,0 +1,105 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "element-field-class": {
+              "type": "null-terminated-string"
+            },
+            "length": 16,
+            "type": "static-length-array"
+          },
+          "name": "uuid"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  }
+]
+----
+"1" 00
+"2" 00
+"3" 00
+"4" 00
+"5" 00
+"6" 00
+"7" 00
+"8" 00
+"9" 00
+"10" 00
+"11" 00
+"12" 00
+"13" 00
+"14" 00
+"15" 00
+"16" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         SLA:uuid {
+     0           NTS {
+     0             SS:2:1
+    16           }
+    16           NTS {
+    16             SS:2:2
+    32           }
+    32           NTS {
+    32             SS:2:3
+    48           }
+    48           NTS {
+    48             SS:2:4
+    64           }
+    64           NTS {
+    64             SS:2:5
+    80           }
+    80           NTS {
+    80             SS:2:6
+    96           }
+    96           NTS {
+    96             SS:2:7
+   112           }
+   112           NTS {
+   112             SS:2:8
+   128           }
+   128           NTS {
+   128             SS:2:9
+   144           }
+   144           NTS {
+   144             SS:3:10
+   168           }
+   168           NTS {
+   168             SS:3:11
+   192           }
+   192           NTS {
+   192             SS:3:12
+   216           }
+   216           NTS {
+   216             SS:3:13
+   240           }
+   240           NTS {
+   240             SS:3:14
+   264           }
+   264           NTS {
+   264             SS:3:15
+   288           }
+   288           NTS {
+   288             SS:3:16
+   312           }
+   312         }
+   312       }
+   312     }
+   312     DSI:T0
+   312     PI
+   312   }
+   312 }

@@ -1,0 +1,94 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "len"
+        },
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        },
+        {
+          "field-class": {
+            "length-field-location": [
+              "event-record-payload",
+              "len"
+            ],
+            "type": "dynamic-length-string"
+          },
+          "name": "meow"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+03 "salut les mecs" 00 "sel"
+06 "tomatoes" 00 "poi" 00 "re"
+04 "madly" 00 "ca"
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len:3
+     8           NTS:salut {
+     8             SS:15:salut les mecs
+   128           }
+   128           DLS:meow {
+   128             SS:3:sel
+   152           }
+   152         }
+   152       }
+   152     }
+   152     ER {
+   152       ERI:T0:#test
+   152       SC:5 {
+   152         ST {
+   152           FLUI:len:6
+   160           NTS:salut {
+   160             SS:9:tomatoes
+   232           }
+   232           DLS:meow {
+   232             SS:6:poi
+   280           }
+   280         }
+   280       }
+   280     }
+   280     ER {
+   280       ERI:T0:#test
+   280       SC:5 {
+   280         ST {
+   280           FLUI:len:4
+   288           NTS:salut {
+   288             SS:6:madly
+   336           }
+   336           DLS:meow {
+   336             SS:2:ca
+   352 Cannot read 8 bits at this point: reaching end of data source.

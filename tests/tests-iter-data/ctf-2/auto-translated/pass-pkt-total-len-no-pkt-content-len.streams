@@ -1,0 +1,94 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "str"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+00000158
+
+    "salut tout le monde" 00
+
+    "diet cola" 00
+
+    "learning" 00
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         FLUI:packet_size:344
+    32       }
+    32     }
+    32     PI:T344:C344
+    32     ER {
+    32       ERI:T0:#test
+    32       SC:5 {
+    32         ST {
+    32           NTS:str {
+    32             SS:20:salut tout le monde
+   192           }
+   192         }
+   192       }
+   192     }
+   192     ER {
+   192       ERI:T0:#test
+   192       SC:5 {
+   192         ST {
+   192           NTS:str {
+   192             SS:10:diet cola
+   272           }
+   272         }
+   272       }
+   272     }
+   272     ER {
+   272       ERI:T0:#test
+   272       SC:5 {
+   272         ST {
+   272           NTS:str {
+   272             SS:9:learning
+   344           }
+   344         }
+   344       }
+   344     }
+   344   }
+   344 }

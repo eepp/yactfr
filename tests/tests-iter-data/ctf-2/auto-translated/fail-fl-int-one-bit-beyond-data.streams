@@ -1,0 +1,87 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "meow"
+        },
+        {
+          "field-class": {
+            "byte-order": "big-endian",
+            "length": 1,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "extra"
+        }
+      ],
+      "minimum-alignment": 8,
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+"salut les mecs" 00 deadbeef ff
+"tomatoes" 00 deadc0de ff
+"madly" 00 feedface
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           NTS:salut {
+     0             SS:15:salut les mecs
+   120           }
+   120           FLUI:meow:3735928559
+   152           FLUI:extra:1
+   153         }
+   153       }
+   153     }
+   160     ER {
+   160       ERI:T0:#test
+   160       SC:5 {
+   160         ST {
+   160           NTS:salut {
+   160             SS:9:tomatoes
+   232           }
+   232           FLUI:meow:3735929054
+   264           FLUI:extra:1
+   265         }
+   265       }
+   265     }
+   272     ER {
+   272       ERI:T0:#test
+   272       SC:5 {
+   272         ST {
+   272           NTS:salut {
+   272             SS:6:madly
+   320           }
+   320           FLUI:meow:4277009102
+   352 Cannot read 1 bit at this point: reaching end of data source.

@@ -1,0 +1,772 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "packet-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "roles": [
+              "packet-magic-number"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "magic"
+        },
+        {
+          "field-class": {
+            "length": 16,
+            "roles": [
+              "trace-class-uuid"
+            ],
+            "type": "static-length-blob"
+          },
+          "name": "uuid"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "roles": [
+              "data-stream-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "stream_id"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "trace-class",
+    "uuid": [
+      77,
+      134,
+      224,
+      44,
+      245,
+      39,
+      73,
+      113,
+      185,
+      96,
+      151,
+      29,
+      38,
+      7,
+      75,
+      212
+    ]
+  },
+  {
+    "frequency": 1000000000,
+    "name": "def",
+    "origin-is-unix-epoch": false,
+    "type": "clock-class"
+  },
+  {
+    "default-clock-class-name": "def",
+    "event-record-common-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "mappings": {
+              "BON": [
+                [
+                  1146447479,
+                  1146447479
+                ]
+              ],
+              "JOVI": [
+                [
+                  1146447480,
+                  1146447480
+                ]
+              ]
+            },
+            "type": "fixed-length-unsigned-enumeration"
+          },
+          "name": "ctx1"
+        },
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "ctx2"
+        }
+      ],
+      "type": "structure"
+    },
+    "event-record-header-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "roles": [
+              "event-record-class-id"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "id"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "ts"
+        }
+      ],
+      "type": "structure"
+    },
+    "id": 35,
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "roles": [
+              "packet-content-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "content_size"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "roles": [
+              "default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "timestamp_begin"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "roles": [
+              "packet-end-default-clock-timestamp"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "timestamp_end"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 35,
+    "id": 5,
+    "name": "the variant event",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "mappings": {
+              "ZAG": [
+                [
+                  192,
+                  192
+                ]
+              ],
+              "ZIG": [
+                [
+                  69,
+                  69
+                ]
+              ]
+            },
+            "type": "fixed-length-unsigned-enumeration"
+          },
+          "name": "tag"
+        },
+        {
+          "field-class": {
+            "options": [
+              {
+                "field-class": {
+                  "type": "null-terminated-string"
+                },
+                "name": "BON",
+                "selector-field-ranges": [
+                  [
+                    1146447479,
+                    1146447479
+                  ]
+                ]
+              },
+              {
+                "field-class": {
+                  "element-field-class": {
+                    "alignment": 8,
+                    "byte-order": "little-endian",
+                    "length": 32,
+                    "type": "fixed-length-unsigned-integer"
+                  },
+                  "length-field-location": [
+                    "event-record-header",
+                    "id"
+                  ],
+                  "type": "dynamic-length-array"
+                },
+                "name": "JOVI",
+                "selector-field-ranges": [
+                  [
+                    1146447480,
+                    1146447480
+                  ]
+                ]
+              }
+            ],
+            "selector-field-location": [
+              "event-record-common-context",
+              "ctx1"
+            ],
+            "type": "variant"
+          },
+          "name": "vvv"
+        },
+        {
+          "field-class": {
+            "options": [
+              {
+                "field-class": {
+                  "alignment": 8,
+                  "byte-order": "little-endian",
+                  "length": 16,
+                  "type": "fixed-length-signed-integer"
+                },
+                "name": "ZIG",
+                "selector-field-ranges": [
+                  [
+                    69,
+                    69
+                  ]
+                ]
+              },
+              {
+                "field-class": {
+                  "alignment": 8,
+                  "byte-order": "little-endian",
+                  "length": 64,
+                  "type": "fixed-length-floating-point-number"
+                },
+                "name": "ZAG",
+                "selector-field-ranges": [
+                  [
+                    192,
+                    192
+                  ]
+                ]
+              }
+            ],
+            "selector-field-location": [
+              "event-record-payload",
+              "tag"
+            ],
+            "type": "variant"
+          },
+          "name": "zigzag"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  },
+  {
+    "data-stream-class-id": 35,
+    "id": 29,
+    "name": "coronin",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "z"
+        }
+      ],
+      "type": "structure"
+    },
+    "specific-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "a"
+        }
+      ],
+      "minimum-alignment": 64,
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  },
+  {
+    "data-stream-class-id": 35,
+    "id": 119,
+    "name": "keratin",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-floating-point-number"
+          },
+          "name": "fff"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  },
+  {
+    "id": 255,
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "roles": [
+              "packet-total-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "packet_size"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "len"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "data-stream-class-id": 255,
+    "name": "coucou les coucous",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "len"
+        },
+        {
+          "field-class": {
+            "element-field-class": {
+              "alignment": 8,
+              "byte-order": "little-endian",
+              "length": 8,
+              "type": "fixed-length-unsigned-integer"
+            },
+            "length-field-location": [
+              "packet-context",
+              "len"
+            ],
+            "type": "dynamic-length-array"
+          },
+          "name": "seq1"
+        },
+        {
+          "field-class": {
+            "element-field-class": {
+              "type": "null-terminated-string"
+            },
+            "length-field-location": [
+              "event-record-payload",
+              "len"
+            ],
+            "type": "dynamic-length-array"
+          },
+          "name": "seq2"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
+6003 5803 004d 0090
+
+    1d 00
+    abcdef23 "hello hello" 00 <19>
+    89674523
+    "meow mix" 00
+
+    77 05
+    01000000 "submarine" 00
+    402df84d
+
+    1d 04
+    00996644 "lel" 00 <00 11 22 33 44>
+    deadbeef
+    "KANADA" 00
+
+    <99>
+
+c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 ff
+98020000 0700
+
+    03000000
+    (01 02 03 04 05 06 07)
+    "yes" 00 "sir" 00 "miller" 00
+
+    04000000
+    (aa bb cc dd ee ff 00)
+    "a" 00 "whole" 00 "lotta" 00 "love" 00
+
+c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
+6003 5003 002f 0090
+
+    05 03
+    77665544 "mystery" 00
+    c0 "it's my life" 00 2a806ffc:8c78e23f
+
+    05 09
+    78665544 "parenthesis" 00
+    45 (00000000 11111111 22222222 33333333 44444444) fe ff
+
+    <ff 02>
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3254525889
+    32         PMN:3254525889
+    32         SLB:uuid:application/octet-stream {
+    32           BS:16:4d86e02cf5274971b960971d26074bd4
+   160           TTU:4d86e02c-f527-4971-b960-971d26074bd4
+   160         }
+   160         FLUI:stream_id:35
+   168       }
+   168     }
+   168     DSI:T35
+   168     SC:1 {
+   168       ST {
+   168         FLUI:packet_size:864
+   184         FLUI:content_size:856
+   200         FLUI:timestamp_begin:19712
+   216         DCV:19712
+   216         FLUI:timestamp_end:36864
+   232       }
+   232     }
+   232     PI:T864:C856:E36864
+   232     ER {
+   232       SC:2 {
+   232         ST {
+   232           FLUI:id:29
+   240           FLUI:ts:0
+   248           DCV:19712
+   248         }
+   248       }
+   248       ERI:T29:#coronin
+   248       SC:3 {
+   248         ST {
+   248           FLUE:ctx1:602918315
+   280           NTS:ctx2 {
+   280             SS:12:hello hello
+   376           }
+   376         }
+   376       }
+   384       SC:4 {
+   384         ST {
+   384           FLUI:a:591751049
+   416         }
+   416       }
+   416       SC:5 {
+   416         ST {
+   416           NTS:z {
+   416             SS:9:meow mix
+   488           }
+   488         }
+   488       }
+   488     }
+   488     ER {
+   488       SC:2 {
+   488         ST {
+   488           FLUI:id:119
+   496           FLUI:ts:5
+   504           DCV:19717
+   504         }
+   504       }
+   504       ERI:T119:#keratin
+   504       SC:3 {
+   504         ST {
+   504           FLUE:ctx1:1
+   536           NTS:ctx2 {
+   536             SS:10:submarine
+   616           }
+   616         }
+   616       }
+   616       SC:5 {
+   616         ST {
+   616           FLFPN:fff:2.71828
+   648         }
+   648       }
+   648     }
+   648     ER {
+   648       SC:2 {
+   648         ST {
+   648           FLUI:id:29
+   656           FLUI:ts:4
+   664           DCV:19972
+   664         }
+   664       }
+   664       ERI:T29:#coronin
+   664       SC:3 {
+   664         ST {
+   664           FLUE:ctx1:1147574528
+   696           NTS:ctx2 {
+   696             SS:4:lel
+   728           }
+   728         }
+   728       }
+   768       SC:4 {
+   768         ST {
+   768           FLUI:a:4022250974
+   800         }
+   800       }
+   800       SC:5 {
+   800         ST {
+   800           NTS:z {
+   800             SS:7:KANADA
+   856           }
+   856         }
+   856       }
+   856     }
+   856   }
+   864 }
+   864 P {
+   864   PC {
+   864     SC:0 {
+   864       ST {
+   864         FLUI:magic:3254525889
+   896         PMN:3254525889
+   896         SLB:uuid:application/octet-stream {
+   896           BS:16:4d86e02cf5274971b960971d26074bd4
+  1024           TTU:4d86e02c-f527-4971-b960-971d26074bd4
+  1024         }
+  1024         FLUI:stream_id:255
+  1032       }
+  1032     }
+  1032     DSI:T255
+  1032     SC:1 {
+  1032       ST {
+  1032         FLUI:packet_size:664
+  1064         FLUI:len:7
+  1080       }
+  1080     }
+  1080     PI:T664:C664
+  1080     ER {
+  1080       ERI:T0:#coucou les coucous
+  1080       SC:5 {
+  1080         ST {
+  1080           FLUI:len:3
+  1112           DLA:seq1 {
+  1112             FLUI:1
+  1120             FLUI:2
+  1128             FLUI:3
+  1136             FLUI:4
+  1144             FLUI:5
+  1152             FLUI:6
+  1160             FLUI:7
+  1168           }
+  1168           DLA:seq2 {
+  1168             NTS {
+  1168               SS:4:yes
+  1200             }
+  1200             NTS {
+  1200               SS:4:sir
+  1232             }
+  1232             NTS {
+  1232               SS:7:miller
+  1288             }
+  1288           }
+  1288         }
+  1288       }
+  1288     }
+  1288     ER {
+  1288       ERI:T0:#coucou les coucous
+  1288       SC:5 {
+  1288         ST {
+  1288           FLUI:len:4
+  1320           DLA:seq1 {
+  1320             FLUI:170
+  1328             FLUI:187
+  1336             FLUI:204
+  1344             FLUI:221
+  1352             FLUI:238
+  1360             FLUI:255
+  1368             FLUI:0
+  1376           }
+  1376           DLA:seq2 {
+  1376             NTS {
+  1376               SS:2:a
+  1392             }
+  1392             NTS {
+  1392               SS:6:whole
+  1440             }
+  1440             NTS {
+  1440               SS:6:lotta
+  1488             }
+  1488             NTS {
+  1488               SS:5:love
+  1528             }
+  1528           }
+  1528         }
+  1528       }
+  1528     }
+  1528   }
+  1528 }
+  1528 P {
+  1528   PC {
+  1528     SC:0 {
+  1528       ST {
+  1528         FLUI:magic:3254525889
+  1560         PMN:3254525889
+  1560         SLB:uuid:application/octet-stream {
+  1560           BS:16:4d86e02cf5274971b960971d26074bd4
+  1688           TTU:4d86e02c-f527-4971-b960-971d26074bd4
+  1688         }
+  1688         FLUI:stream_id:35
+  1696       }
+  1696     }
+  1696     DSI:T35
+  1696     SC:1 {
+  1696       ST {
+  1696         FLUI:packet_size:864
+  1712         FLUI:content_size:848
+  1728         FLUI:timestamp_begin:12032
+  1744         DCV:12032
+  1744         FLUI:timestamp_end:36864
+  1760       }
+  1760     }
+  1760     PI:T864:C848:E36864
+  1760     ER {
+  1760       SC:2 {
+  1760         ST {
+  1760           FLUI:id:5
+  1768           FLUI:ts:3
+  1776           DCV:12035
+  1776         }
+  1776       }
+  1776       ERI:T5:#the variant event
+  1776       SC:3 {
+  1776         ST {
+  1776           FLUE:ctx1:1146447479
+  1808           NTS:ctx2 {
+  1808             SS:8:mystery
+  1872           }
+  1872         }
+  1872       }
+  1872       SC:5 {
+  1872         ST {
+  1872           FLUE:tag:192
+  1880           VU:vvv:1146447479 {
+  1880             NTS {
+  1880               SS:13:it's my life
+  1984             }
+  1984           }
+  1984           VU:zigzag:192 {
+  1984             FLFPN:0.577216
+  2048           }
+  2048         }
+  2048       }
+  2048     }
+  2048     ER {
+  2048       SC:2 {
+  2048         ST {
+  2048           FLUI:id:5
+  2056           FLUI:ts:9
+  2064           DCV:12041
+  2064         }
+  2064       }
+  2064       ERI:T5:#the variant event
+  2064       SC:3 {
+  2064         ST {
+  2064           FLUE:ctx1:1146447480
+  2096           NTS:ctx2 {
+  2096             SS:12:parenthesis
+  2192           }
+  2192         }
+  2192       }
+  2192       SC:5 {
+  2192         ST {
+  2192           FLUE:tag:69
+  2200           VU:vvv:1146447480 {
+  2200             DLA {
+  2200               FLUI:0
+  2232               FLUI:286331153
+  2264               FLUI:572662306
+  2296               FLUI:858993459
+  2328               FLUI:1145324612
+  2360             }
+  2360           }
+  2360           VU:zigzag:69 {
+  2360             FLSI:-2
+  2376           }
+  2376         }
+  2376       }
+  2376     }
+  2376   }
+  2392 }

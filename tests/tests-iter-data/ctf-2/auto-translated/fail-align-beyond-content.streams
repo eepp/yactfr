@@ -1,0 +1,81 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "packet-context-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "roles": [
+              "packet-content-length"
+            ],
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "content_size"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "xx"
+        },
+        {
+          "field-class": {
+            "alignment": 32,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "yy"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+50
+
+    22 <11 22 33> deadbeef
+    33 <aa bb cc> feedface
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         FLUI:content_size:80
+     8       }
+     8     }
+     8     PI:C80
+    32     ER {
+    32       ERI:T0:#test
+    32       SC:5 {
+    32         ST {
+    32           FLUI:xx:51
+    64           FLUI:yy:239
+    72         }
+    72       }
+    72     }
+    72 Cannot read 24 bits at this point: would move beyond the content of the current packet (8 bits remaining).

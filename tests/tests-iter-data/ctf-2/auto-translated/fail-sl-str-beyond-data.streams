@@ -1,0 +1,79 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        },
+        {
+          "field-class": {
+            "length": 4,
+            "type": "static-length-string"
+          },
+          "name": "meow"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+"salut les mecs" 00 "boat"
+"tomatoes" 00 "ming"
+"madly" 00 "zoo"
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           NTS:salut {
+     0             SS:15:salut les mecs
+   120           }
+   120           SLS:meow {
+   120             SS:4:boat
+   152           }
+   152         }
+   152       }
+   152     }
+   152     ER {
+   152       ERI:T0:#test
+   152       SC:5 {
+   152         ST {
+   152           NTS:salut {
+   152             SS:9:tomatoes
+   224           }
+   224           SLS:meow {
+   224             SS:4:ming
+   256           }
+   256         }
+   256       }
+   256     }
+   256     ER {
+   256       ERI:T0:#test
+   256       SC:5 {
+   256         ST {
+   256           NTS:salut {
+   256             SS:6:madly
+   304           }
+   304           SLS:meow {
+   304             SS:3:zoo
+   328 Cannot read 8 bits at this point: reaching end of data source.

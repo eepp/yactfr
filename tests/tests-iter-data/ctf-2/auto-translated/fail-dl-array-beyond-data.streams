@@ -1,0 +1,105 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "name": "len"
+        },
+        {
+          "field-class": {
+            "type": "null-terminated-string"
+          },
+          "name": "salut"
+        },
+        {
+          "field-class": {
+            "element-field-class": {
+              "alignment": 8,
+              "byte-order": "big-endian",
+              "length": 8,
+              "type": "fixed-length-unsigned-integer"
+            },
+            "length-field-location": [
+              "event-record-payload",
+              "len"
+            ],
+            "type": "dynamic-length-array"
+          },
+          "name": "meow"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+03 "salut les mecs" 00 11 22 33
+02 "tomatoes" 00 aa bb
+04 "madly" 00 01 02 03
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len:3
+     8           NTS:salut {
+     8             SS:15:salut les mecs
+   128           }
+   128           DLA:meow {
+   128             FLUI:17
+   136             FLUI:34
+   144             FLUI:51
+   152           }
+   152         }
+   152       }
+   152     }
+   152     ER {
+   152       ERI:T0:#test
+   152       SC:5 {
+   152         ST {
+   152           FLUI:len:2
+   160           NTS:salut {
+   160             SS:9:tomatoes
+   232           }
+   232           DLA:meow {
+   232             FLUI:170
+   240             FLUI:187
+   248           }
+   248         }
+   248       }
+   248     }
+   248     ER {
+   248       ERI:T0:#test
+   248       SC:5 {
+   248         ST {
+   248           FLUI:len:4
+   256           NTS:salut {
+   256             SS:6:madly
+   304           }
+   304           DLA:meow {
+   304             FLUI:1
+   312             FLUI:2
+   320             FLUI:3
+   328 Cannot read 8 bits at this point: reaching end of data source.
