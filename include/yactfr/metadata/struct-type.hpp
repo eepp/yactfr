@@ -110,6 +110,12 @@ public:
         return _memberTypes.size();
     }
 
+    /// Whether or not this type is empty.
+    bool isEmpty() const noexcept
+    {
+        return _memberTypes.empty();
+    }
+
     /*!
     @brief
         Returns the member type at the index \p index.

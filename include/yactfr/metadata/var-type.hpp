@@ -96,6 +96,12 @@ public:
         return _opts.size();
     }
 
+    /// Whether or not this type is empty.
+    bool isEmpty() const noexcept
+    {
+        return _opts.empty();
+    }
+
     /*!
     @brief
         Returns the option at the index \p index.
