@@ -16,6 +16,7 @@
 #include "dst.hpp"
 #include "dt.hpp"
 #include "struct-type.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -93,6 +94,12 @@ public:
         Clock types of the trace type (moved).
     @param[in] dataStreamTypes
         Data stream types (moved).
+    @param[in] userAttributes
+        @parblock
+        User attributes.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p majorVersion is 1.
@@ -102,7 +109,7 @@ public:
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
                        boost::optional<boost::uuids::uuid> uuid,
                        StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
-                       DataStreamTypeSet&& dataStreamTypes);
+                       DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
 
     /*
      * Required because internal::TraceTypeImpl has no known size at
@@ -132,6 +139,14 @@ public:
 
     /// Contained data stream types.
     const DataStreamTypeSet& dataStreamTypes() const noexcept;
+
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of the returned map item is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept;
 
     /*!
     @brief

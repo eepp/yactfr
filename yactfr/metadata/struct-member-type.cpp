@@ -9,6 +9,8 @@
 
 #include <yactfr/metadata/struct-member-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 static std::string dispNameFromName(const std::string& name)
@@ -20,16 +22,18 @@ static std::string dispNameFromName(const std::string& name)
     }
 }
 
-StructureMemberType::StructureMemberType(std::string name, DataType::UP dt) :
+StructureMemberType::StructureMemberType(std::string name, DataType::UP dt, MapItem::UP userAttrs) :
     _dispName {dispNameFromName(name)},
     _name {std::move(name)},
-    _dt {std::move(dt)}
+    _dt {std::move(dt)},
+    _userAttrs {std::move(userAttrs)}
 {
 }
 
 std::unique_ptr<const StructureMemberType> StructureMemberType::clone() const
 {
-    return std::make_unique<StructureMemberType>(_name, _dt->clone());
+    return std::make_unique<StructureMemberType>(_name, _dt->clone(),
+                                                 internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StructureMemberType::operator==(const StructureMemberType& other) const noexcept

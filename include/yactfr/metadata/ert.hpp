@@ -14,6 +14,7 @@
 #include <boost/optional.hpp>
 
 #include "aliases.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -59,12 +60,19 @@ public:
         Specific context type, or \c nullptr if none.
     @param[in] payloadType
         Payload type, or \c nullptr if none.
+    @param[in] userAttributes
+        @parblock
+        User attributes.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     */
     explicit EventRecordType(TypeId id, boost::optional<std::string> nameSpace,
                              boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
                              boost::optional<std::string> emfUri,
                              std::unique_ptr<const StructureType> specificContextType,
-                             std::unique_ptr<const StructureType> payloadType);
+                             std::unique_ptr<const StructureType> payloadType,
+                             MapItem::UP userAttributes = nullptr);
 
     /// Numeric ID, unique amongst the IDs of all the event record types
     /// which are part of the same \link DataStreamType data stream
@@ -121,6 +129,17 @@ public:
         return _dst;
     }
 
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of the returned map item is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
     void _setDst(const DataStreamType& dst) const noexcept;
 
@@ -132,6 +151,7 @@ private:
     const boost::optional<std::string> _emfUri;
     std::unique_ptr<const StructureType> _specCtxType;
     std::unique_ptr<const StructureType> _payloadType;
+    const MapItem::UP _userAttrs;
     mutable const DataStreamType *_dst = nullptr;
 };
 

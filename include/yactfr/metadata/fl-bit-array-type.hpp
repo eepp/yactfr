@@ -27,7 +27,8 @@ class FixedLengthBitArrayType :
     public ScalarDataType
 {
 protected:
-    explicit FixedLengthBitArrayType(int kind, unsigned int align, unsigned int len, ByteOrder bo);
+    explicit FixedLengthBitArrayType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
+                                     MapItem::UP userAttrs);
 
 public:
     /*!
@@ -43,6 +44,13 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length bit arrays described by
         this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length bit arrays described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment > 0.
@@ -51,7 +59,9 @@ public:
     @pre
         \p length > 0.
     */
-    explicit FixedLengthBitArrayType(unsigned int alignment, unsigned int length, ByteOrder byteOrder);
+    explicit FixedLengthBitArrayType(unsigned int alignment, unsigned int length,
+                                     ByteOrder byteOrder,
+                                     MapItem::UP userAttributes = nullptr);
 
     /// Length of data stream fixed-length bit arrays (bits) described
     /// by this type.
@@ -70,6 +80,9 @@ public:
     /*!
     @brief
         Less-than operator.
+
+    @attention
+        This operator doesn't consider user attributes.
 
     @param[in] other
         Other fixed-length bit array type to compare to.

@@ -23,7 +23,8 @@ class ArrayType :
     public CompoundDataType
 {
 protected:
-    explicit ArrayType(int kind, unsigned int minAlign, DataType::UP elemType);
+    explicit ArrayType(int kind, unsigned int minAlign, DataType::UP elemType,
+                       MapItem::UP userAttrs);
 
 public:
     /// Type of fields (elements) contained in data stream arrays

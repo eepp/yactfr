@@ -9,11 +9,13 @@
 
 #include <yactfr/metadata/fl-bool-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int align, const unsigned int len,
-                                               const ByteOrder bo) :
-    FixedLengthBitArrayType {_KIND_FL_BOOL, align, len, bo}
+                                               const ByteOrder bo, MapItem::UP userAttrs) :
+    FixedLengthBitArrayType {_KIND_FL_BOOL, align, len, bo, std::move(userAttrs)}
 {
 }
 
@@ -25,7 +27,8 @@ FixedLengthBooleanType::FixedLengthBooleanType(const FixedLengthBooleanType& oth
 DataType::UP FixedLengthBooleanType::_clone() const
 {
     return std::make_unique<FixedLengthBooleanType>(this->alignment(), this->length(),
-                                                    this->byteOrder());
+                                                    this->byteOrder(),
+                                                    internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

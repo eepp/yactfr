@@ -44,6 +44,13 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length floating point numbers
         described by this floating point number type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length floating point
+        numbers described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment > 0.
@@ -53,7 +60,8 @@ public:
         \p length is 32 or 64.
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int alignment, unsigned int length,
-                                                ByteOrder byteOrder);
+                                                ByteOrder byteOrder,
+                                                MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief

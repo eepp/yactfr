@@ -7,11 +7,14 @@
 
 #include <yactfr/metadata/sl-array-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 StaticLengthArrayType::StaticLengthArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                             const Size len, const bool hasTraceTypeUuidRole) :
-    ArrayType {_KIND_SL_ARRAY, minAlign, std::move(elemType)},
+                                             const Size len, MapItem::UP userAttrs,
+                                             const bool hasTraceTypeUuidRole) :
+    ArrayType {_KIND_SL_ARRAY, minAlign, std::move(elemType), std::move(userAttrs)},
     _len {len},
     _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
 {
@@ -21,6 +24,7 @@ DataType::UP StaticLengthArrayType::_clone() const
 {
     return std::make_unique<StaticLengthArrayType>(this->minimumAlignment(),
                                                    this->elementType().clone(), _len,
+                                                   internal::tryCloneUserAttrs(this->userAttributes()),
                                                    _hasTraceTypeUuidRole);
 }
 

@@ -9,22 +9,27 @@
 
 #include <yactfr/metadata/nt-str-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
-NullTerminatedStringType::NullTerminatedStringType(const unsigned int align) :
-    ScalarDataType {_KIND_NT_STR, align}
+NullTerminatedStringType::NullTerminatedStringType(const unsigned int align, MapItem::UP userAttrs) :
+    ScalarDataType {_KIND_NT_STR, align, std::move(userAttrs)}
 {
     assert(align >= 8);
 }
 
 NullTerminatedStringType::NullTerminatedStringType(const NullTerminatedStringType& other) :
-    ScalarDataType {_KIND_NT_STR, other.alignment()}
+    ScalarDataType {
+        _KIND_NT_STR, other.alignment(), internal::tryCloneUserAttrs(other.userAttributes())
+    }
 {
 }
 
 DataType::UP NullTerminatedStringType::_clone() const
 {
-    return std::make_unique<NullTerminatedStringType>(this->alignment());
+    return std::make_unique<NullTerminatedStringType>(this->alignment(),
+                                                      internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool NullTerminatedStringType::_isEqual(const DataType& other) const noexcept

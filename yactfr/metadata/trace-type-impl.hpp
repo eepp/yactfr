@@ -16,6 +16,7 @@
 
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
+#include <yactfr/item.hpp>
 
 #include "../proc.hpp"
 #include "../utils.hpp"
@@ -29,7 +30,8 @@ public:
     explicit TraceTypeImpl(unsigned int majorVersion, unsigned int minorVersion,
                            boost::optional<boost::uuids::uuid> uuid,
                            StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                           DataStreamTypeSet&& dsts, const TraceType& traceType);
+                           DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
+                           const TraceType& traceType);
 
     unsigned int majorVersion() const noexcept
     {
@@ -59,6 +61,11 @@ public:
     const DataStreamTypeSet& dsts() const noexcept
     {
         return _dsts;
+    }
+
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
     }
 
     const DataStreamType *findDst(TypeId id) const noexcept;
@@ -110,6 +117,7 @@ private:
     const ClockTypeSet _clkTypes;
     const DataStreamTypeSet _dsts;
     std::unordered_map<TypeId, const DataStreamType *> _idsToDsts;
+    const MapItem::UP _userAttrs;
     const TraceType *_traceType;
 
     // packet procedure cache; created the first time we need it

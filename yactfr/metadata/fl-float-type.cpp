@@ -9,12 +9,15 @@
 
 #include <yactfr/metadata/fl-float-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int align,
                                                                        const unsigned int len,
-                                                                       const ByteOrder bo) :
-    FixedLengthBitArrayType {_KIND_FL_FLOAT, align, len, bo}
+                                                                       const ByteOrder bo,
+                                                                       MapItem::UP userAttrs) :
+    FixedLengthBitArrayType {_KIND_FL_FLOAT, align, len, bo, std::move(userAttrs)}
 {
     assert(len == 32 || len == 64);
 }
@@ -27,7 +30,8 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const Fix
 DataType::UP FixedLengthFloatingPointNumberType::_clone() const
 {
     return std::make_unique<FixedLengthFloatingPointNumberType>(this->alignment(), this->length(),
-                                                                this->byteOrder());
+                                                                this->byteOrder(),
+                                                                internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

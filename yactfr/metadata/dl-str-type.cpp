@@ -8,17 +8,21 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/bo.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
-DynamicLengthStringType::DynamicLengthStringType(const unsigned int align, DataLocation maxLenLoc) :
-    NonNullTerminatedStringType {_KIND_DL_STR, align},
+DynamicLengthStringType::DynamicLengthStringType(const unsigned int align, DataLocation maxLenLoc,
+                                                 MapItem::UP userAttrs) :
+    NonNullTerminatedStringType {_KIND_DL_STR, align, std::move(userAttrs)},
     _maxLenLoc {std::move(maxLenLoc)}
 {
 }
 
 DataType::UP DynamicLengthStringType::_clone() const
 {
-    return std::make_unique<DynamicLengthStringType>(this->alignment(), _maxLenLoc);
+    return std::make_unique<DynamicLengthStringType>(this->alignment(), _maxLenLoc,
+                                                     internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool DynamicLengthStringType::_isEqual(const DataType& other) const noexcept

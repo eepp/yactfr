@@ -10,14 +10,17 @@
 
 #include <yactfr/metadata/var-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 VariantWithUnsignedSelectorType::VariantWithUnsignedSelectorType(const unsigned int minAlign,
                                                                  Options&& opts,
-                                                                 DataLocation selLoc) :
+                                                                 DataLocation selLoc,
+                                                                 MapItem::UP userAttrs) :
     VariantType {
         DataType::_KIND_VAR_USEL, minAlign, std::move(opts),
-        std::move(selLoc)
+        std::move(selLoc), std::move(userAttrs)
     }
 {
 }
@@ -26,15 +29,16 @@ DataType::UP VariantWithUnsignedSelectorType::_clone() const
 {
     return std::make_unique<VariantWithUnsignedSelectorType>(this->minimumAlignment(),
                                                              this->_cloneOpts(),
-                                                             this->selectorLocation());
+                                                             this->selectorLocation(),
+                                                             internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 VariantWithSignedSelectorType::VariantWithSignedSelectorType(const unsigned int minAlign,
-                                                             Options&& opts,
-                                                             DataLocation selLoc) :
+                                                             Options&& opts, DataLocation selLoc,
+                                                             MapItem::UP userAttrs) :
     VariantType {
         DataType::_KIND_VAR_SSEL, minAlign, std::move(opts),
-        std::move(selLoc)
+        std::move(selLoc), std::move(userAttrs)
     }
 {
 }
@@ -43,7 +47,8 @@ DataType::UP VariantWithSignedSelectorType::_clone() const
 {
     return std::make_unique<VariantWithSignedSelectorType>(this->minimumAlignment(),
                                                            this->_cloneOpts(),
-                                                           this->selectorLocation());
+                                                           this->selectorLocation(),
+                                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

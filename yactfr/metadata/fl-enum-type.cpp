@@ -10,15 +10,18 @@
 
 #include <yactfr/metadata/fl-enum-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigned int align,
                                                                    const unsigned int len,
                                                                    const ByteOrder bo,
                                                                    const Mappings& mappings,
-                                                                   const DisplayBase prefDispBase) :
+                                                                   const DisplayBase prefDispBase,
+                                                                   MapItem::UP userAttrs) :
     EnumerationType<FixedLengthSignedIntegerType, internal::SignedEnumerationTypeValue> {
-        _KIND_FL_SENUM, mappings, align, len, bo, prefDispBase
+        _KIND_FL_SENUM, mappings, align, len, bo, prefDispBase, std::move(userAttrs)
     }
 {
 }
@@ -27,9 +30,10 @@ FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigne
                                                                    const unsigned int len,
                                                                    const ByteOrder bo,
                                                                    Mappings&& mappings,
-                                                                   const DisplayBase prefDispBase) :
+                                                                   const DisplayBase prefDispBase,
+                                                                   MapItem::UP userAttrs) :
     EnumerationType<FixedLengthSignedIntegerType, internal::SignedEnumerationTypeValue> {
-        _KIND_FL_SENUM, std::move(mappings), align, len, bo, prefDispBase
+        _KIND_FL_SENUM, std::move(mappings), align, len, bo, prefDispBase, std::move(userAttrs)
     }
 {
 }
@@ -38,7 +42,8 @@ DataType::UP FixedLengthSignedEnumerationType::_clone() const
 {
     return std::make_unique<FixedLengthSignedEnumerationType>(this->alignment(), this->length(),
                                                               this->byteOrder(), this->mappings(),
-                                                              this->preferredDisplayBase());
+                                                              this->preferredDisplayBase(),
+                                                              internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const unsigned int align,
@@ -46,9 +51,10 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
                                                                        const ByteOrder bo,
                                                                        const Mappings& mappings,
                                                                        const DisplayBase prefDispBase,
+                                                                       MapItem::UP userAttrs,
                                                                        UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<FixedLengthUnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
-        _KIND_FL_UENUM, mappings, align, len, bo, prefDispBase, std::move(roles)
+        _KIND_FL_UENUM, mappings, align, len, bo, prefDispBase, std::move(userAttrs), std::move(roles)
     }
 {
 }
@@ -58,9 +64,11 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
                                                                        const ByteOrder bo,
                                                                        Mappings&& mappings,
                                                                        const DisplayBase prefDispBase,
+                                                                       MapItem::UP userAttrs,
                                                                        UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<FixedLengthUnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
-        _KIND_FL_UENUM, std::move(mappings), align, len, bo, prefDispBase, std::move(roles)
+        _KIND_FL_UENUM, std::move(mappings), align, len, bo, prefDispBase,
+        std::move(userAttrs), std::move(roles)
     }
 {
 }
@@ -71,6 +79,7 @@ DataType::UP FixedLengthUnsignedEnumerationType::_clone() const
                                                                 this->byteOrder(),
                                                                 this->mappings(),
                                                                 this->preferredDisplayBase(),
+                                                                internal::tryCloneUserAttrs(this->userAttributes()),
                                                                 this->roles());
 }
 

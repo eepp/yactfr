@@ -30,11 +30,11 @@ namespace yactfr {
 
 TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
                      boost::optional<boost::uuids::uuid> uuid, StructureType::UP pktHeaderType,
-                     ClockTypeSet&& clkTypes, DataStreamTypeSet&& dsts) :
+                     ClockTypeSet&& clkTypes, DataStreamTypeSet&& dsts, MapItem::UP userAttrs) :
     _pimpl {
         std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(uuid),
                                                   std::move(pktHeaderType), std::move(clkTypes),
-                                                  std::move(dsts), *this)
+                                                  std::move(dsts), std::move(userAttrs), *this)
     }
 {
 #ifndef NDEBUG
@@ -79,6 +79,11 @@ const ClockTypeSet& TraceType::clockTypes() const noexcept
 const DataStreamTypeSet& TraceType::dataStreamTypes() const noexcept
 {
     return _pimpl->dsts();
+}
+
+const MapItem *TraceType::userAttributes() const noexcept
+{
+    return _pimpl->userAttrs();
 }
 
 const DataStreamType *TraceType::operator[](const TypeId id) const

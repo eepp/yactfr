@@ -48,8 +48,8 @@ public:
 
 protected:
     explicit VariantType(const int kind, const unsigned int minAlign, Options&& opts,
-                         DataLocation selLoc) :
-        CompoundDataType {kind, minAlign, 1},
+                         DataLocation selLoc, MapItem::UP userAttrs) :
+        CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
         _opts {std::move(opts)},
         _selLoc {std::move(selLoc)}
     {
@@ -207,6 +207,12 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream variants described by this
         type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variants described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         <code>!options.empty()</code>
@@ -217,7 +223,7 @@ public:
         ranges between them.
     */
     explicit VariantWithUnsignedSelectorType(unsigned int minimumAlignment, Options&& options,
-                                             DataLocation selectorLocation);
+                                             DataLocation selectorLocation, MapItem::UP userAttributes);
 
 private:
     DataType::UP _clone() const override;
@@ -250,6 +256,13 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream variants described by this
         type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variants described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
 
     @pre
         <code>!options.empty()</code>
@@ -260,7 +273,7 @@ public:
         ranges between them.
     */
     explicit VariantWithSignedSelectorType(unsigned int minimumAlignment, Options&& options,
-                                           DataLocation selectorLocation);
+                                           DataLocation selectorLocation, MapItem::UP userAttributes);
 
 private:
     DataType::UP _clone() const override;

@@ -9,8 +9,8 @@
 
 namespace yactfr {
 
-ScalarDataType::ScalarDataType(const int kind, const unsigned int align) :
-    DataType {kind, align}
+ScalarDataType::ScalarDataType(const int kind, const unsigned int align, MapItem::UP userAttrs) :
+    DataType {kind, align, std::move(userAttrs)}
 {
 }
 

@@ -31,20 +31,22 @@
 
 namespace yactfr {
 
-DataType::DataType(const int kind, const unsigned int align) :
-    DataType {static_cast<_Kind>(kind), align}
+DataType::DataType(const int kind, const unsigned int align, MapItem::UP userAttrs) :
+    DataType {static_cast<_Kind>(kind), align, std::move(userAttrs)}
 {
 }
 
-DataType::DataType(const _Kind kind, const unsigned int align) :
+DataType::DataType(const _Kind kind, const unsigned int align, MapItem::UP userAttrs) :
     _theKind {kind},
-    _align {align}
+    _align {align},
+    _userAttrs {std::move(userAttrs)}
 {
 }
 
 bool DataType::operator==(const DataType& other) const noexcept
 {
-    return _theKind == other._theKind && _align == other._align && this->_isEqual(other);
+    return _theKind == other._theKind && _align == other._align &&
+           _userAttrs == other._userAttrs && this->_isEqual(other);
 }
 
 bool DataType::operator!=(const DataType& other) const noexcept

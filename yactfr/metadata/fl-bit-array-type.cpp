@@ -12,8 +12,9 @@
 namespace yactfr {
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned int align,
-                                                 const unsigned int len, const ByteOrder bo) :
-    ScalarDataType {kind, align},
+                                                 const unsigned int len, const ByteOrder bo,
+                                                 MapItem::UP userAttrs) :
+    ScalarDataType {kind, align, std::move(userAttrs)},
     _len {len},
     _bo {bo}
 {
@@ -22,8 +23,9 @@ FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned 
 }
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int align,
-                                                 const unsigned int len, const ByteOrder bo) :
-    FixedLengthBitArrayType {_KIND_FL_BIT_ARRAY, align, len, bo}
+                                                 const unsigned int len, const ByteOrder bo,
+                                                 MapItem::UP userAttrs) :
+    FixedLengthBitArrayType {_KIND_FL_BIT_ARRAY, align, len, bo, std::move(userAttrs)}
 {
 }
 

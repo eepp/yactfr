@@ -23,7 +23,7 @@ class NonNullTerminatedStringType :
     public ScalarDataType
 {
 protected:
-    explicit NonNullTerminatedStringType(int kind, unsigned int align);
+    explicit NonNullTerminatedStringType(int kind, unsigned int align, MapItem::UP userAttrs);
 };
 
 } // namespace yactfr

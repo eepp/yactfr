@@ -12,6 +12,7 @@
 #include <boost/noncopyable.hpp>
 
 #include "dt.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 
@@ -37,8 +38,16 @@ public:
     @param[in] type
         Data type of data stream structure members described by
         this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream structure members described by
+        this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     */
-    explicit StructureMemberType(std::string name, DataType::UP type);
+    explicit StructureMemberType(std::string name, DataType::UP type,
+                                 MapItem::UP userAttributes = nullptr);
 
     /// Name of data stream structure members described by this type.
     const std::string& name() const noexcept
@@ -58,6 +67,17 @@ public:
     const DataType& type() const noexcept
     {
         return *_dt;
+    }
+
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of \p *userAttributes is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept
+    {
+        return _userAttrs.get();
     }
 
     /*!
@@ -100,6 +120,7 @@ private:
     const std::string _dispName;
     const std::string _name;
     const DataType::UP _dt;
+    const MapItem::UP _userAttrs;
 };
 
 } // namespace yactfr

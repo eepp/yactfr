@@ -13,6 +13,7 @@
 #include <boost/noncopyable.hpp>
 
 #include "fwd.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 
@@ -87,8 +88,8 @@ protected:
     };
 
 protected:
-    explicit DataType(int kind, unsigned int alignment);
-    explicit DataType(_Kind kind, unsigned int alignment);
+    explicit DataType(int kind, unsigned int align, MapItem::UP userAttrs);
+    explicit DataType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
 
 public:
     virtual ~DataType() = default;
@@ -97,6 +98,17 @@ public:
     unsigned int alignment() const noexcept
     {
         return _align;
+    }
+
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of the returned map item is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept
+    {
+        return _userAttrs.get();
     }
 
     /// \c true if this type is a bit array type.
@@ -651,6 +663,7 @@ private:
 private:
     const _Kind _theKind;
     unsigned int _align;
+    const MapItem::UP _userAttrs;
 };
 
 /*!

@@ -39,6 +39,13 @@ public:
     @param[in] length
         Length of data stream static-length arrays described by this
         type (count of element).
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream static-length arrays described by
+        this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] hasTraceTypeUuidRole
         Whether or not the static-length arrays described by this type
         have the "trace type UUID" role.
@@ -58,7 +65,8 @@ public:
         @endparblock
     */
     explicit StaticLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
-                                   Size length, bool hasTraceTypeUuidRole = false);
+                                   Size length, MapItem::UP userAttributes = nullptr,
+                                   bool hasTraceTypeUuidRole = false);
 
     /// Length of data stream static-length arrays described by this
     /// type (count of element).

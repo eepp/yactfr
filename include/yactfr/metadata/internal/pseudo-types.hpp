@@ -121,8 +121,10 @@ public:
         VAR_WITH_INT_RANGES,
     };
 
+protected:
+    explicit PseudoDt(MapItem::UP userAttrs, TextLocation loc);
+
 public:
-    explicit PseudoDt(TextLocation loc);
     virtual ~PseudoDt() = default;
     virtual Kind kind() const noexcept = 0;
     virtual bool isEmpty() const;
@@ -148,7 +150,13 @@ public:
         _loc = std::move(loc);
     }
 
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
+    MapItem::UP _userAttrs;
     TextLocation _loc;
 };
 
@@ -169,9 +177,11 @@ class PseudoScalarDtWrapper :
     public PseudoDt
 {
 public:
-    explicit PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc = TextLocation {});
+    explicit PseudoScalarDtWrapper(DataType::UP dt, MapItem::UP userAttrs = nullptr,
+                                   TextLocation loc = TextLocation {});
 
     explicit PseudoScalarDtWrapper(DataType::UP dt, bool hasEncoding,
+                                   MapItem::UP userAttrs = nullptr,
                                    TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -227,7 +237,7 @@ public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
                               DisplayBase prefDispBase, bool hasEncoding = false,
                               boost::optional<std::string> mappedClkTypeName = boost::none,
-                              TextLocation loc = TextLocation {});
+                              MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -313,7 +323,7 @@ public:
                                FixedLengthUnsignedEnumerationType::Mappings mappings,
                                bool hasEncoding = false,
                                boost::optional<std::string> mappedClkTypeName = boost::none,
-                               TextLocation loc = TextLocation {});
+                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -376,7 +386,8 @@ struct PseudoArrayType :
     public PseudoDt
 {
 protected:
-    explicit PseudoArrayType(PseudoDt::UP pseudoElemType, TextLocation loc = TextLocation {});
+    explicit PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAttrs = nullptr,
+                             TextLocation loc = TextLocation {});
 
 public:
     PseudoDt& pseudoElemType() noexcept
@@ -402,7 +413,7 @@ class PseudoSlArrayType final :
 {
 public:
     explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
-                               TextLocation loc = TextLocation {});
+                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -439,7 +450,7 @@ class PseudoDlArrayType final :
 {
 public:
     explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                               TextLocation loc = TextLocation {});
+                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -460,7 +471,7 @@ struct PseudoBlobType :
 {
 protected:
     explicit PseudoBlobType(boost::optional<std::string> mediaType,
-                            TextLocation loc = TextLocation {});
+                            MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
     const boost::optional<std::string>& mediaType() const noexcept
@@ -484,7 +495,7 @@ class PseudoDlBlobType final :
 {
 public:
     explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, boost::optional<std::string> mediaType,
-                              TextLocation loc = TextLocation {});
+                              MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -506,7 +517,8 @@ public:
 
 public:
     explicit PseudoNamedDt() = default;
-    explicit PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt);
+    explicit PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt,
+                           MapItem::UP userAttrs = nullptr);
 
     const std::string& name() const noexcept
     {
@@ -523,9 +535,15 @@ public:
         return *_pseudoDt;
     }
 
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
     std::string _name;
     PseudoDt::UP _pseudoDt;
+    MapItem::UP _userAttrs;
 };
 
 using PseudoNamedDts = std::vector<PseudoNamedDt::UP>;
@@ -538,7 +556,7 @@ class PseudoStructType final :
 {
 public:
     explicit PseudoStructType(unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                              TextLocation loc = TextLocation {});
+                              MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -585,7 +603,8 @@ class PseudoVarType :
 {
 public:
     explicit PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
-                           PseudoNamedDts&& pseudoOpts, TextLocation loc = TextLocation {});
+                           PseudoNamedDts&& pseudoOpts, MapItem::UP userAttrs = nullptr,
+                           TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -652,6 +671,7 @@ public:
      */
     explicit PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                                         PseudoNamedDts&& pseudoOpts, RangeSets&& rangeSets,
+                                        MapItem::UP userAttrs = nullptr,
                                         TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -683,7 +703,7 @@ public:
     explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
                        boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
                        boost::optional<std::string> emfUri, PseudoDt::UP pseudoSpecCtxType,
-                       PseudoDt::UP pseudoPayloadType);
+                       PseudoDt::UP pseudoPayloadType, MapItem::UP userAttrs = nullptr);
 
     PseudoErt(const PseudoErt&) = delete;
     PseudoErt(PseudoErt&&) = default;
@@ -741,6 +761,11 @@ public:
         return _pseudoPayloadType.get();
     }
 
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
     void _validateNotEmpty(const PseudoDst& pseudoDst) const;
     void _validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const;
@@ -753,6 +778,7 @@ private:
     boost::optional<std::string> _emfUri;
     PseudoDt::UP _pseudoSpecCtxType;
     PseudoDt::UP _pseudoPayloadType;
+    MapItem::UP _userAttrs;
 };
 
 /*
@@ -770,7 +796,7 @@ public:
     explicit PseudoDst(TypeId id, boost::optional<std::string> ns,
                        boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
                        PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
-                       const ClockType *defClkType = nullptr);
+                       const ClockType *defClkType = nullptr, MapItem::UP userAttrs = nullptr);
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -839,6 +865,11 @@ public:
         _defClkType = &clkType;
     }
 
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
     void _validateErHeaderType(const PseudoErtSet& pseudoErts) const;
     void _validateNoMappedClkTypeName() const;
@@ -851,6 +882,7 @@ private:
     PseudoDt::UP _pseudoErHeaderType;
     PseudoDt::UP _pseudoErCommonCtxType;
     const ClockType *_defClkType = nullptr;
+    MapItem::UP _userAttrs;
 };
 
 /*
@@ -892,7 +924,7 @@ public:
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
                              ByteOrder nativeBo, boost::optional<boost::uuids::uuid> uuid,
-                             PseudoDt::UP pseudoPktHeaderType);
+                             PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs = nullptr);
 
     /*
      * Validates this pseudo trace type, throwing `MetadataParseError`
@@ -960,6 +992,11 @@ public:
         return _pseudoOrphanErts;
     }
 
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
@@ -969,6 +1006,7 @@ private:
     ClockTypeSet _clkTypes;
     PseudoDsts _pseudoDsts;
     PseudoOrphanErts _pseudoOrphanErts;
+    MapItem::UP _userAttrs;
 };
 
 } // namespace internal

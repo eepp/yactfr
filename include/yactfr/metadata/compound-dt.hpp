@@ -24,7 +24,8 @@ class CompoundDataType :
     public DataType
 {
 protected:
-    explicit CompoundDataType(int kind, unsigned int minAlign, unsigned int align);
+    explicit CompoundDataType(int kind, unsigned int minAlign, unsigned int align,
+                              MapItem::UP userAttrs);
 
 public:
     /// Minimum alignment of the first data stream bit described by this

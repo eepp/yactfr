@@ -9,17 +9,21 @@
 
 #include <yactfr/metadata/sl-str-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
-StaticLengthStringType::StaticLengthStringType(const unsigned int align, const Size maxLen) :
-    NonNullTerminatedStringType {_KIND_SL_STR, align},
+StaticLengthStringType::StaticLengthStringType(const unsigned int align, const Size maxLen,
+                                               MapItem::UP userAttrs) :
+    NonNullTerminatedStringType {_KIND_SL_STR, align, std::move(userAttrs)},
     _maxLen {maxLen}
 {
 }
 
 DataType::UP StaticLengthStringType::_clone() const
 {
-    return std::make_unique<StaticLengthStringType>(this->alignment(), _maxLen);
+    return std::make_unique<StaticLengthStringType>(this->alignment(), _maxLen,
+                                                    internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StaticLengthStringType::_isEqual(const DataType& other) const noexcept

@@ -36,7 +36,8 @@ class VariableLengthIntegerType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit VariableLengthIntegerType(int kind, unsigned int align, DisplayBase prefDispBase);
+    explicit VariableLengthIntegerType(int kind, unsigned int align, DisplayBase prefDispBase,
+                                       MapItem::UP userAttrs);
 
 protected:
     bool _isEqual(const DataType& other) const noexcept override;
@@ -58,6 +59,7 @@ class VariableLengthUnsignedIntegerType :
 protected:
     explicit VariableLengthUnsignedIntegerType(int kind, unsigned int align,
                                                DisplayBase prefDispBase,
+                                               MapItem::UP userAttrs,
                                                UnsignedIntegerTypeRoleSet roles);
 
 public:
@@ -71,8 +73,16 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length unsigned integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] roles
-        Roles of variable-length unsigned integers described by this type.
+        Roles of variable-length unsigned integers described by this
+        type.
 
     @pre
         \p alignment ≥ 8.
@@ -81,6 +91,7 @@ public:
     */
     explicit VariableLengthUnsignedIntegerType(unsigned int alignment,
                                                DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                               MapItem::UP userAttributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
 protected:
@@ -109,7 +120,7 @@ class VariableLengthSignedIntegerType :
 {
 protected:
     explicit VariableLengthSignedIntegerType(int kind, unsigned int align,
-                                             DisplayBase prefDispBase);
+                                             DisplayBase prefDispBase, MapItem::UP userAttrs);
 
 public:
     /*!
@@ -122,6 +133,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length signed integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment ≥ 8.
@@ -129,7 +147,8 @@ public:
         \p alignment is a power of two.
     */
     explicit VariableLengthSignedIntegerType(unsigned int alignment,
-                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL);
+                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                             MapItem::UP userAttributes = nullptr);
 
 private:
     DataType::UP _clone() const override;

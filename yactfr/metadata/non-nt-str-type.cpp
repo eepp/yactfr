@@ -11,8 +11,9 @@
 
 namespace yactfr {
 
-NonNullTerminatedStringType::NonNullTerminatedStringType(const int kind, const unsigned int align) :
-    ScalarDataType {kind, align}
+NonNullTerminatedStringType::NonNullTerminatedStringType(const int kind, const unsigned int align,
+                                                         MapItem::UP userAttrs) :
+    ScalarDataType {kind, align, std::move(userAttrs)}
 {
     assert(align >= 8);
 }

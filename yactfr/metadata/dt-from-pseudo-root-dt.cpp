@@ -23,6 +23,8 @@
 #include <yactfr/metadata/metadata-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 namespace internal {
 
@@ -137,6 +139,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUIntType(const PseudoDt
                                                                   pseudoUIntType.len(),
                                                                   pseudoUIntType.bo(),
                                                                   pseudoUIntType.prefDispBase(),
+                                                                  tryCloneUserAttrs(pseudoUIntType.userAttrs()),
                                                                   pseudoUIntType.roles());
 }
 
@@ -149,6 +152,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoD
                                                                       pseudoUEnumType.bo(),
                                                                       pseudoUEnumType.mappings(),
                                                                       pseudoUEnumType.prefDispBase(),
+                                                                      tryCloneUserAttrs(pseudoUEnumType.userAttrs()),
                                                                       pseudoUEnumType.roles());
 }
 
@@ -173,6 +177,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
 
     return std::make_unique<const StaticLengthArrayType>(1, std::move(elemType),
                                                          pseudoArrayType.len(),
+                                                         tryCloneUserAttrs(pseudoArrayType.userAttrs()),
                                                          pseudoArrayType.hasTraceTypeUuidRole());
 }
 
@@ -213,7 +218,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
     // not visited anymore
     _current.erase(&pseudoArrayType);
 
-    return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemType), lenLoc);
+    return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemType), lenLoc,
+                                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()));
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt& pseudoDt)
@@ -223,9 +229,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt
 
     if (pseudoBlobType.mediaType()) {
         return std::make_unique<const DynamicLengthBlobType>(1, lenLoc,
-                                                             *pseudoBlobType.mediaType());
+                                                             *pseudoBlobType.mediaType(),
+                                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
     } else {
-        return std::make_unique<const DynamicLengthBlobType>(1, lenLoc);
+        return std::make_unique<const DynamicLengthBlobType>(1, lenLoc,
+                                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
     }
 }
 
@@ -238,11 +246,13 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt
         auto memberDt = this->_dtFromPseudoDt(pseudoMemberType->pseudoDt());
 
         memberTypes.push_back(std::make_unique<const StructureMemberType>(pseudoMemberType->name(),
-                                                                          std::move(memberDt)));
+                                                                          std::move(memberDt),
+                                                                          tryCloneUserAttrs(pseudoMemberType->userAttrs())));
     }
 
     return std::make_unique<const StructureType>(pseudoStructType.minAlign(),
-                                                 std::move(memberTypes));
+                                                 std::move(memberTypes),
+                                                 tryCloneUserAttrs(pseudoStructType.userAttrs()));
 }
 
 void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
@@ -505,6 +515,11 @@ void DtFromPseudoRootDtConverter::_throwInvalDataLoc(const std::string& initMsg,
         appendMsgToMetadataParseError(exc, ss.str(), loc);
         throw;
     }
+}
+
+MapItem::UP DtFromPseudoRootDtConverter::_tryCloneUserAttrs(const MapItem * const userAttrs)
+{
+    return tryCloneUserAttrs(userAttrs);
 }
 
 } // namespace internal

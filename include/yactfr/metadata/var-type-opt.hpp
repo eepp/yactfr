@@ -16,6 +16,7 @@
 
 #include "dt.hpp"
 #include "int-range-set.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 
@@ -48,15 +49,23 @@ public:
         Data type of the variant type option.
     @param[in] ranges
         Ranges for which this variant type option is selected (copied).
+    @param[in] userAttributes
+        @parblock
+        User attributes of this variant type option.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p ranges is not empty.
     */
     explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP type,
-                               const RangeSet& ranges) :
+                               const RangeSet& ranges,
+                               MapItem::UP userAttributes = nullptr) :
         _name {std::move(name)},
         _dt {std::move(type)},
-        _ranges {ranges}
+        _ranges {ranges},
+        _userAttrs {std::move(userAttributes)}
     {
         this->_setDispName();
     }
@@ -109,6 +118,17 @@ public:
     const RangeSet& ranges() const noexcept
     {
         return _ranges;
+    }
+
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of \p *userAttributes is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept
+    {
+        return _userAttrs.get();
     }
 
     /// Clone (deep copy) of this variant type option.
@@ -165,6 +185,7 @@ private:
     boost::optional<std::string> _dispName;
     const DataType::UP _dt;
     const RangeSet _ranges;
+    const MapItem::UP _userAttrs;
 };
 
 /*!

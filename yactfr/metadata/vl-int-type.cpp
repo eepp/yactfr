@@ -7,11 +7,14 @@
 
 #include <yactfr/metadata/vl-int-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 VariableLengthIntegerType::VariableLengthIntegerType(const int kind, const unsigned int align,
-                                                     const DisplayBase prefDispBase) :
-    VariableLengthBitArrayType {kind, align},
+                                                     const DisplayBase prefDispBase,
+                                                     MapItem::UP userAttrs) :
+    VariableLengthBitArrayType {kind, align, std::move(userAttrs)},
     IntegerTypeCommon {prefDispBase}
 {
 }
@@ -26,16 +29,20 @@ bool VariableLengthIntegerType::_isEqual(const DataType& other) const noexcept
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const int kind,
                                                                      const unsigned int align,
                                                                      const DisplayBase prefDispBase,
+                                                                     MapItem::UP userAttrs,
                                                                      UnsignedIntegerTypeRoleSet roles) :
-    VariableLengthIntegerType {kind, align, prefDispBase},
+    VariableLengthIntegerType {kind, align, prefDispBase, std::move(userAttrs)},
     UnsignedIntegerTypeCommon {std::move(roles)}
 {
 }
 
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const unsigned int align,
                                                                      const DisplayBase prefDispBase,
+                                                                     MapItem::UP userAttrs,
                                                                      UnsignedIntegerTypeRoleSet roles) :
-    VariableLengthUnsignedIntegerType {_KIND_VL_UINT, align, prefDispBase, std::move(roles)}
+    VariableLengthUnsignedIntegerType {
+        _KIND_VL_UINT, align, prefDispBase, std::move(userAttrs), std::move(roles)
+    }
 {
 }
 
@@ -43,6 +50,7 @@ DataType::UP VariableLengthUnsignedIntegerType::_clone() const
 {
     return std::make_unique<VariableLengthUnsignedIntegerType>(this->alignment(),
                                                                this->preferredDisplayBase(),
+                                                               internal::tryCloneUserAttrs(this->userAttributes()),
                                                                this->roles());
 }
 
@@ -55,21 +63,24 @@ bool VariableLengthUnsignedIntegerType::_isEqual(const DataType& other) const no
 
 VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const int kind,
                                                                  const unsigned int align,
-                                                                 const DisplayBase prefDispBase) :
-    VariableLengthIntegerType {kind, align, prefDispBase}
+                                                                 const DisplayBase prefDispBase,
+                                                                 MapItem::UP userAttrs) :
+    VariableLengthIntegerType {kind, align, prefDispBase, std::move(userAttrs)}
 {
 }
 
 VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const unsigned int align,
-                                                                 const DisplayBase prefDispBase) :
-    VariableLengthIntegerType {_KIND_VL_SINT, align, prefDispBase}
+                                                                 const DisplayBase prefDispBase,
+                                                                 MapItem::UP userAttrs) :
+    VariableLengthIntegerType {_KIND_VL_SINT, align, prefDispBase, std::move(userAttrs)}
 {
 }
 
 DataType::UP VariableLengthSignedIntegerType::_clone() const
 {
     return std::make_unique<VariableLengthSignedIntegerType>(this->alignment(),
-                                                             this->preferredDisplayBase());
+                                                             this->preferredDisplayBase(),
+                                                             internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 } // namespace yactfr

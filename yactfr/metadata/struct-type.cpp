@@ -10,6 +10,8 @@
 
 #include <yactfr/metadata/struct-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 static inline unsigned int realMinAlign(const StructureType::MemberTypes& memberTypes) noexcept
@@ -23,8 +25,9 @@ static inline unsigned int realMinAlign(const StructureType::MemberTypes& member
     return align;
 }
 
-StructureType::StructureType(const unsigned int minAlign, StructureType::MemberTypes&& memberTypes) :
-    CompoundDataType {_KIND_STRUCT, minAlign, realMinAlign(memberTypes)},
+StructureType::StructureType(const unsigned int minAlign, StructureType::MemberTypes&& memberTypes,
+                             MapItem::UP userAttrs) :
+    CompoundDataType {_KIND_STRUCT, minAlign, realMinAlign(memberTypes), std::move(userAttrs)},
     _memberTypes {std::move(memberTypes)}
 {
     this->_initNamesToMemberTypes();
@@ -43,12 +46,12 @@ DataType::UP StructureType::_clone() const
 {
     MemberTypes memberTypes;
 
-    for (const auto& member : _memberTypes) {
-        memberTypes.push_back(std::make_unique<const StructureMemberType>(member->name(),
-                                                                          member->type().clone()));
+    for (const auto& memberType : _memberTypes) {
+        memberTypes.push_back(memberType->clone());
     }
 
-    return std::make_unique<StructureType>(this->minimumAlignment(), std::move(memberTypes));
+    return std::make_unique<StructureType>(this->minimumAlignment(), std::move(memberTypes),
+                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StructureType::_isEqual(const DataType& other) const noexcept

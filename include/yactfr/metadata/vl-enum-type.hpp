@@ -40,6 +40,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         enumerations described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length signed
+        enumerations described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment > 0.
@@ -51,7 +58,8 @@ public:
         Each integer range set within \p mappings is not empty.
     */
     explicit VariableLengthSignedEnumerationType(unsigned int alignment, const Mappings& mappings,
-                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL);
+                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                                 MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
@@ -66,6 +74,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         enumerations described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length signed
+        enumerations described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment > 0.
@@ -77,7 +92,8 @@ public:
         Each integer range set within \p mappings is not empty.
     */
     explicit VariableLengthSignedEnumerationType(unsigned int alignment, Mappings&& mappings,
-                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL);
+                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                                 MapItem::UP userAttributes = nullptr);
 
 private:
     DataType::UP _clone() const override;
@@ -115,6 +131,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         enumerations described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length unsigned
+        enumerations described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] roles
         Roles of variable-length unsigned enumerations described by this
         type.
@@ -131,6 +154,7 @@ public:
     explicit VariableLengthUnsignedEnumerationType(unsigned int alignment,
                                                    const Mappings& mappings,
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                                   MapItem::UP userAttributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
@@ -146,6 +170,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         enumerations described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length unsigned
+        enumerations described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] roles
         Roles of variable-length unsigned enumerations described by this
         type.
@@ -161,6 +192,7 @@ public:
     */
     explicit VariableLengthUnsignedEnumerationType(unsigned int alignment, Mappings&& mappings,
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                                   MapItem::UP userAttributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});
 
 private:

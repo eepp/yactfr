@@ -44,13 +44,21 @@ public:
     @param[in] maximumLengthLocation
         Location of maximum lengths (bytes) of data stream
         dynamic-length strings described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream dynamic-length strings described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
     */
-    explicit DynamicLengthStringType(unsigned int alignment, DataLocation maximumLengthLocation);
+    explicit DynamicLengthStringType(unsigned int alignment, DataLocation maximumLengthLocation,
+                                     MapItem::UP userAttributes = nullptr);
 
     /// Location of maximum lengths (bytes) of data stream
     /// dynamic-length strings described by this type.

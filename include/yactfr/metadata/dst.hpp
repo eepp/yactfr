@@ -17,6 +17,7 @@
 #include "aliases.hpp"
 #include "ert.hpp"
 #include "struct-type.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -80,6 +81,12 @@ public:
         Event record common context type, or \c nullptr if none.
     @param[in] defaultClockType
         Default clock type, or \c nullptr if none.
+    @param[in] userAttributes
+        @parblock
+        User attributes.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     */
     explicit DataStreamType(TypeId id, boost::optional<std::string> nameSpace,
                             boost::optional<std::string> name,
@@ -87,7 +94,8 @@ public:
                             StructureType::UP packetContextType,
                             StructureType::UP eventRecordHeaderType,
                             StructureType::UP eventRecordCommonContextType,
-                            const ClockType *defaultClockType = nullptr);
+                            const ClockType *defaultClockType = nullptr,
+                            MapItem::UP userAttributes = nullptr);
 
     /// Numeric ID, unique amongst the IDs of all the data stream types
     /// which are part of the same \link TraceType trace type\endlink.
@@ -173,6 +181,17 @@ public:
         return _defClkType;
     }
 
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of the returned map item is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
     /// Parent trace type of this type, or \c nullptr if this type is
     /// not part of a trace type yet.
     const TraceType *traceType() const noexcept
@@ -195,6 +214,7 @@ private:
     StructureType::UP _erHeaderType;
     StructureType::UP _erCommonCtxType;
     const ClockType * const _defClkType;
+    const MapItem::UP _userAttrs;
     mutable const TraceType *_traceType = nullptr;
 };
 

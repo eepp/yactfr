@@ -36,13 +36,21 @@ public:
     @param[in] maximumLength
         Maximum length (bytes) of data stream static-length strings
         described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream static-length strings described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
     */
-    explicit StaticLengthStringType(unsigned int alignment, Size maximumLength);
+    explicit StaticLengthStringType(unsigned int alignment, Size maximumLength,
+                                    MapItem::UP userAttributes = nullptr);
 
     /// Maximum length (bytes) of data stream static-length strings
     /// described by this type.

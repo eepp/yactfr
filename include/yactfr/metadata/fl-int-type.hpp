@@ -44,12 +44,15 @@ class FixedLengthIntegerType :
 
 protected:
     explicit FixedLengthIntegerType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
-                                    DisplayBase prefDispBase);
+                                    DisplayBase prefDispBase, MapItem::UP userAttrs);
 
 public:
     /*!
     @brief
         Less-than operator.
+
+    @attention
+        This operator doesn't consider user attributes.
 
     @param[in] other
         Other fixed-length integer type to compare to.
@@ -78,7 +81,8 @@ class FixedLengthSignedIntegerType :
 {
 protected:
     explicit FixedLengthSignedIntegerType(int kind, unsigned int align, unsigned int len,
-                                          ByteOrder bo, DisplayBase prefDispBase);
+                                          ByteOrder bo, DisplayBase prefDispBase,
+                                          MapItem::UP userAttrs);
 
 public:
     /*!
@@ -97,6 +101,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length signed integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p alignment > 0.
@@ -107,11 +118,15 @@ public:
     */
     explicit FixedLengthSignedIntegerType(unsigned int alignment, unsigned int length,
                                           ByteOrder byteOrder,
-                                          DisplayBase preferredDisplayBase = DisplayBase::DECIMAL);
+                                          DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                          MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
         Less-than operator.
+
+    @attention
+        This operator doesn't consider user attributes.
 
     @param[in] other
         Other fixed-length signed integer type to compare to.
@@ -150,6 +165,7 @@ class FixedLengthUnsignedIntegerType :
 protected:
     explicit FixedLengthUnsignedIntegerType(int kind, unsigned int align, unsigned int len,
                                             ByteOrder bo, DisplayBase prefDispBase,
+                                            MapItem::UP userAttrs,
                                             UnsignedIntegerTypeRoleSet roles);
 
 public:
@@ -169,6 +185,13 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length unsigned integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] roles
         Roles of fixed-length unsigned integers described by this type.
 
@@ -182,6 +205,7 @@ public:
     explicit FixedLengthUnsignedIntegerType(unsigned int alignment, unsigned int length,
                                             ByteOrder byteOrder,
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                            MapItem::UP userAttributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});
 
     /*!

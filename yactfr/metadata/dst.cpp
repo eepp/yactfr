@@ -18,7 +18,8 @@ namespace yactfr {
 DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
                                boost::optional<std::string> name, EventRecordTypeSet&& erts,
                                StructureType::UP pktCtxType, StructureType::UP erHeaderType,
-                               StructureType::UP erCommonCtxType, const ClockType *defClkType) :
+                               StructureType::UP erCommonCtxType,
+                               const ClockType * const defClkType, MapItem::UP userAttrs) :
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
@@ -26,7 +27,8 @@ DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
     _pktCtxType {std::move(pktCtxType)},
     _erHeaderType {std::move(erHeaderType)},
     _erCommonCtxType {std::move(erCommonCtxType)},
-    _defClkType {defClkType}
+    _defClkType {defClkType},
+    _userAttrs {std::move(userAttrs)}
 {
     this->_buildErtMap();
     // TODO: Add validation.

@@ -25,6 +25,7 @@
 
 #include "../../aliases.hpp"
 #include "../../trace-env.hpp"
+#include "../../item.hpp"
 #include "../trace-type.hpp"
 #include "../data-loc.hpp"
 #include "../dst.hpp"
@@ -204,6 +205,8 @@ private:
     template <typename MappingsT>
     static bool _enumTypeMappingsOverlap(const MappingsT& mappings);
 
+    static MapItem::UP _tryCloneUserAttrs(const MapItem *userAttrs);
+
 private:
     // final yactfr data type
     StructureType::UP _dt;
@@ -300,7 +303,8 @@ DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
         }
 
         if (hasEncoding && align == 8 && elemLen == 8) {
-            return std::make_unique<const StrTypeT>(8, std::forward<LenT>(len));
+            return std::make_unique<const StrTypeT>(8, std::forward<LenT>(len),
+                                                    this->_tryCloneUserAttrs(pseudoArrayType.userAttrs()));
         }
     }
 
@@ -352,13 +356,16 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
         }
 
         opts.push_back(std::make_unique<const typename VarTypeT::Option>(pseudoOpt->name(),
-                                                                         std::move(optDt), rangesIt->second));
+                                                                         std::move(optDt),
+                                                                         rangesIt->second,
+                                                                         this->_tryCloneUserAttrs(pseudoOpt->userAttrs())));
     }
 
     // not visited anymore
     _current.erase(&pseudoVarType);
 
-    return std::make_unique<const VarTypeT>(1, std::move(opts), selLoc);
+    return std::make_unique<const VarTypeT>(1, std::move(opts), selLoc,
+                                            this->_tryCloneUserAttrs(pseudoVarType.userAttrs()));
 }
 
 template <typename VarTypeT, typename IntRangeValueT>
@@ -384,13 +391,15 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
 
         opts.push_back(std::make_unique<const typename VarTypeT::Option>(pseudoOpt->name(),
                                                                          std::move(optDt),
-                                                                         IntegerRangeSet<IntRangeValueT> {std::move(ranges)}));
+                                                                         IntegerRangeSet<IntRangeValueT> {std::move(ranges)},
+                                                                         this->_tryCloneUserAttrs(pseudoOpt->userAttrs())));
     }
 
     // not visited anymore
     _current.erase(&pseudoVarType);
 
-    return std::make_unique<const VarTypeT>(1, std::move(opts), selLoc);
+    return std::make_unique<const VarTypeT>(1, std::move(opts), selLoc,
+                                            this->_tryCloneUserAttrs(pseudoVarType.userAttrs()));
 }
 
 } // namespace internal

@@ -47,6 +47,13 @@ public:
     @param[in] lengthLocation
         Location of lengths of data stream dynamic-length arrays
         described by this type (number of elements).
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream dynamic-length arrays described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p minimumAlignment > 0.
@@ -56,7 +63,8 @@ public:
         \p lengthLocation only locates unsigned integers.
     */
     explicit DynamicLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
-                                    DataLocation lengthLocation);
+                                    DataLocation lengthLocation,
+                                    MapItem::UP userAttributes = nullptr);
 
     /// Location of lengths of data stream dynamic-length arrays
     /// described by this type.

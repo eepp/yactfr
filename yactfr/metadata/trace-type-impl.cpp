@@ -24,13 +24,15 @@ namespace internal {
 TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int minorVersion,
                              boost::optional<boost::uuids::uuid> uuid,
                              StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                             DataStreamTypeSet&& dsts, const TraceType& traceType) :
+                             DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
+                             const TraceType& traceType) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
     _uuid {std::move(uuid)},
     _pktHeaderType {std::move(pktHeaderType)},
     _clkTypes {std::move(clkTypes)},
     _dsts {std::move(dsts)},
+    _userAttrs {std::move(userAttrs)},
     _traceType {&traceType}
 {
     this->_buildDstMap();

@@ -16,6 +16,7 @@
 #include "aliases.hpp"
 #include "clk-offset.hpp"
 #include "clk-value-interval.hpp"
+#include "../item.hpp"
 
 namespace yactfr {
 
@@ -50,6 +51,12 @@ public:
     @param[in] originIsUnixEpoch
         \c true if this clock type describes clocks of which the origin
         is 1970-01-01T00:00:00Z.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream clocks described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
 
     @pre
         \p frequency is greater than 0.
@@ -61,7 +68,7 @@ public:
                        boost::optional<std::string> description = boost::none,
                        boost::optional<boost::uuids::uuid> uuid = boost::none,
                        Cycles precision = 0, const ClockOffset& offset = ClockOffset {},
-                       bool originIsUnixEpoch = true);
+                       bool originIsUnixEpoch = true, MapItem::UP userAttributes = nullptr);
 
     /// Name.
     const boost::optional<std::string>& name() const noexcept
@@ -122,6 +129,17 @@ public:
         return _originIsUnixEpoch;
     }
 
+    /*!
+    @brief
+        User attributes.
+
+    If set, each key of \p *userAttributes is a namespace.
+    */
+    const MapItem *userAttributes() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
 private:
     const boost::optional<std::string> _name;
     const unsigned long long _freq;
@@ -130,6 +148,7 @@ private:
     const Cycles _prec;
     const ClockOffset _offset;
     const bool _originIsUnixEpoch;
+    const MapItem::UP _userAttrs;
 };
 
 } // namespace yactfr

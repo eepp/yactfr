@@ -7,11 +7,13 @@
 
 #include <yactfr/metadata/dl-array-type.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 
 DynamicLengthArrayType::DynamicLengthArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                               DataLocation lenLoc) :
-    ArrayType {_KIND_DL_ARRAY, minAlign, std::move(elemType)},
+                                               DataLocation lenLoc, MapItem::UP userAttrs) :
+    ArrayType {_KIND_DL_ARRAY, minAlign, std::move(elemType), std::move(userAttrs)},
     _lenLoc {std::move(lenLoc)}
 {
 }
@@ -19,7 +21,8 @@ DynamicLengthArrayType::DynamicLengthArrayType(const unsigned int minAlign, Data
 DataType::UP DynamicLengthArrayType::_clone() const
 {
     return std::make_unique<DynamicLengthArrayType>(this->alignment(), this->elementType().clone(),
-                                                    _lenLoc);
+                                                    _lenLoc,
+                                                    internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool DynamicLengthArrayType::_isEqual(const DataType& other) const noexcept

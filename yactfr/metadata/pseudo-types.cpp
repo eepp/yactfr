@@ -26,6 +26,8 @@
 #include <yactfr/metadata/metadata-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
+#include "utils.hpp"
+
 namespace yactfr {
 namespace internal {
 
@@ -39,7 +41,8 @@ PseudoDataLoc::PseudoDataLoc(const bool isEnv, const bool isAbs, const Scope sco
 {
 }
 
-PseudoDt::PseudoDt(TextLocation loc) :
+PseudoDt::PseudoDt(MapItem::UP userAttrs, TextLocation loc) :
+    _userAttrs {std::move(userAttrs)},
     _loc {std::move(loc)}
 {
 }
@@ -64,14 +67,16 @@ bool PseudoDt::isFlUInt() const noexcept
     return false;
 }
 
-PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) :
-    PseudoDt {std::move(loc)},
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, MapItem::UP userAttrs,
+                                             TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _dt {std::move(dt)}
 {
 }
 
-PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEncoding, TextLocation loc) :
-    PseudoDt {std::move(loc)},
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEncoding,
+                                             MapItem::UP userAttrs, TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _dt {std::move(dt)},
     _hasEncoding {hasEncoding}
 {
@@ -79,7 +84,9 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEnco
 
 PseudoDt::UP PseudoScalarDtWrapper::clone() const
 {
-    return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), this->loc());
+    return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(),
+                                                   tryCloneUserAttrs(this->userAttrs()),
+                                                   this->loc());
 }
 
 bool PseudoScalarDtWrapper::isEmpty() const
@@ -111,8 +118,8 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
                                    const ByteOrder bo, const DisplayBase prefDispBase,
                                    const bool hasEncoding,
                                    boost::optional<std::string> mappedClkTypeName,
-                                   TextLocation loc) :
-    PseudoDt {std::move(loc)},
+                                   MapItem::UP userAttrs, TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _align {align},
     _len {len},
     _bo {bo},
@@ -125,7 +132,8 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
 PseudoDt::UP PseudoFlUIntType::clone() const
 {
     return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
-                                              _mappedClkTypeName, this->loc());
+                                              _mappedClkTypeName,
+                                              tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 void PseudoFlUIntType::accept(PseudoDtVisitor& visitor)
@@ -158,10 +166,10 @@ PseudoFlUEnumType::PseudoFlUEnumType(const unsigned int align, const unsigned in
                                      FixedLengthUnsignedEnumerationType::Mappings mappings,
                                      const bool hasEncoding,
                                      boost::optional<std::string> mappedClkTypeName,
-                                     TextLocation loc) :
+                                     MapItem::UP userAttrs, TextLocation loc) :
     PseudoFlUIntType {
         align, len, bo, prefDispBase, hasEncoding,
-        std::move(mappedClkTypeName), std::move(loc)
+        std::move(mappedClkTypeName), std::move(userAttrs), std::move(loc)
     },
     _mappings {std::move(mappings)}
 {
@@ -172,7 +180,7 @@ PseudoDt::UP PseudoFlUEnumType::clone() const
     return std::make_unique<PseudoFlUEnumType>(this->align(), this->len(), this->bo(),
                                                this->prefDispBase(), _mappings,
                                                this->hasEncoding(), this->mappedClkTypeName(),
-                                               this->loc());
+                                               tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 void PseudoFlUEnumType::accept(PseudoDtVisitor& visitor)
@@ -195,21 +203,24 @@ PseudoDlType::PseudoDlType(PseudoDataLoc pseudoLenLoc) :
 {
 }
 
-PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, TextLocation loc) :
-    PseudoDt {std::move(loc)},
+PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAttrs,
+                                 TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _pseudoElemType {std::move(pseudoElemType)}
 {
 }
 
-PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType, TextLocation loc) :
-    PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
+PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType,
+                                     MapItem::UP userAttrs, TextLocation loc) :
+    PseudoArrayType {std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
     PseudoSlType {len}
 {
 }
 
 PseudoDt::UP PseudoSlArrayType::clone() const
 {
-    return std::make_unique<PseudoSlArrayType>(_len, this->pseudoElemType().clone(), this->loc());
+    return std::make_unique<PseudoSlArrayType>(_len, this->pseudoElemType().clone(),
+                                               tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 bool PseudoSlArrayType::isEmpty() const
@@ -232,8 +243,8 @@ void PseudoSlArrayType::accept(ConstPseudoDtVisitor& visitor) const
 }
 
 PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                                     TextLocation loc) :
-    PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
+                                     MapItem::UP userAttrs, TextLocation loc) :
+    PseudoArrayType {std::move(pseudoElemType), std::move(userAttrs), std::move(loc)},
     PseudoDlType {std::move(pseudoLenLoc)}
 {
 }
@@ -241,7 +252,7 @@ PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP ps
 PseudoDt::UP PseudoDlArrayType::clone() const
 {
     return std::make_unique<PseudoDlArrayType>(_pseudoLenLoc, this->pseudoElemType().clone(),
-                                               this->loc());
+                                               tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 bool PseudoDlArrayType::isEmpty() const
@@ -259,22 +270,25 @@ void PseudoDlArrayType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, TextLocation loc) :
-    PseudoDt {std::move(loc)},
+PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::UP userAttrs,
+                               TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _mediaType {std::move(mediaType)}
 {
 }
 
 PseudoDlBlobType::PseudoDlBlobType(PseudoDataLoc pseudoLenLoc,
-                                   boost::optional<std::string> mediaType, TextLocation loc) :
-    PseudoBlobType {std::move(mediaType), std::move(loc)},
+                                   boost::optional<std::string> mediaType, MapItem::UP userAttrs,
+                                   TextLocation loc) :
+    PseudoBlobType {std::move(mediaType), std::move(userAttrs), std::move(loc)},
     PseudoDlType {std::move(pseudoLenLoc)}
 {
 }
 
 PseudoDt::UP PseudoDlBlobType::clone() const
 {
-    return std::make_unique<PseudoDlBlobType>(_pseudoLenLoc, this->mediaType(), this->loc());
+    return std::make_unique<PseudoDlBlobType>(_pseudoLenLoc, this->mediaType(),
+                                              tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 void PseudoDlBlobType::accept(PseudoDtVisitor& visitor)
@@ -287,15 +301,16 @@ void PseudoDlBlobType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoNamedDt::PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt) :
+PseudoNamedDt::PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt, MapItem::UP userAttrs) :
     _name {std::move(name)},
-    _pseudoDt {std::move(pseudoDt)}
+    _pseudoDt {std::move(pseudoDt)},
+    _userAttrs {std::move(userAttrs)}
 {
 }
 
 PseudoStructType::PseudoStructType(const unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                                   TextLocation loc) :
-    PseudoDt {std::move(loc)},
+                                   MapItem::UP userAttrs, TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _minAlign {minAlign},
     _pseudoMemberTypes {std::move(pseudoMemberTypes)}
 {
@@ -307,12 +322,14 @@ PseudoDt::UP PseudoStructType::clone() const
 
     for (const auto& pseudoMemberType : _pseudoMemberTypes) {
         auto newPseudoMemberType = std::make_unique<PseudoNamedDt>(pseudoMemberType->name(),
-                                                                   pseudoMemberType->pseudoDt().clone());
+                                                                   pseudoMemberType->pseudoDt().clone(),
+                                                                   tryCloneUserAttrs(pseudoMemberType->userAttrs()));
 
         newPseudoMembers.push_back(std::move(newPseudoMemberType));
     }
 
-    return std::make_unique<PseudoStructType>(_minAlign, std::move(newPseudoMembers), this->loc());
+    return std::make_unique<PseudoStructType>(_minAlign, std::move(newPseudoMembers),
+                                              tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 bool PseudoStructType::isEmpty() const
@@ -354,9 +371,9 @@ const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const
     return it->get();
 }
 
-PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc, PseudoNamedDts&& pseudoOpts,
-                             TextLocation loc) :
-    PseudoDt {std::move(loc)},
+PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+                             PseudoNamedDts&& pseudoOpts, MapItem::UP userAttrs, TextLocation loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
     _pseudoSelLoc {std::move(pseudoSelLoc)},
     _pseudoOpts {std::move(pseudoOpts)}
 {
@@ -368,7 +385,8 @@ PseudoNamedDts PseudoVarType::_clonePseudoOpts() const
 
     for (const auto& pseudoOpt : _pseudoOpts) {
         auto newPseudoOpt = std::make_unique<PseudoNamedDt>(pseudoOpt->name(),
-                                                            pseudoOpt->pseudoDt().clone());
+                                                            pseudoOpt->pseudoDt().clone(),
+                                                            tryCloneUserAttrs(pseudoOpt->userAttrs()));
 
         newPseudoOpts.push_back(std::move(newPseudoOpt));
     }
@@ -378,7 +396,8 @@ PseudoNamedDts PseudoVarType::_clonePseudoOpts() const
 
 PseudoDt::UP PseudoVarType::clone() const
 {
-   return std::make_unique<PseudoVarType>(_pseudoSelLoc, this->_clonePseudoOpts(), this->loc());
+   return std::make_unique<PseudoVarType>(_pseudoSelLoc, this->_clonePseudoOpts(),
+                                          tryCloneUserAttrs(this->userAttrs()), this->loc());
 }
 
 bool PseudoVarType::isEmpty() const
@@ -404,8 +423,11 @@ void PseudoVarType::accept(ConstPseudoDtVisitor& visitor) const
 
 PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                                                        PseudoNamedDts&& pseudoOpts,
-                                                       RangeSets&& rangeSets, TextLocation loc) :
-    PseudoVarType {std::move(pseudoSelLoc), std::move(pseudoOpts), std::move(loc)},
+                                                       RangeSets&& rangeSets,
+                                                       MapItem::UP userAttrs, TextLocation loc) :
+    PseudoVarType {
+        std::move(pseudoSelLoc), std::move(pseudoOpts), std::move(userAttrs), std::move(loc)
+    },
     _rangeSets {std::move(rangeSets)}
 {
     assert(this->pseudoOpts().size() == _rangeSets.size());
@@ -417,7 +439,9 @@ PseudoDt::UP PseudoVarWithIntRangesType::clone() const
 
     return std::make_unique<PseudoVarWithIntRangesType>(this->pseudoSelLoc(),
                                                         this->_clonePseudoOpts(),
-                                                        std::move(rangeSets), this->loc());
+                                                        std::move(rangeSets),
+                                                        tryCloneUserAttrs(this->userAttrs()),
+                                                        this->loc());
 }
 
 void PseudoVarWithIntRangesType::accept(PseudoDtVisitor& visitor)
@@ -430,16 +454,18 @@ void PseudoVarWithIntRangesType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns, boost::optional<std::string> name,
-                     boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
-                     PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType) :
+PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
+                     boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
+                     boost::optional<std::string> emfUri, PseudoDt::UP pseudoSpecCtxType,
+                     PseudoDt::UP pseudoPayloadType, MapItem::UP userAttrs) :
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
     _logLevel {std::move(logLevel)},
     _emfUri {std::move(emfUri)},
     _pseudoSpecCtxType {std::move(pseudoSpecCtxType)},
-    _pseudoPayloadType {std::move(pseudoPayloadType)}
+    _pseudoPayloadType {std::move(pseudoPayloadType)},
+    _userAttrs {std::move(userAttrs)}
 {
 }
 
@@ -568,14 +594,15 @@ PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
 PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
                      PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
-                     const ClockType * const defClkType) :
+                     const ClockType * const defClkType, MapItem::UP userAttrs) :
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
     _pseudoPktCtxType {std::move(pseudoPktCtxType)},
     _pseudoErHeaderType {std::move(pseudoErHeaderType)},
     _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)},
-    _defClkType {defClkType}
+    _defClkType {defClkType},
+    _userAttrs {std::move(userAttrs)}
 {
 }
 
@@ -664,13 +691,15 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 }
 
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                                 const ByteOrder nativeBo, boost::optional<boost::uuids::uuid> uuid,
-                                 PseudoDt::UP pseudoPktHeaderType) :
+                                 const ByteOrder nativeBo,
+                                 boost::optional<boost::uuids::uuid> uuid,
+                                 PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
     _nativeBo {nativeBo},
     _uuid {std::move(uuid)},
-    _pseudoPktHeaderType {std::move(pseudoPktHeaderType)}
+    _pseudoPktHeaderType {std::move(pseudoPktHeaderType)},
+    _userAttrs {std::move(userAttrs)}
 {
 }
 

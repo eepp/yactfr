@@ -1320,10 +1320,10 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
         auto intType = std::make_unique<const FixedLengthSignedIntegerType>(align, size, bo, dispBase);
 
         pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), hasEncoding,
-                                                           beforeKwLoc);
+                                                           nullptr, beforeKwLoc);
     } else {
         pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, hasEncoding,
-                                                    mappedClkTypeName, beforeKwLoc);
+                                                      mappedClkTypeName, nullptr, beforeKwLoc);
     }
 
     assert(pseudoDt);
@@ -1419,7 +1419,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
                                                                                 expDig + mantDig,
                                                                                 bo);
 
-    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), beginLoc);
+    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), nullptr, beginLoc);
 }
 
 template <typename CharIt>
@@ -1437,7 +1437,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
     // try to parse `{`
     if (!_ss.scanToken("{")) {
         return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
-                                                       beginLoc);
+                                                       nullptr, beginLoc);
     }
 
     // parse attributes
@@ -1468,7 +1468,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
         }
     }
 
-    return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8), beginLoc);
+    return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
+                                                   nullptr, beginLoc);
 }
 
 template <typename CharIt>
@@ -1583,7 +1584,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
                                                        pseudoUIntType.len(), pseudoUIntType.bo(),
                                                        pseudoUIntType.prefDispBase(), mappings,
                                                        pseudoUIntType.hasEncoding(),
-                                                       pseudoUIntType.mappedClkTypeName(),
+                                                       pseudoUIntType.mappedClkTypeName(), nullptr,
                                                        pseudoDt.loc());
         });
     } else {
@@ -1598,7 +1599,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
                                                                                mappings,
                                                                                intType.preferredDisplayBase());
 
-            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), pseudoDt.loc());
+            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), nullptr,
+                                                           pseudoDt.loc());
         });
     }
 }
@@ -1698,7 +1700,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
             }
 
             pseudoDt = std::make_unique<PseudoStructType>(align, std::move(pseudoMemberTypes),
-                                                          beginLoc);
+                                                          nullptr, beginLoc);
         }
     }
 
@@ -1802,7 +1804,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
             // check for duplicate option
             TsdlParser::_checkDupPseudoNamedDt(opts, beginLoc);
 
-            pseudoDt = std::make_unique<PseudoVarType>(pseudoDataLoc, std::move(opts), beginLoc);
+            pseudoDt = std::make_unique<PseudoVarType>(pseudoDataLoc, std::move(opts), nullptr,
+                                                       beginLoc);
         }
     }
 
@@ -3029,12 +3032,12 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
     for (const auto& lenDescr : boost::adaptors::reverse(lenDescrs)) {
         if (lenDescr.isStatic) {
             innerPseudoDt = std::make_unique<PseudoSlArrayType>(lenDescr.arrayLen,
-                                                                std::move(innerPseudoDt),
+                                                                std::move(innerPseudoDt), nullptr,
                                                                 lenDescr.loc);
         } else {
             assert(lenDescr.dlArrayLenLoc);
             innerPseudoDt = std::make_unique<PseudoDlArrayType>(*lenDescr.dlArrayLenLoc,
-                                                                std::move(innerPseudoDt),
+                                                                std::move(innerPseudoDt), nullptr,
                                                                 lenDescr.loc);
         }
     }

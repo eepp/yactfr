@@ -11,14 +11,16 @@
 
 namespace yactfr {
 
-VariableLengthBitArrayType::VariableLengthBitArrayType(const int kind, const unsigned int align) :
-    ScalarDataType {kind, align}
+VariableLengthBitArrayType::VariableLengthBitArrayType(const int kind, const unsigned int align,
+                                                       MapItem::UP userAttrs) :
+    ScalarDataType {kind, align, std::move(userAttrs)}
 {
     assert(align >= 8);
 }
 
-VariableLengthBitArrayType::VariableLengthBitArrayType(const unsigned int align) :
-    VariableLengthBitArrayType {_KIND_VL_BIT_ARRAY, align}
+VariableLengthBitArrayType::VariableLengthBitArrayType(const unsigned int align,
+                                                       MapItem::UP userAttrs) :
+    VariableLengthBitArrayType {_KIND_VL_BIT_ARRAY, align, std::move(userAttrs)}
 {
 }
 

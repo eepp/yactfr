@@ -58,6 +58,7 @@ add_library (
     metadata/trace-type.cpp
     metadata/tsdl-attr.cpp
     metadata/tsdl-parser-base.cpp
+    metadata/utils.cpp
     metadata/var-type.cpp
     metadata/vl-bit-array-type.cpp
     metadata/vl-enum-type.cpp

@@ -38,6 +38,13 @@ public:
     @param[in] length
         Length (bytes) of data stream static-length BLOBs described by
         this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream static-length BLOBs described by
+        this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] hasTraceTypeUuidRole
         Whether or not the static-length BLOBs described by this type
         have the "trace type UUID" role.
@@ -50,6 +57,7 @@ public:
         If \p hasTraceTypeUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length,
+                                  MapItem::UP userAttributes = nullptr,
                                   bool hasTraceTypeUuidRole = false);
 
     /*!
@@ -65,8 +73,15 @@ public:
     @param[in] mediaType
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
         of data stream static-length BLOBs described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream static-length BLOBs described by
+        this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
     @param[in] hasTraceTypeUuidRole
-        Whether or not the static-length arrays described by this type
+        Whether or not the static-length BLOBs described by this type
         have the "trace type UUID" role.
 
     @pre
@@ -77,6 +92,7 @@ public:
         If \p hasTraceTypeUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length, std::string mediaType,
+                                  MapItem::UP userAttributes = nullptr,
                                   bool hasTraceTypeUuidRole = false);
 
     /// Length (bytes) of data stream static-length BLOBs described by
