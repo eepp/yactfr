@@ -40,7 +40,7 @@ public:
     @param[in] entries
         Entries of the environment.
     */
-    explicit TraceEnvironment(const Entries& entries);
+    explicit TraceEnvironment(Entries entries);
 
     /// Default copy constructor.
     TraceEnvironment(const TraceEnvironment& other) = default;

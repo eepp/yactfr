@@ -11,8 +11,8 @@
 
 namespace yactfr {
 
-TraceEnvironment::TraceEnvironment(const Entries& entries) :
-    _entries {entries}
+TraceEnvironment::TraceEnvironment(Entries entries) :
+    _entries {std::move(entries)}
 {
 }
 
