@@ -16,7 +16,7 @@ namespace internal {
 class PseudoDtVisitor
 {
 protected:
-    PseudoDtVisitor() = default;
+    explicit PseudoDtVisitor() = default;
 
 public:
     virtual ~PseudoDtVisitor()
@@ -55,7 +55,7 @@ public:
 class ConstPseudoDtVisitor
 {
 protected:
-    ConstPseudoDtVisitor() = default;
+    explicit ConstPseudoDtVisitor() = default;
 
 public:
     virtual ~ConstPseudoDtVisitor()

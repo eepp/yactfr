@@ -82,7 +82,7 @@ public:
     }
 
 protected:
-    TsdlParserBase() = default;
+    explicit TsdlParserBase() = default;
 
     /*
      * One frame of the parser context stack.

@@ -32,7 +32,7 @@ public:
     @brief
         Builds a default clock offset object (0).
     */
-    ClockOffset() noexcept = default;
+    explicit ClockOffset() noexcept = default;
 
     /*!
     @brief

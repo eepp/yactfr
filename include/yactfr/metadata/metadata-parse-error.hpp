@@ -63,8 +63,8 @@ class MetadataParseError;
 
 namespace internal {
 
-[[ noreturn ]] void throwMetadataParseError(std::string msg, TextLocation loc = {});
-void appendMsgToMetadataParseError(MetadataParseError& exc, std::string msg, TextLocation loc = {});
+[[ noreturn ]] void throwMetadataParseError(std::string msg, TextLocation loc = TextLocation {});
+void appendMsgToMetadataParseError(MetadataParseError& exc, std::string msg, TextLocation loc = TextLocation {});
 
 } // namespace internal
 

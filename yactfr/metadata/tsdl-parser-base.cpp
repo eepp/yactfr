@@ -129,7 +129,7 @@ class DefClkTsRoleAdder :
     public PseudoDtVisitor
 {
 public:
-    DefClkTsRoleAdder() = default;
+    explicit DefClkTsRoleAdder() = default;
 
     void visit(PseudoUIntType& pseudoDt) override
     {

@@ -23,7 +23,7 @@ class CallerInstrVisitor :
     public InstrVisitor
 {
 protected:
-    CallerInstrVisitor() = default;
+    explicit CallerInstrVisitor() = default;
 
     void _visitProc(Proc& proc)
     {

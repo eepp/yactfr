@@ -23,7 +23,7 @@ A subclass instance can be passed to DataType::accept().
 class DataTypeVisitor
 {
 protected:
-    DataTypeVisitor() = default;
+    explicit DataTypeVisitor() = default;
 
 public:
     virtual ~DataTypeVisitor()

@@ -25,7 +25,7 @@ public:
     @brief
         Builds a default text location (first line, first column).
     */
-    TextLocation() = default;
+    explicit TextLocation() = default;
 
     /*
     @brief

@@ -201,7 +201,7 @@ class EndElement :
     public Element
 {
 public:
-    EndElement() :
+    explicit EndElement() :
         Element {Kind::END}
     {
     }
@@ -225,7 +225,7 @@ class PacketBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    PacketBeginningElement() :
+    explicit PacketBeginningElement() :
         BeginningElement {Kind::PACKET_BEGINNING}
     {
     }
@@ -250,7 +250,7 @@ class ScopeBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    ScopeBeginningElement() :
+    explicit ScopeBeginningElement() :
         BeginningElement {Kind::SCOPE_BEGINNING}
     {
     }
@@ -284,7 +284,7 @@ class EventRecordBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    EventRecordBeginningElement() :
+    explicit EventRecordBeginningElement() :
         BeginningElement {Kind::EVENT_RECORD_BEGINNING}
     {
     }
@@ -317,7 +317,7 @@ class PacketContentBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    PacketContentBeginningElement() :
+    explicit PacketContentBeginningElement() :
         BeginningElement {Kind::PACKET_CONTENT_BEGINNING}
     {
     }
@@ -354,7 +354,7 @@ class DataStreamIdElement final :
     friend class internal::VmPos;
 
 private:
-    DataStreamIdElement() :
+    explicit DataStreamIdElement() :
         Element {Kind::DATA_STREAM_ID}
     {
     }
@@ -398,7 +398,7 @@ class PacketOriginIndexElement final :
     friend class internal::VmPos;
 
 private:
-    PacketOriginIndexElement() :
+    explicit PacketOriginIndexElement() :
         Element {Kind::PACKET_ORIGIN_INDEX}
     {
     }
@@ -440,7 +440,7 @@ class ExpectedPacketTotalLengthElement final :
     friend class internal::VmPos;
 
 private:
-    ExpectedPacketTotalLengthElement() :
+    explicit ExpectedPacketTotalLengthElement() :
         Element {Kind::EXPECTED_PACKET_TOTAL_LENGTH}
     {
     }
@@ -483,7 +483,7 @@ class ExpectedPacketContentLengthElement final :
     friend class internal::VmPos;
 
 private:
-    ExpectedPacketContentLengthElement() :
+    explicit ExpectedPacketContentLengthElement() :
         Element {Kind::EXPECTED_PACKET_CONTENT_LENGTH}
     {
     }
@@ -523,7 +523,7 @@ class PacketMagicNumberElement final :
     friend class internal::VmPos;
 
 private:
-    PacketMagicNumberElement() :
+    explicit PacketMagicNumberElement() :
         Element {Kind::PACKET_MAGIC_NUMBER}
     {
     }
@@ -576,7 +576,7 @@ class TraceTypeUuidElement final :
     friend class internal::VmPos;
 
 private:
-    TraceTypeUuidElement() :
+    explicit TraceTypeUuidElement() :
         Element {Kind::TRACE_TYPE_UUID}
     {
     }
@@ -626,7 +626,7 @@ class DefaultClockValueElement final :
     friend class internal::VmPos;
 
 private:
-    DefaultClockValueElement() :
+    explicit DefaultClockValueElement() :
         Element {Kind::DEFAULT_CLOCK_VALUE}
     {
     }
@@ -668,7 +668,7 @@ class PacketEndDefaultClockValueElement final :
     friend class internal::VmPos;
 
 private:
-    PacketEndDefaultClockValueElement() :
+    explicit PacketEndDefaultClockValueElement() :
         Element {Kind::PACKET_END_DEFAULT_CLOCK_VALUE}
     {
     }
@@ -707,7 +707,7 @@ class DataStreamTypeElement final :
     friend class internal::VmPos;
 
 private:
-    DataStreamTypeElement() :
+    explicit DataStreamTypeElement() :
         Element {Kind::DATA_STREAM_TYPE}
     {
     }
@@ -746,7 +746,7 @@ class EventRecordTypeElement final :
     friend class internal::VmPos;
 
 private:
-    EventRecordTypeElement() :
+    explicit EventRecordTypeElement() :
         Element {Kind::EVENT_RECORD_TYPE}
     {
     }
@@ -810,7 +810,7 @@ protected:
     }
 
 private:
-    SignedIntegerElement() :
+    explicit SignedIntegerElement() :
         SignedIntegerElement {Kind::SIGNED_INTEGER}
     {
     }
@@ -858,7 +858,7 @@ protected:
     }
 
 private:
-    UnsignedIntegerElement() :
+    explicit UnsignedIntegerElement() :
         UnsignedIntegerElement {Kind::UNSIGNED_INTEGER}
     {
     }
@@ -899,7 +899,7 @@ class SignedEnumerationElement final :
     friend class internal::VmPos;
 
 private:
-    SignedEnumerationElement() :
+    explicit SignedEnumerationElement() :
         SignedIntegerElement {Kind::SIGNED_ENUMERATION}
     {
     }
@@ -930,7 +930,7 @@ class UnsignedEnumerationElement final :
     friend class internal::VmPos;
 
 private:
-    UnsignedEnumerationElement() :
+    explicit UnsignedEnumerationElement() :
         UnsignedIntegerElement {Kind::UNSIGNED_ENUMERATION}
     {
     }
@@ -962,7 +962,7 @@ class FloatingPointNumberElement final :
     friend class internal::VmPos;
 
 private:
-    FloatingPointNumberElement() :
+    explicit FloatingPointNumberElement() :
         Element {Kind::FLOATING_POINT_NUMBER}
     {
     }
@@ -1012,7 +1012,7 @@ class StringBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    StringBeginningElement() :
+    explicit StringBeginningElement() :
         BeginningElement {Kind::STRING_BEGINNING}
     {
     }
@@ -1074,7 +1074,7 @@ class SubstringElement final :
     friend class internal::VmPos;
 
 private:
-    SubstringElement() :
+    explicit SubstringElement() :
         Element {Kind::SUBSTRING}
     {
     }
@@ -1175,7 +1175,7 @@ protected:
     }
 
 private:
-    StaticArrayBeginningElement() :
+    explicit StaticArrayBeginningElement() :
         StaticArrayBeginningElement {Kind::STATIC_ARRAY_BEGINNING}
     {
     }
@@ -1215,7 +1215,7 @@ class StaticTextArrayBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    StaticTextArrayBeginningElement() :
+    explicit StaticTextArrayBeginningElement() :
         StaticArrayBeginningElement {Kind::STATIC_TEXT_ARRAY_BEGINNING}
     {
     }
@@ -1259,7 +1259,7 @@ protected:
     }
 
 private:
-    DynamicArrayBeginningElement() :
+    explicit DynamicArrayBeginningElement() :
         DynamicArrayBeginningElement {Kind::DYNAMIC_ARRAY_BEGINNING}
     {
     }
@@ -1299,7 +1299,7 @@ class DynamicTextArrayBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    DynamicTextArrayBeginningElement() :
+    explicit DynamicTextArrayBeginningElement() :
         DynamicArrayBeginningElement {Kind::DYNAMIC_TEXT_ARRAY_BEGINNING}
     {
     }
@@ -1338,7 +1338,7 @@ class StructureBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    StructureBeginningElement() :
+    explicit StructureBeginningElement() :
         BeginningElement {Kind::STRUCTURE_BEGINNING}
     {
     }
@@ -1400,7 +1400,7 @@ class VariantWithSelectorBeginningElement :
     friend class internal::VmPos;
 
 protected:
-    VariantWithSelectorBeginningElement() :
+    explicit VariantWithSelectorBeginningElement() :
         VariantBeginningElement {KindV}
     {
     }
@@ -1452,7 +1452,7 @@ class VariantWithUnsignedSelectorBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    VariantWithUnsignedSelectorBeginningElement()
+    explicit VariantWithUnsignedSelectorBeginningElement()
     {
     }
 
@@ -1485,7 +1485,7 @@ class VariantWithSignedSelectorBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    VariantWithSignedSelectorBeginningElement()
+    explicit VariantWithSignedSelectorBeginningElement()
     {
     }
 

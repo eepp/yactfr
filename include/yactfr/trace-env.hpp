@@ -31,7 +31,7 @@ public:
 
 public:
     /// Builds an empty trace type environment.
-    TraceEnvironment() = default;
+    explicit TraceEnvironment() = default;
 
     /*!
     @brief

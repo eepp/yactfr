@@ -135,7 +135,7 @@ class UpdateDefClkValInstr;
 class InstrVisitor
 {
 protected:
-    InstrVisitor() = default;
+    explicit InstrVisitor() = default;
 
 public:
     virtual ~InstrVisitor();
@@ -444,7 +444,7 @@ public:
     using FindInstrsCurrent = std::unordered_map<const Instr *, Index>;
 
 protected:
-    Instr() noexcept = default;
+    explicit Instr() noexcept = default;
     explicit Instr(Kind kind) noexcept;
 
 public:
@@ -1256,7 +1256,7 @@ public:
     using Val = typename RangeSet::Value;
 
 public:
-    ReadVarInstrOpt() = default;
+    explicit ReadVarInstrOpt() = default;
     ReadVarInstrOpt(const ReadVarInstrOpt<VarTypeOptT>& opt) = default;
     ReadVarInstrOpt(ReadVarInstrOpt<VarTypeOptT>&& opt) = default;
     ReadVarInstrOpt<VarTypeOptT>& operator=(const ReadVarInstrOpt<VarTypeOptT>& opt) = default;
@@ -1455,7 +1455,7 @@ class SetCurIdInstr :
     public Instr
 {
 public:
-    SetCurIdInstr();
+    explicit SetCurIdInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1530,7 +1530,7 @@ class SetPktOriginIndexInstr :
     public Instr
 {
 public:
-    SetPktOriginIndexInstr();
+    explicit SetPktOriginIndexInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1551,7 +1551,7 @@ class SetDsIdInstr :
     public Instr
 {
 public:
-    SetDsIdInstr();
+    explicit SetDsIdInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1569,7 +1569,7 @@ class SetExpectedPktTotalLenInstr :
     public Instr
 {
 public:
-    SetExpectedPktTotalLenInstr();
+    explicit SetExpectedPktTotalLenInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1587,7 +1587,7 @@ class SetExpectedPktContentLenInstr :
     public Instr
 {
 public:
-    SetExpectedPktContentLenInstr();
+    explicit SetExpectedPktContentLenInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1634,7 +1634,7 @@ class SetPktMagicNumberInstr :
     public Instr
 {
 public:
-    SetPktMagicNumberInstr();
+    explicit SetPktMagicNumberInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1652,7 +1652,7 @@ class EndPktPreambleProcInstr :
     public Instr
 {
 public:
-    EndPktPreambleProcInstr();
+    explicit EndPktPreambleProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1670,7 +1670,7 @@ class EndDsPktPreambleProcInstr :
     public Instr
 {
 public:
-    EndDsPktPreambleProcInstr();
+    explicit EndDsPktPreambleProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1689,7 +1689,7 @@ class EndDsErPreambleProcInstr :
     public Instr
 {
 public:
-    EndDsErPreambleProcInstr();
+    explicit EndDsErPreambleProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1707,7 +1707,7 @@ class EndErProcInstr :
     public Instr
 {
 public:
-    EndErProcInstr();
+    explicit EndErProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1730,7 +1730,7 @@ class DecrRemainingElemsInstr :
     public Instr
 {
 public:
-    DecrRemainingElemsInstr();
+    explicit DecrRemainingElemsInstr();
 
     void accept(InstrVisitor& visitor) override
     {

@@ -43,7 +43,7 @@ public:
     @brief
         Builds an empty integer range set.
     */
-    IntegerRangeSet()
+    explicit IntegerRangeSet()
     {
     }
 

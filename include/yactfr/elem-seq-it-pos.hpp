@@ -50,7 +50,7 @@ public:
     restoring the position of an iterator with
     ElementSequenceIterator::restorePosition().
     */
-    ElementSequenceIteratorPosition();
+    explicit ElementSequenceIteratorPosition();
 
     /*!
     @brief

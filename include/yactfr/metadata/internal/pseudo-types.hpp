@@ -428,7 +428,7 @@ public:
     using UP = std::unique_ptr<PseudoNamedDt>;
 
 public:
-    PseudoNamedDt() = default;
+    explicit PseudoNamedDt() = default;
     explicit PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt);
 
     const std::string& name() const noexcept
@@ -632,7 +632,7 @@ using PseudoErtSet = std::unordered_set<const PseudoErt *>;
 class PseudoDst final
 {
 public:
-    PseudoDst() = default;
+    explicit PseudoDst() = default;
     explicit PseudoDst(TypeId id, PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
                        PseudoDt::UP pseudoErCommonCtxType, const ClockType *defClkType = nullptr);
 
