@@ -1152,7 +1152,13 @@ Vm::_ExecReaction Vm::_execEndDsPktPreambleProc(const Instr& instr)
     _pos.stackPop();
     assert(_pos.stack.empty());
     assert(_pos.curDsPktProc);
-    _pos.state(VmState::BEGIN_ER);
+
+    if (_pos.curDsPktProc->dst().eventRecordTypes().empty()) {
+        _pos.state(VmState::END_PKT_CONTENT);
+    } else {
+        _pos.state(VmState::BEGIN_ER);
+    }
+
     return _ExecReaction::CHANGE_STATE;
 }
 
