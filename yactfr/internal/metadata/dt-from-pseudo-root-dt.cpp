@@ -179,9 +179,6 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
         return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
     });
 
-    // not visited anymore
-    _current.erase(&pseudoArrayType);
-
     return std::make_unique<const StaticLengthArrayType>(1, std::move(elemDt),
                                                          pseudoArrayType.len(),
                                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()),
