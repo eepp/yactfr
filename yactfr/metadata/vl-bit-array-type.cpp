@@ -8,8 +8,7 @@
 #include <cassert>
 
 #include <yactfr/metadata/vl-bit-array-type.hpp>
-
-#include "../internal/metadata/utils.hpp"
+#include <yactfr/internal/metadata/utils.hpp>
 
 namespace yactfr {
 

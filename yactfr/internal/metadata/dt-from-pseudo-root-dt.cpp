@@ -20,10 +20,10 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/opt-type.hpp>
+#include <yactfr/internal/metadata/utils.hpp>
 #include <yactfr/text-parse-error.hpp>
 
 #include "dt-from-pseudo-root-dt.hpp"
-#include "utils.hpp"
 
 namespace yactfr {
 namespace internal {

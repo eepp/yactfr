@@ -17,11 +17,11 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
+#include <yactfr/internal/metadata/utils.hpp>
 #include <yactfr/text-parse-error.hpp>
 
 #include "trace-type-from-pseudo-trace-type.hpp"
 #include "dt-from-pseudo-root-dt.hpp"
-#include "utils.hpp"
 
 namespace yactfr {
 namespace internal {

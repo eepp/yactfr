@@ -14,6 +14,8 @@
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
 
+#include <yactfr/internal/metadata/utils.hpp>
+
 #include "dt.hpp"
 #include "int-range-set.hpp"
 #include "../item.hpp"
@@ -135,7 +137,8 @@ public:
     std::unique_ptr<const VariantTypeOption<SelectorValueT>> clone() const
     {
         return std::make_unique<const VariantTypeOption<SelectorValueT>>(_name, _dt->clone(),
-                                                                         _ranges);
+                                                                         _ranges,
+                                                                         internal::tryCloneUserAttrs(this->userAttributes()));
     }
 
     /*!

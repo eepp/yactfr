@@ -8,8 +8,7 @@
 #include <utility>
 
 #include <yactfr/metadata/struct-member-type.hpp>
-
-#include "../internal/metadata/utils.hpp"
+#include <yactfr/internal/metadata/utils.hpp>
 
 namespace yactfr {
 

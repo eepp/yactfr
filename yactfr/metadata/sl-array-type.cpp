@@ -6,8 +6,7 @@
  */
 
 #include <yactfr/metadata/sl-array-type.hpp>
-
-#include "../internal/metadata/utils.hpp"
+#include <yactfr/internal/metadata/utils.hpp>
 
 namespace yactfr {
 

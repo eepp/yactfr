@@ -9,8 +9,7 @@
 #include <cassert>
 
 #include <yactfr/metadata/opt-type.hpp>
-
-#include "../internal/metadata/utils.hpp"
+#include <yactfr/internal/metadata/utils.hpp>
 
 namespace yactfr {
 

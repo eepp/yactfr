@@ -46,7 +46,6 @@
 #include <yactfr/metadata/aliases.hpp>
 
 #include "tsdl-attr.hpp"
-#include "../utils.hpp"
 #include "../pseudo-types.hpp"
 #include "../pseudo-dt-utils.hpp"
 #include "../str-scanner.hpp"

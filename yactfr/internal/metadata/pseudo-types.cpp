@@ -20,12 +20,12 @@
 #include <yactfr/metadata/sl-blob-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
+#include <yactfr/internal/metadata/utils.hpp>
 #include <yactfr/text-parse-error.hpp>
 
 #include "pseudo-types.hpp"
 #include "pseudo-dt-visitor.hpp"
 #include "pseudo-dt-utils.hpp"
-#include "utils.hpp"
 
 namespace yactfr {
 namespace internal {

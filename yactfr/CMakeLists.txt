@@ -32,7 +32,6 @@ add_library (
     internal/metadata/trace-type-impl.cpp
     internal/metadata/tsdl/tsdl-attr.cpp
     internal/metadata/tsdl/tsdl-parser.cpp
-    internal/metadata/utils.cpp
     internal/mmap-file-view-factory-impl.cpp
     internal/pkt-proc-builder.cpp
     internal/proc.cpp
