@@ -43,7 +43,7 @@ class FixedLengthIntegerType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit FixedLengthIntegerType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
+    explicit FixedLengthIntegerType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
                                     DisplayBase prefDispBase, MapItem::UP userAttrs);
 
 public:
@@ -80,7 +80,7 @@ class FixedLengthSignedIntegerType :
     public FixedLengthIntegerType
 {
 protected:
-    explicit FixedLengthSignedIntegerType(int kind, unsigned int align, unsigned int len,
+    explicit FixedLengthSignedIntegerType(_Kind kind, unsigned int align, unsigned int len,
                                           ByteOrder bo, DisplayBase prefDispBase,
                                           MapItem::UP userAttrs);
 
@@ -192,7 +192,7 @@ class FixedLengthUnsignedIntegerType :
     public UnsignedIntegerTypeCommon
 {
 protected:
-    explicit FixedLengthUnsignedIntegerType(int kind, unsigned int align, unsigned int len,
+    explicit FixedLengthUnsignedIntegerType(_Kind kind, unsigned int align, unsigned int len,
                                             ByteOrder bo, DisplayBase prefDispBase,
                                             MapItem::UP userAttrs,
                                             UnsignedIntegerTypeRoleSet roles);

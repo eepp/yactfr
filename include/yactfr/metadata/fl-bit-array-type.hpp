@@ -28,7 +28,7 @@ class FixedLengthBitArrayType :
     public ScalarDataType
 {
 protected:
-    explicit FixedLengthBitArrayType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
+    explicit FixedLengthBitArrayType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
                                      MapItem::UP userAttrs);
 
 public:

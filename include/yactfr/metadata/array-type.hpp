@@ -23,7 +23,7 @@ class ArrayType :
     public CompoundDataType
 {
 protected:
-    explicit ArrayType(int kind, unsigned int minAlign, DataType::UP elemType,
+    explicit ArrayType(_Kind kind, unsigned int minAlign, DataType::UP elemType,
                        MapItem::UP userAttrs);
 
 public:

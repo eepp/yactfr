@@ -10,7 +10,7 @@
 
 namespace yactfr {
 
-FixedLengthIntegerType::FixedLengthIntegerType(const int kind, const unsigned int align,
+FixedLengthIntegerType::FixedLengthIntegerType(const _Kind kind, const unsigned int align,
                                                const unsigned int len, const ByteOrder bo,
                                                const DisplayBase prefDispBase,
                                                MapItem::UP userAttrs) :
@@ -39,7 +39,7 @@ bool FixedLengthIntegerType::operator<(const FixedLengthIntegerType& other) cons
     return FixedLengthBitArrayType::operator<(other);
 }
 
-FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const int kind,
+FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const _Kind kind,
                                                            const unsigned int align,
                                                            const unsigned int len,
                                                            const ByteOrder bo,
@@ -74,7 +74,7 @@ DataType::UP FixedLengthSignedIntegerType::_clone() const
                                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
-FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const int kind,
+FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const _Kind kind,
                                                                const unsigned int align,
                                                                const unsigned int len,
                                                                const ByteOrder bo,

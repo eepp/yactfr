@@ -36,7 +36,7 @@ class VariableLengthIntegerType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit VariableLengthIntegerType(int kind, unsigned int align, DisplayBase prefDispBase,
+    explicit VariableLengthIntegerType(_Kind kind, unsigned int align, DisplayBase prefDispBase,
                                        MapItem::UP userAttrs);
 
 protected:
@@ -57,7 +57,7 @@ class VariableLengthUnsignedIntegerType :
     public UnsignedIntegerTypeCommon
 {
 protected:
-    explicit VariableLengthUnsignedIntegerType(int kind, unsigned int align,
+    explicit VariableLengthUnsignedIntegerType(_Kind kind, unsigned int align,
                                                DisplayBase prefDispBase,
                                                MapItem::UP userAttrs,
                                                UnsignedIntegerTypeRoleSet roles);
@@ -142,7 +142,7 @@ class VariableLengthSignedIntegerType :
     public VariableLengthIntegerType
 {
 protected:
-    explicit VariableLengthSignedIntegerType(int kind, unsigned int align,
+    explicit VariableLengthSignedIntegerType(_Kind kind, unsigned int align,
                                              DisplayBase prefDispBase, MapItem::UP userAttrs);
 
 public:

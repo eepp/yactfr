@@ -94,7 +94,6 @@ protected:
     };
 
 protected:
-    explicit DataType(int kind, unsigned int align, MapItem::UP userAttrs);
     explicit DataType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
 
 public:

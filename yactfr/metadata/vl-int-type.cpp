@@ -10,7 +10,7 @@
 
 namespace yactfr {
 
-VariableLengthIntegerType::VariableLengthIntegerType(const int kind, const unsigned int align,
+VariableLengthIntegerType::VariableLengthIntegerType(const _Kind kind, const unsigned int align,
                                                      const DisplayBase prefDispBase,
                                                      MapItem::UP userAttrs) :
     VariableLengthBitArrayType {kind, align, std::move(userAttrs)},
@@ -25,7 +25,7 @@ bool VariableLengthIntegerType::_isEqual(const DataType& other) const noexcept
     return VariableLengthBitArrayType::_isEqual(other) && IntegerTypeCommon::_isEqual(otherIntType);
 }
 
-VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const int kind,
+VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const _Kind kind,
                                                                      const unsigned int align,
                                                                      const DisplayBase prefDispBase,
                                                                      MapItem::UP userAttrs,
@@ -69,7 +69,7 @@ bool VariableLengthUnsignedIntegerType::_isEqual(const DataType& other) const no
     return VariableLengthIntegerType::_isEqual(other) && UnsignedIntegerTypeCommon::_isEqual(otherIntType);
 }
 
-VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const int kind,
+VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const _Kind kind,
                                                                  const unsigned int align,
                                                                  const DisplayBase prefDispBase,
                                                                  MapItem::UP userAttrs) :

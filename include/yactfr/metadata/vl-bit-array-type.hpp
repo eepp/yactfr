@@ -27,7 +27,7 @@ class VariableLengthBitArrayType :
     public ScalarDataType
 {
 protected:
-    explicit VariableLengthBitArrayType(int kind, unsigned int align, MapItem::UP userAttrs);
+    explicit VariableLengthBitArrayType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
 
 public:
     /*!

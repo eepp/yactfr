@@ -47,7 +47,7 @@ public:
     using Options = std::vector<std::unique_ptr<const Option>>;
 
 protected:
-    explicit VariantType(const int kind, const unsigned int minAlign, Options&& opts,
+    explicit VariantType(const _Kind kind, const unsigned int minAlign, Options&& opts,
                          DataLocation selLoc, MapItem::UP userAttrs) :
         CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
         _opts {std::move(opts)},

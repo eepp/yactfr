@@ -24,7 +24,7 @@ class ScalarDataType :
     public DataType
 {
 protected:
-    explicit ScalarDataType(int kind, unsigned int align, MapItem::UP userAttrs);
+    explicit ScalarDataType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
 };
 
 } // namespace yactfr

@@ -39,7 +39,7 @@ class OptionalType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit OptionalType(const int kind, const unsigned int minAlign, DataType::UP dt,
+    explicit OptionalType(_Kind kind, const unsigned int minAlign, DataType::UP dt,
                           DataLocation selLoc, MapItem::UP userAttrs);
 
 public:
@@ -179,7 +179,7 @@ public:
     using SelectorRangeSet = IntegerRangeSet<SelectorValueT>;
 
 protected:
-    explicit OptionalWithIntegerSelectorType(int kind, unsigned int minAlign, DataType::UP dt,
+    explicit OptionalWithIntegerSelectorType(_Kind kind, unsigned int minAlign, DataType::UP dt,
                                              DataLocation selLoc, SelectorRangeSet selRanges,
                                              MapItem::UP userAttrs) :
         OptionalType {kind, minAlign, std::move(dt), std::move(selLoc), std::move(userAttrs)},

@@ -31,11 +31,6 @@
 
 namespace yactfr {
 
-DataType::DataType(const int kind, const unsigned int align, MapItem::UP userAttrs) :
-    DataType {static_cast<_Kind>(kind), align, std::move(userAttrs)}
-{
-}
-
 DataType::DataType(const _Kind kind, const unsigned int align, MapItem::UP userAttrs) :
     _theKind {kind},
     _align {align},

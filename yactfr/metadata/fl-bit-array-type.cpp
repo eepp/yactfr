@@ -12,7 +12,7 @@
 
 namespace yactfr {
 
-FixedLengthBitArrayType::FixedLengthBitArrayType(const int kind, const unsigned int align,
+FixedLengthBitArrayType::FixedLengthBitArrayType(const _Kind kind, const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
                                                  MapItem::UP userAttrs) :
     ScalarDataType {kind, align, std::move(userAttrs)},
