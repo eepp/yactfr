@@ -14,6 +14,7 @@
 #include <vector>
 #include <iomanip>
 #include <ostream>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <yactfr/elem-visitor.hpp>
 #include <yactfr/elem.hpp>
