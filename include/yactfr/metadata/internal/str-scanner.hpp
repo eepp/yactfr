@@ -212,41 +212,7 @@ public:
      * The returned string remains valid as long as you don't call any
      * method of this object.
      */
-    const std::string *tryScanIdent()
-    {
-        this->skipCommentsAndWhitespaces();
-
-        // first character: `_` or alpha
-        const auto c = this->_scanAnyChar();
-
-        if (c < 0) {
-            return nullptr;
-        }
-
-        auto chr = static_cast<char>(c);
-
-        if (chr != '_' && !std::isalpha(chr)) {
-            --_at;
-            return nullptr;
-        }
-
-        _strBuf.clear();
-        _strBuf.push_back(chr);
-
-        // other characters: `_` or alphanumeric
-        while (!this->isDone()) {
-            chr = *_at;
-
-            if (chr != '_' && !std::isalpha(chr) && !std::isdigit(chr)) {
-                break;
-            }
-
-            _strBuf.push_back(chr);
-            ++_at;
-        }
-
-        return &_strBuf;
-    }
+    const std::string *tryScanIdent();
 
     /*
      * Tries to scan a double-quoted literal string, considering the
@@ -262,58 +228,7 @@ public:
      * The returned string remains valid as long as you don't call any
      * method of this object.
      */
-    const std::string *tryScanLitStr(const char * const escapeSeqStartList)
-    {
-        this->skipCommentsAndWhitespaces();
-
-        const auto at = _at;
-        const auto lineBegin = _lineBegin;
-        const auto nbLines = _nbLines;
-
-        // first character: `"` or alpha
-        auto c = this->_scanAnyChar();
-
-        if (c < 0) {
-            return nullptr;
-        }
-
-        if (c != '"') {
-            _at = at;
-            _lineBegin = lineBegin;
-            _nbLines = nbLines;
-            return nullptr;
-        }
-
-        _strBuf.clear();
-
-        while (!this->isDone()) {
-            // try to append escape character first
-            if (this->_tryAppendEscapedChar(escapeSeqStartList)) {
-                continue;
-            }
-
-            // check for end of string
-            if (*_at == '"') {
-                ++_at;
-                return &_strBuf;
-            }
-
-            // check for newline
-            this->_checkNewLine();
-
-            // append character
-            _strBuf.push_back(*_at);
-
-            // go to next character
-            ++_at;
-        }
-
-        // could not find end of string
-        _at = at;
-        _lineBegin = lineBegin;
-        _nbLines = nbLines;
-        return nullptr;
-    }
+    const std::string *tryScanLitStr(const char *escapeSeqStartList);
 
     /*
      * Tries to scan and decode a constant integer string, with an
@@ -364,29 +279,7 @@ public:
      * Tries to scan a specific token, placing the current iterator
      * after this string on success.
      */
-    bool tryScanToken(const std::string& str)
-    {
-        this->skipCommentsAndWhitespaces();
-
-        auto strAt = str.begin();
-        auto at = _at;
-
-        while (strAt != str.end() && at != _end) {
-            if (*at != *strAt) {
-                return false;
-            }
-
-            ++at;
-            ++strAt;
-        }
-
-        if (strAt != str.end()) {
-            return false;
-        }
-
-        _at = at;
-        return true;
-    }
+    bool tryScanToken(const std::string& str);
 
     /*
      * Skips the following comments and whitespaces.
@@ -430,6 +323,16 @@ private:
     template <typename ValT, int BaseV>
     boost::optional<ValT> _tryScanConstInt(bool negate);
 
+    void _skipComment();
+
+    /*
+     * Tries to append an escaped character to `_strBuf` from the
+     * characters at the current position, considering the characters of
+     * `escapeSeqStartList` and `"` as escape sequence starting
+     * characters.
+     */
+    bool _tryAppendEscapedChar(const char *escapeSeqStartList);
+
     void _skipWhitespaces()
     {
         while (!this->isDone()) {
@@ -439,58 +342,6 @@ private:
 
             this->_checkNewLine();
             ++_at;
-        }
-    }
-
-    void _skipComment()
-    {
-        if (this->charsLeft() >= 2) {
-            if (*_at == '/') {
-                switch (*(_at + 1)) {
-                case '/':
-                    // single-line comment
-                    _at += 2;
-
-                    while (!this->isDone()) {
-                        /*
-                         * TODO: Handle `\` to continue the comment on
-                         * the next line.
-                         */
-                        if (*_at == '\n') {
-                            /*
-                             * We don't set a newline here because the
-                             * current position is left at the newline
-                             * character, which is considered excluded
-                             * from the comment itself.
-                             */
-                            return;
-                        }
-
-                        ++_at;
-                    }
-                    break;
-
-                case '*':
-                    // multi-line comment
-                    _at += 2;
-
-                    while (!this->isDone()) {
-                        if (this->charsLeft() >= 2) {
-                            if (*_at == '*' && *(_at + 1) == '/') {
-                                _at += 2;
-                                return;
-                            }
-                        }
-
-                        this->_checkNewLine();
-                        ++_at;
-                    }
-                    break;
-
-                default:
-                    break;
-                }
-            }
         }
     }
 
@@ -504,71 +355,6 @@ private:
 
         ++_at;
         return c;
-    }
-
-    /*
-     * Tries to append an escaped character to `_strBuf` from the
-     * characters at the current position, considering the characters of
-     * `escapeSeqStartList` and `"` as escape sequence starting
-     * characters.
-     */
-    bool _tryAppendEscapedChar(const char * const escapeSeqStartList)
-    {
-        if (this->charsLeft() < 2) {
-            return false;
-        }
-
-        if (_at[0] != '\\') {
-            return false;
-        }
-
-        auto escapeSeqStart = escapeSeqStartList;
-
-        while (*escapeSeqStart != '\0') {
-            if (_at[1] == '"' || _at[1] == *escapeSeqStart) {
-                switch (_at[1]) {
-                case 'a':
-                    _strBuf.push_back('\a');
-                    break;
-
-                case 'b':
-                    _strBuf.push_back('\b');
-                    break;
-
-                case 'f':
-                    _strBuf.push_back('\f');
-                    break;
-
-                case 'n':
-                    _strBuf.push_back('\n');
-                    break;
-
-                case 'r':
-                    _strBuf.push_back('\r');
-                    break;
-
-                case 't':
-                    _strBuf.push_back('\t');
-                    break;
-
-                case 'v':
-                    _strBuf.push_back('\v');
-                    break;
-
-                default:
-                    // as is
-                    _strBuf.push_back(_at[1]);
-                    break;
-                }
-
-                _at += 2;
-                return true;
-            }
-
-            ++escapeSeqStart;
-        }
-
-        return false;
     }
 
     _StackFrame& _stackTop()
@@ -609,6 +395,235 @@ private:
     // string buffer
     std::string _strBuf;
 };
+
+template <typename CharIt>
+const std::string *StrScanner<CharIt>::tryScanIdent()
+{
+    this->skipCommentsAndWhitespaces();
+
+    // first character: `_` or alpha
+    const auto c = this->_scanAnyChar();
+
+    if (c < 0) {
+        return nullptr;
+    }
+
+    auto chr = static_cast<char>(c);
+
+    if (chr != '_' && !std::isalpha(chr)) {
+        --_at;
+        return nullptr;
+    }
+
+    _strBuf.clear();
+    _strBuf.push_back(chr);
+
+    // other characters: `_` or alphanumeric
+    while (!this->isDone()) {
+        chr = *_at;
+
+        if (chr != '_' && !std::isalpha(chr) && !std::isdigit(chr)) {
+            break;
+        }
+
+        _strBuf.push_back(chr);
+        ++_at;
+    }
+
+    return &_strBuf;
+}
+
+template <typename CharIt>
+const std::string *StrScanner<CharIt>::tryScanLitStr(const char * const escapeSeqStartList)
+{
+    this->skipCommentsAndWhitespaces();
+
+    const auto at = _at;
+    const auto lineBegin = _lineBegin;
+    const auto nbLines = _nbLines;
+
+    // first character: `"` or alpha
+    auto c = this->_scanAnyChar();
+
+    if (c < 0) {
+        return nullptr;
+    }
+
+    if (c != '"') {
+        _at = at;
+        _lineBegin = lineBegin;
+        _nbLines = nbLines;
+        return nullptr;
+    }
+
+    _strBuf.clear();
+
+    while (!this->isDone()) {
+        // try to append escape character first
+        if (this->_tryAppendEscapedChar(escapeSeqStartList)) {
+            continue;
+        }
+
+        // check for end of string
+        if (*_at == '"') {
+            ++_at;
+            return &_strBuf;
+        }
+
+        // check for newline
+        this->_checkNewLine();
+
+        // append character
+        _strBuf.push_back(*_at);
+
+        // go to next character
+        ++_at;
+    }
+
+    // could not find end of string
+    _at = at;
+    _lineBegin = lineBegin;
+    _nbLines = nbLines;
+    return nullptr;
+}
+
+template <typename CharIt>
+bool StrScanner<CharIt>::tryScanToken(const std::string& str)
+{
+    this->skipCommentsAndWhitespaces();
+
+    auto strAt = str.begin();
+    auto at = _at;
+
+    while (strAt != str.end() && at != _end) {
+        if (*at != *strAt) {
+            return false;
+        }
+
+        ++at;
+        ++strAt;
+    }
+
+    if (strAt != str.end()) {
+        return false;
+    }
+
+    _at = at;
+    return true;
+}
+
+template <typename CharIt>
+bool StrScanner<CharIt>::_tryAppendEscapedChar(const char * const escapeSeqStartList)
+{
+    if (this->charsLeft() < 2) {
+        return false;
+    }
+
+    if (_at[0] != '\\') {
+        return false;
+    }
+
+    auto escapeSeqStart = escapeSeqStartList;
+
+    while (*escapeSeqStart != '\0') {
+        if (_at[1] == '"' || _at[1] == *escapeSeqStart) {
+            switch (_at[1]) {
+            case 'a':
+                _strBuf.push_back('\a');
+                break;
+
+            case 'b':
+                _strBuf.push_back('\b');
+                break;
+
+            case 'f':
+                _strBuf.push_back('\f');
+                break;
+
+            case 'n':
+                _strBuf.push_back('\n');
+                break;
+
+            case 'r':
+                _strBuf.push_back('\r');
+                break;
+
+            case 't':
+                _strBuf.push_back('\t');
+                break;
+
+            case 'v':
+                _strBuf.push_back('\v');
+                break;
+
+            default:
+                // as is
+                _strBuf.push_back(_at[1]);
+                break;
+            }
+
+            _at += 2;
+            return true;
+        }
+
+        ++escapeSeqStart;
+    }
+
+    return false;
+}
+
+template <typename CharIt>
+void StrScanner<CharIt>::_skipComment()
+{
+    if (this->charsLeft() >= 2) {
+        if (*_at == '/') {
+            switch (*(_at + 1)) {
+            case '/':
+                // single-line comment
+                _at += 2;
+
+                while (!this->isDone()) {
+                    /*
+                     * TODO: Handle `\` to continue the comment on
+                     * the next line.
+                     */
+                    if (*_at == '\n') {
+                        /*
+                         * We don't set a newline here because the
+                         * current position is left at the newline
+                         * character, which is considered excluded
+                         * from the comment itself.
+                         */
+                        return;
+                    }
+
+                    ++_at;
+                }
+                break;
+
+            case '*':
+                // multi-line comment
+                _at += 2;
+
+                while (!this->isDone()) {
+                    if (this->charsLeft() >= 2) {
+                        if (*_at == '*' && *(_at + 1) == '/') {
+                            _at += 2;
+                            return;
+                        }
+                    }
+
+                    this->_checkNewLine();
+                    ++_at;
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+}
 
 template <typename CharIt>
 template <typename ValT>
