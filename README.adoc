@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-22 March 2022
+5 April 2022
 :toc: left
 
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
@@ -76,6 +76,9 @@ data stream strings have an 8-bit alignment requirement.
 
 * Decodes CTF packets of any size and event records of any size with
   steady memory usage and performance.
+
+* Decodes a **CTF2-SPECRC-5.0** trace environment data stream as
+  a structured trace environment object.
 
 * Offers a memory mapped file view data source, but you can also
   implement your own data source.

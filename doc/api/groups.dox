@@ -80,17 +80,32 @@ auto myIntType = FixedLengthSignedIntegerType::create(
 @brief
     %Trace API.
 
-The trace API is both the fromMetadataText() function and the
-TraceEnvironment class.
+The trace API is the fromMetadataText() function, the
+TraceEnvironment class, and the TraceEnvironmentStreamDecoder class.
 
-Conceptually, everything found in a CTF&nbsp;1.8
-\link metadata_stream metadata stream\endlink forms a single
-\link TraceType trace type\endlink, except the environment which really
-belongs to the \em trace itself (the conceptual instance of the trace
-type).
+<dl>
+  <dt>CTF&nbsp;1.8
+  <dd>
+    Conceptually, everything found in a CTF&nbsp;1.8
+    \link metadata_stream metadata stream\endlink forms a single
+    \link TraceType trace type\endlink, except the environment which really
+    belongs to the \em trace itself (the conceptual instance of the
+    trace type).
 
-Therefore, fromMetadataText() returns both a trace type and a trace
-environment to accomodate CTF&nbsp;1.8.
+    Therefore, fromMetadataText() returns both a trace type and a trace
+    environment to accomodate CTF&nbsp;1.8.
+
+  <dt>CTF&nbsp;2
+  <dd>
+    The trace environment is not part of a CTF&nbsp;2 metadata stream.
+
+    Therefore, fromMetadataText() returns a trace type and an empty
+    trace environment.
+
+    Use a \link TraceEnvironmentStreamDecoder trace environment stream
+    decoder\endlink to decode a CTF&nbsp;2 trace environment data
+    stream and get the resulting trace environment object.
+</dl>
 
 @defgroup item Item
 @brief

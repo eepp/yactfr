@@ -72,6 +72,7 @@
 #include "metadata/vl-int-type.hpp"
 #include "mmap-file-view-factory.hpp"
 #include "text-parse-error.hpp"
+#include "trace-env-stream-decoder.hpp"
 #include "trace-env.hpp"
 
 #endif // _YACTFR_YACTFR_HPP

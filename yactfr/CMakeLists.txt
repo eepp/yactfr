@@ -80,6 +80,7 @@ add_library (
     mmap-file-view-factory.cpp
     text-loc.cpp
     text-parse-error.cpp
+    trace-env-stream-decoder.cpp
     trace-env.cpp
 )
 set_target_properties (
