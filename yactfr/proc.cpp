@@ -420,6 +420,22 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "END_READ_DL_STR";
         break;
 
+    case Kind::BEGIN_READ_SL_BLOB:
+        kindStr = "BEGIN_READ_SL_BLOB";
+        break;
+
+    case Kind::END_READ_SL_BLOB:
+        kindStr = "END_READ_SL_BLOB";
+        break;
+
+    case Kind::BEGIN_READ_DL_BLOB:
+        kindStr = "BEGIN_READ_DL_BLOB";
+        break;
+
+    case Kind::END_READ_DL_BLOB:
+        kindStr = "END_READ_DL_BLOB";
+        break;
+
     case Kind::BEGIN_READ_VAR_SSEL:
         kindStr = "BEGIN_READ_VAR_SSEL";
         break;
@@ -1061,6 +1077,8 @@ EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * 
            kind == Kind::END_READ_DL_ARRAY ||
            kind == Kind::END_READ_SL_STR ||
            kind == Kind::END_READ_DL_STR ||
+           kind == Kind::END_READ_SL_BLOB ||
+           kind == Kind::END_READ_DL_BLOB ||
            kind == Kind::END_READ_VAR);
 }
 
@@ -1232,6 +1250,35 @@ std::string BeginReadDlStrInstr::_toStr(const Size indent) const
     std::ostringstream ss;
 
     ss << ReadDataInstr::_commonToStr() << " " << _strProp("max-len-pos") << _maxLenPos << std::endl;
+    return ss.str();
+}
+
+BeginReadSlBlobInstr::BeginReadSlBlobInstr(const StructureMemberType * const member,
+                                           const DataType& dt) :
+    ReadDataInstr {Kind::BEGIN_READ_SL_BLOB, member, dt},
+    _len {dt.asStaticLengthBlobType().length()}
+{
+}
+
+std::string BeginReadSlBlobInstr::_toStr(const Size indent) const
+{
+    std::ostringstream ss;
+
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len") << _len << std::endl;
+    return ss.str();
+}
+
+BeginReadDlBlobInstr::BeginReadDlBlobInstr(const StructureMemberType * const member,
+                                           const DataType& dt) :
+    ReadDataInstr {Kind::BEGIN_READ_DL_BLOB, member, dt}
+{
+}
+
+std::string BeginReadDlBlobInstr::_toStr(const Size indent) const
+{
+    std::ostringstream ss;
+
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len-pos") << _lenPos << std::endl;
     return ss.str();
 }
 

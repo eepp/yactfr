@@ -106,6 +106,12 @@ private:
     void _buildReadDlStrInstr(const StructureMemberType *memberType, const DataType& dt,
                               Proc& baseProc);
 
+    void _buildReadSlBlobInstr(const StructureMemberType *memberType, const DataType& dt,
+                               Proc& baseProc);
+
+    void _buildReadDlBlobInstr(const StructureMemberType *memberType, const DataType& dt,
+                               Proc& baseProc);
+
     template <typename BeginReadVarInstrT, typename VarTypeT>
     void _buildReadVarInstr(const StructureMemberType *memberType, const VarTypeT& varType,
                             Proc& baseProc);

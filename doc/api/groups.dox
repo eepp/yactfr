@@ -198,6 +198,8 @@ descriptions below easier to read and to allow recursion.
   (DynamicLengthArrayBeginningElement DATA * EndElement) |
   (StaticLengthStringBeginningElement SubstringElement * EndElement) |
   (DynamicLengthStringBeginningElement SubstringElement * EndElement) |
+  (StaticLengthBlobBeginningElement BlobSectionElement * EndElement) |
+  (DynamicLengthBlobBeginningElement BlobSectionElement * EndElement) |
   (StructureBeginningElement DATA * EndElement) |
   (
     (VariantWithUnsignedSelectorBeginningElement | VariantWithSignedSelectorBeginningElement)

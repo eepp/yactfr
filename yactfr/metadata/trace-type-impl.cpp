@@ -104,6 +104,11 @@ public:
         this->_setTypeDeps(dt.maximumLengthLocation(), TraceTypeImpl::dlStrTypeMaxLenTypes(dt));
     }
 
+    void visit(const DynamicLengthBlobType& dt) override
+    {
+        this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dlBlobTypeLenTypes(dt));
+    }
+
     void visit(const VariantWithUnsignedSelectorType& dt) override
     {
         this->_visitVarType(dt);

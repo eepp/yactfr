@@ -69,6 +69,16 @@ public:
         this->_visit(pseudoDt);
     }
 
+    void visit(_PseudoDt<PseudoSlBlobType>& pseudoDt) override
+    {
+        this->_tryAdd(pseudoDt);
+    }
+
+    void visit(_PseudoDt<PseudoDlBlobType>& pseudoDt) override
+    {
+        this->_tryAdd(pseudoDt);
+    }
+
     void visit(_PseudoDt<PseudoStructType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);

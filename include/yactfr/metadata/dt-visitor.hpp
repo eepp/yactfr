@@ -175,6 +175,28 @@ public:
 
     /*!
     @brief
+        Visits the static-length BLOB type \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const StaticLengthBlobType& type)
+    {
+    }
+
+    /*!
+    @brief
+        Visits the dynamic-length BLOB type \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const DynamicLengthBlobType& type)
+    {
+    }
+
+    /*!
+    @brief
         Visits the type of data stream variants with an unsigned
         selector \p type.
 

@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <cstdint>
+#include <array>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/elem.hpp>
@@ -46,6 +47,7 @@ enum class VmState {
     READ_UUID_BYTE,
     READ_SUBSTR_UNTIL_NULL,
     READ_SUBSTR,
+    READ_BLOB_SECTION,
     END_STR,
     SET_TRACE_TYPE_UUID,
     CONTINUE_SKIP_PADDING_BITS,
@@ -88,6 +90,8 @@ struct VmStackFrame final
      *   array read instruction in this case).
      *
      * * String bytes left to read.
+     *
+     * * BLOB bytes left to read.
      */
     Size rem;
 };
@@ -281,10 +285,13 @@ public:
         FixedLengthFloatingPointNumberElement flFloat;
         NullTerminatedStringBeginningElement ntStrBeginning;
         SubstringElement substr;
+        BlobSectionElement blobSection;
         StaticLengthArrayBeginningElement slArrayBeginning;
-        StaticLengthStringBeginningElement slStrBeginning;
         DynamicLengthArrayBeginningElement dlArrayBeginning;
+        StaticLengthStringBeginningElement slStrBeginning;
         DynamicLengthStringBeginningElement dlStrBeginning;
+        StaticLengthBlobBeginningElement slBlobBeginning;
+        DynamicLengthBlobBeginningElement dlBlobBeginning;
         StructureBeginningElement structBeginning;
         VariantWithSignedSelectorBeginningElement varSSelBeginning;
         VariantWithUnsignedSelectorBeginningElement varUSelBeginning;
@@ -452,7 +459,10 @@ private:
     };
 
 private:
-    void _initExecFuncs();
+    template <Instr::Kind InstrKindV>
+    void _initExecFunc(_ExecReaction (Vm::*)(const Instr&)) noexcept;
+
+    void _initExecFuncs() noexcept;
     bool _newDataBlock(Index offsetInElemSeqBytes, Size sizeBytes);
 
     bool _handleState()
@@ -472,6 +482,9 @@ private:
 
         case VmState::READ_SUBSTR:
             return this->_stateReadSubstr();
+
+        case VmState::READ_BLOB_SECTION:
+            return this->_stateReadBlobSection();
 
         case VmState::READ_SUBSTR_UNTIL_NULL:
             return this->_stateReadSubstrUntilNull();
@@ -747,7 +760,8 @@ private:
         return true;
     }
 
-    bool _stateReadSubstr()
+    template <typename ByteT, typename ElemT>
+    bool _stateReadBytes(ElemT& elem)
     {
         assert((_pos.headOffsetInCurPktBits & 7) == 0);
 
@@ -761,23 +775,33 @@ private:
 
         const auto buf = this->_bufAtHead();
         const auto bufSizeBytes = this->_remBitsInBuf() / 8;
-        const auto substrSizeBytes = std::min(bufSizeBytes, _pos.stackTop().rem);
-        const auto substrLenBits = substrSizeBytes * 8;
+        const auto sectionSizeBytes = std::min(bufSizeBytes, _pos.stackTop().rem);
+        const auto sectionLenBits = sectionSizeBytes * 8;
 
-        if (substrLenBits > _pos.remContentBitsInPkt()) {
+        if (sectionLenBits > _pos.remContentBitsInPkt()) {
             throw CannotDecodeDataBeyondPacketContentDecodingError {
                 _pos.headOffsetInElemSeqBits(),
-                substrLenBits, _pos.remContentBitsInPkt()
+                sectionLenBits, _pos.remContentBitsInPkt()
             };
         }
 
-        _pos.elems.substr._begin = reinterpret_cast<const char *>(buf);
-        _pos.elems.substr._end = reinterpret_cast<const char *>(buf + substrSizeBytes);
-        assert(_pos.elems.substr.size() > 0);
-        this->_updateItCurOffset(_pos.elems.substr);
-        this->_consumeExistingBits(substrSizeBytes * 8);
-        _pos.stackTop().rem -= substrSizeBytes;
+        elem._begin = reinterpret_cast<const ByteT *>(buf);
+        elem._end = reinterpret_cast<const ByteT *>(buf + sectionSizeBytes);
+        assert(elem.size() > 0);
+        this->_updateItCurOffset(elem);
+        this->_consumeExistingBits(sectionSizeBytes * 8);
+        _pos.stackTop().rem -= sectionSizeBytes;
         return true;
+    }
+
+    bool _stateReadSubstr()
+    {
+        return this->_stateReadBytes<char>(_pos.elems.substr);
+    }
+
+    bool _stateReadBlobSection()
+    {
+        return this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection);
     }
 
     bool _stateReadSubstrUntilNull()
@@ -1061,6 +1085,10 @@ private:
     _ExecReaction _execEndReadDlArray(const Instr& instr);
     _ExecReaction _execBeginReadDlStr(const Instr& instr);
     _ExecReaction _execEndReadDlStr(const Instr& instr);
+    _ExecReaction _execBeginReadSlBlob(const Instr& instr);
+    _ExecReaction _execEndReadSlBlob(const Instr& instr);
+    _ExecReaction _execBeginReadDlBlob(const Instr& instr);
+    _ExecReaction _execEndReadDlBlob(const Instr& instr);
     _ExecReaction _execBeginReadVarSSel(const Instr& instr);
     _ExecReaction _execBeginReadVarUSel(const Instr& instr);
     _ExecReaction _execEndReadVar(const Instr& instr);
@@ -1369,6 +1397,9 @@ private:
     }
 
 private:
+    using ExecFunc = _ExecReaction (Vm::*)(const Instr&);
+
+private:
     DataSourceFactory *_dataSrcFactory;
     DataSource::UP _dataSrc;
 
@@ -1385,11 +1416,22 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<_ExecReaction (Vm::*)(const Instr&), 100> _execFuncs;
+    std::array<ExecFunc, 128> _execFuncs;
 
     // position (whole VM's state)
     VmPos _pos;
 };
+
+template <Instr::Kind InstrKindV>
+void Vm::_initExecFunc(const ExecFunc execFunc) noexcept
+{
+    constexpr auto index = static_cast<unsigned int>(InstrKindV);
+
+    static_assert(index < std::tuple_size<decltype(this->_execFuncs)>::value,
+                  "Instruction handler array is large enough.");
+
+    _execFuncs[index] = execFunc;
+}
 
 } // namespace internal
 } // namespace yactfr

@@ -20,6 +20,7 @@ add_library (
     elem-visitor.cpp
     logging/zf_log.c
     metadata/array-type.cpp
+    metadata/blob-type.cpp
     metadata/clk-type.cpp
     metadata/compound-dt.cpp
     metadata/data-loc-map.cpp
@@ -28,6 +29,7 @@ add_library (
     metadata/dt-from-pseudo-root-dt.cpp
     metadata/dt.cpp
     metadata/dl-array-type.cpp
+    metadata/dl-blob-type.cpp
     metadata/dl-str-type.cpp
     metadata/ert.cpp
     metadata/fl-bit-array-type.cpp
@@ -45,6 +47,7 @@ add_library (
     metadata/pseudo-types.cpp
     metadata/scalar-dt.cpp
     metadata/sl-array-type.cpp
+    metadata/sl-blob-type.cpp
     metadata/sl-str-type.cpp
     metadata/struct-member-type.cpp
     metadata/struct-type.cpp

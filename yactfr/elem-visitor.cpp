@@ -105,24 +105,38 @@ void ElementVisitor::visit(const SubstringElement& elem)
 {
 }
 
+void ElementVisitor::visit(const BlobSectionElement& elem)
+{
+}
+
 void ElementVisitor::visit(const StaticLengthArrayBeginningElement& elem)
 {
-    this->visit(static_cast<const BeginningElement&>(elem));
+    this->visit(static_cast<const ArrayBeginningElement&>(elem));
 }
 
 void ElementVisitor::visit(const StaticLengthStringBeginningElement& elem)
 {
-    this->visit(static_cast<const BeginningElement&>(elem));
+    this->visit(static_cast<const NonNullTerminatedStringBeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const StaticLengthBlobBeginningElement& elem)
+{
+    this->visit(static_cast<const BlobBeginningElement&>(elem));
 }
 
 void ElementVisitor::visit(const DynamicLengthArrayBeginningElement& elem)
 {
-    this->visit(static_cast<const BeginningElement&>(elem));
+    this->visit(static_cast<const ArrayBeginningElement&>(elem));
 }
 
 void ElementVisitor::visit(const DynamicLengthStringBeginningElement& elem)
 {
-    this->visit(static_cast<const BeginningElement&>(elem));
+    this->visit(static_cast<const NonNullTerminatedStringBeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const DynamicLengthBlobBeginningElement& elem)
+{
+    this->visit(static_cast<const BlobBeginningElement&>(elem));
 }
 
 void ElementVisitor::visit(const StructureBeginningElement& elem)

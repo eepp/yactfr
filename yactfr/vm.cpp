@@ -192,105 +192,109 @@ Vm& Vm::operator=(const Vm& other)
     return *this;
 }
 
-void Vm::_initExecFuncs()
+void Vm::_initExecFuncs() noexcept
 {
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_LE)] = &Vm::_execReadFlBitArrayLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_BE)] = &Vm::_execReadFlBitArrayBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A8)] = &Vm::_execReadFlBitArrayA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A16_LE)] = &Vm::_execReadFlBitArrayA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A32_LE)] = &Vm::_execReadFlBitArrayA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A64_LE)] = &Vm::_execReadFlBitArrayA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A16_BE)] = &Vm::_execReadFlBitArrayA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A32_BE)] = &Vm::_execReadFlBitArrayA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A64_BE)] = &Vm::_execReadFlBitArrayA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_LE)] = &Vm::_execReadFlBoolLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_BE)] = &Vm::_execReadFlBoolBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A8)] = &Vm::_execReadFlBoolA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A16_LE)] = &Vm::_execReadFlBoolA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A32_LE)] = &Vm::_execReadFlBoolA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A64_LE)] = &Vm::_execReadFlBoolA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A16_BE)] = &Vm::_execReadFlBoolA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A32_BE)] = &Vm::_execReadFlBoolA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A64_BE)] = &Vm::_execReadFlBoolA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_LE)] = &Vm::_execReadFlSIntLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_BE)] = &Vm::_execReadFlSIntBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A8)] = &Vm::_execReadFlSIntA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A16_LE)] = &Vm::_execReadFlSIntA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A32_LE)] = &Vm::_execReadFlSIntA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A64_LE)] = &Vm::_execReadFlSIntA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A16_BE)] = &Vm::_execReadFlSIntA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A32_BE)] = &Vm::_execReadFlSIntA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A64_BE)] = &Vm::_execReadFlSIntA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_LE)] = &Vm::_execReadFlUIntLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_BE)] = &Vm::_execReadFlUIntBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A8)] = &Vm::_execReadFlUIntA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A16_LE)] = &Vm::_execReadFlUIntA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A32_LE)] = &Vm::_execReadFlUIntA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A64_LE)] = &Vm::_execReadFlUIntA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A16_BE)] = &Vm::_execReadFlUIntA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A32_BE)] = &Vm::_execReadFlUIntA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UINT_A64_BE)] = &Vm::_execReadFlUIntA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_32_LE)] = &Vm::_execReadFlFloat32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_32_BE)] = &Vm::_execReadFlFloat32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A32_LE)] = &Vm::_execReadFlFloatA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A32_BE)] = &Vm::_execReadFlFloatA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_64_LE)] = &Vm::_execReadFlFloat64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_64_BE)] = &Vm::_execReadFlFloat64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A64_LE)] = &Vm::_execReadFlFloatA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_FLOAT_A64_BE)] = &Vm::_execReadFlFloatA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_LE)] = &Vm::_execReadFlSEnumLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_BE)] = &Vm::_execReadFlSEnumBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A8)] = &Vm::_execReadFlSEnumA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A16_LE)] = &Vm::_execReadFlSEnumA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A32_LE)] = &Vm::_execReadFlSEnumA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A64_LE)] = &Vm::_execReadFlSEnumA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A16_BE)] = &Vm::_execReadFlSEnumA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A32_BE)] = &Vm::_execReadFlSEnumA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SENUM_A64_BE)] = &Vm::_execReadFlSEnumA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_LE)] = &Vm::_execReadFlUEnumLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_BE)] = &Vm::_execReadFlUEnumBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A8)] = &Vm::_execReadFlUEnumA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A16_LE)] = &Vm::_execReadFlUEnumA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A32_LE)] = &Vm::_execReadFlUEnumA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A64_LE)] = &Vm::_execReadFlUEnumA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A16_BE)] = &Vm::_execReadFlUEnumA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A32_BE)] = &Vm::_execReadFlUEnumA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A64_BE)] = &Vm::_execReadFlUEnumA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_NT_STR)] = &Vm::_execReadNtStr;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SCOPE)] = &Vm::_execBeginReadScope;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_SCOPE)] = &Vm::_execEndReadScope;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STRUCT)] = &Vm::_execBeginReadStruct;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_STRUCT)] = &Vm::_execEndReadStruct;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_ARRAY)] = &Vm::_execBeginReadSlArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_SL_ARRAY)] = &Vm::_execEndReadSlArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_STR)] = &Vm::_execBeginReadSlStr;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_SL_STR)] = &Vm::_execEndReadSlStr;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_UUID_ARRAY)] = &Vm::_execBeginReadSlUuidArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DL_ARRAY)] = &Vm::_execBeginReadDlArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DL_ARRAY)] = &Vm::_execEndReadDlArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DL_STR)] = &Vm::_execBeginReadDlStr;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DL_STR)] = &Vm::_execEndReadDlStr;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_SSEL)] = &Vm::_execBeginReadVarSSel;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_USEL)] = &Vm::_execBeginReadVarUSel;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_VAR)] = &Vm::_execEndReadVar;
-    _execFuncs[static_cast<int>(Instr::Kind::SAVE_VAL)] = &Vm::_execSaveVal;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_END_DEF_CLK_VAL)] = &Vm::_execSetPktEndDefClkVal;
-    _execFuncs[static_cast<int>(Instr::Kind::UPDATE_DEF_CLK_VAL)] = &Vm::_execUpdateDefClkVal;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_CUR_ID)] = &Vm::_execSetCurrentId;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_DST)] = &Vm::_execSetDst;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_ERT)] = &Vm::_execSetErt;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_DS_ID)] = &Vm::_execSetDsId;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_ORIGIN_INDEX)] = &Vm::_execSetPktOriginIndex;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_TOTAL_LEN)] = &Vm::_execSetPktTotalLen;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_CONTENT_LEN)] = &Vm::_execSetPktContentLen;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_MAGIC_NUMBER)] = &Vm::_execSetPktMagicNumber;
-    _execFuncs[static_cast<int>(Instr::Kind::END_PKT_PREAMBLE_PROC)] = &Vm::_execEndPktPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_DS_PKT_PREAMBLE_PROC)] = &Vm::_execEndDsPktPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_DS_ER_PREAMBLE_PROC)] = &Vm::_execEndDsErPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_ER_PROC)] = &Vm::_execEndErProc;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_DS_INFO)] = &Vm::_execSetDsInfo;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_INFO)] = &Vm::_execSetPktInfo;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_ER_INFO)] = &Vm::_execSetErInfo;
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_LE>(&Vm::_execReadFlBitArrayLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_BE>(&Vm::_execReadFlBitArrayBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A8>(&Vm::_execReadFlBitArrayA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A16_LE>(&Vm::_execReadFlBitArrayA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A32_LE>(&Vm::_execReadFlBitArrayA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A64_LE>(&Vm::_execReadFlBitArrayA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A16_BE>(&Vm::_execReadFlBitArrayA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A32_BE>(&Vm::_execReadFlBitArrayA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_A64_BE>(&Vm::_execReadFlBitArrayA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_LE>(&Vm::_execReadFlBoolLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_BE>(&Vm::_execReadFlBoolBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A8>(&Vm::_execReadFlBoolA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A16_LE>(&Vm::_execReadFlBoolA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A32_LE>(&Vm::_execReadFlBoolA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A64_LE>(&Vm::_execReadFlBoolA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A16_BE>(&Vm::_execReadFlBoolA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A32_BE>(&Vm::_execReadFlBoolA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A64_BE>(&Vm::_execReadFlBoolA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_LE>(&Vm::_execReadFlSIntLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_BE>(&Vm::_execReadFlSIntBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A8>(&Vm::_execReadFlSIntA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A16_LE>(&Vm::_execReadFlSIntA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A32_LE>(&Vm::_execReadFlSIntA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A64_LE>(&Vm::_execReadFlSIntA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A16_BE>(&Vm::_execReadFlSIntA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A32_BE>(&Vm::_execReadFlSIntA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_SINT_A64_BE>(&Vm::_execReadFlSIntA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_LE>(&Vm::_execReadFlUIntLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_BE>(&Vm::_execReadFlUIntBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A8>(&Vm::_execReadFlUIntA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A16_LE>(&Vm::_execReadFlUIntA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A32_LE>(&Vm::_execReadFlUIntA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A64_LE>(&Vm::_execReadFlUIntA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A16_BE>(&Vm::_execReadFlUIntA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A32_BE>(&Vm::_execReadFlUIntA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_UINT_A64_BE>(&Vm::_execReadFlUIntA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_32_LE>(&Vm::_execReadFlFloat32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_32_BE>(&Vm::_execReadFlFloat32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_A32_LE>(&Vm::_execReadFlFloatA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_A32_BE>(&Vm::_execReadFlFloatA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_64_LE>(&Vm::_execReadFlFloat64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_64_BE>(&Vm::_execReadFlFloat64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_A64_LE>(&Vm::_execReadFlFloatA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_A64_BE>(&Vm::_execReadFlFloatA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_LE>(&Vm::_execReadFlSEnumLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_BE>(&Vm::_execReadFlSEnumBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A8>(&Vm::_execReadFlSEnumA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A16_LE>(&Vm::_execReadFlSEnumA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A32_LE>(&Vm::_execReadFlSEnumA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A64_LE>(&Vm::_execReadFlSEnumA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A16_BE>(&Vm::_execReadFlSEnumA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A32_BE>(&Vm::_execReadFlSEnumA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A64_BE>(&Vm::_execReadFlSEnumA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_LE>(&Vm::_execReadFlUEnumLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_BE>(&Vm::_execReadFlUEnumBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A8>(&Vm::_execReadFlUEnumA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A16_LE>(&Vm::_execReadFlUEnumA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A32_LE>(&Vm::_execReadFlUEnumA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A64_LE>(&Vm::_execReadFlUEnumA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A16_BE>(&Vm::_execReadFlUEnumA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A32_BE>(&Vm::_execReadFlUEnumA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A64_BE>(&Vm::_execReadFlUEnumA64Be);
+    this->_initExecFunc<Instr::Kind::READ_NT_STR>(&Vm::_execReadNtStr);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SCOPE>(&Vm::_execBeginReadScope);
+    this->_initExecFunc<Instr::Kind::END_READ_SCOPE>(&Vm::_execEndReadScope);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_STRUCT>(&Vm::_execBeginReadStruct);
+    this->_initExecFunc<Instr::Kind::END_READ_STRUCT>(&Vm::_execEndReadStruct);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_ARRAY>(&Vm::_execBeginReadSlArray);
+    this->_initExecFunc<Instr::Kind::END_READ_SL_ARRAY>(&Vm::_execEndReadSlArray);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_STR>(&Vm::_execBeginReadSlStr);
+    this->_initExecFunc<Instr::Kind::END_READ_SL_STR>(&Vm::_execEndReadSlStr);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_BLOB>(&Vm::_execBeginReadSlBlob);
+    this->_initExecFunc<Instr::Kind::END_READ_SL_BLOB>(&Vm::_execEndReadSlBlob);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_UUID_ARRAY>(&Vm::_execBeginReadSlUuidArray);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_DL_ARRAY>(&Vm::_execBeginReadDlArray);
+    this->_initExecFunc<Instr::Kind::END_READ_DL_ARRAY>(&Vm::_execEndReadDlArray);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_DL_STR>(&Vm::_execBeginReadDlStr);
+    this->_initExecFunc<Instr::Kind::END_READ_DL_STR>(&Vm::_execEndReadDlStr);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_DL_BLOB>(&Vm::_execBeginReadDlBlob);
+    this->_initExecFunc<Instr::Kind::END_READ_DL_BLOB>(&Vm::_execEndReadDlBlob);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_VAR_SSEL>(&Vm::_execBeginReadVarSSel);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_VAR_USEL>(&Vm::_execBeginReadVarUSel);
+    this->_initExecFunc<Instr::Kind::END_READ_VAR>(&Vm::_execEndReadVar);
+    this->_initExecFunc<Instr::Kind::SAVE_VAL>(&Vm::_execSaveVal);
+    this->_initExecFunc<Instr::Kind::SET_PKT_END_DEF_CLK_VAL>(&Vm::_execSetPktEndDefClkVal);
+    this->_initExecFunc<Instr::Kind::UPDATE_DEF_CLK_VAL>(&Vm::_execUpdateDefClkVal);
+    this->_initExecFunc<Instr::Kind::SET_CUR_ID>(&Vm::_execSetCurrentId);
+    this->_initExecFunc<Instr::Kind::SET_DST>(&Vm::_execSetDst);
+    this->_initExecFunc<Instr::Kind::SET_ERT>(&Vm::_execSetErt);
+    this->_initExecFunc<Instr::Kind::SET_DS_ID>(&Vm::_execSetDsId);
+    this->_initExecFunc<Instr::Kind::SET_PKT_ORIGIN_INDEX>(&Vm::_execSetPktOriginIndex);
+    this->_initExecFunc<Instr::Kind::SET_PKT_TOTAL_LEN>(&Vm::_execSetPktTotalLen);
+    this->_initExecFunc<Instr::Kind::SET_PKT_CONTENT_LEN>(&Vm::_execSetPktContentLen);
+    this->_initExecFunc<Instr::Kind::SET_PKT_MAGIC_NUMBER>(&Vm::_execSetPktMagicNumber);
+    this->_initExecFunc<Instr::Kind::END_PKT_PREAMBLE_PROC>(&Vm::_execEndPktPreambleProc);
+    this->_initExecFunc<Instr::Kind::END_DS_PKT_PREAMBLE_PROC>(&Vm::_execEndDsPktPreambleProc);
+    this->_initExecFunc<Instr::Kind::END_DS_ER_PREAMBLE_PROC>(&Vm::_execEndDsErPreambleProc);
+    this->_initExecFunc<Instr::Kind::END_ER_PROC>(&Vm::_execEndErProc);
+    this->_initExecFunc<Instr::Kind::SET_DS_INFO>(&Vm::_execSetDsInfo);
+    this->_initExecFunc<Instr::Kind::SET_PKT_INFO>(&Vm::_execSetPktInfo);
+    this->_initExecFunc<Instr::Kind::SET_ER_INFO>(&Vm::_execSetErInfo);
 }
 
 void Vm::seekPkt(const Index offsetBytes)
@@ -848,6 +852,40 @@ Vm::_ExecReaction Vm::_execBeginReadDlStr(const Instr& instr)
 }
 
 Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr& instr)
+{
+    this->_updateItCurOffset(_pos.elems.end);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execBeginReadSlBlob(const Instr& instr)
+{
+    const auto& beginReadSlBlobInstr = static_cast<const BeginReadSlBlobInstr&>(instr);
+
+    _pos.elems.slBlobBeginning._dt = &beginReadSlBlobInstr.slBlobType();
+    _pos.elems.slBlobBeginning._len = beginReadSlBlobInstr.len();
+    this->_execBeginReadStaticData(beginReadSlBlobInstr, _pos.elems.slBlobBeginning,
+                                   beginReadSlBlobInstr.len(), nullptr, VmState::READ_BLOB_SECTION);
+    return _ExecReaction::STOP;
+}
+
+Vm::_ExecReaction Vm::_execEndReadSlBlob(const Instr& instr)
+{
+    this->_updateItCurOffset(_pos.elems.end);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execBeginReadDlBlob(const Instr& instr)
+{
+    const auto& beginReadDlBlobInstr = static_cast<const BeginReadDlBlobInstr&>(instr);
+
+    _pos.elems.dlBlobBeginning._dt = &beginReadDlBlobInstr.dlBlobType();
+    this->_execBeginReadDynData(beginReadDlBlobInstr, _pos.elems.dlBlobBeginning,
+                                beginReadDlBlobInstr.lenPos(), _pos.elems.dlBlobBeginning._len,
+                                nullptr, VmState::READ_BLOB_SECTION);
+    return _ExecReaction::STOP;
+}
+
+Vm::_ExecReaction Vm::_execEndReadDlBlob(const Instr& instr)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;

@@ -15,6 +15,7 @@
 namespace yactfr {
 
 class ArrayType;
+class BlobType;
 class ClockOffset;
 class ClockType;
 class ClockValueInterval;
@@ -24,6 +25,7 @@ class DataStreamType;
 class DataType;
 class DataTypeVisitor;
 class DynamicLengthArrayType;
+class DynamicLengthBlobType;
 class DynamicLengthStringType;
 class EventRecordType;
 class FixedLengthBitArrayType;
@@ -46,6 +48,7 @@ class PlainTextMetadataStream;
 class ScalarDataType;
 class SignedFixedLengthEnumerationType;
 class StaticLengthArrayType;
+class StaticLengthBlobType;
 class StaticLengthStringType;
 class StructureMemberType;
 class StructureType;

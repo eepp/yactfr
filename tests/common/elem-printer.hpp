@@ -191,6 +191,24 @@ public:
         *_os << '\n';
     }
 
+    void visit(const yactfr::BlobSectionElement& elem) override
+    {
+        this->_indent();
+        *_os << "BS:" << elem.size() << ":";
+
+        std::ios init {nullptr};
+
+        init.copyfmt(*_os);
+        *_os << std::hex << std::setw(2) << std::setfill('0');
+
+        for (const auto byte : elem) {
+            *_os << static_cast<unsigned int>(byte);
+        }
+
+        _os->copyfmt(init);
+        *_os << '\n';
+    }
+
     void visit(const yactfr::StaticLengthArrayBeginningElement& elem) override
     {
         this->_visitDataElem(elem, "SLA");
@@ -205,6 +223,13 @@ public:
         ++_indentLevel;
     }
 
+    void visit(const yactfr::StaticLengthBlobBeginningElement& elem) override
+    {
+        this->_visitDataElem(elem, "SLB");
+        *_os << ':' << elem.type().mediaType() << " {\n";
+        ++_indentLevel;
+    }
+
     void visit(const yactfr::DynamicLengthArrayBeginningElement& elem) override
     {
         this->_visitDataElem(elem, "DLA");
@@ -216,6 +241,13 @@ public:
     {
         this->_visitDataElem(elem, "DLS");
         *_os << " {\n";
+        ++_indentLevel;
+    }
+
+    void visit(const yactfr::DynamicLengthBlobBeginningElement& elem) override
+    {
+        this->_visitDataElem(elem, "DLB");
+        *_os << ':' << elem.type().mediaType() << " {\n";
         ++_indentLevel;
     }
 

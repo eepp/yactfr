@@ -90,7 +90,8 @@ void PktProcBuilder::_buildPktProc()
      *
      * 4. Insert `SaveValInstr` objects where needed to accomodate
      *    subsequent "begin read dynamic-length array", "begin read
-     *    dynamic-length string", and "begin read variant" instructions.
+     *    dynamic-length string", "begin read dynamic-length BLOB", and
+     *    "begin read variant" instructions.
      *
      * 5. Insert "end procedure" instructions at the end of each
      *    top-level procedure.
@@ -567,6 +568,11 @@ public:
         instr.maxLenPos(_func(instr.dlStrType().maximumLengthTypes()));
     }
 
+    void visit(BeginReadDlBlobInstr& instr) override
+    {
+        instr.lenPos(_func(instr.dlBlobType().lengthTypes()));
+    }
+
     void visit(BeginReadVarUSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
@@ -608,7 +614,8 @@ void PktProcBuilder::_setSavedValPoss()
      * Here's the idea.
      *
      * We swipe the whole packet procedure tree to find the "begin read
-     * dynamic-length array", "begin read dynamic-length string", and
+     * dynamic-length array", "begin read dynamic-length string", "
+       "begin read dynamic-length BLOB", and
      * "begin read variant" instructions, each of which having a data
      * type containing the lenght/selector types.
      *
@@ -829,6 +836,16 @@ public:
         _pktProcBuilder->_buildReadDlStrInstr(_memberType, dt, *_baseProc);
     }
 
+    void visit(const StaticLengthBlobType& dt) override
+    {
+        _pktProcBuilder->_buildReadSlBlobInstr(_memberType, dt, *_baseProc);
+    }
+
+    void visit(const DynamicLengthBlobType& dt) override
+    {
+        _pktProcBuilder->_buildReadDlBlobInstr(_memberType, dt, *_baseProc);
+    }
+
     void visit(const VariantWithUnsignedSelectorType& dt) override
     {
         _pktProcBuilder->_buildReadVarUSelInstr(_memberType, dt, *_baseProc);
@@ -964,6 +981,22 @@ void PktProcBuilder::_buildReadDlStrInstr(const StructureMemberType * const memb
     assert(dt.isDynamicLengthStringType());
     this->_buildReadInstrWithLen<BeginReadDlStrInstr,
                                  Instr::Kind::END_READ_DL_STR>(memberType, dt, baseProc);
+}
+
+void PktProcBuilder::_buildReadSlBlobInstr(const StructureMemberType * const memberType,
+                                           const DataType& dt, Proc& baseProc)
+{
+    assert(dt.isStaticLengthBlobType());
+    this->_buildReadInstrWithLen<BeginReadSlBlobInstr,
+                                 Instr::Kind::END_READ_SL_BLOB>(memberType, dt, baseProc);
+}
+
+void PktProcBuilder::_buildReadDlBlobInstr(const StructureMemberType * const memberType,
+                                           const DataType& dt, Proc& baseProc)
+{
+    assert(dt.isDynamicLengthBlobType());
+    this->_buildReadInstrWithLen<BeginReadDlBlobInstr,
+                                 Instr::Kind::END_READ_DL_BLOB>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadVarUSelInstr(const StructureMemberType * const memberType,

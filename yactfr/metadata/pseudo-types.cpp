@@ -164,6 +164,16 @@ void PseudoFlUEnumType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
+PseudoSlType::PseudoSlType(const Size len) :
+    _len {len}
+{
+}
+
+PseudoDlType::PseudoDlType(PseudoDataLoc pseudoLenLoc) :
+    _pseudoLenLoc {std::move(pseudoLenLoc)}
+{
+}
+
 PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, TextLocation loc) :
     PseudoDt {std::move(loc)},
     _pseudoElemType {std::move(pseudoElemType)}
@@ -172,7 +182,7 @@ PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, TextLocation loc) 
 
 PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType, TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
-    _len {len}
+    PseudoSlType {len}
 {
 }
 
@@ -203,7 +213,7 @@ void PseudoSlArrayType::accept(ConstPseudoDtVisitor& visitor) const
 PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
                                      TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
-    _pseudoLenLoc {std::move(pseudoLenLoc)}
+    PseudoDlType {std::move(pseudoLenLoc)}
 {
 }
 
@@ -224,6 +234,61 @@ void PseudoDlArrayType::accept(PseudoDtVisitor& visitor)
 }
 
 void PseudoDlArrayType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, TextLocation loc) :
+    PseudoDt {std::move(loc)},
+    _mediaType {std::move(mediaType)}
+{
+}
+
+PseudoSlBlobType::PseudoSlBlobType(const Size len, boost::optional<std::string> mediaType,
+                                   TextLocation loc) :
+    PseudoBlobType {std::move(mediaType), std::move(loc)},
+    PseudoSlType {len}
+{
+}
+
+PseudoDt::UP PseudoSlBlobType::clone() const
+{
+    return std::make_unique<PseudoSlBlobType>(_len, this->mediaType(), this->loc());
+}
+
+bool PseudoSlBlobType::isEmpty() const
+{
+    return _len == 0;
+}
+
+void PseudoSlBlobType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoSlBlobType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+PseudoDlBlobType::PseudoDlBlobType(PseudoDataLoc pseudoLenLoc,
+                                   boost::optional<std::string> mediaType, TextLocation loc) :
+    PseudoBlobType {std::move(mediaType), std::move(loc)},
+    PseudoDlType {std::move(pseudoLenLoc)}
+{
+}
+
+PseudoDt::UP PseudoDlBlobType::clone() const
+{
+    return std::make_unique<PseudoDlBlobType>(_pseudoLenLoc, this->mediaType(), this->loc());
+}
+
+void PseudoDlBlobType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoDlBlobType::accept(ConstPseudoDtVisitor& visitor) const
 {
     visitor.visit(*this);
 }

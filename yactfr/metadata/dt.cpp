@@ -21,6 +21,8 @@
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
+#include <yactfr/metadata/sl-blob-type.hpp>
+#include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/internal/utils.hpp>
 
@@ -145,6 +147,24 @@ const DynamicLengthStringType& DataType::asDynamicLengthStringType() const noexc
 {
     assert(this->isDynamicLengthStringType());
     return static_cast<const DynamicLengthStringType&>(*this);
+}
+
+const BlobType& DataType::asBlobType() const noexcept
+{
+    assert(this->isBlobType());
+    return static_cast<const BlobType&>(*this);
+}
+
+const StaticLengthBlobType& DataType::asStaticLengthBlobType() const noexcept
+{
+    assert(this->isStaticLengthBlobType());
+    return static_cast<const StaticLengthBlobType&>(*this);
+}
+
+const DynamicLengthBlobType& DataType::asDynamicLengthBlobType() const noexcept
+{
+    assert(this->isDynamicLengthBlobType());
+    return static_cast<const DynamicLengthBlobType&>(*this);
 }
 
 const StructureType& DataType::asStructureType() const noexcept

@@ -81,6 +81,8 @@
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
+#include <yactfr/metadata/sl-blob-type.hpp>
+#include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/ert.hpp>
@@ -98,6 +100,8 @@ class BeginReadScopeInstr;
 class BeginReadSlArrayInstr;
 class BeginReadSlStrInstr;
 class BeginReadSlUuidArrayInstr;
+class BeginReadDlBlobInstr;
+class BeginReadSlBlobInstr;
 class BeginReadStructInstr;
 class BeginReadVarSSelInstr;
 class BeginReadVarUSelInstr;
@@ -198,15 +202,23 @@ public:
     {
     }
 
-    virtual void visit(BeginReadSlStrInstr& instr)
-    {
-    }
-
     virtual void visit(BeginReadDlArrayInstr& instr)
     {
     }
 
+    virtual void visit(BeginReadSlStrInstr& instr)
+    {
+    }
+
     virtual void visit(BeginReadDlStrInstr& instr)
+    {
+    }
+
+    virtual void visit(BeginReadSlBlobInstr& instr)
+    {
+    }
+
+    virtual void visit(BeginReadDlBlobInstr& instr)
     {
     }
 
@@ -383,15 +395,17 @@ class Instr
 {
 public:
     // kind of instruction (opcode)
-    enum class Kind
+    enum class Kind : unsigned int
     {
         UNSET,
         BEGIN_READ_DL_ARRAY,
         BEGIN_READ_DL_STR,
+        BEGIN_READ_DL_BLOB,
         BEGIN_READ_SCOPE,
         BEGIN_READ_SL_ARRAY,
         BEGIN_READ_SL_STR,
         BEGIN_READ_SL_UUID_ARRAY,
+        BEGIN_READ_SL_BLOB,
         BEGIN_READ_STRUCT,
         BEGIN_READ_VAR_SSEL,
         BEGIN_READ_VAR_USEL,
@@ -405,6 +419,8 @@ public:
         END_READ_SCOPE,
         END_READ_SL_STR,
         END_READ_DL_STR,
+        END_READ_SL_BLOB,
+        END_READ_DL_BLOB,
         END_READ_STRUCT,
         END_READ_VAR,
         READ_FL_BIT_ARRAY_A16_BE,
@@ -672,6 +688,16 @@ public:
     bool isBeginReadDlStr() const noexcept
     {
         return _theKind == Kind::BEGIN_READ_DL_STR;
+    }
+
+    bool isBeginReadSlBlob() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_SL_BLOB;
+    }
+
+    bool isBeginReadDlBlob() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_DL_BLOB;
     }
 
     bool isBeginReadStruct() const noexcept
@@ -1355,6 +1381,78 @@ private:
 
 private:
     Index _maxLenPos = -1ULL;
+};
+
+/*
+ * "Begin reading static-length BLOB" procedure instruction.
+ *
+ * len() indicates the length (bytes) of the static-length BLOB to read.
+ */
+class BeginReadSlBlobInstr final :
+    public ReadDataInstr
+{
+public:
+    explicit BeginReadSlBlobInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+
+    const StaticLengthBlobType& slBlobType() const noexcept
+    {
+        return static_cast<const StaticLengthBlobType&>(this->dt());
+    }
+
+    Size len() const noexcept
+    {
+        return _len;
+    }
+
+private:
+    std::string _toStr(Size indent = 0) const override;
+
+private:
+    const Size _len;
+};
+
+/*
+ * "Begin reading dynamic-length BLOB" procedure instruction.
+ *
+ * The VM must use lenPos() to retrieve the saved value which contains
+ * the length (bytes) of the dynamic-length BLOB.
+ */
+class BeginReadDlBlobInstr final :
+    public ReadDataInstr
+{
+public:
+    explicit BeginReadDlBlobInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+
+    const DynamicLengthBlobType& dlBlobType() const noexcept
+    {
+        return static_cast<const DynamicLengthBlobType&>(this->dt());
+    }
+
+    const Index lenPos() const noexcept
+    {
+        return _lenPos;
+    }
+
+    void lenPos(const Index lenPos) noexcept
+    {
+        _lenPos = lenPos;
+    }
+
+private:
+    std::string _toStr(Size indent = 0) const override;
+
+private:
+    Index _lenPos = -1ULL;
 };
 
 /*

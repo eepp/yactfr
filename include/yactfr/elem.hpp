@@ -19,6 +19,8 @@
 #include "metadata/dl-array-type.hpp"
 #include "metadata/sl-str-type.hpp"
 #include "metadata/dl-str-type.hpp"
+#include "metadata/sl-blob-type.hpp"
+#include "metadata/dl-blob-type.hpp"
 #include "metadata/var-type.hpp"
 #include "elem-visitor.hpp"
 #include "aliases.hpp"
@@ -111,6 +113,9 @@ public:
         /// SubstringElement
         SUBSTRING,
 
+        /// BlobSectionElement
+        BLOB_SECTION,
+
         /// StructureBeginningElement
         STRUCTURE_BEGINNING,
 
@@ -119,6 +124,12 @@ public:
 
         /// DynamicLengthArrayBeginningElement
         DYNAMIC_LENGTH_ARRAY_BEGINNING,
+
+        /// StaticLengthBlobBeginningElement
+        STATIC_LENGTH_BLOB_BEGINNING,
+
+        /// DynamicLengthBlobBeginningElement
+        DYNAMIC_LENGTH_BLOB_BEGINNING,
 
         /// StaticLengthStringBeginningElement
         STATIC_LENGTH_STRING_BEGINNING,
@@ -1158,6 +1169,71 @@ private:
 
 /*!
 @brief
+    BLOB section element.
+
+@ingroup elems
+
+This element can occur:
+
+<dl>
+  <dt>Data stream static-length BLOB</dt>
+  <dd>
+    Between StaticLengthBlobBeginningElement and EndElement elements.
+  </dd>
+
+  <dt>Data stream dynamic-length BLOB</dt>
+  <dd>
+    Between DynamicLengthBlobBeginningElement and EndElement elements.
+  </dd>
+</dl>
+
+begin() points to the first byte of the BLOB section and end() points to
+the byte \em after the last byte of the BLOB section. Use length() to
+compute the length of the BLOB section.
+*/
+class BlobSectionElement final :
+    public Element
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit BlobSectionElement() :
+        Element {Kind::BLOB_SECTION}
+    {
+    }
+
+public:
+    /// Beginning of the data of this BLOB section.
+    const std::uint8_t *begin() const noexcept
+    {
+        return _begin;
+    }
+
+    /// End of the data of this BLOB section.
+    const std::uint8_t *end() const noexcept
+    {
+        return _end;
+    }
+
+    /// Size (bytes) of this BLOB section.
+    Size size() const noexcept
+    {
+        return _end - _begin;
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+private:
+    const std::uint8_t *_begin;
+    const std::uint8_t *_end;
+};
+
+/*!
+@brief
     Array beginning base element.
 
 @ingroup elems
@@ -1380,6 +1456,122 @@ public:
     const DynamicLengthStringType& type() const noexcept
     {
         return _dt->asDynamicLengthStringType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    BLOB beginning base element.
+
+@ingroup elems
+*/
+class BlobBeginningElement :
+    public BeginningElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    BlobBeginningElement(const Kind kind) :
+        BeginningElement {kind}
+    {
+    }
+
+public:
+    /// BLOB type.
+    const BlobType& type() const noexcept
+    {
+        return *_dt;
+    }
+
+    /// BLOB length (bytes).
+    Size length() const noexcept
+    {
+        return _len;
+    }
+
+protected:
+    const BlobType *_dt;
+    Size _len;
+};
+
+/*!
+@brief
+    Static-length BLOB beginning element.
+
+@ingroup elems
+
+This element indicates the beginning of a data stream static-length
+BLOB.
+
+The next BlobSectionElement elements before the next EndElement are
+consecutive BLOB sections of this beginning static-length BLOB.
+
+@sa BlobSectionElement
+@sa EndElement
+*/
+class StaticLengthBlobBeginningElement final :
+    public BlobBeginningElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit StaticLengthBlobBeginningElement() :
+        BlobBeginningElement {Kind::STATIC_LENGTH_BLOB_BEGINNING}
+    {
+    }
+
+public:
+    /// Static-length BLOB type.
+    const StaticLengthBlobType& type() const noexcept
+    {
+        return _dt->asStaticLengthBlobType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Dynamic-length BLOB beginning element.
+
+@ingroup elems
+
+This element indicates the beginning of a data stream dynamic-length
+BLOB.
+
+The next BlobSectionElement elements before the next EndElement are
+consecutive BLOB sections of this beginning dynamic-length BLOB.
+
+@sa EndElement
+*/
+class DynamicLengthBlobBeginningElement final :
+    public BlobBeginningElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit DynamicLengthBlobBeginningElement() :
+        BlobBeginningElement {Kind::DYNAMIC_LENGTH_BLOB_BEGINNING}
+    {
+    }
+
+public:
+    /// Dynamic-length BLOB type.
+    const DynamicLengthBlobType& type() const noexcept
+    {
+        return _dt->asDynamicLengthBlobType();
     }
 
     void accept(ElementVisitor& visitor) const override

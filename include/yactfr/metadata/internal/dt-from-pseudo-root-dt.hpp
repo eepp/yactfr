@@ -128,16 +128,34 @@ private:
                                                      const PseudoDt& pseudoElemType, LenT&& len);
 
     /*
+     * Returns the validated length location of the pseudo
+     * dynamic-length array or BLOB type `pseudoDt`.
+     */
+    const DataLocation& _getLenLoc(const PseudoDt& pseudoDt) const;
+
+    /*
      * Converts the pseudo static-length array type `pseudoDt` to a
-     * yactfr static array type.
+     * yactfr static-length array type.
      */
     DataType::UP _dtFromPseudoSlArrayType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo dynamic-length array type `pseudoDt` to a
-     * yactfr dynamic array type.
+     * yactfr dynamic-length array type.
      */
     DataType::UP _dtFromPseudoDlArrayType(const PseudoDt& pseudoDt);
+
+    /*
+     * Converts the pseudo static-length BLOB type `pseudoDt` to a
+     * yactfr static BLOB type.
+     */
+    DataType::UP _dtFromPseudoSlBlobType(const PseudoDt& pseudoDt);
+
+    /*
+     * Converts the pseudo dynamic-length BLOB type `pseudoDt` to a
+     * yactfr dynamic BLOB type.
+     */
+    DataType::UP _dtFromPseudoDlBlobType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo structure type `pseudoDt` to a yactfr

@@ -16,6 +16,8 @@
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
+#include <yactfr/metadata/sl-blob-type.hpp>
+#include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>
@@ -60,8 +62,8 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoD
      *
      *    During this process, we need to find and validate:
      *
-     *    * The length integer types of dynamic-length array and
-     *      string types.
+     *    * The length integer types of dynamic-length array, string,
+     *      and BLOB types.
      *
      *    * The selector enumeration types of variant types.
      *
@@ -104,6 +106,12 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
 
     case PseudoDt::Kind::DL_ARRAY:
         return this->_dtFromPseudoDlArrayType(pseudoDt);
+
+    case PseudoDt::Kind::SL_BLOB:
+        return this->_dtFromPseudoSlBlobType(pseudoDt);
+
+    case PseudoDt::Kind::DL_BLOB:
+        return this->_dtFromPseudoDlBlobType(pseudoDt);
 
     case PseudoDt::Kind::STRUCT:
         return this->_dtFromPseudoStructType(pseudoDt);
@@ -168,9 +176,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
                                                          pseudoArrayType.hasTraceTypeUuidRole());
 }
 
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoDt& pseudoDt)
+const DataLocation& DtFromPseudoRootDtConverter::_getLenLoc(const PseudoDt& pseudoDt) const
 {
-    auto& pseudoArrayType = static_cast<const PseudoDlArrayType&>(pseudoDt);
     const auto& lenLoc = _locMap[pseudoDt];
 
     try {
@@ -193,6 +200,13 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
         throw;
     }
 
+    return lenLoc;
+}
+
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoDt& pseudoDt)
+{
+    const auto& lenLoc = this->_getLenLoc(pseudoDt);
+    auto& pseudoArrayType = static_cast<const PseudoDlArrayType&>(pseudoDt);
     auto strType = this->_tryNonNtStrTypeFromPseudoArrayType<DynamicLengthStringType>(pseudoDt,
                                                                                       pseudoArrayType.pseudoElemType(),
                                                                                       lenLoc);
@@ -210,6 +224,31 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
     _current.erase(&pseudoArrayType);
 
     return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemType), lenLoc);
+}
+
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlBlobType(const PseudoDt& pseudoDt)
+{
+    auto& pseudoBlobType = static_cast<const PseudoSlBlobType&>(pseudoDt);
+
+    if (pseudoBlobType.mediaType()) {
+        return std::make_unique<const StaticLengthBlobType>(1, pseudoBlobType.len(),
+                                                            *pseudoBlobType.mediaType());
+    } else {
+        return std::make_unique<const StaticLengthBlobType>(1, pseudoBlobType.len());
+    }
+}
+
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt& pseudoDt)
+{
+    const auto& lenLoc = this->_getLenLoc(pseudoDt);
+    auto& pseudoBlobType = static_cast<const PseudoDlBlobType&>(pseudoDt);
+
+    if (pseudoBlobType.mediaType()) {
+        return std::make_unique<const DynamicLengthBlobType>(1, lenLoc,
+                                                             *pseudoBlobType.mediaType());
+    } else {
+        return std::make_unique<const DynamicLengthBlobType>(1, lenLoc);
+    }
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt& pseudoDt)

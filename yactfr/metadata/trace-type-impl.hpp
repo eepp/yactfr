@@ -74,6 +74,11 @@ public:
         return dt._lenTypes();
     }
 
+    static DataTypeSet& dlBlobTypeLenTypes(const DynamicLengthBlobType& dt) noexcept
+    {
+        return dt._lenTypes();
+    }
+
     static DataTypeSet& dlStrTypeMaxLenTypes(const DynamicLengthStringType& dt) noexcept
     {
         return dt._maxLenTypes();

@@ -11,9 +11,11 @@
 namespace yactfr {
 
 class BeginningElement;
+class BlobSectionElement;
 class DataStreamInfoElement;
 class DefaultClockValueElement;
 class DynamicLengthArrayBeginningElement;
+class DynamicLengthBlobBeginningElement;
 class DynamicLengthStringBeginningElement;
 class EndElement;
 class EventRecordBeginningElement;
@@ -33,6 +35,7 @@ class PacketInfoElement;
 class PacketMagicNumberElement;
 class ScopeBeginningElement;
 class StaticLengthArrayBeginningElement;
+class StaticLengthBlobBeginningElement;
 class StaticLengthStringBeginningElement;
 class StructureBeginningElement;
 class SubstringElement;
@@ -55,9 +58,11 @@ class ElementVisitor
 public:
     virtual ~ElementVisitor() = default;
     virtual void visit(const BeginningElement& elem);
+    virtual void visit(const BlobSectionElement& elem);
     virtual void visit(const DataStreamInfoElement& elem);
     virtual void visit(const DefaultClockValueElement& elem);
     virtual void visit(const DynamicLengthArrayBeginningElement& elem);
+    virtual void visit(const DynamicLengthBlobBeginningElement& elem);
     virtual void visit(const DynamicLengthStringBeginningElement& elem);
     virtual void visit(const EndElement& elem);
     virtual void visit(const EventRecordBeginningElement& elem);
@@ -69,14 +74,15 @@ public:
     virtual void visit(const FixedLengthSignedIntegerElement& elem);
     virtual void visit(const FixedLengthUnsignedEnumerationElement& elem);
     virtual void visit(const FixedLengthUnsignedIntegerElement& elem);
+    virtual void visit(const NullTerminatedStringBeginningElement& elem);
     virtual void visit(const PacketBeginningElement& elem);
     virtual void visit(const PacketContentBeginningElement& elem);
     virtual void visit(const PacketInfoElement& elem);
     virtual void visit(const PacketMagicNumberElement& elem);
     virtual void visit(const ScopeBeginningElement& elem);
     virtual void visit(const StaticLengthArrayBeginningElement& elem);
+    virtual void visit(const StaticLengthBlobBeginningElement& elem);
     virtual void visit(const StaticLengthStringBeginningElement& elem);
-    virtual void visit(const NullTerminatedStringBeginningElement& elem);
     virtual void visit(const StructureBeginningElement& elem);
     virtual void visit(const SubstringElement& elem);
     virtual void visit(const TraceTypeUuidElement& elem);

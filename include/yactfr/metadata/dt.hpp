@@ -55,10 +55,13 @@ protected:
         _KIND_NON_NT_STRING         = 1 << 16,
         _KIND_SL_STR                = 1 << 17,
         _KIND_DL_STR                = 1 << 18,
-        _KIND_VAR                   = 1 << 19,
-        _KIND_VAR_USEL              = 1 << 20,
-        _KIND_VAR_SSEL              = 1 << 21,
-        _KIND_COMPOUND              = 1 << 22,
+        _KIND_BLOB                  = 1 << 19,
+        _KIND_SL_BLOB               = 1 << 20,
+        _KIND_DL_BLOB               = 1 << 21,
+        _KIND_VAR                   = 1 << 22,
+        _KIND_VAR_USEL              = 1 << 23,
+        _KIND_VAR_SSEL              = 1 << 24,
+        _KIND_COMPOUND              = 1 << 25,
     };
 
 protected:
@@ -169,6 +172,24 @@ public:
     bool isDynamicLengthStringType() const noexcept
     {
         return this->_isKind(_KIND_DL_STR);
+    }
+
+    /// \c true if this type is a BLOB type.
+    bool isBlobType() const noexcept
+    {
+        return this->_isKind(_KIND_BLOB);
+    }
+
+    /// \c true if this type is a static-length BLOB type.
+    bool isStaticLengthBlobType() const noexcept
+    {
+        return this->_isKind(_KIND_SL_BLOB);
+    }
+
+    /// \c true if this type is a dynamic-length BLOB type.
+    bool isDynamicLengthBlobType() const noexcept
+    {
+        return this->_isKind(_KIND_DL_BLOB);
     }
 
     /// \c true if this type is a structure type.
@@ -338,6 +359,33 @@ public:
         This type is a dynamic-length string type.
     */
     const DynamicLengthStringType& asDynamicLengthStringType() const noexcept;
+
+    /*!
+    @brief
+        This type as a BLOB type.
+
+    @pre
+        This type is a BLOB type.
+    */
+    const BlobType& asBlobType() const noexcept;
+
+    /*!
+    @brief
+        This type as a static-length BLOB type.
+
+    @pre
+        This type is a static-length BLOB type.
+    */
+    const StaticLengthBlobType& asStaticLengthBlobType() const noexcept;
+
+    /*!
+    @brief
+        This type as a dynamic-length BLOB type.
+
+    @pre
+        This type is a dynamic-length BLOB type.
+    */
+    const DynamicLengthBlobType& asDynamicLengthBlobType() const noexcept;
 
     /*!
     @brief

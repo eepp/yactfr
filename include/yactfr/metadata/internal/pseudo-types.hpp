@@ -113,6 +113,8 @@ public:
         FL_UENUM,
         SL_ARRAY,
         DL_ARRAY,
+        SL_BLOB,
+        DL_BLOB,
         STRUCT,
         VAR,
     };
@@ -326,6 +328,42 @@ private:
 };
 
 /*
+ * Pseudo static-length type.
+ */
+class PseudoSlType
+{
+protected:
+    explicit PseudoSlType(Size len);
+
+public:
+    Size len() const noexcept
+    {
+        return _len;
+    }
+
+protected:
+    Size _len;
+};
+
+/*
+ * Pseudo dynamic-length type.
+ */
+class PseudoDlType
+{
+protected:
+    explicit PseudoDlType(PseudoDataLoc pseudoLenLoc);
+
+public:
+    const PseudoDataLoc& pseudoLenLoc() const noexcept
+    {
+        return _pseudoLenLoc;
+    }
+
+protected:
+    PseudoDataLoc _pseudoLenLoc;
+};
+
+/*
  * Pseudo array type (base class).
  */
 struct PseudoArrayType :
@@ -353,7 +391,8 @@ private:
  * Pseudo static-length array type.
  */
 class PseudoSlArrayType final :
-    public PseudoArrayType
+    public PseudoArrayType,
+    public PseudoSlType
 {
 public:
     explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
@@ -369,11 +408,6 @@ public:
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
-    Size len() const noexcept
-    {
-        return _len;
-    }
-
     bool hasTraceTypeUuidRole() const noexcept
     {
         return _hasTraceTypeUuidRole;
@@ -385,7 +419,6 @@ public:
     }
 
 private:
-    Size _len;
     bool _hasTraceTypeUuidRole = false;
 };
 
@@ -395,7 +428,8 @@ private:
  * `pseudoLenLoc` may be a relative data location.
  */
 class PseudoDlArrayType final :
-    public PseudoArrayType
+    public PseudoArrayType,
+    public PseudoDlType
 {
 public:
     explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
@@ -410,14 +444,72 @@ public:
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
+};
 
-    const PseudoDataLoc& pseudoLenLoc() const noexcept
+/*
+ * Pseudo BLOB type (base class).
+ */
+struct PseudoBlobType :
+    public PseudoDt
+{
+protected:
+    explicit PseudoBlobType(boost::optional<std::string> mediaType,
+                            TextLocation loc = TextLocation {});
+
+public:
+    const boost::optional<std::string>& mediaType() const noexcept
     {
-        return _pseudoLenLoc;
+        return _mediaType;
     }
 
 private:
-    PseudoDataLoc _pseudoLenLoc;
+    boost::optional<std::string> _mediaType;
+    PseudoDt::UP _pseudoElemType;
+};
+
+/*
+ * Pseudo static-length BLOB type.
+ */
+class PseudoSlBlobType final :
+    public PseudoBlobType,
+    public PseudoSlType
+{
+public:
+    explicit PseudoSlBlobType(Size len, boost::optional<std::string> mediaType,
+                              TextLocation loc = TextLocation {});
+
+    PseudoDt::Kind kind() const noexcept override
+    {
+        return PseudoDt::Kind::SL_BLOB;
+    }
+
+    PseudoDt::UP clone() const override;
+    bool isEmpty() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
+};
+
+/*
+ * Pseudo dynamic-length BLOB type.
+ *
+ * `pseudoLenLoc` may be a relative data location.
+ */
+class PseudoDlBlobType final :
+    public PseudoBlobType,
+    public PseudoDlType
+{
+public:
+    explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, boost::optional<std::string> mediaType,
+                              TextLocation loc = TextLocation {});
+
+    PseudoDt::Kind kind() const noexcept override
+    {
+        return PseudoDt::Kind::DL_BLOB;
+    }
+
+    PseudoDt::UP clone() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
 };
 
 /*
