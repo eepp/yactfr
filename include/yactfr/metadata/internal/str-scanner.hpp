@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,6 +13,8 @@
 #include <iterator>
 #include <vector>
 #include <limits>
+#include <regex>
+#include <cmath>
 #include <boost/utility.hpp>
 #include <boost/optional.hpp>
 
@@ -71,7 +73,16 @@ public:
         _begin {begin},
         _end {end},
         _at {begin},
-        _lineBegin {begin}
+        _lineBegin {begin},
+        _realRegex {
+            "^"                     // start of target
+            "-?"                    // optional negation
+            "(?:0|[1-9]\\d*)"       // integer part
+            "(?=[eE.]\\d)"          // assertion: need fraction/exponent part
+            "(?:\\.\\d+)?"          // optional fraction part
+            "(?:[eE][+-]?\\d+)?",   // optional exponent part
+            std::regex::optimize
+        }
     {
     }
 
@@ -276,6 +287,21 @@ public:
     }
 
     /*
+     * Scans and decodes a constant real number string, returning
+     * `boost::none` if not possible.
+     *
+     * The format of the real number string to scan is the JSON
+     * (<https://www.json.org/>) number one, _with_ a fraction or an
+     * exponent part. Without a fraction/exponent part, this method
+     * returns `boost::none`: use tryScanConstInt() to try scanning a
+     * constant integer instead.
+     *
+     * The current iterator is placed after this constant real number
+     * string on success.
+     */
+    boost::optional<double> tryScanConstReal();
+
+    /*
      * Tries to scan a specific token, placing the current iterator
      * after this string on success.
      */
@@ -394,6 +420,9 @@ private:
 
     // string buffer
     std::string _strBuf;
+
+    // real number string regex
+    std::regex _realRegex;
 };
 
 template <typename CharIt>
@@ -805,6 +834,38 @@ boost::optional<ValT> StrScanner<CharIt>::tryScanConstInt()
         _at = at;
     }
 
+    return val;
+}
+
+template <typename CharIt>
+boost::optional<double> StrScanner<CharIt>::tryScanConstReal()
+{
+    this->skipCommentsAndWhitespaces();
+
+    const auto at = _at;
+
+    /*
+     * Validate JSON number format (with fraction and/or exponent part).
+     *
+     * This is needed because std::strtod() accepts more formats which
+     * JSON doesn't support.
+     */
+    if (!std::regex_search(_at, _end, _realRegex)) {
+        return boost::none;
+    }
+
+    // parse
+    char *strEnd = nullptr;
+    const auto val = std::strtod(&(*_at), &strEnd);
+
+    if (val == HUGE_VAL || (val == 0 && &(*_at) == strEnd) || errno == ERANGE) {
+        // could not parse
+        errno = 0;
+        return boost::none;
+    }
+
+    // success: update position and return value
+    _at += (strEnd - &(*_at));
     return val;
 }
 
