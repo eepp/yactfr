@@ -28,8 +28,7 @@ class FixedLengthSignedEnumerationType final :
 public:
     /*!
     @brief
-        Builds a fixed-length signed enumeration type,
-        copying \p mappings.
+        Builds a fixed-length signed enumeration type.
 
     @param[in] alignment
         Alignment of data stream fixed-length signed enumerations
@@ -41,7 +40,7 @@ public:
         Byte order of data stream fixed-length signed enumerations
         described by this type.
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         enumerations described by this type.
@@ -65,14 +64,14 @@ public:
         Each integer range set within \p mappings is not empty.
     */
     explicit FixedLengthSignedEnumerationType(unsigned int alignment, unsigned int length,
-                                              ByteOrder byteOrder, const Mappings& mappings,
+                                              ByteOrder byteOrder, Mappings mappings,
                                               DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                               MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
-        Builds a fixed-length signed enumeration type,
-        copying \p mappings, having a default alignment property (1).
+        Builds a fixed-length signed enumeration type, having a default
+        alignment property (1).
 
     @param[in] length
         Length of data stream fixed-length signed enumerations (bits)
@@ -81,7 +80,7 @@ public:
         Byte order of data stream fixed-length signed enumerations
         described by this type.
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         enumerations described by this type.
@@ -101,86 +100,7 @@ public:
         Each integer range set within \p mappings is not empty.
     */
     explicit FixedLengthSignedEnumerationType(unsigned int length, ByteOrder byteOrder,
-                                              const Mappings& mappings,
-                                              DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                              MapItem::UP userAttributes = nullptr);
-
-    /*!
-    @brief
-        Builds a fixed-length signed enumeration type,
-        moving \p mappings.
-
-    @param[in] alignment
-        Alignment of data stream fixed-length signed enumerations
-        described by this type.
-    @param[in] length
-        Length of data stream fixed-length signed enumerations (bits)
-        described by this type.
-    @param[in] byteOrder
-        Byte order of data stream fixed-length signed enumerations
-        described by this type.
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream fixed-length signed
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream fixed-length signed enumerations
-        described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-
-    @pre
-        \p alignment > 0.
-    @pre
-        \p alignment is a power of two.
-    @pre
-        \p length > 0.
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit FixedLengthSignedEnumerationType(unsigned int alignment, unsigned int length,
-                                              ByteOrder byteOrder, Mappings&& mappings,
-                                              DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                              MapItem::UP userAttributes = nullptr);
-
-    /*!
-    @brief
-        Builds a fixed-length signed enumeration type,
-        moving \p mappings, having a default alignment property (1).
-
-    @param[in] length
-        Length of data stream fixed-length signed enumerations (bits)
-        described by this type.
-    @param[in] byteOrder
-        Byte order of data stream fixed-length signed enumerations
-        described by this type.
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream fixed-length signed
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream fixed-length signed enumerations
-        described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-
-    @pre
-        \p length > 0.
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit FixedLengthSignedEnumerationType(unsigned int length, ByteOrder byteOrder,
-                                              Mappings&& mappings,
+                                              Mappings mappings,
                                               DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                               MapItem::UP userAttributes = nullptr);
 
@@ -208,8 +128,7 @@ class FixedLengthUnsignedEnumerationType final :
 public:
     /*!
     @brief
-        Builds a fixed-length unsigned enumeration type,
-        copying \p mappings.
+        Builds a fixed-length unsigned enumeration type.
 
     @param[in] alignment
         Alignment of data stream fixed-length unsigned enumerations
@@ -221,7 +140,7 @@ public:
         Byte order of data stream fixed-length unsigned enumerations
         described by this type.
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         enumerations described by this type.
@@ -247,15 +166,15 @@ public:
         Each integer range set within \p mappings is not empty.
     */
     explicit FixedLengthUnsignedEnumerationType(unsigned int alignment, unsigned int length,
-                                                ByteOrder byteOrder, const Mappings& mappings,
+                                                ByteOrder byteOrder, Mappings mappings,
                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                 MapItem::UP userAttributes = nullptr,
                                                 UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
     @brief
-        Builds a fixed-length unsigned enumeration type,
-        copying \p mappings, having a default alignment property (1).
+        Builds a fixed-length unsigned enumeration type, having a
+        default alignment property (1).
 
     @param[in] length
         Length of data stream fixed-length unsigned enumerations (bits)
@@ -264,7 +183,7 @@ public:
         Byte order of data stream fixed-length unsigned enumerations
         described by this type.
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         enumerations described by this type.
@@ -286,92 +205,7 @@ public:
         Each integer range set within \p mappings is not empty.
     */
     explicit FixedLengthUnsignedEnumerationType(unsigned int length, ByteOrder byteOrder,
-                                                const Mappings& mappings,
-                                                DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                MapItem::UP userAttributes = nullptr,
-                                                UnsignedIntegerTypeRoleSet roles = {});
-
-    /*!
-    @brief
-        Builds a fixed-length unsigned enumeration type,
-        moving \p mappings.
-
-    @param[in] alignment
-        Alignment of data stream fixed-length unsigned enumerations
-        described by this type.
-    @param[in] length
-        Length of data stream fixed-length unsigned enumerations
-        described by this type.
-    @param[in] byteOrder
-        Byte order of data stream fixed-length unsigned enumerations
-        described by this type.
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream fixed-length unsigned
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream fixed-length unsigned
-        enumerations described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-    @param[in] roles
-        Roles of fixed-length unsigned integers described by this type.
-
-    @pre
-        \p alignment > 0.
-    @pre
-        \p alignment is a power of two.
-    @pre
-        \p length > 0.
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit FixedLengthUnsignedEnumerationType(unsigned int alignment, unsigned int length,
-                                                ByteOrder byteOrder, Mappings&& mappings,
-                                                DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                MapItem::UP userAttributes = nullptr,
-                                                UnsignedIntegerTypeRoleSet roles = {});
-
-    /*!
-    @brief
-        Builds a fixed-length unsigned enumeration type,
-        moving \p mappings, having a default alignment property (1).
-
-    @param[in] length
-        Length of data stream fixed-length unsigned enumerations
-        described by this type.
-    @param[in] byteOrder
-        Byte order of data stream fixed-length unsigned enumerations
-        described by this type.
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream fixed-length unsigned
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream fixed-length unsigned
-        enumerations described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-    @param[in] roles
-        Roles of fixed-length unsigned integers described by this type.
-
-    @pre
-        \p length > 0.
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit FixedLengthUnsignedEnumerationType(unsigned int length, ByteOrder byteOrder,
-                                                Mappings&& mappings,
+                                                Mappings mappings,
                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                 MapItem::UP userAttributes = nullptr,
                                                 UnsignedIntegerTypeRoleSet roles = {});

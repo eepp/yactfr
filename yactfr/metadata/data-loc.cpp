@@ -9,13 +9,7 @@
 
 namespace yactfr {
 
-DataLocation::DataLocation(const Scope scope, const std::vector<std::string>& pathElems) :
-    _scope {scope},
-    _pathElems {pathElems}
-{
-}
-
-DataLocation::DataLocation(const Scope scope, std::vector<std::string>&& pathElems) :
+DataLocation::DataLocation(const Scope scope, std::vector<std::string> pathElems) :
     _scope {scope},
     _pathElems {std::move(pathElems)}
 {

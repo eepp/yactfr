@@ -29,14 +29,13 @@ class VariableLengthSignedEnumerationType final :
 public:
     /*!
     @brief
-        Builds a variable-length signed enumeration type,
-        copying \p mappings.
+        Builds a variable-length signed enumeration type
 
     @param[in] alignment
         Alignment of data stream variable-length signed enumerations
         described by this type.
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         enumerations described by this type.
@@ -57,17 +56,17 @@ public:
     @pre
         Each integer range set within \p mappings is not empty.
     */
-    explicit VariableLengthSignedEnumerationType(unsigned int alignment, const Mappings& mappings,
+    explicit VariableLengthSignedEnumerationType(unsigned int alignment, Mappings mappings,
                                                  DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                  MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
         Builds a variable-length signed enumeration type,
-        copying \p mappings, having a default alignment (8).
+        having a default alignment (8).
 
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         enumerations described by this type.
@@ -84,68 +83,7 @@ public:
     @pre
         Each integer range set within \p mappings is not empty.
     */
-    explicit VariableLengthSignedEnumerationType(const Mappings& mappings,
-                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                 MapItem::UP userAttributes = nullptr);
-
-    /*!
-    @brief
-        Builds a variable-length signed enumeration type,
-        moving \p mappings.
-
-    @param[in] alignment
-        Alignment of data stream variable-length signed enumerations
-        described by this type.
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream variable-length signed
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream variable-length signed
-        enumerations described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-
-    @pre
-        \p alignment ≥ 8.
-    @pre
-        \p alignment is a power of two.
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit VariableLengthSignedEnumerationType(unsigned int alignment, Mappings&& mappings,
-                                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                 MapItem::UP userAttributes = nullptr);
-
-    /*!
-    @brief
-        Builds a variable-length signed enumeration type,
-        moving \p mappings, having a default alignment (8).
-
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream variable-length signed
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream variable-length signed
-        enumerations described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit VariableLengthSignedEnumerationType(Mappings&& mappings,
+    explicit VariableLengthSignedEnumerationType(Mappings mappings,
                                                  DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                  MapItem::UP userAttributes = nullptr);
 
@@ -174,14 +112,13 @@ class VariableLengthUnsignedEnumerationType final :
 public:
     /*!
     @brief
-        Builds a variable-length unsigned enumeration type,
-        copying \p mappings.
+        Builds a variable-length unsigned enumeration type.
 
     @param[in] alignment
         Alignment of data stream variable-length unsigned enumerations
         described by this type.
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         enumerations described by this type.
@@ -205,8 +142,7 @@ public:
     @pre
         Each integer range set within \p mappings is not empty.
     */
-    explicit VariableLengthUnsignedEnumerationType(unsigned int alignment,
-                                                   const Mappings& mappings,
+    explicit VariableLengthUnsignedEnumerationType(unsigned int alignment, Mappings mappings,
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                    MapItem::UP userAttributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});
@@ -214,10 +150,10 @@ public:
     /*!
     @brief
         Builds a variable-length unsigned enumeration type,
-        copying \p mappings, having a default alignment (8).
+        having a default alignment (8).
 
     @param[in] mappings
-        Mappings (copied).
+        Mappings.
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         enumerations described by this type.
@@ -237,76 +173,7 @@ public:
     @pre
         Each integer range set within \p mappings is not empty.
     */
-    explicit VariableLengthUnsignedEnumerationType(const Mappings& mappings,
-                                                   DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                   MapItem::UP userAttributes = nullptr,
-                                                   UnsignedIntegerTypeRoleSet roles = {});
-
-    /*!
-    @brief
-        Builds a variable-length unsigned enumeration type,
-        moving \p mappings.
-
-    @param[in] alignment
-        Alignment of data stream variable-length unsigned enumerations
-        described by this type.
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream variable-length unsigned
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream variable-length unsigned
-        enumerations described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-    @param[in] roles
-        Roles of variable-length unsigned enumerations described by this
-        type.
-
-    @pre
-        \p alignment ≥ 8.
-    @pre
-        \p alignment is a power of two.
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit VariableLengthUnsignedEnumerationType(unsigned int alignment, Mappings&& mappings,
-                                                   DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                   MapItem::UP userAttributes = nullptr,
-                                                   UnsignedIntegerTypeRoleSet roles = {});
-
-    /*!
-    @brief
-        Builds a variable-length unsigned enumeration type,
-        moving \p mappings, having a default alignment (8).
-
-    @param[in] mappings
-        Mappings (moved).
-    @param[in] preferredDisplayBase
-        Preferred display base of data stream variable-length unsigned
-        enumerations described by this type.
-    @param[in] userAttributes
-        @parblock
-        User attributes of data stream variable-length unsigned
-        enumerations described by this type.
-
-        If set, each key of \p *userAttributes is a namespace.
-        @endparblock
-    @param[in] roles
-        Roles of variable-length unsigned enumerations described by this
-        type.
-
-    @pre
-        <code>!mappings.empty()</code>
-    @pre
-        Each integer range set within \p mappings is not empty.
-    */
-    explicit VariableLengthUnsignedEnumerationType(Mappings&& mappings,
+    explicit VariableLengthUnsignedEnumerationType(Mappings mappings,
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                                    MapItem::UP userAttributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});

@@ -43,14 +43,14 @@ public:
     /*!
     @brief
         Builds a variant type option named \p name having the data type
-        \p dataType, copying \p selectorRanges.
+        \p dataType.
 
     @param[in] name
         Name of the variant type option.
     @param[in] dataType
         Data type of the variant type option.
     @param[in] selectorRanges
-        Selector values for which this option is selected (copied).
+        Selector values for which this option is selected.
     @param[in] userAttributes
         @parblock
         User attributes of this variant type option.
@@ -64,11 +64,11 @@ public:
         \p selectorRanges is not empty.
     */
     explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
-                               const SelectorRangeSet& selectorRanges,
+                               SelectorRangeSet selectorRanges,
                                MapItem::UP userAttributes = nullptr) :
         _name {std::move(name)},
         _dt {std::move(dataType)},
-        _selRanges {selectorRanges},
+        _selRanges {std::move(selectorRanges)},
         _userAttrs {std::move(userAttributes)}
     {
         this->_setDispName();
@@ -77,12 +77,12 @@ public:
     /*!
     @brief
         Builds an unnamed variant type option having the type
-        \p dataType, copying \p selectorRanges.
+        \p dataType.
 
     @param[in] dataType
         Data type of the variant type option.
     @param[in] selectorRanges
-        Selector values for which this option is selected (copied).
+        Selector values for which this option is selected.
     @param[in] userAttributes
         @parblock
         User attributes of this variant type option.
@@ -95,55 +95,11 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(DataType::UP dataType, const SelectorRangeSet& selectorRanges,
+    explicit VariantTypeOption(DataType::UP dataType, SelectorRangeSet selectorRanges,
                                MapItem::UP userAttributes = nullptr) :
-        VariantTypeOption {boost::none, std::move(dataType), selectorRanges, std::move(userAttributes)}
-    {
-    }
-
-    /*!
-    @brief
-        Builds a variant type option named \p name having the type
-        \p dataType, moving \p selectorRanges.
-
-    @param[in] name
-        Name of the variant type option.
-    @param[in] dataType
-        Data type of the variant type option.
-    @param[in] selectorRanges
-        Selector values for which this option is selected (moved).
-
-    @pre
-        \p dataType is set.
-    @pre
-        \p selectorRanges is not empty.
-    */
-    explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
-                               SelectorRangeSet&& selectorRanges) :
-        _name {std::move(name)},
-        _dt {std::move(dataType)},
-        _selRanges {std::move(selectorRanges)}
-    {
-        this->_setDispName();
-    }
-
-    /*!
-    @brief
-        Builds an unnamed variant type option having the dataType
-        \p type, moving \p selectorRanges.
-
-    @param[in] dataType
-        Data type of the variant type option.
-    @param[in] selectorRanges
-        Selector values for which this option is selected (moved).
-
-    @pre
-        \p dataType is set.
-    @pre
-        \p selectorRanges is not empty.
-    */
-    explicit VariantTypeOption(DataType::UP dataType, SelectorRangeSet&& selectorRanges) :
-        VariantTypeOption {boost::none, std::move(dataType), std::move(selectorRanges)}
+        VariantTypeOption {
+            boost::none, std::move(dataType), std::move(selectorRanges), std::move(userAttributes)
+        }
     {
     }
 

@@ -45,31 +45,16 @@ public:
 public:
     /*!
     @brief
-        Builds a data location, copying the path elements
-        \p pathElements.
+        Builds a data location.
 
     @param[in] scope
         Scope.
     @param[in] pathElements
         Names of the structure members to follow from \p scope to reach
-        the target (copied). If this is empty, then the scope itself is
-        the target.
+        the target. If this is empty, then the scope itself is the
+        target.
     */
-    explicit DataLocation(Scope scope, const PathElements& pathElements);
-
-    /*!
-    @brief
-        Builds a data location, moving the path elements
-        \p pathElements.
-
-    @param[in] scope
-        Scope.
-    @param[in] pathElements
-        Names of the structure members to follow from \p scope to reach
-        the target (moved). If this is empty, then the scope itself is
-        the target.
-    */
-    explicit DataLocation(Scope scope, PathElements&& pathElements);
+    explicit DataLocation(Scope scope, PathElements pathElements);
 
     /// Default copy constructor.
     DataLocation(const DataLocation&) = default;
