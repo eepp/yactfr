@@ -215,6 +215,11 @@ public:
         }
     }
 
+    void visit(ReadFlUEnumInstr& instr) override
+    {
+        this->visit(static_cast<ReadFlUIntInstr&>(instr));
+    }
+
     void visit(ReadVlBitArrayInstr& instr) override
     {
         if (_uIntTypeRole && isReadVlUInt(instr) &&
