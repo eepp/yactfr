@@ -1,0 +1,4 @@
+{"type":"preamble","version":2}
+{"type":"trace-class"}
+{"type":"data-stream-class"}
+{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"},{"field-class":{"type":"null-terminated-string"},"name":"b"},{"field-class":{"type":"null-terminated-string"},"name":"c"}],"type":"structure"},"name":"salut"}],"type":"structure"},"type":"event-record-class"}

@@ -1,0 +1,5 @@
+{"type":"preamble","version":2}
+{"type":"trace-class"}
+{"description":"je suis une \n description","frequency":101014124,"name":"salut","offset":{"cycles":5,"seconds":1243},"precision":308,"type":"clock-class","uuid":[244,237,186,103,110,87,74,52,161,227,139,225,242,130,246,132]}
+{"type":"data-stream-class"}
+{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"}],"type":"structure"},"type":"event-record-class"}

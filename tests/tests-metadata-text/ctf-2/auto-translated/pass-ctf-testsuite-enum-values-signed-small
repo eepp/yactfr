@@ -1,0 +1,4 @@
+{"type":"preamble","version":2}
+{"packet-header-field-class":{"member-classes":[{"field-class":{"alignment":32,"byte-order":"little-endian","length":32,"preferred-display-base":16,"roles":["packet-magic-number"],"type":"fixed-length-unsigned-integer"},"name":"magic"},{"field-class":{"length":16,"roles":["trace-class-uuid"],"type":"static-length-blob"},"name":"uuid"}],"type":"structure"},"type":"trace-class","uuid":[42,100,34,208,108,238,17,224,140,8,203,7,215,179,165,100]}
+{"type":"data-stream-class"}
+{"name":"string","payload-field-class":{"member-classes":[{"field-class":{"alignment":32,"byte-order":"little-endian","length":32,"mappings":{"VAL1":[[0,0]],"VAL2":[[1,1]],"VAL3":[[-128,-128]]},"preferred-display-base":16,"type":"fixed-length-signed-enumeration"},"name":"field"}],"type":"structure"},"type":"event-record-class"}

@@ -1,0 +1,5 @@
+{"type":"preamble","version":2}
+{"type":"trace-class"}
+{"frequency":1000000000,"name":"salut","offset":{"cycles":0,"seconds":-23},"origin-is-unix-epoch":false,"type":"clock-class"}
+{"type":"data-stream-class"}
+{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"}],"type":"structure"},"type":"event-record-class"}

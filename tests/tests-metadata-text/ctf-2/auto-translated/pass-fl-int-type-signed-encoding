@@ -1,0 +1,4 @@
+{"type":"preamble","version":2}
+{"type":"trace-class"}
+{"type":"data-stream-class"}
+{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-signed-integer"},"name":"a"}],"type":"structure"},"type":"event-record-class"}
