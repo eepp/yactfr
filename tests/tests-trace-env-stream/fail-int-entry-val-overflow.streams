@@ -1,0 +1,40 @@
+[
+  {"type": "preamble", "version": 2},
+  {
+    "type": "data-stream-class",
+    "namespace": "std",
+    "name": "environment"
+  },
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "my key",
+          "field-class": {
+            "type": "null-terminated-string",
+            "user-attributes": {
+              "std": {"is-key": true}
+            }
+          }
+        },
+        {
+          "name": "my val",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 64,
+            "byte-order": "big-endian",
+            "user-attributes": {
+              "std": {"is-value": true}
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+----
+"toute la gang" 00 80000000 00000000
+----
+Value 9223372036854775808 overflows the signed 64-bit range.

@@ -1,0 +1,23 @@
+[
+  {"type": "preamble", "version": 2},
+  {
+    "type": "data-stream-class",
+    "namespace": "std",
+    "name": "Environment",
+    "packet-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "meow",
+          "field-class": {
+            "type": "null-terminated-string"
+          }
+        }
+      ]
+    }
+  }
+]
+----
+"allo" 00
+----
+Unexpected data stream type name `Environment`; expecting `environment`.

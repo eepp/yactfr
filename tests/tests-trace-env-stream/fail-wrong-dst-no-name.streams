@@ -1,0 +1,22 @@
+[
+  {"type": "preamble", "version": 2},
+  {
+    "type": "data-stream-class",
+    "namespace": "std",
+    "packet-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "meow",
+          "field-class": {
+            "type": "null-terminated-string"
+          }
+        }
+      ]
+    }
+  }
+]
+----
+"allo" 00
+----
+Data stream type has no name (expecting `environment`).

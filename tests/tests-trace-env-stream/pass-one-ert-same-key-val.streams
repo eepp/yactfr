@@ -1,0 +1,34 @@
+[
+  {"type": "preamble", "version": 2},
+  {
+    "type": "data-stream-class",
+    "namespace": "std",
+    "name": "environment"
+  },
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "my key",
+          "field-class": {
+            "type": "null-terminated-string",
+            "user-attributes": {
+              "std": {
+                "is-key": true,
+                "is-value": true
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+----
+"toute la gang" 00
+"mes income tax" 00
+----
+mes income tax: mes income tax
+toute la gang: toute la gang

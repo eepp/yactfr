@@ -1,0 +1,23 @@
+[
+  {"type": "preamble", "version": 2},
+  {
+    "type": "data-stream-class",
+    "namespace": "Std",
+    "name": "environment",
+    "packet-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "meow",
+          "field-class": {
+            "type": "null-terminated-string"
+          }
+        }
+      ]
+    }
+  }
+]
+----
+"allo" 00
+----
+Unexpected data stream type namespace `Std`; expecting `std`.
