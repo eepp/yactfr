@@ -1,0 +1,24 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "len",
+          "field-class": {
+            "type": "variable-length-unsigned-integer"
+          }
+        },
+        {
+          "name": "test",
+          "field-class": {
+            "type": "dynamic-length-string",
+            "length-field-location": ["payload", "len"]
+          }
+        }
+      ]
+    }
+  }

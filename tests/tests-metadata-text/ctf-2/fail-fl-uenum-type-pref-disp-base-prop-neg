@@ -1,0 +1,23 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "fixed-length-unsigned-enumeration",
+            "byte-order": "little-endian",
+            "length": 42,
+            "preferred-display-base": -10,
+            "mappings": {
+              "a": [[23, 23]]
+            }
+          }
+        }
+      ]
+    }
+  }

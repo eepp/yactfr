@@ -1,0 +1,24 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "static-length-array",
+            "length": 34,
+            "extensions": {
+              "meow": "mix"
+            },
+            "element-field-class": {
+              "type": "null-terminated-string"
+            }
+          }
+        }
+      ]
+    }
+  }

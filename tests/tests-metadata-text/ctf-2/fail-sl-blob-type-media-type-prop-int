@@ -1,0 +1,19 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "static-length-blob",
+            "length": 34,
+            "media-type": 17
+          }
+        }
+      ]
+    }
+  }
