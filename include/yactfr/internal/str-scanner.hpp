@@ -947,6 +947,10 @@ boost::optional<ValT> StrScanner<CharIt>::tryScanConstInt()
 
     if (!negate) {
         --_at;
+
+        if (AllowPrefixV && c == '+') {
+            ++_at;
+        }
     }
 
     // check for radix prefix
