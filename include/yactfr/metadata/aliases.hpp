@@ -20,14 +20,6 @@ using TypeId = unsigned long long;
 
 /*!
 @brief
-    Numeric log level.
-
-@ingroup metadata
-*/
-using LogLevel = long long;
-
-/*!
-@brief
     Clock cycles.
 
 @ingroup metadata

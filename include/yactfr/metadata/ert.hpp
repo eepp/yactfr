@@ -30,6 +30,14 @@ class DataLocation;
 
 /*!
 @brief
+    Numeric log level.
+
+@ingroup metadata
+*/
+using LogLevel = long long;
+
+/*!
+@brief
     Event record type.
 
 @ingroup metadata
