@@ -26,7 +26,7 @@ class TraceTypeImpl;
 
 /*!
 @brief
-    \link IntegerType Integer type\endlink display base.
+    \link yactfr::IntegerType Integer type\endlink display base.
 
 @ingroup metadata_dt
 */
