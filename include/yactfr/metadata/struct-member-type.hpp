@@ -35,7 +35,7 @@ public:
 
     @param[in] name
         Name of data stream structure members described by this type.
-    @param[in] type
+    @param[in] dataType
         Data type of data stream structure members described by
         this type.
     @param[in] userAttributes
@@ -47,9 +47,9 @@ public:
         @endparblock
 
     @pre
-        \p type is set.
+        \p dataType is set.
     */
-    explicit StructureMemberType(std::string name, DataType::UP type,
+    explicit StructureMemberType(std::string name, DataType::UP dataType,
                                  MapItem::UP userAttributes = nullptr);
 
     /// Name of data stream structure members described by this type.
@@ -67,7 +67,7 @@ public:
 
     /// Data type of data stream structure members described by
     /// this type.
-    const DataType& type() const noexcept
+    const DataType& dataType() const noexcept
     {
         return *_dt;
     }

@@ -18,7 +18,7 @@ static inline unsigned int realMinAlign(const StructureType::MemberTypes& member
     unsigned int align = 1;
 
     for (const auto& member : memberTypes) {
-        align = std::max(align, member->type().alignment());
+        align = std::max(align, member->dataType().alignment());
     }
 
     return align;

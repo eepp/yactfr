@@ -1096,7 +1096,7 @@ void PktProcBuilder::_buildReadStructInstr(const StructureMemberType * const mem
     auto instr = std::make_shared<BeginReadStructInstr>(memberType, dt);
 
     for (const auto& innerMemberType : dt.asStructureType().memberTypes()) {
-        this->_buildReadInstr(innerMemberType.get(), innerMemberType->type(), instr->proc());
+        this->_buildReadInstr(innerMemberType.get(), innerMemberType->dataType(), instr->proc());
     }
 
     auto endInstr = std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_STRUCT, memberType,

@@ -86,7 +86,7 @@ public:
     void visit(const StructureType& structType) override
     {
         for (const auto& memberType : structType) {
-            memberType->type().accept(*this);
+            memberType->dataType().accept(*this);
         }
     }
 
@@ -206,7 +206,7 @@ private:
             const auto memberType = dt.asStructureType()[*locIt];
 
             assert(memberType);
-            this->_setTypeDeps(memberType->type(), loc, locIt + 1, dts);
+            this->_setTypeDeps(memberType->dataType(), loc, locIt + 1, dts);
         } else if (dt.isArrayType()) {
             assert(_current.find(&dt) != _current.end());
             this->_setTypeDeps(dt.asArrayType().elementType(), loc, locIt, dts);
