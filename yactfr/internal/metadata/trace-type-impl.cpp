@@ -157,7 +157,7 @@ private:
             // currently being visited
             _current[&varType] = i;
 
-            varType[i].type().accept(*this);
+            varType[i].dataType().accept(*this);
         }
 
         // not visited anymore
@@ -187,11 +187,11 @@ private:
         if (it == _current.end()) {
             // fan out (consider all options)
             for (auto& opt : dt.options()) {
-                this->_setTypeDeps(opt->type(), loc, locIt, dts);
+                this->_setTypeDeps(opt->dataType(), loc, locIt, dts);
             }
         } else {
             // follow current option only
-            this->_setTypeDeps(dt[it->second].type(), loc, locIt, dts);
+            this->_setTypeDeps(dt[it->second].dataType(), loc, locIt, dts);
         }
     }
 

@@ -183,7 +183,7 @@ void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const member
     for (auto i = 0U; i < varType.size(); ++i) {
         auto& optProc = instr->opts()[i].proc();
 
-        this->_buildReadInstr(nullptr, varType[i].type(), optProc);
+        this->_buildReadInstr(nullptr, varType[i].dataType(), optProc);
 
         /*
          * The VM can push the procedure of each option as the current

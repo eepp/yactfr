@@ -42,12 +42,12 @@ public:
 public:
     /*!
     @brief
-        Builds a variant type option named \p name having the type
-        \p type, copying \p selectorRanges.
+        Builds a variant type option named \p name having the data type
+        \p dataType, copying \p selectorRanges.
 
     @param[in] name
         Name of the variant type option.
-    @param[in] type
+    @param[in] dataType
         Data type of the variant type option.
     @param[in] selectorRanges
         Selector values for which this option is selected (copied).
@@ -61,11 +61,11 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP type,
+    explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
                                const SelectorRangeSet& selectorRanges,
                                MapItem::UP userAttributes = nullptr) :
         _name {std::move(name)},
-        _dt {std::move(type)},
+        _dt {std::move(dataType)},
         _selRanges {selectorRanges},
         _userAttrs {std::move(userAttributes)}
     {
@@ -75,9 +75,9 @@ public:
     /*!
     @brief
         Builds an unnamed variant type option having the type
-        \p type, copying \p selectorRanges.
+        \p dataType, copying \p selectorRanges.
 
-    @param[in] type
+    @param[in] dataType
         Data type of the variant type option.
     @param[in] selectorRanges
         Selector values for which this option is selected (copied).
@@ -91,20 +91,20 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(DataType::UP type, const SelectorRangeSet& selectorRanges,
+    explicit VariantTypeOption(DataType::UP dataType, const SelectorRangeSet& selectorRanges,
                                MapItem::UP userAttributes = nullptr) :
-        VariantTypeOption {boost::none, std::move(type), selectorRanges, std::move(userAttributes)}
+        VariantTypeOption {boost::none, std::move(dataType), selectorRanges, std::move(userAttributes)}
     {
     }
 
     /*!
     @brief
         Builds a variant type option named \p name having the type
-        \p type, moving \p selectorRanges.
+        \p dataType, moving \p selectorRanges.
 
     @param[in] name
         Name of the variant type option.
-    @param[in] type
+    @param[in] dataType
         Data type of the variant type option.
     @param[in] selectorRanges
         Selector values for which this option is selected (moved).
@@ -112,10 +112,10 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP type,
+    explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
                                SelectorRangeSet&& selectorRanges) :
         _name {std::move(name)},
-        _dt {std::move(type)},
+        _dt {std::move(dataType)},
         _selRanges {std::move(selectorRanges)}
     {
         this->_setDispName();
@@ -123,10 +123,10 @@ public:
 
     /*!
     @brief
-        Builds an unnamed variant type option having the type
+        Builds an unnamed variant type option having the dataType
         \p type, moving \p selectorRanges.
 
-    @param[in] type
+    @param[in] dataType
         Data type of the variant type option.
     @param[in] selectorRanges
         Selector values for which this option is selected (moved).
@@ -134,8 +134,8 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(DataType::UP type, SelectorRangeSet&& selectorRanges) :
-        VariantTypeOption {boost::none, std::move(type), std::move(selectorRanges)}
+    explicit VariantTypeOption(DataType::UP dataType, SelectorRangeSet&& selectorRanges) :
+        VariantTypeOption {boost::none, std::move(dataType), std::move(selectorRanges)}
     {
     }
 
@@ -154,7 +154,7 @@ public:
     }
 
     /// Data type of this variant type option.
-    const DataType& type() const noexcept
+    const DataType& dataType() const noexcept
     {
         return *_dt;
     }
