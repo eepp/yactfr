@@ -1269,7 +1269,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
         auto intType = std::make_unique<const FixedLengthSignedIntegerType>(align, size, bo, dispBase);
 
         pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), hasEncoding,
-                                                           nullptr, beforeKwLoc);
+                                                           beforeKwLoc);
     } else {
         pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, hasEncoding,
                                                       mappedClkTypeName, nullptr, beforeKwLoc);
@@ -1367,7 +1367,7 @@ PseudoDt::UP TsdlParser::_tryParseFlFloatType()
                                                                                 expDig + mantDig,
                                                                                 bo);
 
-    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), nullptr, beginLoc);
+    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), false, beginLoc);
 }
 
 PseudoDt::UP TsdlParser::_tryParseNtStrType()
@@ -1384,7 +1384,7 @@ PseudoDt::UP TsdlParser::_tryParseNtStrType()
     // try to parse `{`
     if (!_ss.tryScanToken("{")) {
         return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
-                                                       nullptr, beginLoc);
+                                                       false, beginLoc);
     }
 
     // parse attributes
@@ -1416,7 +1416,7 @@ PseudoDt::UP TsdlParser::_tryParseNtStrType()
     }
 
     return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
-                                                   nullptr, beginLoc);
+                                                   false, beginLoc);
 }
 
 PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
@@ -1544,7 +1544,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                                                mappings,
                                                                                intType.preferredDisplayBase());
 
-            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), nullptr,
+            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), false,
                                                            pseudoDt.loc());
         });
     }

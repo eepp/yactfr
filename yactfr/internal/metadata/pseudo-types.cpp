@@ -40,8 +40,7 @@ PseudoDataLoc::PseudoDataLoc(const bool isEnv, const bool isAbs, const Scope sco
 {
 }
 
-PseudoDt::PseudoDt(MapItem::UP userAttrs, TextLocation loc) :
-    _userAttrs {std::move(userAttrs)},
+PseudoDt::PseudoDt(TextLocation loc) :
     _loc {std::move(loc)}
 {
 }
@@ -66,16 +65,9 @@ bool PseudoDt::isFlUInt() const noexcept
     return false;
 }
 
-PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, MapItem::UP userAttrs,
-                                             TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
-    _dt {std::move(dt)}
-{
-}
-
 PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEncoding,
-                                             MapItem::UP userAttrs, TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+                                             TextLocation loc) :
+    PseudoDt {std::move(loc)},
     _dt {std::move(dt)},
     _hasEncoding {hasEncoding}
 {
@@ -83,9 +75,7 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEnco
 
 PseudoDt::UP PseudoScalarDtWrapper::clone() const
 {
-    return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(),
-                                                   tryCloneUserAttrs(this->userAttrs()),
-                                                   this->loc());
+    return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), _hasEncoding, this->loc());
 }
 
 bool PseudoScalarDtWrapper::isEmpty() const
@@ -113,12 +103,18 @@ bool PseudoScalarDtWrapper::isUInt() const noexcept
     return _dt->isUnsignedIntegerType();
 }
 
+WithUserAttrsMixin::WithUserAttrsMixin(MapItem::UP userAttrs) :
+    _userAttrs {std::move(userAttrs)}
+{
+}
+
 PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
                                    const ByteOrder bo, const DisplayBase prefDispBase,
                                    const bool hasEncoding,
                                    boost::optional<std::string> mappedClkTypeName,
                                    MapItem::UP userAttrs, TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+    PseudoDt {std::move(loc)},
+    WithUserAttrsMixin {std::move(userAttrs)},
     _align {align},
     _len {len},
     _bo {bo},
@@ -204,7 +200,8 @@ PseudoDlDtMixin::PseudoDlDtMixin(PseudoDataLoc pseudoLenLoc) :
 
 PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAttrs,
                                  TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+    PseudoDt {std::move(loc)},
+    WithUserAttrsMixin {std::move(userAttrs)},
     _pseudoElemType {std::move(pseudoElemType)}
 {
 }
@@ -271,7 +268,8 @@ void PseudoDlArrayType::accept(ConstPseudoDtVisitor& visitor) const
 
 PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::UP userAttrs,
                                TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+    PseudoDt {std::move(loc)},
+    WithUserAttrsMixin {std::move(userAttrs)},
     _mediaType {std::move(mediaType)}
 {
 }
@@ -301,15 +299,16 @@ void PseudoDlBlobType::accept(ConstPseudoDtVisitor& visitor) const
 }
 
 PseudoNamedDt::PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt, MapItem::UP userAttrs) :
+    WithUserAttrsMixin {std::move(userAttrs)},
     _name {std::move(name)},
-    _pseudoDt {std::move(pseudoDt)},
-    _userAttrs {std::move(userAttrs)}
+    _pseudoDt {std::move(pseudoDt)}
 {
 }
 
 PseudoStructType::PseudoStructType(const unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
                                    MapItem::UP userAttrs, TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+    PseudoDt {std::move(loc)},
+    WithUserAttrsMixin {std::move(userAttrs)},
     _minAlign {minAlign},
     _pseudoMemberTypes {std::move(pseudoMemberTypes)}
 {
@@ -372,7 +371,8 @@ const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const
 
 PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                              PseudoNamedDts&& pseudoOpts, MapItem::UP userAttrs, TextLocation loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+    PseudoDt {std::move(loc)},
+    WithUserAttrsMixin {std::move(userAttrs)},
     _pseudoSelLoc {std::move(pseudoSelLoc)},
     _pseudoOpts {std::move(pseudoOpts)}
 {
@@ -453,7 +453,8 @@ void PseudoVarWithIntRangesType::accept(ConstPseudoDtVisitor& visitor) const
 
 PseudoOptType::PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
                              MapItem::UP userAttrs, TextLocation&& loc) :
-    PseudoDt {std::move(userAttrs), std::move(loc)},
+    PseudoDt {std::move(loc)},
+    WithUserAttrsMixin {std::move(userAttrs)},
     _pseudoDt {std::move(pseudoDt)},
     _pseudoSelLoc {std::move(pseudoSelLoc)}
 {
@@ -525,14 +526,14 @@ PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
                      boost::optional<std::string> emfUri, PseudoDt::UP pseudoSpecCtxType,
                      PseudoDt::UP pseudoPayloadType, MapItem::UP userAttrs) :
+    WithUserAttrsMixin {std::move(userAttrs)},
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
     _logLevel {std::move(logLevel)},
     _emfUri {std::move(emfUri)},
     _pseudoSpecCtxType {std::move(pseudoSpecCtxType)},
-    _pseudoPayloadType {std::move(pseudoPayloadType)},
-    _userAttrs {std::move(userAttrs)}
+    _pseudoPayloadType {std::move(pseudoPayloadType)}
 {
 }
 
@@ -661,14 +662,14 @@ PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
                      PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
                      const ClockType * const defClkType, MapItem::UP userAttrs) :
+    WithUserAttrsMixin {std::move(userAttrs)},
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
     _pseudoPktCtxType {std::move(pseudoPktCtxType)},
     _pseudoErHeaderType {std::move(pseudoErHeaderType)},
     _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)},
-    _defClkType {defClkType},
-    _userAttrs {std::move(userAttrs)}
+    _defClkType {defClkType}
 {
 }
 
@@ -759,11 +760,11 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
                                  boost::optional<boost::uuids::uuid> uuid,
                                  PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs) :
+    WithUserAttrsMixin {std::move(userAttrs)},
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
     _uuid {std::move(uuid)},
-    _pseudoPktHeaderType {std::move(pseudoPktHeaderType)},
-    _userAttrs {std::move(userAttrs)}
+    _pseudoPktHeaderType {std::move(pseudoPktHeaderType)}
 {
 }
 

@@ -127,8 +127,8 @@ private:
      * Returns a null pointer if `pseudoArrayType` doesn't match a non
      * null-terminated string type profile.
      */
-    template <typename StrTypeT, typename LenT>
-    DataType::UP _tryNonNtStrTypeFromPseudoArrayType(const PseudoDt& pseudoArrayType,
+    template <typename StrTypeT, typename PseudoArrayTypeT, typename LenT>
+    DataType::UP _tryNonNtStrTypeFromPseudoArrayType(const PseudoArrayTypeT& pseudoArrayType,
                                                      const PseudoDt& pseudoElemType, LenT&& len);
 
     /*
@@ -309,8 +309,8 @@ std::string DtFromPseudoRootDtConverter::_dataLocStr(const Scope scope, const It
     return str;
 }
 
-template <typename StrTypeT, typename LenT>
-DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(const PseudoDt& pseudoArrayType,
+template <typename StrTypeT, typename PseudoArrayTypeT, typename LenT>
+DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(const PseudoArrayTypeT& pseudoArrayType,
                                                                               const PseudoDt& pseudoElemType,
                                                                               LenT&& len)
 {

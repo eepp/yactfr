@@ -167,9 +167,9 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoD
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoDt& pseudoDt)
 {
     auto& pseudoArrayType = static_cast<const PseudoSlArrayType&>(pseudoDt);
-    auto arrayType = this->_tryNonNtStrTypeFromPseudoArrayType<StaticLengthStringType>(pseudoDt,
-                                                                                   pseudoArrayType.pseudoElemType(),
-                                                                                   pseudoArrayType.len());
+    auto arrayType = this->_tryNonNtStrTypeFromPseudoArrayType<StaticLengthStringType>(pseudoArrayType,
+                                                                                       pseudoArrayType.pseudoElemType(),
+                                                                                       pseudoArrayType.len());
 
     if (arrayType) {
         return arrayType;
@@ -206,7 +206,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
 {
     const auto& lenLoc = this->_getLenLoc(pseudoDt);
     auto& pseudoArrayType = static_cast<const PseudoDlArrayType&>(pseudoDt);
-    auto strType = this->_tryNonNtStrTypeFromPseudoArrayType<DynamicLengthStringType>(pseudoDt,
+    auto strType = this->_tryNonNtStrTypeFromPseudoArrayType<DynamicLengthStringType>(pseudoArrayType,
                                                                                       pseudoArrayType.pseudoElemType(),
                                                                                       lenLoc);
 
@@ -552,7 +552,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
 
     return std::make_unique<const OptionalWithBooleanSelectorType>(1, std::move(containedDt),
                                                                    std::move(selLocPseudoDtsPair.first),
-                                                                   tryCloneUserAttrs(pseudoDt.userAttrs()));
+                                                                   tryCloneUserAttrs(pseudoOptType.userAttrs()));
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt)
@@ -574,7 +574,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
         return std::make_unique<OptionalWithUnsignedIntegerSelectorType>(1, std::move(containedDt),
                                                                          std::move(selLoc),
                                                                          pseudoOptType.selRanges(),
-                                                                         tryCloneUserAttrs(pseudoDt.userAttrs()));
+                                                                         tryCloneUserAttrs(pseudoOptType.userAttrs()));
     } else {
         using SInt = long long;
 
@@ -590,7 +590,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
         return std::make_unique<OptionalWithSignedIntegerSelectorType>(1, std::move(containedDt),
                                                                        std::move(selLoc),
                                                                        IntegerRangeSet<SInt> {std::move(ranges)},
-                                                                       tryCloneUserAttrs(pseudoDt.userAttrs()));
+                                                                       tryCloneUserAttrs(pseudoOptType.userAttrs()));
     }
 
     return nullptr;

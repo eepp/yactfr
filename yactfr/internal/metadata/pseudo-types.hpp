@@ -125,7 +125,7 @@ public:
     };
 
 protected:
-    explicit PseudoDt(MapItem::UP userAttrs, TextLocation loc);
+    explicit PseudoDt(TextLocation loc);
 
 public:
     virtual ~PseudoDt() = default;
@@ -153,13 +153,7 @@ public:
         _loc = std::move(loc);
     }
 
-    const MapItem *userAttrs() const noexcept
-    {
-        return _userAttrs.get();
-    }
-
 private:
-    MapItem::UP _userAttrs;
     TextLocation _loc;
 };
 
@@ -180,11 +174,7 @@ class PseudoScalarDtWrapper :
     public PseudoDt
 {
 public:
-    explicit PseudoScalarDtWrapper(DataType::UP dt, MapItem::UP userAttrs = nullptr,
-                                   TextLocation loc = TextLocation {});
-
-    explicit PseudoScalarDtWrapper(DataType::UP dt, bool hasEncoding,
-                                   MapItem::UP userAttrs = nullptr,
+    explicit PseudoScalarDtWrapper(DataType::UP dt, bool hasEncoding = false,
                                    TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -215,6 +205,24 @@ private:
 };
 
 /*
+ * Mixin to add user attribute property.
+ */
+class WithUserAttrsMixin
+{
+public:
+    explicit WithUserAttrsMixin() = default;
+    explicit WithUserAttrsMixin(MapItem::UP userAttrs);
+
+    const MapItem *userAttrs() const noexcept
+    {
+        return _userAttrs.get();
+    }
+
+private:
+    MapItem::UP _userAttrs;
+};
+
+/*
  * Pseudo fixed-length unsigned integer type.
  *
  * This is needed because:
@@ -234,7 +242,8 @@ private:
  * the _name_ of the mapped clock type, if any.
  */
 class PseudoFlUIntType :
-    public PseudoDt
+    public PseudoDt,
+    public WithUserAttrsMixin
 {
 public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
@@ -386,7 +395,8 @@ protected:
  * Pseudo array type (base class).
  */
 struct PseudoArrayType :
-    public PseudoDt
+    public PseudoDt,
+    public WithUserAttrsMixin
 {
 protected:
     explicit PseudoArrayType(PseudoDt::UP pseudoElemType, MapItem::UP userAttrs = nullptr,
@@ -470,7 +480,8 @@ public:
  * Pseudo BLOB type (base class).
  */
 struct PseudoBlobType :
-    public PseudoDt
+    public PseudoDt,
+    public WithUserAttrsMixin
 {
 protected:
     explicit PseudoBlobType(boost::optional<std::string> mediaType,
@@ -513,7 +524,8 @@ public:
 /*
  * Pseudo named data type.
  */
-class PseudoNamedDt final
+class PseudoNamedDt final :
+    public WithUserAttrsMixin
 {
 public:
     using UP = std::unique_ptr<PseudoNamedDt>;
@@ -538,15 +550,9 @@ public:
         return *_pseudoDt;
     }
 
-    const MapItem *userAttrs() const noexcept
-    {
-        return _userAttrs.get();
-    }
-
 private:
     std::string _name;
     PseudoDt::UP _pseudoDt;
-    MapItem::UP _userAttrs;
 };
 
 using PseudoNamedDts = std::vector<PseudoNamedDt::UP>;
@@ -555,7 +561,8 @@ using PseudoNamedDts = std::vector<PseudoNamedDt::UP>;
  * Pseudo structure type.
  */
 class PseudoStructType final :
-    public PseudoDt
+    public PseudoDt,
+    public WithUserAttrsMixin
 {
 public:
     explicit PseudoStructType(unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
@@ -602,7 +609,8 @@ private:
  * `pseudoSelLoc` may be a relative data location.
  */
 class PseudoVarType :
-    public PseudoDt
+    public PseudoDt,
+    public WithUserAttrsMixin
 {
 public:
     explicit PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
@@ -701,7 +709,8 @@ private:
  * `pseudoSelLoc` may be a relative data location.
  */
 class PseudoOptType :
-    public PseudoDt
+    public PseudoDt,
+    public WithUserAttrsMixin
 {
 protected:
     explicit PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
@@ -806,7 +815,8 @@ class PseudoDst;
 /*
  * Pseudo event record type: mutable event record type.
  */
-class PseudoErt final
+class PseudoErt final :
+    public WithUserAttrsMixin
 {
 public:
     explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
@@ -870,11 +880,6 @@ public:
         return _pseudoPayloadType.get();
     }
 
-    const MapItem *userAttrs() const noexcept
-    {
-        return _userAttrs.get();
-    }
-
 private:
     void _validateNotEmpty(const PseudoDst& pseudoDst) const;
     void _validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const;
@@ -887,7 +892,6 @@ private:
     boost::optional<std::string> _emfUri;
     PseudoDt::UP _pseudoSpecCtxType;
     PseudoDt::UP _pseudoPayloadType;
-    MapItem::UP _userAttrs;
 };
 
 /*
@@ -898,7 +902,8 @@ using PseudoErtSet = std::unordered_set<const PseudoErt *>;
 /*
  * Pseudo data stream type: mutable data stream type.
  */
-class PseudoDst final
+class PseudoDst final :
+    public WithUserAttrsMixin
 {
 public:
     explicit PseudoDst() = default;
@@ -974,11 +979,6 @@ public:
         _defClkType = &clkType;
     }
 
-    const MapItem *userAttrs() const noexcept
-    {
-        return _userAttrs.get();
-    }
-
 private:
     void _validateErHeaderType(const PseudoErtSet& pseudoErts) const;
     void _validateNoMappedClkTypeName() const;
@@ -991,7 +991,6 @@ private:
     PseudoDt::UP _pseudoErHeaderType;
     PseudoDt::UP _pseudoErCommonCtxType;
     const ClockType *_defClkType = nullptr;
-    MapItem::UP _userAttrs;
 };
 
 /*
@@ -1024,7 +1023,8 @@ private:
 /*
  * Pseudo trace type: mutable trace type.
  */
-class PseudoTraceType final
+class PseudoTraceType final :
+    public WithUserAttrsMixin
 {
 public:
     using PseudoDsts = std::unordered_map<TypeId, std::unique_ptr<PseudoDst>>;
@@ -1099,11 +1099,6 @@ public:
         return _pseudoOrphanErts;
     }
 
-    const MapItem *userAttrs() const noexcept
-    {
-        return _userAttrs.get();
-    }
-
 private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
@@ -1112,7 +1107,6 @@ private:
     ClockTypeSet _clkTypes;
     PseudoDsts _pseudoDsts;
     PseudoOrphanErts _pseudoOrphanErts;
-    MapItem::UP _userAttrs;
 };
 
 } // namespace internal
