@@ -583,9 +583,9 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
                                                                UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
 
             /*
-             * Without any pseudo fixed-length unsigned integer type
-             * with an "event record type ID" role, there may be only
-             * one (implicit) event record type.
+             * Without any pseudo unsigned integer type with an "event
+             * record type ID" role, there may be only one (implicit)
+             * event record type.
              */
             if (idPseudoDts.empty() && pseudoErts.size() > 1) {
                 throwMetadataParseError("No structure member type with the "
@@ -737,9 +737,9 @@ void PseudoTraceType::validate() const
             }
 
             /*
-             * Without any pseudo fixed-length unsigned integer type
-             * with a "data stream type ID" role, there may be only one
-             * (implicit) data stream type.
+             * Without any pseudo unsigned integer type with a "data
+             * stream type ID" role, there may be only one (implicit)
+             * data stream type.
              */
             if (_pseudoDsts.size() > 1 &&
                     findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
