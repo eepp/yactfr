@@ -21,10 +21,11 @@
 #include <yactfr/metadata/packetized-metadata-stream.hpp>
 #include <yactfr/metadata/invalid-metadata-stream.hpp>
 
-namespace yactfr {
-
 namespace bendian = boost::endian;
 namespace buuids = boost::uuids;
+
+namespace yactfr {
+namespace internal {
 
 class MetadataStreamDecoder final
 {
@@ -122,9 +123,9 @@ private:
     /*
      * Calls `_stream->read()` and updates the current offset on
      * success. Also checks if `_stream->gcount()` is equal to `size`
-     * after reading, throwing `InvalidMetadataStream` otherwise.
+     * after reading, throwing `InvalidMetadataStream` if not.
      */
-    void _read(char * const s, const std::streamsize size)
+    void _expect(char * const s, const std::streamsize size)
     {
         _stream->read(s, size);
 
@@ -171,8 +172,8 @@ private:
 
     /*
      * We keep a current offset for exception messages because
-     * _stream->tellg() is not guaranteed to return a valid offset, for
-     * example if it's std::cin.
+     * `_stream->tellg()` is not guaranteed to return a valid offset,
+     * for example if it's `std::cin`.
      */
     Index _curOffset = 0;
 
@@ -193,32 +194,32 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
     }
 
     /*
-     * We don't want any I/O exceptions during the decoding process
-     * (we check the error flags explicitly), so temporarily set the
-     * stream's exception mask to nothing. Save the current value to
-     * restore it after the decoding process.
+     * We don't want any I/O exceptions during the decoding process (we
+     * check the error flags explicitly), so temporarily set the
+     * exception mask of the input stream to nothing. Save the current
+     * value to restore it after the decoding process.
      */
     _origStreamMask = stream.exceptions();
     stream.exceptions(std::ios_base::goodbit);
 
     try {
         /*
-         * Let's read the first 4 bytes of the stream first.
+         * Let's read the first four bytes of the stream first.
          *
          * This indicates if the metadata is packetized or not. If it's
-         * not, we append those 4 bytes as the first 4 characters of the
-         * metadata text and read the whole stream directly.
+         * not, we append those four bytes as the first four characters
+         * of the metadata text and read the whole stream directly.
          *
          * Otherwise, we decode each packet, except for the magic number
          * of the first packet which is already decoded.
          *
-         * It's okay to require 4 bytes at this point: the size of a
+         * It's okay to require four bytes at this point: the size of a
          * valid metadata stream, plain text or packetized, cannot be
-         * under 4 bytes.
+         * under four bytes.
          */
         std::array<char, sizeof(std::uint32_t)> magicBuf;
 
-        this->_read(magicBuf.data(), magicBuf.size());
+        this->_expect(magicBuf.data(), magicBuf.size());
 
         const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
 
@@ -238,6 +239,7 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
         if (_isPacketized) {
             this->_readPacketized();
         } else {
+            // start with those four bytes
             _text.assign(magicBuf.begin(), magicBuf.end());
             this->_readText();
         }
@@ -246,7 +248,7 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
         throw;
     }
 
-    // should probably use some RAII to avoid repeating this
+    // TODO: should probably use some RAII to avoid repeating this
     stream.exceptions(_origStreamMask);
 }
 
@@ -289,7 +291,7 @@ boost::optional<MetadataStreamDecoder::_PktHeader> MetadataStreamDecoder::_readP
 
     /*
      * Do not assume the alignment of `_PktHeader` fields. Any of the
-     * read operations below can throw `IOError` or
+     * reading operations below may throw `IOError` or
      * `InvalidMetadataStream`: this must be catched by the caller.
      */
     if (readMagic) {
@@ -305,7 +307,7 @@ boost::optional<MetadataStreamDecoder::_PktHeader> MetadataStreamDecoder::_readP
         header.magic = _PKT_MAGIC;
     }
 
-    this->_read(reinterpret_cast<char *>(&header.uuid[0]), sizeof header.uuid);
+    this->_expect(reinterpret_cast<char *>(&header.uuid[0]), sizeof header.uuid);
 
     if (this->_streamIsBad()) {
         throw IOError {"Cannot read metadata stream."};
@@ -318,13 +320,7 @@ boost::optional<MetadataStreamDecoder::_PktHeader> MetadataStreamDecoder::_readP
     this->_expectItem(header.encryptionScheme);
     this->_expectItem(header.checksumScheme);
     this->_expectItem(header.majorVersion);
-
-    /*
-     * Do not check the end-of-file flag for the last item because the
-     * packet could be empty (no content).
-     */
     this->_expectItem(header.minorVersion);
-
     return header;
 }
 
@@ -335,7 +331,7 @@ void MetadataStreamDecoder::_readPacketized()
 
     /*
      * We can't initialize to `_curOffset` here because at this point we
-     * already read the first packet's magic.
+     * already read the magic number of the first packet.
      */
     decltype(_curOffset) curPktOffset = 0;
 
@@ -356,7 +352,7 @@ void MetadataStreamDecoder::_readPacketized()
             if (header->totalSize % 8 != 0) {
                 std::ostringstream ss;
 
-                ss << "packet size: " << header->totalSize <<
+                ss << "packet total size: " << header->totalSize <<
                       " is not a multiple of 8.";
                 this->_throwInvalid(curPktOffset, ss.str());
             }
@@ -364,14 +360,14 @@ void MetadataStreamDecoder::_readPacketized()
             if (header->contentSize % 8 != 0) {
                 std::ostringstream ss;
 
-                ss << "content size: " << header->contentSize <<
+                ss << "packet content size: " << header->contentSize <<
                       " is not a multiple of 8.";
                 this->_throwInvalid(curPktOffset, ss.str());
             }
 
             if (header->contentSize < pktHeaderSize) { std::ostringstream ss;
 
-                ss << "content size (" << header->contentSize <<
+                ss << "packet content size (" << header->contentSize <<
                       ") should be at least " << pktHeaderSize << ".";
                 this->_throwInvalid(curPktOffset, ss.str());
             }
@@ -379,7 +375,7 @@ void MetadataStreamDecoder::_readPacketized()
             if (header->contentSize > header->totalSize) {
                 std::ostringstream ss;
 
-                ss << "content size (" <<
+                ss << "packet content size (" <<
                       static_cast<unsigned int>(header->contentSize) <<
                       ") is greater than total size (" <<
                       static_cast<unsigned int>(header->totalSize) << ").";
@@ -392,7 +388,7 @@ void MetadataStreamDecoder::_readPacketized()
                 ss << "unknown major or minor version (" <<
                       static_cast<unsigned int>(header->majorVersion) <<
                       "." << static_cast<unsigned int>(header->minorVersion) <<
-                      ": only 1.8 is supported).";
+                      ": expecting 1.8).";
                 this->_throwInvalid(curPktOffset, ss.str());
             }
 
@@ -421,7 +417,7 @@ void MetadataStreamDecoder::_readPacketized()
             }
 
             if (_pktCount == 0) {
-                // use the first packet's UUID as the UUID
+                // use the UUID of the first packet as the UUID
                 std::copy(header->uuid, header->uuid + 16, _uuid.begin());
             } else {
                 buuids::uuid uuid;
@@ -432,7 +428,7 @@ void MetadataStreamDecoder::_readPacketized()
                     std::ostringstream ss;
 
                     ss << "UUID mismatch: expecting " << _uuid <<
-                          " (from packet #0), got " << uuid << ".";
+                          " (from first packet), got " << uuid << ".";
                     this->_throwInvalid(curPktOffset, ss.str());
                 }
             }
@@ -443,7 +439,7 @@ void MetadataStreamDecoder::_readPacketized()
             const Size textSizeBytes = contentSizeBytes - pktHeaderSizeBytes;
 
             buf.resize(textSizeBytes);
-            this->_read(buf.data(), textSizeBytes);
+            this->_expect(buf.data(), textSizeBytes);
 
             if (this->_streamIsBad()) {
                 throw IOError {"Cannot read metadata stream."};
@@ -487,7 +483,7 @@ void MetadataStreamDecoder::_readText()
             break;
         }
 
-        static const Size blkSize = 4096;
+        constexpr Size blkSize = 4096;
         const auto textOffset = _text.size();
 
         _text.resize(_text.size() + blkSize);
@@ -501,6 +497,8 @@ void MetadataStreamDecoder::_readText()
     }
 }
 
+} // namespace internal
+
 InvalidMetadataStream::InvalidMetadataStream(std::string msg, const Index offset) :
     std::runtime_error {std::move(msg)},
     _offset {offset}
@@ -509,21 +507,20 @@ InvalidMetadataStream::InvalidMetadataStream(std::string msg, const Index offset
 
 std::unique_ptr<const MetadataStream> createMetadataStream(std::istream& stream)
 {
-    MetadataStreamDecoder decoder {stream};
-    MetadataStream *metadataStream;
+    internal::MetadataStreamDecoder decoder {stream};
 
     if (decoder.isPacketized()) {
-        metadataStream = new PacketizedMetadataStream {
+        return std::unique_ptr<const PacketizedMetadataStream> {new PacketizedMetadataStream {
             std::move(decoder.text()), decoder.pktCount(),
             static_cast<unsigned int>(decoder.majorVersion()),
             static_cast<unsigned int>(decoder.minorVersion()),
             decoder.bo(), decoder.uuid()
-        };
+        }};
     } else {
-        metadataStream = new PlainTextMetadataStream {std::move(decoder.text())};
+        return std::unique_ptr<const PlainTextMetadataStream> {new PlainTextMetadataStream {
+            std::move(decoder.text())
+        }};
     }
-
-    return std::unique_ptr<const MetadataStream> {metadataStream};
 }
 
 } // namespace yactfr
