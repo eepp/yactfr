@@ -536,10 +536,13 @@ PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
 {
 }
 
-PseudoDst::PseudoDst(const TypeId id, PseudoDt::UP pseudoPktCtxType,
+PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
+                     boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
                      PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
                      const ClockType * const defClkType) :
     _id {id},
+    _ns {std::move(ns)},
+    _name {std::move(name)},
     _pseudoPktCtxType {std::move(pseudoPktCtxType)},
     _pseudoErHeaderType {std::move(pseudoErHeaderType)},
     _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)},
@@ -625,7 +628,17 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
 
-        ss << "In data stream type " << _id << ":";
+        ss << "In data stream type " << _id;
+
+        if (_name) {
+            ss << " named `" << *_name << "`";
+        }
+
+        if (_ns) {
+            ss << " within namespace `" << *_ns << "`";
+        }
+
+        ss << ':';
         appendMsgToMetadataParseError(exc, ss.str());
         throw;
     }

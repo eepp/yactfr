@@ -2356,7 +2356,8 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
     }
 
     // create and initialize pseudo data stream type
-    auto pseudoDst = std::make_unique<PseudoDst>(id, std::move(pseudoPktCtxType),
+    auto pseudoDst = std::make_unique<PseudoDst>(id, boost::none, boost::none,
+                                                 std::move(pseudoPktCtxType),
                                                  std::move(pseudoErHeaderType),
                                                  std::move(pseudoErCommonCtxType));
     _pseudoTraceType->pseudoDsts().insert(std::make_pair(id, std::move(pseudoDst)));

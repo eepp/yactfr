@@ -66,6 +66,10 @@ public:
 
     @param[in] id
         Data stream type ID.
+    @param[in] nameSpace
+        Namespace.
+    @param[in] name
+        Name.
     @param[in] eventRecordTypes
         Children event record types (moved to this type).
     @param[in] packetContextType
@@ -77,7 +81,9 @@ public:
     @param[in] defaultClockType
         Default clock type, or \c nullptr if none.
     */
-    explicit DataStreamType(TypeId id, EventRecordTypeSet&& eventRecordTypes,
+    explicit DataStreamType(TypeId id, boost::optional<std::string> nameSpace,
+                            boost::optional<std::string> name,
+                            EventRecordTypeSet&& eventRecordTypes,
                             StructureType::UP packetContextType,
                             StructureType::UP eventRecordHeaderType,
                             StructureType::UP eventRecordCommonContextType,
@@ -88,6 +94,18 @@ public:
     TypeId id() const noexcept
     {
         return _id;
+    }
+
+    /// Namespace.
+    const boost::optional<std::string>& nameSpace() const noexcept
+    {
+        return _ns;
+    }
+
+    /// Name.
+    const boost::optional<std::string>& name() const noexcept
+    {
+        return _name;
     }
 
     /// Contained event record types.
@@ -169,6 +187,8 @@ private:
 
 private:
     const TypeId _id;
+    const boost::optional<std::string> _ns;
+    const boost::optional<std::string> _name;
     const EventRecordTypeSet _erts;
     std::unordered_map<TypeId, const EventRecordType *> _idsToErts;
     StructureType::UP _pktCtxType;

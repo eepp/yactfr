@@ -15,10 +15,13 @@
 
 namespace yactfr {
 
-DataStreamType::DataStreamType(const TypeId id, EventRecordTypeSet&& erts,
+DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
+                               boost::optional<std::string> name, EventRecordTypeSet&& erts,
                                StructureType::UP pktCtxType, StructureType::UP erHeaderType,
                                StructureType::UP erCommonCtxType, const ClockType *defClkType) :
     _id {id},
+    _ns {std::move(ns)},
+    _name {std::move(name)},
     _erts {std::move(erts)},
     _pktCtxType {std::move(pktCtxType)},
     _erHeaderType {std::move(erHeaderType)},

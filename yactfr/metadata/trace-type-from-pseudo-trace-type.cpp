@@ -102,8 +102,8 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
                                                               &pseudoDst);
 
     // create yactfr data stream type
-    return std::make_unique<const DataStreamType>(pseudoDst.id(), std::move(ertSet),
-                                                  std::move(pseudoPktCtxType),
+    return std::make_unique<const DataStreamType>(pseudoDst.id(), pseudoDst.ns(), pseudoDst.name(),
+                                                  std::move(ertSet), std::move(pseudoPktCtxType),
                                                   std::move(erHeaderType),
                                                   std::move(erCommonCtxType),
                                                   pseudoDst.defClkType());

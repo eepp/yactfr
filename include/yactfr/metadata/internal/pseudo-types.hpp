@@ -760,8 +760,10 @@ class PseudoDst final
 {
 public:
     explicit PseudoDst() = default;
-    explicit PseudoDst(TypeId id, PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
-                       PseudoDt::UP pseudoErCommonCtxType, const ClockType *defClkType = nullptr);
+    explicit PseudoDst(TypeId id, boost::optional<std::string> ns,
+                       boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
+                       PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
+                       const ClockType *defClkType = nullptr);
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -778,6 +780,16 @@ public:
     TypeId id() const noexcept
     {
         return _id;
+    }
+
+    const boost::optional<std::string>& ns() const noexcept
+    {
+        return _ns;
+    }
+
+    const boost::optional<std::string>& name() const noexcept
+    {
+        return _name;
     }
 
     const PseudoDt *pseudoPktCtxType() const noexcept
@@ -826,6 +838,8 @@ private:
 
 private:
     TypeId _id = 0;
+    boost::optional<std::string> _ns;
+    boost::optional<std::string> _name;
     PseudoDt::UP _pseudoPktCtxType;
     PseudoDt::UP _pseudoErHeaderType;
     PseudoDt::UP _pseudoErCommonCtxType;
