@@ -2073,7 +2073,7 @@ public:
         visitor.visit(*this);
     }
 
-    /// Type of the current event record, or \c nullptr if the dat
+    /// Type of the current event record, or \c nullptr if the data
     /// stream type has no event record types.
     const EventRecordType *type() const noexcept
     {
