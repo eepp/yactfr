@@ -71,6 +71,7 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
 #include <yactfr/metadata/fl-bit-array-type.hpp>
+#include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
@@ -110,6 +111,7 @@ class EndReadScopeInstr;
 class Instr;
 class ReadFlBitArrayInstr;
 class ReadDataInstr;
+class ReadFlBoolInstr;
 class ReadFlFloatInstr;
 class ReadFlSEnumInstr;
 class ReadFlSIntInstr;
@@ -145,6 +147,10 @@ public:
     virtual ~InstrVisitor() = default;
 
     virtual void visit(ReadFlBitArrayInstr& instr)
+    {
+    }
+
+    virtual void visit(ReadFlBoolInstr& instr)
     {
     }
 
@@ -455,6 +461,15 @@ public:
         READ_FL_UINT_A8,
         READ_FL_UINT_BE,
         READ_FL_UINT_LE,
+        READ_FL_BOOL_A16_BE,
+        READ_FL_BOOL_A16_LE,
+        READ_FL_BOOL_A32_BE,
+        READ_FL_BOOL_A32_LE,
+        READ_FL_BOOL_A64_BE,
+        READ_FL_BOOL_A64_LE,
+        READ_FL_BOOL_A8,
+        READ_FL_BOOL_BE,
+        READ_FL_BOOL_LE,
         SAVE_VAL,
         SET_CUR_ID,
         SET_DS_ID,
@@ -533,8 +548,22 @@ public:
                _theKind == Kind::READ_FL_BIT_ARRAY_A16_BE ||
                _theKind == Kind::READ_FL_BIT_ARRAY_A32_BE ||
                _theKind == Kind::READ_FL_BIT_ARRAY_A64_BE ||
+               this->isReadFlBool() ||
                this->isReadFlInt() ||
                this->isReadFlFloat();
+    }
+
+    bool isReadFlBool() const noexcept
+    {
+        return _theKind == Kind::READ_FL_BOOL_LE ||
+               _theKind == Kind::READ_FL_BOOL_BE ||
+               _theKind == Kind::READ_FL_BOOL_A8 ||
+               _theKind == Kind::READ_FL_BOOL_A16_LE ||
+               _theKind == Kind::READ_FL_BOOL_A32_LE ||
+               _theKind == Kind::READ_FL_BOOL_A64_LE ||
+               _theKind == Kind::READ_FL_BOOL_A16_BE ||
+               _theKind == Kind::READ_FL_BOOL_A32_BE ||
+               _theKind == Kind::READ_FL_BOOL_A64_BE;
     }
 
     bool isReadFlInt() const noexcept
@@ -823,6 +852,26 @@ private:
 };
 
 /*
+ * "Read fixed-length boolean" procedure instruction.
+ */
+class ReadFlBoolInstr :
+    public ReadFlBitArrayInstr
+{
+public:
+    explicit ReadFlBoolInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+
+    const FixedLengthBooleanType& boolType() const noexcept
+    {
+        return static_cast<const FixedLengthBooleanType&>(this->dt());
+    }
+};
+
+/*
  * "Read fixed-length integer" procedure instruction.
  */
 class ReadFlIntInstr :
@@ -910,9 +959,6 @@ public:
     {
         return static_cast<const FixedLengthFloatingPointNumberType&>(this->dt());
     }
-
-private:
-    std::string _toStr(Size indent = 0) const override;
 };
 
 /*

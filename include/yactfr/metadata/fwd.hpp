@@ -27,6 +27,7 @@ class DynamicLengthArrayType;
 class DynamicLengthStringType;
 class EventRecordType;
 class FixedLengthBitArrayType;
+class FixedLengthBooleanType;
 class FixedLengthFloatingPointNumberType;
 class FixedLengthIntegerType;
 class FixedLengthSignedIntegerType;

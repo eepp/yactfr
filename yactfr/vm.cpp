@@ -203,6 +203,15 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A16_BE)] = &Vm::_execReadFlBitArrayA16Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A32_BE)] = &Vm::_execReadFlBitArrayA32Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BIT_ARRAY_A64_BE)] = &Vm::_execReadFlBitArrayA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_LE)] = &Vm::_execReadFlBoolLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_BE)] = &Vm::_execReadFlBoolBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A8)] = &Vm::_execReadFlBoolA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A16_LE)] = &Vm::_execReadFlBoolA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A32_LE)] = &Vm::_execReadFlBoolA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A64_LE)] = &Vm::_execReadFlBoolA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A16_BE)] = &Vm::_execReadFlBoolA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A32_BE)] = &Vm::_execReadFlBoolA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_FL_BOOL_A64_BE)] = &Vm::_execReadFlBoolA64Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_LE)] = &Vm::_execReadFlSIntLe;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_BE)] = &Vm::_execReadFlSIntBe;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_SINT_A8)] = &Vm::_execReadFlSIntA8;
@@ -398,6 +407,60 @@ Vm::_ExecReaction Vm::_execReadFlBitArrayA32Be(const Instr& instr)
 Vm::_ExecReaction Vm::_execReadFlBitArrayA64Be(const Instr& instr)
 {
     this->_execReadStdFlBitArray<64, readFlUIntBe64>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolLe(const Instr& instr)
+{
+    this->_execReadFlBool<readFlUIntLeFuncs>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolBe(const Instr& instr)
+{
+    this->_execReadFlBool<readFlUIntBeFuncs>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA8(const Instr& instr)
+{
+    this->_execReadStdFlBool<8, readFlUInt8>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA16Le(const Instr& instr)
+{
+    this->_execReadStdFlBool<16, readFlUIntLe16>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA32Le(const Instr& instr)
+{
+    this->_execReadStdFlBool<32, readFlUIntLe32>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA64Le(const Instr& instr)
+{
+    this->_execReadStdFlBool<64, readFlUIntLe64>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA16Be(const Instr& instr)
+{
+    this->_execReadStdFlBool<16, readFlUIntBe16>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA32Be(const Instr& instr)
+{
+    this->_execReadStdFlBool<32, readFlUIntBe32>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBoolA64Be(const Instr& instr)
+{
+    this->_execReadStdFlBool<64, readFlUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

@@ -11,6 +11,7 @@
 
 #include <yactfr/metadata/dt.hpp>
 #include <yactfr/metadata/fl-bit-array-type.hpp>
+#include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
@@ -60,6 +61,12 @@ const FixedLengthBitArrayType& DataType::asFixedLengthBitArrayType() const noexc
 {
     assert(this->isFixedLengthBitArrayType());
     return static_cast<const FixedLengthBitArrayType&>(*this);
+}
+
+const FixedLengthBooleanType& DataType::asFixedLengthBooleanType() const noexcept
+{
+    assert(this->isFixedLengthBooleanType());
+    return static_cast<const FixedLengthBooleanType&>(*this);
 }
 
 const FixedLengthIntegerType& DataType::asFixedLengthIntegerType() const noexcept

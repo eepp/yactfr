@@ -66,6 +66,11 @@ void ElementVisitor::visit(const FixedLengthBitArrayElement& elem)
 {
 }
 
+void ElementVisitor::visit(const FixedLengthBooleanElement& elem)
+{
+    this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));
+}
+
 void ElementVisitor::visit(const FixedLengthSignedIntegerElement& elem)
 {
     this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));

@@ -87,6 +87,9 @@ public:
         /// FixedLengthBitArrayElement
         FIXED_LENGTH_BIT_ARRAY,
 
+        /// FixedLengthBooleanElement
+        FIXED_LENGTH_BOOLEAN,
+
         /// FixedLengthSignedIntegerElement
         FIXED_LENGTH_SIGNED_INTEGER,
 
@@ -794,6 +797,46 @@ protected:
         std::int64_t i;
         double d;
     } _theVal;
+};
+
+/*!
+@brief
+    Fixed-length boolean element.
+
+@ingroup elems
+*/
+class FixedLengthBooleanElement final :
+    public FixedLengthBitArrayElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit FixedLengthBooleanElement() :
+        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_BOOLEAN}
+    {
+    }
+
+public:
+    /// Fixed-length boolean type.
+    const FixedLengthBooleanType& type() const noexcept
+    {
+        return *_dt;
+    }
+
+    /// Boolean value.
+    bool value() const noexcept
+    {
+        return static_cast<bool>(_theVal.u);
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+private:
+    const FixedLengthBooleanType *_dt;
 };
 
 /*!

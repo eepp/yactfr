@@ -136,6 +136,12 @@ public:
         *_os << ':' << elem.unsignedIntegerValue() << '\n';
     }
 
+    void visit(const yactfr::FixedLengthBooleanElement& elem) override
+    {
+        this->_visitDataElem(elem, "FLB");
+        *_os << ':' << (elem.value() ? "true" : "false") << '\n';
+    }
+
     void visit(const yactfr::FixedLengthSignedIntegerElement& elem) override
     {
         this->_visitDataElem(elem, "FLSI");

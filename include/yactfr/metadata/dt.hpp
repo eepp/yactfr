@@ -37,27 +37,28 @@ protected:
     // kind of data type
     enum _Kind
     {
-        _KIND_FL_SENUM              = 1 << 0,
-        _KIND_FL_UENUM              = 1 << 1,
-        _KIND_FL_SINT               = 1 << 2,
-        _KIND_FL_UINT               = 1 << 3,
-        _KIND_FL_INT                = 1 << 4,
-        _KIND_FL_ENUM               = 1 << 5,
-        _KIND_FL_BIT_ARRAY          = 1 << 6,
-        _KIND_FL_FLOAT              = 1 << 7,
-        _KIND_NT_STR                = 1 << 8,
-        _KIND_SCALAR                = 1 << 9,
-        _KIND_STRUCT                = 1 << 10,
-        _KIND_ARRAY                 = 1 << 11,
-        _KIND_SL_ARRAY              = 1 << 12,
-        _KIND_DL_ARRAY              = 1 << 13,
-        _KIND_NON_NT_STRING         = 1 << 14,
-        _KIND_SL_STR                = 1 << 15,
-        _KIND_DL_STR                = 1 << 16,
-        _KIND_VAR                   = 1 << 17,
-        _KIND_VAR_USEL              = 1 << 18,
-        _KIND_VAR_SSEL              = 1 << 19,
-        _KIND_COMPOUND              = 1 << 20,
+        _KIND_FL_BIT_ARRAY          = 1 << 1,
+        _KIND_FL_BOOL               = 1 << 2,
+        _KIND_FL_INT                = 1 << 3,
+        _KIND_FL_SINT               = 1 << 4,
+        _KIND_FL_UINT               = 1 << 5,
+        _KIND_FL_ENUM               = 1 << 6,
+        _KIND_FL_SENUM              = 1 << 7,
+        _KIND_FL_UENUM              = 1 << 8,
+        _KIND_FL_FLOAT              = 1 << 9,
+        _KIND_NT_STR                = 1 << 10,
+        _KIND_SCALAR                = 1 << 11,
+        _KIND_STRUCT                = 1 << 12,
+        _KIND_ARRAY                 = 1 << 13,
+        _KIND_SL_ARRAY              = 1 << 14,
+        _KIND_DL_ARRAY              = 1 << 15,
+        _KIND_NON_NT_STRING         = 1 << 16,
+        _KIND_SL_STR                = 1 << 17,
+        _KIND_DL_STR                = 1 << 18,
+        _KIND_VAR                   = 1 << 19,
+        _KIND_VAR_USEL              = 1 << 20,
+        _KIND_VAR_SSEL              = 1 << 21,
+        _KIND_COMPOUND              = 1 << 22,
     };
 
 protected:
@@ -77,6 +78,12 @@ public:
     bool isFixedLengthBitArrayType() const noexcept
     {
         return this->_isKind(_KIND_FL_BIT_ARRAY);
+    }
+
+    /// \c true if this type is a fixed-length boolean type.
+    bool isFixedLengthBooleanType() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BOOL);
     }
 
     /// \c true if this type is a fixed-length integer type.
@@ -205,6 +212,15 @@ public:
         This type is a fixed-length bit array type.
     */
     const FixedLengthBitArrayType& asFixedLengthBitArrayType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a fixed-length boolean type.
+
+    @pre
+        This type is a fixed-length boolean type.
+    */
+    const FixedLengthBooleanType& asFixedLengthBooleanType() const noexcept;
 
     /*!
     @brief

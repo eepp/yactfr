@@ -189,6 +189,7 @@ descriptions below easier to read and to allow recursion.
     [DefaultClockValueElement]
   ) |
   FixedLengthBitArrayElement |
+  FixedLengthBooleanElement |
   FixedLengthSignedIntegerElement |
   FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
@@ -340,8 +341,8 @@ when the current element of the iterator is:
   <dt>EndElement</dt>
   <dd>
     If the last element was a fixed-length bit array
-    (FixedLengthBitArrayElement, FixedLengthUnsignedIntegerElement,
-    FixedLengthSignedIntegerElement,
+    (FixedLengthBitArrayElement, FixedLengthBooleanElement,
+    FixedLengthUnsignedIntegerElement, FixedLengthSignedIntegerElement,
     FixedLengthFloatingPointNumberElement,
     FixedLengthUnsignedEnumerationElement, or
     FixedLengthSignedEnumerationElement) or a SubstringElement, the

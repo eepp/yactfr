@@ -152,6 +152,42 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_FL_BIT_ARRAY_A64_BE";
         break;
 
+    case Kind::READ_FL_BOOL_LE:
+        kindStr = "READ_FL_BOOL_LE";
+        break;
+
+    case Kind::READ_FL_BOOL_BE:
+        kindStr = "READ_FL_BOOL_BE";
+        break;
+
+    case Kind::READ_FL_BOOL_A8:
+        kindStr = "READ_FL_BOOL_A8";
+        break;
+
+    case Kind::READ_FL_BOOL_A16_LE:
+        kindStr = "READ_FL_BOOL_A16_LE";
+        break;
+
+    case Kind::READ_FL_BOOL_A32_LE:
+        kindStr = "READ_FL_BOOL_A32_LE";
+        break;
+
+    case Kind::READ_FL_BOOL_A64_LE:
+        kindStr = "READ_FL_BOOL_A64_LE";
+        break;
+
+    case Kind::READ_FL_BOOL_A16_BE:
+        kindStr = "READ_FL_BOOL_A16_BE";
+        break;
+
+    case Kind::READ_FL_BOOL_A32_BE:
+        kindStr = "READ_FL_BOOL_A32_BE";
+        break;
+
+    case Kind::READ_FL_BOOL_A64_BE:
+        kindStr = "READ_FL_BOOL_A64_BE";
+        break;
+
     case Kind::READ_FL_SINT_LE:
         kindStr = "READ_FL_SINT_LE";
         break;
@@ -628,6 +664,67 @@ std::string ReadFlBitArrayInstr::_commonToStr() const
     return ss.str();
 }
 
+static inline Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
+{
+    assert(dt.isFixedLengthBooleanType());
+
+    Instr::Kind kind = Instr::Kind::UNSET;
+    auto& boolType = dt.asFixedLengthBooleanType();
+
+    if (boolType.byteOrder() == ByteOrder::LITTLE) {
+        kind = Instr::Kind::READ_FL_BOOL_LE;
+
+        if (dt.alignment() % 8 == 0) {
+            switch (boolType.length()) {
+            case 8:
+                return Instr::Kind::READ_FL_BOOL_A8;
+
+            case 16:
+                return Instr::Kind::READ_FL_BOOL_A16_LE;
+
+            case 32:
+                return Instr::Kind::READ_FL_BOOL_A32_LE;
+
+            case 64:
+                return Instr::Kind::READ_FL_BOOL_A64_LE;
+
+            default:
+                break;
+            }
+        }
+    } else {
+        kind = Instr::Kind::READ_FL_BOOL_BE;
+
+        if (dt.alignment() % 8 == 0) {
+            switch (boolType.length()) {
+            case 8:
+                return Instr::Kind::READ_FL_BOOL_A8;
+
+            case 16:
+                return Instr::Kind::READ_FL_BOOL_A16_BE;
+
+            case 32:
+                return Instr::Kind::READ_FL_BOOL_A32_BE;
+
+            case 64:
+                return Instr::Kind::READ_FL_BOOL_A64_BE;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    assert(kind != Instr::Kind::UNSET);
+    return kind;
+}
+
+ReadFlBoolInstr::ReadFlBoolInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlBitArrayInstr {kindFromFlBoolType(dt), member, dt}
+{
+    assert(dt.isFixedLengthBooleanType());
+}
+
 ReadFlIntInstr::ReadFlIntInstr(const Kind kind, const StructureMemberType * const member,
                                const DataType& dt) :
     ReadFlBitArrayInstr {kind, member, dt}
@@ -837,14 +934,6 @@ ReadFlFloatInstr::ReadFlFloatInstr(const StructureMemberType * const member, con
     ReadFlBitArrayInstr {kindFromFlFloatType(dt), member, dt}
 {
     assert(dt.isFixedLengthFloatingPointNumberType());
-}
-
-std::string ReadFlFloatInstr::_toStr(const Size indent) const
-{
-    std::ostringstream ss;
-
-    ss << this->_commonToStr() << std::endl;
-    return ss.str();
 }
 
 static inline Instr::Kind kindFromFlEnumType(const DataType& dt) noexcept

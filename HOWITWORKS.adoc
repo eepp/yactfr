@@ -35,6 +35,7 @@ documented uses unabbreviated names.
 |BE |Big-endian
 |Blk |Block
 |BO |Byte order
+|Bool |Boolean
 |Cand |Candidate
 |Clk |Clock
 |Col |Column

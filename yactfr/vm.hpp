@@ -273,6 +273,7 @@ public:
         EventRecordInfoElement erInfo;
         DefaultClockValueElement defClkVal;
         FixedLengthBitArrayElement flBitArray;
+        FixedLengthBooleanElement flBool;
         FixedLengthSignedIntegerElement flSInt;
         FixedLengthUnsignedIntegerElement flUInt;
         FixedLengthSignedEnumerationElement flSEnum;
@@ -993,6 +994,15 @@ private:
     _ExecReaction _execReadFlBitArrayA16Be(const Instr& instr);
     _ExecReaction _execReadFlBitArrayA32Be(const Instr& instr);
     _ExecReaction _execReadFlBitArrayA64Be(const Instr& instr);
+    _ExecReaction _execReadFlBoolLe(const Instr& instr);
+    _ExecReaction _execReadFlBoolBe(const Instr& instr);
+    _ExecReaction _execReadFlBoolA8(const Instr& instr);
+    _ExecReaction _execReadFlBoolA16Le(const Instr& instr);
+    _ExecReaction _execReadFlBoolA32Le(const Instr& instr);
+    _ExecReaction _execReadFlBoolA64Le(const Instr& instr);
+    _ExecReaction _execReadFlBoolA16Be(const Instr& instr);
+    _ExecReaction _execReadFlBoolA32Be(const Instr& instr);
+    _ExecReaction _execReadFlBoolA64Be(const Instr& instr);
     _ExecReaction _execReadFlSIntLe(const Instr& instr);
     _ExecReaction _execReadFlSIntBe(const Instr& instr);
     _ExecReaction _execReadFlSIntA8(const Instr& instr);
@@ -1153,6 +1163,15 @@ private:
         this->_consumeExistingBits(LenBits);
     }
 
+    template <Size LenBits, std::uint64_t (*Func)(const std::uint8_t *)>
+    void _execReadStdFlBool(const Instr& instr)
+    {
+        const auto val = this->_readStdFlInt<std::uint64_t, LenBits, Func>(instr);
+
+        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBool);
+        this->_consumeExistingBits(LenBits);
+    }
+
     template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
     void _execReadStdFlInt(const Instr& instr)
     {
@@ -1209,6 +1228,15 @@ private:
 
         this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
+    }
+
+    template <std::uint64_t (*Funcs[])(const std::uint8_t *)>
+    void _execReadFlBool(const Instr& instr)
+    {
+        const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
+
+        this->_setFlBitArrayElemBase(val, instr, _pos.elems.flBool);
+        this->_consumeExistingBits(static_cast<const ReadFlBoolInstr&>(instr).len());
     }
 
     template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
@@ -1357,7 +1385,7 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<_ExecReaction (Vm::*)(const Instr&), 96> _execFuncs;
+    std::array<_ExecReaction (Vm::*)(const Instr&), 100> _execFuncs;
 
     // position (whole VM's state)
     VmPos _pos;
