@@ -419,8 +419,8 @@ private:
 
 @ingroup elems
 
-This element contains the decoded trace type UUID as well as the expected
-trace type UUID.
+This element contains the decoded trace type UUID as well as the
+expected trace type UUID.
 
 isValid() indicates whether or not the decoded UUID is valid, that is,
 that it's equal to TraceType::uuid().

@@ -251,6 +251,12 @@ descriptions below easier to read and to allow recursion.
         TraceTypeUuidElement
         EndElement
       ) |
+      (
+        StaticLengthBlobBeginningElement
+        BlobSectionElement *
+        TraceTypeUuidElement
+        EndElement
+      ) |
       DATA
     ) *
     EndElement

@@ -444,6 +444,10 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "BEGIN_READ_SL_BLOB";
         break;
 
+    case Kind::BEGIN_READ_SL_UUID_BLOB:
+        kindStr = "BEGIN_READ_SL_UUID_BLOB";
+        break;
+
     case Kind::END_READ_SL_BLOB:
         kindStr = "END_READ_SL_BLOB";
         break;
@@ -1309,10 +1313,16 @@ std::string BeginReadDlStrInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
+BeginReadSlBlobInstr::BeginReadSlBlobInstr(const Kind kind, const StructureMemberType * const member,
+                                           const DataType& dt) :
+    ReadDataInstr {kind, member, dt},
+    _len {dt.asStaticLengthBlobType().length()}
+{
+}
+
 BeginReadSlBlobInstr::BeginReadSlBlobInstr(const StructureMemberType * const member,
                                            const DataType& dt) :
-    ReadDataInstr {Kind::BEGIN_READ_SL_BLOB, member, dt},
-    _len {dt.asStaticLengthBlobType().length()}
+    BeginReadSlBlobInstr {Kind::BEGIN_READ_SL_BLOB, member, dt}
 {
 }
 
@@ -1322,6 +1332,12 @@ std::string BeginReadSlBlobInstr::_toStr(const Size indent) const
 
     ss << ReadDataInstr::_commonToStr() << " " << _strProp("len") << _len << std::endl;
     return ss.str();
+}
+
+BeginReadSlUuidBlobInstr::BeginReadSlUuidBlobInstr(const StructureMemberType * const member,
+                                                     const DataType& dt) :
+    BeginReadSlBlobInstr {Kind::BEGIN_READ_SL_UUID_BLOB, member, dt}
+{
 }
 
 BeginReadDlBlobInstr::BeginReadDlBlobInstr(const StructureMemberType * const member,

@@ -80,9 +80,10 @@ void PktProcBuilder::_buildPktProc()
      *    any special rule.
      *
      * 2. In the `BeginReadScopeInstr` instruction of the trace preamble
-     *    procedure, find a first-level `uuid` "begin read static-length
-     *    array" instruction and replace it with a
-     *    `BeginReadSlUuidArrayInstr` object.
+     *    procedure, find "begin read static-length array" and "begin
+     *    read static-length BLOB" instructions and replace them with
+     *    `BeginReadSlUuidArrayInstr` and `BeginReadSlUuidBlobInstr`
+     *    object.
      *
      * 3. Insert `SetCurIdInstr`, `SetDstInstr`, `SetErtInstr`,
      *    `SetDsIdInstr`, `SetPktOriginIndexInstr`,
@@ -179,11 +180,18 @@ public:
 
     void visit(BeginReadSlArrayInstr& instr) override
     {
-        if (_findWithTraceTypeUuidRole && instr.staticArrayType().hasTraceTypeUuidRole()) {
+        if (_findWithTraceTypeUuidRole && instr.slArrayType().hasTraceTypeUuidRole()) {
             _func(_curInstrLoc);
         }
 
         this->_visit(instr);
+    }
+
+    void visit(BeginReadSlBlobInstr& instr) override
+    {
+        if (_findWithTraceTypeUuidRole && instr.slBlobType().hasTraceTypeUuidRole()) {
+            _func(_curInstrLoc);
+        }
     }
 
     void visit(BeginReadSlUuidArrayInstr& instr) override
@@ -233,36 +241,49 @@ private:
 
 void PktProcBuilder::_subUuidInstr()
 {
-    auto readScopeInstrIt = firstBeginReadScopeInstr(_pktProc->preambleProc(),
-                                                     Scope::PACKET_HEADER);
+    const auto readScopeInstrIt = firstBeginReadScopeInstr(_pktProc->preambleProc(),
+                                                           Scope::PACKET_HEADER);
 
     if (readScopeInstrIt == _pktProc->preambleProc().end()) {
         return;
     }
 
     auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
-    Proc::SharedIt readArrayInstrIt = readScopeInstr.proc().end();
+    std::vector<InstrLoc> instrLocs;
 
-    InstrFinder {readScopeInstr.proc(), [&readArrayInstrIt](InstrLoc& instrLoc) {
+    InstrFinder {readScopeInstr.proc(), [&instrLocs](InstrLoc& instrLoc) {
         /*
          * Replace after this visitor finishes because it recurses into
-         * this compound instruction afterwards so we cannot change it
-         * in its back, effectively deleting the old shared pointer and
-         * making a dangling pointer within the visitor.
+         * "begin reading static-length array" instructions afterwards
+         * so we cannot change it in its back, effectively deleting the
+         * old shared pointer and making a dangling pointer within the
+         * visitor.
          */
-        readArrayInstrIt = instrLoc.it;
+        instrLocs.push_back(instrLoc);
     }};
 
-    if (readArrayInstrIt != readScopeInstr.proc().end()) {
-        auto& instrReadArray = static_cast<ReadDataInstr&>(**readArrayInstrIt);
+    for (auto& instrLoc : instrLocs) {
+        const auto& origInstr = static_cast<const ReadDataInstr&>(**instrLoc.it);
 
-        *readArrayInstrIt = std::make_shared<BeginReadSlUuidArrayInstr>(instrReadArray.memberType(),
-                                                                        instrReadArray.dt());
+        if (origInstr.isBeginReadSlArray()) {
+            auto& origBeginReadArrayInstr = static_cast<const BeginReadSlArrayInstr&>(**instrLoc.it);
 
-        auto& readArrayInstr = static_cast<BeginReadSlArrayInstr&>(**readArrayInstrIt);
+            // replace instruction
+            *instrLoc.it = std::make_shared<BeginReadSlUuidArrayInstr>(origBeginReadArrayInstr.memberType(),
+                                                                       origBeginReadArrayInstr.dt());
 
-        this->_buildReadInstr(nullptr, readArrayInstr.staticArrayType().elementType(),
-                              readArrayInstr.proc());
+            auto& beginReadUuidArrayInstr = static_cast<BeginReadSlArrayInstr&>(**instrLoc.it);
+
+            // rebuild subprocedure
+            this->_buildReadInstr(nullptr, beginReadUuidArrayInstr.slArrayType().elementType(),
+                                  beginReadUuidArrayInstr.proc());
+        } else {
+            assert(origInstr.isBeginReadSlBlob());
+
+            // replace instruction
+            *instrLoc.it = std::make_shared<BeginReadSlUuidBlobInstr>(origInstr.memberType(),
+                                                                      origInstr.dt());
+        }
     }
 }
 

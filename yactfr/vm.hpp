@@ -48,6 +48,7 @@ enum class VmState {
     READ_SUBSTR_UNTIL_NULL,
     READ_SUBSTR,
     READ_BLOB_SECTION,
+    READ_UUID_BLOB_SECTION,
     CONTINUE_READ_VL_UINT,
     CONTINUE_READ_VL_SINT,
     END_STR,
@@ -502,6 +503,9 @@ private:
         case VmState::READ_BLOB_SECTION:
             return this->_stateReadBlobSection();
 
+        case VmState::READ_UUID_BLOB_SECTION:
+            return this->_stateReadUuidBlobSection();
+
         case VmState::CONTINUE_READ_VL_UINT:
             return this->_stateContinueReadVlInt<false>();
 
@@ -791,7 +795,6 @@ private:
         assert((_pos.headOffsetInCurPktBits & 7) == 0);
 
         if (_pos.stackTop().rem == 0) {
-            _pos.setParentStateAndStackPop();
             return false;
         }
 
@@ -821,12 +824,43 @@ private:
 
     bool _stateReadSubstr()
     {
-        return this->_stateReadBytes<char>(_pos.elems.substr);
+        const auto cont = this->_stateReadBytes<char>(_pos.elems.substr);
+
+        if (!cont) {
+            _pos.setParentStateAndStackPop();
+        }
+
+        return cont;
     }
 
     bool _stateReadBlobSection()
     {
-        return this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection);
+        const auto cont = this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection);
+
+        if (!cont) {
+            _pos.setParentStateAndStackPop();
+        }
+
+        return cont;
+    }
+
+    bool _stateReadUuidBlobSection()
+    {
+        if (this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection)) {
+            // new UUID bytes
+            const auto blobSize = _pos.elems.blobSection.size();
+            const auto startIndex = 16 - _pos.stackTop().rem - blobSize;
+
+            for (auto index = startIndex; index < startIndex + blobSize; ++index) {
+                _pos.uuid.data[index] = static_cast<std::uint8_t>(_pos.elems.blobSection.begin()[index]);
+            }
+
+            return true;
+        } else {
+            // done
+            _pos.state(VmState::SET_TRACE_TYPE_UUID);
+            return false;
+        }
     }
 
     void _signExtendVlSIntVal() noexcept
@@ -878,9 +912,6 @@ private:
 
         // read current byte
         const auto byte = *this->_bufAtHead();
-
-        // mark this byte as consumed immediately
-        this->_consumeExistingBits(8);
 
         if ((byte & 0b1000'0000) == 0) {
             // this is the last byte
@@ -1195,14 +1226,15 @@ private:
     _ExecReaction _execEndReadStruct(const Instr& instr);
     _ExecReaction _execBeginReadSlArray(const Instr& instr);
     _ExecReaction _execEndReadSlArray(const Instr& instr);
+    _ExecReaction _execBeginReadSlUuidArray(const Instr& instr);
     _ExecReaction _execBeginReadSlStr(const Instr& instr);
     _ExecReaction _execEndReadSlStr(const Instr& instr);
-    _ExecReaction _execBeginReadSlUuidArray(const Instr& instr);
     _ExecReaction _execBeginReadDlArray(const Instr& instr);
     _ExecReaction _execEndReadDlArray(const Instr& instr);
     _ExecReaction _execBeginReadDlStr(const Instr& instr);
     _ExecReaction _execEndReadDlStr(const Instr& instr);
     _ExecReaction _execBeginReadSlBlob(const Instr& instr);
+    _ExecReaction _execBeginReadSlUuidBlob(const Instr& instr);
     _ExecReaction _execEndReadSlBlob(const Instr& instr);
     _ExecReaction _execBeginReadDlBlob(const Instr& instr);
     _ExecReaction _execEndReadDlBlob(const Instr& instr);
@@ -1508,11 +1540,22 @@ private:
     {
         const auto& beginReadStaticArrayInstr = static_cast<const BeginReadSlArrayInstr&>(instr);
 
-        _pos.elems.slArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
+        _pos.elems.slArrayBeginning._dt = &beginReadStaticArrayInstr.slArrayType();
         _pos.elems.slArrayBeginning._len = beginReadStaticArrayInstr.len();
         this->_execBeginReadStaticData(beginReadStaticArrayInstr, _pos.elems.slArrayBeginning,
                                        beginReadStaticArrayInstr.len(),
                                        &beginReadStaticArrayInstr.proc(), nextState);
+        return _ExecReaction::STOP;
+    }
+
+    _ExecReaction _execBeginReadSlBlob(const Instr& instr, const VmState nextState)
+    {
+        const auto& beginReadSlBlobInstr = static_cast<const BeginReadSlBlobInstr&>(instr);
+
+        _pos.elems.slBlobBeginning._dt = &beginReadSlBlobInstr.slBlobType();
+        _pos.elems.slBlobBeginning._len = beginReadSlBlobInstr.len();
+        this->_execBeginReadStaticData(beginReadSlBlobInstr, _pos.elems.slBlobBeginning,
+                                       beginReadSlBlobInstr.len(), nullptr, nextState);
         return _ExecReaction::STOP;
     }
 

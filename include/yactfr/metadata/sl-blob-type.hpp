@@ -38,13 +38,19 @@ public:
     @param[in] length
         Length (bytes) of data stream static-length BLOBs described by
         this type.
+    @param[in] hasTraceTypeUuidRole
+        Whether or not the static-length BLOBs described by this type
+        have the "trace type UUID" role.
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
+    @pre
+        If \p hasTraceTypeUuidRole is true, then \p length is 16.
     */
-    explicit StaticLengthBlobType(unsigned int alignment, Size length);
+    explicit StaticLengthBlobType(unsigned int alignment, Size length,
+                                  bool hasTraceTypeUuidRole = false);
 
     /*!
     @brief
@@ -59,20 +65,32 @@ public:
     @param[in] mediaType
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
         of data stream static-length BLOBs described by this type.
+    @param[in] hasTraceTypeUuidRole
+        Whether or not the static-length arrays described by this type
+        have the "trace type UUID" role.
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
+    @pre
+        If \p hasTraceTypeUuidRole is true, then \p length is 16.
     */
-    explicit StaticLengthBlobType(unsigned int alignment, Size length,
-                                  std::string mediaType);
+    explicit StaticLengthBlobType(unsigned int alignment, Size length, std::string mediaType,
+                                  bool hasTraceTypeUuidRole = false);
 
     /// Length (bytes) of data stream static-length BLOBs described by
     /// this type.
     Size length() const noexcept
     {
         return _len;
+    }
+
+    /// Whether or not the static-length arrays described by this type
+    /// have the "trace type UUID" role.
+    bool hasTraceTypeUuidRole() const noexcept
+    {
+        return _hasTraceTypeUuidRole;
     }
 
 private:
@@ -87,6 +105,7 @@ private:
 
 private:
     const Size _len;
+    const bool _hasTraceTypeUuidRole;
 };
 
 } // namespace yactfr

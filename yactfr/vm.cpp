@@ -269,11 +269,12 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::END_READ_STRUCT>(&Vm::_execEndReadStruct);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_ARRAY>(&Vm::_execBeginReadSlArray);
     this->_initExecFunc<Instr::Kind::END_READ_SL_ARRAY>(&Vm::_execEndReadSlArray);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_UUID_ARRAY>(&Vm::_execBeginReadSlUuidArray);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_STR>(&Vm::_execBeginReadSlStr);
     this->_initExecFunc<Instr::Kind::END_READ_SL_STR>(&Vm::_execEndReadSlStr);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_BLOB>(&Vm::_execBeginReadSlBlob);
     this->_initExecFunc<Instr::Kind::END_READ_SL_BLOB>(&Vm::_execEndReadSlBlob);
-    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_UUID_ARRAY>(&Vm::_execBeginReadSlUuidArray);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_SL_UUID_BLOB>(&Vm::_execBeginReadSlUuidBlob);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_DL_ARRAY>(&Vm::_execBeginReadDlArray);
     this->_initExecFunc<Instr::Kind::END_READ_DL_ARRAY>(&Vm::_execEndReadDlArray);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_DL_STR>(&Vm::_execBeginReadDlStr);
@@ -896,13 +897,12 @@ Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execBeginReadSlBlob(const Instr& instr)
 {
-    const auto& beginReadSlBlobInstr = static_cast<const BeginReadSlBlobInstr&>(instr);
+    return this->_execBeginReadSlBlob(instr, VmState::READ_BLOB_SECTION);
+}
 
-    _pos.elems.slBlobBeginning._dt = &beginReadSlBlobInstr.slBlobType();
-    _pos.elems.slBlobBeginning._len = beginReadSlBlobInstr.len();
-    this->_execBeginReadStaticData(beginReadSlBlobInstr, _pos.elems.slBlobBeginning,
-                                   beginReadSlBlobInstr.len(), nullptr, VmState::READ_BLOB_SECTION);
-    return _ExecReaction::STOP;
+Vm::_ExecReaction Vm::_execBeginReadSlUuidBlob(const Instr& instr)
+{
+    return this->_execBeginReadSlBlob(instr, VmState::READ_UUID_BLOB_SECTION);
 }
 
 Vm::_ExecReaction Vm::_execEndReadSlBlob(const Instr& instr)

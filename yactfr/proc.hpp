@@ -102,6 +102,7 @@ class BeginReadSlStrInstr;
 class BeginReadSlUuidArrayInstr;
 class BeginReadDlBlobInstr;
 class BeginReadSlBlobInstr;
+class BeginReadSlUuidBlobInstr;
 class BeginReadStructInstr;
 class BeginReadVarSSelInstr;
 class BeginReadVarUSelInstr;
@@ -220,6 +221,10 @@ public:
     }
 
     virtual void visit(BeginReadSlBlobInstr& instr)
+    {
+    }
+
+    virtual void visit(BeginReadSlUuidBlobInstr& instr)
     {
     }
 
@@ -411,6 +416,7 @@ public:
         BEGIN_READ_SL_STR,
         BEGIN_READ_SL_UUID_ARRAY,
         BEGIN_READ_SL_BLOB,
+        BEGIN_READ_SL_UUID_BLOB,
         BEGIN_READ_STRUCT,
         BEGIN_READ_VAR_SSEL,
         BEGIN_READ_VAR_USEL,
@@ -715,7 +721,7 @@ public:
         return _theKind == Kind::BEGIN_READ_SL_STR;
     }
 
-    bool isBeginReadStaticUuidArray() const noexcept
+    bool isBeginReadSlUuidArray() const noexcept
     {
         return _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY;
     }
@@ -733,6 +739,11 @@ public:
     bool isBeginReadSlBlob() const noexcept
     {
         return _theKind == Kind::BEGIN_READ_SL_BLOB;
+    }
+
+    bool isBeginReadSlUuidBlob() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_SL_UUID_BLOB;
     }
 
     bool isBeginReadDlBlob() const noexcept
@@ -766,6 +777,10 @@ public:
         return _theKind == Kind::END_READ_STRUCT ||
                _theKind == Kind::END_READ_SL_ARRAY ||
                _theKind == Kind::END_READ_DL_ARRAY ||
+               _theKind == Kind::END_READ_SL_STR ||
+               _theKind == Kind::END_READ_DL_STR ||
+               _theKind == Kind::END_READ_SL_BLOB ||
+               _theKind == Kind::END_READ_DL_BLOB ||
                _theKind == Kind::END_READ_VAR;
     }
 
@@ -1303,7 +1318,7 @@ public:
         visitor.visit(*this);
     }
 
-    const StaticLengthArrayType& staticArrayType() const noexcept
+    const StaticLengthArrayType& slArrayType() const noexcept
     {
         return static_cast<const StaticLengthArrayType&>(this->dt());
     }
@@ -1357,8 +1372,8 @@ private:
 /*
  * "Begin reading static-length UUID array" procedure instruction.
  *
- * This is a specialized instruction to read the UUID field (16 bytes)
- * of a packet header to emit `TraceTypeUuidElement`.
+ * This is a specialized instruction to read the 16 trace type UUID
+ * bytes of a packet header to emit `TraceTypeUuidElement`.
  */
 class BeginReadSlUuidArrayInstr final :
     public BeginReadSlArrayInstr
@@ -1456,9 +1471,13 @@ private:
  *
  * len() indicates the length (bytes) of the static-length BLOB to read.
  */
-class BeginReadSlBlobInstr final :
+class BeginReadSlBlobInstr :
     public ReadDataInstr
 {
+protected:
+    explicit BeginReadSlBlobInstr(Kind kind, const StructureMemberType *memberType,
+                                  const DataType& dt);
+
 public:
     explicit BeginReadSlBlobInstr(const StructureMemberType *memberType, const DataType& dt);
 
@@ -1482,6 +1501,24 @@ private:
 
 private:
     const Size _len;
+};
+
+/*
+ * "Begin reading static-length UUID BLOB" procedure instruction.
+ *
+ * This is a specialized instruction to read the 16 UUID bytes of a
+ * packet header to emit `TraceTypeUuidElement`.
+ */
+class BeginReadSlUuidBlobInstr final :
+    public BeginReadSlBlobInstr
+{
+public:
+    explicit BeginReadSlUuidBlobInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
 };
 
 /*

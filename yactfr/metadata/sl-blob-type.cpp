@@ -10,15 +10,18 @@
 namespace yactfr {
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
-                                           std::string mediaType) :
+                                           std::string mediaType, const bool hasTraceTypeUuidRole) :
     BlobType {_KIND_SL_BLOB, align, std::move(mediaType)},
-    _len {len}
+    _len {len},
+    _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
 {
 }
 
-StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len) :
+StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
+                                           const bool hasTraceTypeUuidRole) :
     BlobType {_KIND_SL_BLOB, align},
-    _len {len}
+    _len {len},
+    _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
 {
 }
 
@@ -31,7 +34,8 @@ bool StaticLengthBlobType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherSlBlobType = static_cast<const StaticLengthBlobType&>(other);
 
-    return BlobType::_isEqual(other) && _len == otherSlBlobType._len;
+    return BlobType::_isEqual(other) && _len == otherSlBlobType._len &&
+           otherSlBlobType._hasTraceTypeUuidRole == _hasTraceTypeUuidRole;
 }
 
 } // namespace yactfr
