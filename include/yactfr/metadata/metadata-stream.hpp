@@ -35,7 +35,7 @@ public:
         return _text;
     }
 
-    /// Major CTF version (always 1).
+    /// Major CTF version (1 or 2).
     unsigned int majorVersion() const noexcept;
 
     /// \c true if the metadata text has a recognized initial CTF&nbsp;1

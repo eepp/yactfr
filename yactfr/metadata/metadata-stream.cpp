@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <cassert>
 #include <cstring>
 
 #include <yactfr/metadata/metadata-stream.hpp>
@@ -18,7 +19,10 @@ MetadataStream::MetadataStream(std::string&& text) :
 
 unsigned int MetadataStream::majorVersion() const noexcept
 {
-    return 1;
+    assert(!_text.empty());
+
+    // CTF 2 if the text starts with a record separator (RS) byte
+    return _text[0] == 30 ? 2 : 1;
 }
 
 bool MetadataStream::hasCtf1Signature() const noexcept
