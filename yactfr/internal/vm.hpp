@@ -96,7 +96,7 @@ struct VmStackFrame final
      *
      * * BLOB bytes left to read.
      */
-    Size rem;
+    Size rem = 0;
 };
 
 /*
@@ -445,7 +445,7 @@ public:
     explicit Vm(DataSourceFactory& dataSrcFactory, const PktProc& pktProc,
                 ElementSequenceIterator& it);
     Vm(const Vm& vm, ElementSequenceIterator& it);
-    Vm& operator=(const Vm& vm);
+    void setFromOther(const Vm& vm, ElementSequenceIterator& it);
     void seekPkt(Index offset);
     void savePos(ElementSequenceIteratorPosition& pos) const;
     void restorePos(const ElementSequenceIteratorPosition& pos);

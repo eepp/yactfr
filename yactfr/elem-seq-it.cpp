@@ -42,13 +42,7 @@ ElementSequenceIterator::ElementSequenceIterator(const ElementSequenceIterator& 
         return;
     }
 
-    if (_vm) {
-        *_vm = *other._vm;
-        _vm->it(*this);
-    } else {
-        _vm = std::make_unique<internal::Vm>(*other._vm, *this);
-    }
-
+    _vm = std::make_unique<internal::Vm>(*other._vm, *this);
     _vm->updateItElemFromOtherPos(other._vm->pos(), other._curElem);
 }
 
@@ -97,8 +91,7 @@ ElementSequenceIterator& ElementSequenceIterator::operator=(const ElementSequenc
     }
 
     if (_vm) {
-        *_vm = *other._vm;
-        _vm->it(*this);
+        _vm->setFromOther(*other._vm, *this);
     } else {
         _vm = std::make_unique<internal::Vm>(*other._vm, *this);
     }

@@ -128,7 +128,7 @@ protected:
         auto otherIt = other._theItems.begin();
 
         for (; it != this->_theItems.end(); ++it, ++otherIt) {
-            if ((!*it && *otherIt) || (*it && !*otherIt)) {
+            if (static_cast<bool>(*it) != static_cast<bool>(*otherIt)) {
                 return false;
             }
 
@@ -136,7 +136,7 @@ protected:
                 continue;
             }
 
-            if (*it != *otherIt) {
+            if (**it != **otherIt) {
                 return false;
             }
         }
@@ -196,7 +196,7 @@ protected:
             const auto otherItem = other._at(keyItemPair.first);
             const auto item = this->_at(keyItemPair.first);
 
-            if ((!item && otherItem) || (item && !otherItem)) {
+            if (static_cast<bool>(item) != static_cast<bool>(otherItem)) {
                 return false;
             }
 

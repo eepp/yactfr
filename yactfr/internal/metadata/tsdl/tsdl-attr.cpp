@@ -43,8 +43,6 @@ boost::optional<ByteOrder> TsdlAttr::_toBo() const
 
 DisplayBase TsdlAttr::dispBase() const
 {
-    boost::optional<DisplayBase> dispBase;
-
     if (kind != Kind::UINT && kind != Kind::IDENT) {
         std::ostringstream ss;
 
@@ -61,28 +59,24 @@ DisplayBase TsdlAttr::dispBase() const
             throwTextParseError(ss.str(), this->valTextLoc());
         }
 
-        dispBase = static_cast<DisplayBase>(uintVal);
+        return static_cast<DisplayBase>(uintVal);
     }
 
     if (strVal == "decimal" || strVal == "dec" || strVal == "d" || strVal == "i" || strVal == "u") {
-        dispBase = DisplayBase::DECIMAL;
+        return DisplayBase::DECIMAL;
     } else if (strVal == "hexadecimal" || strVal == "hex" ||
             strVal == "x" || strVal == "X" || strVal == "p") {
-        dispBase = DisplayBase::HEXADECIMAL;
+        return DisplayBase::HEXADECIMAL;
     } else if (strVal == "octal" || strVal == "oct" || strVal == "o") {
-        dispBase = DisplayBase::OCTAL;
+        return DisplayBase::OCTAL;
     } else if (strVal == "binary" || strVal == "bin" || strVal == "b") {
-        dispBase = DisplayBase::BINARY;
+        return DisplayBase::BINARY;
     }
 
-    if (!dispBase) {
-        std::ostringstream ss;
+    std::ostringstream ss;
 
-        ss << "Invalid `base` attribute: `" << strVal << "`.";
-        throwTextParseError(ss.str(), this->valTextLoc());
-    }
-
-    return *dispBase;
+    ss << "Invalid `base` attribute: `" << strVal << "`.";
+    throwTextParseError(ss.str(), this->valTextLoc());
 }
 
 void TsdlAttr::checkKind(const Kind expectedKind) const

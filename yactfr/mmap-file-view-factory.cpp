@@ -34,7 +34,7 @@ private:
     std::shared_ptr<internal::MmapFileViewFactoryImpl> _mmapFileViewFactoryImpl;
     void *_mmapAddr = nullptr;
     Size _mmapLength = 0;
-    Index _mmapOffset;
+    Index _mmapOffset = 0;
     std::array<std::uint8_t, 16> _tmpBuf;
 };
 

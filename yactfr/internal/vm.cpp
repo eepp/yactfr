@@ -184,13 +184,12 @@ Vm::Vm(const Vm& other, ElementSequenceIterator& it) :
     this->_resetBuffer();
 }
 
-Vm& Vm::operator=(const Vm& other)
+void Vm::setFromOther(const Vm& other, ElementSequenceIterator& it)
 {
     assert(_dataSrcFactory == other._dataSrcFactory);
-    _it = nullptr;
+    _it = &it;
     _pos = other._pos;
     this->_resetBuffer();
-    return *this;
 }
 
 void Vm::_initExecFuncs() noexcept

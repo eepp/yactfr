@@ -121,36 +121,39 @@ ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError::ExpectedPacketCo
 }
 
 CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketContentDecodingError(const Index offset,
-                                                                                                   const Size len,
+                                                                                                   const Size reqLen,
                                                                                                    const Size remLen) :
     DecodingError {
-        [](const auto len, const auto remLen) {
+        [](const auto reqLen, const auto remLen) {
             std::ostringstream ss;
 
-            ss << "Cannot read " << len << " bit" << (len == 1 ? "" : "s") <<
+            ss << "Cannot read " << reqLen << " bit" << (reqLen == 1 ? "" : "s") <<
                   " at this point: would move beyond the content of the current packet "
                   "(" << remLen <<
                   " bit" << (remLen == 1 ? "" : "s") << " remaining).";
             return ss.str();
-        }(len, remLen),
+        }(reqLen, remLen),
         offset
-    }
+    },
+    _reqLen {reqLen},
+    _remLen {remLen}
 {
 }
 
 PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index offset,
-                                                                 const Size len) :
+                                                                 const Size reqLen) :
     DecodingError {
-        [](const auto len) {
+        [](const auto reqLen) {
             std::ostringstream ss;
 
-            ss << "Cannot read " << len <<
-                  " bit" << (len == 1 ? "" : "s") << " at this point: "
+            ss << "Cannot read " << reqLen <<
+                  " bit" << (reqLen == 1 ? "" : "s") << " at this point: "
                   "reaching end of data source.";
             return ss.str();
-        }(len),
+        }(reqLen),
         offset
-    }
+    },
+    _reqLen {reqLen}
 {
 }
 

@@ -463,81 +463,79 @@ boost::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& 
     }
 }
 
-boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const DataLocation::PathElements& allPathElems,
-                                                                                 const TextLocation& loc)
+struct PseudoDataLocBase
 {
+    PseudoDataLocBase(const bool isAbs, const bool isEnv, const Scope scope,
+                      const DataLocation::PathElements::const_iterator restPos) :
+        isAbs {isAbs},
+        isEnv {isEnv},
+        scope {scope},
+        restPos {restPos}
+    {
+    }
+
     bool isAbs = false;
     bool isEnv = false;
     Scope scope;
-    DataLocation::PathElements pathElems;
-    auto restPos = allPathElems.begin();
+    DataLocation::PathElements::const_iterator restPos;
+};
+
+static PseudoDataLocBase pseudoDataLocBase(const DataLocation::PathElements& allPathElems,
+                                           const TextLocation& loc)
+{
+    const auto beginPos = allPathElems.begin();
 
     if (allPathElems.size() >= 3) {
         if (allPathElems[0] == "trace") {
             if (allPathElems[1] == "packet") {
                 if (allPathElems[2] == "header") {
-                    scope = Scope::PACKET_HEADER;
-                    isAbs = true;
+                    return {true, false, Scope::PACKET_HEADER, beginPos + 3};
                 }
             }
 
-            if (!isAbs) {
-                throwTextParseError("Expecting `packet.header` after `trace.`.", loc);
-            }
+            throwTextParseError("Expecting `packet.header` after `trace.`.", loc);
         } else if (allPathElems[0] == "stream") {
             if (allPathElems[1] == "packet") {
                 if (allPathElems[2] == "context") {
-                    scope = Scope::PACKET_CONTEXT;
-                    isAbs = true;
+                    return {true, false, Scope::PACKET_CONTEXT, beginPos + 3};
                 }
             } else if (allPathElems[1] == "event") {
                 if (allPathElems[2] == "header") {
-                    scope = Scope::EVENT_RECORD_HEADER;
-                    isAbs = true;
+                    return {true, false, Scope::EVENT_RECORD_HEADER, beginPos + 3};
                 } else if (allPathElems[2] == "context") {
-                    scope = Scope::EVENT_RECORD_COMMON_CONTEXT;
-                    isAbs = true;
+                    return {true, false, Scope::EVENT_RECORD_COMMON_CONTEXT, beginPos + 3};
                 }
             }
 
-            if (!isAbs) {
-                throwTextParseError("Expecting `packet.context`, `event.header`, or "
-                                    "`event.context` after `stream.`.", loc);
-            }
-        }
-
-        if (isAbs) {
-            restPos = allPathElems.begin() + 3;
+            throwTextParseError("Expecting `packet.context`, `event.header`, or "
+                                "`event.context` after `stream.`.", loc);
         }
     }
 
-    if (!isAbs && allPathElems.size() >= 2) {
+    if (allPathElems.size() >= 2) {
         if (allPathElems[0] == "event") {
             if (allPathElems[1] == "context") {
-                scope = Scope::EVENT_RECORD_SPECIFIC_CONTEXT;
-                isAbs = true;
+                return {true, false, Scope::EVENT_RECORD_SPECIFIC_CONTEXT, beginPos + 2};
             } else if (allPathElems[1] == "fields") {
-                scope = Scope::EVENT_RECORD_PAYLOAD;
-                isAbs = true;
+                return {true, false, Scope::EVENT_RECORD_PAYLOAD, beginPos + 2};
             }
-
-            if (!isAbs) {
-                throwTextParseError("Expecting `context` or `fields` after `event.`.", loc);
-            }
-        }
-
-        if (isAbs) {
-            restPos = allPathElems.begin() + 2;
+            throwTextParseError("Expecting `context` or `fields` after `event.`.", loc);
         }
     }
 
-    if (!isAbs && allPathElems.size() >= 1 && allPathElems[0] == "env") {
-        isAbs = true;
-        isEnv = true;
-        restPos = allPathElems.begin() + 1;
+    if (allPathElems.size() >= 1 && allPathElems[0] == "env") {
+        return {true, true, Scope::PACKET_HEADER, beginPos + 1};
     }
 
-    if (!isAbs) {
+    return {false, false, Scope::PACKET_HEADER, beginPos};
+}
+
+boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const DataLocation::PathElements& allPathElems,
+                                                                             const TextLocation& loc)
+{
+    const auto psDataLocBase = pseudoDataLocBase(allPathElems, loc);
+
+    if (!psDataLocBase.isAbs) {
         return boost::none;
     }
 
@@ -545,9 +543,14 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(con
      * Data location is already absolute: skip the root scope part (or
      * `env`) to create the path elements.
      */
-    std::copy(restPos, allPathElems.end(), std::back_inserter(pathElems));
+    DataLocation::PathElements pathElems;
 
-    return PseudoDataLoc {isEnv, isAbs, scope, std::move(pathElems), loc};
+    std::copy(psDataLocBase.restPos, allPathElems.end(), std::back_inserter(pathElems));
+
+    return PseudoDataLoc {
+        psDataLocBase.isEnv, psDataLocBase.isAbs, psDataLocBase.scope,
+        std::move(pathElems), loc
+    };
 }
 
 boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const DataLocation::PathElements& allPathElems,

@@ -390,13 +390,13 @@ bool JsonParser<ListenerT>::_tryParseObj()
 template <typename ListenerT>
 void parseJson(const char * const begin, const char * const end, ListenerT& listener)
 {
-    JsonParser<ListenerT> {begin, end, listener};
+    JsonParser<ListenerT> {begin, end, listener}; //-V607
 }
 
 template <typename ListenerT>
 void parseJson(const std::string& str, ListenerT& listener)
 {
-    JsonParser<ListenerT> {str.data(), str.data() + str.size(), listener};
+    JsonParser<ListenerT> {str.data(), str.data() + str.size(), listener}; //-V607
 }
 
 } // namespace internal

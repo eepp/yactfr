@@ -1319,7 +1319,7 @@ private:
     std::string _toStr(Size indent = 0) const override;
 
 private:
-    Index _lenPos = -1ULL;
+    Index _lenPos = UINT64_C(-1);
 };
 
 /*
@@ -1358,7 +1358,7 @@ private:
     std::string _toStr(Size indent = 0) const override;
 
 private:
-    Index _maxLenPos = -1ULL;
+    Index _maxLenPos = UINT64_C(-1);
 };
 
 /*
@@ -1452,7 +1452,7 @@ private:
     std::string _toStr(Size indent = 0) const override;
 
 private:
-    Index _lenPos = -1ULL;
+    Index _lenPos = UINT64_C(-1);
 };
 
 /*
@@ -1691,7 +1691,7 @@ private:
     std::string _toStr(Size indent = 0) const override;
 
 private:
-    Index _selPos;
+    Index _selPos = UINT64_C(-1);
 };
 
 /*
@@ -2375,7 +2375,7 @@ public:
 private:
     const TraceType * const _traceType;
     DsPktProcs _dsPktProcs;
-    Size _savedValsCount;
+    Size _savedValsCount = 0;
     Proc _preambleProc;
 };
 

@@ -15,7 +15,7 @@
 #include <yactfr/yactfr.hpp>
 #include <elem-printer.hpp>
 
-int main(const int argc, const char * const argv[])
+int main(__attribute__((unused)) const int argc, const char * const argv[])
 {
     assert(argc >= 2);
 

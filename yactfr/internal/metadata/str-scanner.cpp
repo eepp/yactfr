@@ -12,7 +12,7 @@
 namespace yactfr {
 namespace internal {
 
-StrScanner::StrScanner(const char * const begin, const char * const end) :
+StrScanner::StrScanner(const char * const begin, const char * const end) : //-V730
     _begin {begin},
     _end {end},
     _at {begin},

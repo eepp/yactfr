@@ -105,10 +105,12 @@ static bool isReadFlUInt(const Instr& instr) noexcept
     }
 }
 
+#ifndef NDEBUG
 static bool isReadUInt(const Instr& instr) noexcept
 {
     return isReadFlUInt(instr) || isReadVlUInt(instr);
 }
+#endif // NDEBUG
 
 PktProcBuilder::PktProcBuilder(const TraceType& traceType) :
     _traceType {&traceType}

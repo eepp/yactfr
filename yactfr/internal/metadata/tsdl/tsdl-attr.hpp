@@ -131,10 +131,10 @@ public:
     std::string strVal;
 
     // unsigned integer value (for `UINT` kind)
-    unsigned long long uintVal;
+    unsigned long long uintVal = 0;
 
     // signed integer value (for `SINT` kind)
-    long long intVal;
+    long long intVal = 0;
 
     // text location of the beginning of the parsed attribute name
     boost::optional<TextLocation> nameLoc;

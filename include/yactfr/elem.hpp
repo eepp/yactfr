@@ -1756,7 +1756,7 @@ public:
     /// \c true if the decoded magic number is valid.
     bool isValid() const noexcept
     {
-        return _val == _expectedValue;
+        return _val == this->expectedValue();
     }
 
     /// Decoded magic number value.
@@ -1772,8 +1772,7 @@ public:
     }
 
 private:
-    unsigned long long _val;
-    unsigned long long _expectedValue;
+    unsigned long long _val = 0;
 };
 
 /*!
@@ -1795,7 +1794,7 @@ class TraceTypeUuidElement final :
     friend class internal::VmPos;
 
 private:
-    explicit TraceTypeUuidElement() :
+    explicit TraceTypeUuidElement() : //-V730
         Element {Kind::TRACE_TYPE_UUID}
     {
     }
@@ -1922,7 +1921,7 @@ public:
     }
 
 private:
-    Cycles _cycles;
+    Cycles _cycles = 0;
 };
 
 /*!
@@ -2203,7 +2202,7 @@ class FixedLengthBitArrayElement :
     friend class internal::VmPos;
 
 protected:
-    explicit FixedLengthBitArrayElement(const Kind kind) :
+    explicit FixedLengthBitArrayElement(const Kind kind) : //-V730
         Element {kind}
     {
     }
@@ -2556,7 +2555,7 @@ public:
     }
 
 private:
-    Size _len;
+    Size _len = 0;
 };
 
 /*!
@@ -2863,8 +2862,8 @@ public:
     }
 
 private:
-    const char *_begin;
-    const char *_end;
+    const char *_begin = nullptr;
+    const char *_end = nullptr;
 };
 
 /*!
@@ -2930,8 +2929,8 @@ public:
     }
 
 private:
-    const std::uint8_t *_begin;
-    const std::uint8_t *_end;
+    const std::uint8_t *_begin = nullptr;
+    const std::uint8_t *_end = nullptr;
 };
 
 /*!
@@ -2969,7 +2968,7 @@ public:
     }
 
 protected:
-    Size _len;
+    Size _len = 0;
 };
 
 /*!
@@ -3184,7 +3183,7 @@ public:
     }
 
 protected:
-    Size _maxLen;
+    Size _maxLen = 0;
 };
 
 /*!
@@ -3410,7 +3409,7 @@ public:
     }
 
 protected:
-    Size _len;
+    Size _len = 0;
 };
 
 /*!
@@ -3766,8 +3765,8 @@ public:
     }
 
 private:
-    SelectorValueT _selVal;
-    const typename VariantTypeT::Option *_opt;
+    SelectorValueT _selVal = 0;
+    const typename VariantTypeT::Option *_opt = nullptr;
 };
 
 /*!
@@ -3958,7 +3957,7 @@ public:
     }
 
 private:
-    bool _isEnabled;
+    bool _isEnabled = false;
 };
 
 /*!
@@ -4108,7 +4107,7 @@ public:
     }
 
 private:
-    SelectorValueT _selVal;
+    SelectorValueT _selVal = 0;
 };
 
 /*!
