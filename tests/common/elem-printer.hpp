@@ -156,64 +156,34 @@ public:
         *_os << ':' << std::setprecision(6) << elem.value() << '\n';
     }
 
-    void visit(const yactfr::VariableLengthBitArrayBeginningElement& elem) override
+    void visit(const yactfr::VariableLengthBitArrayElement& elem) override
     {
         this->_visitDataElem(elem, "VLBA");
-        *_os << " {\n";
-        ++_indentLevel;
+        *_os << ':' << elem.unsignedIntegerValue() << '\n';
     }
 
-    void visit(const yactfr::VariableLengthSignedIntegerBeginningElement& elem) override
+    void visit(const yactfr::VariableLengthSignedIntegerElement& elem) override
     {
         this->_visitDataElem(elem, "VLSI");
-        *_os << " {\n";
-        ++_indentLevel;
+        *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::VariableLengthUnsignedIntegerBeginningElement& elem) override
+    void visit(const yactfr::VariableLengthUnsignedIntegerElement& elem) override
     {
         this->_visitDataElem(elem, "VLUI");
-        *_os << " {\n";
-        ++_indentLevel;
+        *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::VariableLengthSignedEnumerationBeginningElement& elem) override
+    void visit(const yactfr::VariableLengthSignedEnumerationElement& elem) override
     {
         this->_visitDataElem(elem, "VLSE");
-        *_os << " {\n";
-        ++_indentLevel;
+        *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::VariableLengthUnsignedEnumerationBeginningElement& elem) override
+    void visit(const yactfr::VariableLengthUnsignedEnumerationElement& elem) override
     {
         this->_visitDataElem(elem, "VLUE");
-        *_os << " {\n";
-        ++_indentLevel;
-    }
-
-    void visit(const yactfr::VariableLengthBitArrayEndElement& elem) override
-    {
-        this->_visitVlBitArrayEndElem(elem.unsignedIntegerValue());
-    }
-
-    void visit(const yactfr::VariableLengthSignedIntegerEndElement& elem) override
-    {
-        this->_visitVlBitArrayEndElem(elem.value());
-    }
-
-    void visit(const yactfr::VariableLengthUnsignedIntegerEndElement& elem) override
-    {
-        this->_visitVlBitArrayEndElem(elem.value());
-    }
-
-    void visit(const yactfr::VariableLengthSignedEnumerationEndElement& elem) override
-    {
-        this->_visitVlBitArrayEndElem(elem.value());
-    }
-
-    void visit(const yactfr::VariableLengthUnsignedEnumerationEndElement& elem) override
-    {
-        this->_visitVlBitArrayEndElem(elem.value());
+        *_os << ':' << elem.value() << '\n';
     }
 
     void visit(const yactfr::NullTerminatedStringBeginningElement& elem) override
@@ -368,14 +338,6 @@ private:
         if (elem.structureMemberType()) {
             *_os << ':' << *elem.structureMemberType()->displayName();
         }
-    }
-
-    template <typename ValT>
-    void _visitVlBitArrayEndElem(const ValT val)
-    {
-        --_indentLevel;
-        this->_indent();
-        *_os << "} " << val << '\n';
     }
 
     void _indent()

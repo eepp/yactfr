@@ -232,12 +232,12 @@ private:
         return this->_sIntElemVal(elem);
     }
 
-    long long _intElemVal(const VariableLengthUnsignedIntegerEndElement& elem) const
+    long long _intElemVal(const VariableLengthUnsignedIntegerElement& elem) const
     {
         return this->_uIntElemVal(elem);
     }
 
-    long long _intElemVal(const VariableLengthSignedIntegerEndElement& elem) const noexcept
+    long long _intElemVal(const VariableLengthSignedIntegerElement& elem) const noexcept
     {
         return this->_sIntElemVal(elem);
     }

@@ -198,14 +198,14 @@ TraceEnvironment TraceEnvironmentStreamDecoder::decode()
             this->_trySetCurIntVal<FixedLengthSignedIntegerElement>();
             break;
 
-        case Element::Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER_END:
-        case Element::Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION_END:
-            this->_trySetCurIntVal<VariableLengthUnsignedIntegerEndElement>();
+        case Element::Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER:
+        case Element::Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION:
+            this->_trySetCurIntVal<VariableLengthUnsignedIntegerElement>();
             break;
 
-        case Element::Kind::VARIABLE_LENGTH_SIGNED_INTEGER_END:
-        case Element::Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION_END:
-            this->_trySetCurIntVal<VariableLengthSignedIntegerEndElement>();
+        case Element::Kind::VARIABLE_LENGTH_SIGNED_INTEGER:
+        case Element::Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION:
+            this->_trySetCurIntVal<VariableLengthSignedIntegerElement>();
             break;
 
         case Element::Kind::NULL_TERMINATED_STRING_BEGINNING:

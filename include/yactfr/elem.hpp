@@ -169,35 +169,20 @@ public:
         /// FixedLengthUnsignedEnumerationElement
         FIXED_LENGTH_UNSIGNED_ENUMERATION                   = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED),
 
-        /// VariableLengthBitArrayBeginningElement
-        VARIABLE_LENGTH_BIT_ARRAY_BEGINNING                 = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_BEG),
+        /// VariableLengthBitArrayElement
+        VARIABLE_LENGTH_BIT_ARRAY                           = static_cast<_U>(_KIND_VL_BIT_ARRAY),
 
-        /// VariableLengthSignedIntegerBeginningElement
-        VARIABLE_LENGTH_SIGNED_INTEGER_BEGINNING            = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED | _KIND_BEG),
+        /// VariableLengthSignedIntegerElement
+        VARIABLE_LENGTH_SIGNED_INTEGER                      = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED),
 
-        /// VariableLengthUnsignedIntegerBeginningElement
-        VARIABLE_LENGTH_UNSIGNED_INTEGER_BEGINNING          = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED | _KIND_BEG),
+        /// VariableLengthUnsignedIntegerElement
+        VARIABLE_LENGTH_UNSIGNED_INTEGER                    = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED),
 
-        /// VariableLengthSignedEnumerationBeginningElement
-        VARIABLE_LENGTH_SIGNED_ENUMERATION_BEGINNING        = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED | _KIND_BEG),
+        /// VariableLengthSignedEnumerationElement
+        VARIABLE_LENGTH_SIGNED_ENUMERATION                  = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED),
 
-        /// VariableLengthUnsignedEnumerationBeginningElement
-        VARIABLE_LENGTH_UNSIGNED_ENUMERATION_BEGINNING      = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED | _KIND_BEG),
-
-        /// VariableLengthBitArrayEndElement
-        VARIABLE_LENGTH_BIT_ARRAY_END                       = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_END),
-
-        /// VariableLengthSignedIntegerEndElement
-        VARIABLE_LENGTH_SIGNED_INTEGER_END                  = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED | _KIND_END),
-
-        /// VariableLengthUnsignedIntegerEndElement
-        VARIABLE_LENGTH_UNSIGNED_INTEGER_END                = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED | _KIND_END),
-
-        /// VariableLengthSignedEnumerationEndElement
-        VARIABLE_LENGTH_SIGNED_ENUMERATION_END              = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED | _KIND_END),
-
-        /// VariableLengthUnsignedEnumerationEndElement
-        VARIABLE_LENGTH_UNSIGNED_ENUMERATION_END            = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED | _KIND_END),
+        /// VariableLengthUnsignedEnumerationElement
+        VARIABLE_LENGTH_UNSIGNED_ENUMERATION                = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED),
 
         /// NullTerminatedStringBeginningElement
         NULL_TERMINATED_STRING_BEGINNING                    = static_cast<_U>(_KIND_NT_STR | _KIND_BEG),
@@ -531,88 +516,46 @@ public:
         return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED);
     }
 
-    /// \c true if this element is a variable-length bit array beginning element.
-    bool isVariableLengthBitArrayBeginningElement() const noexcept
+    /// \c true if this element is a variable-length bit array element.
+    bool isVariableLengthBitArrayElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_BEG);
+        return this->_isKind(_KIND_VL_BIT_ARRAY);
     }
 
-    /// \c true if this element is a variable-length integer beginning element.
-    bool isVariableLengthIntegerBeginningElement() const noexcept
+    /// \c true if this element is a variable-length integer element.
+    bool isVariableLengthIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_BEG);
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA);
     }
 
-    /// \c true if this element is a variable-length signed integer beginning element.
-    bool isVariableLengthSignedIntegerBeginningElement() const noexcept
+    /// \c true if this element is a variable-length signed integer element.
+    bool isVariableLengthSignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED | _KIND_BEG);
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED);
     }
 
-    /// \c true if this element is a variable-length unsigned integer beginning element.
-    bool isVariableLengthUnsignedIntegerBeginningElement() const noexcept
+    /// \c true if this element is a variable-length unsigned integer element.
+    bool isVariableLengthUnsignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED | _KIND_BEG);
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED);
     }
 
-    /// \c true if this element is a variable-length enumeration beginning element.
-    bool isVariableLengthEnumerationBeginningElement() const noexcept
+    /// \c true if this element is a variable-length enumeration element.
+    bool isVariableLengthEnumerationElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_BEG);
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA);
     }
 
-    /// \c true if this element is a variable-length signed enumeration beginning element.
-    bool isVariableLengthSignedEnumerationBeginningElement() const noexcept
+    /// \c true if this element is a variable-length signed enumeration element.
+    bool isVariableLengthSignedEnumerationElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED | _KIND_BEG);
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED);
     }
 
-    /// \c true if this element is a variable-length unsigned enumeration beginning element.
-    bool isVariableLengthUnsignedEnumerationBeginningElement() const noexcept
+    /// \c true if this element is a variable-length unsigned enumeration element.
+    bool isVariableLengthUnsignedEnumerationElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED | _KIND_BEG);
-    }
-
-    /// \c true if this element is a variable-length bit array end element.
-    bool isVariableLengthBitArrayEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_END);
-    }
-
-    /// \c true if this element is a variable-length integer end element.
-    bool isVariableLengthIntegerEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_END);
-    }
-
-    /// \c true if this element is a variable-length signed integer end element.
-    bool isVariableLengthSignedIntegerEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED | _KIND_END);
-    }
-
-    /// \c true if this element is a variable-length unsigned integer end element.
-    bool isVariableLengthUnsignedIntegerEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED | _KIND_END);
-    }
-
-    /// \c true if this element is a variable-length enumeration end element.
-    bool isVariableLengthEnumerationEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_END);
-    }
-
-    /// \c true if this element is a variable-length signed enumeration end element.
-    bool isVariableLengthSignedEnumerationEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED | _KIND_END);
-    }
-
-    /// \c true if this element is a variable-length unsigned enumeration end element.
-    bool isVariableLengthUnsignedEnumerationEndElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED | _KIND_END);
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED);
     }
 
     /// \c true if this element is a null-terminated string beginning/end element.
@@ -1376,107 +1319,52 @@ public:
 
     /*!
     @brief
-        Returns this element as a variable-length bit array beginning
-        element.
+        Returns this element as a variable-length bit array element.
 
     @pre
-        This type is a variable-length bit array beginning element.
+        This type is a variable-length bit array element.
     */
-    const VariableLengthBitArrayBeginningElement& asVariableLengthBitArrayBeginningElement() const noexcept;
+    const VariableLengthBitArrayElement& asVariableLengthBitArrayElement() const noexcept;
 
     /*!
     @brief
         Returns this element as a variable-length signed enumeration
-        beginning element.
+        element.
 
     @pre
-        This type is a variable-length signed enumeration beginning element.
+        This type is a variable-length signed enumeration element.
     */
-    const VariableLengthSignedEnumerationBeginningElement& asVariableLengthSignedEnumerationBeginningElement() const noexcept;
+    const VariableLengthSignedEnumerationElement& asVariableLengthSignedEnumerationElement() const noexcept;
 
     /*!
     @brief
         Returns this element as a variable-length signed integer
-        beginning element.
+        element.
 
     @pre
-        This type is a variable-length signed integer beginning element.
+        This type is a variable-length signed integer element.
     */
-    const VariableLengthSignedIntegerBeginningElement& asVariableLengthSignedIntegerBeginningElement() const noexcept;
+    const VariableLengthSignedIntegerElement& asVariableLengthSignedIntegerElement() const noexcept;
 
     /*!
     @brief
         Returns this element as a variable-length unsigned enumeration
-        beginning element.
+        element.
 
     @pre
-        This type is a variable-length unsigned enumeration beginning
-        element.
+        This type is a variable-length unsigned enumeration element.
     */
-    const VariableLengthUnsignedEnumerationBeginningElement& asVariableLengthUnsignedEnumerationBeginningElement() const noexcept;
+    const VariableLengthUnsignedEnumerationElement& asVariableLengthUnsignedEnumerationElement() const noexcept;
 
     /*!
     @brief
         Returns this element as a variable-length unsigned integer
-        beginning element.
-
-    @pre
-        This type is a variable-length unsigned integer beginning
-        element.
-    */
-    const VariableLengthUnsignedIntegerBeginningElement& asVariableLengthUnsignedIntegerBeginningElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a variable-length bit array end
         element.
 
     @pre
-        This type is a variable-length bit array end element.
+        This type is a variable-length unsigned integer element.
     */
-    const VariableLengthBitArrayEndElement& asVariableLengthBitArrayEndElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a variable-length signed enumeration
-        end element.
-
-    @pre
-        This type is a variable-length signed enumeration end element.
-    */
-    const VariableLengthSignedEnumerationEndElement& asVariableLengthSignedEnumerationEndElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a variable-length signed integer
-        end element.
-
-    @pre
-        This type is a variable-length signed integer end element.
-    */
-    const VariableLengthSignedIntegerEndElement& asVariableLengthSignedIntegerEndElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a variable-length unsigned enumeration
-        end element.
-
-    @pre
-        This type is a variable-length unsigned enumeration end
-        element.
-    */
-    const VariableLengthUnsignedEnumerationEndElement& asVariableLengthUnsignedEnumerationEndElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a variable-length unsigned integer
-        end element.
-
-    @pre
-        This type is a variable-length unsigned integer end
-        element.
-    */
-    const VariableLengthUnsignedIntegerEndElement& asVariableLengthUnsignedIntegerEndElement() const noexcept;
+    const VariableLengthUnsignedIntegerElement& asVariableLengthUnsignedIntegerElement() const noexcept;
 
     /*!
     @brief
@@ -2586,224 +2474,26 @@ public:
 
 /*!
 @brief
-    Variable-length bit array beginning element.
-
-Such an element doesn't contain any value: it only indicates the
-beginning of a variable-length bit array. The following
-VariableLengthBitArrayEndElement instance contains the decoded value.
+    Variable-length bit array element.
 
 @ingroup elems
 */
-class VariableLengthBitArrayBeginningElement :
-    public BeginningElement,
-    public DataElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-protected:
-    explicit VariableLengthBitArrayBeginningElement(const Kind kind) :
-        BeginningElement {kind}
-    {
-    }
-
-private:
-    explicit VariableLengthBitArrayBeginningElement() :
-        VariableLengthBitArrayBeginningElement {Kind::VARIABLE_LENGTH_BIT_ARRAY_BEGINNING}
-    {
-    }
-
-public:
-    /// Variable-length bit array type.
-    const VariableLengthBitArrayType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthBitArrayType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length signed integer beginning element.
-
-Such an element doesn't contain any value: it only indicates the
-beginning of a variable-length signed integer. The following
-VariableLengthSignedIntegerEndElement instance contains the decoded
-value.
-
-@ingroup elems
-*/
-class VariableLengthSignedIntegerBeginningElement :
-    public VariableLengthBitArrayBeginningElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-protected:
-    explicit VariableLengthSignedIntegerBeginningElement(const Kind kind) :
-        VariableLengthBitArrayBeginningElement {kind}
-    {
-    }
-
-private:
-    explicit VariableLengthSignedIntegerBeginningElement() :
-        VariableLengthSignedIntegerBeginningElement {Kind::VARIABLE_LENGTH_SIGNED_INTEGER_BEGINNING}
-    {
-    }
-
-public:
-    /// Variable-length signed integer type.
-    const VariableLengthSignedIntegerType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthSignedIntegerType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length unsigned integer beginning element.
-
-Such an element doesn't contain any value: it only indicates the
-beginning of a variable-length unsigned integer. The following
-VariableLengthUnsignedIntegerEndElement instance contains the decoded
-value.
-
-@ingroup elems
-*/
-class VariableLengthUnsignedIntegerBeginningElement :
-    public VariableLengthBitArrayBeginningElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-protected:
-    explicit VariableLengthUnsignedIntegerBeginningElement(const Kind kind) :
-        VariableLengthBitArrayBeginningElement {kind}
-    {
-    }
-
-private:
-    explicit VariableLengthUnsignedIntegerBeginningElement() :
-        VariableLengthUnsignedIntegerBeginningElement {Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER_BEGINNING}
-    {
-    }
-
-public:
-    /// Variable-length unsigned integer type.
-    const VariableLengthUnsignedIntegerType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthUnsignedIntegerType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length signed enumeration beginning element.
-
-Such an element doesn't contain any value: it only indicates the
-beginning of a variable-length signed enumeration. The following
-VariableLengthSignedEnumerationEndElement instance contains the decoded
-value.
-
-@ingroup elems
-*/
-class VariableLengthSignedEnumerationBeginningElement final :
-    public VariableLengthSignedIntegerBeginningElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit VariableLengthSignedEnumerationBeginningElement() :
-        VariableLengthSignedIntegerBeginningElement {Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION_BEGINNING}
-    {
-    }
-
-public:
-    /// Variable-length signed enumeration type.
-    const VariableLengthSignedEnumerationType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthSignedEnumerationType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length unsigned enumeration beginning element.
-
-Such an element doesn't contain any value: it only indicates the
-beginning of a variable-length unsigned enumeration. The following
-VariableLengthUnsignedEnumerationEndElement instance contains the
-decoded value.
-
-@ingroup elems
-*/
-class VariableLengthUnsignedEnumerationBeginningElement final :
-    public VariableLengthUnsignedIntegerBeginningElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit VariableLengthUnsignedEnumerationBeginningElement() :
-        VariableLengthUnsignedIntegerBeginningElement {Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION_BEGINNING}
-    {
-    }
-
-public:
-    /// Variable-length unsigned enumeration type.
-    const VariableLengthUnsignedEnumerationType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthUnsignedEnumerationType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length bit array end element.
-
-@ingroup elems
-*/
-class VariableLengthBitArrayEndElement :
-    public EndElement,
+class VariableLengthBitArrayElement :
+    public Element,
     public BitArrayElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
-    explicit VariableLengthBitArrayEndElement(const Kind kind) :
-        EndElement {kind}
+    explicit VariableLengthBitArrayElement(const Kind kind) :
+        Element {kind}
     {
     }
 
 private:
-    explicit VariableLengthBitArrayEndElement() :
-        VariableLengthBitArrayEndElement {Kind::VARIABLE_LENGTH_BIT_ARRAY_END}
+    explicit VariableLengthBitArrayElement() :
+        VariableLengthBitArrayElement {Kind::VARIABLE_LENGTH_BIT_ARRAY}
     {
     }
 
@@ -2851,25 +2541,25 @@ private:
 
 /*!
 @brief
-    Variable-length signed integer end element.
+    Variable-length signed integer element.
 
 @ingroup elems
 */
-class VariableLengthSignedIntegerEndElement :
-    public VariableLengthBitArrayEndElement
+class VariableLengthSignedIntegerElement :
+    public VariableLengthBitArrayElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
-    explicit VariableLengthSignedIntegerEndElement(const Kind kind) :
-        VariableLengthBitArrayEndElement {kind}
+    explicit VariableLengthSignedIntegerElement(const Kind kind) :
+        VariableLengthBitArrayElement {kind}
     {
     }
 
 private:
-    explicit VariableLengthSignedIntegerEndElement() :
-        VariableLengthSignedIntegerEndElement {Kind::VARIABLE_LENGTH_SIGNED_INTEGER_END}
+    explicit VariableLengthSignedIntegerElement() :
+        VariableLengthSignedIntegerElement {Kind::VARIABLE_LENGTH_SIGNED_INTEGER}
     {
     }
 
@@ -2894,25 +2584,25 @@ public:
 
 /*!
 @brief
-    Variable-length unsigned integer end element.
+    Variable-length unsigned integer element.
 
 @ingroup elems
 */
-class VariableLengthUnsignedIntegerEndElement :
-    public VariableLengthBitArrayEndElement
+class VariableLengthUnsignedIntegerElement :
+    public VariableLengthBitArrayElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
-    explicit VariableLengthUnsignedIntegerEndElement(const Kind kind) :
-        VariableLengthBitArrayEndElement {kind}
+    explicit VariableLengthUnsignedIntegerElement(const Kind kind) :
+        VariableLengthBitArrayElement {kind}
     {
     }
 
 private:
-    explicit VariableLengthUnsignedIntegerEndElement() :
-        VariableLengthUnsignedIntegerEndElement {Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER_END}
+    explicit VariableLengthUnsignedIntegerElement() :
+        VariableLengthUnsignedIntegerElement {Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER}
     {
     }
 
@@ -2937,19 +2627,19 @@ public:
 
 /*!
 @brief
-    Variable-length signed enumeration end element.
+    Variable-length signed enumeration element.
 
 @ingroup elems
 */
-class VariableLengthSignedEnumerationEndElement final :
-    public VariableLengthSignedIntegerEndElement
+class VariableLengthSignedEnumerationElement final :
+    public VariableLengthSignedIntegerElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit VariableLengthSignedEnumerationEndElement() :
-        VariableLengthSignedIntegerEndElement {Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION_END}
+    explicit VariableLengthSignedEnumerationElement() :
+        VariableLengthSignedIntegerElement {Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION}
     {
     }
 
@@ -2968,19 +2658,19 @@ public:
 
 /*!
 @brief
-    Variable-length unsigned enumeration end element.
+    Variable-length unsigned enumeration element.
 
 @ingroup elems
 */
-class VariableLengthUnsignedEnumerationEndElement final :
-    public VariableLengthUnsignedIntegerEndElement
+class VariableLengthUnsignedEnumerationElement final :
+    public VariableLengthUnsignedIntegerElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit VariableLengthUnsignedEnumerationEndElement() :
-        VariableLengthUnsignedIntegerEndElement {Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION_END}
+    explicit VariableLengthUnsignedEnumerationElement() :
+        VariableLengthUnsignedIntegerElement {Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION}
     {
     }
 
@@ -4850,54 +4540,29 @@ inline const TraceTypeUuidElement& Element::asTraceTypeUuidElement() const noexc
     return static_cast<const TraceTypeUuidElement&>(*this);
 }
 
-inline const VariableLengthBitArrayBeginningElement& Element::asVariableLengthBitArrayBeginningElement() const noexcept
+inline const VariableLengthBitArrayElement& Element::asVariableLengthBitArrayElement() const noexcept
 {
-    return static_cast<const VariableLengthBitArrayBeginningElement&>(*this);
+    return static_cast<const VariableLengthBitArrayElement&>(*this);
 }
 
-inline const VariableLengthSignedEnumerationBeginningElement& Element::asVariableLengthSignedEnumerationBeginningElement() const noexcept
+inline const VariableLengthSignedEnumerationElement& Element::asVariableLengthSignedEnumerationElement() const noexcept
 {
-    return static_cast<const VariableLengthSignedEnumerationBeginningElement&>(*this);
+    return static_cast<const VariableLengthSignedEnumerationElement&>(*this);
 }
 
-inline const VariableLengthSignedIntegerBeginningElement& Element::asVariableLengthSignedIntegerBeginningElement() const noexcept
+inline const VariableLengthSignedIntegerElement& Element::asVariableLengthSignedIntegerElement() const noexcept
 {
-    return static_cast<const VariableLengthSignedIntegerBeginningElement&>(*this);
+    return static_cast<const VariableLengthSignedIntegerElement&>(*this);
 }
 
-inline const VariableLengthUnsignedEnumerationBeginningElement& Element::asVariableLengthUnsignedEnumerationBeginningElement() const noexcept
+inline const VariableLengthUnsignedEnumerationElement& Element::asVariableLengthUnsignedEnumerationElement() const noexcept
 {
-    return static_cast<const VariableLengthUnsignedEnumerationBeginningElement&>(*this);
+    return static_cast<const VariableLengthUnsignedEnumerationElement&>(*this);
 }
 
-inline const VariableLengthUnsignedIntegerBeginningElement& Element::asVariableLengthUnsignedIntegerBeginningElement() const noexcept
+inline const VariableLengthUnsignedIntegerElement& Element::asVariableLengthUnsignedIntegerElement() const noexcept
 {
-    return static_cast<const VariableLengthUnsignedIntegerBeginningElement&>(*this);
-}
-
-inline const VariableLengthBitArrayEndElement& Element::asVariableLengthBitArrayEndElement() const noexcept
-{
-    return static_cast<const VariableLengthBitArrayEndElement&>(*this);
-}
-
-inline const VariableLengthSignedEnumerationEndElement& Element::asVariableLengthSignedEnumerationEndElement() const noexcept
-{
-    return static_cast<const VariableLengthSignedEnumerationEndElement&>(*this);
-}
-
-inline const VariableLengthSignedIntegerEndElement& Element::asVariableLengthSignedIntegerEndElement() const noexcept
-{
-    return static_cast<const VariableLengthSignedIntegerEndElement&>(*this);
-}
-
-inline const VariableLengthUnsignedEnumerationEndElement& Element::asVariableLengthUnsignedEnumerationEndElement() const noexcept
-{
-    return static_cast<const VariableLengthUnsignedEnumerationEndElement&>(*this);
-}
-
-inline const VariableLengthUnsignedIntegerEndElement& Element::asVariableLengthUnsignedIntegerEndElement() const noexcept
-{
-    return static_cast<const VariableLengthUnsignedIntegerEndElement&>(*this);
+    return static_cast<const VariableLengthUnsignedIntegerElement&>(*this);
 }
 
 inline const VariantBeginningElement& Element::asVariantBeginningElement() const noexcept

@@ -259,14 +259,8 @@ descriptions below easier to read and to allow recursion.
     (
       FixedLengthUnsignedIntegerElement |
       FixedLengthUnsignedEnumerationElement |
-      (
-        VariableLengthUnsignedIntegerBeginningElement
-        VariableLengthUnsignedIntegerEndElement
-      ) |
-      (
-        VariableLengthUnsignedEnumerationBeginningElement
-        VariableLengthUnsignedEnumerationEndElement
-      )
+      VariableLengthUnsignedIntegerElement |
+      VariableLengthUnsignedEnumerationElement
     )
     [DefaultClockValueElement]
   ) |
@@ -275,18 +269,9 @@ descriptions below easier to read and to allow recursion.
   FixedLengthSignedIntegerElement |
   FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
-  (
-    VariableLengthBitArrayBeginningElement
-    VariableLengthBitArrayEndElement
-  ) |
-  (
-    VariableLengthSignedIntegerBeginningElement
-    VariableLengthSignedIntegerEndElement
-  ) |
-  (
-    VariableLengthSignedEnumerationBeginningElement
-    VariableLengthSignedEnumerationEndElement
-  ) |
+  VariableLengthBitArrayElement |
+  VariableLengthSignedIntegerElement |
+  VariableLengthSignedEnumerationElement |
   (
     NullTerminatedStringBeginningElement
     SubstringElement *
@@ -445,7 +430,7 @@ data. In other words, yactfr always skips padding bits so that the
 following datum is aligned according to its metadata.
 
 The guarantees of ElementSequenceIterator::offset() are as follows,
-when the current element of the iterator is an instance of:
+when the current element of the iterator is:
 
 <dl>
   <dt>PacketBeginningElement</dt>
@@ -494,28 +479,21 @@ when the current element of the iterator is an instance of:
     The offset is the same as it was at the last StructureEndElement.
   </dd>
 
-  <dt>VariableLengthBitArrayBeginningElement</dt>
-  <dt>VariableLengthUnsignedIntegerBeginningElement</dt>
-  <dt>VariableLengthSignedIntegerBeginningElement</dt>
-  <dt>VariableLengthUnsignedEnumerationBeginningElement</dt>
-  <dt>VariableLengthSignedEnumerationBeginningElement</dt>
   <dt>NullTerminatedStringBeginningElement</dt>
   <dt>StructureBeginningElement</dt>
   <dt>StaticLengthArrayBeginningElement</dt>
   <dt>DynamicLengthArrayBeginningElement</dt>
   <dt>StaticLengthStringBeginningElement</dt>
   <dt>DynamicLengthStringBeginningElement</dt>
-  <dt>StaticLengthBlobBeginningElement</dt>
-  <dt>DynamicLengthBlobBeginningElement</dt>
   <dt>VariantWithUnsignedIntegerSelectorBeginningElement</dt>
   <dt>VariantWithSignedIntegerSelectorBeginningElement</dt>
   <dt>OptionalWithBooleanSelectorBeginningElement</dt>
   <dt>OptionalWithUnsignedIntegerSelectorBeginningElement</dt>
   <dt>OptionalWithSignedIntegerSelectorBeginningElement</dt>
   <dd>
-    The offset is the beginning of the container/datum, that is, it's
-    aligned according to the alignment of the container/datum type (with
-    relation to the beginning of the packet).
+    The offset is the beginning of the container, that is, it's aligned
+    according to the alignment of the container type (with relation to
+    the beginning of the packet).
   </dd>
 
   <dt>EndElement</dt>
@@ -529,11 +507,11 @@ when the current element of the iterator is an instance of:
     * FixedLengthUnsignedEnumerationElement
     * FixedLengthSignedEnumerationElement
     * FixedLengthFloatingPointNumberElement
-    * VariableLengthBitArrayEndElement
-    * VariableLengthUnsignedIntegerEndElement
-    * VariableLengthSignedIntegerEndElement
-    * VariableLengthUnsignedEnumerationEndElement
-    * VariableLengthSignedEnumerationEndElement
+    * VariableLengthBitArrayElement
+    * VariableLengthUnsignedIntegerElement
+    * VariableLengthSignedIntegerElement
+    * VariableLengthUnsignedEnumerationElement
+    * VariableLengthSignedEnumerationElement
     * SubstringElement
     * BlobSectionElement
 

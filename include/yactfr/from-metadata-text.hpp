@@ -70,7 +70,7 @@ CTF&nbsp;2 metadata text.
 @throws TextParseError
     An error occurred while parsing the document.
 */
-static inline std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const std::string& text)
+std::pair<TraceType::UP, TraceEnvironment> fromMetadataText(const std::string& text)
 {
     return fromMetadataText(text.data(), text.data() + text.size());
 }

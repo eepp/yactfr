@@ -51,7 +51,7 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     remBitsToSkip = other.remBitsToSkip;
     lastIntVal = other.lastIntVal;
     curVlBitArrayLenBits = other.curVlBitArrayLenBits;
-    curVlBitArrayEndElem = &this->elemFromOther(other, *other.curVlBitArrayEndElem);
+    curVlBitArrayElem = &this->elemFromOther(other, *other.curVlBitArrayElem);
     curId = other.curId;
     pktProc = other.pktProc;
     curDsPktProc = other.curDsPktProc;
@@ -749,33 +749,32 @@ Vm::_ExecReaction Vm::_execReadFlUEnumA64Be(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execReadVlBitArray(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlBitArrayBeginning,
-                                           _pos.elems.vlBitArrayEnd,
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlBitArray,
                                            VmState::CONTINUE_READ_VL_UINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlUInt(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUIntBeginning, _pos.elems.vlUIntEnd,
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUInt,
                                            VmState::CONTINUE_READ_VL_UINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlSInt(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSIntBeginning, _pos.elems.vlSIntEnd,
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSInt,
                                            VmState::CONTINUE_READ_VL_SINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlUEnum(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUEnumBeginning,
-                                           _pos.elems.vlUEnumEnd, VmState::CONTINUE_READ_VL_UINT);
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUEnum,
+                                           VmState::CONTINUE_READ_VL_UINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlSEnum(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSEnumBeginning,
-                                           _pos.elems.vlSEnumEnd, VmState::CONTINUE_READ_VL_SINT);
+    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSEnum,
+                                           VmState::CONTINUE_READ_VL_SINT);
 }
 
 Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)

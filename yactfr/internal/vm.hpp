@@ -300,16 +300,11 @@ public:
         FixedLengthSignedEnumerationElement flSEnum;
         FixedLengthUnsignedEnumerationElement flUEnum;
         FixedLengthFloatingPointNumberElement flFloat;
-        VariableLengthBitArrayBeginningElement vlBitArrayBeginning;
-        VariableLengthSignedIntegerBeginningElement vlSIntBeginning;
-        VariableLengthUnsignedIntegerBeginningElement vlUIntBeginning;
-        VariableLengthSignedEnumerationBeginningElement vlSEnumBeginning;
-        VariableLengthUnsignedEnumerationBeginningElement vlUEnumBeginning;
-        VariableLengthBitArrayEndElement vlBitArrayEnd;
-        VariableLengthSignedIntegerEndElement vlSIntEnd;
-        VariableLengthUnsignedIntegerEndElement vlUIntEnd;
-        VariableLengthSignedEnumerationEndElement vlSEnumEnd;
-        VariableLengthUnsignedEnumerationEndElement vlUEnumEnd;
+        VariableLengthBitArrayElement vlBitArray;
+        VariableLengthSignedIntegerElement vlSInt;
+        VariableLengthUnsignedIntegerElement vlUInt;
+        VariableLengthSignedEnumerationElement vlSEnum;
+        VariableLengthUnsignedEnumerationElement vlUEnum;
         NullTerminatedStringBeginningElement ntStrBeginning;
         NullTerminatedStringEndElement ntStrEnd;
         SubstringElement substr;
@@ -361,8 +356,8 @@ public:
     // current variable-length bit array length (bits)
     Size curVlBitArrayLenBits;
 
-    // current variable-length bit array end element
-    VariableLengthBitArrayEndElement *curVlBitArrayEndElem;
+    // current variable-length bit array element
+    VariableLengthBitArrayElement *curVlBitArrayElem;
 
     // current ID (event record or data stream type)
     TypeId curId;
@@ -942,26 +937,27 @@ private:
             this->_appendVlIntByte(byte);
 
             /*
-             * When calling _setBitArrayElemBase() below, `instr` is the
-             * current `ReadVlBitArrayInstr` instruction.
+             * When calling _setBitArrayElemBase() below,
+             * `**_pos.stackTop().it` is the current
+             * `ReadVlBitArrayInstr` instruction.
              */
-            auto& instr = **(_pos.stack.end() - 2)->it;
-
-            assert(_pos.curVlBitArrayEndElem);
-            _pos.curVlBitArrayEndElem->_len = _pos.curVlBitArrayLenBits;
+            assert(_pos.curVlBitArrayElem);
+            _pos.curVlBitArrayElem->_len = _pos.curVlBitArrayLenBits;
 
             if (IsSignedV) {
                 this->_signExtendVlSIntVal();
-                this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlBitArrayEndElem);
+                this->_setBitArrayElemBase(_pos.lastIntVal.i, **_pos.stackTop().it,
+                                           *_pos.curVlBitArrayElem);
             } else {
-                this->_setBitArrayElemBase(_pos.lastIntVal.u, instr, *_pos.curVlBitArrayEndElem);
+                this->_setBitArrayElemBase(_pos.lastIntVal.u, **_pos.stackTop().it,
+                                           *_pos.curVlBitArrayElem);
             }
 
             // we're done with this instruction and this state
-            _pos.setParentStateAndStackPop();
+            _pos.gotoNextInstr();
+            _pos.state(_pos.nextState);
             assert(_pos.state() == VmState::EXEC_INSTR ||
                    _pos.state() == VmState::EXEC_ARRAY_INSTR);
-            _pos.gotoNextInstr();
             return true;
         }
 
@@ -1513,19 +1509,16 @@ private:
     }
 
     _ExecReaction _execReadVlBitArrayCommon(const Instr& instr,
-                                            VariableLengthBitArrayBeginningElement& beginningElem,
-                                            VariableLengthBitArrayEndElement& endElem,
-                                            const VmState continueState)
+                                            VariableLengthBitArrayElement& elem,
+                                            const VmState nextState)
     {
         this->_alignHead(instr);
-        _pos.curVlBitArrayEndElem = &endElem;
+        _pos.curVlBitArrayElem = &elem;
         _pos.curVlBitArrayLenBits = 0;
         _pos.lastIntVal.u = 0;
-        _pos.stackPush();
-        Vm::_setDataElemFromInstr(beginningElem, instr);
-        this->_updateItCurOffset(beginningElem);
-        _pos.state(continueState);
-        return _ExecReaction::STOP;
+        _pos.nextState = _pos.state();
+        _pos.state(nextState);
+        return _ExecReaction::CHANGE_STATE;
     }
 
     template <typename ReadVarInstrT, typename ElemT>
