@@ -36,7 +36,7 @@ DataType::UP NullTerminatedStringType::_clone() const
                                                       internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
-bool NullTerminatedStringType::_isEqual(const DataType& other) const noexcept
+bool NullTerminatedStringType::_isEqual(const DataType&) const noexcept
 {
     return true;
 }

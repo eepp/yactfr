@@ -18,7 +18,7 @@ class ItemFromJsonValConverter final :
     public JsonValVisitor
 {
 public:
-    void visit(const JsonNullVal& jsonVal) override
+    void visit(const JsonNullVal&) override
     {
         _item = nullptr;
     }

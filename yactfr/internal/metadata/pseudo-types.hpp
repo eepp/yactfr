@@ -901,7 +901,7 @@ public:
 
 private:
     void _validateNotEmpty(const PseudoDst& pseudoDst) const;
-    void _validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const;
+    void _validateNoMappedClkTypeName() const;
 
 private:
     TypeId _id = 0;

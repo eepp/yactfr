@@ -10,11 +10,11 @@
 
 namespace yactfr {
 
-void ElementVisitor::visit(const BeginningElement& elem)
+void ElementVisitor::visit(const BeginningElement&)
 {
 }
 
-void ElementVisitor::visit(const EndElement& elem)
+void ElementVisitor::visit(const EndElement&)
 {
 }
 
@@ -38,31 +38,31 @@ void ElementVisitor::visit(const EventRecordBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const PacketMagicNumberElement& elem)
+void ElementVisitor::visit(const PacketMagicNumberElement&)
 {
 }
 
-void ElementVisitor::visit(const TraceTypeUuidElement& elem)
+void ElementVisitor::visit(const TraceTypeUuidElement&)
 {
 }
 
-void ElementVisitor::visit(const DefaultClockValueElement& elem)
+void ElementVisitor::visit(const DefaultClockValueElement&)
 {
 }
 
-void ElementVisitor::visit(const DataStreamInfoElement& elem)
+void ElementVisitor::visit(const DataStreamInfoElement&)
 {
 }
 
-void ElementVisitor::visit(const PacketInfoElement& elem)
+void ElementVisitor::visit(const PacketInfoElement&)
 {
 }
 
-void ElementVisitor::visit(const EventRecordInfoElement& elem)
+void ElementVisitor::visit(const EventRecordInfoElement&)
 {
 }
 
-void ElementVisitor::visit(const FixedLengthBitArrayElement& elem)
+void ElementVisitor::visit(const FixedLengthBitArrayElement&)
 {
 }
 
@@ -96,7 +96,7 @@ void ElementVisitor::visit(const FixedLengthFloatingPointNumberElement& elem)
     this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariableLengthBitArrayElement& elem)
+void ElementVisitor::visit(const VariableLengthBitArrayElement&)
 {
 }
 
@@ -125,11 +125,11 @@ void ElementVisitor::visit(const NullTerminatedStringBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const SubstringElement& elem)
+void ElementVisitor::visit(const SubstringElement&)
 {
 }
 
-void ElementVisitor::visit(const BlobSectionElement& elem)
+void ElementVisitor::visit(const BlobSectionElement&)
 {
 }
 

@@ -802,7 +802,7 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadScope(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadScope(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     _pos.stackPop();
@@ -824,7 +824,7 @@ Vm::_ExecReaction Vm::_execBeginReadStruct(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadStruct(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadStruct(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     _pos.setParentStateAndStackPop();
@@ -836,7 +836,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlArray(const Instr& instr)
     return this->_execBeginReadSlArray(instr, VmState::EXEC_ARRAY_INSTR);
 }
 
-Vm::_ExecReaction Vm::_execEndReadSlArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadSlArray(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -853,7 +853,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlStr(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadSlStr(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadSlStr(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -875,7 +875,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlArray(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDlArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDlArray(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -892,7 +892,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlStr(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -908,7 +908,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlUuidBlob(const Instr& instr)
     return this->_execBeginReadSlBlob(instr, VmState::READ_UUID_BLOB_SECTION);
 }
 
-Vm::_ExecReaction Vm::_execEndReadSlBlob(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadSlBlob(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -925,7 +925,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlBlob(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDlBlob(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDlBlob(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -968,14 +968,14 @@ Vm::_ExecReaction Vm::_execBeginReadOptUIntSel(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadVar(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadVar(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadOpt(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadOpt(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.end);
     _pos.setParentStateAndStackPop();
@@ -990,7 +990,7 @@ Vm::_ExecReaction Vm::_execSaveVal(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPktEndDefClkVal(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktEndDefClkVal(const Instr&)
 {
     _pos.elems.pktInfo._endDefClkVal = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
@@ -1003,12 +1003,12 @@ Vm::_ExecReaction Vm::_execUpdateDefClkValFl(const Instr& instr)
     return this->_execUpdateDefClkValCommon(updateDefClkValFlInstr.len());
 }
 
-Vm::_ExecReaction Vm::_execUpdateDefClkVal(const Instr& instr)
+Vm::_ExecReaction Vm::_execUpdateDefClkVal(const Instr&)
 {
     return this->_execUpdateDefClkValCommon(_pos.lastIntVal.u);
 }
 
-Vm::_ExecReaction Vm::_execSetCurrentId(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetCurrentId(const Instr&)
 {
     _pos.curId = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
@@ -1053,25 +1053,25 @@ Vm::_ExecReaction Vm::_execSetErt(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetDsId(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetDsId(const Instr&)
 {
     _pos.elems.dsInfo._id = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPktSeqNum(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktSeqNum(const Instr&)
 {
     _pos.elems.pktInfo._seqNum = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPktDiscErCounterSnap(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktDiscErCounterSnap(const Instr&)
 {
     _pos.elems.pktInfo._discErCounterSnap = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr&)
 {
     const auto pktTotalSizeCandidateBits = _pos.lastIntVal.u;
 
@@ -1109,7 +1109,7 @@ Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr&)
 {
     const auto pktContentSizeCandidateBits = _pos.lastIntVal.u;
 
@@ -1135,13 +1135,13 @@ Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetDsInfo(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetDsInfo(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.dsInfo);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetPktInfo(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktInfo(const Instr&)
 {
     _pos.elems.pktInfo._expectedTotalLen = boost::none;
     _pos.elems.pktInfo._expectedContentLen = boost::none;
@@ -1157,20 +1157,20 @@ Vm::_ExecReaction Vm::_execSetPktInfo(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetErInfo(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetErInfo(const Instr&)
 {
     this->_updateItCurOffset(_pos.elems.erInfo);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetPktMagicNumber(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktMagicNumber(const Instr&)
 {
     _pos.elems.pktMagicNumber._val = _pos.lastIntVal.u;
     this->_updateItCurOffset(_pos.elems.pktMagicNumber);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndPktPreambleProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndPktPreambleProc(const Instr&)
 {
     // after packet header
     _pos.stackPop();
@@ -1185,7 +1185,7 @@ Vm::_ExecReaction Vm::_execEndPktPreambleProc(const Instr& instr)
     }
 }
 
-Vm::_ExecReaction Vm::_execEndDsPktPreambleProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndDsPktPreambleProc(const Instr&)
 {
     // after packet context
     _pos.stackPop();
@@ -1201,7 +1201,7 @@ Vm::_ExecReaction Vm::_execEndDsPktPreambleProc(const Instr& instr)
     return _ExecReaction::CHANGE_STATE;
 }
 
-Vm::_ExecReaction Vm::_execEndDsErPreambleProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndDsErPreambleProc(const Instr&)
 {
     // after second event record context
     _pos.stackPop();
@@ -1211,7 +1211,7 @@ Vm::_ExecReaction Vm::_execEndDsErPreambleProc(const Instr& instr)
     return _ExecReaction::EXEC_CUR_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execEndErProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndErProc(const Instr&)
 {
     // after event record payload
     _pos.stackPop();

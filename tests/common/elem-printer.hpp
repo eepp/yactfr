@@ -29,7 +29,7 @@ public:
     {
     }
 
-    void visit(const yactfr::PacketBeginningElement& elem) override
+    void visit(const yactfr::PacketBeginningElement&) override
     {
         this->_indent();
         *_os << "P {\n";
@@ -43,14 +43,14 @@ public:
         ++_indentLevel;
     }
 
-    void visit(const yactfr::PacketContentBeginningElement& elem) override
+    void visit(const yactfr::PacketContentBeginningElement&) override
     {
         this->_indent();
         *_os << "PC {\n";
         ++_indentLevel;
     }
 
-    void visit(const yactfr::EventRecordBeginningElement& elem) override
+    void visit(const yactfr::EventRecordBeginningElement&) override
     {
         this->_indent();
         *_os << "ER {\n";
@@ -298,7 +298,7 @@ public:
         this->_visitOptBegWithIntSelElem(elem, "OU");
     }
 
-    void visit(const yactfr::EndElement& elem) override
+    void visit(const yactfr::EndElement&) override
     {
         --_indentLevel;
         this->_indent();

@@ -100,7 +100,7 @@ void JsonNullVal::_accept(JsonValVisitor& visitor) const
     visitor.visit(*this);
 }
 
-bool JsonNullVal::_isEqual(const JsonVal& other) const noexcept
+bool JsonNullVal::_isEqual(const JsonVal&) const noexcept
 {
     return true;
 }

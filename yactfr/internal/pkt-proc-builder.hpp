@@ -144,7 +144,7 @@ private:
         this->_buildReadInstr(nullptr, dt.asArrayType().elementType(), instr.proc());
     }
 
-    void _specBuildReadDataInstrWithLen(Instr& instr, const DataType& dt)
+    void _specBuildReadDataInstrWithLen(Instr&, const DataType&)
     {
     }
 

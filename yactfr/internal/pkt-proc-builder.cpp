@@ -585,7 +585,7 @@ private:
         this->_visitProc(instr.proc());
     }
 
-    void _visit(ReadDataInstr& instr)
+    void _visit(ReadDataInstr&)
     {
         _func(_curInstrLoc);
     }

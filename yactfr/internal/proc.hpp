@@ -157,187 +157,187 @@ protected:
 public:
     virtual ~InstrVisitor() = default;
 
-    virtual void visit(ReadFlBitArrayInstr& instr)
+    virtual void visit(ReadFlBitArrayInstr&)
     {
     }
 
-    virtual void visit(ReadFlBoolInstr& instr)
+    virtual void visit(ReadFlBoolInstr&)
     {
     }
 
-    virtual void visit(ReadFlSIntInstr& instr)
+    virtual void visit(ReadFlSIntInstr&)
     {
     }
 
-    virtual void visit(ReadFlUIntInstr& instr)
+    virtual void visit(ReadFlUIntInstr&)
     {
     }
 
-    virtual void visit(ReadFlFloatInstr& instr)
+    virtual void visit(ReadFlFloatInstr&)
     {
     }
 
-    virtual void visit(ReadFlSEnumInstr& instr)
+    virtual void visit(ReadFlSEnumInstr&)
     {
     }
 
-    virtual void visit(ReadFlUEnumInstr& instr)
+    virtual void visit(ReadFlUEnumInstr&)
     {
     }
 
-    virtual void visit(ReadVlBitArrayInstr& instr)
+    virtual void visit(ReadVlBitArrayInstr&)
     {
     }
 
-    virtual void visit(ReadNtStrInstr& instr)
+    virtual void visit(ReadNtStrInstr&)
     {
     }
 
-    virtual void visit(BeginReadScopeInstr& instr)
+    virtual void visit(BeginReadScopeInstr&)
     {
     }
 
-    virtual void visit(EndReadScopeInstr& instr)
+    virtual void visit(EndReadScopeInstr&)
     {
     }
 
-    virtual void visit(BeginReadStructInstr& instr)
+    virtual void visit(BeginReadStructInstr&)
     {
     }
 
-    virtual void visit(BeginReadSlArrayInstr& instr)
+    virtual void visit(BeginReadSlArrayInstr&)
     {
     }
 
-    virtual void visit(BeginReadSlUuidArrayInstr& instr)
+    virtual void visit(BeginReadSlUuidArrayInstr&)
     {
     }
 
-    virtual void visit(BeginReadDlArrayInstr& instr)
+    virtual void visit(BeginReadDlArrayInstr&)
     {
     }
 
-    virtual void visit(BeginReadSlStrInstr& instr)
+    virtual void visit(BeginReadSlStrInstr&)
     {
     }
 
-    virtual void visit(BeginReadDlStrInstr& instr)
+    virtual void visit(BeginReadDlStrInstr&)
     {
     }
 
-    virtual void visit(BeginReadSlBlobInstr& instr)
+    virtual void visit(BeginReadSlBlobInstr&)
     {
     }
 
-    virtual void visit(BeginReadSlUuidBlobInstr& instr)
+    virtual void visit(BeginReadSlUuidBlobInstr&)
     {
     }
 
-    virtual void visit(BeginReadDlBlobInstr& instr)
+    virtual void visit(BeginReadDlBlobInstr&)
     {
     }
 
-    virtual void visit(BeginReadVarUIntSelInstr& instr)
+    virtual void visit(BeginReadVarUIntSelInstr&)
     {
     }
 
-    virtual void visit(BeginReadVarSIntSelInstr& instr)
+    virtual void visit(BeginReadVarSIntSelInstr&)
     {
     }
 
-    virtual void visit(BeginReadOptBoolSelInstr& instr)
+    virtual void visit(BeginReadOptBoolSelInstr&)
     {
     }
 
-    virtual void visit(BeginReadOptUIntSelInstr& instr)
+    virtual void visit(BeginReadOptUIntSelInstr&)
     {
     }
 
-    virtual void visit(BeginReadOptSIntSelInstr& instr)
+    virtual void visit(BeginReadOptSIntSelInstr&)
     {
     }
 
-    virtual void visit(EndReadDataInstr& instr)
+    virtual void visit(EndReadDataInstr&)
     {
     }
 
-    virtual void visit(UpdateDefClkValInstr& instr)
+    virtual void visit(UpdateDefClkValInstr&)
     {
     }
 
-    virtual void visit(SetCurIdInstr& instr)
+    virtual void visit(SetCurIdInstr&)
     {
     }
 
-    virtual void visit(SetDstInstr& instr)
+    virtual void visit(SetDstInstr&)
     {
     }
 
-    virtual void visit(SetErtInstr& instr)
+    virtual void visit(SetErtInstr&)
     {
     }
 
-    virtual void visit(SetErInfoInstr& instr)
+    virtual void visit(SetErInfoInstr&)
     {
     }
 
-    virtual void visit(SetDsIdInstr& instr)
+    virtual void visit(SetDsIdInstr&)
     {
     }
 
-    virtual void visit(SetDsInfoInstr& instr)
+    virtual void visit(SetDsInfoInstr&)
     {
     }
 
-    virtual void visit(SetPktSeqNumInstr& instr)
+    virtual void visit(SetPktSeqNumInstr&)
     {
     }
 
-    virtual void visit(SetPktDiscErCounterSnapInstr& instr)
+    virtual void visit(SetPktDiscErCounterSnapInstr&)
     {
     }
 
-    virtual void visit(SetExpectedPktTotalLenInstr& instr)
+    virtual void visit(SetExpectedPktTotalLenInstr&)
     {
     }
 
-    virtual void visit(SetExpectedPktContentLenInstr& instr)
+    virtual void visit(SetExpectedPktContentLenInstr&)
     {
     }
 
-    virtual void visit(SaveValInstr& instr)
+    virtual void visit(SaveValInstr&)
     {
     }
 
-    virtual void visit(SetPktEndDefClkValInstr& instr)
+    virtual void visit(SetPktEndDefClkValInstr&)
     {
     }
 
-    virtual void visit(SetPktInfoInstr& instr)
+    virtual void visit(SetPktInfoInstr&)
     {
     }
 
-    virtual void visit(SetPktMagicNumberInstr& instr)
+    virtual void visit(SetPktMagicNumberInstr&)
     {
     }
 
-    virtual void visit(EndPktPreambleProcInstr& instr)
+    virtual void visit(EndPktPreambleProcInstr&)
     {
     }
 
-    virtual void visit(EndDsPktPreambleProcInstr& instr)
+    virtual void visit(EndDsPktPreambleProcInstr&)
     {
     }
 
-    virtual void visit(EndDsErPreambleProcInstr& instr)
+    virtual void visit(EndDsErPreambleProcInstr&)
     {
     }
 
-    virtual void visit(EndErProcInstr& instr)
+    virtual void visit(EndErProcInstr&)
     {
     }
 
-    virtual void visit(DecrRemainingElemsInstr& instr)
+    virtual void visit(DecrRemainingElemsInstr&)
     {
     }
 };

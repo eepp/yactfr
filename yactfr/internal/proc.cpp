@@ -99,7 +99,7 @@ Instr::Instr(const Kind kind) noexcept :
 {
 }
 
-std::string Instr::_toStr(const Size indent) const
+std::string Instr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -628,7 +628,7 @@ SaveValInstr::SaveValInstr(const Index pos) :
 {
 }
 
-std::string SaveValInstr::_toStr(const Size indent) const
+std::string SaveValInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -710,7 +710,7 @@ ReadFlBitArrayInstr::ReadFlBitArrayInstr(const StructureMemberType * const membe
 {
 }
 
-std::string ReadFlBitArrayInstr::_toStr(const Size indent) const
+std::string ReadFlBitArrayInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -908,7 +908,7 @@ ReadFlSIntInstr::ReadFlSIntInstr(const StructureMemberType * const member, const
 {
 }
 
-std::string ReadFlSIntInstr::_toStr(const Size indent) const
+std::string ReadFlSIntInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -928,7 +928,7 @@ ReadFlUIntInstr::ReadFlUIntInstr(const StructureMemberType * const member, const
 {
 }
 
-std::string ReadFlUIntInstr::_toStr(const Size indent) const
+std::string ReadFlUIntInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1067,7 +1067,7 @@ ReadFlSEnumInstr::ReadFlSEnumInstr(const StructureMemberType * const member, con
     assert(dt.isFixedLengthSignedEnumerationType());
 }
 
-std::string ReadFlSEnumInstr::_toStr(const Size indent) const
+std::string ReadFlSEnumInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1081,7 +1081,7 @@ ReadFlUEnumInstr::ReadFlUEnumInstr(const StructureMemberType * const member, con
     assert(dt.isFixedLengthUnsignedEnumerationType());
 }
 
-std::string ReadFlUEnumInstr::_toStr(const Size indent) const
+std::string ReadFlUEnumInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1114,7 +1114,7 @@ ReadVlBitArrayInstr::ReadVlBitArrayInstr(const StructureMemberType * const membe
 {
 }
 
-std::string ReadVlBitArrayInstr::_toStr(const Size indent) const
+std::string ReadVlBitArrayInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1128,7 +1128,7 @@ ReadNtStrInstr::ReadNtStrInstr(const StructureMemberType * const member, const D
     assert(dt.isNullTerminatedStringType());
 }
 
-std::string ReadNtStrInstr::_toStr(const Size indent) const
+std::string ReadNtStrInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1163,7 +1163,7 @@ EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * 
            kind == Kind::END_READ_OPT);
 }
 
-std::string EndReadDataInstr::_toStr(const Size indent) const
+std::string EndReadDataInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1286,7 +1286,7 @@ EndReadScopeInstr::EndReadScopeInstr(const Scope scope) :
 {
 }
 
-std::string EndReadScopeInstr::_toStr(const Size indent) const
+std::string EndReadScopeInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1324,7 +1324,7 @@ BeginReadSlStrInstr::BeginReadSlStrInstr(const StructureMemberType * const membe
 {
 }
 
-std::string BeginReadSlStrInstr::_toStr(const Size indent) const
+std::string BeginReadSlStrInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1359,7 +1359,7 @@ BeginReadDlStrInstr::BeginReadDlStrInstr(const StructureMemberType * const membe
 {
 }
 
-std::string BeginReadDlStrInstr::_toStr(const Size indent) const
+std::string BeginReadDlStrInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1380,7 +1380,7 @@ BeginReadSlBlobInstr::BeginReadSlBlobInstr(const StructureMemberType * const mem
 {
 }
 
-std::string BeginReadSlBlobInstr::_toStr(const Size indent) const
+std::string BeginReadSlBlobInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1400,7 +1400,7 @@ BeginReadDlBlobInstr::BeginReadDlBlobInstr(const StructureMemberType * const mem
 {
 }
 
-std::string BeginReadDlBlobInstr::_toStr(const Size indent) const
+std::string BeginReadDlBlobInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1419,7 +1419,7 @@ SetTypeInstr::SetTypeInstr(const Kind kind, boost::optional<TypeId> fixedId) :
 {
 }
 
-std::string SetTypeInstr::_toStr(const Size indent) const
+std::string SetTypeInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 
@@ -1499,7 +1499,7 @@ UpdateDefClkValFlInstr::UpdateDefClkValFlInstr(const Size len) :
     assert(len <= 64);
 }
 
-std::string UpdateDefClkValFlInstr::_toStr(const Size indent) const
+std::string UpdateDefClkValFlInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 

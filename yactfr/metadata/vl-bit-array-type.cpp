@@ -30,7 +30,7 @@ VariableLengthBitArrayType::VariableLengthBitArrayType(MapItem::UP userAttrs) :
 {
 }
 
-bool VariableLengthBitArrayType::_isEqual(const DataType& other) const noexcept
+bool VariableLengthBitArrayType::_isEqual(const DataType&) const noexcept
 {
     return true;
 }

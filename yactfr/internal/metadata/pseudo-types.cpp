@@ -617,7 +617,7 @@ static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
     }
 }
 
-void PseudoErt::_validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const
+void PseudoErt::_validateNoMappedClkTypeName() const
 {
     if (_pseudoSpecCtxType) {
         try {
@@ -675,7 +675,7 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
 {
     try {
         this->_validateNotEmpty(pseudoDst);
-        this->_validateNoMappedClkTypeName(pseudoDst);
+        this->_validateNoMappedClkTypeName();
     } catch (TextParseError& exc) {
         std::ostringstream ss;
 

@@ -74,7 +74,7 @@ void JsonValReq::validate(const JsonVal& jsonVal) const
     this->_validate(jsonVal);
 }
 
-void JsonValReq::_validate(const JsonVal& jsonVal) const
+void JsonValReq::_validate(const JsonVal&) const
 {
 }
 

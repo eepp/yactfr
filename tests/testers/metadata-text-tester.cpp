@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <yactfr/yactfr.hpp>
 
-int main(const int argc, const char * const argv[])
+int main(int, const char * const argv[])
 {
     try {
         std::ifstream file {argv[1]};
