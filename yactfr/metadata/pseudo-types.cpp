@@ -16,9 +16,9 @@
 #include <yactfr/metadata/internal/pseudo-types.hpp>
 #include <yactfr/metadata/internal/pseudo-type-visitor.hpp>
 #include <yactfr/metadata/internal/pseudo-dt-utils.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
@@ -170,20 +170,18 @@ PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, TextLocation loc) 
 {
 }
 
-PseudoStaticArrayType::PseudoStaticArrayType(const Size len, PseudoDt::UP pseudoElemType,
-                                             TextLocation loc) :
+PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType, TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
     _len {len}
 {
 }
 
-PseudoDt::UP PseudoStaticArrayType::clone() const
+PseudoDt::UP PseudoSlArrayType::clone() const
 {
-    return std::make_unique<PseudoStaticArrayType>(_len, this->pseudoElemType().clone(),
-                                                   this->loc());
+    return std::make_unique<PseudoSlArrayType>(_len, this->pseudoElemType().clone(), this->loc());
 }
 
-bool PseudoStaticArrayType::isEmpty() const
+bool PseudoSlArrayType::isEmpty() const
 {
     if (_len == 0) {
         return true;
@@ -192,40 +190,40 @@ bool PseudoStaticArrayType::isEmpty() const
     return this->pseudoElemType().isEmpty();
 }
 
-void PseudoStaticArrayType::accept(PseudoDtVisitor& visitor)
+void PseudoSlArrayType::accept(PseudoDtVisitor& visitor)
 {
     visitor.visit(*this);
 }
 
-void PseudoStaticArrayType::accept(ConstPseudoDtVisitor& visitor) const
+void PseudoSlArrayType::accept(ConstPseudoDtVisitor& visitor) const
 {
     visitor.visit(*this);
 }
 
-PseudoDynArrayType::PseudoDynArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                                       TextLocation loc) :
+PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
+                                     TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
     _pseudoLenLoc {std::move(pseudoLenLoc)}
 {
 }
 
-PseudoDt::UP PseudoDynArrayType::clone() const
+PseudoDt::UP PseudoDlArrayType::clone() const
 {
-    return std::make_unique<PseudoDynArrayType>(_pseudoLenLoc, this->pseudoElemType().clone(),
-                                                this->loc());
+    return std::make_unique<PseudoDlArrayType>(_pseudoLenLoc, this->pseudoElemType().clone(),
+                                               this->loc());
 }
 
-bool PseudoDynArrayType::isEmpty() const
+bool PseudoDlArrayType::isEmpty() const
 {
     return this->pseudoElemType().isEmpty();
 }
 
-void PseudoDynArrayType::accept(PseudoDtVisitor& visitor)
+void PseudoDlArrayType::accept(PseudoDtVisitor& visitor)
 {
     visitor.visit(*this);
 }
 
-void PseudoDynArrayType::accept(ConstPseudoDtVisitor& visitor) const
+void PseudoDlArrayType::accept(ConstPseudoDtVisitor& visitor) const
 {
     visitor.visit(*this);
 }
@@ -454,11 +452,11 @@ PseudoDst::PseudoDst(const TypeId id, PseudoDt::UP pseudoPktCtxType,
 {
 }
 
-static auto findPseudoStaticArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseudoDt)
+static auto findPseudoSlArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseudoDt)
 {
     return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
-        return pseudoDt.kind() == PseudoDt::Kind::STATIC_ARRAY &&
-            static_cast<const PseudoStaticArrayType&>(pseudoDt).hasTraceTypeUuidRole();
+        return pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
+            static_cast<const PseudoSlArrayType&>(pseudoDt).hasTraceTypeUuidRole();
     });
 }
 
@@ -562,17 +560,17 @@ void PseudoTraceType::validate() const
     if (_pseudoPktHeaderType) {
         try {
             /*
-             * Validate pseudo static array types with the "trace type
-             * UUID" role.
+             * Validate pseudo static-length array types with the "trace
+             * type UUID" role.
              */
-            const auto pseudoUuidDts = findPseudoStaticArrayTypesWithTraceTypeUuidRole(*_pseudoPktHeaderType);
+            const auto pseudoUuidDts = findPseudoSlArrayTypesWithTraceTypeUuidRole(*_pseudoPktHeaderType);
 
             for (auto& pseudoUuidDt : pseudoUuidDts) {
-                auto& pseudoUuidArrayType = static_cast<const PseudoStaticArrayType&>(*pseudoUuidDt);
+                auto& pseudoUuidArrayType = static_cast<const PseudoSlArrayType&>(*pseudoUuidDt);
 
                 try {
                     if (pseudoUuidArrayType.len() != 16) {
-                        throwMetadataParseError("Expecting a 16-element static array type.",
+                        throwMetadataParseError("Expecting a 16-element static-length array type.",
                                                 pseudoUuidDt->loc());
                     }
 
@@ -590,7 +588,7 @@ void PseudoTraceType::validate() const
                     }
                 } catch (MetadataParseError& exc) {
                     appendMsgToMetadataParseError(exc,
-                                                  "Static array type with a \"trace type UUID\" role:",
+                                                  "Static-length array type with a \"trace type UUID\" role:",
                                                   pseudoUuidDt->loc());
                     throw;
                 }

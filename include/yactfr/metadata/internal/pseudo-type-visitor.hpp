@@ -35,11 +35,11 @@ public:
     {
     }
 
-    virtual void visit(PseudoStaticArrayType&)
+    virtual void visit(PseudoSlArrayType&)
     {
     }
 
-    virtual void visit(PseudoDynArrayType&)
+    virtual void visit(PseudoDlArrayType&)
     {
     }
 
@@ -74,11 +74,11 @@ public:
     {
     }
 
-    virtual void visit(const PseudoStaticArrayType&)
+    virtual void visit(const PseudoSlArrayType&)
     {
     }
 
-    virtual void visit(const PseudoDynArrayType&)
+    virtual void visit(const PseudoDlArrayType&)
     {
     }
 

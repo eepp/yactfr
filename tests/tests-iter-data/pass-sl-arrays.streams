@@ -30,9 +30,9 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           SA:arr {
+     0           SLA:arr {
      0             ST {
-     0               SA:arr {
+     0               SLA:arr {
      0                 NTS {
      0                   SS:7:copper
     56                 }
@@ -45,7 +45,7 @@ event {
    168               }
    168             }
    168             ST {
-   168               SA:arr {
+   168               SLA:arr {
    168                 NTS {
    168                   SS:5:neat
    208                 }
@@ -58,7 +58,7 @@ event {
    288               }
    288             }
    288             ST {
-   288               SA:arr {
+   288               SLA:arr {
    288                 NTS {
    288                   SS:7:notice
    344                 }
@@ -71,7 +71,7 @@ event {
    424               }
    424             }
    424             ST {
-   424               SA:arr {
+   424               SLA:arr {
    424                 NTS {
    424                   SS:1:
    432                 }
@@ -84,21 +84,21 @@ event {
    520               }
    520             }
    520           }
-   520           SA:arr3 {
-   520             SA {
-   520               SA {
+   520           SLA:arr3 {
+   520             SLA {
+   520               SLA {
    520                 FLUI:17
    528                 FLUI:34
    536                 FLUI:51
    544               }
-   544               SA {
+   544               SLA {
    544                 FLUI:68
    552                 FLUI:85
    560                 FLUI:102
    568               }
    568             }
    568           }
-   568           SA:arr0 {
+   568           SLA:arr0 {
    568           }
    568         }
    568       }

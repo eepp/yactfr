@@ -13,7 +13,7 @@ namespace yactfr {
 class BeginningElement;
 class DataStreamInfoElement;
 class DefaultClockValueElement;
-class DynamicArrayBeginningElement;
+class DynamicLengthArrayBeginningElement;
 class DynamicLengthStringBeginningElement;
 class EndElement;
 class EventRecordBeginningElement;
@@ -30,7 +30,7 @@ class PacketEndDefaultClockValueElement;
 class PacketInfoElement;
 class PacketMagicNumberElement;
 class ScopeBeginningElement;
-class StaticArrayBeginningElement;
+class StaticLengthArrayBeginningElement;
 class StaticLengthStringBeginningElement;
 class StructureBeginningElement;
 class SubstringElement;
@@ -55,7 +55,7 @@ public:
     virtual void visit(const BeginningElement& elem);
     virtual void visit(const DataStreamInfoElement& elem);
     virtual void visit(const DefaultClockValueElement& elem);
-    virtual void visit(const DynamicArrayBeginningElement& elem);
+    virtual void visit(const DynamicLengthArrayBeginningElement& elem);
     virtual void visit(const DynamicLengthStringBeginningElement& elem);
     virtual void visit(const EndElement& elem);
     virtual void visit(const EventRecordBeginningElement& elem);
@@ -70,7 +70,7 @@ public:
     virtual void visit(const PacketInfoElement& elem);
     virtual void visit(const PacketMagicNumberElement& elem);
     virtual void visit(const ScopeBeginningElement& elem);
-    virtual void visit(const StaticArrayBeginningElement& elem);
+    virtual void visit(const StaticLengthArrayBeginningElement& elem);
     virtual void visit(const StaticLengthStringBeginningElement& elem);
     virtual void visit(const NullTerminatedStringBeginningElement& elem);
     virtual void visit(const StructureBeginningElement& elem);

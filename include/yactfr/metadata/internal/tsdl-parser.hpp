@@ -32,9 +32,9 @@
 #include "../fl-float-type.hpp"
 #include "../fl-enum-type.hpp"
 #include "../nt-str-type.hpp"
-#include "../static-array-type.hpp"
+#include "../sl-array-type.hpp"
 #include "../sl-str-type.hpp"
-#include "../dyn-array-type.hpp"
+#include "../dl-array-type.hpp"
 #include "../dl-str-type.hpp"
 #include "../struct-type.hpp"
 #include "../struct-member-type.hpp"
@@ -2912,14 +2912,14 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
      * A temporary array type subscript.
      *
      * If `isStatic` is true, then use `arrayLen` to build a
-     * static array type. Otherwise use `dynArrayLenLoc`.
+     * static-length array type. Otherwise use `dlArrayLenLoc`.
      *
      * TODO: Use `boost::variant`.
      */
     struct LenDescr final
     {
         bool isStatic;
-        boost::optional<PseudoDataLoc> dynArrayLenLoc;
+        boost::optional<PseudoDataLoc> dlArrayLenLoc;
         Size arrayLen;
         TextLocation loc;
     };
@@ -2952,7 +2952,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                 pseudoDataLoc = this->_expectDataLoc();
             } catch (MetadataParseError& exc) {
                 appendMsgToMetadataParseError(exc,
-                                              "Expecting valid constant integer (static array type) or valid data location (dynamic array type):",
+                                              "Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):",
                                               subscriptLoc);
                 throw;
             }
@@ -2973,7 +2973,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                 if (!_traceEnv) {
                     std::ostringstream ss;
 
-                    ss << "Static array type refers to the environment entry `" <<
+                    ss << "Static-length array type refers to the environment entry `" <<
                           envKey << "`, but no environment exists at this point.";
                     throwMetadataParseError(ss.str(), subscriptLoc);
                 }
@@ -2991,7 +2991,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                     if (*entryVal < 0) {
                         std::ostringstream ss;
 
-                        ss << "Static array type cannot have a negative size: " << *entryVal << ".";
+                        ss << "Static-length array type cannot have a negative size: " << *entryVal << ".";
                         throwMetadataParseError(ss.str(), subscriptLoc);
                     }
 
@@ -3001,7 +3001,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                     std::ostringstream ss;
 
                     ss << "Environment entry `" << envKey <<
-                          "` isn't a valid static array type size.";
+                          "` isn't a valid static-length array type size.";
                     throwMetadataParseError(ss.str(), subscriptLoc);
                 }
             } else {
@@ -3017,22 +3017,23 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
      *
      *     string s[2][len][4];
      *
-     * becomes the class of a static array of two dynamic arrays of
-     * `len` static arrays of four null-terminated strings.
+     * becomes the class of a static-length array of two dynamic-length
+     * arrays of `len` static-length arrays of four null-terminated
+     * strings.
      *
      * At this point, `innerPseudoDt` is the null-terminated string type
      * in the example above.
      */
     for (const auto& lenDescr : boost::adaptors::reverse(lenDescrs)) {
         if (lenDescr.isStatic) {
-            innerPseudoDt = std::make_unique<PseudoStaticArrayType>(lenDescr.arrayLen,
-                                                                    std::move(innerPseudoDt),
-                                                                    lenDescr.loc);
+            innerPseudoDt = std::make_unique<PseudoSlArrayType>(lenDescr.arrayLen,
+                                                                std::move(innerPseudoDt),
+                                                                lenDescr.loc);
         } else {
-            assert(lenDescr.dynArrayLenLoc);
-            innerPseudoDt = std::make_unique<PseudoDynArrayType>(*lenDescr.dynArrayLenLoc,
-                                                                 std::move(innerPseudoDt),
-                                                                 lenDescr.loc);
+            assert(lenDescr.dlArrayLenLoc);
+            innerPseudoDt = std::make_unique<PseudoDlArrayType>(*lenDescr.dlArrayLenLoc,
+                                                                std::move(innerPseudoDt),
+                                                                lenDescr.loc);
         }
     }
 

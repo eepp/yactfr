@@ -12,9 +12,9 @@
 
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/internal/dt-from-pseudo-root-dt.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
@@ -60,8 +60,8 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoD
      *
      *    During this process, we need to find and validate:
      *
-     *    * The length integer types of dynamic array types and
-     *      dynamic-length string types.
+     *    * The length integer types of dynamic-length array and
+     *      string types.
      *
      *    * The selector enumeration types of variant types.
      *
@@ -99,11 +99,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
     case PseudoDt::Kind::FL_UENUM:
         return this->_dtFromPseudoFlUEnumType(pseudoDt);
 
-    case PseudoDt::Kind::STATIC_ARRAY:
-        return this->_dtFromPseudoStaticArrayType(pseudoDt);
+    case PseudoDt::Kind::SL_ARRAY:
+        return this->_dtFromPseudoSlArrayType(pseudoDt);
 
-    case PseudoDt::Kind::DYN_ARRAY:
-        return this->_dtFromPseudoDynArrayType(pseudoDt);
+    case PseudoDt::Kind::DL_ARRAY:
+        return this->_dtFromPseudoDlArrayType(pseudoDt);
 
     case PseudoDt::Kind::STRUCT:
         return this->_dtFromPseudoStructType(pseudoDt);
@@ -144,9 +144,9 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoD
                                                                       pseudoUEnumType.roles());
 }
 
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStaticArrayType(const PseudoDt& pseudoDt)
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoDt& pseudoDt)
 {
-    auto& pseudoArrayType = static_cast<const PseudoStaticArrayType&>(pseudoDt);
+    auto& pseudoArrayType = static_cast<const PseudoSlArrayType&>(pseudoDt);
     auto arrayType = this->_tryNonNtStrTypeFromPseudoArrayType<StaticLengthStringType>(pseudoDt,
                                                                                    pseudoArrayType.pseudoElemType(),
                                                                                    pseudoArrayType.len());
@@ -163,13 +163,14 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStaticArrayType(const Pse
     // not visited anymore
     _current.erase(&pseudoArrayType);
 
-    return std::make_unique<const StaticArrayType>(1, std::move(elemType), pseudoArrayType.len(),
-                                                   pseudoArrayType.hasTraceTypeUuidRole());
+    return std::make_unique<const StaticLengthArrayType>(1, std::move(elemType),
+                                                         pseudoArrayType.len(),
+                                                         pseudoArrayType.hasTraceTypeUuidRole());
 }
 
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDynArrayType(const PseudoDt& pseudoDt)
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoDt& pseudoDt)
 {
-    auto& pseudoArrayType = static_cast<const PseudoDynArrayType&>(pseudoDt);
+    auto& pseudoArrayType = static_cast<const PseudoDlArrayType&>(pseudoDt);
     const auto& lenLoc = _locMap[pseudoDt];
 
     try {
@@ -208,7 +209,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDynArrayType(const Pseudo
     // not visited anymore
     _current.erase(&pseudoArrayType);
 
-    return std::make_unique<const DynamicArrayType>(1, std::move(elemType), lenLoc);
+    return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemType), lenLoc);
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt& pseudoDt)
@@ -263,8 +264,8 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
         break;
     }
 
-    case PseudoDt::Kind::STATIC_ARRAY:
-    case PseudoDt::Kind::DYN_ARRAY:
+    case PseudoDt::Kind::SL_ARRAY:
+    case PseudoDt::Kind::DL_ARRAY:
     {
         if (_current.find(&pseudoDt) == _current.end()) {
             std::ostringstream ss;

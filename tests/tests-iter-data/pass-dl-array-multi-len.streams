@@ -55,7 +55,7 @@ event {
     64           NTS:z {
     64             SS:4:pad
     96           }
-    96           DA:seq {
+    96           DLA:seq {
     96             NTS {
     96               SS:3:un
    120             }
@@ -85,7 +85,7 @@ event {
    288           NTS:z {
    288             SS:4:pad
    320           }
-   320           DA:seq {
+   320           DLA:seq {
    320             NTS {
    320               SS:3:un
    344             }

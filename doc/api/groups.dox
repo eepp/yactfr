@@ -192,9 +192,9 @@ descriptions below easier to read and to allow recursion.
   FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
   (NullTerminatedStringBeginningElement SubstringElement * EndElement) |
-  (StaticArrayBeginningElement DATA * EndElement) |
+  (StaticLengthArrayBeginningElement DATA * EndElement) |
+  (DynamicLengthArrayBeginningElement DATA * EndElement) |
   (StaticLengthStringBeginningElement SubstringElement * EndElement) |
-  (DynamicArrayBeginningElement DATA * EndElement) |
   (DynamicLengthStringBeginningElement SubstringElement * EndElement) |
   (StructureBeginningElement DATA * EndElement) |
   (
@@ -234,7 +234,7 @@ descriptions below easier to read and to allow recursion.
         PacketMagicNumberElement
       ) |
       (
-        StaticArrayBeginningElement
+        StaticLengthArrayBeginningElement
         (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement){16}
         TraceTypeUuidElement
         EndElement
@@ -324,9 +324,9 @@ when the current element of the iterator is:
 
   <dt>NullTerminatedStringBeginningElement</dt>
   <dt>StructureBeginningElement</dt>
-  <dt>StaticArrayBeginningElement</dt>
+  <dt>StaticLengthArrayBeginningElement</dt>
+  <dt>DynamicLengthArrayBeginningElement</dt>
   <dt>StaticLengthStringBeginningElement</dt>
-  <dt>DynamicArrayBeginningElement</dt>
   <dt>DynamicLengthStringBeginningElement</dt>
   <dt>VariantWithUnsignedSelectorBeginningElement</dt>
   <dt>VariantWithSignedSelectorBeginningElement</dt>

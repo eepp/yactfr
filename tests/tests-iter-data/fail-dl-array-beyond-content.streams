@@ -37,7 +37,7 @@ event {
      8       SC:5 {
      8         ST {
      8           FLUI:len:3
-    16           DA:yy {
+    16           DLA:yy {
     16             FLUI:3735928559
     48             FLUI:4277009102
     80             FLUI:3131746989
@@ -50,5 +50,5 @@ event {
    112       SC:5 {
    112         ST {
    112           FLUI:len:2
-   120           DA:yy {
+   120           DLA:yy {
    120 Cannot read 32 bits at this point: would move beyond the content of the current packet (16 bits remaining).

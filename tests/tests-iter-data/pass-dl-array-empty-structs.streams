@@ -23,7 +23,7 @@ event {
      0       SC:5 {
      0         ST {
      0           FLUI:len:50
-     8           DA:yes {
+     8           DLA:yes {
      8             ST {
      8             }
      8             ST {
@@ -133,7 +133,7 @@ event {
      8       SC:5 {
      8         ST {
      8           FLUI:len:20
-    16           DA:yes {
+    16           DLA:yes {
     16             ST {
     16             }
     16             ST {

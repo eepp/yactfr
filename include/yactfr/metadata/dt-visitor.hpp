@@ -109,23 +109,23 @@ public:
 
     /*!
     @brief
-        Visits the static array type \p type.
+        Visits the static-length array type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const StaticArrayType& type)
+    virtual void visit(const StaticLengthArrayType& type)
     {
     }
 
     /*!
     @brief
-        Visits the dynamic array type \p type.
+        Visits the dynamic-length array type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const DynamicArrayType& type)
+    virtual void visit(const DynamicLengthArrayType& type)
     {
     }
 

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_STATIC_ARRAY_TYPE_HPP
-#define _YACTFR_METADATA_STATIC_ARRAY_TYPE_HPP
+#ifndef _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
+#define _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
 
 #include "../aliases.hpp"
 #include "array-type.hpp"
@@ -17,31 +17,31 @@ namespace yactfr {
 
 /*!
 @brief
-    Static array type.
+    Static-length array type.
 
 @ingroup metadata_dt
 
-A static array type describes data stream static arrays.
+A static-length array type describes data stream static-length arrays.
 */
-class StaticArrayType final :
+class StaticLengthArrayType final :
     public ArrayType
 {
 public:
     /*!
     @brief
-        Builds a static array data type.
+        Builds a static-length array data type.
 
     @param[in] minimumAlignment
-        Minimum alignment of data stream static arrays described by this
-        type.
+        Minimum alignment of data stream static-length arrays described
+        by this type.
     @param[in] elementType
         Element type.
     @param[in] length
-        Length of data stream static arrays described by this type
-        (count of element).
+        Length of data stream static-length arrays described by this
+        type (count of element).
     @param[in] hasTraceTypeUuidRole
-        Whether or not the static arrays described by this type have the
-        "trace type UUID" role.
+        Whether or not the static-length arrays described by this type
+        have the "trace type UUID" role.
 
     @pre
         \p minimumAlignment > 0.
@@ -49,25 +49,25 @@ public:
         \p minimumAlignment is a power of two.
     @pre
         @parblock
-        If \p hasTraceTypeUuidRole is true, then \p length is 16 and
-        all of the following are true:
+        If \p hasTraceTypeUuidRole is true, then \p length is 16 and all
+        of the following are true:
 
         * <code>elementType->isFixedLengthUnsignedIntegerType()</code>
         * <code>elementType->asFixedLengthUnsignedIntegerType().length() == 8</code>
         @endparblock
     */
-    explicit StaticArrayType(unsigned int minimumAlignment, DataType::UP elementType, Size length,
-                             bool hasTraceTypeUuidRole = false);
+    explicit StaticLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
+                                   Size length, bool hasTraceTypeUuidRole = false);
 
-    /// Length of data stream static arrays described by this type
-    /// (count of element).
+    /// Length of data stream static-length arrays described by this
+    /// type (count of element).
     Size length() const noexcept
     {
         return _len;
     }
 
-    /// Whether or not the static arrays described by this type have
-    /// the "trace type UUID" role.
+    /// Whether or not the static-length arrays described by this type
+    /// have the "trace type UUID" role.
     bool hasTraceTypeUuidRole() const noexcept
     {
         return _hasTraceTypeUuidRole;
@@ -90,4 +90,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_STATIC_ARRAY_TYPE_HPP
+#endif // _YACTFR_METADATA_SL_ARRAY_TYPE_HPP

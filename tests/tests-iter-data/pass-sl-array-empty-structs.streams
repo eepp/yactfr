@@ -26,7 +26,7 @@ event {
      0           NTS:salut {
      0             SS:13:heille salut
    104           }
-   104           SA:yes {
+   104           SLA:yes {
    104             ST {
    104             }
    104             ST {
@@ -138,7 +138,7 @@ event {
    104           NTS:salut {
    104             SS:12:autre event
    200           }
-   200           SA:yes {
+   200           SLA:yes {
    200             ST {
    200             }
    200             ST {

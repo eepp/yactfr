@@ -15,7 +15,7 @@ namespace yactfr {
 
 /*!
 @brief
-    %Base class of static/dynamic array types.
+    %Base class of static-length and dynamic-length array types.
 
 @ingroup metadata_dt
 */

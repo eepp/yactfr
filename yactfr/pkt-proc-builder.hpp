@@ -88,11 +88,11 @@ private:
     void _buildReadStructInstr(const StructureMemberType *memberType, const DataType& dt,
                                Proc& baseProc);
 
-    void _buildReadStaticArrayInstr(const StructureMemberType *memberType, const DataType& dt,
-                                    Proc& baseProc);
+    void _buildReadSlArrayInstr(const StructureMemberType *memberType, const DataType& dt,
+                                Proc& baseProc);
 
-    void _buildReadDynArrayInstr(const StructureMemberType *memberType, const DataType& dt,
-                                 Proc& baseProc);
+    void _buildReadDlArrayInstr(const StructureMemberType *memberType, const DataType& dt,
+                                Proc& baseProc);
 
     void _buildReadSlStrInstr(const StructureMemberType *memberType, const DataType& dt,
                               Proc& baseProc);
@@ -120,12 +120,12 @@ private:
     {
     }
 
-    void _specBuildReadDataInstrWithLen(BeginReadStaticArrayInstr& instr, const DataType& dt)
+    void _specBuildReadDataInstrWithLen(BeginReadSlArrayInstr& instr, const DataType& dt)
     {
         this->_commonSpecBuildReadArrayInstrWithLen(instr, dt);
     }
 
-    void _specBuildReadDataInstrWithLen(BeginReadDynArrayInstr& instr, const DataType& dt)
+    void _specBuildReadDataInstrWithLen(BeginReadDlArrayInstr& instr, const DataType& dt)
     {
         this->_commonSpecBuildReadArrayInstrWithLen(instr, dt);
     }

@@ -128,16 +128,16 @@ private:
                                                      const PseudoDt& pseudoElemType, LenT&& len);
 
     /*
-     * Converts the pseudo static array type `pseudoDt` to a yactfr
-     * static array type.
+     * Converts the pseudo static-length array type `pseudoDt` to a
+     * yactfr static array type.
      */
-    DataType::UP _dtFromPseudoStaticArrayType(const PseudoDt& pseudoDt);
+    DataType::UP _dtFromPseudoSlArrayType(const PseudoDt& pseudoDt);
 
     /*
-     * Converts the pseudo dynamic array type `pseudoDt` to a yactfr
-     * dynamic array type.
+     * Converts the pseudo dynamic-length array type `pseudoDt` to a
+     * yactfr dynamic array type.
      */
-    DataType::UP _dtFromPseudoDynArrayType(const PseudoDt& pseudoDt);
+    DataType::UP _dtFromPseudoDlArrayType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo structure type `pseudoDt` to a yactfr
@@ -191,8 +191,9 @@ private:
     DataLocMap _locMap;
 
     /*
-     * Option/element indexes of currently visited pseudo variant and
-     * dynamic array types (always 0 for a pseudo dynamic array type).
+     * Option/element indexes of currently visited pseudo variant,
+     * dynamic-length array, and dynamic-length string types (always 0
+     * for pseudo dynamic-length array/string type).
      */
     std::unordered_map<const PseudoDt *, Index> _current;
 };

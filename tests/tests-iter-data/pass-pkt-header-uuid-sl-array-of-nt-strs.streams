@@ -31,7 +31,7 @@ stream {
      0   PC {
      0     SC:0 {
      0       ST {
-     0         SA:uuid {
+     0         SLA:uuid {
      0           NTS {
      0             SS:2:1
     16           }

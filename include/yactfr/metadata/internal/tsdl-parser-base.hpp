@@ -375,11 +375,10 @@ private:
     void _addPseudoFlUIntTypeDefClkTsRole(PseudoDt& basePseudoDt, const std::string& name);
 
     /*
-     * Sets the "has trace type UUID role" property of all pseudo static
-     * array types named `name` within `basePseudoDt`.
+     * Sets the "has trace type UUID role" property of all pseudo
+     * static-length array types named `name` within `basePseudoDt`.
      */
-    void _setPseudoStaticArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
-                                                    const std::string& name);
+    void _setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt, const std::string& name);
 
     /*
      * Adds roles to pseudo data types.

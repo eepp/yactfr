@@ -88,14 +88,14 @@ public:
         }
     }
 
-    void visit(const StaticArrayType& dt) override
+    void visit(const StaticLengthArrayType& dt) override
     {
         this->_visitArrayType(dt);
     }
 
-    void visit(const DynamicArrayType& dt) override
+    void visit(const DynamicLengthArrayType& dt) override
     {
-        this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dynArrayTypeLenTypes(dt));
+        this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dlArrayTypeLenTypes(dt));
         this->_visitArrayType(dt);
     }
 

@@ -279,9 +279,9 @@ public:
         FixedLengthFloatingPointNumberElement flFloat;
         NullTerminatedStringBeginningElement ntStrBeginning;
         SubstringElement substr;
-        StaticArrayBeginningElement staticArrayBeginning;
+        StaticLengthArrayBeginningElement slArrayBeginning;
         StaticLengthStringBeginningElement slStrBeginning;
-        DynamicArrayBeginningElement dynArrayBeginning;
+        DynamicLengthArrayBeginningElement dlArrayBeginning;
         DynamicLengthStringBeginningElement dlStrBeginning;
         StructureBeginningElement structBeginning;
         VariantWithSignedSelectorBeginningElement varSSelBeginning;
@@ -1032,13 +1032,13 @@ private:
     _ExecReaction _execEndReadScope(const Instr& instr);
     _ExecReaction _execBeginReadStruct(const Instr& instr);
     _ExecReaction _execEndReadStruct(const Instr& instr);
-    _ExecReaction _execBeginReadStaticArray(const Instr& instr);
-    _ExecReaction _execEndReadStaticArray(const Instr& instr);
+    _ExecReaction _execBeginReadSlArray(const Instr& instr);
+    _ExecReaction _execEndReadSlArray(const Instr& instr);
     _ExecReaction _execBeginReadSlStr(const Instr& instr);
     _ExecReaction _execEndReadSlStr(const Instr& instr);
-    _ExecReaction _execBeginReadStaticUuidArray(const Instr& instr);
-    _ExecReaction _execBeginReadDynArray(const Instr& instr);
-    _ExecReaction _execEndReadDynArray(const Instr& instr);
+    _ExecReaction _execBeginReadSlUuidArray(const Instr& instr);
+    _ExecReaction _execBeginReadDlArray(const Instr& instr);
+    _ExecReaction _execEndReadDlArray(const Instr& instr);
     _ExecReaction _execBeginReadDlStr(const Instr& instr);
     _ExecReaction _execEndReadDlStr(const Instr& instr);
     _ExecReaction _execBeginReadVarSSel(const Instr& instr);
@@ -1285,13 +1285,13 @@ private:
         _pos.state(nextState);
     }
 
-    _ExecReaction _execBeginReadStaticArray(const Instr& instr, const VmState nextState)
+    _ExecReaction _execBeginReadSlArray(const Instr& instr, const VmState nextState)
     {
-        const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticArrayInstr&>(instr);
+        const auto& beginReadStaticArrayInstr = static_cast<const BeginReadSlArrayInstr&>(instr);
 
-        _pos.elems.staticArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
-        _pos.elems.staticArrayBeginning._len = beginReadStaticArrayInstr.len();
-        this->_execBeginReadStaticData(beginReadStaticArrayInstr, _pos.elems.staticArrayBeginning,
+        _pos.elems.slArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
+        _pos.elems.slArrayBeginning._len = beginReadStaticArrayInstr.len();
+        this->_execBeginReadStaticData(beginReadStaticArrayInstr, _pos.elems.slArrayBeginning,
                                        beginReadStaticArrayInstr.len(),
                                        &beginReadStaticArrayInstr.proc(), nextState);
         return _ExecReaction::STOP;

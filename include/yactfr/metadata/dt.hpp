@@ -49,8 +49,8 @@ protected:
         _KIND_SCALAR                = 1 << 9,
         _KIND_STRUCT                = 1 << 10,
         _KIND_ARRAY                 = 1 << 11,
-        _KIND_STATIC_ARRAY          = 1 << 12,
-        _KIND_DYN_ARRAY             = 1 << 13,
+        _KIND_SL_ARRAY              = 1 << 12,
+        _KIND_DL_ARRAY              = 1 << 13,
         _KIND_NON_NT_STRING         = 1 << 14,
         _KIND_SL_STR                = 1 << 15,
         _KIND_DL_STR                = 1 << 16,
@@ -133,16 +133,16 @@ public:
         return this->_isKind(_KIND_ARRAY);
     }
 
-    /// \c true if this type is a static array type.
-    bool isStaticArrayType() const noexcept
+    /// \c true if this type is a static-length array type.
+    bool isStaticLengthArrayType() const noexcept
     {
-        return this->_isKind(_KIND_STATIC_ARRAY);
+        return this->_isKind(_KIND_SL_ARRAY);
     }
 
-    /// \c true if this type is a dynamic array type.
-    bool isDynamicArrayType() const noexcept
+    /// \c true if this type is a dynamic-length array type.
+    bool isDynamicLengthArrayType() const noexcept
     {
-        return this->_isKind(_KIND_DYN_ARRAY);
+        return this->_isKind(_KIND_DL_ARRAY);
     }
 
     /// \c true if this type is a string type which is not a
@@ -280,21 +280,21 @@ public:
 
     /*!
     @brief
-        This type as a static array type.
+        This type as a static-length array type.
 
     @pre
-        This type is a static array type.
+        This type is a static-length array type.
     */
-    const StaticArrayType& asStaticArrayType() const noexcept;
+    const StaticLengthArrayType& asStaticLengthArrayType() const noexcept;
 
     /*!
     @brief
-        This type as a dynamic array type.
+        This type as a dynamic-length array type.
 
     @pre
-        This type is a dynamic array type.
+        This type is a dynamic-length array type.
     */
-    const DynamicArrayType& asDynamicArrayType() const noexcept;
+    const DynamicLengthArrayType& asDynamicLengthArrayType() const noexcept;
 
     /*!
     @brief

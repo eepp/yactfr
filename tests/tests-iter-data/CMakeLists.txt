@@ -23,11 +23,11 @@ endfunction ()
 yactfr_create_all_streams (
     fail-align-beyond-content
     fail-align-beyond-data
-    fail-array-beyond-content
-    fail-array-beyond-data
+    fail-sl-array-beyond-content
+    fail-sl-array-beyond-data
     fail-be-to-le-change-in-byte
-    fail-dyn-array-beyond-content
-    fail-dyn-array-beyond-data
+    fail-dl-array-beyond-content
+    fail-dl-array-beyond-data
     fail-dl-str-beyond-content
     fail-dl-str-beyond-data
     fail-fl-float-beyond-data
@@ -52,16 +52,16 @@ yactfr_create_all_streams (
     fail-var-inval-sel
     pass-all-basic-features-be
     pass-all-basic-features-le
-    pass-array-empty-structs
-    pass-arrays
+    pass-sl-array-empty-structs
+    pass-sl-arrays
     pass-clk-vals
-    pass-complex-arrays
+    pass-complex-sl-arrays
     pass-diff-magic
     pass-diff-uuid
     pass-dst
-    pass-dyn-array-empty-structs
-    pass-dyn-array-multi-len
-    pass-dyn-arrays
+    pass-dl-array-empty-structs
+    pass-dl-array-multi-len
+    pass-dl-arrays
     pass-dl-strs
     pass-empty-data
     pass-er-header-id-nt-str
@@ -79,7 +79,7 @@ yactfr_create_all_streams (
     pass-pkt-header-magic-nt-str
     pass-pkt-header-stream-id-nt-str
     pass-pkt-header-stream-instance-id-nt-str
-    pass-pkt-header-uuid-array-of-nt-strs
+    pass-pkt-header-uuid-sl-array-of-nt-strs
     pass-pkt-header-uuid-nt-str
     pass-pkt-origin-index
     pass-pkt-total-len-no-pkt-content-len
@@ -95,11 +95,11 @@ add_custom_target (
     DEPENDS
         "${CMAKE_CURRENT_BINARY_DIR}/fail-align-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-align-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-sl-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-sl-array-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-be-to-le-change-in-byte/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dl-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dl-array-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-dl-str-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-dl-str-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-fl-float-beyond-data/metadata"
@@ -124,16 +124,16 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/fail-var-inval-sel/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-all-basic-features-be/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-all-basic-features-le/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-array-empty-structs/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-sl-array-empty-structs/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-sl-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-clk-vals/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-complex-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-complex-sl-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-diff-magic/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-diff-uuid/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dst/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-array-empty-structs/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-array-multi-len/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dl-array-empty-structs/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dl-array-multi-len/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dl-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dl-strs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-empty-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-er-header-id-nt-str/metadata"
@@ -151,7 +151,7 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-magic-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-id-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-instance-id-nt-str/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-array-of-nt-strs/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-sl-array-of-nt-strs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-origin-index/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-total-len-no-pkt-content-len/metadata"

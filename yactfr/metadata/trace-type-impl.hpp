@@ -69,7 +69,7 @@ public:
      */
     const PktProc& pktProc() const;
 
-    static DataTypeSet& dynArrayTypeLenTypes(const DynamicArrayType& dt) noexcept
+    static DataTypeSet& dlArrayTypeLenTypes(const DynamicLengthArrayType& dt) noexcept
     {
         return dt._lenTypes();
     }

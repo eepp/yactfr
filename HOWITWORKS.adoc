@@ -322,18 +322,17 @@ the VM to save the value of the last decoded integer to a specific
 position (index) within an array of saved values.
 
 This is how the VM knows where to dynamically find the length of a
-dynamic array, the length of a dynamic-length string, or the selector of
-a variant, as the `internal::BeginReadDynArrayInstr`,
-`internal::BeginReadDlStrInstr`, `internal::BeginReadVarUSelInstr`, and
-`internal::BeginReadVarSSelInstr` instructions contain a numeric
-position (index) within this saved value array where to find the length
-or selector value.
+dynamic-length array/string, or the selector of a variant, as the
+`internal::BeginReadDlArrayInstr`, `internal::BeginReadDlStrInstr`,
+`internal::BeginReadVarUSelInstr`, and `internal::BeginReadVarSSelInstr`
+instructions contain a numeric position (index) within this saved value
+array where to find the length or selector value.
 
 `internal::PktProcBuilder` contains the logic to insert
 `internal::SaveValInstr` instructions at specific locations within the
 procedures and to assign appropriate positions to link "`begin read
-dynamic array`", "`begin read dynamic-length string`", and "`begin read
-variant`" instructions to their length/selector values.
+dynamic-length array`", "`begin read dynamic-length string`", and
+"`begin read variant`" instructions to their length/selector values.
 
 [[data-src-factory]]
 == Data source factory
@@ -401,18 +400,19 @@ State handling however is an inline `switch` statement with about
 The reason why there are instructions _and_ VM states is that the yactfr
 instruction set is not general enough. This would result in many useless
 function calls in some situations. For example, the
-`internal::BeginReadStaticArrayInstr` requires the VM to start reading a
-static array. This instruction object contains the length of the static
-array, that is, the number of items to read next. The static array
-reading instruction contains a subprocedure which only contains which
-instruction to execute to read a single array element. It doesn't
-contain register decrementation, comparison, and jump instructions like
-you would find in a typical assembly loop. Instead, the state of the VM
-is changed (to `VmState::EXEC_ARRAY_INSTR`) so that it knows that it's
-currently decoding an array at this stack level, and the VM position
-contains the number of remaining elements. The decrementation,
-comparison, and stack popping when it's done are implicit. This proves
-faster than executing three instructions for each array item.
+`internal::BeginReadSlArrayInstr` requires the VM to start reading a
+static-length array. This instruction object contains the length of the
+static-length array, that is, the number of items to read next. The
+static-length array reading instruction contains a subprocedure which
+only contains which instruction to execute to read a single array
+element. It doesn't contain register decrementation, comparison, and
+jump instructions like you would find in a typical assembly loop.
+Instead, the state of the VM is changed (to `VmState::EXEC_ARRAY_INSTR`)
+so that it knows that it's currently decoding an array at this stack
+level, and the VM position contains the number of remaining elements.
+The decrementation, comparison, and stack popping when it's done are
+implicit. This proves faster than executing three instructions for each
+array item.
 
 === Fixed-length integer decoding
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,8 +16,8 @@
 #include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
@@ -110,16 +110,16 @@ const ArrayType& DataType::asArrayType() const noexcept
     return static_cast<const ArrayType&>(*this);
 }
 
-const StaticArrayType& DataType::asStaticArrayType() const noexcept
+const StaticLengthArrayType& DataType::asStaticLengthArrayType() const noexcept
 {
-    assert(this->isStaticArrayType());
-    return static_cast<const StaticArrayType&>(*this);
+    assert(this->isStaticLengthArrayType());
+    return static_cast<const StaticLengthArrayType&>(*this);
 }
 
-const DynamicArrayType& DataType::asDynamicArrayType() const noexcept
+const DynamicLengthArrayType& DataType::asDynamicLengthArrayType() const noexcept
 {
-    assert(this->isDynamicArrayType());
-    return static_cast<const DynamicArrayType&>(*this);
+    assert(this->isDynamicLengthArrayType());
+    return static_cast<const DynamicLengthArrayType&>(*this);
 }
 
 const NonNullTerminatedStringType& DataType::asNonNullTerminatedStringType() const noexcept

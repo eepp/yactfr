@@ -15,8 +15,8 @@
 
 #include "metadata/fwd.hpp"
 #include "metadata/fl-enum-type.hpp"
-#include "metadata/static-array-type.hpp"
-#include "metadata/dyn-array-type.hpp"
+#include "metadata/sl-array-type.hpp"
+#include "metadata/dl-array-type.hpp"
 #include "metadata/sl-str-type.hpp"
 #include "metadata/dl-str-type.hpp"
 #include "metadata/var-type.hpp"
@@ -108,11 +108,11 @@ public:
         /// StructureBeginningElement
         STRUCTURE_BEGINNING,
 
-        /// StaticArrayBeginningElement
-        STATIC_ARRAY_BEGINNING,
+        /// StaticLengthArrayBeginningElement
+        STATIC_LENGTH_ARRAY_BEGINNING,
 
-        /// DynamicArrayBeginningElement
-        DYNAMIC_ARRAY_BEGINNING,
+        /// DynamicLengthArrayBeginningElement
+        DYNAMIC_LENGTH_ARRAY_BEGINNING,
 
         /// StaticLengthStringBeginningElement
         STATIC_LENGTH_STRING_BEGINNING,
@@ -1066,34 +1066,35 @@ protected:
 
 /*!
 @brief
-    Static array beginning element.
+    Static-length array beginning element.
 
 @ingroup elems
 
-This element indicates the beginning of a data stream static array.
+This element indicates the beginning of a data stream static-length
+array.
 
-The next elements until the next EndElement at the same level are
-all part of this static array.
+The next elements until the next EndElement at the same level are all
+part of this static-length array.
 
 @sa EndElement
 */
-class StaticArrayBeginningElement final :
+class StaticLengthArrayBeginningElement final :
     public ArrayBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit StaticArrayBeginningElement() :
-        ArrayBeginningElement {Kind::STATIC_ARRAY_BEGINNING}
+    explicit StaticLengthArrayBeginningElement() :
+        ArrayBeginningElement {Kind::STATIC_LENGTH_ARRAY_BEGINNING}
     {
     }
 
 public:
-    /// Static array type.
-    const StaticArrayType& type() const noexcept
+    /// Static-length array type.
+    const StaticLengthArrayType& type() const noexcept
     {
-        return _dt->asStaticArrayType();
+        return _dt->asStaticLengthArrayType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1104,34 +1105,35 @@ public:
 
 /*!
 @brief
-    Dynamic array beginning element.
+    Dynamic-length array beginning element.
 
 @ingroup elems
 
-This element indicates the beginning of a data stream dynamic array.
+This element indicates the beginning of a data stream dynamic-length
+array.
 
 The next elements until the next EndElement at the same level are all
-part of this dynamic array.
+part of this dynamic-length array.
 
 @sa EndElement
 */
-class DynamicArrayBeginningElement final :
+class DynamicLengthArrayBeginningElement final :
     public ArrayBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit DynamicArrayBeginningElement() :
-        ArrayBeginningElement {Kind::DYNAMIC_ARRAY_BEGINNING}
+    explicit DynamicLengthArrayBeginningElement() :
+        ArrayBeginningElement {Kind::DYNAMIC_LENGTH_ARRAY_BEGINNING}
     {
     }
 
 public:
-    /// Dynamic array type.
-    const DynamicArrayType& type() const noexcept
+    /// Dynamic-length array type.
+    const DynamicLengthArrayType& type() const noexcept
     {
-        return _dt->asDynamicArrayType();
+        return _dt->asDynamicLengthArrayType();
     }
 
     void accept(ElementVisitor& visitor) const override

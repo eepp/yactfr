@@ -243,13 +243,13 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_SCOPE)] = &Vm::_execEndReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STRUCT)] = &Vm::_execBeginReadStruct;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_STRUCT)] = &Vm::_execEndReadStruct;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_ARRAY)] = &Vm::_execBeginReadStaticArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_STATIC_ARRAY)] = &Vm::_execEndReadStaticArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_ARRAY)] = &Vm::_execBeginReadSlArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_SL_ARRAY)] = &Vm::_execEndReadSlArray;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_STR)] = &Vm::_execBeginReadSlStr;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_SL_STR)] = &Vm::_execEndReadSlStr;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_UUID_ARRAY)] = &Vm::_execBeginReadStaticUuidArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYN_ARRAY)] = &Vm::_execBeginReadDynArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYN_ARRAY)] = &Vm::_execEndReadDynArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_UUID_ARRAY)] = &Vm::_execBeginReadSlUuidArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DL_ARRAY)] = &Vm::_execBeginReadDlArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DL_ARRAY)] = &Vm::_execEndReadDlArray;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DL_STR)] = &Vm::_execBeginReadDlStr;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_DL_STR)] = &Vm::_execEndReadDlStr;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_SSEL)] = &Vm::_execBeginReadVarSSel;
@@ -660,12 +660,12 @@ Vm::_ExecReaction Vm::_execEndReadStruct(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadStaticArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadSlArray(const Instr& instr)
 {
-    return this->_execBeginReadStaticArray(instr, VmState::EXEC_ARRAY_INSTR);
+    return this->_execBeginReadSlArray(instr, VmState::EXEC_ARRAY_INSTR);
 }
 
-Vm::_ExecReaction Vm::_execEndReadStaticArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadSlArray(const Instr& instr)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -688,23 +688,23 @@ Vm::_ExecReaction Vm::_execEndReadSlStr(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadStaticUuidArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadSlUuidArray(const Instr& instr)
 {
-    return this->_execBeginReadStaticArray(instr, VmState::READ_UUID_BYTE);
+    return this->_execBeginReadSlArray(instr, VmState::READ_UUID_BYTE);
 }
 
-Vm::_ExecReaction Vm::_execBeginReadDynArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadDlArray(const Instr& instr)
 {
-    const auto& beginReadDynArrayInstr = static_cast<const BeginReadDynArrayInstr&>(instr);
+    const auto& beginReadDlArrayInstr = static_cast<const BeginReadDlArrayInstr&>(instr);
 
-    _pos.elems.dynArrayBeginning._dt = &beginReadDynArrayInstr.dynArrayType();
-    this->_execBeginReadDynData(beginReadDynArrayInstr, _pos.elems.dynArrayBeginning,
-                                beginReadDynArrayInstr.lenPos(), _pos.elems.dynArrayBeginning._len,
-                                &beginReadDynArrayInstr.proc(), VmState::EXEC_ARRAY_INSTR);
+    _pos.elems.dlArrayBeginning._dt = &beginReadDlArrayInstr.dlArrayType();
+    this->_execBeginReadDynData(beginReadDlArrayInstr, _pos.elems.dlArrayBeginning,
+                                beginReadDlArrayInstr.lenPos(), _pos.elems.dlArrayBeginning._len,
+                                &beginReadDlArrayInstr.proc(), VmState::EXEC_ARRAY_INSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDynArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDlArray(const Instr& instr)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;

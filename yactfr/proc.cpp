@@ -312,12 +312,12 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "END_READ_STRUCT";
         break;
 
-    case Kind::BEGIN_READ_STATIC_ARRAY:
-        kindStr = "BEGIN_READ_STATIC_ARRAY";
+    case Kind::BEGIN_READ_SL_ARRAY:
+        kindStr = "BEGIN_READ_SL_ARRAY";
         break;
 
-    case Kind::END_READ_STATIC_ARRAY:
-        kindStr = "END_READ_STATIC_ARRAY";
+    case Kind::END_READ_SL_ARRAY:
+        kindStr = "END_READ_SL_ARRAY";
         break;
 
     case Kind::BEGIN_READ_SL_STR:
@@ -328,16 +328,16 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "END_READ_SL_STR";
         break;
 
-    case Kind::BEGIN_READ_STATIC_UUID_ARRAY:
-        kindStr = "BEGIN_READ_STATIC_UUID_ARRAY";
+    case Kind::BEGIN_READ_SL_UUID_ARRAY:
+        kindStr = "BEGIN_READ_SL_UUID_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_DYN_ARRAY:
-        kindStr = "BEGIN_READ_DYN_ARRAY";
+    case Kind::BEGIN_READ_DL_ARRAY:
+        kindStr = "BEGIN_READ_DL_ARRAY";
         break;
 
-    case Kind::END_READ_DYN_ARRAY:
-        kindStr = "END_READ_DYN_ARRAY";
+    case Kind::END_READ_DL_ARRAY:
+        kindStr = "END_READ_DL_ARRAY";
         break;
 
     case Kind::BEGIN_READ_DL_STR:
@@ -871,8 +871,8 @@ EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * 
     ReadDataInstr {kind, member, dt}
 {
     assert(kind == Kind::END_READ_STRUCT ||
-           kind == Kind::END_READ_STATIC_ARRAY ||
-           kind == Kind::END_READ_DYN_ARRAY ||
+           kind == Kind::END_READ_SL_ARRAY ||
+           kind == Kind::END_READ_DL_ARRAY ||
            kind == Kind::END_READ_SL_STR ||
            kind == Kind::END_READ_DL_STR ||
            kind == Kind::END_READ_VAR);
@@ -976,21 +976,21 @@ std::string EndReadScopeInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-BeginReadStaticArrayInstr::BeginReadStaticArrayInstr(const Kind kind,
-                                                     const StructureMemberType * const member,
-                                                     const DataType& dt) :
+BeginReadSlArrayInstr::BeginReadSlArrayInstr(const Kind kind,
+                                             const StructureMemberType * const member,
+                                             const DataType& dt) :
     BeginReadCompoundInstr {kind, member, dt},
-    _len {dt.asStaticArrayType().length()}
+    _len {dt.asStaticLengthArrayType().length()}
 {
 }
 
-BeginReadStaticArrayInstr::BeginReadStaticArrayInstr(const StructureMemberType * const member,
-                                                     const DataType& dt) :
-    BeginReadStaticArrayInstr {Kind::BEGIN_READ_STATIC_ARRAY, member, dt}
+BeginReadSlArrayInstr::BeginReadSlArrayInstr(const StructureMemberType * const member,
+                                             const DataType& dt) :
+    BeginReadSlArrayInstr {Kind::BEGIN_READ_SL_ARRAY, member, dt}
 {
 }
 
-std::string BeginReadStaticArrayInstr::_toStr(const Size indent) const
+std::string BeginReadSlArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -1014,19 +1014,19 @@ std::string BeginReadSlStrInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-BeginReadStaticUuidArrayInstr::BeginReadStaticUuidArrayInstr(const StructureMemberType * const member,
-                                                             const DataType& dt) :
-    BeginReadStaticArrayInstr {Kind::BEGIN_READ_STATIC_UUID_ARRAY, member, dt}
+BeginReadSlUuidArrayInstr::BeginReadSlUuidArrayInstr(const StructureMemberType * const member,
+                                                     const DataType& dt) :
+    BeginReadSlArrayInstr {Kind::BEGIN_READ_SL_UUID_ARRAY, member, dt}
 {
 }
 
-BeginReadDynArrayInstr::BeginReadDynArrayInstr(const StructureMemberType * const member,
-                                               const DataType& dt) :
-    BeginReadCompoundInstr {Kind::BEGIN_READ_DYN_ARRAY, member, dt}
+BeginReadDlArrayInstr::BeginReadDlArrayInstr(const StructureMemberType * const member,
+                                             const DataType& dt) :
+    BeginReadCompoundInstr {Kind::BEGIN_READ_DL_ARRAY, member, dt}
 {
 }
 
-std::string BeginReadDynArrayInstr::_toStr(const Size indent) const
+std::string BeginReadDlArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 

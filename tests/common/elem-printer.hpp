@@ -179,9 +179,9 @@ public:
         *_os << '\n';
     }
 
-    void visit(const yactfr::StaticArrayBeginningElement& elem) override
+    void visit(const yactfr::StaticLengthArrayBeginningElement& elem) override
     {
-        this->_visitDataElem(elem, "SA");
+        this->_visitDataElem(elem, "SLA");
         *_os << " {\n";
         ++_indentLevel;
     }
@@ -193,9 +193,9 @@ public:
         ++_indentLevel;
     }
 
-    void visit(const yactfr::DynamicArrayBeginningElement& elem) override
+    void visit(const yactfr::DynamicLengthArrayBeginningElement& elem) override
     {
-        this->_visitDataElem(elem, "DA");
+        this->_visitDataElem(elem, "DLA");
         *_os << " {\n";
         ++_indentLevel;
     }

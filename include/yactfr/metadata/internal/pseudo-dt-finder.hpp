@@ -59,12 +59,12 @@ public:
         this->_tryAdd(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoStaticArrayType>& pseudoDt) override
+    void visit(_PseudoDt<PseudoSlArrayType>& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoDynArrayType>& pseudoDt) override
+    void visit(_PseudoDt<PseudoDlArrayType>& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }

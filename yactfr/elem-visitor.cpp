@@ -93,7 +93,7 @@ void ElementVisitor::visit(const SubstringElement& elem)
 {
 }
 
-void ElementVisitor::visit(const StaticArrayBeginningElement& elem)
+void ElementVisitor::visit(const StaticLengthArrayBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
@@ -103,7 +103,7 @@ void ElementVisitor::visit(const StaticLengthStringBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const DynamicArrayBeginningElement& elem)
+void ElementVisitor::visit(const DynamicLengthArrayBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }

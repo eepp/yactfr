@@ -38,39 +38,39 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           SA:hope {
+     0           SLA:hope {
      0             ST {
      0               FLUE:tag:67
-     8               SA:point {
+     8               SLA:point {
      8                 ST {
-     8                   SA:v {
+     8                   SLA:v {
      8                     VU:67 {
-     8                       SA {
+     8                       SLA {
      8                         FLUI:1
     16                         FLUI:2
     24                         FLUI:3
     32                       }
     32                     }
     32                     VU:67 {
-    32                       SA {
+    32                       SLA {
     32                         FLUI:4
     40                         FLUI:5
     48                         FLUI:6
     56                       }
     56                     }
     56                   }
-    56                   SA:zz {
+    56                   SLA:zz {
     56                   }
     56                 }
     56               }
     56             }
     56             ST {
     56               FLUE:tag:66
-    64               SA:point {
+    64               SLA:point {
     64                 ST {
-    64                   SA:v {
+    64                   SLA:v {
     64                     VU:66 {
-    64                       SA {
+    64                       SLA {
     64                         NTS {
     64                           SS:7:purple
    120                         }
@@ -80,7 +80,7 @@ event {
    160                       }
    160                     }
    160                     VU:66 {
-   160                       SA {
+   160                       SLA {
    160                         NTS {
    160                           SS:7:planes
    216                         }
@@ -90,7 +90,7 @@ event {
    256                       }
    256                     }
    256                   }
-   256                   SA:zz {
+   256                   SLA:zz {
    256                   }
    256                 }
    256               }

@@ -151,9 +151,10 @@ event {
 ----
 --
 
-* TSDL: Doesn't support relative dynamic array type lengths and variant
-  type selectors in data type aliases (or named structure/variant type)
-  which target structure member types outside this data type alias.
+* TSDL: Doesn't support relative dynamic-length array type lengths and
+  variant type selectors in data type aliases (or named
+  structure/variant type) which target structure member types outside
+  this data type alias.
 +
 For example, this is not supported (TSDL):
 +
@@ -453,9 +454,9 @@ int main(const int argc, const char * const argv[])
         case yactfr::Element::Kind::EVENT_RECORD_BEGINNING:
         case yactfr::Element::Kind::NULL_TERMINATED_STRING_BEGINNING:
         case yactfr::Element::Kind::STRUCTURE_BEGINNING:
-        case yactfr::Element::Kind::STATIC_ARRAY_BEGINNING:
+        case yactfr::Element::Kind::STATIC_LENGTH_ARRAY_BEGINNING:
+        case yactfr::Element::Kind::DYNAMIC_LENGTH_ARRAY_BEGINNING:
         case yactfr::Element::Kind::STATIC_LENGTH_STRING_BEGINNING:
-        case yactfr::Element::Kind::DYNAMIC_ARRAY_BEGINNING:
         case yactfr::Element::Kind::DYNAMIC_LENGTH_STRING_BEGINNING:
         case yactfr::Element::Kind::VARIANT_WITH_SIGNED_SELECTOR_BEGINNING:
         case yactfr::Element::Kind::VARIANT_WITH_UNSIGNED_SELECTOR_BEGINNING:

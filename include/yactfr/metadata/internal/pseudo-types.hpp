@@ -41,8 +41,8 @@ namespace internal {
  *
  * If `isEnv` is true, then the parsed data location was
  * `env.SOMETHING`, where `SOMETHING` must be an existing environment
- * key (for static array types). The first element of `pathElems` is
- * `SOMETHING` in this case.
+ * key (for static-length array types). The first element of `pathElems`
+ * is `SOMETHING` in this case.
  *
  * If `isAbs` is false, then don't consider `scope`. Otherwise, `scope`
  * indicates the root scope, and `pathElems` contains everything else
@@ -111,8 +111,8 @@ public:
         SCALAR_DT_WRAPPER,
         FL_UINT,
         FL_UENUM,
-        STATIC_ARRAY,
-        DYN_ARRAY,
+        SL_ARRAY,
+        DL_ARRAY,
         STRUCT,
         VAR,
     };
@@ -350,18 +350,18 @@ private:
 };
 
 /*
- * Pseudo static array type.
+ * Pseudo static-length array type.
  */
-class PseudoStaticArrayType final :
+class PseudoSlArrayType final :
     public PseudoArrayType
 {
 public:
-    explicit PseudoStaticArrayType(Size len, PseudoDt::UP pseudoElemType,
-                                   TextLocation loc = TextLocation {});
+    explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
+                               TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::STATIC_ARRAY;
+        return PseudoDt::Kind::SL_ARRAY;
     }
 
     PseudoDt::UP clone() const override;
@@ -390,20 +390,20 @@ private:
 };
 
 /*
- * Pseudo dynamic array type.
+ * Pseudo dynamic-length array type.
  *
  * `pseudoLenLoc` may be a relative data location.
  */
-class PseudoDynArrayType final :
+class PseudoDlArrayType final :
     public PseudoArrayType
 {
 public:
-    explicit PseudoDynArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                                TextLocation loc = TextLocation {});
+    explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
+                               TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::DYN_ARRAY;
+        return PseudoDt::Kind::DL_ARRAY;
     }
 
     PseudoDt::UP clone() const override;

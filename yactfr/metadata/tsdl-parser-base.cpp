@@ -14,9 +14,9 @@
 #include <yactfr/metadata/internal/tsdl-attr.hpp>
 #include <yactfr/metadata/internal/tsdl-parser-base.hpp>
 #include <yactfr/metadata/internal/trace-type-from-pseudo-trace-type.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
@@ -86,16 +86,16 @@ void TsdlParserBase::_setImplicitMappedClkTypeName()
     }
 }
 
-void TsdlParserBase::_setPseudoStaticArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
-                                                                const std::string& memberTypeName)
+void TsdlParserBase::_setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
+                                                            const std::string& memberTypeName)
 {
     const auto pseudoDts = findPseudoDtsByName(basePseudoDt, memberTypeName,
                                                [](auto& pseudoDt) {
-        if (pseudoDt.kind() != PseudoDt::Kind::STATIC_ARRAY) {
+        if (pseudoDt.kind() != PseudoDt::Kind::SL_ARRAY) {
             return false;
         }
 
-        auto& pseudoArrayType = static_cast<const PseudoStaticArrayType&>(pseudoDt);
+        auto& pseudoArrayType = static_cast<const PseudoSlArrayType&>(pseudoDt);
 
         if (pseudoArrayType.len() != 16) {
             return false;
@@ -119,7 +119,7 @@ void TsdlParserBase::_setPseudoStaticArrayTypeTraceTypeUuidRole(PseudoDt& basePs
     });
 
     for (auto& pseudoDt : pseudoDts) {
-        auto& pseudoArrayType = static_cast<PseudoStaticArrayType&>(*pseudoDt);
+        auto& pseudoArrayType = static_cast<PseudoSlArrayType&>(*pseudoDt);
 
         pseudoArrayType.hasTraceTypeUuidRole(true);
     }
@@ -144,12 +144,12 @@ public:
         this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
     }
 
-    void visit(PseudoStaticArrayType& pseudoDt) override
+    void visit(PseudoSlArrayType& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
-    void visit(PseudoDynArrayType& pseudoDt) override
+    void visit(PseudoDlArrayType& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
@@ -198,8 +198,8 @@ void TsdlParserBase::_addPseudoDtRoles()
         this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(),
                                         "stream_instance_id",
                                         UnsignedIntegerTypeRole::DATA_STREAM_ID);
-        this->_setPseudoStaticArrayTypeTraceTypeUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
-                                                         "uuid");
+        this->_setPseudoSlArrayTypeTraceTypeUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
+                                                     "uuid");
     }
 
     for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
@@ -294,12 +294,12 @@ public:
         this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
     }
 
-    void visit(PseudoStaticArrayType& pseudoDt) override
+    void visit(PseudoSlArrayType& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
-    void visit(PseudoDynArrayType& pseudoDt) override
+    void visit(PseudoDlArrayType& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
@@ -425,8 +425,8 @@ void TsdlParserBase::_checkDupPseudoNamedDt(const PseudoNamedDts& entries, const
 
 bool TsdlParserBase::_isPseudoVarTypeWithoutSelLocRec(const PseudoDt& pseudoDt)
 {
-    if (pseudoDt.kind() == PseudoDt::Kind::STATIC_ARRAY ||
-            pseudoDt.kind() == PseudoDt::Kind::DYN_ARRAY) {
+    if (pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY ||
+            pseudoDt.kind() == PseudoDt::Kind::DL_ARRAY) {
         auto& pseudoArrayType = static_cast<const PseudoArrayType&>(pseudoDt);
 
         return TsdlParserBase::_isPseudoVarTypeWithoutSelLocRec(pseudoArrayType.pseudoElemType());
@@ -595,11 +595,11 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromRelAllPathElems
      *     } := some_name;
      *
      * In this last example, the location of the length data type for
-     * the dynamic array type `seq[a]` contained in `my_struct b` is NOT
-     * `int a` immediately before, but rather `my_int a`. In practice,
-     * this trick of using a data type which is external to a data type
-     * alias for dynamic array type lengths or variant type selectors is
-     * rarely, if ever, used.
+     * the dynamic-length array type `seq[a]` contained in `my_struct b`
+     * is NOT `int a` immediately before, but rather `my_int a`. In
+     * practice, this trick of using a data type which is external to a
+     * data type alias for dynamic-length array type lengths or variant
+     * type selectors is rarely, if ever, used.
      *
      * So this is easy to detect, because each time this parser "enters"
      * a data type alias (with the `typealias` keyword or with a named

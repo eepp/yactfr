@@ -22,7 +22,7 @@ c1fc1fc1 1225a44c-b439-4f03-912b-577de11d44d3 ff
      0       ST {
      0         FLUI:magic:3254525889
     32         PMN:3254525889
-    32         SA:uuid {
+    32         SLA:uuid {
     32           FLUI:18
     40           FLUI:37
     48           FLUI:164

@@ -29,7 +29,7 @@ event {
      8           NTS:salut {
      8             SS:15:salut les mecs
    128           }
-   128           DA:meow {
+   128           DLA:meow {
    128             FLUI:17
    136             FLUI:34
    144             FLUI:51
@@ -45,7 +45,7 @@ event {
    160           NTS:salut {
    160             SS:9:tomatoes
    232           }
-   232           DA:meow {
+   232           DLA:meow {
    232             FLUI:170
    240             FLUI:187
    248           }
@@ -60,7 +60,7 @@ event {
    256           NTS:salut {
    256             SS:6:madly
    304           }
-   304           DA:meow {
+   304           DLA:meow {
    304             FLUI:1
    312             FLUI:2
    320             FLUI:3

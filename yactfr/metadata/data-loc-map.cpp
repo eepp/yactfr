@@ -12,9 +12,9 @@
 
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/internal/data-loc-map.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
@@ -40,7 +40,7 @@ DataLocation DataLocMap::_dataLocFromPseudoDataLoc(const PseudoDataLoc& pseudoDa
 {
     /*
      * `isEnv` is a temporary property which leads to a
-     * `PseudoStaticArrayType` instance in
+     * `PseudoSlArrayType` instance in
      * TsdlParser::_parseArraySubscripts().
      */
     assert(!pseudoDataLoc.isEnv());
@@ -103,17 +103,17 @@ DataLocation DataLocMap::_dataLocFromPseudoDataLoc(const PseudoDataLoc& pseudoDa
 void DataLocMap::_create(const PseudoDt& pseudoDt)
 {
     switch (pseudoDt.kind()) {
-    case PseudoDt::Kind::STATIC_ARRAY:
+    case PseudoDt::Kind::SL_ARRAY:
     {
-        auto& pseudoArrayType = static_cast<const PseudoStaticArrayType&>(pseudoDt);
+        auto& pseudoArrayType = static_cast<const PseudoSlArrayType&>(pseudoDt);
 
         this->_create(pseudoArrayType.pseudoElemType());
         break;
     }
 
-    case PseudoDt::Kind::DYN_ARRAY:
+    case PseudoDt::Kind::DL_ARRAY:
     {
-        auto& pseudoArrayType = static_cast<const PseudoDynArrayType&>(pseudoDt);
+        auto& pseudoArrayType = static_cast<const PseudoDlArrayType&>(pseudoDt);
 
         _map.emplace(std::make_pair(&pseudoArrayType,
                                     this->_dataLocFromPseudoDataLoc(pseudoArrayType.pseudoLenLoc())));

@@ -31,12 +31,12 @@ test_iter_data() {
   test_iter_data fail-align-beyond-data
 }
 
-@test 'array beyond content -> fail' {
-  test_iter_data fail-array-beyond-content
+@test 'static-length array beyond content -> fail' {
+  test_iter_data fail-sl-array-beyond-content
 }
 
-@test 'array beyond data -> fail' {
-  test_iter_data fail-array-beyond-data
+@test 'static-length array beyond data -> fail' {
+  test_iter_data fail-sl-array-beyond-data
 }
 
 @test 'BE to LE byte order change within same byte -> fail' {
@@ -87,12 +87,12 @@ test_iter_data() {
   test_iter_data fail-pkt-total-len-too-small
 }
 
-@test 'dynamic array beyond content -> fail' {
-  test_iter_data fail-dyn-array-beyond-content
+@test 'dynamic-length array beyond content -> fail' {
+  test_iter_data fail-dl-array-beyond-content
 }
 
-@test 'dynamic array beyond data -> fail' {
-  test_iter_data fail-dyn-array-beyond-data
+@test 'dynamic-length array beyond data -> fail' {
+  test_iter_data fail-dl-array-beyond-data
 }
 
 @test 'null-terminated string beyond content -> fail' {
@@ -153,12 +153,12 @@ test_iter_data() {
   test_iter_data pass-all-basic-features-le
 }
 
-@test 'array of empty structures -> pass' {
-  test_iter_data pass-array-empty-structs
+@test 'static-length array of empty structures -> pass' {
+  test_iter_data pass-sl-array-empty-structs
 }
 
-@test 'various arrays -> pass' {
-  test_iter_data pass-arrays
+@test 'various static-length arrays -> pass' {
+  test_iter_data pass-sl-arrays
 }
 
 @test 'clock values -> pass' {
@@ -169,8 +169,8 @@ test_iter_data() {
   test_iter_data pass-implicit-def-clk-ts-role
 }
 
-@test 'complex arrays -> pass' {
-  test_iter_data pass-complex-arrays
+@test 'complex static-length arrays -> pass' {
+  test_iter_data pass-complex-sl-arrays
 }
 
 @test 'data stream ID -> pass' {
@@ -237,16 +237,16 @@ test_iter_data() {
   test_iter_data pass-pkt-total-len-no-pkt-content-len
 }
 
-@test 'dynamic array of empty structures -> pass' {
-  test_iter_data pass-dyn-array-empty-structs
+@test 'dynamic-length array of empty structures -> pass' {
+  test_iter_data pass-dl-array-empty-structs
 }
 
-@test 'various dynamic arrays -> pass' {
-  test_iter_data pass-dyn-arrays
+@test 'various dynamic-length arrays -> pass' {
+  test_iter_data pass-dl-arrays
 }
 
-@test 'dynamic array: multiple possible lengths -> pass' {
-  test_iter_data pass-dyn-array-multi-len
+@test 'dynamic-length array: multiple possible lengths -> pass' {
+  test_iter_data pass-dl-array-multi-len
 }
 
 @test 'null-terminated string alignment -> pass' {
@@ -273,8 +273,8 @@ test_iter_data() {
   test_iter_data pass-vars pass-pkt-header-uuid-nt-str
 }
 
-@test 'packet header: array of null-terminated strings named `uuid` -> pass' {
-  test_iter_data pass-vars pass-pkt-header-uuid-array-of-nt-strs
+@test 'packet header: static-length array of null-terminated strings named `uuid` -> pass' {
+  test_iter_data pass-vars pass-pkt-header-uuid-sl-array-of-nt-strs
 }
 
 @test 'packet header: null-terminated string named `stream_id` -> pass' {

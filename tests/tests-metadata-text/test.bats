@@ -330,8 +330,8 @@ test_metadata_pass() {
   test_metadata_fail dt-alias-dup
 }
 
-@test 'data type alias: length type of dynamic array type outside alias scope -> fail' {
-  test_metadata_fail dt-alias-dyn-array-type-len-type-outside
+@test 'data type alias: length type of dynamic-length array type outside alias scope -> fail' {
+  test_metadata_fail dt-alias-dl-array-type-len-type-outside
 }
 
 @test 'data type alias: length type of dynamic-length string type outside alias scope -> fail' {
@@ -750,40 +750,40 @@ test_metadata_pass() {
   test_metadata_fail var-type-named-rel-sel-loc
 }
 
-@test 'static array type: empty length -> fail' {
-  test_metadata_fail static-array-type-len-empty
+@test 'static-length array type: empty length -> fail' {
+  test_metadata_fail sl-array-type-len-empty
 }
 
-@test 'static array type: length is negative -> fail' {
-  test_metadata_fail static-array-type-len-neg
+@test 'static-length array type: length is negative -> fail' {
+  test_metadata_fail sl-array-type-len-neg
 }
 
-@test 'static array type: wrong length -> fail' {
-  test_metadata_fail static-array-type-wrong-len
+@test 'static-length array type: wrong length -> fail' {
+  test_metadata_fail sl-array-type-wrong-len
 }
 
-@test 'static array type: negative length through `env` reference -> fail' {
-  test_metadata_fail static-array-type-env-ref-len-neg
+@test 'static-length array type: negative length through `env` reference -> fail' {
+  test_metadata_fail sl-array-type-env-ref-len-neg
 }
 
-@test 'static array type: `env` reference with missing `env` block -> fail' {
-  test_metadata_fail static-array-type-env-ref-missing-env-block
+@test 'static-length array type: `env` reference with missing `env` block -> fail' {
+  test_metadata_fail sl-array-type-env-ref-missing-env-block
 }
 
-@test 'static array type: missing `env` reference key -> fail' {
-  test_metadata_fail static-array-type-env-ref-missing-key
+@test 'static-length array type: missing `env` reference key -> fail' {
+  test_metadata_fail sl-array-type-env-ref-missing-key
 }
 
-@test 'static array type: missing `env` reference entry -> fail' {
-  test_metadata_fail static-array-type-env-ref-missing
+@test 'static-length array type: missing `env` reference entry -> fail' {
+  test_metadata_fail sl-array-type-env-ref-missing
 }
 
-@test 'static array type: `env` reference is too long -> fail' {
-  test_metadata_fail static-array-type-env-ref-too-long
+@test 'static-length array type: `env` reference is too long -> fail' {
+  test_metadata_fail sl-array-type-env-ref-too-long
 }
 
-@test 'static array type: `env` reference is a string -> fail' {
-  test_metadata_fail static-array-type-env-ref-str-val
+@test 'static-length array type: `env` reference is a string -> fail' {
+  test_metadata_fail sl-array-type-env-ref-str-val
 }
 
 @test 'static-length string type: empty length -> fail' {
@@ -822,60 +822,60 @@ test_metadata_pass() {
   test_metadata_fail sl-str-type-env-ref-str-val
 }
 
-@test 'dynamic array type: invalid length location (1) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-1
+@test 'dynamic-length array type: invalid length location (1) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-1
 }
 
-@test 'dynamic array type: invalid length location (2) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-2
+@test 'dynamic-length array type: invalid length location (2) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-2
 }
 
-@test 'dynamic array type: invalid length location (3) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-3
+@test 'dynamic-length array type: invalid length location (3) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-3
 }
 
-@test 'dynamic array type: invalid length location (4) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-4
+@test 'dynamic-length array type: invalid length location (4) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-4
 }
 
-@test 'dynamic array type: invalid length location (5) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-5
+@test 'dynamic-length array type: invalid length location (5) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-5
 }
 
-@test 'dynamic array type: invalid length location (6) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-6
+@test 'dynamic-length array type: invalid length location (6) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-6
 }
 
-@test 'dynamic array type: invalid length location (7) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-7
+@test 'dynamic-length array type: invalid length location (7) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-7
 }
 
-@test 'dynamic array type: invalid length location (8) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-8
+@test 'dynamic-length array type: invalid length location (8) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-8
 }
 
-@test 'dynamic array type: invalid length location (9) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-9
+@test 'dynamic-length array type: invalid length location (9) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-9
 }
 
-@test 'dynamic array type: invalid length location (10) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-10
+@test 'dynamic-length array type: invalid length location (10) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-10
 }
 
-@test 'dynamic array type: invalid length location (11) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-11
+@test 'dynamic-length array type: invalid length location (11) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-11
 }
 
-@test 'dynamic array type: invalid length location (12) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-12
+@test 'dynamic-length array type: invalid length location (12) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-12
 }
 
-@test 'dynamic array type: invalid length location (13) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-13
+@test 'dynamic-length array type: invalid length location (13) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-13
 }
 
-@test 'dynamic array type: invalid length location (14) -> fail' {
-  test_metadata_fail dyn-array-type-inval-len-loc-14
+@test 'dynamic-length array type: invalid length location (14) -> fail' {
+  test_metadata_fail dl-array-type-inval-len-loc-14
 }
 
 @test 'dynamic-length string type: invalid length location (1) -> fail' {
@@ -1276,92 +1276,92 @@ test_metadata_pass() {
   test_metadata_pass fl-enum-type-alias
 }
 
-@test 'dynamic array type: valid length location (1) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-1
+@test 'dynamic-length array type: valid length location (1) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-1
 }
 
-@test 'dynamic array type: valid length location (2) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-2
+@test 'dynamic-length array type: valid length location (2) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-2
 }
 
-@test 'dynamic array type: valid length location (3) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-3
+@test 'dynamic-length array type: valid length location (3) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-3
 }
 
-@test 'dynamic array type: valid length location (4) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-4
+@test 'dynamic-length array type: valid length location (4) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-4
 }
 
-@test 'dynamic array type: valid length location (5) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-5
+@test 'dynamic-length array type: valid length location (5) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-5
 }
 
-@test 'dynamic array type: valid length location (6) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-6
+@test 'dynamic-length array type: valid length location (6) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-6
 }
 
-@test 'dynamic array type: valid length location (7) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-7
+@test 'dynamic-length array type: valid length location (7) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-7
 }
 
-@test 'dynamic array type: valid length location (8) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-8
+@test 'dynamic-length array type: valid length location (8) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-8
 }
 
-@test 'dynamic array type: valid length location (9) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-9
+@test 'dynamic-length array type: valid length location (9) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-9
 }
 
-@test 'dynamic array type: valid length location (10) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-10
+@test 'dynamic-length array type: valid length location (10) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-10
 }
 
-@test 'dynamic array type: valid length location: multiple length types (1) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-1
+@test 'dynamic-length array type: valid length location: multiple length types (1) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-1
 }
 
-@test 'dynamic array type: valid length location: multiple length types (2) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-2
+@test 'dynamic-length array type: valid length location: multiple length types (2) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-2
 }
 
-@test 'dynamic array type: valid length location: multiple length types (3) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-3
+@test 'dynamic-length array type: valid length location: multiple length types (3) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-3
 }
 
-@test 'dynamic array type: valid length location: multiple length types (4) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-4
+@test 'dynamic-length array type: valid length location: multiple length types (4) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-4
 }
 
-@test 'dynamic array type: valid length location: multiple length types (5) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-5
+@test 'dynamic-length array type: valid length location: multiple length types (5) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-5
 }
 
-@test 'dynamic array type: valid length location: multiple length types (6) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-6
+@test 'dynamic-length array type: valid length location: multiple length types (6) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-6
 }
 
-@test 'dynamic array type: valid length location: multiple length types (7) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-7
+@test 'dynamic-length array type: valid length location: multiple length types (7) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-7
 }
 
-@test 'dynamic array type: valid length location: multiple length types (8) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-8
+@test 'dynamic-length array type: valid length location: multiple length types (8) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-8
 }
 
-@test 'dynamic array type: valid length location: multiple length types (9) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-9
+@test 'dynamic-length array type: valid length location: multiple length types (9) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-9
 }
 
-@test 'dynamic array type: valid length location: multiple length types (10) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-10
+@test 'dynamic-length array type: valid length location: multiple length types (10) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-10
 }
 
-@test 'dynamic array type: valid length location: multiple length types (11) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-11
+@test 'dynamic-length array type: valid length location: multiple length types (11) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-11
 }
 
-@test 'dynamic array type: valid length location: multiple length types (12) -> pass' {
-  test_metadata_pass dyn-array-type-len-loc-multi-12
+@test 'dynamic-length array type: valid length location: multiple length types (12) -> pass' {
+  test_metadata_pass dl-array-type-len-loc-multi-12
 }
 
 @test 'dynamic-length string type: valid length location (1) -> pass' {
@@ -1452,11 +1452,11 @@ test_metadata_pass() {
   test_metadata_pass dl-str-type-len-loc-multi-12
 }
 
-@test 'static array type: `env` reference for length -> pass' {
-  test_metadata_pass static-array-type-len-env-ref
+@test 'static-length array type: `env` reference for length -> pass' {
+  test_metadata_pass sl-array-type-len-env-ref
 }
 
-@test 'static array type: signed element type -> pass' {
+@test 'static-length array type: signed element type -> pass' {
   test_metadata_pass sl-str-signed-elem-type
 }
 
@@ -1580,23 +1580,23 @@ test_metadata_pass() {
   test_metadata_pass trace-type-ph-type-uuid-member-1
 }
 
-@test 'trace type: PH type: static array of strings type for `uuid` member -> pass' {
+@test 'trace type: PH type: static-length array of strings type for `uuid` member -> pass' {
   test_metadata_pass trace-type-ph-type-uuid-member-2
 }
 
-@test 'trace type: PH type: static array of 15 bytes type for `uuid` member -> pass' {
+@test 'trace type: PH type: static-length array of 15 bytes type for `uuid` member -> pass' {
   test_metadata_pass trace-type-ph-type-uuid-member-3
 }
 
-@test 'trace type: PH type: static array of 16 16-bit integers type for `uuid` member -> pass' {
+@test 'trace type: PH type: static-length array of 16 16-bit integers type for `uuid` member -> pass' {
   test_metadata_pass trace-type-ph-type-uuid-member-4
 }
 
-@test 'trace type: PH type: static array of 16-bit-aligned integers type for `uuid` member -> pass' {
+@test 'trace type: PH type: static-length array of 16-bit-aligned integers type for `uuid` member -> pass' {
   test_metadata_pass trace-type-ph-type-uuid-member-5
 }
 
-@test 'trace type: PH type: dynamic array type for `uuid` member -> pass' {
+@test 'trace type: PH type: dynamic-length array type for `uuid` member -> pass' {
   test_metadata_pass trace-type-ph-type-uuid-member-6
 }
 

@@ -10,8 +10,8 @@
 #include <type_traits>
 #include <boost/optional/optional.hpp>
 
-#include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 
@@ -77,9 +77,9 @@ void PktProcBuilder::_buildPktProc()
      *    any special rule.
      *
      * 2. In the `BeginReadScopeInstr` instruction of the trace preamble
-     *    procedure, find a first-level `uuid` "read static array"
-     *    instruction and replace it with a
-     *    `BeginReadStaticUuidArrayInstr` object.
+     *    procedure, find a first-level `uuid` "begin read static-length
+     *    array" instruction and replace it with a
+     *    `BeginReadSlUuidArrayInstr` object.
      *
      * 3. Insert `SetCurIdInstr`, `SetDstInstr`, `SetErtInstr`,
      *    `SetDsIdInstr`, `SetPktOriginIndexInstr`,
@@ -89,7 +89,7 @@ void PktProcBuilder::_buildPktProc()
      *    at the appropriate locations in the packet procedure.
      *
      * 4. Insert `SaveValInstr` objects where needed to accomodate
-     *    subsequent "begin read dynamic array", "begin read
+     *    subsequent "begin read dynamic-length array", "begin read
      *    dynamic-length string", and "begin read variant" instructions.
      *
      * 5. Insert "end procedure" instructions at the end of each
@@ -169,7 +169,7 @@ public:
         this->_visit(instr);
     }
 
-    void visit(BeginReadStaticArrayInstr& instr) override
+    void visit(BeginReadSlArrayInstr& instr) override
     {
         if (_findWithTraceTypeUuidRole && instr.staticArrayType().hasTraceTypeUuidRole()) {
             _func(_curInstrLoc);
@@ -178,12 +178,12 @@ public:
         this->_visit(instr);
     }
 
-    void visit(BeginReadStaticUuidArrayInstr& instr) override
+    void visit(BeginReadSlUuidArrayInstr& instr) override
     {
-        this->visit(static_cast<BeginReadStaticArrayInstr&>(instr));
+        this->visit(static_cast<BeginReadSlArrayInstr&>(instr));
     }
 
-    void visit(BeginReadDynArrayInstr& instr) override
+    void visit(BeginReadDlArrayInstr& instr) override
     {
         this->_visit(instr);
     }
@@ -248,10 +248,10 @@ void PktProcBuilder::_subUuidInstr()
     if (readArrayInstrIt != readScopeInstr.proc().end()) {
         auto& instrReadArray = static_cast<ReadDataInstr&>(**readArrayInstrIt);
 
-        *readArrayInstrIt = std::make_shared<BeginReadStaticUuidArrayInstr>(instrReadArray.memberType(),
-                                                                            instrReadArray.dt());
+        *readArrayInstrIt = std::make_shared<BeginReadSlUuidArrayInstr>(instrReadArray.memberType(),
+                                                                        instrReadArray.dt());
 
-        auto& readArrayInstr = static_cast<BeginReadStaticArrayInstr&>(**readArrayInstrIt);
+        auto& readArrayInstr = static_cast<BeginReadSlArrayInstr&>(**readArrayInstrIt);
 
         this->_buildReadInstr(nullptr, readArrayInstr.staticArrayType().elementType(),
                               readArrayInstr.proc());
@@ -459,12 +459,12 @@ public:
         this->_visit(instr);
     }
 
-    void visit(BeginReadStaticArrayInstr& instr) override
+    void visit(BeginReadSlArrayInstr& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(BeginReadDynArrayInstr& instr) override
+    void visit(BeginReadDlArrayInstr& instr) override
     {
         this->_visit(instr);
     }
@@ -551,14 +551,14 @@ public:
         this->_visit(instr);
     }
 
-    void visit(BeginReadStaticArrayInstr& instr) override
+    void visit(BeginReadSlArrayInstr& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(BeginReadDynArrayInstr& instr) override
+    void visit(BeginReadDlArrayInstr& instr) override
     {
-        instr.lenPos(_func(instr.dynArrayType().lengthTypes()));
+        instr.lenPos(_func(instr.dlArrayType().lengthTypes()));
         this->_visit(instr);
     }
 
@@ -608,9 +608,9 @@ void PktProcBuilder::_setSavedValPoss()
      * Here's the idea.
      *
      * We swipe the whole packet procedure tree to find the "begin read
-     * dynamic array", "begin read dynamic-length string", and "begin
-     * read variant" instructions, each of which having a data type
-     * containing the lenght/selector types.
+     * dynamic-length array", "begin read dynamic-length string", and
+     * "begin read variant" instructions, each of which having a data
+     * type containing the lenght/selector types.
      *
      * For a given length/selector type, we can find the corresponding
      * "read fixed-length integer" instruction as data types are unique.
@@ -799,9 +799,9 @@ public:
         _pktProcBuilder->_buildReadStructInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const StaticArrayType& dt) override
+    void visit(const StaticLengthArrayType& dt) override
     {
-        _pktProcBuilder->_buildReadStaticArrayInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadSlArrayInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const StaticLengthStringType& dt) override
@@ -809,9 +809,9 @@ public:
         _pktProcBuilder->_buildReadSlStrInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const DynamicArrayType& dt) override
+    void visit(const DynamicLengthArrayType& dt) override
     {
-        _pktProcBuilder->_buildReadDynArrayInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadDlArrayInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const DynamicLengthStringType& dt) override
@@ -910,28 +910,28 @@ void PktProcBuilder::_buildReadStructInstr(const StructureMemberType * const mem
     baseProc.pushBack(std::move(instr));
 }
 
-void PktProcBuilder::_buildReadStaticArrayInstr(const StructureMemberType * const memberType,
-                                                const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadSlArrayInstr(const StructureMemberType * const memberType,
+                                            const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isStaticArrayType());
-    this->_buildReadInstrWithLen<BeginReadStaticArrayInstr,
-                                 Instr::Kind::END_READ_STATIC_ARRAY>(memberType, dt, baseProc);
+    assert(dt.isStaticLengthArrayType());
+    this->_buildReadInstrWithLen<BeginReadSlArrayInstr,
+                                 Instr::Kind::END_READ_SL_ARRAY>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadSlStrInstr(const StructureMemberType * const memberType,
-                                                const DataType& dt, Proc& baseProc)
+                                          const DataType& dt, Proc& baseProc)
 {
     assert(dt.isStaticLengthStringType());
     this->_buildReadInstrWithLen<BeginReadSlStrInstr,
                                  Instr::Kind::END_READ_SL_STR>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadDynArrayInstr(const StructureMemberType * const memberType,
-                                             const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadDlArrayInstr(const StructureMemberType * const memberType,
+                                            const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isDynamicArrayType());
-    this->_buildReadInstrWithLen<BeginReadDynArrayInstr,
-                                 Instr::Kind::END_READ_DYN_ARRAY>(memberType, dt, baseProc);
+    assert(dt.isDynamicLengthArrayType());
+    this->_buildReadInstrWithLen<BeginReadDlArrayInstr,
+                                 Instr::Kind::END_READ_DL_ARRAY>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadDlStrInstr(const StructureMemberType * const memberType,

@@ -75,8 +75,8 @@
 #include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/dyn-array-type.hpp>
+#include <yactfr/metadata/sl-array-type.hpp>
+#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
@@ -90,12 +90,12 @@
 namespace yactfr {
 namespace internal {
 
-class BeginReadDynArrayInstr;
+class BeginReadDlArrayInstr;
 class BeginReadDlStrInstr;
 class BeginReadScopeInstr;
-class BeginReadStaticArrayInstr;
+class BeginReadSlArrayInstr;
 class BeginReadSlStrInstr;
-class BeginReadStaticUuidArrayInstr;
+class BeginReadSlUuidArrayInstr;
 class BeginReadStructInstr;
 class BeginReadVarSSelInstr;
 class BeginReadVarUSelInstr;
@@ -179,11 +179,11 @@ public:
     {
     }
 
-    virtual void visit(BeginReadStaticArrayInstr& instr)
+    virtual void visit(BeginReadSlArrayInstr& instr)
     {
     }
 
-    virtual void visit(BeginReadStaticUuidArrayInstr& instr)
+    virtual void visit(BeginReadSlUuidArrayInstr& instr)
     {
     }
 
@@ -191,7 +191,7 @@ public:
     {
     }
 
-    virtual void visit(BeginReadDynArrayInstr& instr)
+    virtual void visit(BeginReadDlArrayInstr& instr)
     {
     }
 
@@ -375,12 +375,12 @@ public:
     enum class Kind
     {
         UNSET,
-        BEGIN_READ_DYN_ARRAY,
+        BEGIN_READ_DL_ARRAY,
         BEGIN_READ_DL_STR,
         BEGIN_READ_SCOPE,
-        BEGIN_READ_STATIC_ARRAY,
+        BEGIN_READ_SL_ARRAY,
         BEGIN_READ_SL_STR,
-        BEGIN_READ_STATIC_UUID_ARRAY,
+        BEGIN_READ_SL_UUID_ARRAY,
         BEGIN_READ_STRUCT,
         BEGIN_READ_VAR_SSEL,
         BEGIN_READ_VAR_USEL,
@@ -389,8 +389,8 @@ public:
         END_DS_PKT_PREAMBLE_PROC,
         END_ER_PROC,
         END_PKT_PREAMBLE_PROC,
-        END_READ_STATIC_ARRAY,
-        END_READ_DYN_ARRAY,
+        END_READ_SL_ARRAY,
+        END_READ_DL_ARRAY,
         END_READ_SCOPE,
         END_READ_SL_STR,
         END_READ_DL_STR,
@@ -504,9 +504,9 @@ public:
     bool isBeginReadCompound() const noexcept
     {
         return _theKind == Kind::BEGIN_READ_STRUCT ||
-               _theKind == Kind::BEGIN_READ_STATIC_ARRAY ||
-               _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
-               _theKind == Kind::BEGIN_READ_DYN_ARRAY;
+               _theKind == Kind::BEGIN_READ_SL_ARRAY ||
+               _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY ||
+               _theKind == Kind::BEGIN_READ_DL_ARRAY;
     }
 
     bool isReadFlInt() const noexcept
@@ -591,10 +591,10 @@ public:
         return _theKind == Kind::READ_NT_STR;
     }
 
-    bool isBeginReadStaticArray() const noexcept
+    bool isBeginReadSlArray() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_STATIC_ARRAY ||
-               _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY;
+        return _theKind == Kind::BEGIN_READ_SL_ARRAY ||
+               _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY;
     }
 
     bool isBeginReadSlStr() const noexcept
@@ -604,12 +604,12 @@ public:
 
     bool isBeginReadStaticUuidArray() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY;
+        return _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY;
     }
 
-    bool isBeginReadDynArray() const noexcept
+    bool isBeginReadDlArray() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_DYN_ARRAY;
+        return _theKind == Kind::BEGIN_READ_DL_ARRAY;
     }
 
     bool isBeginReadDlStr() const noexcept
@@ -641,8 +641,8 @@ public:
     bool isEndReadData() const noexcept
     {
         return _theKind == Kind::END_READ_STRUCT ||
-               _theKind == Kind::END_READ_STATIC_ARRAY ||
-               _theKind == Kind::END_READ_DYN_ARRAY ||
+               _theKind == Kind::END_READ_SL_ARRAY ||
+               _theKind == Kind::END_READ_DL_ARRAY ||
                _theKind == Kind::END_READ_VAR;
     }
 
@@ -706,8 +706,8 @@ private:
  *
  * This instruction requires the VM to save the last decoded integer
  * value to a position (index) in its saved value vector so that it can
- * be used later (for the length of a dynamic array, the length of a
- * dynamic-length string, or for the selector of a variant).
+ * be used later (for the length of a dynamic-length array/string or for
+ * the selector of a variant).
  */
 class SaveValInstr final :
     public Instr
@@ -1109,28 +1109,28 @@ private:
 };
 
 /*
- * "Begin reading static array" procedure instruction.
+ * "Begin reading static-length array" procedure instruction.
  *
  * The VM must execute the subprocedure `len()` times.
  */
-class BeginReadStaticArrayInstr :
+class BeginReadSlArrayInstr :
     public BeginReadCompoundInstr
 {
 protected:
-    explicit BeginReadStaticArrayInstr(Kind kind, const StructureMemberType *memberType,
-                                       const DataType& dt);
+    explicit BeginReadSlArrayInstr(Kind kind, const StructureMemberType *memberType,
+                                   const DataType& dt);
 
 public:
-    explicit BeginReadStaticArrayInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit BeginReadSlArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const StaticArrayType& staticArrayType() const noexcept
+    const StaticLengthArrayType& staticArrayType() const noexcept
     {
-        return static_cast<const StaticArrayType&>(this->dt());
+        return static_cast<const StaticLengthArrayType&>(this->dt());
     }
 
     Size len() const noexcept
@@ -1180,17 +1180,16 @@ private:
 };
 
 /*
- * "Begin reading static UUID array" procedure instruction.
+ * "Begin reading static-length UUID array" procedure instruction.
  *
  * This is a specialized instruction to read the UUID field (16 bytes)
  * of a packet header to emit `TraceTypeUuidElement`.
  */
-class BeginReadStaticUuidArrayInstr final :
-    public BeginReadStaticArrayInstr
+class BeginReadSlUuidArrayInstr final :
+    public BeginReadSlArrayInstr
 {
 public:
-    explicit BeginReadStaticUuidArrayInstr(const StructureMemberType *memberType,
-                                           const DataType& dt);
+    explicit BeginReadSlUuidArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1199,26 +1198,26 @@ public:
 };
 
 /*
- * "Begin reading dynamic array" procedure instruction.
+ * "Begin reading dynamic-length array" procedure instruction.
  *
  * The VM must use lenPos() to retrieve the saved value which contains
- * the length of the dynamic array, and then execute the subprocedure
- * this number of times.
+ * the length of the dynamic-length array, and then execute the
+ * subprocedure this number of times.
  */
-class BeginReadDynArrayInstr final :
+class BeginReadDlArrayInstr final :
     public BeginReadCompoundInstr
 {
 public:
-    explicit BeginReadDynArrayInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit BeginReadDlArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const DynamicArrayType& dynArrayType() const noexcept
+    const DynamicLengthArrayType& dlArrayType() const noexcept
     {
-        return static_cast<const DynamicArrayType&>(this->dt());
+        return static_cast<const DynamicLengthArrayType&>(this->dt());
     }
 
     const Index lenPos() const noexcept

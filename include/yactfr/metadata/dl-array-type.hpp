@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_DYN_ARRAY_TYPE_HPP
-#define _YACTFR_METADATA_DYN_ARRAY_TYPE_HPP
+#ifndef _YACTFR_METADATA_DL_ARRAY_TYPE_HPP
+#define _YACTFR_METADATA_DL_ARRAY_TYPE_HPP
 
 #include "array-type.hpp"
 #include "data-loc.hpp"
@@ -23,13 +23,13 @@ class DataType;
 
 /*!
 @brief
-    Dynamic array type.
+    Dynamic-length array type.
 
 @ingroup metadata_dt
 
-A dynamic array type describes data stream dynamic arrays.
+A dynamic-length array type describes data stream dynamic-length arrays.
 */
-class DynamicArrayType final :
+class DynamicLengthArrayType final :
     public ArrayType
 {
     friend class internal::TraceTypeImpl;
@@ -37,16 +37,16 @@ class DynamicArrayType final :
 public:
     /*!
     @brief
-        Builds a dynamic array type.
+        Builds a dynamic-length array type.
 
     @param[in] minimumAlignment
-        Minimum alignment of data stream dynamic arrays described by
-        this type.
+        Minimum alignment of data stream dynamic-length arrays described
+        by this type.
     @param[in] elementType
         Element type.
     @param[in] lengthLocation
-        Location of lengths of data stream dynamic arrays described by
-        this type (number of elements).
+        Location of lengths of data stream dynamic-length arrays
+        described by this type (number of elements).
 
     @pre
         \p minimumAlignment > 0.
@@ -55,19 +55,19 @@ public:
     @pre
         \p lengthLocation only locates unsigned integers.
     */
-    explicit DynamicArrayType(unsigned int minimumAlignment, DataType::UP elementType,
-                              DataLocation lengthLocation);
+    explicit DynamicLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
+                                    DataLocation lengthLocation);
 
-    /// Location of lengths of data stream dynamic arrays described by
-    /// this type.
+    /// Location of lengths of data stream dynamic-length arrays
+    /// described by this type.
     const DataLocation& lengthLocation() const noexcept
     {
         return _lenLoc;
     }
 
-    /// Types of lengths of data stream dynamic arrays described by this
-    /// type, or an empty set if this type is not part of a trace type
-    /// yet.
+    /// Types of lengths of data stream dynamic-length arrays described
+    /// by this type, or an empty set if this type is not part of a
+    /// trace type yet.
     const DataTypeSet& lengthTypes() const noexcept
     {
         return _theLenTypes;
@@ -94,4 +94,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_DYN_ARRAY_TYPE_HPP
+#endif // _YACTFR_METADATA_DL_ARRAY_TYPE_HPP

@@ -27,7 +27,7 @@ follow to reach a specific datum within this scope. It is used to find
 which datum in a given data stream indicates:
 
 - The lengths of dynamic arrays
-  (described by \link DynamicArrayType dynamic array types\endlink).
+  (described by \link DynamicLengthArrayType dynamic array types\endlink).
 
 - The selectors of variants (described by
   \link VariantType variant types\endlink).
