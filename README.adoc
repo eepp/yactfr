@@ -17,9 +17,10 @@ API offers a lower level of CTF processing: you iterate individual
 element sequences to get _elements_: beginning/end of packet,
 beginning/end of event record, beggining/end of structure, individual
 data stream scalar values like fixed-length integers, fixed-length
-floating point numbers, and strings, specific clock value update, known
-data stream ID, and the rest. This means the sizes of event records and
-packets don't influence the performance or memory usage of yactfr.
+floating point numbers, and null-terminated strings, specific clock
+value update, known data stream ID, and the rest. This means the sizes
+of event records and packets don't influence the performance or memory
+usage of yactfr.
 
 Some use cases where this library can prove useful:
 
@@ -450,7 +451,7 @@ int main(const int argc, const char * const argv[])
         case yactfr::Element::Kind::SCOPE_BEGINNING:
         case yactfr::Element::Kind::PACKET_CONTENT_BEGINNING:
         case yactfr::Element::Kind::EVENT_RECORD_BEGINNING:
-        case yactfr::Element::Kind::STRING_BEGINNING:
+        case yactfr::Element::Kind::NULL_TERMINATED_STRING_BEGINNING:
         case yactfr::Element::Kind::STRUCTURE_BEGINNING:
         case yactfr::Element::Kind::STATIC_ARRAY_BEGINNING:
         case yactfr::Element::Kind::STATIC_TEXT_ARRAY_BEGINNING:

@@ -37,7 +37,7 @@ event {
      8       SC:5 {
      8         ST {
      8           FLUI:yy:3735928559
-    40           STR:str {
+    40           NTS:str {
     40             SS:6:salut
     88           }
     88         }
@@ -48,5 +48,5 @@ event {
     88       SC:5 {
     88         ST {
     88           FLUI:yy:4277009102
-   120           STR:str {
+   120           NTS:str {
    120 Cannot read 56 bits at this point: would move beyond the content of the current packet (24 bits remaining).

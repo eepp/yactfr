@@ -38,7 +38,7 @@ event {
     32       ERI:0:test
     32       SC:5 {
     32         ST {
-    32           STR:str {
+    32           NTS:str {
     32             SS:20:salut tout le monde
    192           }
    192         }
@@ -48,7 +48,7 @@ event {
    192       ERI:0:test
    192       SC:5 {
    192         ST {
-   192           STR:str {
+   192           NTS:str {
    192             SS:10:diet cola
    272           }
    272         }
@@ -58,7 +58,7 @@ event {
    272       ERI:0:test
    272       SC:5 {
    272         ST {
-   272           STR:str {
+   272           NTS:str {
    272             SS:9:learning
    344           }
    344         }

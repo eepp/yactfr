@@ -47,22 +47,22 @@ event {
      8           VU:outer:0 {
      8             ST {
      8               FLUI:len:3
-    16               STR:s {
+    16               NTS:s {
     16                 SS:6:salut
     64               }
     64             }
     64           }
-    64           STR:z {
+    64           NTS:z {
     64             SS:4:pad
     96           }
     96           DA:seq {
-    96             STR {
+    96             NTS {
     96               SS:3:un
    120             }
-   120             STR {
+   120             NTS {
    120               SS:5:deux
    160             }
-   160             STR {
+   160             NTS {
    160               SS:6:trois
    208             }
    208           }
@@ -76,29 +76,29 @@ event {
    208           FLUE:tag:1
    216           VU:outer:1 {
    216             ST {
-   216               STR:s {
+   216               NTS:s {
    216                 SS:7:coucou
    272               }
    272               FLUI:len:5
    288             }
    288           }
-   288           STR:z {
+   288           NTS:z {
    288             SS:4:pad
    320           }
    320           DA:seq {
-   320             STR {
+   320             NTS {
    320               SS:3:un
    344             }
-   344             STR {
+   344             NTS {
    344               SS:5:deux
    384             }
-   384             STR {
+   384             NTS {
    384               SS:6:trois
    432             }
-   432             STR {
+   432             NTS {
    432               SS:7:quatre
    488             }
-   488             STR {
+   488             NTS {
    488               SS:5:cinq
    528             }
    528           }

@@ -582,16 +582,16 @@ test_metadata_pass() {
   test_metadata_fail fl-float-type-wrong-mant-dig-attr-2
 }
 
-@test 'string type: duplicate attribute -> fail' {
-  test_metadata_fail str-type-dup-attr
+@test 'null-terminated string type: duplicate attribute -> fail' {
+  test_metadata_fail nt-str-type-dup-attr
 }
 
-@test 'string type: unknown attribute -> fail' {
-  test_metadata_fail str-type-unknown-attr
+@test 'null-terminated string type: unknown attribute -> fail' {
+  test_metadata_fail nt-str-type-unknown-attr
 }
 
-@test 'string type: wrong `encoding` attribute -> fail' {
-  test_metadata_fail str-type-wrong-encoding-attr
+@test 'null-terminated string type: wrong `encoding` attribute -> fail' {
+  test_metadata_fail nt-str-type-wrong-encoding-attr
 }
 
 @test 'structure type: negative minimum alignment -> fail' {
@@ -1236,8 +1236,8 @@ test_metadata_pass() {
   test_metadata_pass fl-float-type-full
 }
 
-@test 'string type: full -> pass' {
-  test_metadata_pass str-type-full
+@test 'null-terminated string type: full -> pass' {
+  test_metadata_pass nt-str-type-full
 }
 
 @test 'fixed-length enumeration type: maximum value (unsigned 64-bit, decimal) -> pass' {

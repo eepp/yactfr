@@ -36,7 +36,7 @@ event {
     16       ERI:0:test
     16       SC:5 {
     16         ST {
-    16           STR:str {
+    16           NTS:str {
     16             SS:7:coucou
     72           }
     72         }
@@ -58,7 +58,7 @@ event {
     88       ERI:0:test
     88       SC:5 {
     88         ST {
-    88           STR:str {
+    88           NTS:str {
     88             SS:6:salut
    136           }
    136         }
@@ -80,7 +80,7 @@ event {
    152       ERI:0:test
    152       SC:5 {
    152         ST {
-   152           STR:str {
+   152           NTS:str {
    152             SS:9:meow mix
    224           }
    224         }

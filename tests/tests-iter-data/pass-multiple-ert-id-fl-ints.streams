@@ -45,7 +45,7 @@ deadbeef
      0         ST {
      0           FLUI:id:67
      8           ST:s {
-     8             STR:aaa {
+     8             NTS:aaa {
      8               SS:6:paste
     56             }
     56             FLUI:id:66
@@ -55,7 +55,7 @@ deadbeef
     64       ERI:66:test1
     64       SC:5 {
     64         ST {
-    64           STR:salut {
+    64           NTS:salut {
     64             SS:9:la lampe
    136           }
    136         }
@@ -66,7 +66,7 @@ deadbeef
    136         ST {
    136           FLUI:id:66
    144           ST:s {
-   144             STR:aaa {
+   144             NTS:aaa {
    144               SS:6:paste
    192             }
    192             FLUI:id:67

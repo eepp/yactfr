@@ -138,7 +138,7 @@ V_ABS     cd
      0       ST {
      0         FLUE:tag:11
      8         VU:v:11 {
-     8           STR {
+     8           NTS {
      8             SS:9:ethereal
     80           }
     80         }
@@ -153,7 +153,7 @@ V_ABS     cd
     96       ST {
     96         FLUE:pc_tag:0
    104         VU:v_rel:0 {
-   104           STR {
+   104           NTS {
    104             SS:6:faded
    152           }
    152         }
@@ -171,7 +171,7 @@ V_ABS     cd
    168             FLUI:305419896
    200           }
    200           VU:v_abs:0 {
-   200             STR {
+   200             NTS {
    200               SS:5:wing
    240             }
    240           }
@@ -182,7 +182,7 @@ V_ABS     cd
    240         ST {
    240           FLUE:e1c_tag:0
    248           VU:v_rel:0 {
-   248             STR {
+   248             NTS {
    248               SS:9:cultured
    320             }
    320           }
@@ -198,7 +198,7 @@ V_ABS     cd
    360             FLUI:23
    368           }
    368           VU:v_abs:0 {
-   368             STR {
+   368             NTS {
    368               SS:5:nest
    408             }
    408           }

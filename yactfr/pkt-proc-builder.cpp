@@ -797,9 +797,9 @@ public:
         _pktProcBuilder->_buildReadFlUEnumInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const StringType& dt) override
+    void visit(const NullTerminatedStringType& dt) override
     {
-        _pktProcBuilder->_buildReadStrInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadNtStrInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const StructureType& dt) override
@@ -893,11 +893,11 @@ void PktProcBuilder::_buildReadFlUEnumInstr(const StructureMemberType * const me
     buildBasicReadInstr<ReadFlUEnumInstr>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadStrInstr(const StructureMemberType * const memberType,
-                                        const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadNtStrInstr(const StructureMemberType * const memberType,
+                                          const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isStringType());
-    buildBasicReadInstr<ReadStrInstr>(memberType, dt, baseProc);
+    assert(dt.isNullTerminatedStringType());
+    buildBasicReadInstr<ReadNtStrInstr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadStructInstr(const StructureMemberType * const memberType,

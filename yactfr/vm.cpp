@@ -238,7 +238,7 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A16_BE)] = &Vm::_execReadFlUEnumA16Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A32_BE)] = &Vm::_execReadFlUEnumA32Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FL_UENUM_A64_BE)] = &Vm::_execReadFlUEnumA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_STR)] = &Vm::_execReadStr;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_NT_STR)] = &Vm::_execReadNtStr;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SCOPE)] = &Vm::_execBeginReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_SCOPE)] = &Vm::_execEndReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STRUCT)] = &Vm::_execBeginReadStruct;
@@ -602,14 +602,14 @@ Vm::_ExecReaction Vm::_execReadFlUEnumA64Be(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadStr(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)
 {
-    const auto& readStrInstr = static_cast<const ReadStrInstr&>(instr);
+    const auto& readNtStrInstr = static_cast<const ReadNtStrInstr&>(instr);
 
     this->_alignHead(instr);
-    this->_setDataElemFromInstr(_pos.elems.strBeginning, readStrInstr);
-    _pos.elems.strBeginning._dt = &readStrInstr.strType();
-    this->_updateItCurOffset(_pos.elems.strBeginning);
+    this->_setDataElemFromInstr(_pos.elems.ntStrBeginning, readNtStrInstr);
+    _pos.elems.ntStrBeginning._dt = &readNtStrInstr.strType();
+    this->_updateItCurOffset(_pos.elems.ntStrBeginning);
     _pos.postEndStrState = _pos.state();
     _pos.state(VmState::READ_SUBSTR_UNTIL_NULL);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;

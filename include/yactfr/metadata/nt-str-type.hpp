@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_STR_TYPE_HPP
-#define _YACTFR_METADATA_STR_TYPE_HPP
+#ifndef _YACTFR_METADATA_NT_STR_TYPE_HPP
+#define _YACTFR_METADATA_NT_STR_TYPE_HPP
 
 #include "dt.hpp"
 #include "scalar-dt.hpp"
@@ -16,51 +16,53 @@ namespace yactfr {
 
 /*!
 @brief
-    String type.
+    Null-terminated string type.
 
 @ingroup metadata_dt
 
-A string type describes data stream null-terminated strings.
+A null-terminated string type describes data stream null-terminated
+strings.
 */
-class StringType final :
+class NullTerminatedStringType final :
     public ScalarDataType
 {
 public:
     /*!
     @brief
-        Builds a string type.
+        Builds a null-terminated string type.
 
     @param[in] alignment
-        Alignment of data stream strings described by this type.
+        Alignment of data stream null-terminated strings described by
+        this type.
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
     */
-    explicit StringType(unsigned int alignment);
+    explicit NullTerminatedStringType(unsigned int alignment);
 
     /*!
     @brief
         Copy constructor.
 
     @param[in] other
-        String type to copy.
+        Null-terminated string type to copy.
     */
-    StringType(const StringType& other);
+    NullTerminatedStringType(const NullTerminatedStringType& other);
 
     /*!
     @brief
         Less-than operator.
 
     @param[in] other
-        Other string type to compare to.
+        Other null-terminated string type to compare to.
 
     @returns
         \c true if this type is less than \p other (respects total
         order).
     */
-    bool operator<(const StringType& other) const noexcept
+    bool operator<(const NullTerminatedStringType& other) const noexcept
     {
         return this->alignment() < other.alignment();
     }
@@ -78,4 +80,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_STR_TYPE_HPP
+#endif // _YACTFR_METADATA_NT_STR_TYPE_HPP

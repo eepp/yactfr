@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -45,7 +45,7 @@ protected:
         _KIND_FL_ENUM               = 1 << 5,
         _KIND_FL_BIT_ARRAY          = 1 << 6,
         _KIND_FL_FLOAT              = 1 << 7,
-        _KIND_STR                   = 1 << 8,
+        _KIND_NT_STR                = 1 << 8,
         _KIND_SCALAR                = 1 << 9,
         _KIND_STRUCT                = 1 << 10,
         _KIND_ARRAY                 = 1 << 11,
@@ -120,10 +120,10 @@ public:
         return this->_isKind(_KIND_FL_UENUM);
     }
 
-    /// \c true if this type is a string type.
-    bool isStringType() const noexcept
+    /// \c true if this type is a null-terminated string type.
+    bool isNullTerminatedStringType() const noexcept
     {
-        return this->_isKind(_KIND_STR);
+        return this->_isKind(_KIND_NT_STR);
     }
 
     /// \c true if this type is an array type.
@@ -254,12 +254,12 @@ public:
 
     /*!
     @brief
-        This type as a string type.
+        This type as a null-terminated string type.
 
     @pre
-        This type is a string type.
+        This type is a null-terminated string type.
     */
-    const StringType& asStringType() const noexcept;
+    const NullTerminatedStringType& asNullTerminatedStringType() const noexcept;
 
     /*!
     @brief

@@ -45,7 +45,7 @@ event {
      0       ST {
      0         FLUI:stream_id:67
      8         ST:s {
-     8           STR:aaa {
+     8           NTS:aaa {
      8             SS:6:paste
     56           }
     56           FLUI:stream_id:66
@@ -58,7 +58,7 @@ event {
     64       ERI:0:test42
     64       SC:5 {
     64         ST {
-    64           STR:salut {
+    64           NTS:salut {
     64             SS:11:the string
    152           }
    152         }

@@ -33,52 +33,52 @@ event {
      0           SA:arr {
      0             ST {
      0               SA:arr {
-     0                 STR {
+     0                 NTS {
      0                   SS:7:copper
     56                 }
-    56                 STR {
+    56                 NTS {
     56                   SS:8:explain
    120                 }
-   120                 STR {
+   120                 NTS {
    120                   SS:6:truck
    168                 }
    168               }
    168             }
    168             ST {
    168               SA:arr {
-   168                 STR {
+   168                 NTS {
    168                   SS:5:neat
    208                 }
-   208                 STR {
+   208                 NTS {
    208                   SS:1:
    216                 }
-   216                 STR {
+   216                 NTS {
    216                   SS:9:decisive
    288                 }
    288               }
    288             }
    288             ST {
    288               SA:arr {
-   288                 STR {
+   288                 NTS {
    288                   SS:7:notice
    344                 }
-   344                 STR {
+   344                 NTS {
    344                   SS:4:hum
    376                 }
-   376                 STR {
+   376                 NTS {
    376                   SS:6:nerve
    424                 }
    424               }
    424             }
    424             ST {
    424               SA:arr {
-   424                 STR {
+   424                 NTS {
    424                   SS:1:
    432                 }
-   432                 STR {
+   432                 NTS {
    432                   SS:6:blood
    480                 }
-   480                 STR {
+   480                 NTS {
    480                   SS:5:calm
    520                 }
    520               }

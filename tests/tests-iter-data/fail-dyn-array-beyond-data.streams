@@ -26,7 +26,7 @@ event {
      0       SC:5 {
      0         ST {
      0           FLUI:len:3
-     8           STR:salut {
+     8           NTS:salut {
      8             SS:15:salut les mecs
    128           }
    128           DA:meow {
@@ -42,7 +42,7 @@ event {
    152       SC:5 {
    152         ST {
    152           FLUI:len:2
-   160           STR:salut {
+   160           NTS:salut {
    160             SS:9:tomatoes
    232           }
    232           DA:meow {
@@ -57,7 +57,7 @@ event {
    248       SC:5 {
    248         ST {
    248           FLUI:len:4
-   256           STR:salut {
+   256           NTS:salut {
    256             SS:6:madly
    304           }
    304           DA:meow {

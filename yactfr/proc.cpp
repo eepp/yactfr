@@ -292,8 +292,8 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_FL_UENUM_A64_BE";
         break;
 
-    case Kind::READ_STR:
-        kindStr = "READ_STR";
+    case Kind::READ_NT_STR:
+        kindStr = "READ_NT_STR";
         break;
 
     case Kind::BEGIN_READ_SCOPE:
@@ -840,13 +840,13 @@ std::string ReadFlUEnumInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-ReadStrInstr::ReadStrInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadDataInstr {Kind::READ_STR, member, dt}
+ReadNtStrInstr::ReadNtStrInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadDataInstr {Kind::READ_NT_STR, member, dt}
 {
-    assert(dt.isStringType());
+    assert(dt.isNullTerminatedStringType());
 }
 
-std::string ReadStrInstr::_toStr(const Size indent) const
+std::string ReadNtStrInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 

@@ -42,7 +42,7 @@ ff 78 "heille Lynda" 00
     16       ERI:0:test
     16       SC:5 {
     16         ST {
-    16           STR:str {
+    16           NTS:str {
     16             SS:13:heille Marie
    120           }
    120         }
@@ -68,7 +68,7 @@ ff 78 "heille Lynda" 00
    136       ERI:0:test
    136       SC:5 {
    136         ST {
-   136           STR:str {
+   136           NTS:str {
    136             SS:13:heille Serge
    240           }
    240         }
@@ -94,7 +94,7 @@ ff 78 "heille Lynda" 00
    256       ERI:0:test
    256       SC:5 {
    256         ST {
-   256           STR:str {
+   256           NTS:str {
    256             SS:13:heille Lynda
    360           }
    360         }

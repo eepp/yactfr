@@ -25,7 +25,7 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           STR:salut {
+     0           NTS:salut {
      0             SS:15:salut les mecs
    120           }
    120           FLUI:meow:3735928559
@@ -37,7 +37,7 @@ event {
    160       ERI:0:test
    160       SC:5 {
    160         ST {
-   160           STR:salut {
+   160           NTS:salut {
    160             SS:9:tomatoes
    232           }
    232           FLUI:meow:3735929054
@@ -49,7 +49,7 @@ event {
    272       ERI:0:test
    272       SC:5 {
    272         ST {
-   272           STR:salut {
+   272           NTS:salut {
    272             SS:6:madly
    320           }
    320           FLUI:meow:4277009102

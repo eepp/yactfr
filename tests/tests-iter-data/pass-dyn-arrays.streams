@@ -50,13 +50,13 @@ event {
     32             ST {
     32               FLUI:len2:3
     48               DA:seq {
-    48                 STR {
+    48                 NTS {
     48                   SS:7:copper
    104                 }
-   104                 STR {
+   104                 NTS {
    104                   SS:8:explain
    168                 }
-   168                 STR {
+   168                 NTS {
    168                   SS:6:truck
    216                 }
    216               }
@@ -64,10 +64,10 @@ event {
    216             ST {
    216               FLUI:len2:2
    232               DA:seq {
-   232                 STR {
+   232                 NTS {
    232                   SS:5:neat
    272                 }
-   272                 STR {
+   272                 NTS {
    272                   SS:8:tenuous
    336                 }
    336               }
@@ -80,10 +80,10 @@ event {
    352             ST {
    352               FLUI:len2:2
    368               DA:seq {
-   368                 STR {
+   368                 NTS {
    368                   SS:9:decisive
    440                 }
-   440                 STR {
+   440                 NTS {
    440                   SS:7:notice
    496                 }
    496               }
@@ -91,7 +91,7 @@ event {
    496             ST {
    496               FLUI:len2:1
    512               DA:seq {
-   512                 STR {
+   512                 NTS {
    512                   SS:4:hum
    544                 }
    544               }
@@ -99,7 +99,7 @@ event {
    544             ST {
    544               FLUI:len2:1
    560               DA:seq {
-   560                 STR {
+   560                 NTS {
    560                   SS:1:
    568                 }
    568               }
@@ -107,10 +107,10 @@ event {
    568             ST {
    568               FLUI:len2:2
    584               DA:seq {
-   584                 STR {
+   584                 NTS {
    584                   SS:6:nerve
    632                 }
-   632                 STR {
+   632                 NTS {
    632                   SS:7:locket
    688                 }
    688               }

@@ -71,20 +71,20 @@ event {
     64                   SA:v {
     64                     VU:66 {
     64                       SA {
-    64                         STR {
+    64                         NTS {
     64                           SS:7:purple
    120                         }
-   120                         STR {
+   120                         NTS {
    120                           SS:5:unit
    160                         }
    160                       }
    160                     }
    160                     VU:66 {
    160                       SA {
-   160                         STR {
+   160                         NTS {
    160                           SS:7:planes
    216                         }
-   216                         STR {
+   216                         NTS {
    216                           SS:5:hate
    256                         }
    256                       }

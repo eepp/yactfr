@@ -97,8 +97,8 @@ public:
         /// FixedLengthUnsignedEnumerationElement
         FIXED_LENGTH_UNFIXED_LENGTH_SIGNED_ENUMERATION,
 
-        /// StringBeginningElement
-        STRING_BEGINNING,
+        /// NullTerminatedStringBeginningElement
+        NULL_TERMINATED_STRING_BEGINNING,
 
         /// SubstringElement
         SUBSTRING,
@@ -904,19 +904,20 @@ private:
 
 /*!
 @brief
-    String beginning element.
+    Null-terminated string beginning element.
 
 @ingroup elems
 
-This element indicates the beginning of a data stream string.
+This element indicates the beginning of a data stream null-terminated
+string.
 
 The next SubstringElement elements before the next EndElement are
-consecutive substrings of this beginning string.
+consecutive substrings of this beginning null-terminated string.
 
 @sa SubstringElement
 @sa EndElement
 */
-class StringBeginningElement final :
+class NullTerminatedStringBeginningElement final :
     public BeginningElement,
     public DataElement
 {
@@ -924,14 +925,14 @@ class StringBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    explicit StringBeginningElement() :
-        BeginningElement {Kind::STRING_BEGINNING}
+    explicit NullTerminatedStringBeginningElement() :
+        BeginningElement {Kind::NULL_TERMINATED_STRING_BEGINNING}
     {
     }
 
 public:
-    /// String type.
-    const StringType& type() const noexcept
+    /// Null-terminated string type.
+    const NullTerminatedStringType& type() const noexcept
     {
         return *_dt;
     }
@@ -942,7 +943,7 @@ public:
     }
 
 private:
-    const StringType *_dt;
+    const NullTerminatedStringType *_dt;
 };
 
 /*!
@@ -956,7 +957,7 @@ This element can occur:
 <dl>
   <dt>Data stream null-terminated string</dt>
   <dd>
-    Between StringBeginningElement and EndElement elements.
+    Between NullTerminatedStringBeginningElement and EndElement elements.
   </dd>
 
   <dt>Data stream static text array</dt>

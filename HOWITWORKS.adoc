@@ -68,6 +68,7 @@ documented uses unabbreviated names.
 |Loc |Location
 |Max |Maximum
 |Min |Minimum
+|NT |Null-terminated
 |Opt |Option
 |Pkt |Packet
 |Pos |Position
@@ -257,7 +258,7 @@ decoding head and then read data in a specific way, for example:
 
 * `internal::ReadFlSIntInstr`
 * `internal::ReadFlFloatInstr`
-* `internal::ReadStrInstr`
+* `internal::ReadNtStrInstr`
 
 For compound types, a first `+internal::BeginRead*Instr+` instruction
 indicates to "`enter`" the compound data. This instruction usually

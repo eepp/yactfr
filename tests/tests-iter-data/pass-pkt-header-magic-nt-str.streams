@@ -3,7 +3,7 @@ trace {
     minor = 8;
     byte_order = be;
     packet.header := struct {
-        string uuid;
+        string magic;
     };
 };
 
@@ -16,7 +16,7 @@ stream {
      0   PC {
      0     SC:0 {
      0       ST {
-     0         STR:uuid {
+     0         NTS:magic {
      0           SS:6:salut
     48         }
     48       }

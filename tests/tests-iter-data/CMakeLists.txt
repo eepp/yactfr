@@ -43,8 +43,8 @@ yactfr_create_all_streams (
     fail-pkt-total-len-too-small
     fail-static-text-array-beyond-content
     fail-static-text-array-beyond-data
-    fail-str-beyond-content
-    fail-str-beyond-data
+    fail-nt-str-beyond-content
+    fail-nt-str-beyond-data
     fail-unknown-dst-id
     fail-unknown-ert-id
     fail-var-beyond-content
@@ -64,7 +64,7 @@ yactfr_create_all_streams (
     pass-dyn-arrays
     pass-dyn-text-arrays
     pass-empty-data
-    pass-er-header-id-str
+    pass-er-header-id-nt-str
     pass-fl-floats
     pass-implicit-def-clk-ts-role
     pass-multiple-dst-id-fl-ints
@@ -74,19 +74,19 @@ yactfr_create_all_streams (
     pass-odd-fl-enums
     pass-odd-fl-ints
     pass-pkt-content-len-no-pkt-total-len
-    pass-pkt-ctx-content-size-str
-    pass-pkt-ctx-pkt-size-str
-    pass-pkt-header-magic-str
-    pass-pkt-header-stream-id-str
-    pass-pkt-header-stream-instance-id-str
-    pass-pkt-header-uuid-array-of-strs
-    pass-pkt-header-uuid-str
+    pass-pkt-ctx-content-size-nt-str
+    pass-pkt-ctx-pkt-size-nt-str
+    pass-pkt-header-magic-nt-str
+    pass-pkt-header-stream-id-nt-str
+    pass-pkt-header-stream-instance-id-nt-str
+    pass-pkt-header-uuid-array-of-nt-strs
+    pass-pkt-header-uuid-nt-str
     pass-pkt-origin-index
     pass-pkt-total-len-no-pkt-content-len
     pass-static-text-arrays
     pass-std-fl-enums
     pass-std-fl-ints
-    pass-str-align
+    pass-nt-str-align
     pass-vars
 )
 
@@ -115,8 +115,8 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-total-len-too-small/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-static-text-array-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-static-text-array-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-str-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-str-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-nt-str-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-nt-str-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-dst-id/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-ert-id/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-var-beyond-content/metadata"
@@ -136,7 +136,7 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-text-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-empty-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-er-header-id-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-er-header-id-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-fl-floats/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-implicit-def-clk-ts-role/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-multiple-dst-id-fl-ints/metadata"
@@ -146,19 +146,19 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-odd-fl-enums/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-odd-fl-ints/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-content-len-no-pkt-total-len/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-ctx-content-size-str/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-ctx-pkt-size-str/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-magic-str/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-id-str/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-instance-id-str/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-array-of-strs/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-ctx-content-size-nt-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-ctx-pkt-size-nt-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-magic-nt-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-id-nt-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-instance-id-nt-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-array-of-nt-strs/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-origin-index/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-total-len-no-pkt-content-len/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-static-text-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-fl-enums/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-fl-ints/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-str-align/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-nt-str-align/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-vars/metadata"
     VERBATIM
 )

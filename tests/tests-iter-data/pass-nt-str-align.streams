@@ -26,7 +26,7 @@ event {
      0       SC:5 {
      0         ST {
      0           FLUI:pad:5
-     8           STR:salut {
+     8           NTS:salut {
      8             SS:12:hello there
    104           }
    104         }

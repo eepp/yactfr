@@ -43,5 +43,5 @@ event {
      8         ST {
      8           FLUE:tag:1
     16           VU:v:1 {
-    16             STR {
+    16             NTS {
     16 Cannot read 48 bits at this point: would move beyond the content of the current packet (24 bits remaining).

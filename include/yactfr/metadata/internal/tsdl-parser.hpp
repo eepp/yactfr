@@ -31,7 +31,7 @@
 #include "../fl-int-type.hpp"
 #include "../fl-float-type.hpp"
 #include "../fl-enum-type.hpp"
-#include "../str-type.hpp"
+#include "../nt-str-type.hpp"
 #include "../static-array-type.hpp"
 #include "../static-text-array-type.hpp"
 #include "../dyn-array-type.hpp"
@@ -430,7 +430,7 @@ private:
     PseudoDt::UP _tryParseFlFloatType();
 
     /*
-     * Tries to parse a string type block.
+     * Tries to parse a null-terminated string type block.
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      *
@@ -442,7 +442,7 @@ private:
      *         encoding = ascii;
      *     }
      */
-    PseudoDt::UP _tryParseStrType();
+    PseudoDt::UP _tryParseNtStrType();
 
     /*
      * Tries to parse a fixed-length enumeration type block.
@@ -1101,7 +1101,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseStrType();
+        pseudoDt = this->_tryParseNtStrType();
 
         if (pseudoDt) {
             return pseudoDt;
@@ -1423,7 +1423,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
 }
 
 template <typename CharIt>
-PseudoDt::UP TsdlParser<CharIt>::_tryParseStrType()
+PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1436,7 +1436,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStrType()
 
     // try to parse `{`
     if (!_ss.scanToken("{")) {
-        return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const StringType>(8),
+        return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
                                                        beginLoc);
     }
 
@@ -1468,7 +1468,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStrType()
         }
     }
 
-    return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const StringType>(8), beginLoc);
+    return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8), beginLoc);
 }
 
 template <typename CharIt>
@@ -3018,10 +3018,10 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
      *     string s[2][len][4];
      *
      * becomes the class of a static array of two dynamic arrays of
-     * `len` static arrays of four strings.
+     * `len` static arrays of four null-terminated strings.
      *
-     * At this point, `innerPseudoDt` is the string type in the example
-     * above.
+     * At this point, `innerPseudoDt` is the null-terminated string type
+     * in the example above.
      */
     for (const auto& lenDescr : boost::adaptors::reverse(lenDescrs)) {
         if (lenDescr.isStatic) {

@@ -73,7 +73,7 @@
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
-#include <yactfr/metadata/str-type.hpp>
+#include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
 #include <yactfr/metadata/static-text-array-type.hpp>
@@ -112,7 +112,7 @@ class ReadDataInstr;
 class ReadFlFloatInstr;
 class ReadFlSEnumInstr;
 class ReadFlSIntInstr;
-class ReadStrInstr;
+class ReadNtStrInstr;
 class ReadFlUEnumInstr;
 class ReadFlUIntInstr;
 class SaveValInstr;
@@ -163,7 +163,7 @@ public:
     {
     }
 
-    virtual void visit(ReadStrInstr& instr)
+    virtual void visit(ReadNtStrInstr& instr)
     {
     }
 
@@ -422,7 +422,7 @@ public:
         READ_FL_SINT_A8,
         READ_FL_SINT_BE,
         READ_FL_SINT_LE,
-        READ_STR,
+        READ_NT_STR,
         READ_FL_UENUM_A16_BE,
         READ_FL_UENUM_A16_LE,
         READ_FL_UENUM_A32_BE,
@@ -590,7 +590,7 @@ public:
 
     bool isReadStr() const noexcept
     {
-        return _theKind == Kind::READ_STR;
+        return _theKind == Kind::READ_NT_STR;
     }
 
     bool isBeginReadStaticArray() const noexcept
@@ -935,20 +935,20 @@ private:
 /*
  * "Read null-terminated string" procedure instruction.
  */
-class ReadStrInstr :
+class ReadNtStrInstr :
     public ReadDataInstr
 {
 public:
-    explicit ReadStrInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadNtStrInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const StringType& strType() const noexcept
+    const NullTerminatedStringType& strType() const noexcept
     {
-        return static_cast<const StringType&>(this->dt());
+        return static_cast<const NullTerminatedStringType&>(this->dt());
     }
 
 private:

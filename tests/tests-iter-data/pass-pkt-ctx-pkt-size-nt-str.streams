@@ -6,7 +6,7 @@ trace {
 
 stream {
     packet.context := struct {
-        string content_size;
+        string packet_size;
     };
 };
 ----
@@ -17,7 +17,7 @@ stream {
      0     DSI:0
      0     SC:1 {
      0       ST {
-     0         STR:content_size {
+     0         NTS:packet_size {
      0           SS:5:meow
     40         }
     40       }

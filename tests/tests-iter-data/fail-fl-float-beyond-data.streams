@@ -24,7 +24,7 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           STR:salut {
+     0           NTS:salut {
      0             SS:15:salut les mecs
    120           }
    120           FLFPN:meow:0
@@ -35,7 +35,7 @@ event {
    152       ERI:0:test
    152       SC:5 {
    152         ST {
-   152           STR:salut {
+   152           NTS:salut {
    152             SS:9:tomatoes
    224           }
    224           FLFPN:meow:-23
@@ -46,7 +46,7 @@ event {
    256       ERI:0:test
    256       SC:5 {
    256         ST {
-   256           STR:salut {
+   256           NTS:salut {
    256             SS:6:madly
    304           }
    304 Cannot read 32 bits at this point: reaching end of data source.

@@ -160,9 +160,9 @@ public:
         *_os << ':' << std::setprecision(6) << elem.value() << '\n';
     }
 
-    void visit(const yactfr::StringBeginningElement& elem) override
+    void visit(const yactfr::NullTerminatedStringBeginningElement& elem) override
     {
-        this->_visitDataElem(elem, "STR");
+        this->_visitDataElem(elem, "NTS");
         *_os << " {\n";
         ++_indentLevel;
     }

@@ -23,7 +23,7 @@ event {
      0       ERI:0:test
      0       SC:5 {
      0         ST {
-     0           STR:salut {
+     0           NTS:salut {
      0             SS:13:heille salut
    104           }
    104           SA:yes {
@@ -135,7 +135,7 @@ event {
    104       ERI:0:test
    104       SC:5 {
    104         ST {
-   104           STR:salut {
+   104           NTS:salut {
    104             SS:12:autre event
    200           }
    200           SA:yes {

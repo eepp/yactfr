@@ -37,13 +37,13 @@ add_library (
     metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
+    metadata/nt-str-type.cpp
     metadata/packetized-metadata-stream.cpp
     metadata/plain-text-metadata-stream.cpp
     metadata/pseudo-types.cpp
     metadata/scalar-dt.cpp
     metadata/static-array-type.cpp
     metadata/static-text-array-type.cpp
-    metadata/str-type.cpp
     metadata/struct-member-type.cpp
     metadata/struct-type.cpp
     metadata/trace-type-from-pseudo-trace-type.cpp

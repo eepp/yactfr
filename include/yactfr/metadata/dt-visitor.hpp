@@ -87,12 +87,12 @@ public:
 
     /*!
     @brief
-        Visits the string type \p type.
+        Visits the null-terminated string type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const StringType& type)
+    virtual void visit(const NullTerminatedStringType& type)
     {
     }
 

@@ -32,6 +32,6 @@ event {
      0         ST {
      0           FLUE:tag:1
      8           VU:v:1 {
-     8             STR {
+     8             NTS {
      8               SS:6:blabli
     56 Cannot read 8 bits at this point: reaching end of data source.

@@ -82,8 +82,8 @@ private:
     void _buildReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt,
                                 Proc& baseProc);
 
-    void _buildReadStrInstr(const StructureMemberType *memberType, const DataType& dt,
-                            Proc& baseProc);
+    void _buildReadNtStrInstr(const StructureMemberType *memberType, const DataType& dt,
+                              Proc& baseProc);
 
     void _buildReadStructInstr(const StructureMemberType *memberType, const DataType& dt,
                                Proc& baseProc);

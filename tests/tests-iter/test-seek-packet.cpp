@@ -225,7 +225,7 @@ static const auto expected =
     "ERI:0\n"
     "SC:5 {\n"
     "ST {\n"
-    "STR:a {\n"
+    "NTS:a {\n"
     "SS:1:s\n"
     "SS:3:alu\n"
     "SS:2:t\n";

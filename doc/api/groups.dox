@@ -191,7 +191,7 @@ descriptions below easier to read and to allow recursion.
   FixedLengthSignedIntegerElement |
   FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
-  (StringBeginningElement SubstringElement * EndElement) |
+  (NullTerminatedStringBeginningElement SubstringElement * EndElement) |
   (StaticArrayBeginningElement DATA * EndElement) |
   (StaticTextArrayBeginningElement SubstringElement * EndElement) |
   (DynamicArrayBeginningElement DATA * EndElement) |
@@ -322,7 +322,7 @@ when the current element of the iterator is:
     a StructureBeginningElement.
   </dd>
 
-  <dt>StringBeginningElement</dt>
+  <dt>NullTerminatedStringBeginningElement</dt>
   <dt>StructureBeginningElement</dt>
   <dt>StaticArrayBeginningElement</dt>
   <dt>StaticTextArrayBeginningElement</dt>

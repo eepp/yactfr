@@ -14,7 +14,7 @@
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
-#include <yactfr/metadata/str-type.hpp>
+#include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
 #include <yactfr/metadata/static-text-array-type.hpp>
@@ -98,10 +98,10 @@ const FixedLengthUnsignedEnumerationType& DataType::asFixedLengthUnsignedEnumera
     return static_cast<const FixedLengthUnsignedEnumerationType&>(*this);
 }
 
-const StringType& DataType::asStringType() const noexcept
+const NullTerminatedStringType& DataType::asNullTerminatedStringType() const noexcept
 {
-    assert(this->isStringType());
-    return static_cast<const StringType&>(*this);
+    assert(this->isNullTerminatedStringType());
+    return static_cast<const NullTerminatedStringType&>(*this);
 }
 
 const ArrayType& DataType::asArrayType() const noexcept

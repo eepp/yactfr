@@ -84,7 +84,7 @@ void ElementVisitor::visit(const FixedLengthFloatingPointNumberElement& elem)
 {
 }
 
-void ElementVisitor::visit(const StringBeginningElement& elem)
+void ElementVisitor::visit(const NullTerminatedStringBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }

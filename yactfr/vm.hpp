@@ -263,7 +263,7 @@ public:
         FixedLengthSignedEnumerationElement flSEnum;
         FixedLengthUnsignedEnumerationElement flUEnum;
         FixedLengthFloatingPointNumberElement flFloat;
-        StringBeginningElement strBeginning;
+        NullTerminatedStringBeginningElement ntStrBeginning;
         SubstringElement substr;
         StaticArrayBeginningElement staticArrayBeginning;
         StaticTextArrayBeginningElement staticTextArrayBeginning;
@@ -1013,7 +1013,7 @@ private:
     _ExecReaction _execReadFlUEnumA16Be(const Instr& instr);
     _ExecReaction _execReadFlUEnumA32Be(const Instr& instr);
     _ExecReaction _execReadFlUEnumA64Be(const Instr& instr);
-    _ExecReaction _execReadStr(const Instr& instr);
+    _ExecReaction _execReadNtStr(const Instr& instr);
     _ExecReaction _execBeginReadScope(const Instr& instr);
     _ExecReaction _execEndReadScope(const Instr& instr);
     _ExecReaction _execBeginReadStruct(const Instr& instr);

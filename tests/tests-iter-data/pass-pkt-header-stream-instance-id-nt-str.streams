@@ -3,7 +3,7 @@ trace {
     minor = 8;
     byte_order = be;
     packet.header := struct {
-        string stream_id;
+        string stream_instance_id;
     };
 };
 
@@ -16,7 +16,7 @@ stream {
      0   PC {
      0     SC:0 {
      0       ST {
-     0         STR:stream_id {
+     0         NTS:stream_instance_id {
      0           SS:6:salut
     48         }
     48       }
