@@ -362,7 +362,7 @@ PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc, Pseudo
 {
 }
 
-PseudoDt::UP PseudoVarType::clone() const
+PseudoNamedDts PseudoVarType::_clonePseudoOpts() const
 {
     PseudoNamedDts newPseudoOpts;
 
@@ -373,7 +373,12 @@ PseudoDt::UP PseudoVarType::clone() const
         newPseudoOpts.push_back(std::move(newPseudoOpt));
     }
 
-    return std::make_unique<PseudoVarType>(_pseudoSelLoc, std::move(newPseudoOpts), this->loc());
+    return newPseudoOpts;
+}
+
+PseudoDt::UP PseudoVarType::clone() const
+{
+   return std::make_unique<PseudoVarType>(_pseudoSelLoc, this->_clonePseudoOpts(), this->loc());
 }
 
 bool PseudoVarType::isEmpty() const
@@ -393,6 +398,34 @@ void PseudoVarType::accept(PseudoDtVisitor& visitor)
 }
 
 void PseudoVarType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+                                                       PseudoNamedDts&& pseudoOpts,
+                                                       RangeSets&& rangeSets, TextLocation loc) :
+    PseudoVarType {std::move(pseudoSelLoc), std::move(pseudoOpts), std::move(loc)},
+    _rangeSets {std::move(rangeSets)}
+{
+    assert(this->pseudoOpts().size() == _rangeSets.size());
+}
+
+PseudoDt::UP PseudoVarWithIntRangesType::clone() const
+{
+    RangeSets rangeSets {_rangeSets};
+
+    return std::make_unique<PseudoVarWithIntRangesType>(this->pseudoSelLoc(),
+                                                        this->_clonePseudoOpts(),
+                                                        std::move(rangeSets), this->loc());
+}
+
+void PseudoVarWithIntRangesType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoVarWithIntRangesType::accept(ConstPseudoDtVisitor& visitor) const
 {
     visitor.visit(*this);
 }

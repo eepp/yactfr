@@ -19,6 +19,7 @@
 
 #include "../../aliases.hpp"
 #include "../data-loc.hpp"
+#include "../int-range-set.hpp"
 #include "../fl-enum-type.hpp"
 #include "../vl-int-type.hpp"
 #include "../trace-type.hpp"
@@ -117,6 +118,7 @@ public:
         DL_BLOB,
         STRUCT,
         VAR,
+        VAR_WITH_INT_RANGES,
     };
 
 public:
@@ -578,7 +580,7 @@ private:
  *
  * `pseudoSelLoc` may be a relative data location.
  */
-class PseudoVarType final :
+class PseudoVarType :
     public PseudoDt
 {
 public:
@@ -615,9 +617,59 @@ public:
         return _pseudoOpts;
     }
 
+protected:
+    PseudoNamedDts _clonePseudoOpts() const;
+
 private:
     boost::optional<PseudoDataLoc> _pseudoSelLoc;
     PseudoNamedDts _pseudoOpts;
+};
+
+/*
+ * Pseudo variant (with integer ranges) type.
+ *
+ * `pseudoSelLoc` may be a relative data location.
+ */
+class PseudoVarWithIntRangesType final :
+    public PseudoVarType
+{
+public:
+    /*
+     * This is a hack: such an integer range set may in fact contain
+     * signed integer ranges, but we'll only know in
+     * DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(),
+     * at which point signed integer range sets will be created, casting
+     * the lower and upper values to `long long`.
+     *
+     * Hackish, but safe.
+     */
+    using RangeSets = std::vector<IntegerRangeSet<unsigned long long>>;
+
+public:
+    /*
+     * `ranges` matches `pseudoOpts`, that is, `ranges[i]` is the
+     * corresponding integer range set of the option `pseudoOpts[i]`.
+     */
+    explicit PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+                                        PseudoNamedDts&& pseudoOpts, RangeSets&& rangeSets,
+                                        TextLocation loc = TextLocation {});
+
+    PseudoDt::Kind kind() const noexcept override
+    {
+        return PseudoDt::Kind::VAR_WITH_INT_RANGES;
+    }
+
+    PseudoDt::UP clone() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
+
+    const RangeSets& rangeSets() const noexcept
+    {
+        return _rangeSets;
+    }
+
+private:
+    RangeSets _rangeSets;
 };
 
 class PseudoDst;

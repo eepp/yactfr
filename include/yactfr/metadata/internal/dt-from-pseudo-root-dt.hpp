@@ -164,17 +164,38 @@ private:
     DataType::UP _dtFromPseudoVarType(const PseudoDt& pseudoDt);
 
     /*
+     * Converts the pseudo variant (with integer ranges) type `pseudoDt`
+     * to a yactfr variant type.
+     */
+    DataType::UP _dtFromPseudoVarWithIntRangesType(const PseudoDt& pseudoDt);
+
+    /*
+     * Returns the yactfr data location and all the pseudo selector
+     * types of the pseudo variant type `pseudoDt`.
+     */
+    std::pair<DataLocation, ConstPseudoDtSet> _pseudoVarTypeSels(const PseudoDt& pseudoDt) const;
+
+    /*
      * Converts the pseudo variant type `pseudoVarType` to a yactfr
-     * variant type of type `VarTypeT`, the type of the selector being
-     * `pseudoSelType` of yactfr type `SelTypeT`.
+     * variant type of type `VarTypeT`, the type of the selector type
+     * mappings `selTypeMappings` being `MappingsT`.
      */
     template <typename VarTypeT, typename MappingsT>
     DataType::UP _dtFromPseudoVarType(const PseudoVarType& pseudoVarType,
                                       const MappingsT& selTypeMappings, const DataLocation& selLoc);
 
-    [[ noreturn ]] void _throwVarTypeInvalDataLoc(const std::string& initMsg,
-                                                  const PseudoDt& pseudoDt,
-                                                  const DataLocation& selLoc) const;
+    /*
+     * Converts the pseudo variant (with integer ranges) type
+     * `pseudoVarType` to a yactfr variant type of type `VarTypeT`, the
+     * value type of the integer ranges of the options being
+     * `IntRangeValueT`.
+     */
+    template <typename VarTypeT, typename IntRangeValueT>
+    DataType::UP _dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
+                                                   const DataLocation& selLoc);
+
+    [[ noreturn ]] void _throwInvalDataLoc(const std::string& initMsg, const TextLocation& initLoc,
+                                           const DataLocation& dataLoc, const TextLocation& loc) const;
 
     template <typename ItT>
     static std::string _dataLocStr(Scope scope, ItT begin, ItT end);
@@ -307,8 +328,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
 {
     // validate that the selector type has no overlapping mappings
     if (this->_enumTypeMappingsOverlap(selTypeMappings)) {
-        this->_throwVarTypeInvalDataLoc("Selector type of variant type contains overlapping mappings.",
-                                        pseudoVarType, selLoc);
+        this->_throwInvalDataLoc("Selector type of variant type contains overlapping mappings.",
+                                 pseudoVarType.loc(), selLoc, pseudoVarType.loc());
     }
 
     typename VarTypeT::Options opts;
@@ -327,11 +348,43 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
 
             ss << "Selector type of variant type has no mapping named `" <<
                   pseudoOpt->name() << "`.";
-            this->_throwVarTypeInvalDataLoc(ss.str(), pseudoVarType, selLoc);
+            this->_throwInvalDataLoc(ss.str(), pseudoVarType.loc(), selLoc, pseudoVarType.loc());
         }
 
         opts.push_back(std::make_unique<const typename VarTypeT::Option>(pseudoOpt->name(),
                                                                          std::move(optDt), rangesIt->second));
+    }
+
+    // not visited anymore
+    _current.erase(&pseudoVarType);
+
+    return std::make_unique<const VarTypeT>(1, std::move(opts), selLoc);
+}
+
+template <typename VarTypeT, typename IntRangeValueT>
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
+                                                                            const DataLocation& selLoc)
+{
+    typename VarTypeT::Options opts;
+
+    for (auto i = 0U; i < pseudoVarType.pseudoOpts().size(); ++i) {
+        // currently being visited
+        _current[&pseudoVarType] = i;
+
+        const auto& pseudoOpt = pseudoVarType.pseudoOpts()[i];
+        auto optDt = this->_dtFromPseudoDt(pseudoOpt->pseudoDt());
+        std::set<IntegerRange<IntRangeValueT>> ranges;
+
+        for (auto& range : pseudoVarType.rangeSets()[i]) {
+            ranges.insert(IntegerRange<IntRangeValueT> {
+                static_cast<IntRangeValueT>(range.lower()),
+                static_cast<IntRangeValueT>(range.upper())
+            });
+        }
+
+        opts.push_back(std::make_unique<const typename VarTypeT::Option>(pseudoOpt->name(),
+                                                                         std::move(optDt),
+                                                                         IntegerRangeSet<IntRangeValueT> {std::move(ranges)}));
     }
 
     // not visited anymore

@@ -54,6 +54,10 @@ public:
     virtual void visit(PseudoVarType&)
     {
     }
+
+    virtual void visit(PseudoVarWithIntRangesType&)
+    {
+    }
 };
 
 class ConstPseudoDtVisitor
@@ -95,6 +99,10 @@ public:
     }
 
     virtual void visit(const PseudoVarType&)
+    {
+    }
+
+    virtual void visit(const PseudoVarWithIntRangesType&)
     {
     }
 };

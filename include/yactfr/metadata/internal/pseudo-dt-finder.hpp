@@ -94,6 +94,11 @@ public:
         }
     }
 
+    void visit(_PseudoDt<PseudoVarWithIntRangesType>& pseudoDt) override
+    {
+        this->visit(static_cast<_PseudoDt<PseudoVarType>&>(pseudoDt));
+    }
+
 private:
     void _visit(_PseudoDt<PseudoArrayType>& pseudoDt)
     {

@@ -116,6 +116,9 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
     case PseudoDt::Kind::VAR:
         return this->_dtFromPseudoVarType(pseudoDt);
 
+    case PseudoDt::Kind::VAR_WITH_INT_RANGES:
+        return this->_dtFromPseudoVarWithIntRangesType(pseudoDt);
+
     default:
         std::abort();
     }
@@ -176,25 +179,15 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
 const DataLocation& DtFromPseudoRootDtConverter::_getLenLoc(const PseudoDt& pseudoDt) const
 {
     const auto& lenLoc = _locMap[pseudoDt];
+    const auto pseudoLenTypes = this->_findPseudoDts(lenLoc, pseudoDt.loc());
 
-    try {
-        const auto pseudoLenTypes = this->_findPseudoDts(lenLoc, pseudoDt.loc());
+    assert(!pseudoLenTypes.empty());
 
-        assert(!pseudoLenTypes.empty());
-
-        for (const auto pseudoLenType : pseudoLenTypes) {
-            if (!pseudoLenType->isUInt()) {
-                throwMetadataParseError("Length type isn't an unsigned integer type.",
-                                        pseudoLenType->loc());
-            }
+    for (const auto pseudoLenType : pseudoLenTypes) {
+        if (!pseudoLenType->isUInt()) {
+            this->_throwInvalDataLoc("Length type isn't an unsigned integer type.",
+                                     pseudoLenType->loc(), lenLoc, pseudoDt.loc());
         }
-    } catch (MetadataParseError& exc) {
-        std::ostringstream ss;
-
-        ss << "Invalid data location (`" <<
-              this->_dataLocStr(lenLoc.scope(), lenLoc.begin(), lenLoc.end()) << "`):";
-        appendMsgToMetadataParseError(exc, ss.str(), pseudoDt.loc());
-        throw;
     }
 
     return lenLoc;
@@ -385,33 +378,43 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
     return pseudoDts;
 }
 
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& pseudoDt)
+std::pair<DataLocation, ConstPseudoDtSet> DtFromPseudoRootDtConverter::_pseudoVarTypeSels(const PseudoDt& pseudoDt) const
 {
     auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
     const auto& selLoc = _locMap[pseudoDt];
+    const auto pseudoSelDts = this->_findPseudoDts(selLoc, pseudoDt.loc());
+
+    assert(!pseudoSelDts.empty());
+
+    for (const auto pseudoSelDt : pseudoSelDts) {
+        if (!pseudoSelDt->isInt()) {
+            this->_throwInvalDataLoc("Selector type of variant type isn't an integer type.",
+                                     pseudoSelDt->loc(), selLoc, pseudoDt.loc());
+        }
+    }
+
+    return std::make_pair(selLoc, pseudoSelDts);
+}
+
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& pseudoDt)
+{
+    assert(_pseudoTraceType->majorVersion() == 1);
+
+    auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
+    const auto selLocPseudoDtsPair = this->_pseudoVarTypeSels(pseudoDt);
+    auto& selLoc = selLocPseudoDtsPair.first;
+    auto& pseudoSelDts = selLocPseudoDtsPair.second;
     const PseudoDt *pseudoSelDt = nullptr;
     bool selIsFlUEnumType;
 
-    try {
-        const auto pseudoSelDts = this->_findPseudoDts(selLoc, pseudoDt.loc());
-
-        assert(!pseudoSelDts.empty());
-
+    // validate selector type
+    {
         if (pseudoSelDts.size() > 1) {
-            std::ostringstream ss;
-
-            ss << "Selector type of variant type (location: `" <<
-                  this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) <<
-                  "`) targets more than one data type.";
-            throwMetadataParseError(ss.str(), pseudoDt.loc());
+            this->_throwInvalDataLoc("Selector type of variant type targets more than one data type.",
+                                     pseudoVarType.loc(), selLoc, pseudoVarType.loc());
         }
 
         pseudoSelDt = *pseudoSelDts.begin();
-
-        if (!pseudoSelDt->isInt()) {
-            throwMetadataParseError("Selector type of variant type isn't a fixed-length integer type.",
-                                    pseudoSelDt->loc());
-        }
 
         bool isFlEnumType;
 
@@ -426,17 +429,10 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
         }
 
         if (!isFlEnumType) {
-            throwMetadataParseError("Selector type of variant type isn't a fixed-length enumeration type.",
-                                    pseudoSelDt->loc());
+            this->_throwInvalDataLoc("Selector type of variant type isn't an enumeration type.",
+                                     pseudoSelDt->loc(), selLoc, pseudoDt.loc());
         }
-    } catch (MetadataParseError& exc) {
-        std::ostringstream ss;
 
-        ss << "Invalid data location (`" <<
-              this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) <<
-              "`):";
-        appendMsgToMetadataParseError(exc, ss.str(), pseudoDt.loc());
-        throw;
     }
 
     assert(pseudoSelDt);
@@ -456,18 +452,57 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     }
 }
 
-void DtFromPseudoRootDtConverter::_throwVarTypeInvalDataLoc(const std::string& initMsg,
-                                                            const PseudoDt& pseudoDt,
-                                                            const DataLocation& selLoc) const
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(const PseudoDt& pseudoDt)
+{
+    assert(_pseudoTraceType->majorVersion() == 2);
+
+    auto& pseudoVarType = static_cast<const PseudoVarWithIntRangesType&>(pseudoDt);
+    const auto selLocPseudoDtsPair = this->_pseudoVarTypeSels(pseudoDt);
+    auto& selLoc = selLocPseudoDtsPair.first;
+    auto& pseudoSelDts = selLocPseudoDtsPair.second;
+
+    assert(!pseudoSelDts.empty());
+
+    // validate selector types
+    Size unsignedSelTypeCount = 0;
+
+    for (const auto pseudoSelDt : pseudoSelDts) {
+        assert(pseudoSelDt->isInt());
+
+        if (pseudoSelDt->isUInt()) {
+            ++unsignedSelTypeCount;
+        }
+    }
+
+    if (unsignedSelTypeCount > 0 && unsignedSelTypeCount < pseudoSelDts.size()) {
+        this->_throwInvalDataLoc("All selector types of variant type don't have the same signedness.",
+                                 pseudoDt.loc(), selLoc, pseudoDt.loc());
+    }
+
+    if (unsignedSelTypeCount > 0) {
+        return this->_dtFromPseudoVarWithIntRangesType<VariantWithUnsignedSelectorType,
+                                                       unsigned long long>(pseudoVarType, selLoc);
+    } else {
+        return this->_dtFromPseudoVarWithIntRangesType<VariantWithSignedSelectorType,
+                                                       long long>(pseudoVarType, selLoc);
+    }
+
+    return nullptr;
+}
+
+void DtFromPseudoRootDtConverter::_throwInvalDataLoc(const std::string& initMsg,
+                                                     const TextLocation& initLoc,
+                                                     const DataLocation& dataLoc,
+                                                     const TextLocation& loc) const
 {
     try {
-        throwMetadataParseError(initMsg, pseudoDt.loc());
+        throwMetadataParseError(initMsg, initLoc);
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
 
         ss << "Invalid data location (`" <<
-              this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) << "`):";
-        appendMsgToMetadataParseError(exc, ss.str(), pseudoDt.loc());
+              this->_dataLocStr(dataLoc.scope(), dataLoc.begin(), dataLoc.end()) << "`):";
+        appendMsgToMetadataParseError(exc, ss.str(), loc);
         throw;
     }
 }
