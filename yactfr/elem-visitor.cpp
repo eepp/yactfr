@@ -116,28 +116,53 @@ void ElementVisitor::visit(const FixedLengthFloatingPointNumberElement& elem)
     this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariableLengthBitArrayElement&)
+void ElementVisitor::visit(const VariableLengthBitArrayBeginningElement&)
 {
 }
 
-void ElementVisitor::visit(const VariableLengthSignedIntegerElement& elem)
+void ElementVisitor::visit(const VariableLengthSignedIntegerBeginningElement& elem)
 {
-    this->visit(static_cast<const VariableLengthBitArrayElement&>(elem));
+    this->visit(static_cast<const VariableLengthBitArrayBeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariableLengthUnsignedIntegerElement& elem)
+void ElementVisitor::visit(const VariableLengthUnsignedIntegerBeginningElement& elem)
 {
-    this->visit(static_cast<const VariableLengthBitArrayElement&>(elem));
+    this->visit(static_cast<const VariableLengthBitArrayBeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariableLengthSignedEnumerationElement& elem)
+void ElementVisitor::visit(const VariableLengthSignedEnumerationBeginningElement& elem)
 {
-   this->visit(static_cast<const VariableLengthSignedIntegerElement&>(elem));
+   this->visit(static_cast<const VariableLengthSignedIntegerBeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariableLengthUnsignedEnumerationElement& elem)
+void ElementVisitor::visit(const VariableLengthUnsignedEnumerationBeginningElement& elem)
 {
-   this->visit(static_cast<const VariableLengthUnsignedIntegerElement&>(elem));
+   this->visit(static_cast<const VariableLengthUnsignedIntegerBeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthBitArrayEndElement& elem)
+{
+    this->visit(static_cast<const EndElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthSignedIntegerEndElement& elem)
+{
+    this->visit(static_cast<const VariableLengthBitArrayEndElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthUnsignedIntegerEndElement& elem)
+{
+    this->visit(static_cast<const VariableLengthBitArrayEndElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthSignedEnumerationEndElement& elem)
+{
+   this->visit(static_cast<const VariableLengthSignedIntegerEndElement&>(elem));
+}
+
+void ElementVisitor::visit(const VariableLengthUnsignedEnumerationEndElement& elem)
+{
+   this->visit(static_cast<const VariableLengthUnsignedIntegerEndElement&>(elem));
 }
 
 void ElementVisitor::visit(const NullTerminatedStringBeginningElement& elem)
