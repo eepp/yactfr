@@ -226,6 +226,13 @@ TraceEnvironment TraceEnvironmentStreamDecoder::decode()
                 };
             }
 
+            if (_curEntries.find(*_curKey) != _curEntries.end()) {
+                std::ostringstream ss;
+
+                ss << "Duplicate environment entry with key `" << *_curKey << "`.";
+                throw InvalidTraceEnvironmentStream {ss.str(), _it.offset()};
+            }
+
             if (_curStrVal) {
                 // string value
                 _curEntries.emplace(std::make_pair(std::move(*_curKey), std::move(*_curStrVal)));
