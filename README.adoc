@@ -280,12 +280,14 @@ make check
 
 If you're in a hurry and you have the
 https://pypi.org/project/pytest-xdist/[pytest-xdist] package, you can
-parallelize the testing. You need to set the `YACTFR_BINARY_DIR` to the
-build directory (absolute path), for example:
+parallelize the testing process. You need to set the `YACTFR_BINARY_DIR`
+environment variable to the build directory (absolute path), for
+example:
 
-.Run the yactfr tests in parallel (eight processes) from the root directory of the source tree.
+.Run the yactfr tests in parallel (eight processes) from the build directory.
 ----
-YACTFR_BINARY_DIR=$(pwd)/build py.test -n8
+make tests
+YACTFR_BINARY_DIR=$(pwd) py.test -n8 ../tests
 ----
 
 == Usage examples

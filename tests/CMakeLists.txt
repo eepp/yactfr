@@ -8,7 +8,7 @@ add_subdirectory (tests-iter)
 add_subdirectory (tests-iter-pos)
 add_subdirectory (tests-elem-seq)
 add_custom_target (
-    all-tests
+    tests
     DEPENDS
         testers
         tests-iter
@@ -23,7 +23,7 @@ add_custom_target (
             "YACTFR_BINARY_DIR=${CMAKE_BINARY_DIR}"
             py.test -v
     DEPENDS
-        all-tests
+        tests
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Running tests"
     VERBATIM
