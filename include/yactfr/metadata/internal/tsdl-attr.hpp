@@ -13,6 +13,7 @@
 #include <vector>
 #include <cstring>
 #include <cassert>
+#include <sstream>
 #include <unordered_map>
 #include <unordered_set>
 #include <boost/optional.hpp>
@@ -23,18 +24,9 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "../../aliases.hpp"
-#include "../../trace-env.hpp"
-#include "../trace-type.hpp"
-#include "../data-loc.hpp"
-#include "../dst.hpp"
-#include "../ert.hpp"
-#include "../fl-enum-type.hpp"
-#include "../int-range.hpp"
+#include "../int-type-common.hpp"
 #include "../aliases.hpp"
 #include "../metadata-parse-error.hpp"
-#include "str-scanner.hpp"
-#include "pseudo-types.hpp"
-#include "data-loc-map.hpp"
 
 namespace yactfr {
 namespace internal {

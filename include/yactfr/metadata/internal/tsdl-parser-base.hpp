@@ -33,7 +33,6 @@
 #include "../int-range.hpp"
 #include "../aliases.hpp"
 #include "../metadata-parse-error.hpp"
-#include "str-scanner.hpp"
 #include "pseudo-types.hpp"
 #include "pseudo-dt-utils.hpp"
 #include "data-loc-map.hpp"

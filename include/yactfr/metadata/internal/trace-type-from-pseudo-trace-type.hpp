@@ -32,7 +32,6 @@
 #include "../int-range.hpp"
 #include "../aliases.hpp"
 #include "../metadata-parse-error.hpp"
-#include "str-scanner.hpp"
 #include "pseudo-types.hpp"
 
 namespace yactfr {
