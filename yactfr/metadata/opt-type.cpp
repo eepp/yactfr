@@ -40,6 +40,13 @@ OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(const unsigned 
 {
 }
 
+OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(DataType::UP dt,
+                                                                 DataLocation selLoc,
+                                                                 MapItem::UP userAttrs) :
+    OptionalWithBooleanSelectorType {1, std::move(dt), std::move(selLoc), std::move(userAttrs)}
+{
+}
+
 DataType::UP OptionalWithBooleanSelectorType::_clone() const
 {
     return std::make_unique<OptionalWithBooleanSelectorType>(this->minimumAlignment(),
@@ -56,6 +63,16 @@ OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType
     OptionalWithIntegerSelectorType<unsigned long long> {
         DataType::_KIND_OPT_UINT_SEL, minAlign, std::move(dt),
         std::move(selLoc), std::move(selRanges), std::move(userAttrs)
+    }
+{
+}
+
+OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(DataType::UP dt,
+                                                                                 DataLocation selLoc,
+                                                                                 SelectorRangeSet selRanges,
+                                                                                 MapItem::UP userAttrs) :
+    OptionalWithUnsignedIntegerSelectorType {
+        1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(userAttrs)
     }
 {
 }
@@ -77,6 +94,16 @@ OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(con
     OptionalWithIntegerSelectorType<long long> {
         DataType::_KIND_OPT_SINT_SEL, minAlign, std::move(dt),
         std::move(selLoc), std::move(selRanges), std::move(userAttrs)
+    }
+{
+}
+
+OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(DataType::UP dt,
+                                                                             DataLocation selLoc,
+                                                                             SelectorRangeSet selRanges,
+                                                                             MapItem::UP userAttrs) :
+    OptionalWithSignedIntegerSelectorType {
+        1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(userAttrs)
     }
 {
 }

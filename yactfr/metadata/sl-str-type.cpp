@@ -19,6 +19,11 @@ StaticLengthStringType::StaticLengthStringType(const unsigned int align, const S
 {
 }
 
+StaticLengthStringType::StaticLengthStringType(const Size maxLen, MapItem::UP userAttrs) :
+    StaticLengthStringType {8, maxLen, std::move(userAttrs)}
+{
+}
+
 DataType::UP StaticLengthStringType::_clone() const
 {
     return std::make_unique<StaticLengthStringType>(this->alignment(), _maxLen,

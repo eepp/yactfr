@@ -94,6 +94,29 @@ public:
                                                MapItem::UP userAttributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
+    /*!
+    @brief
+        Builds a variable-length unsigned integer type having
+        a default alignment property (8).
+
+    @param[in] preferredDisplayBase
+        Preferred display base of data stream variable-length unsigned
+        integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length unsigned integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    @param[in] roles
+        Roles of variable-length unsigned integers described by this
+        type.
+    */
+    explicit VariableLengthUnsignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                               MapItem::UP userAttributes = nullptr,
+                                               UnsignedIntegerTypeRoleSet roles = {});
+
 protected:
     bool _isEqual(const DataType& other) const noexcept override;
 
@@ -148,6 +171,25 @@ public:
     */
     explicit VariableLengthSignedIntegerType(unsigned int alignment,
                                              DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                             MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Builds a variable-length signed integer type having a default
+        alignment property (8).
+
+    @param[in] preferredDisplayBase
+        Preferred display base of data stream variable-length signed
+        integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length signed integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit VariableLengthSignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                              MapItem::UP userAttributes = nullptr);
 
 private:

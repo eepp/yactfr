@@ -18,6 +18,11 @@ NullTerminatedStringType::NullTerminatedStringType(const unsigned int align, Map
     assert(align >= 8);
 }
 
+NullTerminatedStringType::NullTerminatedStringType(MapItem::UP userAttrs) :
+    NullTerminatedStringType {8, std::move(userAttrs)}
+{
+}
+
 NullTerminatedStringType::NullTerminatedStringType(const NullTerminatedStringType& other) :
     ScalarDataType {
         _KIND_NT_STR, other.alignment(), internal::tryCloneUserAttrs(other.userAttributes())

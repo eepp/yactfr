@@ -97,6 +97,36 @@ public:
                             const ClockType *defaultClockType = nullptr,
                             MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Builds a data stream type without namespace and name properties.
+
+    @param[in] id
+        Data stream type ID.
+    @param[in] eventRecordTypes
+        Children event record types (moved to this type).
+    @param[in] packetContextType
+        Packet context type, or \c nullptr if none.
+    @param[in] eventRecordHeaderType
+        Event record header type, or \c nullptr if none.
+    @param[in] eventRecordCommonContextType
+        Event record common context type, or \c nullptr if none.
+    @param[in] defaultClockType
+        Default clock type, or \c nullptr if none.
+    @param[in] userAttributes
+        @parblock
+        User attributes.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit DataStreamType(TypeId id, EventRecordTypeSet&& eventRecordTypes,
+                            StructureType::UP packetContextType,
+                            StructureType::UP eventRecordHeaderType,
+                            StructureType::UP eventRecordCommonContextType,
+                            const ClockType *defaultClockType = nullptr,
+                            MapItem::UP userAttributes = nullptr);
+
     /// Numeric ID, unique amongst the IDs of all the data stream types
     /// which are part of the same \link TraceType trace type\endlink.
     TypeId id() const noexcept

@@ -45,6 +45,15 @@ VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const unsig
 {
 }
 
+VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const DisplayBase prefDispBase,
+                                                                     MapItem::UP userAttrs,
+                                                                     UnsignedIntegerTypeRoleSet roles) :
+    VariableLengthUnsignedIntegerType {
+        8, prefDispBase, std::move(userAttrs), std::move(roles)
+    }
+{
+}
+
 DataType::UP VariableLengthUnsignedIntegerType::_clone() const
 {
     return std::make_unique<VariableLengthUnsignedIntegerType>(this->alignment(),
@@ -72,6 +81,12 @@ VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const unsigned 
                                                                  const DisplayBase prefDispBase,
                                                                  MapItem::UP userAttrs) :
     VariableLengthIntegerType {_KIND_VL_SINT, align, prefDispBase, std::move(userAttrs)}
+{
+}
+
+VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const DisplayBase prefDispBase,
+                                                                 MapItem::UP userAttrs) :
+    VariableLengthSignedIntegerType {8, prefDispBase, std::move(userAttrs)}
 {
 }
 

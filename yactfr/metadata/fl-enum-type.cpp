@@ -25,6 +25,15 @@ FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigne
 {
 }
 
+FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigned int len,
+                                                                   const ByteOrder bo,
+                                                                   const Mappings& mappings,
+                                                                   const DisplayBase prefDispBase,
+                                                                   MapItem::UP userAttrs) :
+    FixedLengthSignedEnumerationType {1, len, bo, mappings, prefDispBase, std::move(userAttrs)}
+{
+}
+
 FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigned int align,
                                                                    const unsigned int len,
                                                                    const ByteOrder bo,
@@ -33,6 +42,17 @@ FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigne
                                                                    MapItem::UP userAttrs) :
     EnumerationType<FixedLengthSignedIntegerType, internal::SignedEnumerationTypeValue> {
         _KIND_FL_SENUM, std::move(mappings), align, len, bo, prefDispBase, std::move(userAttrs)
+    }
+{
+}
+
+FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigned int len,
+                                                                   const ByteOrder bo,
+                                                                   Mappings&& mappings,
+                                                                   const DisplayBase prefDispBase,
+                                                                   MapItem::UP userAttrs) :
+    FixedLengthSignedEnumerationType {
+        1, len, bo, std::move(mappings), prefDispBase, std::move(userAttrs)
     }
 {
 }
@@ -58,6 +78,18 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
 {
 }
 
+FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const unsigned int len,
+                                                                       const ByteOrder bo,
+                                                                       const Mappings& mappings,
+                                                                       const DisplayBase prefDispBase,
+                                                                       MapItem::UP userAttrs,
+                                                                       UnsignedIntegerTypeRoleSet roles) :
+    FixedLengthUnsignedEnumerationType {
+        1, len, bo, mappings, prefDispBase, std::move(userAttrs), std::move(roles)
+    }
+{
+}
+
 FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const unsigned int align,
                                                                        const unsigned int len,
                                                                        const ByteOrder bo,
@@ -68,6 +100,18 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
     EnumerationType<FixedLengthUnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
         _KIND_FL_UENUM, std::move(mappings), align, len, bo, prefDispBase,
         std::move(userAttrs), std::move(roles)
+    }
+{
+}
+
+FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const unsigned int len,
+                                                                       const ByteOrder bo,
+                                                                       Mappings&& mappings,
+                                                                       const DisplayBase prefDispBase,
+                                                                       MapItem::UP userAttrs,
+                                                                       UnsignedIntegerTypeRoleSet roles) :
+    FixedLengthUnsignedEnumerationType {
+        1, len, bo, std::move(mappings), prefDispBase, std::move(userAttrs), std::move(roles)
     }
 {
 }

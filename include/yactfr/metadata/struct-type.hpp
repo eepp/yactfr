@@ -59,9 +59,31 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
+
+    @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
     */
     explicit StructureType(unsigned int minimumAlignment, MemberTypes&& memberTypes,
                            MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Builds a structure type having a default minimum alignment
+        property (1).
+
+    @param[in] memberTypes
+        Member types of the structure type (moved to this type).
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream structures described by this
+        type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit StructureType(MemberTypes&& memberTypes, MapItem::UP userAttributes = nullptr);
 
     /// Member types contained in this structure type.
     const MemberTypes& memberTypes() const noexcept

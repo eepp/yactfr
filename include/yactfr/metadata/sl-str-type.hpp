@@ -52,6 +52,24 @@ public:
     explicit StaticLengthStringType(unsigned int alignment, Size maximumLength,
                                     MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Builds a static-length string type having a default alignment
+        property (8).
+
+    @param[in] maximumLength
+        Maximum length (bytes) of data stream static-length strings
+        described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream static-length strings described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit StaticLengthStringType(Size maximumLength, MapItem::UP userAttributes = nullptr);
+
     /// Maximum length (bytes) of data stream static-length strings
     /// described by this type.
     Size maximumLength() const noexcept

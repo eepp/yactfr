@@ -32,6 +32,11 @@ StructureType::StructureType(const unsigned int minAlign, StructureType::MemberT
     this->_initNamesToMemberTypes();
 }
 
+StructureType::StructureType(StructureType::MemberTypes&& memberTypes, MapItem::UP userAttrs) :
+    StructureType {1, std::move(memberTypes), std::move(userAttrs)}
+{
+}
+
 void StructureType::_initNamesToMemberTypes()
 {
     for (const auto& member : _memberTypes) {

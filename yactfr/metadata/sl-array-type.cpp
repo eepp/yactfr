@@ -19,6 +19,13 @@ StaticLengthArrayType::StaticLengthArrayType(const unsigned int minAlign, DataTy
 {
 }
 
+StaticLengthArrayType::StaticLengthArrayType(DataType::UP elemType, const Size len,
+                                             MapItem::UP userAttrs,
+                                             const bool hasTraceTypeUuidRole) :
+    StaticLengthArrayType {1, std::move(elemType), len, std::move(userAttrs), hasTraceTypeUuidRole}
+{
+}
+
 DataType::UP StaticLengthArrayType::_clone() const
 {
     return std::make_unique<StaticLengthArrayType>(this->minimumAlignment(),

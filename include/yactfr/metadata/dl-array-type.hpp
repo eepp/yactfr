@@ -66,6 +66,30 @@ public:
                                     DataLocation lengthLocation,
                                     MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Builds a dynamic-length array type having a default minimum
+        alignment property (1).
+
+    @param[in] elementType
+        %Element type.
+    @param[in] lengthLocation
+        Location of lengths of data stream dynamic-length arrays
+        described by this type (number of elements).
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream dynamic-length arrays described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p lengthLocation only locates unsigned integers.
+    */
+    explicit DynamicLengthArrayType(DataType::UP elementType, DataLocation lengthLocation,
+                                    MapItem::UP userAttributes = nullptr);
+
     /// Location of lengths of data stream dynamic-length arrays
     /// described by this type.
     const DataLocation& lengthLocation() const noexcept

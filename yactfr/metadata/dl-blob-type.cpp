@@ -17,10 +17,21 @@ DynamicLengthBlobType::DynamicLengthBlobType(const unsigned int align, DataLocat
 {
 }
 
+DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, std::string mediaType,
+                                             MapItem::UP userAttrs) :
+    DynamicLengthBlobType {8, std::move(lenLoc), std::move(mediaType), std::move(userAttrs)}
+{
+}
+
 DynamicLengthBlobType::DynamicLengthBlobType(const unsigned int align, DataLocation lenLoc,
                                              MapItem::UP userAttrs) :
     BlobType {_KIND_DL_BLOB, align, std::move(userAttrs)},
     _lenLoc {std::move(lenLoc)}
+{
+}
+
+DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, MapItem::UP userAttrs) :
+    DynamicLengthBlobType {8, std::move(lenLoc), std::move(userAttrs)}
 {
 }
 

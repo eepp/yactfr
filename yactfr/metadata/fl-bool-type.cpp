@@ -18,6 +18,12 @@ FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int align, const u
 {
 }
 
+FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int len, const ByteOrder bo,
+                                               MapItem::UP userAttrs) :
+    FixedLengthBooleanType {1, len, bo, std::move(userAttrs)}
+{
+}
+
 FixedLengthBooleanType::FixedLengthBooleanType(const FixedLengthBooleanType& other) :
     FixedLengthBooleanType {other.alignment(), other.length(), other.byteOrder()}
 {

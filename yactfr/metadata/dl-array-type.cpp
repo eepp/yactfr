@@ -17,6 +17,12 @@ DynamicLengthArrayType::DynamicLengthArrayType(const unsigned int minAlign, Data
 {
 }
 
+DynamicLengthArrayType::DynamicLengthArrayType(DataType::UP elemType, DataLocation lenLoc,
+                                               MapItem::UP userAttrs) :
+    DynamicLengthArrayType {1, std::move(elemType), std::move(lenLoc), std::move(userAttrs)}
+{
+}
+
 DataType::UP DynamicLengthArrayType::_clone() const
 {
     return std::make_unique<DynamicLengthArrayType>(this->alignment(), this->elementType().clone(),

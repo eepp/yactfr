@@ -24,6 +24,15 @@ VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(c
 {
 }
 
+VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(Options&& opts,
+                                                                               DataLocation selLoc,
+                                                                               MapItem::UP userAttrs) :
+    VariantWithUnsignedIntegerSelectorType {
+        1, std::move(opts), std::move(selLoc), std::move(userAttrs)
+    }
+{
+}
+
 DataType::UP VariantWithUnsignedIntegerSelectorType::_clone() const
 {
     return std::make_unique<VariantWithUnsignedIntegerSelectorType>(this->minimumAlignment(),
@@ -39,6 +48,15 @@ VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(const
     VariantType {
         DataType::_KIND_VAR_SINT_SEL, minAlign, std::move(opts),
         std::move(selLoc), std::move(userAttrs)
+    }
+{
+}
+
+VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(Options&& opts,
+                                                                           DataLocation selLoc,
+                                                                           MapItem::UP userAttrs) :
+    VariantWithSignedIntegerSelectorType {
+        1, std::move(opts), std::move(selLoc), std::move(userAttrs)
     }
 {
 }

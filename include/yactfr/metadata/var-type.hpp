@@ -216,6 +216,10 @@ public:
         @endparblock
 
     @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
+    @pre
         <code>!options.empty()</code>
     @pre
         \p selectorLocation only locates unsigned integers.
@@ -225,6 +229,35 @@ public:
     */
     explicit VariantWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
                                                     Options&& options,
+                                                    DataLocation selectorLocation,
+                                                    MapItem::UP userAttributes);
+
+    /*!
+    @brief
+        Builds a type of data stream variants with an unsigned integer
+        selector, having a default minimum alignment property (1).
+
+    @param[in] options
+        Options of the variant type (moved to this type).
+    @param[in] selectorLocation
+        Location of selectors of data stream variants described by this
+        type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variants described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        <code>!options.empty()</code>
+    @pre
+        \p selectorLocation only locates unsigned integers.
+    @pre
+        The options of \p options don't contain overlapping integer
+        ranges between them.
+    */
+    explicit VariantWithUnsignedIntegerSelectorType(Options&& options,
                                                     DataLocation selectorLocation,
                                                     MapItem::UP userAttributes);
 
@@ -267,7 +300,10 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
 
-
+    @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
     @pre
         <code>!options.empty()</code>
     @pre
@@ -278,6 +314,34 @@ public:
     */
     explicit VariantWithSignedIntegerSelectorType(unsigned int minimumAlignment, Options&& options,
                                                   DataLocation selectorLocation,
+                                                  MapItem::UP userAttributes);
+
+    /*!
+    @brief
+        Builds a type of data stream variants with a signed integer
+        selector, having a default minimum alignment property (1).
+
+    @param[in] options
+        Options of the variant type (moved to this type).
+    @param[in] selectorLocation
+        Location of selectors of data stream variants described by this
+        type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variants described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        <code>!options.empty()</code>
+    @pre
+        \p selectorLocation only locates signed integers.
+    @pre
+        The options of \p options don't contain overlapping integer
+        ranges between them.
+    */
+    explicit VariantWithSignedIntegerSelectorType(Options&& options, DataLocation selectorLocation,
                                                   MapItem::UP userAttributes);
 
 private:

@@ -123,6 +123,35 @@ public:
 
     /*!
     @brief
+        Builds a fixed-length signed integer type having a default
+        alignment property (1).
+
+    @param[in] length
+        Length of data stream fixed-length signed integers (bits)
+        described by this type.
+    @param[in] byteOrder
+        Byte order of data stream fixed-length signed integers described
+        by this type.
+    @param[in] preferredDisplayBase
+        Preferred display base of data stream fixed-length signed
+        integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length signed integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p length > 0.
+    */
+    explicit FixedLengthSignedIntegerType(unsigned int length, ByteOrder byteOrder,
+                                          DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                          MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
         Less-than operator.
 
     @attention
@@ -204,6 +233,38 @@ public:
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int alignment, unsigned int length,
                                             ByteOrder byteOrder,
+                                            DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                            MapItem::UP userAttributes = nullptr,
+                                            UnsignedIntegerTypeRoleSet roles = {});
+
+    /*!
+    @brief
+        Builds a fixed-length unsigned integer type having a default
+        alignment property (1).
+
+    @param[in] length
+        Length of data stream fixed-length unsigned integers (bits)
+        described by this type.
+    @param[in] byteOrder
+        Byte order of data stream fixed-length unsigned integers
+        described by this type.
+    @param[in] preferredDisplayBase
+        Preferred display base of data stream fixed-length unsigned
+        integers described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length unsigned integers
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    @param[in] roles
+        Roles of fixed-length unsigned integers described by this type.
+
+    @pre
+        \p length > 0.
+    */
+    explicit FixedLengthUnsignedIntegerType(unsigned int length, ByteOrder byteOrder,
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                             MapItem::UP userAttributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});

@@ -51,6 +51,21 @@ public:
 
     /*!
     @brief
+        Builds a null-terminated string type having a default alignment
+        property (8).
+
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream null-terminated strings described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit NullTerminatedStringType(MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
         Copy constructor.
 
     @param[in] other

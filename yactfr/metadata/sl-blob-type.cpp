@@ -19,11 +19,23 @@ StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size 
 {
 }
 
+StaticLengthBlobType::StaticLengthBlobType(const Size len, std::string mediaType,
+                                           MapItem::UP userAttrs, const bool hasTraceTypeUuidRole) :
+    StaticLengthBlobType {8, len, std::move(mediaType), std::move(userAttrs), hasTraceTypeUuidRole}
+{
+}
+
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
                                            MapItem::UP userAttrs, const bool hasTraceTypeUuidRole) :
     BlobType {_KIND_SL_BLOB, align, std::move(userAttrs)},
     _len {len},
     _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
+{
+}
+
+StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::UP userAttrs,
+                                           const bool hasTraceTypeUuidRole) :
+    StaticLengthBlobType {8, len, std::move(userAttrs), hasTraceTypeUuidRole}
 {
 }
 

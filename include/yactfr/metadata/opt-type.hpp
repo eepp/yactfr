@@ -112,10 +112,38 @@ public:
         @endparblock
 
     @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
+    @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithBooleanSelectorType(const unsigned int minimumAlignment,
-                                             DataType::UP dataType, DataLocation selectorLocation,
+    explicit OptionalWithBooleanSelectorType(unsigned int minimumAlignment, DataType::UP dataType,
+                                             DataLocation selectorLocation,
+                                             MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Builds a type of data stream optionals with a boolean selector,
+        having a default minimum alignment property (1).
+
+    @param[in] dataType
+        Type of the data contained by data stream optionals described by
+        this type.
+    @param[in] selectorLocation
+        Location of selectors of data stream optionals described by this
+        type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream optionals described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p selectorLocation only locates booleans.
+    */
+    explicit OptionalWithBooleanSelectorType(DataType::UP dataType, DataLocation selectorLocation,
                                              MapItem::UP userAttributes = nullptr);
 
 private:
@@ -202,10 +230,42 @@ public:
         @endparblock
 
     @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
+    @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithUnsignedIntegerSelectorType(const unsigned int minimumAlignment,
+    explicit OptionalWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
                                                      DataType::UP dataType,
+                                                     DataLocation selectorLocation,
+                                                     SelectorRangeSet selectorRanges,
+                                                     MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Builds a type of data stream optionals with an unsigned integer
+        selector, having a default minimum alignment property (1).
+
+    @param[in] dataType
+        Type of the data contained by data stream optionals described by
+        this type.
+    @param[in] selectorLocation
+        Location of selectors of data stream optionals described by this
+        type.
+    @param[in] selectorRanges
+        Selector range set of this optional type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream optionals described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p selectorLocation only locates booleans.
+    */
+    explicit OptionalWithUnsignedIntegerSelectorType(DataType::UP dataType,
                                                      DataLocation selectorLocation,
                                                      SelectorRangeSet selectorRanges,
                                                      MapItem::UP userAttributes = nullptr);
@@ -255,10 +315,42 @@ public:
         @endparblock
 
     @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
+    @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithSignedIntegerSelectorType(const unsigned int minimumAlignment,
+    explicit OptionalWithSignedIntegerSelectorType(unsigned int minimumAlignment,
                                                    DataType::UP dataType,
+                                                   DataLocation selectorLocation,
+                                                   SelectorRangeSet selectorRanges,
+                                                   MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Builds a type of data stream optionals with a signed integer
+        selector, having a default minimum alignment property (1).
+
+    @param[in] dataType
+        Type of the data contained by data stream optionals described by
+        this type.
+    @param[in] selectorLocation
+        Location of selectors of data stream optionals described by this
+        type.
+    @param[in] selectorRanges
+        Selector range set of this optional type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream optionals described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p selectorLocation only locates booleans.
+    */
+    explicit OptionalWithSignedIntegerSelectorType(DataType::UP dataType,
                                                    DataLocation selectorLocation,
                                                    SelectorRangeSet selectorRanges,
                                                    MapItem::UP userAttributes = nullptr);

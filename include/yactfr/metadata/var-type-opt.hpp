@@ -74,6 +74,31 @@ public:
 
     /*!
     @brief
+        Builds an unnamed variant type option having the type
+        \p type, copying \p ranges.
+
+    @param[in] type
+        Data type of the variant type option.
+    @param[in] ranges
+        Ranges for which this variant type option is selected (copied).
+    @param[in] userAttributes
+        @parblock
+        User attributes of this variant type option.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p ranges is not empty.
+    */
+    explicit VariantTypeOption(DataType::UP type, const RangeSet& ranges,
+                               MapItem::UP userAttributes = nullptr) :
+        VariantTypeOption {boost::none, std::move(type), ranges, std::move(userAttributes)}
+    {
+    }
+
+    /*!
+    @brief
         Builds a variant type option named \p name having the type
         \p type, moving \p ranges.
 
@@ -94,6 +119,24 @@ public:
         _ranges {std::move(ranges)}
     {
         this->_setDispName();
+    }
+
+    /*!
+    @brief
+        Builds an unnamed variant type option having the type
+        \p type, moving \p ranges.
+
+    @param[in] type
+        Data type of the variant type option.
+    @param[in] ranges
+        Ranges for which this variant type option is selected (moved).
+
+    @pre
+        \p ranges is not empty.
+    */
+    explicit VariantTypeOption(DataType::UP type, RangeSet&& ranges) :
+        VariantTypeOption {boost::none, std::move(type), std::move(ranges)}
+    {
     }
 
 public:

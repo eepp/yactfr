@@ -65,6 +65,31 @@ public:
 
     /*!
     @brief
+        Builds a fixed-length floating point number type having a
+        default alignment property (1).
+
+    @param[in] length
+        Length of data stream fixed-length floating point numbers (bits)
+        described by this floating point number type.
+    @param[in] byteOrder
+        Byte order of data stream fixed-length floating point numbers
+        described by this floating point number type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length floating point
+        numbers described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p length is 32 or 64.
+    */
+    explicit FixedLengthFloatingPointNumberType(unsigned int length, ByteOrder byteOrder,
+                                                MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
         Copy constructor.
 
     @param[in] other

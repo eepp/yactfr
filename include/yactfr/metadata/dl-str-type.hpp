@@ -60,6 +60,26 @@ public:
     explicit DynamicLengthStringType(unsigned int alignment, DataLocation maximumLengthLocation,
                                      MapItem::UP userAttributes = nullptr);
 
+
+    /*!
+    @brief
+        Builds a dynamic-length string type having a default
+        alignment property (8).
+
+    @param[in] maximumLengthLocation
+        Location of maximum lengths (bytes) of data stream
+        dynamic-length strings described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream dynamic-length strings described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit DynamicLengthStringType(DataLocation maximumLengthLocation,
+                                     MapItem::UP userAttributes = nullptr);
+
     /// Location of maximum lengths (bytes) of data stream
     /// dynamic-length strings described by this type.
     const DataLocation& maximumLengthLocation() const noexcept

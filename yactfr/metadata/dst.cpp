@@ -34,6 +34,20 @@ DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
     // TODO: Add validation.
 }
 
+DataStreamType::DataStreamType(const TypeId id, EventRecordTypeSet&& erts,
+                               StructureType::UP pktCtxType, StructureType::UP erHeaderType,
+                               StructureType::UP erCommonCtxType,
+                               const ClockType * const defClkType, MapItem::UP userAttrs) :
+    DataStreamType {
+        id, boost::none, boost::none, std::move(erts),
+        std::move(pktCtxType), std::move(erHeaderType), std::move(erCommonCtxType),
+        defClkType, std::move(userAttrs)
+    }
+{
+    this->_buildErtMap();
+    // TODO: Add validation.
+}
+
 void DataStreamType::_buildErtMap()
 {
     for (auto& ertUp : _erts) {

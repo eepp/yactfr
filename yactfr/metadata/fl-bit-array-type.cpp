@@ -30,6 +30,12 @@ FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int align,
 {
 }
 
+FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int len, const ByteOrder bo,
+                                                 MapItem::UP userAttrs) :
+    FixedLengthBitArrayType {1, len, bo, std::move(userAttrs)}
+{
+}
+
 bool FixedLengthBitArrayType::operator<(const FixedLengthBitArrayType& other) const noexcept
 {
     if (this->alignment() < other.alignment()) {

@@ -53,6 +53,22 @@ public:
     explicit VariableLengthBitArrayType(unsigned int alignment,
                                         MapItem::UP userAttributes = nullptr);
 
+    /*!
+    @brief
+        Builds a variable-length bit array type having a default
+        alignment property (8).
+
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream variable-length bit arrays
+        described by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit VariableLengthBitArrayType(MapItem::UP userAttributes = nullptr);
+
+
 protected:
     bool _isEqual(const DataType& other) const noexcept override;
 

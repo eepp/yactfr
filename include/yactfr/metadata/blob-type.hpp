@@ -25,7 +25,7 @@ class BlobType :
     public ScalarDataType
 {
 protected:
-    explicit BlobType(int kind, unsigned int minAlign, MapItem::UP userAttrs,
+    explicit BlobType(int kind, unsigned int align, MapItem::UP userAttrs,
                       std::string mediaType = "application/octet-stream");
 
 public:

@@ -68,6 +68,41 @@ public:
                                    Size length, MapItem::UP userAttributes = nullptr,
                                    bool hasTraceTypeUuidRole = false);
 
+    /*!
+    @brief
+        Builds a static-length array data type having a default minimum
+        alignment property (1).
+
+    @param[in] elementType
+        %Element type.
+    @param[in] length
+        Length of data stream static-length arrays described by this
+        type (count of element).
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream static-length arrays described by
+        this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    @param[in] hasTraceTypeUuidRole
+        Whether or not the static-length arrays described by this type
+        have the "trace type UUID" role.
+
+    @pre
+        @parblock
+        If \p hasTraceTypeUuidRole is true, then \p length is 16 and all
+        of the following are true:
+
+        - <code>elementType->%isFixedLengthUnsignedIntegerType()</code>
+        - <code>elementType->%asFixedLengthUnsignedIntegerType().%length() == 8</code>
+        - <code>elementType->%asFixedLengthUnsignedIntegerType().%alignment() == 8</code>
+        @endparblock
+    */
+    explicit StaticLengthArrayType(DataType::UP elementType, Size length,
+                                   MapItem::UP userAttributes = nullptr,
+                                   bool hasTraceTypeUuidRole = false);
+
     /// Length of data stream static-length arrays described by this
     /// type (count of element).
     Size length() const noexcept

@@ -21,6 +21,13 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const uns
     assert(len == 32 || len == 64);
 }
 
+FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int len,
+                                                                       const ByteOrder bo,
+                                                                       MapItem::UP userAttrs) :
+    FixedLengthFloatingPointNumberType {1, len, bo, std::move(userAttrs)}
+{
+}
+
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const FixedLengthFloatingPointNumberType& other) :
     FixedLengthFloatingPointNumberType {other.alignment(), other.length(), other.byteOrder()}
 {

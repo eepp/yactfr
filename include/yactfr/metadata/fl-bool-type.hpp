@@ -62,6 +62,32 @@ public:
 
     /*!
     @brief
+        Builds a fixed-length boolean type having a default alignment
+        property (1).
+
+    @param[in] length
+        Length of data stream fixed-length booleans (bits) described by
+        this type.
+    @param[in] byteOrder
+        Byte order of data stream fixed-length booleans described by
+        this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream fixed-length booleans described
+        by this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+
+    @pre
+        \p length > 0.
+    */
+    explicit FixedLengthBooleanType(unsigned int length, ByteOrder byteOrder,
+                                    MapItem::UP userAttributes = nullptr);
+
+
+    /*!
+    @brief
         Copy constructor.
 
     @param[in] other

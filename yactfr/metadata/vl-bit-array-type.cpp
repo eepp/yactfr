@@ -25,6 +25,11 @@ VariableLengthBitArrayType::VariableLengthBitArrayType(const unsigned int align,
 {
 }
 
+VariableLengthBitArrayType::VariableLengthBitArrayType(MapItem::UP userAttrs) :
+    VariableLengthBitArrayType {8, std::move(userAttrs)}
+{
+}
+
 bool VariableLengthBitArrayType::_isEqual(const DataType& other) const noexcept
 {
     return true;

@@ -58,6 +58,14 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int al
 {
 }
 
+FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int len,
+                                                           const ByteOrder bo,
+                                                           const DisplayBase prefDispBase,
+                                                           MapItem::UP userAttrs) :
+    FixedLengthSignedIntegerType {1, len, bo, prefDispBase, std::move(userAttrs)}
+{
+}
+
 DataType::UP FixedLengthSignedIntegerType::_clone() const
 {
     return std::make_unique<FixedLengthSignedIntegerType>(this->alignment(), this->length(),
@@ -87,6 +95,17 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
     FixedLengthUnsignedIntegerType {
         _KIND_FL_UINT, align, len, bo, prefDispBase,
         std::move(userAttrs), std::move(roles)
+    }
+{
+}
+
+FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int len,
+                                                               const ByteOrder bo,
+                                                               const DisplayBase prefDispBase,
+                                                               MapItem::UP userAttrs,
+                                                               UnsignedIntegerTypeRoleSet roles) :
+    FixedLengthUnsignedIntegerType {
+        1, len, bo, prefDispBase, std::move(userAttrs), std::move(roles)
     }
 {
 }

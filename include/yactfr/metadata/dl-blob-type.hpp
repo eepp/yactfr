@@ -65,6 +65,28 @@ public:
 
     /*!
     @brief
+        Builds a dynamic-length BLOB type having a default alignment
+        property (8).
+
+    @param[in] lengthLocation
+        Location of lengths (bytes) of data stream dynamic-length BLOBs
+        described by this type.
+    @param[in] mediaType
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
+        of data stream dynamic-length BLOBs described by this type.
+    @param[in] userAttributes
+        @parblock
+        User attributes of data stream dynamic-length BLOBs described by
+        this type.
+
+        If set, each key of \p *userAttributes is a namespace.
+        @endparblock
+    */
+    explicit DynamicLengthBlobType(DataLocation lengthLocation,
+                                   std::string mediaType, MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
         Builds a dynamic-length BLOB type having a default IANA media
         type (<code>application/octet-stream</code>).
 
@@ -84,6 +106,22 @@ public:
         \p alignment is a power of two.
     */
     explicit DynamicLengthBlobType(unsigned int alignment, DataLocation lengthLocation,
+                                   MapItem::UP userAttributes = nullptr);
+
+    /*!
+    @brief
+        Builds a dynamic-length BLOB type having a default IANA media
+        type (<code>application/octet-stream</code>) and alignment
+        property (8).
+
+    @param[in] lengthLocation
+        Location of lengths (bytes) of data stream dynamic-length BLOBs
+        described by this type.
+    @param[in] userAttributes
+        User attributes of data stream dynamic-length BLOBs described
+        by this type.
+    */
+    explicit DynamicLengthBlobType(DataLocation lengthLocation,
                                    MapItem::UP userAttributes = nullptr);
 
     /// Location of lengths (bytes) of data stream dynamic-length BLOBs

@@ -18,6 +18,11 @@ DynamicLengthStringType::DynamicLengthStringType(const unsigned int align, DataL
 {
 }
 
+DynamicLengthStringType::DynamicLengthStringType(DataLocation maxLenLoc, MapItem::UP userAttrs) :
+    DynamicLengthStringType {8, std::move(maxLenLoc), std::move(userAttrs)}
+{
+}
+
 DataType::UP DynamicLengthStringType::_clone() const
 {
     return std::make_unique<DynamicLengthStringType>(this->alignment(), _maxLenLoc,
