@@ -666,6 +666,22 @@ boost::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
 template <typename ValT, int BaseV>
 boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 {
+    /*
+     * Only accept hex characters for the first two characters at this
+     * point, as std::strtoull() will accept a hexadecimal radix prefix,
+     * whitespaces, `-`, and `+`.
+     */
+    if (this->charsLeft() >= 2 && _at[0] == '0') {
+        if (_at[1] == 'x' || _at[1] == 'X') {
+            // we already scanned any prefix, if allowed
+            return boost::none;
+        }
+    }
+
+    if (this->charsLeft() >= 1 && !std::isxdigit(*_at)) {
+        return boost::none;
+    }
+
     char *strEnd = nullptr;
     const auto ullVal = std::strtoull(&(*_at), &strEnd, BaseV);
 
