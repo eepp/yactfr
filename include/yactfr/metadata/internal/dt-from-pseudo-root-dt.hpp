@@ -117,14 +117,15 @@ private:
 
     /*
      * Tries to convert the pseudo array type `pseudoArrayType` to a
-     * yactfr text array type having the type `TextArrayTypeT`.
+     * yactfr non null-terminated string type having the type
+     * `StrTypeT`.
      *
-     * Returns a null pointer if `pseudoArrayType` doesn't match a text
-     * array type profile.
+     * Returns a null pointer if `pseudoArrayType` doesn't match a non
+     * null-terminated string type profile.
      */
-    template <typename TextArrayTypeT, typename LenT>
-    DataType::UP _tryTextArrayDtFromPseudoArrayType(const PseudoDt& pseudoArrayType,
-                                                    const PseudoDt& pseudoElemType, LenT&& len);
+    template <typename StrTypeT, typename LenT>
+    DataType::UP _tryNonNtStrTypeFromPseudoArrayType(const PseudoDt& pseudoArrayType,
+                                                     const PseudoDt& pseudoElemType, LenT&& len);
 
     /*
      * Converts the pseudo static array type `pseudoDt` to a yactfr
@@ -239,10 +240,10 @@ std::string DtFromPseudoRootDtConverter::_dataLocStr(const Scope scope, const It
     return str;
 }
 
-template <typename TextArrayTypeT, typename LenT>
-DataType::UP DtFromPseudoRootDtConverter::_tryTextArrayDtFromPseudoArrayType(const PseudoDt& pseudoArrayType,
-                                                                             const PseudoDt& pseudoElemType,
-                                                                             LenT&& len)
+template <typename StrTypeT, typename LenT>
+DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(const PseudoDt& pseudoArrayType,
+                                                                              const PseudoDt& pseudoElemType,
+                                                                              LenT&& len)
 {
     if (pseudoElemType.isInt()) {
         bool hasEncoding;
@@ -265,7 +266,7 @@ DataType::UP DtFromPseudoRootDtConverter::_tryTextArrayDtFromPseudoArrayType(con
         }
 
         if (hasEncoding && align == 8 && elemLen == 8) {
-            return std::make_unique<const TextArrayTypeT>(8, std::forward<LenT>(len));
+            return std::make_unique<const StrTypeT>(8, std::forward<LenT>(len));
         }
     }
 

@@ -88,16 +88,17 @@ private:
     void _buildReadStructInstr(const StructureMemberType *memberType, const DataType& dt,
                                Proc& baseProc);
 
-    template <typename BeginReadStdArrayInstrT, typename BeginReadTextArrayInstrT>
-    void _buildReadArrayInstr(const StructureMemberType *memberType, const DataType& dt,
-                              Proc& baseProc, const Instr::Kind endReadStdArrayInstrKind,
-                              Instr::Kind endReadTextArrayInstrKind);
-
     void _buildReadStaticArrayInstr(const StructureMemberType *memberType, const DataType& dt,
                                     Proc& baseProc);
 
     void _buildReadDynArrayInstr(const StructureMemberType *memberType, const DataType& dt,
                                  Proc& baseProc);
+
+    void _buildReadSlStrInstr(const StructureMemberType *memberType, const DataType& dt,
+                              Proc& baseProc);
+
+    void _buildReadDlStrInstr(const StructureMemberType *memberType, const DataType& dt,
+                              Proc& baseProc);
 
     template <typename BeginReadVarInstrT, typename VarTypeT>
     void _buildReadVarInstr(const StructureMemberType *memberType, const VarTypeT& varType,
@@ -109,37 +110,41 @@ private:
     void _buildReadVarSSelInstr(const StructureMemberType *memberType, const DataType& dt,
                                 Proc& baseProc);
 
+    template <typename InstrT>
+    void _commonSpecBuildReadArrayInstrWithLen(InstrT& instr, const DataType& dt)
+    {
+        this->_buildReadInstr(nullptr, dt.asArrayType().elementType(), instr.proc());
+    }
+
+    void _specBuildReadDataInstrWithLen(Instr& instr, const DataType& dt)
+    {
+    }
+
+    void _specBuildReadDataInstrWithLen(BeginReadStaticArrayInstr& instr, const DataType& dt)
+    {
+        this->_commonSpecBuildReadArrayInstrWithLen(instr, dt);
+    }
+
+    void _specBuildReadDataInstrWithLen(BeginReadDynArrayInstr& instr, const DataType& dt)
+    {
+        this->_commonSpecBuildReadArrayInstrWithLen(instr, dt);
+    }
+
+    template <typename InstrT, Instr::Kind KindV>
+    void _buildReadInstrWithLen(const StructureMemberType * const memberType, const DataType& dt,
+                                Proc& baseProc)
+    {
+        auto instr = std::make_shared<InstrT>(memberType, dt);
+
+        this->_specBuildReadDataInstrWithLen(*instr, dt);
+        baseProc.pushBack(std::move(instr));
+        baseProc.pushBack(std::make_shared<EndReadDataInstr>(KindV, memberType, dt));
+    }
+
 private:
     const TraceType *_traceType = nullptr;
     std::unique_ptr<PktProc> _pktProc;
 };
-
-template <typename BeginReadStdArrayInstrT, typename BeginReadTextArrayInstrT>
-void PktProcBuilder::_buildReadArrayInstr(const StructureMemberType * const memberType,
-                                          const DataType& dt, Proc& baseProc,
-                                          const Instr::Kind endReadStdArrayInstrKind,
-                                          const Instr::Kind endReadTextArrayInstrKind)
-{
-    assert(dt.isArrayType());
-
-    std::shared_ptr<BeginReadStdArrayInstrT> instr;
-    Instr::Kind endKind;
-
-    if (dt.isStaticTextArrayType() || dt.isDynamicTextArrayType()) {
-        instr = std::make_shared<BeginReadTextArrayInstrT>(memberType, dt);
-        endKind = endReadTextArrayInstrKind;
-    } else {
-        instr = std::make_shared<BeginReadStdArrayInstrT>(memberType, dt);
-        this->_buildReadInstr(nullptr, dt.asArrayType().elementType(), instr->proc());
-        endKind = endReadStdArrayInstrKind;
-    }
-
-    baseProc.pushBack(std::move(instr));
-
-    auto endInstr = std::make_shared<EndReadCompoundInstr>(endKind, memberType, dt);
-
-    baseProc.pushBack(std::move(endInstr));
-}
 
 template <typename BeginReadVarInstrT, typename VarTypeT>
 void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const memberType,
@@ -157,8 +162,8 @@ void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const member
          * one, so each one ends with an "end read variant" instruction
          * to be consistent with other begin/end instruction pairs.
          */
-        auto endInstr = std::make_shared<EndReadCompoundInstr>(Instr::Kind::END_READ_VAR,
-                                                               memberType, varType);
+        auto endInstr = std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_VAR, memberType,
+                                                           varType);
 
         optProc.pushBack(std::move(endInstr));
     }

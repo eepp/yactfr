@@ -13,9 +13,9 @@
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/internal/tsdl-attr.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dyn-array-type.hpp>
-#include <yactfr/metadata/dyn-text-array-type.hpp>
+#include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>

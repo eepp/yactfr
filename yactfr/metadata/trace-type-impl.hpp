@@ -74,6 +74,11 @@ public:
         return dt._lenTypes();
     }
 
+    static DataTypeSet& dlStrTypeMaxLenTypes(const DynamicLengthStringType& dt) noexcept
+    {
+        return dt._maxLenTypes();
+    }
+
     template <typename VarTypeT>
     static DataTypeSet& varTypeSelTypes(const VarTypeT& dt) noexcept
     {

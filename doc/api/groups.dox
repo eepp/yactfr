@@ -193,9 +193,9 @@ descriptions below easier to read and to allow recursion.
   FixedLengthFloatingPointNumberElement |
   (NullTerminatedStringBeginningElement SubstringElement * EndElement) |
   (StaticArrayBeginningElement DATA * EndElement) |
-  (StaticTextArrayBeginningElement SubstringElement * EndElement) |
+  (StaticLengthStringBeginningElement SubstringElement * EndElement) |
   (DynamicArrayBeginningElement DATA * EndElement) |
-  (DynamicTextArrayBeginningElement SubstringElement * EndElement) |
+  (DynamicLengthStringBeginningElement SubstringElement * EndElement) |
   (StructureBeginningElement DATA * EndElement) |
   (
     (VariantWithUnsignedSelectorBeginningElement | VariantWithSignedSelectorBeginningElement)
@@ -325,9 +325,9 @@ when the current element of the iterator is:
   <dt>NullTerminatedStringBeginningElement</dt>
   <dt>StructureBeginningElement</dt>
   <dt>StaticArrayBeginningElement</dt>
-  <dt>StaticTextArrayBeginningElement</dt>
+  <dt>StaticLengthStringBeginningElement</dt>
   <dt>DynamicArrayBeginningElement</dt>
-  <dt>DynamicTextArrayBeginningElement</dt>
+  <dt>DynamicLengthStringBeginningElement</dt>
   <dt>VariantWithUnsignedSelectorBeginningElement</dt>
   <dt>VariantWithSignedSelectorBeginningElement</dt>
   <dd>

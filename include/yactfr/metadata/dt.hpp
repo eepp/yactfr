@@ -51,12 +51,13 @@ protected:
         _KIND_ARRAY                 = 1 << 11,
         _KIND_STATIC_ARRAY          = 1 << 12,
         _KIND_DYN_ARRAY             = 1 << 13,
-        _KIND_STATIC_TEXT_ARRAY     = 1 << 14,
-        _KIND_DYN_TEXT_ARRAY        = 1 << 15,
-        _KIND_VAR                   = 1 << 16,
-        _KIND_VAR_USEL              = 1 << 17,
-        _KIND_VAR_SSEL              = 1 << 18,
-        _KIND_COMPOUND              = 1 << 19,
+        _KIND_NON_NT_STRING         = 1 << 14,
+        _KIND_SL_STR                = 1 << 15,
+        _KIND_DL_STR                = 1 << 16,
+        _KIND_VAR                   = 1 << 17,
+        _KIND_VAR_USEL              = 1 << 18,
+        _KIND_VAR_SSEL              = 1 << 19,
+        _KIND_COMPOUND              = 1 << 20,
     };
 
 protected:
@@ -144,16 +145,23 @@ public:
         return this->_isKind(_KIND_DYN_ARRAY);
     }
 
-    /// \c true if this type is a static text array type.
-    bool isStaticTextArrayType() const noexcept
+    /// \c true if this type is a string type which is not a
+    /// null-terminated string type.
+    bool isNonNullTerminatedStringType() const noexcept
     {
-        return this->_isKind(_KIND_STATIC_TEXT_ARRAY);
+        return this->_isKind(_KIND_NON_NT_STRING);
     }
 
-    /// \c true if this type is a dynamic text array type.
-    bool isDynamicTextArrayType() const noexcept
+    /// \c true if this type is a static-length string type.
+    bool isStaticLengthStringType() const noexcept
     {
-        return this->_isKind(_KIND_DYN_TEXT_ARRAY);
+        return this->_isKind(_KIND_SL_STR);
+    }
+
+    /// \c true if this type is a dynamic-length string type.
+    bool isDynamicLengthStringType() const noexcept
+    {
+        return this->_isKind(_KIND_DL_STR);
     }
 
     /// \c true if this type is a structure type.
@@ -281,15 +289,6 @@ public:
 
     /*!
     @brief
-        This type as a static text array type.
-
-    @pre
-        This type is a static text array type.
-    */
-    const StaticTextArrayType& asStaticTextArrayType() const noexcept;
-
-    /*!
-    @brief
         This type as a dynamic array type.
 
     @pre
@@ -299,12 +298,30 @@ public:
 
     /*!
     @brief
-        This type as a dynamic text array type.
+        This type as a non null-terminated string type.
 
     @pre
-        This type is a dynamic text array type.
+        This type is a non null-terminated string type.
     */
-    const DynamicTextArrayType& asDynamicTextArrayType() const noexcept;
+    const NonNullTerminatedStringType& asNonNullTerminatedStringType() const noexcept;
+
+    /*!
+    @brief
+        This type as a static-length string type.
+
+    @pre
+        This type is a static-length string type.
+    */
+    const StaticLengthStringType& asStaticLengthStringType() const noexcept;
+
+    /*!
+    @brief
+        This type as a dynamic-length string type.
+
+    @pre
+        This type is a dynamic-length string type.
+    */
+    const DynamicLengthStringType& asDynamicLengthStringType() const noexcept;
 
     /*!
     @brief

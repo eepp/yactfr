@@ -245,13 +245,13 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_STRUCT)] = &Vm::_execEndReadStruct;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_ARRAY)] = &Vm::_execBeginReadStaticArray;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_STATIC_ARRAY)] = &Vm::_execEndReadStaticArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_TEXT_ARRAY)] = &Vm::_execBeginReadStaticTextArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_STATIC_TEXT_ARRAY)] = &Vm::_execEndReadStaticTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SL_STR)] = &Vm::_execBeginReadSlStr;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_SL_STR)] = &Vm::_execEndReadSlStr;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_UUID_ARRAY)] = &Vm::_execBeginReadStaticUuidArray;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYN_ARRAY)] = &Vm::_execBeginReadDynArray;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYN_ARRAY)] = &Vm::_execEndReadDynArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYN_TEXT_ARRAY)] = &Vm::_execBeginReadDynTextArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYN_TEXT_ARRAY)] = &Vm::_execEndReadDynTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DL_STR)] = &Vm::_execBeginReadDlStr;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DL_STR)] = &Vm::_execEndReadDlStr;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_SSEL)] = &Vm::_execBeginReadVarSSel;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_USEL)] = &Vm::_execBeginReadVarUSel;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_VAR)] = &Vm::_execEndReadVar;
@@ -625,7 +625,7 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
     _pos.elems.scopeBeginning._scope = beginReadScopeInstr.scope();
     this->_updateItCurOffset(_pos.elems.scopeBeginning);
     _pos.gotoNextInstr();
-    _pos.stackPush(beginReadScopeInstr.proc());
+    _pos.stackPush(&beginReadScopeInstr.proc());
     return _ExecReaction::STOP;
 }
 
@@ -648,7 +648,7 @@ Vm::_ExecReaction Vm::_execBeginReadStruct(const Instr& instr)
     _pos.elems.structBeginning._dt = &beginReadStructInstr.structType();
     this->_updateItCurOffset(_pos.elems.structBeginning);
     _pos.gotoNextInstr();
-    _pos.stackPush(beginReadStructInstr.proc());
+    _pos.stackPush(&beginReadStructInstr.proc());
     _pos.state(VmState::EXEC_INSTR);
     return _ExecReaction::STOP;
 }
@@ -662,12 +662,7 @@ Vm::_ExecReaction Vm::_execEndReadStruct(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execBeginReadStaticArray(const Instr& instr)
 {
-    const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticArrayInstr&>(instr);
-
-    _pos.elems.staticArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
-    this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticArrayBeginning,
-                                          VmState::EXEC_ARRAY_INSTR);
-    return _ExecReaction::STOP;
+    return this->_execBeginReadStaticArray(instr, VmState::EXEC_ARRAY_INSTR);
 }
 
 Vm::_ExecReaction Vm::_execEndReadStaticArray(const Instr& instr)
@@ -676,17 +671,18 @@ Vm::_ExecReaction Vm::_execEndReadStaticArray(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadStaticTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadSlStr(const Instr& instr)
 {
-    const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticTextArrayInstr&>(instr);
+    const auto& beginReadSlStrInstr = static_cast<const BeginReadSlStrInstr&>(instr);
 
-    _pos.elems.staticTextArrayBeginning._dt = &beginReadStaticArrayInstr.staticTextArrayType();
-    this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticTextArrayBeginning,
-                                          VmState::READ_SUBSTR);
+    _pos.elems.slStrBeginning._dt = &beginReadSlStrInstr.slStrType();
+    _pos.elems.slStrBeginning._maxLen = beginReadSlStrInstr.maxLen();
+    this->_execBeginReadStaticData(beginReadSlStrInstr, _pos.elems.slStrBeginning,
+                                   beginReadSlStrInstr.maxLen(), nullptr, VmState::READ_SUBSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadStaticTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadSlStr(const Instr& instr)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -694,12 +690,7 @@ Vm::_ExecReaction Vm::_execEndReadStaticTextArray(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execBeginReadStaticUuidArray(const Instr& instr)
 {
-    const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticUuidArrayInstr&>(instr);
-
-    _pos.elems.staticArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
-    this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticArrayBeginning,
-                                          VmState::READ_UUID_BYTE);
-    return _ExecReaction::STOP;
+    return this->_execBeginReadStaticArray(instr, VmState::READ_UUID_BYTE);
 }
 
 Vm::_ExecReaction Vm::_execBeginReadDynArray(const Instr& instr)
@@ -707,8 +698,9 @@ Vm::_ExecReaction Vm::_execBeginReadDynArray(const Instr& instr)
     const auto& beginReadDynArrayInstr = static_cast<const BeginReadDynArrayInstr&>(instr);
 
     _pos.elems.dynArrayBeginning._dt = &beginReadDynArrayInstr.dynArrayType();
-    this->_execBeginReadDynArrayCommon(instr, _pos.elems.dynArrayBeginning,
-                                       VmState::EXEC_ARRAY_INSTR);
+    this->_execBeginReadDynData(beginReadDynArrayInstr, _pos.elems.dynArrayBeginning,
+                                beginReadDynArrayInstr.lenPos(), _pos.elems.dynArrayBeginning._len,
+                                &beginReadDynArrayInstr.proc(), VmState::EXEC_ARRAY_INSTR);
     return _ExecReaction::STOP;
 }
 
@@ -718,17 +710,18 @@ Vm::_ExecReaction Vm::_execEndReadDynArray(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadDynTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadDlStr(const Instr& instr)
 {
-    const auto& beginReadDynArrayInstr = static_cast<const BeginReadDynArrayInstr&>(instr);
+    const auto& beginReadDlStrInstr = static_cast<const BeginReadDlStrInstr&>(instr);
 
-    _pos.elems.dynTextArrayBeginning._dt = &beginReadDynArrayInstr.dynArrayType();
-    this->_execBeginReadDynArrayCommon(instr, _pos.elems.dynTextArrayBeginning,
-                                           VmState::READ_SUBSTR);
+    _pos.elems.dlStrBeginning._dt = &beginReadDlStrInstr.dlStrType();
+    this->_execBeginReadDynData(beginReadDlStrInstr, _pos.elems.dlStrBeginning,
+                                beginReadDlStrInstr.maxLenPos(), _pos.elems.dlStrBeginning._maxLen,
+                                nullptr, VmState::READ_SUBSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDynTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr& instr)
 {
     this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;

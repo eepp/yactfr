@@ -320,12 +320,12 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "END_READ_STATIC_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_STATIC_TEXT_ARRAY:
-        kindStr = "BEGIN_READ_STATIC_TEXT_ARRAY";
+    case Kind::BEGIN_READ_SL_STR:
+        kindStr = "BEGIN_READ_SL_STR";
         break;
 
-    case Kind::END_READ_STATIC_TEXT_ARRAY:
-        kindStr = "END_READ_STATIC_TEXT_ARRAY";
+    case Kind::END_READ_SL_STR:
+        kindStr = "END_READ_SL_STR";
         break;
 
     case Kind::BEGIN_READ_STATIC_UUID_ARRAY:
@@ -340,12 +340,12 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "END_READ_DYN_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_DYN_TEXT_ARRAY:
-        kindStr = "BEGIN_READ_DYN_TEXT_ARRAY";
+    case Kind::BEGIN_READ_DL_STR:
+        kindStr = "BEGIN_READ_DL_STR";
         break;
 
-    case Kind::END_READ_DYN_TEXT_ARRAY:
-        kindStr = "END_READ_DYN_TEXT_ARRAY";
+    case Kind::END_READ_DL_STR:
+        kindStr = "END_READ_DL_STR";
         break;
 
     case Kind::BEGIN_READ_VAR_SSEL:
@@ -446,7 +446,7 @@ std::string Instr::toStr(const Size indent) const
 
     if (this->isReadData() || this->isBeginReadScope()) {
         ss << _strName(kindStr);
-    } else if (this->isEndReadCompound() || _theKind == Kind::END_READ_SCOPE || this->isEndProc()) {
+    } else if (this->isEndReadData() || _theKind == Kind::END_READ_SCOPE || this->isEndProc()) {
         ss << _strEndName(kindStr);
     } else {
         ss << _strSpecName(kindStr);
@@ -866,20 +866,19 @@ void BeginReadCompoundInstr::buildRawProcFromShared()
     _proc.buildRawProcFromShared();
 }
 
-EndReadCompoundInstr::EndReadCompoundInstr(const Kind kind,
-                                           const StructureMemberType * const member,
-                                           const DataType& dt) :
+EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * const member,
+                                   const DataType& dt) :
     ReadDataInstr {kind, member, dt}
 {
     assert(kind == Kind::END_READ_STRUCT ||
            kind == Kind::END_READ_STATIC_ARRAY ||
-           kind == Kind::END_READ_STATIC_TEXT_ARRAY ||
            kind == Kind::END_READ_DYN_ARRAY ||
-           kind == Kind::END_READ_DYN_TEXT_ARRAY ||
+           kind == Kind::END_READ_SL_STR ||
+           kind == Kind::END_READ_DL_STR ||
            kind == Kind::END_READ_VAR);
 }
 
-std::string EndReadCompoundInstr::_toStr(const Size indent) const
+std::string EndReadDataInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -991,26 +990,28 @@ BeginReadStaticArrayInstr::BeginReadStaticArrayInstr(const StructureMemberType *
 {
 }
 
-std::string BeginReadStaticArrayInstr::_commonToStr() const
-{
-    std::ostringstream ss;
-
-    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len") << _len;
-    return ss.str();
-}
-
 std::string BeginReadStaticArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToStr() << std::endl << this->_procToStr(indent + 1);
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len") << _len << std::endl <<
+          this->_procToStr(indent + 1);
     return ss.str();
 }
 
-BeginReadStaticTextArrayInstr::BeginReadStaticTextArrayInstr(const StructureMemberType * const member,
-                                                             const DataType& dt) :
-    BeginReadStaticArrayInstr {Kind::BEGIN_READ_STATIC_TEXT_ARRAY, member, dt}
+BeginReadSlStrInstr::BeginReadSlStrInstr(const StructureMemberType * const member,
+                                         const DataType& dt) :
+    ReadDataInstr {Kind::BEGIN_READ_SL_STR, member, dt},
+    _maxLen {dt.asStaticLengthStringType().maximumLength()}
 {
+}
+
+std::string BeginReadSlStrInstr::_toStr(const Size indent) const
+{
+    std::ostringstream ss;
+
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("max-len") << _maxLen << std::endl;
+    return ss.str();
 }
 
 BeginReadStaticUuidArrayInstr::BeginReadStaticUuidArrayInstr(const StructureMemberType * const member,
@@ -1019,16 +1020,9 @@ BeginReadStaticUuidArrayInstr::BeginReadStaticUuidArrayInstr(const StructureMemb
 {
 }
 
-BeginReadDynArrayInstr::BeginReadDynArrayInstr(const Kind kind,
-                                               const StructureMemberType * const member,
-                                               const DataType& dt) :
-    BeginReadCompoundInstr {kind, member, dt}
-{
-}
-
 BeginReadDynArrayInstr::BeginReadDynArrayInstr(const StructureMemberType * const member,
                                                const DataType& dt) :
-    BeginReadDynArrayInstr {Kind::BEGIN_READ_DYN_ARRAY, member, dt}
+    BeginReadCompoundInstr {Kind::BEGIN_READ_DYN_ARRAY, member, dt}
 {
 }
 
@@ -1036,22 +1030,23 @@ std::string BeginReadDynArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToStr() << std::endl << this->_procToStr(indent + 1);
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len-pos") << _lenPos << std::endl <<
+          this->_procToStr(indent + 1);
     return ss.str();
 }
 
-std::string BeginReadDynArrayInstr::_commonToStr() const
+BeginReadDlStrInstr::BeginReadDlStrInstr(const StructureMemberType * const member,
+                                         const DataType& dt) :
+    ReadDataInstr {Kind::BEGIN_READ_DL_STR, member, dt}
+{
+}
+
+std::string BeginReadDlStrInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len-pos") << _lenPos;
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("max-len-pos") << _maxLenPos << std::endl;
     return ss.str();
-}
-
-BeginReadDynTextArrayInstr::BeginReadDynTextArrayInstr(const StructureMemberType * const member,
-                                                       const DataType& dt) :
-    BeginReadDynArrayInstr {Kind::BEGIN_READ_DYN_TEXT_ARRAY, member, dt}
-{
 }
 
 SetCurIdInstr::SetCurIdInstr() :

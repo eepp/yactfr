@@ -9,16 +9,10 @@
 
 namespace yactfr {
 
-StaticArrayType::StaticArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                 const Size len, const bool hasTraceTypeUuidRole) :
-    StaticArrayType {_KIND_STATIC_ARRAY, minAlign, std::move(elemType), len, hasTraceTypeUuidRole}
-{
-}
-
-StaticArrayType::StaticArrayType(const int kind, const unsigned int minAlign,
+StaticArrayType::StaticArrayType(const unsigned int minAlign,
                                  DataType::UP elemType, const Size len,
                                  const bool hasTraceTypeUuidRole) :
-    ArrayType {_KIND_STATIC_ARRAY | kind, minAlign, std::move(elemType)},
+    ArrayType {_KIND_STATIC_ARRAY, minAlign, std::move(elemType)},
     _len {len},
     _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
 {

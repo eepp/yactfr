@@ -28,7 +28,7 @@ add_library (
     metadata/dt-from-pseudo-root-dt.cpp
     metadata/dt.cpp
     metadata/dyn-array-type.cpp
-    metadata/dyn-text-array-type.cpp
+    metadata/dl-str-type.cpp
     metadata/ert.cpp
     metadata/fl-bit-array-type.cpp
     metadata/fl-enum-type.cpp
@@ -37,13 +37,14 @@ add_library (
     metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
+    metadata/non-nt-str-type.cpp
     metadata/nt-str-type.cpp
     metadata/packetized-metadata-stream.cpp
     metadata/plain-text-metadata-stream.cpp
     metadata/pseudo-types.cpp
     metadata/scalar-dt.cpp
     metadata/static-array-type.cpp
-    metadata/static-text-array-type.cpp
+    metadata/sl-str-type.cpp
     metadata/struct-member-type.cpp
     metadata/struct-type.cpp
     metadata/trace-type-from-pseudo-trace-type.cpp

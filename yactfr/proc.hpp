@@ -76,9 +76,9 @@
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/static-text-array-type.hpp>
 #include <yactfr/metadata/dyn-array-type.hpp>
-#include <yactfr/metadata/dyn-text-array-type.hpp>
+#include <yactfr/metadata/sl-str-type.hpp>
+#include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/ert.hpp>
@@ -91,10 +91,10 @@ namespace yactfr {
 namespace internal {
 
 class BeginReadDynArrayInstr;
-class BeginReadDynTextArrayInstr;
+class BeginReadDlStrInstr;
 class BeginReadScopeInstr;
 class BeginReadStaticArrayInstr;
-class BeginReadStaticTextArrayInstr;
+class BeginReadSlStrInstr;
 class BeginReadStaticUuidArrayInstr;
 class BeginReadStructInstr;
 class BeginReadVarSSelInstr;
@@ -104,7 +104,7 @@ class EndDsErPreambleProcInstr;
 class EndDsPktPreambleProcInstr;
 class EndErProcInstr;
 class EndPktPreambleProcInstr;
-class EndReadCompoundInstr;
+class EndReadDataInstr;
 class EndReadScopeInstr;
 class Instr;
 class ReadFlBitArrayInstr;
@@ -187,7 +187,7 @@ public:
     {
     }
 
-    virtual void visit(BeginReadStaticTextArrayInstr& instr)
+    virtual void visit(BeginReadSlStrInstr& instr)
     {
     }
 
@@ -195,7 +195,7 @@ public:
     {
     }
 
-    virtual void visit(BeginReadDynTextArrayInstr& instr)
+    virtual void visit(BeginReadDlStrInstr& instr)
     {
     }
 
@@ -207,7 +207,7 @@ public:
     {
     }
 
-    virtual void visit(EndReadCompoundInstr& instr)
+    virtual void visit(EndReadDataInstr& instr)
     {
     }
 
@@ -376,10 +376,10 @@ public:
     {
         UNSET,
         BEGIN_READ_DYN_ARRAY,
-        BEGIN_READ_DYN_TEXT_ARRAY,
+        BEGIN_READ_DL_STR,
         BEGIN_READ_SCOPE,
         BEGIN_READ_STATIC_ARRAY,
-        BEGIN_READ_STATIC_TEXT_ARRAY,
+        BEGIN_READ_SL_STR,
         BEGIN_READ_STATIC_UUID_ARRAY,
         BEGIN_READ_STRUCT,
         BEGIN_READ_VAR_SSEL,
@@ -389,11 +389,11 @@ public:
         END_DS_PKT_PREAMBLE_PROC,
         END_ER_PROC,
         END_PKT_PREAMBLE_PROC,
-        END_READ_DYN_ARRAY,
-        END_READ_DYN_TEXT_ARRAY,
-        END_READ_SCOPE,
         END_READ_STATIC_ARRAY,
-        END_READ_STATIC_TEXT_ARRAY,
+        END_READ_DYN_ARRAY,
+        END_READ_SCOPE,
+        END_READ_SL_STR,
+        END_READ_DL_STR,
         END_READ_STRUCT,
         END_READ_VAR,
         READ_FL_FLOAT_32_BE,
@@ -506,9 +506,7 @@ public:
         return _theKind == Kind::BEGIN_READ_STRUCT ||
                _theKind == Kind::BEGIN_READ_STATIC_ARRAY ||
                _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
-               _theKind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY ||
-               _theKind == Kind::BEGIN_READ_DYN_ARRAY ||
-               _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
+               _theKind == Kind::BEGIN_READ_DYN_ARRAY;
     }
 
     bool isReadFlInt() const noexcept
@@ -596,13 +594,12 @@ public:
     bool isBeginReadStaticArray() const noexcept
     {
         return _theKind == Kind::BEGIN_READ_STATIC_ARRAY ||
-               _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
-               _theKind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
+               _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY;
     }
 
-    bool isBeginReadStaticTextArray() const noexcept
+    bool isBeginReadSlStr() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_SL_STR;
     }
 
     bool isBeginReadStaticUuidArray() const noexcept
@@ -612,13 +609,12 @@ public:
 
     bool isBeginReadDynArray() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_DYN_ARRAY ||
-               _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_DYN_ARRAY;
     }
 
-    bool isBeginReadDynTextArray() const noexcept
+    bool isBeginReadDlStr() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_DL_STR;
     }
 
     bool isBeginReadStruct() const noexcept
@@ -642,13 +638,11 @@ public:
         return _theKind == Kind::BEGIN_READ_VAR_USEL;
     }
 
-    bool isEndReadCompound() const noexcept
+    bool isEndReadData() const noexcept
     {
         return _theKind == Kind::END_READ_STRUCT ||
                _theKind == Kind::END_READ_STATIC_ARRAY ||
-               _theKind == Kind::END_READ_STATIC_TEXT_ARRAY ||
                _theKind == Kind::END_READ_DYN_ARRAY ||
-               _theKind == Kind::END_READ_DYN_TEXT_ARRAY ||
                _theKind == Kind::END_READ_VAR;
     }
 
@@ -712,10 +706,10 @@ private:
  *
  * This instruction requires the VM to save the last decoded integer
  * value to a position (index) in its saved value vector so that it can
- * be used later (for the length of a dynamic array or for the selector
- * of a variant).
+ * be used later (for the length of a dynamic array, the length of a
+ * dynamic-length string, or for the selector of a variant).
  */
-class SaveValInstr :
+class SaveValInstr final :
     public Instr
 {
 public:
@@ -749,7 +743,7 @@ private:
  * This instruction indicates to the VM that the last decoded integer
  * value is the packet end clock value.
  */
-class SetPktEndDefClkValInstr :
+class SetPktEndDefClkValInstr final :
     public Instr
 {
 public:
@@ -866,7 +860,7 @@ private:
 /*
  * "Read fixed-length floating point number" procedure instruction.
  */
-class ReadFlFloatInstr :
+class ReadFlFloatInstr final :
     public ReadFlBitArrayInstr
 {
 public:
@@ -889,7 +883,7 @@ private:
 /*
  * "Read fixed-length signed enumeration" procedure instruction.
  */
-class ReadFlSEnumInstr :
+class ReadFlSEnumInstr final :
     public ReadFlSIntInstr
 {
 public:
@@ -912,7 +906,7 @@ private:
 /*
  * "Read fixed-length unsigned enumeration" procedure instruction.
  */
-class ReadFlUEnumInstr :
+class ReadFlUEnumInstr final :
     public ReadFlUIntInstr
 {
 public:
@@ -935,7 +929,7 @@ private:
 /*
  * "Read null-terminated string" procedure instruction.
  */
-class ReadNtStrInstr :
+class ReadNtStrInstr final :
     public ReadDataInstr
 {
 public:
@@ -991,21 +985,20 @@ private:
 };
 
 /*
- * "End reading compound data" procedure instruction.
+ * "End reading data" procedure instruction.
  *
  * If the kind of this instruction is `END_READ_STRUCT`, then the VM
  * must stop executing the current procedure and continue executing the
  * parent procedure.
  *
- * For all instruction kinds, this instruction requires the VM to set a
- * `StructEndElement` as the current element.
+ * For all instruction kinds, this instruction requires the VM to set an
+ * `EndElement` as the current element.
  */
-class EndReadCompoundInstr :
+class EndReadDataInstr :
     public ReadDataInstr
 {
 public:
-    explicit EndReadCompoundInstr(Kind kind, const StructureMemberType *memberType,
-                                  const DataType& dt);
+    explicit EndReadDataInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1019,7 +1012,7 @@ private:
 /*
  * "Begin reading structure" procedure instruction.
  */
-class BeginReadStructInstr :
+class BeginReadStructInstr final :
     public BeginReadCompoundInstr
 {
 public:
@@ -1045,7 +1038,7 @@ private:
  * This is the top-level instruction to start reading a whole scope
  * (packet header, packet context, event record payload, etc.).
  */
-class BeginReadScopeInstr :
+class BeginReadScopeInstr final :
     public Instr
 {
 public:
@@ -1092,7 +1085,7 @@ private:
  * This requires the VM to stop executing the current procedure and
  * continue executing the parent procedure.
  */
-class EndReadScopeInstr :
+class EndReadScopeInstr final :
     public Instr
 {
 public:
@@ -1145,9 +1138,6 @@ public:
         return _len;
     }
 
-protected:
-    std::string _commonToStr() const;
-
 private:
     std::string _toStr(Size indent = 0) const override;
 
@@ -1156,24 +1146,37 @@ private:
 };
 
 /*
- * "Begin reading static text array" procedure instruction.
+ * "Begin reading static-length string" procedure instruction.
+ *
+ * maxLen() indicates the maximum length (bytes) of the static-length
+ * string to read.
  */
-class BeginReadStaticTextArrayInstr :
-    public BeginReadStaticArrayInstr
+class BeginReadSlStrInstr final :
+    public ReadDataInstr
 {
 public:
-    explicit BeginReadStaticTextArrayInstr(const StructureMemberType *memberType,
-                                           const DataType& dt);
+    explicit BeginReadSlStrInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const StaticTextArrayType& staticTextArrayType() const noexcept
+    const StaticLengthStringType& slStrType() const noexcept
     {
-        return static_cast<const StaticTextArrayType&>(this->dt());
+        return static_cast<const StaticLengthStringType&>(this->dt());
     }
+
+    Size maxLen() const noexcept
+    {
+        return _maxLen;
+    }
+
+private:
+    std::string _toStr(Size indent = 0) const override;
+
+private:
+    const Size _maxLen;
 };
 
 /*
@@ -1182,7 +1185,7 @@ public:
  * This is a specialized instruction to read the UUID field (16 bytes)
  * of a packet header to emit `TraceTypeUuidElement`.
  */
-class BeginReadStaticUuidArrayInstr :
+class BeginReadStaticUuidArrayInstr final :
     public BeginReadStaticArrayInstr
 {
 public:
@@ -1198,17 +1201,13 @@ public:
 /*
  * "Begin reading dynamic array" procedure instruction.
  *
- * The VM must use `lenPos()` to retrieve the saved value which contains
+ * The VM must use lenPos() to retrieve the saved value which contains
  * the length of the dynamic array, and then execute the subprocedure
  * this number of times.
  */
-class BeginReadDynArrayInstr :
+class BeginReadDynArrayInstr final :
     public BeginReadCompoundInstr
 {
-protected:
-    explicit BeginReadDynArrayInstr(Kind kind, const StructureMemberType *memberType,
-                                    const DataType& dt);
-
 public:
     explicit BeginReadDynArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
@@ -1232,9 +1231,6 @@ public:
         _lenPos = lenPos;
     }
 
-protected:
-    std::string _commonToStr() const;
-
 private:
     std::string _toStr(Size indent = 0) const override;
 
@@ -1243,30 +1239,49 @@ private:
 };
 
 /*
- * "Begin reading dynamic text array" procedure instruction.
+ * "Begin reading dynamic-length string" procedure instruction.
+ *
+ * The VM must use maxLenPos() to retrieve the saved value which
+ * contains the maximum length (bytes) of the dynamic-length string.
  */
-class BeginReadDynTextArrayInstr :
-    public BeginReadDynArrayInstr
+class BeginReadDlStrInstr final :
+    public ReadDataInstr
 {
 public:
-    explicit BeginReadDynTextArrayInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit BeginReadDlStrInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const DynamicTextArrayType& dynTextArrayType() const noexcept
+    const DynamicLengthStringType& dlStrType() const noexcept
     {
-        return static_cast<const DynamicTextArrayType&>(this->dt());
+        return static_cast<const DynamicLengthStringType&>(this->dt());
     }
+
+    const Index maxLenPos() const noexcept
+    {
+        return _maxLenPos;
+    }
+
+    void maxLenPos(const Index maxLenPos) noexcept
+    {
+        _maxLenPos = maxLenPos;
+    }
+
+private:
+    std::string _toStr(Size indent = 0) const override;
+
+private:
+    Index _maxLenPos = -1ULL;
 };
 
 /*
  * Option of a "read variant" procedure instruction.
  */
 template <typename VarTypeOptT>
-class ReadVarInstrOpt
+class ReadVarInstrOpt final
 {
 public:
     using Opt = VarTypeOptT;
@@ -1352,7 +1367,7 @@ static inline std::string _strProp(const std::string& prop)
 /*
  * "Begin reading variant" procedure instruction template.
  *
- * The VM must use `selPos()` to retrieve the saved value which is the
+ * The VM must use selPos() to retrieve the saved value which is the
  * selector of the variant, find the corresponding option for this
  * selector value, and then execute the subprocedure of the option.
  */
@@ -1438,7 +1453,7 @@ private:
     Index _selPos;
 };
 
-class BeginReadVarUSelInstr :
+class BeginReadVarUSelInstr final :
     public BeginReadVarInstr<VariantWithUnsignedSelectorType, Instr::Kind::BEGIN_READ_VAR_USEL>
 {
 public:
@@ -1450,7 +1465,7 @@ public:
     }
 };
 
-class BeginReadVarSSelInstr :
+class BeginReadVarSSelInstr final :
     public BeginReadVarInstr<VariantWithSignedSelectorType, Instr::Kind::BEGIN_READ_VAR_SSEL>
 {
 public:
@@ -1469,7 +1484,7 @@ public:
  * decoded value. This is either the current data stream type ID or the
  * current event record type ID.
  */
-class SetCurIdInstr :
+class SetCurIdInstr final :
     public Instr
 {
 public:
@@ -1511,7 +1526,7 @@ private:
 /*
  * "Set current data stream type" procedure instruction.
  */
-class SetDstInstr :
+class SetDstInstr final :
     public SetTypeInstr
 {
 public:
@@ -1526,7 +1541,7 @@ public:
 /*
  * "Set current event record type" procedure instruction.
  */
-class SetErtInstr :
+class SetErtInstr final :
     public SetTypeInstr
 {
 public:
@@ -1544,7 +1559,7 @@ public:
  * This instruction requires the VM to set the packet origin index
  * (sequence number) to the last decoded value.
  */
-class SetPktOriginIndexInstr :
+class SetPktOriginIndexInstr final :
     public Instr
 {
 public:
@@ -1565,7 +1580,7 @@ public:
  * This is NOT the current data stream _type_ ID. It's sometimes called
  * the "data stream instance ID".
  */
-class SetDsIdInstr :
+class SetDsIdInstr final :
     public Instr
 {
 public:
@@ -1583,7 +1598,7 @@ public:
  * This instruction requires the VM to set and emit the data stream
  * info element.
  */
-class SetDsInfoInstr :
+class SetDsInfoInstr final :
     public Instr
 {
 public:
@@ -1601,7 +1616,7 @@ public:
  * This instruction requires the VM to set and emit the packet info
  * element.
  */
-class SetPktInfoInstr :
+class SetPktInfoInstr final :
     public Instr
 {
 public:
@@ -1619,7 +1634,7 @@ public:
  * This instruction requires the VM to set and emit the event record
  * info element.
  */
-class SetErInfoInstr :
+class SetErInfoInstr final :
     public Instr
 {
 public:
@@ -1637,7 +1652,7 @@ public:
  * This instruction requires the VM to set the expected packet total
  * length (bits) to the last decoded value.
  */
-class SetExpectedPktTotalLenInstr :
+class SetExpectedPktTotalLenInstr final :
     public Instr
 {
 public:
@@ -1655,7 +1670,7 @@ public:
  * This instruction requires the VM to set the expected packet content
  * length (bits) to the last decoded value.
  */
-class SetExpectedPktContentLenInstr :
+class SetExpectedPktContentLenInstr final :
     public Instr
 {
 public:
@@ -1673,7 +1688,7 @@ public:
  * This instruction requires the VM to update the value of the default
  * clock from the last decoded value.
  */
-class UpdateDefClkValInstr :
+class UpdateDefClkValInstr final :
     public Instr
 {
 public:
@@ -1702,7 +1717,7 @@ private:
  * This instruction requires the VM to use the last decoded value as the
  * packet magic number.
  */
-class SetPktMagicNumberInstr :
+class SetPktMagicNumberInstr final :
     public Instr
 {
 public:
@@ -1720,7 +1735,7 @@ public:
  * This instruction indicates that the packet preamble procedure
  * containing it has no more instructions.
  */
-class EndPktPreambleProcInstr :
+class EndPktPreambleProcInstr final :
     public Instr
 {
 public:
@@ -1738,7 +1753,7 @@ public:
  * This instruction indicates that the data stream packet preamble
  * procedure containing it has no more instructions.
  */
-class EndDsPktPreambleProcInstr :
+class EndDsPktPreambleProcInstr final :
     public Instr
 {
 public:
@@ -1757,7 +1772,7 @@ public:
  * This instruction indicates that the data stream event record preamble
  * procedure containing it has no more instructions.
  */
-class EndDsErPreambleProcInstr :
+class EndDsErPreambleProcInstr final :
     public Instr
 {
 public:
@@ -1775,7 +1790,7 @@ public:
  * This instruction indicates that the event record type procedure
  * containing it has no more instructions.
  */
-class EndErProcInstr :
+class EndErProcInstr final :
     public Instr
 {
 public:
@@ -1798,7 +1813,7 @@ public:
  * compound data, or having this decrementation instruction even for
  * simple arrays of scalar elements.
  */
-class DecrRemainingElemsInstr :
+class DecrRemainingElemsInstr final :
     public Instr
 {
 public:
@@ -1813,7 +1828,7 @@ public:
 /*
  * Event record procedure.
  */
-class ErProc
+class ErProc final
 {
 public:
     explicit ErProc(const EventRecordType& ert);
@@ -1843,7 +1858,7 @@ private:
 /*
  * Packet procedure for any data stream of a given type.
  */
-class DsPktProc
+class DsPktProc final
 {
 public:
     using ErProcsMap = std::unordered_map<TypeId, std::unique_ptr<ErProc>>;
@@ -1954,7 +1969,7 @@ private:
  *           Trace type
  *             Packet procedure
  */
-class PktProc
+class PktProc final
 {
 public:
     using DsPktProcs = std::unordered_map<TypeId, std::unique_ptr<DsPktProc>>;

@@ -11,13 +11,7 @@ namespace yactfr {
 
 DynamicArrayType::DynamicArrayType(const unsigned int minAlign, DataType::UP elemType,
                                    DataLocation lenLoc) :
-    DynamicArrayType {_KIND_DYN_ARRAY, minAlign, std::move(elemType), std::move(lenLoc)}
-{
-}
-
-DynamicArrayType::DynamicArrayType(const int kind, const unsigned int minAlign,
-                                   DataType::UP elemType, DataLocation lenLoc) :
-    ArrayType {_KIND_DYN_ARRAY | kind, minAlign, std::move(elemType)},
+    ArrayType {_KIND_DYN_ARRAY, minAlign, std::move(elemType)},
     _lenLoc {std::move(lenLoc)}
 {
 }

@@ -103,20 +103,20 @@ test_iter_data() {
   test_iter_data fail-nt-str-beyond-data
 }
 
-@test 'static text array beyond content -> fail' {
-  test_iter_data fail-static-text-array-beyond-content
+@test 'static-length string beyond content -> fail' {
+  test_iter_data fail-sl-str-beyond-content
 }
 
-@test 'static text array beyond data -> fail' {
-  test_iter_data fail-static-text-array-beyond-data
+@test 'static-length string beyond data -> fail' {
+  test_iter_data fail-sl-str-beyond-data
 }
 
-@test 'dynamic text array beyond content -> fail' {
-  test_iter_data fail-dyn-text-array-beyond-content
+@test 'dynamic-length string beyond content -> fail' {
+  test_iter_data fail-dl-str-beyond-content
 }
 
-@test 'dynamic text array beyond data -> fail' {
-  test_iter_data fail-dyn-text-array-beyond-data
+@test 'dynamic-length string beyond data -> fail' {
+  test_iter_data fail-dl-str-beyond-data
 }
 
 @test 'unknown data stream type ID -> fail' {
@@ -253,12 +253,12 @@ test_iter_data() {
   test_iter_data pass-nt-str-align
 }
 
-@test 'various static text arrays -> pass' {
-  test_iter_data pass-static-text-arrays
+@test 'various static-length strings -> pass' {
+  test_iter_data pass-sl-strs
 }
 
-@test 'various dynamic text arrays -> pass' {
-  test_iter_data pass-dyn-text-arrays
+@test 'various dynamic-length strings -> pass' {
+  test_iter_data pass-dl-strs
 }
 
 @test 'various variants -> pass' {

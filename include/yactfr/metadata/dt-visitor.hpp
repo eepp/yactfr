@@ -120,17 +120,6 @@ public:
 
     /*!
     @brief
-        Visits the static text array type \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const StaticTextArrayType& type)
-    {
-    }
-
-    /*!
-    @brief
         Visits the dynamic array type \p type.
 
     @param[in] type
@@ -142,12 +131,23 @@ public:
 
     /*!
     @brief
-        Visits the dynamic text array type \p type.
+        Visits the static-length string type \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const DynamicTextArrayType& type)
+    virtual void visit(const StaticLengthStringType& type)
+    {
+    }
+
+    /*!
+    @brief
+        Visits the dynamic-length string type \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const DynamicLengthStringType& type)
     {
     }
 

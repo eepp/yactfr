@@ -44,6 +44,7 @@ documented uses unabbreviated names.
 |Decr |Decrement
 |Def |Default
 |Disp |Display
+|DL |Dynamic-length
 |DS |Data stream
 |DST |Data stream type
 |DT |Data type
@@ -82,6 +83,7 @@ documented uses unabbreviated names.
 |SEnum |Signed enumeration
 |Seq |Sequence
 |SInt |Signed integer
+|SL |Static-length
 |SP |Shared pointer
 |Spec |Specific
 |Src |Source
@@ -263,7 +265,7 @@ decoding head and then read data in a specific way, for example:
 For compound types, a first `+internal::BeginRead*Instr+` instruction
 indicates to "`enter`" the compound data. This instruction usually
 contains a subprocedure to read its contents. The last element of this
-subprocedure is usually an `internal::EndReadCompoundInstr` instruction,
+subprocedure is usually an `internal::EndReadDataInstr` instruction,
 which indicates the end of the subprocedure. This avoids a useless
 index-size comparison performed before fetching the next instruction in
 the VM.
@@ -320,17 +322,18 @@ the VM to save the value of the last decoded integer to a specific
 position (index) within an array of saved values.
 
 This is how the VM knows where to dynamically find the length of a
-dynamic array or the selector of a variant, as the
-`internal::BeginReadDynArrayInstr`, `internal::BeginReadVarUSelInstr`,
-and `internal::BeginReadVarSSelInstr` instructions contain a numeric
+dynamic array, the length of a dynamic-length string, or the selector of
+a variant, as the `internal::BeginReadDynArrayInstr`,
+`internal::BeginReadDlStrInstr`, `internal::BeginReadVarUSelInstr`, and
+`internal::BeginReadVarSSelInstr` instructions contain a numeric
 position (index) within this saved value array where to find the length
 or selector value.
 
 `internal::PktProcBuilder` contains the logic to insert
 `internal::SaveValInstr` instructions at specific locations within the
-procedures and to assign appropriate positions to link "`read dynamic
-array`" and "`begin read variant`" instructions to their length/selector
-values.
+procedures and to assign appropriate positions to link "`begin read
+dynamic array`", "`begin read dynamic-length string`", and "`begin read
+variant`" instructions to their length/selector values.
 
 [[data-src-factory]]
 == Data source factory

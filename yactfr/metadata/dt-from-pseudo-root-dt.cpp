@@ -13,9 +13,9 @@
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/internal/dt-from-pseudo-root-dt.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dyn-array-type.hpp>
-#include <yactfr/metadata/dyn-text-array-type.hpp>
+#include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>
@@ -60,7 +60,9 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoD
      *
      *    During this process, we need to find and validate:
      *
-     *    * The length integer types of dynamic array types.
+     *    * The length integer types of dynamic array types and
+     *      dynamic-length string types.
+     *
      *    * The selector enumeration types of variant types.
      *
      *    To do so:
@@ -145,7 +147,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoD
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStaticArrayType(const PseudoDt& pseudoDt)
 {
     auto& pseudoArrayType = static_cast<const PseudoStaticArrayType&>(pseudoDt);
-    auto arrayType = this->_tryTextArrayDtFromPseudoArrayType<StaticTextArrayType>(pseudoDt,
+    auto arrayType = this->_tryNonNtStrTypeFromPseudoArrayType<StaticLengthStringType>(pseudoDt,
                                                                                    pseudoArrayType.pseudoElemType(),
                                                                                    pseudoArrayType.len());
 
@@ -190,12 +192,12 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDynArrayType(const Pseudo
         throw;
     }
 
-    auto arrayType = this->_tryTextArrayDtFromPseudoArrayType<DynamicTextArrayType>(pseudoDt,
-                                                                                    pseudoArrayType.pseudoElemType(),
-                                                                                    lenLoc);
+    auto strType = this->_tryNonNtStrTypeFromPseudoArrayType<DynamicLengthStringType>(pseudoDt,
+                                                                                      pseudoArrayType.pseudoElemType(),
+                                                                                      lenLoc);
 
-    if (arrayType) {
-        return arrayType;
+    if (strType) {
+        return strType;
     }
 
     // currently being visited
@@ -303,7 +305,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 }
 
 ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation& loc,
-                                                        const TextLocation& srcLoc) const
+                                                             const TextLocation& srcLoc) const
 {
     if (static_cast<int>(loc.scope()) > static_cast<int>(_scope)) {
         std::ostringstream ss;

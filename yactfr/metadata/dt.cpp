@@ -17,9 +17,9 @@
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/static-text-array-type.hpp>
 #include <yactfr/metadata/dyn-array-type.hpp>
-#include <yactfr/metadata/dyn-text-array-type.hpp>
+#include <yactfr/metadata/sl-str-type.hpp>
+#include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/internal/utils.hpp>
 
@@ -116,22 +116,28 @@ const StaticArrayType& DataType::asStaticArrayType() const noexcept
     return static_cast<const StaticArrayType&>(*this);
 }
 
-const StaticTextArrayType& DataType::asStaticTextArrayType() const noexcept
-{
-    assert(this->isStaticTextArrayType());
-    return static_cast<const StaticTextArrayType&>(*this);
-}
-
 const DynamicArrayType& DataType::asDynamicArrayType() const noexcept
 {
     assert(this->isDynamicArrayType());
     return static_cast<const DynamicArrayType&>(*this);
 }
 
-const DynamicTextArrayType& DataType::asDynamicTextArrayType() const noexcept
+const NonNullTerminatedStringType& DataType::asNonNullTerminatedStringType() const noexcept
 {
-    assert(this->isDynamicTextArrayType());
-    return static_cast<const DynamicTextArrayType&>(*this);
+    assert(this->isNonNullTerminatedStringType());
+    return static_cast<const NonNullTerminatedStringType&>(*this);
+}
+
+const StaticLengthStringType& DataType::asStaticLengthStringType() const noexcept
+{
+    assert(this->isStaticLengthStringType());
+    return static_cast<const StaticLengthStringType&>(*this);
+}
+
+const DynamicLengthStringType& DataType::asDynamicLengthStringType() const noexcept
+{
+    assert(this->isDynamicLengthStringType());
+    return static_cast<const DynamicLengthStringType&>(*this);
 }
 
 const StructureType& DataType::asStructureType() const noexcept

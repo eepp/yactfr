@@ -15,8 +15,10 @@
 
 #include "metadata/fwd.hpp"
 #include "metadata/fl-enum-type.hpp"
-#include "metadata/static-text-array-type.hpp"
-#include "metadata/dyn-text-array-type.hpp"
+#include "metadata/static-array-type.hpp"
+#include "metadata/dyn-array-type.hpp"
+#include "metadata/sl-str-type.hpp"
+#include "metadata/dl-str-type.hpp"
 #include "metadata/var-type.hpp"
 #include "elem-visitor.hpp"
 #include "aliases.hpp"
@@ -109,14 +111,14 @@ public:
         /// StaticArrayBeginningElement
         STATIC_ARRAY_BEGINNING,
 
-        /// StaticTextArrayBeginningElement
-        STATIC_TEXT_ARRAY_BEGINNING,
-
         /// DynamicArrayBeginningElement
         DYNAMIC_ARRAY_BEGINNING,
 
-        /// DynamicTextArrayBeginningElement
-        DYNAMIC_TEXT_ARRAY_BEGINNING,
+        /// StaticLengthStringBeginningElement
+        STATIC_LENGTH_STRING_BEGINNING,
+
+        /// DynamicLengthStringBeginningElement
+        DYNAMIC_LENGTH_STRING_BEGINNING,
 
         /// VariantWithSignedSelectorBeginningElement
         VARIANT_WITH_SIGNED_SELECTOR_BEGINNING,
@@ -960,14 +962,14 @@ This element can occur:
     Between NullTerminatedStringBeginningElement and EndElement elements.
   </dd>
 
-  <dt>Data stream static text array</dt>
+  <dt>Data stream static-length string</dt>
   <dd>
-    Between StaticTextArrayBeginningElement and EndElement elements.
+    Between StaticLengthStringBeginningElement and EndElement elements.
   </dd>
 
-  <dt>Data stream dynamic text array</dt>
+  <dt>Data stream dynamic-length string</dt>
   <dd>
-    Between DynamicTextArrayBeginningElement and EndElement elements.
+    Between DynamicLengthStringBeginningElement and EndElement elements.
   </dd>
 </dl>
 
@@ -977,8 +979,9 @@ length() to compute the length of the substring.
 
 Note that the substring can contain <em>zero or more</em> null bytes. If
 there's a null byte between begin() and end(), the string finishes at
-this point, but for a text array, there can be other non-null bytes
-before end() which are still part of the data stream.
+this point, but for static-length and dynamic-length strings, there can
+be other non-null bytes before end() which are still part of the data
+stream.
 */
 class SubstringElement final :
     public Element
@@ -1061,7 +1064,6 @@ protected:
     Size _len;
 };
 
-
 /*!
 @brief
     Static array beginning element.
@@ -1075,21 +1077,15 @@ all part of this static array.
 
 @sa EndElement
 */
-class StaticArrayBeginningElement :
+class StaticArrayBeginningElement final :
     public ArrayBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
-protected:
-    StaticArrayBeginningElement(const Kind kind) :
-        ArrayBeginningElement {kind}
-    {
-    }
-
 private:
     explicit StaticArrayBeginningElement() :
-        StaticArrayBeginningElement {Kind::STATIC_ARRAY_BEGINNING}
+        ArrayBeginningElement {Kind::STATIC_ARRAY_BEGINNING}
     {
     }
 
@@ -1098,46 +1094,6 @@ public:
     const StaticArrayType& type() const noexcept
     {
         return _dt->asStaticArrayType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Static text array beginning element.
-
-@ingroup elems
-
-This element indicates the beginning of a data stream static text
-array.
-
-The next SubstringElement elements before the next EndElement are
-consecutive substrings of this beginning static text array.
-
-@sa SubstringElement
-@sa EndElement
-*/
-class StaticTextArrayBeginningElement final :
-    public StaticArrayBeginningElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit StaticTextArrayBeginningElement() :
-        StaticArrayBeginningElement {Kind::STATIC_TEXT_ARRAY_BEGINNING}
-    {
-    }
-
-public:
-    /// Static text array type.
-    const StaticTextArrayType& type() const noexcept
-    {
-        return _dt->asStaticTextArrayType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1159,21 +1115,15 @@ part of this dynamic array.
 
 @sa EndElement
 */
-class DynamicArrayBeginningElement :
+class DynamicArrayBeginningElement final :
     public ArrayBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
-protected:
-    DynamicArrayBeginningElement(const Kind kind) :
-        ArrayBeginningElement {kind}
-    {
-    }
-
 private:
     explicit DynamicArrayBeginningElement() :
-        DynamicArrayBeginningElement {Kind::DYNAMIC_ARRAY_BEGINNING}
+        ArrayBeginningElement {Kind::DYNAMIC_ARRAY_BEGINNING}
     {
     }
 
@@ -1192,36 +1142,113 @@ public:
 
 /*!
 @brief
-    Dynamic text array beginning element.
+    Non null-terminated string beginning base element.
+
+@ingroup elems
+*/
+class NonNullTerminatedStringBeginningElement :
+    public BeginningElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    NonNullTerminatedStringBeginningElement(const Kind kind) :
+        BeginningElement {kind}
+    {
+    }
+
+public:
+    /// Non null-terminated string type.
+    const NonNullTerminatedStringType& type() const noexcept
+    {
+        return *_dt;
+    }
+
+    /// Maximum length (bytes).
+    Size maximumLength() const noexcept
+    {
+        return _maxLen;
+    }
+
+protected:
+    const NonNullTerminatedStringType *_dt;
+    Size _maxLen;
+};
+
+/*!
+@brief
+    Static-length string beginning element.
 
 @ingroup elems
 
-This element indicates the beginning of a data stream dynamic text
-array.
+This element indicates the beginning of a data stream static-length
+string.
 
 The next SubstringElement elements before the next EndElement are
-consecutive substrings of this beginning dynamic text array.
+consecutive substrings of this beginning static-length string.
 
 @sa SubstringElement
 @sa EndElement
 */
-class DynamicTextArrayBeginningElement final :
-    public DynamicArrayBeginningElement
+class StaticLengthStringBeginningElement final :
+    public NonNullTerminatedStringBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit DynamicTextArrayBeginningElement() :
-        DynamicArrayBeginningElement {Kind::DYNAMIC_TEXT_ARRAY_BEGINNING}
+    explicit StaticLengthStringBeginningElement() :
+        NonNullTerminatedStringBeginningElement {Kind::STATIC_LENGTH_STRING_BEGINNING}
     {
     }
 
 public:
-    /// Dynamic text array type.
-    const DynamicTextArrayType& type() const noexcept
+    /// Static-length string type.
+    const StaticLengthStringType& type() const noexcept
     {
-        return _dt->asDynamicTextArrayType();
+        return _dt->asStaticLengthStringType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Dynamic-length string beginning element.
+
+@ingroup elems
+
+This element indicates the beginning of a data stream dynamic-length
+string.
+
+The next SubstringElement elements before the next EndElement are
+consecutive substrings of this beginning dynamic-length string.
+
+@sa SubstringElement
+@sa EndElement
+*/
+class DynamicLengthStringBeginningElement final :
+    public NonNullTerminatedStringBeginningElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit DynamicLengthStringBeginningElement() :
+        NonNullTerminatedStringBeginningElement {Kind::DYNAMIC_LENGTH_STRING_BEGINNING}
+    {
+    }
+
+public:
+    /// Dynamic-length string type.
+    const DynamicLengthStringType& type() const noexcept
+    {
+        return _dt->asDynamicLengthStringType();
     }
 
     void accept(ElementVisitor& visitor) const override

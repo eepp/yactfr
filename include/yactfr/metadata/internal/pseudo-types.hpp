@@ -207,8 +207,8 @@ private:
  *   role, but we need its structure member type name to assign it.
  *
  * * A TSDL fixed-length unsigned integer type may have an encoding:
- *   this is only needed to detect text array types; a yactfr
- *   fixed-length integer type has no encoding.
+ *   this is only needed to detect static-length and dynamic-length
+ *   string types; a yactfr fixed-length integer type has no encoding.
  *
  * Keep an unmapped fixed-length unsigned integer type here as well as
  * the _name_ of the mapped clock type, if any.

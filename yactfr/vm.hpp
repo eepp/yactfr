@@ -55,27 +55,41 @@ enum class VmState {
 // VM stack frame
 struct VmStackFrame final
 {
-    explicit VmStackFrame(const Proc& proc, const VmState parentState) :
-        proc {&proc.rawProc()},
-        it {proc.rawProc().begin()},
+    explicit VmStackFrame(const Proc * const proc, const VmState parentState) :
+        proc {proc ? &proc->rawProc() : nullptr},
         parentState {parentState}
     {
+        if (proc) {
+            it = proc->rawProc().begin();
+        }
     }
 
-    // base procedure (container of `it` below)
+    /*
+     * Base procedure (container of `it` below).
+     *
+     * May be `nullptr`.
+     */
     const Proc::Raw *proc;
 
-    // _next_ instruction to execute (part of `*proc` above)
+    /*
+     * _Next_ instruction to execute (part of `*proc` above).
+     *
+     * Not needed if `proc` is `nullptr`.
+     */
     Proc::RawIt it;
 
     // state when this frame was created
     VmState parentState;
 
     /*
-     * Array elements left to read (`*proc` is the procedure of this
-     * array read instruction in this case).
+     * Either:
+     *
+     * * Array elements left to read (`*proc` is the procedure of this
+     *   array read instruction in this case).
+     *
+     * * String bytes left to read.
      */
-    Size remElems;
+    Size rem;
 };
 
 /*
@@ -99,7 +113,7 @@ public:
         return theState;
     }
 
-    void stackPush(const Proc& proc)
+    void stackPush(const Proc * const proc = nullptr)
     {
         stack.push_back(VmStackFrame {proc, theState});
     }
@@ -135,8 +149,8 @@ public:
         ++stackTop.it;
 
         if (stackTop.it == stackTop.proc->end()) {
-            assert(stackTop.remElems > 0);
-            --stackTop.remElems;
+            assert(stackTop.rem > 0);
+            --stackTop.rem;
             stackTop.it = stackTop.proc->begin();
         }
     }
@@ -144,7 +158,7 @@ public:
     void loadNewProc(const Proc& proc)
     {
         assert(stack.empty());
-        this->stackPush(proc);
+        this->stackPush(&proc);
     }
 
     const Instr& nextInstr() noexcept
@@ -266,9 +280,9 @@ public:
         NullTerminatedStringBeginningElement ntStrBeginning;
         SubstringElement substr;
         StaticArrayBeginningElement staticArrayBeginning;
-        StaticTextArrayBeginningElement staticTextArrayBeginning;
+        StaticLengthStringBeginningElement slStrBeginning;
         DynamicArrayBeginningElement dynArrayBeginning;
-        DynamicTextArrayBeginningElement dynTextArrayBeginning;
+        DynamicLengthStringBeginningElement dlStrBeginning;
         StructureBeginningElement structBeginning;
         VariantWithSignedSelectorBeginningElement varSSelBeginning;
         VariantWithUnsignedSelectorBeginningElement varUSelBeginning;
@@ -473,7 +487,7 @@ private:
             return this->_stateReadUuidByte();
 
         case VmState::SET_TRACE_TYPE_UUID:
-            return this->_stateSetPktUuid();
+            return this->_stateSetTraceTypeUuid();
 
         case VmState::BEGIN_PKT:
             return this->_stateBeginPkt();
@@ -526,7 +540,7 @@ private:
 
     bool _stateExecArrayInstr()
     {
-        if (_pos.stackTop().remElems == 0) {
+        if (_pos.stackTop().rem == 0) {
             _pos.setParentStateAndStackPop();
             return false;
         }
@@ -535,10 +549,10 @@ private:
             auto& stackTop = _pos.stackTop();
 
             if (stackTop.it == stackTop.proc->end()) {
-                assert(stackTop.remElems > 0);
-                --stackTop.remElems;
+                assert(stackTop.rem > 0);
+                --stackTop.rem;
 
-                if (_pos.stackTop().remElems == 0) {
+                if (_pos.stackTop().rem == 0) {
                     _pos.setParentStateAndStackPop();
                     return false;
                 }
@@ -706,7 +720,7 @@ private:
 
     bool _stateReadUuidByte()
     {
-        if (_pos.stackTop().remElems == 0) {
+        if (_pos.stackTop().rem == 0) {
             // set completed UUID
             _pos.state(VmState::SET_TRACE_TYPE_UUID);
             return false;
@@ -715,12 +729,12 @@ private:
         auto& instr = **_pos.stackTop().it;
 
         this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8>(instr);
-        _pos.uuid.data[16 - _pos.stackTop().remElems] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
-        --_pos.stackTop().remElems;
+        _pos.uuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
+        --_pos.stackTop().rem;
         return true;
     }
 
-    bool _stateSetPktUuid()
+    bool _stateSetTraceTypeUuid()
     {
         assert(_pos.pktProc->traceType().uuid());
 
@@ -735,7 +749,7 @@ private:
     {
         assert((_pos.headOffsetInCurPktBits & 7) == 0);
 
-        if (_pos.stackTop().remElems == 0) {
+        if (_pos.stackTop().rem == 0) {
             _pos.setParentStateAndStackPop();
             return false;
         }
@@ -745,7 +759,7 @@ private:
 
         const auto buf = this->_bufAtHead();
         const auto bufSizeBytes = this->_remBitsInBuf() / 8;
-        const auto substrSizeBytes = std::min(bufSizeBytes, _pos.stackTop().remElems);
+        const auto substrSizeBytes = std::min(bufSizeBytes, _pos.stackTop().rem);
         const auto substrLenBits = substrSizeBytes * 8;
 
         if (substrLenBits > _pos.remContentBitsInPkt()) {
@@ -760,7 +774,7 @@ private:
         assert(_pos.elems.substr.size() > 0);
         this->_updateItCurOffset(_pos.elems.substr);
         this->_consumeExistingBits(substrSizeBytes * 8);
-        _pos.stackTop().remElems -= substrSizeBytes;
+        _pos.stackTop().rem -= substrSizeBytes;
         return true;
     }
 
@@ -1020,13 +1034,13 @@ private:
     _ExecReaction _execEndReadStruct(const Instr& instr);
     _ExecReaction _execBeginReadStaticArray(const Instr& instr);
     _ExecReaction _execEndReadStaticArray(const Instr& instr);
-    _ExecReaction _execBeginReadStaticTextArray(const Instr& instr);
-    _ExecReaction _execEndReadStaticTextArray(const Instr& instr);
+    _ExecReaction _execBeginReadSlStr(const Instr& instr);
+    _ExecReaction _execEndReadSlStr(const Instr& instr);
     _ExecReaction _execBeginReadStaticUuidArray(const Instr& instr);
     _ExecReaction _execBeginReadDynArray(const Instr& instr);
     _ExecReaction _execEndReadDynArray(const Instr& instr);
-    _ExecReaction _execBeginReadDynTextArray(const Instr& instr);
-    _ExecReaction _execEndReadDynTextArray(const Instr& instr);
+    _ExecReaction _execBeginReadDlStr(const Instr& instr);
+    _ExecReaction _execEndReadDlStr(const Instr& instr);
     _ExecReaction _execBeginReadVarSSel(const Instr& instr);
     _ExecReaction _execBeginReadVarUSel(const Instr& instr);
     _ExecReaction _execEndReadVar(const Instr& instr);
@@ -1254,43 +1268,47 @@ private:
         elem._selVal = selVal;
         this->_updateItCurOffset(elem);
         _pos.gotoNextInstr();
-        _pos.stackPush(*proc);
+        _pos.stackPush(proc);
         _pos.state(VmState::EXEC_INSTR);
     }
 
-    void _execBeginReadStaticArrayCommon(const Instr& instr, StaticArrayBeginningElement& elem,
-                                         const VmState nextState)
+    template <typename ElemT>
+    void _execBeginReadStaticData(const ReadDataInstr& instr, ElemT& elem, const Size len,
+                                  const Proc * const proc, const VmState nextState)
     {
-        const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticArrayInstr&>(instr);
-        auto& staticArrayBeginningElem = static_cast<StaticArrayBeginningElement&>(elem);
-        auto& dataElem = static_cast<DataElement&>(staticArrayBeginningElem);
-
         this->_alignHead(instr);
-        Vm::_setDataElemFromInstr(dataElem, beginReadStaticArrayInstr);
-        elem._dt = &beginReadStaticArrayInstr.staticArrayType();
-        elem._len = beginReadStaticArrayInstr.staticArrayType().length();
-        this->_updateItCurOffset(staticArrayBeginningElem);
+        Vm::_setDataElemFromInstr(elem, instr);
+        this->_updateItCurOffset(elem);
         _pos.gotoNextInstr();
-        _pos.stackPush(beginReadStaticArrayInstr.proc());
-        _pos.stackTop().remElems = beginReadStaticArrayInstr.len();
+        _pos.stackPush(proc);
+        _pos.stackTop().rem = len;
         _pos.state(nextState);
     }
 
-    void _execBeginReadDynArrayCommon(const Instr& instr, DynamicArrayBeginningElement& elem,
-                                      const VmState nextState)
+    _ExecReaction _execBeginReadStaticArray(const Instr& instr, const VmState nextState)
     {
-        const auto& beginReadDynArrayInstr = static_cast<const BeginReadDynArrayInstr&>(instr);
-        const auto len = _pos.savedVal(beginReadDynArrayInstr.lenPos());
+        const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticArrayInstr&>(instr);
 
+        _pos.elems.staticArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
+        _pos.elems.staticArrayBeginning._len = beginReadStaticArrayInstr.len();
+        this->_execBeginReadStaticData(beginReadStaticArrayInstr, _pos.elems.staticArrayBeginning,
+                                       beginReadStaticArrayInstr.len(),
+                                       &beginReadStaticArrayInstr.proc(), nextState);
+        return _ExecReaction::STOP;
+    }
+
+    template <typename ElemT>
+    void _execBeginReadDynData(const ReadDataInstr& instr, ElemT& elem, const Index lenPos,
+                               Size& len, const Proc * const proc, const VmState nextState)
+    {
+        len = _pos.savedVal(lenPos);
         assert(len != SAVED_VAL_UNSET);
         this->_alignHead(instr);
-        Vm::_setDataElemFromInstr(elem, beginReadDynArrayInstr);
-        elem._dt = &beginReadDynArrayInstr.dynArrayType();
-        elem._len = len;
+        Vm::_setDataElemFromInstr(elem, instr);
         this->_updateItCurOffset(elem);
         _pos.gotoNextInstr();
-        _pos.stackPush(beginReadDynArrayInstr.proc());
-        _pos.stackTop().remElems = len;
+        _pos.stackPush(proc);
+        _pos.stackTop().rem = len;
         _pos.state(nextState);
     }
 

@@ -28,8 +28,8 @@ yactfr_create_all_streams (
     fail-be-to-le-change-in-byte
     fail-dyn-array-beyond-content
     fail-dyn-array-beyond-data
-    fail-dyn-text-array-beyond-content
-    fail-dyn-text-array-beyond-data
+    fail-dl-str-beyond-content
+    fail-dl-str-beyond-data
     fail-fl-float-beyond-data
     fail-fl-int-beyond-content
     fail-fl-int-beyond-data
@@ -41,8 +41,8 @@ yactfr_create_all_streams (
     fail-pkt-content-len-too-small
     fail-pkt-total-len-not-multiple-eight
     fail-pkt-total-len-too-small
-    fail-static-text-array-beyond-content
-    fail-static-text-array-beyond-data
+    fail-sl-str-beyond-content
+    fail-sl-str-beyond-data
     fail-nt-str-beyond-content
     fail-nt-str-beyond-data
     fail-unknown-dst-id
@@ -62,7 +62,7 @@ yactfr_create_all_streams (
     pass-dyn-array-empty-structs
     pass-dyn-array-multi-len
     pass-dyn-arrays
-    pass-dyn-text-arrays
+    pass-dl-strs
     pass-empty-data
     pass-er-header-id-nt-str
     pass-fl-floats
@@ -83,7 +83,7 @@ yactfr_create_all_streams (
     pass-pkt-header-uuid-nt-str
     pass-pkt-origin-index
     pass-pkt-total-len-no-pkt-content-len
-    pass-static-text-arrays
+    pass-sl-strs
     pass-std-fl-enums
     pass-std-fl-ints
     pass-nt-str-align
@@ -100,8 +100,8 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/fail-be-to-le-change-in-byte/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-array-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-array-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-text-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-text-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dl-str-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dl-str-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-fl-float-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-fl-int-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-fl-int-beyond-data/metadata"
@@ -113,8 +113,8 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-content-len-too-small/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-total-len-not-multiple-eight/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-total-len-too-small/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-static-text-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-static-text-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-sl-str-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-sl-str-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-nt-str-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-nt-str-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-dst-id/metadata"
@@ -134,7 +134,7 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-array-empty-structs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-array-multi-len/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-arrays/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-text-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dl-strs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-empty-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-er-header-id-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-fl-floats/metadata"
@@ -155,7 +155,7 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-origin-index/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-total-len-no-pkt-content-len/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-static-text-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-sl-strs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-fl-enums/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-fl-ints/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-nt-str-align/metadata"

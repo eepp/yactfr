@@ -93,20 +93,15 @@ public:
         this->_visitArrayType(dt);
     }
 
-    void visit(const StaticTextArrayType& dt) override
-    {
-        this->_visitArrayType(dt);
-    }
-
     void visit(const DynamicArrayType& dt) override
     {
         this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dynArrayTypeLenTypes(dt));
         this->_visitArrayType(dt);
     }
 
-    void visit(const DynamicTextArrayType& dt) override
+    void visit(const DynamicLengthStringType& dt) override
     {
-        this->visit(static_cast<const DynamicArrayType&>(dt));
+        this->_setTypeDeps(dt.maximumLengthLocation(), TraceTypeImpl::dlStrTypeMaxLenTypes(dt));
     }
 
     void visit(const VariantWithUnsignedSelectorType& dt) override

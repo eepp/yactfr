@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,7 +23,7 @@ namespace yactfr {
 
 A static array type describes data stream static arrays.
 */
-class StaticArrayType :
+class StaticArrayType final :
     public ArrayType
 {
 public:
@@ -59,11 +59,6 @@ public:
     explicit StaticArrayType(unsigned int minimumAlignment, DataType::UP elementType, Size length,
                              bool hasTraceTypeUuidRole = false);
 
-protected:
-    explicit StaticArrayType(int kind, unsigned int minAlign, DataType::UP elemType, Size len,
-                             bool hasTraceTypeUuidRole = false);
-
-public:
     /// Length of data stream static arrays described by this type
     /// (count of element).
     Size length() const noexcept

@@ -454,9 +454,9 @@ int main(const int argc, const char * const argv[])
         case yactfr::Element::Kind::NULL_TERMINATED_STRING_BEGINNING:
         case yactfr::Element::Kind::STRUCTURE_BEGINNING:
         case yactfr::Element::Kind::STATIC_ARRAY_BEGINNING:
-        case yactfr::Element::Kind::STATIC_TEXT_ARRAY_BEGINNING:
+        case yactfr::Element::Kind::STATIC_LENGTH_STRING_BEGINNING:
         case yactfr::Element::Kind::DYNAMIC_ARRAY_BEGINNING:
-        case yactfr::Element::Kind::DYNAMIC_TEXT_ARRAY_BEGINNING:
+        case yactfr::Element::Kind::DYNAMIC_LENGTH_STRING_BEGINNING:
         case yactfr::Element::Kind::VARIANT_WITH_SIGNED_SELECTOR_BEGINNING:
         case yactfr::Element::Kind::VARIANT_WITH_UNSIGNED_SELECTOR_BEGINNING:
             // beginning element: increment current level

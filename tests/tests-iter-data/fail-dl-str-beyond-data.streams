@@ -29,7 +29,7 @@ event {
      8           NTS:salut {
      8             SS:15:salut les mecs
    128           }
-   128           DTA:meow {
+   128           DLS:meow {
    128             SS:3:sel
    152           }
    152         }
@@ -43,7 +43,7 @@ event {
    160           NTS:salut {
    160             SS:9:tomatoes
    232           }
-   232           DTA:meow {
+   232           DLS:meow {
    232             SS:6:poi
    280           }
    280         }
@@ -57,6 +57,6 @@ event {
    288           NTS:salut {
    288             SS:6:madly
    336           }
-   336           DTA:meow {
+   336           DLS:meow {
    336             SS:2:ca
    352 Cannot read 8 bits at this point: reaching end of data source.

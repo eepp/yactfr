@@ -98,7 +98,7 @@ void ElementVisitor::visit(const StaticArrayBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const StaticTextArrayBeginningElement& elem)
+void ElementVisitor::visit(const StaticLengthStringBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
@@ -108,7 +108,7 @@ void ElementVisitor::visit(const DynamicArrayBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const DynamicTextArrayBeginningElement& elem)
+void ElementVisitor::visit(const DynamicLengthStringBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
