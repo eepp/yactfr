@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <memory>
 #include <vector>
+#include <string>
 #include <iomanip>
 #include <ostream>
 #include <boost/uuid/uuid_io.hpp>
@@ -195,13 +196,7 @@ public:
     void visit(const yactfr::SubstringElement& elem) override
     {
         this->_indent();
-        *_os << "SS:" << elem.size() << ":";
-
-        for (auto ch = elem.begin(); *ch != '\0' && ch != elem.end(); ++ch) {
-            *_os << *ch;
-        }
-
-        *_os << '\n';
+        *_os << "SS:" << elem.size() << ":" << elem.string() << '\n';
     }
 
     void visit(const yactfr::BlobSectionElement& elem) override

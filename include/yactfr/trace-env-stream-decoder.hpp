@@ -66,8 +66,8 @@ a \link TraceType trace type\endlink and a
 \link DataSourceFactory data source factory\endlink.
 
 Once you have built a trace environment stream decoder, call its
-TraceEnvironmentStreamDecoder::decode() method which returns a
-TraceEnvironment object on success, or throws otherwise.
+decode() method which returns a TraceEnvironment object on success, or
+throws otherwise.
 */
 class TraceEnvironmentStreamDecoder final
 {

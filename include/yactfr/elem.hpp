@@ -10,8 +10,13 @@
 
 #include <cstdint>
 #include <string>
+#include <algorithm>
 #include <boost/uuid/uuid.hpp>
 #include <boost/optional/optional.hpp>
+
+#ifdef __cpp_lib_string_view
+#include <string_view>
+#endif
 
 #include "metadata/fwd.hpp"
 #include "metadata/dt.hpp"
@@ -2789,15 +2794,26 @@ This element can occur:
   </dd>
 </dl>
 
-begin() points to the first character of the substring and end() points
-to the character \em after the last character of the substring. Use
-length() to compute the length of the substring.
+begin() points to the first byte of the substring and end() points to
+the byte \em after the last byte of the substring. Use size() to compute
+the size of the substring \em data in bytes.
 
-Note that the substring can contain <em>zero or more</em> null bytes. If
-there's a null byte between begin() and end(), the string finishes at
-this point, but for static-length and dynamic-length strings, there can
+The whole substring may contain <em>zero or more</em> null bytes. If
+there's a null byte between begin() and end(), the substring finishes at
+this point, but for static-length and dynamic-length strings, there may
 be other non-null bytes before end() which are still part of the data
-stream.
+stream. Knowing this:
+
+- Use stringEnd() to get the end of the null-terminated substring
+  (the first null byte or end() if none).
+
+- Use stringSize() to get the size of the null-terminated substring.
+
+- Use string() to get a string containing the text data of
+  the null-terminate substring.
+
+- If available, use stringView() to get a string view containing the
+  text data of the null-terminated substring.
 */
 class SubstringElement final :
     public Element
@@ -2819,19 +2835,60 @@ public:
         return _begin;
     }
 
-    /// End of the data of this substring (points to the character \em
-    /// after the last character of the substring).
+    /*!
+    @brief
+        End of the data of this substring (points to the byte \em after
+        the last byte of the substring).
+
+    Use stringEnd() to get the end of the null-terminated substring.
+    */
     const char *end() const noexcept
     {
         return _end;
     }
 
-    /// Size of this substring (bytes), including null characters and
-    /// characters after that, if any.
+    /// End of this null-terminated substring (points to either the
+    /// first null byte, or is end() if none).
+    const char *stringEnd() const noexcept
+    {
+        return std::find(_begin, _end, '\0');
+    }
+
+    /*!
+    @brief
+        Size of this substring (bytes), including null characters and
+        characters after that, if any.
+
+    Use stringSize() to get the size of this null-terminated string,
+    excluding any terminating null character.
+    */
     Size size() const noexcept
     {
         return _end - _begin;
     }
+
+    /// Size of this null-terminated substring (bytes), excluding any
+    /// terminating null character.
+    Size stringSize() const noexcept
+    {
+        return this->stringEnd() - _begin;
+    }
+
+    /// String containing the text data (between begin() and
+    /// stringEnd()) of this substring.
+    std::string string() const
+    {
+        return {_begin, this->stringEnd()};
+    }
+
+#ifdef __cpp_lib_string_view
+    /// String view wrapping the text data (between begin() and
+    /// stringEnd()) of this substring.
+    std::string_view stringView() const
+    {
+        return {_begin, this->stringSize()};
+    }
+#endif
 
     void accept(ElementVisitor& visitor) const override
     {
@@ -2866,8 +2923,8 @@ This element can occur:
 </dl>
 
 begin() points to the first byte of the BLOB section and end() points to
-the byte \em after the last byte of the BLOB section. Use length() to
-compute the length of the BLOB section.
+the byte \em after the last byte of the BLOB section. Use size() to
+compute the size of the BLOB section.
 */
 class BlobSectionElement final :
     public Element

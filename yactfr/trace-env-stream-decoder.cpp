@@ -184,18 +184,16 @@ TraceEnvironment TraceEnvironmentStreamDecoder::decode()
 
         case Element::Kind::SUBSTRING:
         {
-            // find real string end
             auto& elem = _it->asSubstringElement();
-            const auto end = std::find(elem.begin(), elem.end(), '\0');
 
             if (_fillingCurKey) {
                 // append to current key
-                _curKey->append(elem.begin(), end);
+                _curKey->append(elem.string());
             }
 
             if (_fillingCurStrVal) {
                 // append to current string value
-                _curStrVal->append(elem.begin(), end);
+                _curStrVal->append(elem.string());
             }
 
             break;
