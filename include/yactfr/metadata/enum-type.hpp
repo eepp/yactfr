@@ -50,6 +50,9 @@ class EnumerationType :
     public IntegerTypeParentT
 {
 public:
+    /// Type of the value of an integer range within a mapping.
+    using Value = ValueT;
+
     /// Type of an integer range set within a mapping.
     using RangeSet = IntegerRangeSet<ValueT>;
 
