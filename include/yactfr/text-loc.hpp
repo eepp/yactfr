@@ -29,20 +29,29 @@ public:
 
     /*
     @brief
-        Builds a text location which targets zero-based line number
-        \p lineNumber and column number \p columnNumber.
+        Builds a text location which targets offset \p offset bytes,
+        zero-based line number \p lineNumber, zero-based column number
+        \p columnNumber.
 
+    @param[in] offset
+        Offset (bytes).
     @param[in] lineNumber
         Line number (zero-based) of the text location.
     @param[in] columnNumber
         Column number (zero-based) of the text location.
     */
-    explicit TextLocation(Index lineNumber, Index columnNumber) noexcept;
+    explicit TextLocation(Index offset, Index lineNumber, Index columnNumber) noexcept;
 
     TextLocation(const TextLocation&) = default;
     TextLocation(TextLocation&&) = default;
     TextLocation& operator=(const TextLocation&) = default;
     TextLocation& operator=(TextLocation&&) = default;
+
+    /// Offset (bytes).
+    Index offset() const noexcept
+    {
+        return _offset;
+    }
 
     /// Line number (zero-based).
     Index lineNumber() const noexcept
@@ -69,7 +78,9 @@ public:
     }
 
 private:
-    Index _lineNumber = 0, _colNumber = 0;
+    Index _offset;
+    Index _lineNumber = 0;
+    Index _colNumber = 0;
 };
 
 } // namespace yactfr

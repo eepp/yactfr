@@ -31,34 +31,19 @@ class InvalEscapeSeq final :
     public std::runtime_error
 {
 public:
-    explicit InvalEscapeSeq(std::string message, const Index offset, const Index lineNumber,
-                            const Index colNumber) :
-        std::runtime_error {std::move(message)},
-        _offset {offset},
-        _lineNumber {lineNumber},
-        _colNumber {colNumber}
+    explicit InvalEscapeSeq(std::string msg, TextLocation loc) :
+        std::runtime_error {std::move(msg)},
+        _loc {std::move(loc)}
     {
     }
 
-    Size offset() const noexcept
+    const TextLocation& loc() const noexcept
     {
-        return _offset;
-    }
-
-    Size lineNumber() const noexcept
-    {
-        return _lineNumber;
-    }
-
-    Size colNumber() const noexcept
-    {
-        return _colNumber;
+        return _loc;
     }
 
 private:
-    Size _offset;
-    Size _lineNumber;
-    Size _colNumber;
+    TextLocation _loc;
 };
 
 /*
@@ -171,20 +156,15 @@ public:
     }
 
     /*
-     * Returns the zero-based line number at which the current
-     * iterator is.
+     * Returns the current text location.
      */
-    Index curLineNumber() const
+    TextLocation loc() const
     {
-        return _nbLines;
-    }
-
-    /*
-     * Returns the zero-based column number within the current line.
-     */
-    Index curColNumber() const
-    {
-        return _at - _lineBegin;
+        return TextLocation {
+            static_cast<Index>(_at - _begin),
+            _nbLines,
+            static_cast<Index>(_at - _lineBegin)
+        };
     }
 
     /*
@@ -670,10 +650,7 @@ void StrScanner<CharIt>::_appendEscapedUnicodeChar(const CharIt at)
             std::ostringstream ss;
 
             ss << "In `\\u` escape sequence: unexpected character `" << ch << "`.";
-            throw InvalEscapeSeq {
-                ss.str(), static_cast<Index>(_at - _begin),
-                this->curLineNumber(), this->curColNumber()
-            };
+            throw InvalEscapeSeq {ss.str(), this->loc()};
         }
     }
 
@@ -690,10 +667,7 @@ void StrScanner<CharIt>::_appendEscapedUnicodeChar(const CharIt at)
         std::ostringstream ss;
 
         ss << "In `\\u` escape sequence: invalid codepoint " << cp << ".";
-        throw InvalEscapeSeq {
-            ss.str(), static_cast<Index>(_at - _begin),
-            this->curLineNumber(), this->curColNumber()
-        };
+        throw InvalEscapeSeq {ss.str(), this->loc()};
     } else if (cp <= 0xffff) {
         _strBuf.push_back(static_cast<char>((cp >> 12) + 224));
         _strBuf.push_back(static_cast<char>(((cp >> 6) & 63) + 128));
@@ -725,8 +699,7 @@ bool StrScanner<CharIt>::_tryAppendEscapedChar(const char * const escapeSeqStart
                 if (this->charsLeft() < 6) {
                     throw InvalEscapeSeq {
                         "`\\u` escape sequence needs four hexadecimal digits.",
-                        static_cast<Index>(_at - _begin),
-                        this->curLineNumber(), this->curColNumber()
+                        this->loc()
                     };
                 }
 

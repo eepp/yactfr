@@ -632,11 +632,6 @@ private:
      */
     PseudoDt::UP _fastPseudoFlIntType(TextLocation loc);
 
-    TextLocation _curLoc() const
-    {
-        return TextLocation {_ss.curLineNumber(), _ss.curColNumber()};
-    }
-
     /*
      * Inserts a clone of the pseudo fixed-length integer type
      * `pseudoIntType` having the corresponding TSDL string from `begin`
@@ -667,12 +662,12 @@ private:
 
         _ss.skipCommentsAndWhitespaces();
 
-        const auto loc = this->_curLoc();
+        const auto loc = _ss.loc();
 
         try {
             litStr = _ss.tryScanLitStr("abfnrtv'?\\");
         } catch (const InvalEscapeSeq& exc) {
-            throwTextParseError(exc.what(), TextLocation {exc.lineNumber(), exc.colNumber()});
+            throwTextParseError(exc.what(), exc.loc());
         }
 
         if (!litStr) {
@@ -695,7 +690,7 @@ private:
 
     void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt)
     {
-        TsdlParserBase::_addDtAlias(std::move(name), pseudoDt, this->_curLoc());
+        TsdlParserBase::_addDtAlias(std::move(name), pseudoDt, _ss.loc());
     }
 
 private:
@@ -731,7 +726,7 @@ void TsdlParser<CharIt>::_parseMetadata()
                             "clock type block (`clock`), data stream type block (`stream`), "
                             "or event record type block (`event`). Did you forget the `;` "
                             "after the closing `}` of the block?",
-                            this->_curLoc());
+                            _ss.loc());
     }
 
     if (!_pseudoTraceType) {
@@ -747,7 +742,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto loc = this->_curLoc();
+    const auto loc = _ss.loc();
 
     if (this->_tryParseDtAlias()) {
         return true;
@@ -818,7 +813,7 @@ void TsdlParser<CharIt>::_expectToken(const char * const token)
         std::ostringstream ss;
 
         ss << "Expecting `" << token << "`.";
-        throwTextParseError(ss.str(), this->_curLoc());
+        throwTextParseError(ss.str(), _ss.loc());
     }
 }
 
@@ -830,7 +825,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto loc = this->_curLoc();
+    const auto loc = _ss.loc();
 
     // try fixed-length enumeration type alias
     {
@@ -950,7 +945,7 @@ bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
              * Cannot parse a full data type: try an existing data type
              * alias name.
              */
-            const auto loc = this->_curLoc();
+            const auto loc = _ss.loc();
 
             if (const auto ident = _ss.tryScanIdent()) {
                 pseudoDt = this->_aliasedPseudoDt(*ident, loc);
@@ -959,13 +954,13 @@ bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
                     throwTextParseError("Expecting explicit data type block (`integer`, `floating_point`, "
                                         "`enum`, `string`, `struct`, or `variant`) or "
                                         "existing data type alias name.",
-                                        this->_curLoc());
+                                        _ss.loc());
                 }
             } else {
                 throwTextParseError("Expecting explicit data type block (`integer`, `floating_point`, "
                                     "`enum`, `string`, `struct`, or `variant`) or "
                                     "existing data type alias name.",
-                                    this->_curLoc());
+                                    _ss.loc());
             }
         }
 
@@ -992,7 +987,7 @@ bool TsdlParser<CharIt>::_tryParseDtAlias()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto loc = this->_curLoc();
+    const auto loc = _ss.loc();
 
     try {
         if (this->_tryParseGenericDtAlias()) {
@@ -1033,7 +1028,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
 {
     _ss.skipCommentsAndWhitespaces();
 
-    const auto loc = this->_curLoc();
+    const auto loc = _ss.loc();
     PseudoDt::UP pseudoDt;
 
     try {
@@ -1148,7 +1143,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
 {
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beforeKwLoc = this->_curLoc();
+    const auto beforeKwLoc = _ss.loc();
 
     // parse `integer`
     if (!_ss.tryScanToken("integer")) {
@@ -1163,7 +1158,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
         return fastPseudoFlIntType;
     }
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
     const auto beginAt = _ss.at();
 
     // parse `{`
@@ -1275,7 +1270,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
 
     assert(pseudoDt);
 
-    if (beginLoc.lineNumber() == this->_curLoc().lineNumber()) {
+    if (beginLoc.lineNumber() == _ss.loc().lineNumber()) {
         /*
          * Fast pseudo fixed-length integer type cache only supported
          * for single lines.
@@ -1291,7 +1286,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
 {
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `floating_point`
     if (!_ss.tryScanToken("floating_point")) {
@@ -1374,7 +1369,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
 {
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `string`
     if (!_ss.tryScanToken("string")) {
@@ -1427,7 +1422,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
 
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `enum`
     if (!_ss.tryScanToken("enum")) {
@@ -1465,7 +1460,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
         _ss.skipCommentsAndWhitespaces();
 
         // remember location
-        const auto loc = this->_curLoc();
+        const auto loc = _ss.loc();
 
         // check for a data type alias name first
         std::string dtAliasName;
@@ -1559,7 +1554,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
 
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `struct`
     if (!_ss.tryScanToken("struct")) {
@@ -1601,7 +1596,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
                     break;
                 }
 
-                const auto loc = this->_curLoc();
+                const auto loc = _ss.loc();
                 bool success;
 
                 try {
@@ -1614,7 +1609,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
                 if (!success) {
                     throwTextParseError("Expecting member type with known data type "
                                         "or data type alias.",
-                                        this->_curLoc());
+                                        _ss.loc());
                 }
             }
 
@@ -1631,7 +1626,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
 
                 if (!optAlign) {
                     throwTextParseError("Expecting valid constant unsigned integer.",
-                                        this->_curLoc());
+                                        _ss.loc());
                 }
 
                 if (!isPowOfTwo(*optAlign)) {
@@ -1639,7 +1634,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
 
                     ss << "Invalid minimum alignment for `struct` block " <<
                           "(must be a power of two): " << *optAlign << ".";
-                    throwTextParseError(ss.str(), this->_curLoc());
+                    throwTextParseError(ss.str(), _ss.loc());
                 }
 
                 align = *optAlign;
@@ -1666,7 +1661,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
 
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `variant`
     if (!_ss.tryScanToken("variant")) {
@@ -1703,7 +1698,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
                 if (pseudoDataLoc->isEnv()) {
                     throwTextParseError("Selector location of variant type "
                                         "cannot start with `env.`.",
-                                        this->_curLoc());
+                                        _ss.loc());
                 }
 
                 this->_expectToken(">");
@@ -1724,7 +1719,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
                     break;
                 }
 
-                const auto loc = this->_curLoc();
+                const auto loc = _ss.loc();
                 bool success;
 
                 try {
@@ -1735,7 +1730,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
                 }
 
                 if (!success) {
-                    throwTextParseError("Expecting option or data type alias.", this->_curLoc());
+                    throwTextParseError("Expecting option or data type alias.", _ss.loc());
                 }
             }
 
@@ -1769,7 +1764,7 @@ bool TsdlParser<CharIt>::_tryParseEnvBlock()
     }
 
     if (_traceEnv) {
-        throwTextParseError("Duplicate `env` block.", this->_curLoc());
+        throwTextParseError("Duplicate `env` block.", _ss.loc());
     }
 
     // parse `{`
@@ -1872,7 +1867,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `clock`
     if (!_ss.tryScanToken("clock")) {
@@ -2034,7 +2029,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `trace`
     if (!_ss.tryScanToken("trace")) {
@@ -2042,7 +2037,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
     }
 
     if (_pseudoTraceType) {
-        throwTextParseError("Duplicate `trace` block.", this->_curLoc());
+        throwTextParseError("Duplicate `trace` block.", _ss.loc());
     }
 
     // parse `{`
@@ -2066,7 +2061,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
 
         if (pseudoDt) {
             if (pseudoPktHeaderType) {
-                throwTextParseError("Duplicate `packet.header` scope.", this->_curLoc());
+                throwTextParseError("Duplicate `packet.header` scope.", _ss.loc());
             }
 
             pseudoPktHeaderType = std::move(pseudoDt);
@@ -2199,7 +2194,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `stream`
     if (!_ss.tryScanToken("stream")) {
@@ -2229,7 +2224,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
         if (pseudoDt) {
             if (pseudoPktCtxType) {
-                throwTextParseError("Duplicate `packet.context` scope.", this->_curLoc());
+                throwTextParseError("Duplicate `packet.context` scope.", _ss.loc());
             }
 
             pseudoPktCtxType = std::move(pseudoDt);
@@ -2242,7 +2237,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
         if (pseudoDt) {
             if (pseudoErHeaderType) {
-                throwTextParseError("Duplicate `event.header` scope.", this->_curLoc());
+                throwTextParseError("Duplicate `event.header` scope.", _ss.loc());
             }
 
             pseudoErHeaderType = std::move(pseudoDt);
@@ -2255,7 +2250,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
         if (pseudoDt) {
             if (pseudoErCommonCtxType) {
-                throwTextParseError("Duplicate `event.context` scope.", this->_curLoc());
+                throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
             }
 
             pseudoErCommonCtxType = std::move(pseudoDt);
@@ -2320,7 +2315,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse `event`
     if (!_ss.tryScanToken("event")) {
@@ -2348,7 +2343,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
 
         if (pseudoDt) {
             if (pseudoSpecCtxType) {
-                throwTextParseError("Duplicate `event.context` scope.", this->_curLoc());
+                throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
             }
 
             pseudoSpecCtxType = std::move(pseudoDt);
@@ -2360,7 +2355,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
 
         if (pseudoDt) {
             if (pseudoPayloadType) {
-                throwTextParseError("Duplicate `event.fields` scope.", this->_curLoc());
+                throwTextParseError("Duplicate `event.fields` scope.", _ss.loc());
             }
 
             pseudoPayloadType = std::move(pseudoDt);
@@ -2472,7 +2467,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
 
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // parse name
     if (!_ss.tryScanToken(firstName)) {
@@ -2488,7 +2483,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
                     std::ostringstream ss;
 
                     ss << "Expecting `" << secondName << "`.";
-                    throwTextParseError(ss.str(), this->_curLoc());
+                    throwTextParseError(ss.str(), _ss.loc());
                 }
 
                 return nullptr;
@@ -2499,7 +2494,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
         this->_expectToken(":=");
         _ss.skipCommentsAndWhitespaces();
 
-        const auto dtLoc = this->_curLoc();
+        const auto dtLoc = _ss.loc();
 
         // parse data type
         PseudoDt::UP pseudoDt;
@@ -2548,7 +2543,7 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
     auto nameIsFound = false;
 
     _ss.skipCommentsAndWhitespaces();
-    attr.nameLoc = this->_curLoc();
+    attr.nameLoc = _ss.loc();
 
     if (_ss.tryScanToken(TsdlParser::_EMF_URI_ATTR_NAME)) {
         nameIsFound = true;
@@ -2567,7 +2562,7 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
 
     // this it the source location of the attribute for an eventual error
     _ss.skipCommentsAndWhitespaces();
-    attr.valLoc = this->_curLoc();
+    attr.valLoc = _ss.loc();
 
     // special case for the `map` attribute
     if (attr.name == "map") {
@@ -2583,7 +2578,7 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
         const auto ident = _ss.tryScanIdent();
 
         if (!ident) {
-            throwTextParseError("Expecting identifier (clock type name).", this->_curLoc());
+            throwTextParseError("Expecting identifier (clock type name).", _ss.loc());
         }
 
         attr.strVal = *ident;
@@ -2631,7 +2626,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
 {
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
 
     // try `enum`/`struct` followed by name
     {
@@ -2687,7 +2682,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
                 if (_ss.tryScanToken("<")) {
                     _ss.skipCommentsAndWhitespaces();
 
-                    const auto selLoc = this->_curLoc();
+                    const auto selLoc = _ss.loc();
                     auto pseudoSelLoc = this->_expectDataLoc();
 
                     if (pseudoSelLoc.isEnv()) {
@@ -2743,7 +2738,7 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
 
         _ss.skipCommentsAndWhitespaces();
 
-        const auto loc = this->_curLoc();
+        const auto loc = _ss.loc();
         const auto ident = _ss.tryScanIdent();
 
         if (!ident) {
@@ -2789,7 +2784,7 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
 
     if (parts.empty()) {
         if (expect) {
-            throwTextParseError("Expecting data type alias name.", this->_curLoc());
+            throwTextParseError("Expecting data type alias name.", _ss.loc());
         } else {
             return false;
         }
@@ -2813,7 +2808,7 @@ PseudoDataLoc TsdlParser<CharIt>::_expectDataLoc()
 {
     _ss.skipCommentsAndWhitespaces();
 
-    const auto beginLoc = this->_curLoc();
+    const auto beginLoc = _ss.loc();
     DataLocation::PathElements allPathElems;
 
     while (true) {
@@ -2880,7 +2875,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
 
         _ss.skipCommentsAndWhitespaces();
 
-        const auto subscriptLoc = this->_curLoc();
+        const auto subscriptLoc = _ss.loc();
 
         if (const auto val = _ss.tryScanConstSInt()) {
             if (*val < 0) {
@@ -3002,7 +2997,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
 
         _ss.skipCommentsAndWhitespaces();
 
-        boost::optional<TextLocation> loc {this->_curLoc()};
+        boost::optional<TextLocation> loc {_ss.loc()};
 
         if (const auto ident = _ss.tryScanIdent()) {
             name = *ident;
@@ -3019,17 +3014,17 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
             using Val = decltype(curVal);
 
             _ss.skipCommentsAndWhitespaces();
-            loc = this->_curLoc();
+            loc = _ss.loc();
 
             auto val = _ss.template tryScanConstInt<Val>();
 
             if (!val) {
                 if (std::is_signed<Val>::value) {
                     throwTextParseError("Expecting valid constant signed integer.",
-                                        this->_curLoc());
+                                        _ss.loc());
                 } else {
                     throwTextParseError("Expecting valid constant unsigned integer.",
-                                        this->_curLoc());
+                                        _ss.loc());
                 }
             }
 
@@ -3041,7 +3036,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
                 val = _ss.template tryScanConstInt<Val>();
 
                 if (!val) {
-                    throwTextParseError("Expecting valid constant integer.", this->_curLoc());
+                    throwTextParseError("Expecting valid constant integer.", _ss.loc());
                 }
 
                 upper = *val;
@@ -3077,7 +3072,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
         }
 
         if (!gotComma) {
-            throwTextParseError("Expecting `,` or `}`.", this->_curLoc());
+            throwTextParseError("Expecting `,` or `}`.", _ss.loc());
         }
     }
 
@@ -3208,7 +3203,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
 
     {
         _StrScannerRejecter ssRej {_ss};
-        const auto dtLoc = this->_curLoc();
+        const auto dtLoc = _ss.loc();
         auto pseudoDt = this->_tryParseDtAliasRef();
 
         if (pseudoDt) {
@@ -3263,7 +3258,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
                  * location at this point.
                  */
                 if (TsdlParser::_isPseudoVarTypeWithoutSelLocRec(*effectivePseudoDt)) {
-                    throwTextParseError("Variant type needs a selector here.", this->_curLoc());
+                    throwTextParseError("Variant type needs a selector here.", _ss.loc());
                 }
 
                 auto pseudoNamedDt = std::make_unique<PseudoNamedDt>(ident,
@@ -3282,7 +3277,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
                  */
                 _ss.skipCommentsAndWhitespaces();
                 throwTextParseError("Expecting identifier (member type/option name).",
-                                    this->_curLoc());
+                                    _ss.loc());
             }
         }
     }

@@ -25,7 +25,7 @@ TextParseError::TextParseError(std::string initMsg, TextLocation initLoc) :
 }
 
 TextParseError::TextParseError(std::string initMsg) :
-    TextParseError {std::move(initMsg), TextLocation {0, 0}}
+    TextParseError {std::move(initMsg), TextLocation {0, 0, 0}}
 {
 }
 
@@ -37,7 +37,7 @@ void TextParseError::_appendErrorMsg(std::string msg, TextLocation loc)
 
 void TextParseError::_appendErrorMsg(std::string msg)
 {
-    this->_appendErrorMsg(std::move(msg), TextLocation {0, 0});
+    this->_appendErrorMsg(std::move(msg), TextLocation {0, 0, 0});
 }
 
 void TextParseError::_buildFullError()
