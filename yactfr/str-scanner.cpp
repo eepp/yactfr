@@ -112,7 +112,7 @@ bool StrScanner::_tryAppendEscapedChar(const char * const escapeSeqStartList)
     auto escapeSeqStart = escapeSeqStartList;
 
     while (*escapeSeqStart != '\0') {
-        if (_at[1] == '"' || _at[1] == *escapeSeqStart) {
+        if (_at[1] == '"' || _at[1] == '\\' || _at[1] == *escapeSeqStart) {
             if (_at[1] == 'u') {
                 if (this->charsLeft() < 6) {
                     throwTextParseError("`\\u` escape sequence needs four hexadecimal digits.",

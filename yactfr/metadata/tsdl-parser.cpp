@@ -3143,7 +3143,7 @@ const std::string *TsdlParser::_tryScanLitStr()
 
     const auto loc = _ss.loc();
 
-    litStr = _ss.tryScanLitStr("abfnrtv'?\\");
+    litStr = _ss.tryScanLitStr("abfnrtv'?");
 
     if (!litStr) {
         return nullptr;
