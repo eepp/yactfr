@@ -1097,6 +1097,7 @@ public:
     }
 
     bool hasClkType(const std::string& name) const noexcept;
+    const ClockType *findClkType(const std::string& name) const noexcept;
 
     const PseudoDsts& pseudoDsts() const noexcept
     {
@@ -1108,6 +1109,8 @@ public:
         return _pseudoDsts;
     }
 
+    bool hasPseudoDst(TypeId id) const noexcept;
+
     const PseudoOrphanErts& pseudoOrphanErts() const noexcept
     {
         return _pseudoOrphanErts;
@@ -1117,6 +1120,8 @@ public:
     {
         return _pseudoOrphanErts;
     }
+
+    bool hasPseudoOrphanErt(TypeId dstId, TypeId ertId) const noexcept;
 
 private:
     unsigned int _majorVersion;

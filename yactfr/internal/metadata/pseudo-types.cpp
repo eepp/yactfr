@@ -804,10 +804,37 @@ PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned
 
 bool PseudoTraceType::hasClkType(const std::string& name) const noexcept
 {
-    return std::find_if(_clkTypes.begin(), _clkTypes.end(),
-                        [&name](const auto& clkType) {
+    return this->findClkType(name);
+}
+
+const ClockType *PseudoTraceType::findClkType(const std::string& name) const noexcept
+{
+    const auto it = std::find_if(_clkTypes.begin(), _clkTypes.end(),
+                                 [&name](auto& clkType) {
         return clkType->name() == name;
-    }) != _clkTypes.end();
+    });
+
+    if (it == _clkTypes.end()) {
+        return nullptr;
+    }
+
+    return it->get();
+}
+
+bool PseudoTraceType::hasPseudoDst(const TypeId id) const noexcept
+{
+    return _pseudoDsts.find(id) != _pseudoDsts.end();
+}
+
+bool PseudoTraceType::hasPseudoOrphanErt(const TypeId dstId, const TypeId ertId) const noexcept
+{
+    const auto it = _pseudoOrphanErts.find(dstId);
+
+    if (it == _pseudoOrphanErts.end()) {
+        return false;
+    }
+
+    return it->second.find(ertId) != it->second.end();
 }
 
 void PseudoTraceType::validate() const
