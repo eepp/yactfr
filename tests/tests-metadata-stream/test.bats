@@ -151,26 +151,26 @@ test_metadata_pass() {
 # |_|
 
 @test 'good stream with 23 packets' {
-  test_metadata_pass 23-pkts 'text-size=11633,has-signature=0,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
+  test_metadata_pass 23-pkts 'text-size=11633,has-ctf-1-signature=0,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
 }
 
 @test 'good stream with an empty packet' {
-  test_metadata_pass empty-pkt 'text-size=1084,has-signature=0,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
+  test_metadata_pass empty-pkt 'text-size=1084,has-ctf-1-signature=0,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
 }
 
 @test 'good stream with signature' {
-  test_metadata_pass with-signature 'text-size=1084,has-signature=1,pkt-count=1,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
+  test_metadata_pass with-signature 'text-size=1084,has-ctf-1-signature=1,pkt-count=1,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
 }
 
 @test 'good stream with signature (big-endian)' {
-  test_metadata_pass with-signature-be 'text-size=1084,has-signature=1,pkt-count=1,major-version=1,minor-version=8,bo=be,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
+  test_metadata_pass with-signature-be 'text-size=1084,has-ctf-1-signature=1,pkt-count=1,major-version=1,minor-version=8,bo=be,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d'
 }
 
 @test 'good plain text stream' {
-  test_metadata_pass text 'text-size=378,has-signature=1'
+  test_metadata_pass text 'text-size=378,has-ctf-1-signature=1'
 }
 
 @test 'good plain text stream without signature' {
-  test_metadata_pass text-no-sig 'text-size=363,has-signature=0'
+  test_metadata_pass text-no-sig 'text-size=363,has-ctf-1-signature=0'
 }
 

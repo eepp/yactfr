@@ -34,7 +34,7 @@ int main(const int argc, const char * const argv[])
         const auto metaStream = yactfr::createMetadataStream(*stream);
 
         std::cout << "text-size=" << metaStream->text().size() <<
-                     ",has-signature=" << metaStream->hasSignature();
+                     ",has-ctf-1-signature=" << metaStream->hasCtf1Signature();
 
         if (const auto pktMetadataStream = dynamic_cast<const yactfr::PacketizedMetadataStream *>(metaStream.get())) {
             std::cout << ",pkt-count=" << pktMetadataStream->packetCount() <<
