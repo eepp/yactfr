@@ -21,6 +21,7 @@ add_library (
     from-metadata-text.cpp
     item.cpp
     logging/zf_log.c
+    json-val.cpp
     metadata/array-type.cpp
     metadata/blob-type.cpp
     metadata/clk-type.cpp
