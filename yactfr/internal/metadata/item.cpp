@@ -78,7 +78,7 @@ ArrayItem::ArrayItem(Container&& items) :
 {
 }
 
-Item::UP ArrayItem::_clone() const
+ArrayItem::UP ArrayItem::clone() const
 {
     Container items;
 
@@ -87,6 +87,11 @@ Item::UP ArrayItem::_clone() const
     }
 
     return std::make_unique<const ArrayItem>(std::move(items));
+}
+
+Item::UP ArrayItem::_clone() const
+{
+    return this->clone();
 }
 
 bool ArrayItem::_isEqual(const Item& other) const noexcept
@@ -100,7 +105,7 @@ MapItem::MapItem(Container&& items) :
 {
 }
 
-Item::UP MapItem::_clone() const
+MapItem::UP MapItem::clone() const
 {
     Container items;
 
@@ -109,6 +114,11 @@ Item::UP MapItem::_clone() const
     }
 
     return std::make_unique<const MapItem>(std::move(items));
+}
+
+Item::UP MapItem::_clone() const
+{
+    return this->clone();
 }
 
 bool MapItem::_isEqual(const Item& other) const noexcept

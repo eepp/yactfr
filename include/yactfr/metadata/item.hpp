@@ -321,10 +321,22 @@ public:
         return this->_val();
     }
 
+    /*!
+    @brief
+        Creates and returns a clone (deep copy) of this item.
+
+    @returns
+        Clone (deep copy) of this item.
+    */
+    UP clone() const
+    {
+        return std::make_unique<const ScalarValueItem<ValueT, KindV>>(this->_val());
+    }
+
 private:
     Item::UP _clone() const override
     {
-        return std::make_unique<const ScalarValueItem<ValueT, KindV>>(this->_val());
+        return this->clone();
     }
 
     bool _isEqual(const Item& other) const noexcept override
@@ -395,6 +407,15 @@ public:
     {
         return this->_at(index);
     }
+
+    /*!
+    @brief
+        Creates and returns a clone (deep copy) of this item.
+
+    @returns
+        Clone (deep copy) of this item.
+    */
+    UP clone() const;
 
 private:
     Item::UP _clone() const override;
@@ -481,6 +502,15 @@ public:
     {
         return this->_hasItem(key);
     }
+
+    /*!
+    @brief
+        Creates and returns a clone (deep copy) of this item.
+
+    @returns
+        Clone (deep copy) of this item.
+    */
+    UP clone() const;
 
 private:
     Item::UP _clone() const override;
