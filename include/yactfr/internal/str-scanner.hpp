@@ -260,7 +260,16 @@ public:
      * The returned string remains valid as long as you don't call any
      * method of this object.
      */
+    template <bool SkipWsV, bool SkipCommentsV>
     const std::string *tryScanIdent();
+
+    /*
+     * Alternative version which skips whitespaces and comments.
+     */
+    const std::string *tryScanIdent()
+    {
+        return this->tryScanIdent<true, true>();
+    }
 
     /*
      * Tries to scan a double-quoted literal string, considering the
@@ -276,7 +285,16 @@ public:
      * The returned string remains valid as long as you don't call any
      * method of this object.
      */
+    template <bool SkipWsV, bool SkipCommentsV>
     const std::string *tryScanLitStr(const char *escapeSeqStartList);
+
+    /*
+     * Alternative version which skips whitespaces and comments.
+     */
+    const std::string *tryScanLitStr(const char * const escapeSeqStartList)
+    {
+        return this->tryScanLitStr<true, true>(escapeSeqStartList);
+    }
 
     /*
      * Tries to scan and decode a constant integer string, with an
@@ -288,8 +306,17 @@ public:
      * The current iterator is placed after this constant integer
      * string on success.
      */
-    template <typename ValT, bool AllowPrefixV = true>
+    template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV = true>
     boost::optional<ValT> tryScanConstInt();
+
+    /*
+     * Alternative version which skips whitespaces and comments.
+     */
+    template <typename ValT, bool AllowPrefixV = true>
+    boost::optional<ValT> tryScanConstInt()
+    {
+        return this->tryScanConstInt<true, true, ValT, AllowPrefixV>();
+    }
 
     /*
      * Tries to scan and decode a constant unsigned integer string, with
@@ -301,10 +328,20 @@ public:
      * The current iterator is placed after this constant integer
      * string on success.
      */
+    template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
+    boost::optional<unsigned long long> tryScanConstUInt()
+    {
+        return this->tryScanConstInt<SkipWsV, SkipCommentsV,
+                                     unsigned long long, AllowPrefixV>();
+    }
+
+    /*
+     * Alternative version which skips whitespaces and comments.
+     */
     template <bool AllowPrefixV = true>
     boost::optional<unsigned long long> tryScanConstUInt()
     {
-        return this->tryScanConstInt<unsigned long long, AllowPrefixV>();
+        return this->tryScanConstUInt<true, true, AllowPrefixV>();
     }
 
     /*
@@ -317,10 +354,20 @@ public:
      * The current iterator is placed after this constant integer
      * string on success.
      */
+    template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
+    boost::optional<long long> tryScanConstSInt()
+    {
+        return this->tryScanConstInt<SkipWsV, SkipCommentsV,
+                                     long long, AllowPrefixV>();
+    }
+
+    /*
+     * Alternative version which skips whitespaces and comments.
+     */
     template <bool AllowPrefixV = true>
     boost::optional<long long> tryScanConstSInt()
     {
-        return this->tryScanConstInt<long long, AllowPrefixV>();
+        return this->tryScanConstSInt<true, true, AllowPrefixV>();
     }
 
     /*
@@ -336,24 +383,53 @@ public:
      * The current iterator is placed after this constant real number
      * string on success.
      */
+    template <bool SkipWsV, bool SkipCommentsV>
     boost::optional<double> tryScanConstReal();
+
+    /*
+     * Alternative version which skips whitespaces and comments.
+     */
+    boost::optional<double> tryScanConstReal()
+    {
+        return this->tryScanConstReal<true, true>();
+    }
 
     /*
      * Tries to scan a specific token `token`, placing the current
      * iterator after this string on success.
      */
+    template <bool SkipWsV, bool SkipCommentsV>
     bool tryScanToken(const char *token);
 
     /*
-     * Skips the following comments and whitespaces.
+     * Alternative version which skips whitespaces and comments.
      */
+    bool tryScanToken(const char * const token)
+    {
+        return this->tryScanToken<true, true>(token);
+    }
+
+    /*
+     * Skips the following whitespaces (if `SkipWsV` is true) and
+     * comments (if `SkipCommentsV` is true).
+     */
+    template <bool SkipWsV = true, bool SkipCommentsV = true>
     void skipCommentsAndWhitespaces()
     {
+        if (!SkipWsV && !SkipCommentsV) {
+            return;
+        }
+
         while (!this->isDone()) {
             const auto at = _at;
 
-            this->_skipWhitespaces();
-            this->_skipComment();
+            if (SkipWsV) {
+                this->_skipWhitespaces();
+            }
+
+            if (SkipCommentsV) {
+                this->_skipComment();
+            }
 
             if (_at == at) {
                 // no more whitespaces or comments
@@ -464,9 +540,10 @@ private:
 };
 
 template <typename CharIt>
+template <bool SkipWsV, bool SkipCommentsV>
 const std::string *StrScanner<CharIt>::tryScanIdent()
 {
-    this->skipCommentsAndWhitespaces();
+    this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
     // first character: `_` or alpha
     const auto c = this->_scanAnyChar();
@@ -501,9 +578,10 @@ const std::string *StrScanner<CharIt>::tryScanIdent()
 }
 
 template <typename CharIt>
+template <bool SkipWsV, bool SkipCommentsV>
 const std::string *StrScanner<CharIt>::tryScanLitStr(const char * const escapeSeqStartList)
 {
-    this->skipCommentsAndWhitespaces();
+    this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
     const auto at = _at;
     const auto lineBegin = _lineBegin;
@@ -555,9 +633,10 @@ const std::string *StrScanner<CharIt>::tryScanLitStr(const char * const escapeSe
 }
 
 template <typename CharIt>
+template <bool SkipWsV, bool SkipCommentsV>
 bool StrScanner<CharIt>::tryScanToken(const char * const token)
 {
-    this->skipCommentsAndWhitespaces();
+    this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
     auto tokenAt = token;
     auto at = _at;
@@ -868,14 +947,14 @@ boost::optional<ValT> StrScanner<CharIt>::_tryScanConstInt(const bool negate)
 }
 
 template <typename CharIt>
-template <typename ValT, bool AllowPrefixV>
+template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV>
 boost::optional<ValT> StrScanner<CharIt>::tryScanConstInt()
 {
     static_assert(std::is_same<ValT, long long>::value ||
                   std::is_same<ValT, unsigned long long>::value,
                   "`ValT` is `long long` or `unsigned long long`.");
 
-    this->skipCommentsAndWhitespaces();
+    this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
     const auto at = _at;
     const auto c = this->_scanAnyChar();
@@ -938,9 +1017,10 @@ boost::optional<ValT> StrScanner<CharIt>::tryScanConstInt()
 }
 
 template <typename CharIt>
+template <bool SkipWsV, bool SkipCommentsV>
 boost::optional<double> StrScanner<CharIt>::tryScanConstReal()
 {
-    this->skipCommentsAndWhitespaces();
+    this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
     const auto at = _at;
 
