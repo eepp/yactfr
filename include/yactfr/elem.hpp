@@ -2504,10 +2504,28 @@ public:
         return this->dataType().asVariableLengthBitArrayType();
     }
 
-    /// Bit-array length (bits).
+    /*!
+    @brief
+        Bit-array length (bits).
+
+    This is the length of the decoded bit array itself, not of the data
+    stream variable-length bit array datum (use dataLength()).
+    */
     Size length() const noexcept
     {
         return _len;
+    }
+
+    /*!
+    @brief
+        Data length (bits).
+
+    This is the length of the data stream variable-length bit array
+    datum, not of the decoded bit array (use length()).
+    */
+    Size dataLength() const noexcept
+    {
+        return _len + _len / 7;
     }
 
     /*!

@@ -941,16 +941,26 @@ private:
              * `**_pos.stackTop().it` is the current
              * `ReadVlBitArrayInstr` instruction.
              */
+            auto& instr = **_pos.stackTop().it;
+
             assert(_pos.curVlBitArrayElem);
             _pos.curVlBitArrayElem->_len = _pos.curVlBitArrayLenBits;
 
+            /*
+             * `_pos.headOffsetInElemSeqBits()` now returns the offset
+             * at the _end_ of the VL bit array; the iterator user
+             * expects its beginning offset.
+             */
+            const auto offset = _pos.headOffsetInElemSeqBits() -
+                                _pos.curVlBitArrayElem->dataLength();
+
             if (IsSignedV) {
                 this->_signExtendVlSIntVal();
-                this->_setBitArrayElemBase(_pos.lastIntVal.i, **_pos.stackTop().it,
-                                           *_pos.curVlBitArrayElem);
+                this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlBitArrayElem,
+                                           offset);
             } else {
-                this->_setBitArrayElemBase(_pos.lastIntVal.u, **_pos.stackTop().it,
-                                           *_pos.curVlBitArrayElem);
+                this->_setBitArrayElemBase(_pos.lastIntVal.u, instr, *_pos.curVlBitArrayElem,
+                                           offset);
             }
 
             // we're done with this instruction and this state
@@ -1037,11 +1047,16 @@ private:
         ++_it->_mark;
     }
 
-    void _updateItCurOffset(const Element& elem)
+    void _updateItCurOffset(const Element& elem, const Index offset)
     {
         _it->_curElem = &elem;
-        _it->_offset = _pos.headOffsetInElemSeqBits();
+        _it->_offset = offset;
         ++_it->_mark;
+    }
+
+    void _updateItCurOffset(const Element& elem)
+    {
+        this->_updateItCurOffset(elem, _pos.headOffsetInElemSeqBits());
     }
 
     void _setItEnd() const noexcept
@@ -1314,12 +1329,18 @@ private:
     }
 
     template <typename ValT, typename ElemT>
-    void _setBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
+    void _setBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem, const Index offset) noexcept
     {
         Vm::_setDataElemFromInstr(elem, instr);
         this->_setLastIntVal(val);
         elem._val(val);
-        this->_updateItCurOffset(elem);
+        this->_updateItCurOffset(elem, offset);
+    }
+
+    template <typename ValT, typename ElemT>
+    void _setBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
+    {
+        this->_setBitArrayElemBase(val, instr, elem, _pos.headOffsetInElemSeqBits());
     }
 
     void _setFlIntElem(const std::uint64_t val, const Instr& instr) noexcept
