@@ -124,7 +124,7 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
                                                           &curPseudoDst, &pseudoErt);
 
     // create yactfr event record type
-    return std::make_unique<const EventRecordType>(pseudoErt.id(), pseudoErt.name(),
+    return std::make_unique<const EventRecordType>(pseudoErt.id(), pseudoErt.ns(), pseudoErt.name(),
                                                    pseudoErt.logLevel(), pseudoErt.emfUri(),
                                                    std::move(specCtxType), std::move(payloadType));
 }

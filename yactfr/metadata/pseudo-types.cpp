@@ -430,10 +430,11 @@ void PseudoVarWithIntRangesType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> name,
+PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns, boost::optional<std::string> name,
                      boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
                      PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType) :
     _id {id},
+    _ns {std::move(ns)},
     _name {std::move(name)},
     _logLevel {std::move(logLevel)},
     _emfUri {std::move(emfUri)},
@@ -515,7 +516,8 @@ void PseudoErt::_validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const
     }
 }
 
-static std::string pseudoDstIdenStr(const PseudoDst& pseudoDst)
+template <typename PseudoTypeT>
+static std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
 {
     std::ostringstream ss;
 
@@ -550,8 +552,8 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
 
-        ss << "In the event record type " << _id <<
-              " of data stream type " << pseudoDstIdenStr(pseudoDst) << ":";
+        ss << "In the event record type " << pseudoTypeIdenStr(*this) <<
+              " of data stream type " << pseudoTypeIdenStr(pseudoDst) << ":";
         appendMsgToMetadataParseError(exc, ss.str());
         throw;
     }
@@ -655,7 +657,7 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
 
-        ss << "In data stream type " << pseudoDstIdenStr(*this) << ':';
+        ss << "In data stream type " << pseudoTypeIdenStr(*this) << ':';
         appendMsgToMetadataParseError(exc, ss.str());
         throw;
     }

@@ -45,10 +45,12 @@ public:
     @brief
         Builds an event record type.
 
-    @param[in] name
-        Name.
     @param[in] id
         Event record type ID.
+    @param[in] nameSpace
+        Namespace.
+    @param[in] name
+        Name.
     @param[in] logLevel
         Log level.
     @param[in] emfUri
@@ -58,8 +60,8 @@ public:
     @param[in] payloadType
         Payload type, or \c nullptr if none.
     */
-    explicit EventRecordType(TypeId id, boost::optional<std::string> name,
-                             boost::optional<LogLevel> logLevel,
+    explicit EventRecordType(TypeId id, boost::optional<std::string> nameSpace,
+                             boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
                              boost::optional<std::string> emfUri,
                              std::unique_ptr<const StructureType> specificContextType,
                              std::unique_ptr<const StructureType> payloadType);
@@ -70,6 +72,12 @@ public:
     TypeId id() const noexcept
     {
         return _id;
+    }
+
+    /// Namespace.
+    const boost::optional<std::string>& nameSpace() const noexcept
+    {
+        return _ns;
     }
 
     /// Name.
@@ -119,6 +127,7 @@ private:
 private:
     const TypeId _id;
     const boost::optional<std::string> _name;
+    const boost::optional<std::string> _ns;
     const boost::optional<LogLevel> _logLevel;
     const boost::optional<std::string> _emfUri;
     std::unique_ptr<const StructureType> _specCtxType;

@@ -2506,8 +2506,9 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
     // build event record type object
     dstPseudoOrphanErts.insert(std::make_pair(id, PseudoOrphanErt {
         PseudoErt {
-            id, std::move(name), std::move(logLevel), std::move(emfUri),
-            std::move(pseudoSpecCtxType), std::move(pseudoPayloadType)
+            id, boost::none, std::move(name), std::move(logLevel),
+            std::move(emfUri), std::move(pseudoSpecCtxType),
+            std::move(pseudoPayloadType)
         },
         beginLoc
     }));

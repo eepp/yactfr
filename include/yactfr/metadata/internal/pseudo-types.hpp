@@ -680,9 +680,10 @@ class PseudoDst;
 class PseudoErt final
 {
 public:
-    explicit PseudoErt(TypeId id, boost::optional<std::string> name,
-                       boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
-                       PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType);
+    explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
+                       boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
+                       boost::optional<std::string> emfUri, PseudoDt::UP pseudoSpecCtxType,
+                       PseudoDt::UP pseudoPayloadType);
 
     PseudoErt(const PseudoErt&) = delete;
     PseudoErt(PseudoErt&&) = default;
@@ -698,6 +699,11 @@ public:
     TypeId id() const noexcept
     {
         return _id;
+    }
+
+    const boost::optional<std::string>& ns() const noexcept
+    {
+        return _ns;
     }
 
     const boost::optional<std::string>& name() const noexcept
@@ -741,6 +747,7 @@ private:
 
 private:
     TypeId _id = 0;
+    boost::optional<std::string> _ns;
     boost::optional<std::string> _name;
     boost::optional<LogLevel> _logLevel;
     boost::optional<std::string> _emfUri;
