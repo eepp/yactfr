@@ -202,7 +202,7 @@ void TsdlParser::_addPseudoDtRoles()
                                             UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
             this->_addPseudoFlUIntTypeRoles<true>(*pseudoDst->pseudoPktCtxType(), "timestamp_end",
                                                   UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
-            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "discarded_events",
+            this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "events_discarded",
                                             UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT);
             this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_seq_num",
                                             UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER);
