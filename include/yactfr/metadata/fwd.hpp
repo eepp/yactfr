@@ -40,7 +40,6 @@ class InvalidMetadataStream;
 class MetadataParseError;
 class MetadataParseErrorMessage;
 class MetadataStream;
-class MetadataTextLocation;
 class NonNullTerminatedStringType;
 class NullTerminatedStringType;
 class OptionalType;
