@@ -90,6 +90,11 @@ protected:
         return _theItems.size();
     }
 
+    bool _isEmpty() const noexcept
+    {
+        return _theItems.empty();
+    }
+
 protected:
     ContainerT _theItems;
 };

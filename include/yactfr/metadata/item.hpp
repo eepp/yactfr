@@ -390,6 +390,12 @@ public:
         return this->_size();
     }
 
+    /// Whether or not this item is empty.
+    bool isEmpty() const noexcept
+    {
+        return this->_isEmpty();
+    }
+
     /*!
     @brief
         Returns the item at the index \p index.
@@ -465,6 +471,12 @@ public:
     Size size() const noexcept
     {
         return this->_size();
+    }
+
+    /// Whether or not this item is empty.
+    bool isEmpty() const noexcept
+    {
+        return this->_isEmpty();
     }
 
     /*!

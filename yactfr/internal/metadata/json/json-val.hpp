@@ -263,6 +263,11 @@ public:
         return this->_size();
     }
 
+    bool isEmpty() const noexcept
+    {
+        return this->_isEmpty();
+    }
+
     const JsonVal& operator[](const Index index) const noexcept
     {
         return *this->_at(index);
@@ -298,6 +303,11 @@ public:
     Size size() const noexcept
     {
         return this->_size();
+    }
+
+    bool isEmpty() const noexcept
+    {
+        return this->_isEmpty();
     }
 
     bool hasVal(const std::string& key) const noexcept
