@@ -17,12 +17,13 @@ namespace yactfr {
 
 DataStreamType::DataStreamType(const TypeId id, EventRecordTypeSet&& erts,
                                StructureType::UP pktCtxType, StructureType::UP erHeaderType,
-                               StructureType::UP erCommonCtxType) :
+                               StructureType::UP erCommonCtxType, const ClockType *defClkType) :
     _id {id},
     _erts {std::move(erts)},
     _pktCtxType {std::move(pktCtxType)},
     _erHeaderType {std::move(erHeaderType)},
-    _erCommonCtxType {std::move(erCommonCtxType)}
+    _erCommonCtxType {std::move(erCommonCtxType)},
+    _defClkType {defClkType}
 {
     this->_buildErtMap();
     // TODO: Add validation.

@@ -187,11 +187,11 @@ public:
     @param[in] byteOrder
         Byte order of data stream signed enumerations described by this
         type.
+    @param[in] mappings
+        Mappings (copied).
     @param[in] preferredDisplayBase
         Preferred display base of data stream signed enumerations
         described by this type.
-    @param[in] mappings
-        Mappings (copied).
 
     @pre
         \p alignment > 0.
@@ -221,11 +221,11 @@ public:
     @param[in] byteOrder
         Byte order of data stream signed enumerations described by this
         type.
+    @param[in] mappings
+        Mappings (moved).
     @param[in] preferredDisplayBase
         Preferred display base of data stream signed enumerations
         described by this type.
-    @param[in] mappings
-        Mappings (moved).
 
     @pre
         \p alignment > 0.
@@ -283,15 +283,13 @@ public:
     @param[in] byteOrder
         Byte order of data stream unsigned enumerations described by
         this type.
+    @param[in] mappings
+        Mappings (copied).
     @param[in] preferredDisplayBase
         Preferred display base of data stream unsigned enumerations
         described by this type.
-    @param[in] mappedClockType
-        Type of the clocks to which the data stream unsigned
-        enumerations described by this type are mapped, or \c nullptr if
-        none.
-    @param[in] mappings
-        Mappings (copied).
+    @param[in] roles
+        Roles of unsigned integers described by this type.
 
     @pre
         \p alignment > 0.
@@ -307,7 +305,7 @@ public:
     explicit UnsignedEnumerationType(unsigned int alignment, unsigned int length,
                                      ByteOrder byteOrder, const Mappings& mappings,
                                      DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                     const ClockType *mappedClockType = nullptr);
+                                     UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
     @brief
@@ -322,15 +320,13 @@ public:
     @param[in] byteOrder
         Byte order of data stream unsigned enumerations described by
         this type.
+    @param[in] mappings
+        Mappings (moved).
     @param[in] preferredDisplayBase
         Preferred display base of data stream unsigned enumerations
         described by this type.
-    @param[in] mappedClockType
-        Type of the clocks to which the data stream unsigned
-        enumerations described by this type are mapped, or \c nullptr if
-        none.
-    @param[in] mappings
-        Mappings (moved).
+    @param[in] roles
+        Roles of unsigned integers described by this type.
 
     @pre
         \p alignment > 0.
@@ -345,8 +341,8 @@ public:
     */
     explicit UnsignedEnumerationType(unsigned int alignment, unsigned int length,
                                      ByteOrder byteOrder, Mappings&& mappings,
-                                     DisplayBase preferredDisplayBase,
-                                     const ClockType *mappedClockType);
+                                     DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                     UnsignedIntegerTypeRoleSet roles = {});
 
 private:
     DataType::UP _clone() const override;

@@ -59,14 +59,12 @@ private:
     TextLocation _loc;
 };
 
+class MetadataParseError;
+
 namespace internal {
 
-class TsdlParserBase;
-class TsdlAttr;
-class PseudoValidatableType;
-class ObjFromPseudoConverter;
-class DtFromPseudoRootDtConverter;
-class DataLocMap;
+[[ noreturn ]] void throwMetadataParseError(std::string msg, TextLocation loc = {});
+void appendMsgToMetadataParseError(MetadataParseError& exc, std::string msg, TextLocation loc = {});
 
 } // namespace internal
 
@@ -86,15 +84,8 @@ located in the original text.
 class MetadataParseError final :
     public std::runtime_error
 {
-    friend class internal::TsdlParserBase;
-    friend class internal::TsdlAttr;
-    friend class internal::PseudoValidatableType;
-    friend class internal::ObjFromPseudoConverter;
-    friend class internal::DtFromPseudoRootDtConverter;
-    friend class internal::DataLocMap;
-
-    template <typename CharIt>
-    friend class internal::TsdlParser;
+    friend void internal::throwMetadataParseError(std::string, TextLocation);
+    friend void internal::appendMsgToMetadataParseError(MetadataParseError&, std::string, TextLocation);
 
 private:
     explicit MetadataParseError(std::string initMsg, TextLocation initLoc);

@@ -58,7 +58,7 @@ private:
     void _insertSpecialInstrs();
     void _insertSpecialPktProcPreambleProcInstrs();
     void _insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc);
-    void _insertUpdateClkValInstrs();
+    void _insertUpdateDefClkValInstrs();
     _IntTypeReadIntInstrMap _createIntTypeReadIntInstrMap() const;
     void _setSavedValPoss();
     void _insertEndInstrs();

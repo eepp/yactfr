@@ -91,8 +91,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
     case PseudoDt::Kind::SCALAR_DT_WRAPPER:
         return this->_dtFromPseudoScalarDtWrapper(pseudoDt);
 
-    case PseudoDt::Kind::INT_TYPE_WRAPPER:
-        return this->_dtFromPseudoIntTypeWrapper(pseudoDt);
+    case PseudoDt::Kind::UINT:
+        return this->_dtFromPseudoUIntType(pseudoDt);
+
+    case PseudoDt::Kind::UENUM:
+        return this->_dtFromPseudoUEnumType(pseudoDt);
 
     case PseudoDt::Kind::STATIC_ARRAY:
         return this->_dtFromPseudoStaticArrayType(pseudoDt);
@@ -116,56 +119,49 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoScalarDtWrapper(const Pse
     return static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().clone();
 }
 
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoIntTypeWrapper(const PseudoDt& pseudoDt) const
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoUIntType(const PseudoDt& pseudoDt) const
 {
-    auto& pseudoIntTypeWrapper = static_cast<const PseudoIntTypeWrapper&>(pseudoDt);
-    auto& intType = pseudoIntTypeWrapper.intType();
+    auto& pseudoUIntType = static_cast<const PseudoUIntType&>(pseudoDt);
 
-    if (intType.isUnsignedIntegerType() && pseudoIntTypeWrapper.mappedClkTypeName()) {
-        const ClockType *mappedClkType = nullptr;
+    return std::make_unique<const UnsignedIntegerType>(pseudoUIntType.align(),
+                                                       pseudoUIntType.len(), pseudoUIntType.bo(),
+                                                       pseudoUIntType.prefDispBase(),
+                                                       pseudoUIntType.roles());
+}
 
-        for (const auto& candClkType : _pseudoTraceType->clkTypes()) {
-            if (*candClkType->name() == *pseudoIntTypeWrapper.mappedClkTypeName()) {
-                mappedClkType = candClkType.get();
-                break;
-            }
-        }
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoUEnumType(const PseudoDt& pseudoDt) const
+{
+    auto& pseudoUEnumType = static_cast<const PseudoUEnumType&>(pseudoDt);
 
-        if (!mappedClkType) {
-            std::ostringstream ss;
-
-            ss << "Unknown clock type `" << *pseudoIntTypeWrapper.mappedClkTypeName() << "`.";
-            throw MetadataParseError {ss.str()};
-        }
-
-        if (intType.isUnsignedEnumerationType()) {
-            auto& enumType = intType.asUnsignedEnumerationType();
-
-            return std::make_unique<const UnsignedEnumerationType>(intType.alignment(),
-                                                                   intType.length(),
-                                                                   intType.byteOrder(),
-                                                                   enumType.mappings(),
-                                                                   intType.preferredDisplayBase(),
-                                                                   mappedClkType);
-        } else {
-            return std::make_unique<const UnsignedIntegerType>(intType.alignment(), intType.length(),
-                                                               intType.byteOrder(),
-                                                               intType.preferredDisplayBase(),
-                                                               mappedClkType);
-        }
-    } else {
-        // no mapped clock type: return a simple clone
-        return intType.clone();
-    }
+    return std::make_unique<const UnsignedEnumerationType>(pseudoUEnumType.align(),
+                                                           pseudoUEnumType.len(),
+                                                           pseudoUEnumType.bo(),
+                                                           pseudoUEnumType.mappings(),
+                                                           pseudoUEnumType.prefDispBase(),
+                                                           pseudoUEnumType.roles());
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStaticArrayType(const PseudoDt& pseudoDt)
 {
     auto& pseudoArrayType = static_cast<const PseudoStaticArrayType&>(pseudoDt);
+    auto arrayType = this->_tryTextArrayDtFromPseudoArrayType<StaticTextArrayType>(pseudoDt,
+                                                                                   pseudoArrayType.pseudoElemType(),
+                                                                                   pseudoArrayType.len());
 
-    return this->_dtFromPseudoArrayType<StaticArrayType, StaticTextArrayType>(pseudoDt,
-                                                                              pseudoArrayType.pseudoElemType(),
-                                                                              pseudoArrayType.len());
+    if (arrayType) {
+        return arrayType;
+    }
+
+    // currently being visited
+    _current.insert({&pseudoDt, 0});
+
+    auto elemType = this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
+
+    // not visited anymore
+    _current.erase(&pseudoArrayType);
+
+    return std::make_unique<const StaticArrayType>(1, std::move(elemType), pseudoArrayType.len(),
+                                                   pseudoArrayType.hasTraceTypeUuidRole());
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDynArrayType(const PseudoDt& pseudoDt)
@@ -179,34 +175,37 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDynArrayType(const Pseudo
         assert(!pseudoLenTypes.empty());
 
         for (const auto pseudoLenType : pseudoLenTypes) {
-            if (pseudoLenType->kind() != PseudoDt::Kind::INT_TYPE_WRAPPER) {
-                throw MetadataParseError {
-                    "Length type isn't an integer type.", pseudoLenType->loc()
-                };
-            }
-
-            auto& pseudoIntLenType = static_cast<const PseudoIntTypeWrapper&>(*pseudoLenType);
-
-            if (!pseudoIntLenType.intType().isUnsignedIntegerType()) {
-                throw MetadataParseError {
-                    "Length type isn't an unsigned integer type.", pseudoLenType->loc()
-                };
+            if (!pseudoLenType->isUInt()) {
+                throwMetadataParseError("Length type isn't an unsigned integer type.",
+                                        pseudoLenType->loc());
             }
         }
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
 
         ss << "Invalid data location (`" <<
-              this->_dataLocStr(lenLoc.scope(), lenLoc.begin(), lenLoc.end()) <<
-              "`):";
-        exc._appendErrorMsg(ss.str(), pseudoDt.loc());
+              this->_dataLocStr(lenLoc.scope(), lenLoc.begin(), lenLoc.end()) << "`):";
+        appendMsgToMetadataParseError(exc, ss.str(), pseudoDt.loc());
         throw;
     }
 
-    return this->_dtFromPseudoArrayType<DynamicArrayType,
-                                        DynamicTextArrayType>(pseudoDt,
-                                                              pseudoArrayType.pseudoElemType(),
-                                                              lenLoc);
+    auto arrayType = this->_tryTextArrayDtFromPseudoArrayType<DynamicTextArrayType>(pseudoDt,
+                                                                                    pseudoArrayType.pseudoElemType(),
+                                                                                    lenLoc);
+
+    if (arrayType) {
+        return arrayType;
+    }
+
+    // currently being visited
+    _current.insert({&pseudoDt, 0});
+
+    auto elemType = this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
+
+    // not visited anymore
+    _current.erase(&pseudoArrayType);
+
+    return std::make_unique<const DynamicArrayType>(1, std::move(elemType), lenLoc);
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt& pseudoDt)
@@ -228,17 +227,18 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt
 void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
                                                  const DataLocation::PathElements::const_iterator locIt,
                                                  const TextLocation& srcLoc,
-                                                 PseudoDtSet& pseudoDts) const
+                                                 ConstPseudoDtSet& pseudoDts) const
 {
     switch (pseudoDt.kind()) {
     case PseudoDt::Kind::SCALAR_DT_WRAPPER:
-    case PseudoDt::Kind::INT_TYPE_WRAPPER:
+    case PseudoDt::Kind::UINT:
+    case PseudoDt::Kind::UENUM:
         if (locIt != loc.pathElements().end()) {
             std::ostringstream ss;
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
                   "nothing past scalar data type.";
-            throw MetadataParseError {ss.str(), pseudoDt.loc()};
+            throwMetadataParseError(ss.str(), pseudoDt.loc());
         }
 
         pseudoDts.insert(&pseudoDt);
@@ -253,7 +253,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt + 1) << "`: "
                   "cannot find `" << *locIt << "` (last element).";
-            throw MetadataParseError {ss.str(), pseudoDt.loc()};
+            throwMetadataParseError(ss.str(), pseudoDt.loc());
         }
 
         this->_findPseudoDts(pseudoMemberType->pseudoDt(), loc, locIt + 1, srcLoc, pseudoDts);
@@ -268,7 +268,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
                   "unreachable array element.";
-            throw MetadataParseError {ss.str(), pseudoDt.loc()};
+            throwMetadataParseError(ss.str(), pseudoDt.loc());
         }
 
         auto& pseudoArrayType = static_cast<const PseudoArrayType&>(pseudoDt);
@@ -301,7 +301,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
     }
 }
 
-PseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation& loc,
+ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation& loc,
                                                         const TextLocation& srcLoc) const
 {
     if (static_cast<int>(loc.scope()) > static_cast<int>(_scope)) {
@@ -309,7 +309,7 @@ PseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation& loc,
 
         ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "`: "
               "data would be unreachable.";
-        throw MetadataParseError {ss.str(), srcLoc};
+        throwMetadataParseError(ss.str(), srcLoc);
     }
 
     const PseudoDt *pseudoDt = nullptr;
@@ -348,10 +348,10 @@ PseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation& loc,
 
         ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "`: "
               "cannot find scope data type.";
-        throw MetadataParseError {ss.str(), srcLoc};
+        throwMetadataParseError(ss.str(), srcLoc);
     }
 
-    PseudoDtSet pseudoDts;
+    ConstPseudoDtSet pseudoDts;
 
     this->_findPseudoDts(*pseudoDt, loc, loc.begin(), srcLoc, pseudoDts);
     return pseudoDts;
@@ -361,38 +361,45 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
 {
     auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
     const auto& selLoc = _locMap[pseudoDt];
-    const PseudoIntTypeWrapper *pseudoIntSelType = nullptr;
+    const PseudoDt *pseudoSelDt = nullptr;
+    bool selIsUEnumType;
 
     try {
-        const auto pseudoSelTypes = this->_findPseudoDts(selLoc, pseudoDt.loc());
+        const auto pseudoSelDts = this->_findPseudoDts(selLoc, pseudoDt.loc());
 
-        assert(!pseudoSelTypes.empty());
+        assert(!pseudoSelDts.empty());
 
-        if (pseudoSelTypes.size() > 1) {
+        if (pseudoSelDts.size() > 1) {
             std::ostringstream ss;
 
             ss << "Selector type of variant type (location: `" <<
                   this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) <<
                   "`) targets more than one data type.";
-            throw MetadataParseError {ss.str(), pseudoDt.loc()};
+            throwMetadataParseError(ss.str(), pseudoDt.loc());
         }
 
-        const auto& firstPseudoSelType = **pseudoSelTypes.begin();
+        pseudoSelDt = *pseudoSelDts.begin();
 
-        if (firstPseudoSelType.kind() != PseudoDt::Kind::INT_TYPE_WRAPPER) {
-            throw MetadataParseError {
-                "Selector type of variant type isn't an enumeration type.",
-                firstPseudoSelType.loc()
-            };
+        if (!pseudoSelDt->isInt()) {
+            throwMetadataParseError("Selector type of variant type isn't an integer type.",
+                                    pseudoSelDt->loc());
         }
 
-        pseudoIntSelType = static_cast<const PseudoIntTypeWrapper *>(&firstPseudoSelType);
+        bool isEnumType;
 
-        if (!pseudoIntSelType->intType().isEnumerationType()) {
-            throw MetadataParseError {
-                "Selector type of variant type isn't an enumeration type.",
-                firstPseudoSelType.loc()
-            };
+        if (pseudoSelDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
+            auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
+
+            isEnumType = pseudoScalarDtWrapper.dt().isEnumerationType();
+            selIsUEnumType = false;
+        } else {
+            isEnumType = pseudoSelDt->kind() == PseudoDt::Kind::UENUM;
+            selIsUEnumType = true;
+        }
+
+        if (!isEnumType) {
+            throwMetadataParseError("Selector type of variant type isn't an enumeration type.",
+                                    pseudoSelDt->loc());
         }
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
@@ -400,32 +407,41 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
         ss << "Invalid data location (`" <<
               this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) <<
               "`):";
-        exc._appendErrorMsg(ss.str(), pseudoDt.loc());
+        appendMsgToMetadataParseError(exc, ss.str(), pseudoDt.loc());
         throw;
     }
 
-    assert(pseudoIntSelType);
+    assert(pseudoSelDt);
 
-    if (pseudoIntSelType->intType().isUnsignedIntegerType()) {
-        return this->_dtFromPseudoVarType<VariantWithUnsignedSelectorType,
-                                          UnsignedEnumerationType>(pseudoVarType, *pseudoIntSelType,
-                                                                   selLoc);
+    if (selIsUEnumType) {
+        auto& pseudoUEnumSelType = static_cast<const PseudoUEnumType&>(*pseudoSelDt);
+
+        return this->_dtFromPseudoVarType<VariantWithUnsignedSelectorType>(pseudoVarType,
+                                                                           pseudoUEnumSelType.mappings(),
+                                                                           selLoc);
     } else {
-        return this->_dtFromPseudoVarType<VariantWithSignedSelectorType,
-                                          SignedEnumerationType>(pseudoVarType, *pseudoIntSelType,
-                                                                 selLoc);
+        auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
+        auto& mappings = pseudoScalarDtWrapper.dt().asSignedEnumerationType().mappings();
+
+        return this->_dtFromPseudoVarType<VariantWithSignedSelectorType>(pseudoVarType, mappings,
+                                                                         selLoc);
     }
 }
 
-void DtFromPseudoRootDtConverter::_appendVarTypeInvalDataLocToMetadataParseErrorExc(const PseudoDt& pseudoDt,
-                                                                                    const DataLocation& selLoc,
-                                                                                    MetadataParseError& exc) const
+void DtFromPseudoRootDtConverter::_throwVarTypeInvalDataLoc(const std::string& initMsg,
+                                                            const PseudoDt& pseudoDt,
+                                                            const DataLocation& selLoc) const
 {
-    std::ostringstream ss;
+    try {
+        throwMetadataParseError(initMsg, pseudoDt.loc());
+    } catch (MetadataParseError& exc) {
+        std::ostringstream ss;
 
-    ss << "Invalid data location (`" <<
-          this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) << "`):";
-    exc._appendErrorMsg(ss.str(), pseudoDt.loc());
+        ss << "Invalid data location (`" <<
+              this->_dataLocStr(selLoc.scope(), selLoc.begin(), selLoc.end()) << "`):";
+        appendMsgToMetadataParseError(exc, ss.str(), pseudoDt.loc());
+        throw;
+    }
 }
 
 } // namespace internal

@@ -58,24 +58,23 @@ DataType::UP SignedIntegerType::_clone() const
 UnsignedIntegerType::UnsignedIntegerType(const int kind, const unsigned int align,
                                          const unsigned int len, const ByteOrder bo,
                                          const DisplayBase prefDispBase,
-                                         const ClockType * const mappedClkType) :
+                                         UnsignedIntegerTypeRoleSet roles) :
     IntegerType {_KIND_UINT | kind, align, len, bo, prefDispBase},
-    _mappedClkType {mappedClkType}
+    _roles {std::move(roles)}
 {
 }
 
 UnsignedIntegerType::UnsignedIntegerType(const unsigned int align, const unsigned int len,
                                          const ByteOrder bo, const DisplayBase prefDispBase,
-                                         const ClockType * const mappedClkType) :
-    IntegerType {_KIND_UINT, align, len, bo, prefDispBase},
-    _mappedClkType {mappedClkType}
+                                         UnsignedIntegerTypeRoleSet roles) :
+    UnsignedIntegerType {_KIND_UINT, align, len, bo, prefDispBase, std::move(roles)}
 {
 }
 
 UnsignedIntegerType::UnsignedIntegerType(const UnsignedIntegerType& other) :
     UnsignedIntegerType {
         other.alignment(), other.length(), other.byteOrder(),
-        other.preferredDisplayBase(), other._mappedClkType
+        other.preferredDisplayBase(), other._roles
     }
 {
 }
@@ -84,23 +83,23 @@ DataType::UP UnsignedIntegerType::_clone() const
 {
     return std::make_unique<UnsignedIntegerType>(this->alignment(), this->length(),
                                                  this->byteOrder(), this->preferredDisplayBase(),
-                                                 _mappedClkType);
+                                                 _roles);
 }
 
 bool UnsignedIntegerType::_compare(const DataType& other) const noexcept
 {
     auto& otherIntType = static_cast<const UnsignedIntegerType&>(other);
 
-    return IntegerType::_compare(other) && otherIntType._mappedClkType == _mappedClkType;
+    return IntegerType::_compare(other) && otherIntType._roles == _roles;
 }
 
 bool UnsignedIntegerType::operator<(const UnsignedIntegerType& other) const noexcept
 {
-    if (_mappedClkType < other._mappedClkType) {
+    if (_roles < other._roles) {
         return true;
     }
 
-    if (other._mappedClkType < _mappedClkType) {
+    if (other._roles < _roles) {
         return false;
     }
 

@@ -5,7 +5,7 @@ trace {
   minor = 8;
   byte_order = le;
   packet.header := struct {
-    string stream_id;
+    integer {size = 8; align = 16;} uuid[16];
   };
 };
 

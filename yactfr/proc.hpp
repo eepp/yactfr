@@ -121,11 +121,11 @@ class SetDsIdInstr;
 class SetDstInstr;
 class SetErtInstr;
 class SetExpectedPktContentLenInstr;
-class SetPktEndClkValInstr;
+class SetPktEndDefClkValInstr;
 class SetPktMagicNumberInstr;
 class SetPktOriginIndexInstr;
 class SetExpectedPktTotalLenInstr;
-class UpdateClkValInstr;
+class UpdateDefClkValInstr;
 
 /*
  * A classic abstract visitor class for procedure instructions.
@@ -208,7 +208,7 @@ public:
     {
     }
 
-    virtual void visit(UpdateClkValInstr& instr)
+    virtual void visit(UpdateDefClkValInstr& instr)
     {
     }
 
@@ -244,7 +244,7 @@ public:
     {
     }
 
-    virtual void visit(SetPktEndClkValInstr& instr)
+    virtual void visit(SetPktEndDefClkValInstr& instr)
     {
     }
 
@@ -432,11 +432,11 @@ public:
         SET_DST,
         SET_ERT,
         SET_PKT_CONTENT_LEN,
-        SET_PKT_END_CLK_VAL,
+        SET_PKT_END_DEF_CLK_VAL,
         SET_PKT_MAGIC_NUMBER,
         SET_PKT_ORIGIN_INDEX,
         SET_PKT_TOTAL_LEN,
-        UPDATE_CLK_VAL,
+        UPDATE_DEF_CLK_VAL,
     };
 
 public:
@@ -731,28 +731,16 @@ private:
  * This instruction indicates to the VM that the last decoded integer
  * value is the packet end clock value.
  */
-class SetPktEndClkValInstr :
+class SetPktEndDefClkValInstr :
     public Instr
 {
 public:
-    explicit SetPktEndClkValInstr(const ClockType& clkType, Index index);
+    explicit SetPktEndDefClkValInstr();
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
-
-    const ClockType& clkType() const noexcept
-    {
-        return *_clkType;
-    }
-
-private:
-    std::string _toStr(Size indent = 0) const override;
-
-private:
-    const ClockType * const _clkType;
-    const Index _index;
 };
 
 /*
@@ -1610,24 +1598,14 @@ public:
 /*
  * "Update clock value" procedure instruction.
  *
- * This instruction requires the VM to update the value of the clock of
- * which the type index is `index()` from the last decoded value.
+ * This instruction requires the VM to update the value of the default
+ * clock from the last decoded value.
  */
-class UpdateClkValInstr :
+class UpdateDefClkValInstr :
     public Instr
 {
 public:
-    explicit UpdateClkValInstr(const ClockType& clkType, Index index, Size len);
-
-    const ClockType& clkType() const noexcept
-    {
-        return *_clkType;
-    }
-
-    Index index() const noexcept
-    {
-        return _index;
-    }
+    explicit UpdateDefClkValInstr(Size len);
 
     Size len() const noexcept
     {
@@ -1643,8 +1621,6 @@ private:
     std::string _toStr(Size indent = 0) const override;
 
 private:
-    const ClockType * const _clkType;
-    const Index _index;
     const Size _len;
 };
 
@@ -1943,18 +1919,6 @@ public:
         return _preambleProc;
     }
 
-    std::vector<const ClockType *>& indexedClkTypes() noexcept
-    {
-        return _indexedClkTypes;
-    }
-
-    const std::vector<const ClockType *>& indexedClkTypes() const noexcept
-    {
-        return _indexedClkTypes;
-    }
-
-    Index clkTypeIndex(const ClockType& clkType);
-
     Size savedValsCount() const noexcept
     {
         return _savedValsCount;
@@ -1968,7 +1932,6 @@ public:
 private:
     const TraceType * const _traceType;
     DsPktProcs _dsPktProcs;
-    std::vector<const ClockType *> _indexedClkTypes;
     Size _savedValsCount;
     Proc _preambleProc;
 };

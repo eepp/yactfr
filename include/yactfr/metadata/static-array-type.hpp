@@ -39,16 +39,29 @@ public:
     @param[in] length
         Length of data stream static arrays described by this type
         (count of element).
+    @param[in] hasTraceTypeUuidRole
+        Whether or not the static arrays described by this type have the
+        "trace type UUID" role.
 
     @pre
         \p minimumAlignment > 0.
     @pre
         \p minimumAlignment is a power of two.
+    @pre
+        @parblock
+        If \p hasTraceTypeUuidRole is true, then \p length is 16 and
+        all of the following are true:
+
+        * <code>elementType->isUnsignedIntegerType()</code>
+        * <code>elementType->asUnsignedIntegerType().length() == 8</code>
+        @endparblock
     */
-    explicit StaticArrayType(unsigned int minimumAlignment, DataType::UP elementType, Size length);
+    explicit StaticArrayType(unsigned int minimumAlignment, DataType::UP elementType, Size length,
+                             bool hasTraceTypeUuidRole = false);
 
 protected:
-    explicit StaticArrayType(int kind, unsigned int minAlign, DataType::UP elemType, Size len);
+    explicit StaticArrayType(int kind, unsigned int minAlign, DataType::UP elemType, Size len,
+                             bool hasTraceTypeUuidRole = false);
 
 public:
     /// Length of data stream static arrays described by this type
@@ -56,6 +69,13 @@ public:
     Size length() const noexcept
     {
         return _len;
+    }
+
+    /// Whether or not the static arrays described by this type have
+    /// the "trace type UUID" role.
+    bool hasTraceTypeUuidRole() const noexcept
+    {
+        return _hasTraceTypeUuidRole;
     }
 
 private:
@@ -70,6 +90,7 @@ private:
 
 private:
     const Size _len;
+    const bool _hasTraceTypeUuidRole;
 };
 
 } // namespace yactfr

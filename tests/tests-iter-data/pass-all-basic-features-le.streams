@@ -176,9 +176,9 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    184         UI:content_size:856
    200         EPCL:856
    200         UI:timestamp_begin:19712
-   216         CV:def:19712
+   216         DCV:19712
    216         UI:timestamp_end:36864
-   232         PECV:def:36864
+   232         PEDCV:36864
    232       }
    232     }
    232     ER {
@@ -186,7 +186,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    232         ST {
    232           UI:id:29
    240           UI:ts:0
-   248           CV:def:19712
+   248           DCV:19712
    248         }
    248       }
    248       ERT:29:coronin
@@ -216,7 +216,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    488         ST {
    488           UI:id:119
    496           UI:ts:5
-   504           CV:def:19717
+   504           DCV:19717
    504         }
    504       }
    504       ERT:119:keratin
@@ -239,7 +239,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    648         ST {
    648           UI:id:29
    656           UI:ts:4
-   664           CV:def:19972
+   664           DCV:19972
    664         }
    664       }
    664       ERT:29:coronin
@@ -399,9 +399,9 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1712         UI:content_size:848
   1728         EPCL:848
   1728         UI:timestamp_begin:12032
-  1744         CV:def:12032
+  1744         DCV:12032
   1744         UI:timestamp_end:36864
-  1760         PECV:def:36864
+  1760         PEDCV:36864
   1760       }
   1760     }
   1760     ER {
@@ -409,7 +409,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1760         ST {
   1760           UI:id:5
   1768           UI:ts:3
-  1776           CV:def:12035
+  1776           DCV:12035
   1776         }
   1776       }
   1776       ERT:5:the variant event
@@ -440,7 +440,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2048         ST {
   2048           UI:id:5
   2056           UI:ts:9
-  2064           CV:def:12041
+  2064           DCV:12041
   2064         }
   2064       }
   2064       ERT:5:the variant event

@@ -87,11 +87,11 @@ public:
         /// TraceTypeUuidElement
         TRACE_TYPE_UUID,
 
-        /// ClockValueElement
-        CLOCK_VALUE,
+        /// DefaultClockValueElement
+        DEFAULT_CLOCK_VALUE,
 
-        /// PacketEndClockValueElement
-        PACKET_END_CLOCK_VALUE,
+        /// PacketEndDefaultClockValueElement
+        PACKET_END_DEFAULT_CLOCK_VALUE,
 
         /// SignedIntegerElement
         SIGNED_INTEGER,
@@ -612,32 +612,26 @@ private:
 
 /*!
 @brief
-    Clock value element.
+    Default clock value element.
 
 @ingroup elems
 
-This element provides the value of the clock of the data stream of the
-current packet.
+This element provides the value of the default clock of the data stream
+of the current packet.
 */
-class ClockValueElement final :
+class DefaultClockValueElement final :
     public Element
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    ClockValueElement() :
-        Element {Kind::CLOCK_VALUE}
+    DefaultClockValueElement() :
+        Element {Kind::DEFAULT_CLOCK_VALUE}
     {
     }
 
 public:
-    /// Type of the clock.
-    const ClockType& clockType() const noexcept
-    {
-        return *_clkType;
-    }
-
     /// Value of the clock (cycles).
     Cycles cycles() const noexcept
     {
@@ -650,43 +644,36 @@ public:
     }
 
 private:
-    const ClockType *_clkType;
     Cycles _cycles;
 };
 
 /*!
 @brief
-    Clock value at packet end element.
+    Default clock value at end of packet element.
 
 @ingroup elems
 
-This element provides the value of the clock of the data stream of the
-current packet at its end.
+This element provides the value of the default clock of the data stream
+of the current packet at its end.
 
-During the packet decoding process, this clock value is known
+During the packet decoding process, this default clock value is known
 \em before decoding the event records.
 
-@sa ClockValueElement
+@sa DefaultClockValueElement
 */
-class PacketEndClockValueElement final :
+class PacketEndDefaultClockValueElement final :
     public Element
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    PacketEndClockValueElement() :
-        Element {Kind::PACKET_END_CLOCK_VALUE}
+    PacketEndDefaultClockValueElement() :
+        Element {Kind::PACKET_END_DEFAULT_CLOCK_VALUE}
     {
     }
 
 public:
-    /// Type of the clock.
-    const ClockType& clockType() const noexcept
-    {
-        return *_clkType;
-    }
-
     /// Value of the clock (cycles) at the end of the current packet.
     Cycles cycles() const noexcept
     {
@@ -699,7 +686,6 @@ public:
     }
 
 private:
-    const ClockType *_clkType;
     Cycles _cycles;
 };
 

@@ -93,11 +93,8 @@ private:
 };
 
 class PseudoDt;
-
-/*
- * Set of pseudo data types.
- */
-using PseudoDtSet = std::unordered_set<const PseudoDt *>;
+class PseudoDtVisitor;
+class ConstPseudoDtVisitor;
 
 /*
  * Base pseudo data type.
@@ -107,11 +104,13 @@ class PseudoDt :
 {
 public:
     using UP = std::unique_ptr<PseudoDt>;
+    using FindFunc = std::function<bool (const PseudoDt&, const std::string&)>;
 
     enum class Kind
     {
         SCALAR_DT_WRAPPER,
-        INT_TYPE_WRAPPER,
+        UINT,
+        UENUM,
         STATIC_ARRAY,
         DYN_ARRAY,
         STRUCT,
@@ -123,7 +122,10 @@ public:
     virtual ~PseudoDt();
     virtual Kind kind() const noexcept = 0;
     virtual bool isEmpty() const;
-    PseudoDtSet findPseudoDtsByName(const std::string& name) const;
+    virtual void accept(PseudoDtVisitor& visitor) = 0;
+    virtual void accept(ConstPseudoDtVisitor& visitor) const = 0;
+    virtual bool isInt() const noexcept;
+    virtual bool isUInt() const noexcept;
 
     /*
      * Fully clones this pseudo data type, meaning the returned object
@@ -141,15 +143,12 @@ public:
         _loc = std::move(loc);
     }
 
-protected:
-    static void _findPseudoDtsByName(const PseudoDt& pseudoDt, const std::string& name,
-                                     PseudoDtSet& pseudoDts);
-
-    virtual void _findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const;
-
 private:
     TextLocation _loc;
 };
+
+using PseudoDtSet = std::unordered_set<PseudoDt *>;
+using ConstPseudoDtSet = std::unordered_set<const PseudoDt *>;
 
 /*
  * This is a wrapper for any yactfr scalar type, except unsigned integer
@@ -167,55 +166,91 @@ class PseudoScalarDtWrapper :
 public:
     explicit PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc = TextLocation {});
 
+    explicit PseudoScalarDtWrapper(DataType::UP dt, bool hasEncoding,
+                                   TextLocation loc = TextLocation {});
+
     PseudoDt::Kind kind() const noexcept override
     {
         return PseudoDt::Kind::SCALAR_DT_WRAPPER;
     }
 
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
     PseudoDt::UP clone() const override;
+    bool isInt() const noexcept override;
 
     const DataType& dt() const noexcept
     {
         return *_dt;
     }
 
+    bool hasEncoding() const noexcept
+    {
+        return _hasEncoding;
+    }
+
 private:
     DataType::UP _dt;
+    bool _hasEncoding = false;
 };
 
 /*
- * This is a wrapper for yactfr integer and enumeration types.
+ * Pseudo unsigned integer type.
  *
  * This is needed because:
  *
- * * During the decoding process, an unsigned integer type may be mapped
- *   to a clock type by name, and it's possible that we don't have this
- *   clock type yet (early data type aliases, for example).
+ * * During the decoding process, a TSDL unsigned integer type may be
+ *   mapped to a clock type by name, and we want to keep this name for
+ *   validation and role creation purposes.
  *
- * * An integer type may have an encoding: this is only needed to
- *   detect text array types; a yactfr integer type has no encoding.
+ * * A TSDL unsigned integer type may have an implicit role, but we need
+ *   its structure member type name to assign it.
  *
- * Keep an unmapped integer type here as well as the _name_ of the
- * mapped clock type, if any.
+ * * A TSDL unsigned integer type may have an encoding: this is only
+ *   needed to detect text array types; a yactfr integer type has no
+ *   encoding.
+ *
+ * Keep an unmapped unsigned integer type here as well as the _name_ of
+ * the mapped clock type, if any.
  */
-class PseudoIntTypeWrapper final :
-    public PseudoScalarDtWrapper
+class PseudoUIntType :
+    public PseudoDt
 {
 public:
-    explicit PseudoIntTypeWrapper(DataType::UP dt, bool hasEncoding = false,
-                                  boost::optional<std::string> mappedClkTypeName = boost::none,
-                                  TextLocation loc = TextLocation {});
+    explicit PseudoUIntType(unsigned int align, unsigned int len, ByteOrder bo,
+                            DisplayBase prefDispBase, bool hasEncoding = false,
+                            boost::optional<std::string> mappedClkTypeName = boost::none,
+                            TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::INT_TYPE_WRAPPER;
+        return PseudoDt::Kind::UINT;
     }
 
     PseudoDt::UP clone() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
+    bool isInt() const noexcept override;
+    bool isUInt() const noexcept override;
 
-    const IntegerType& intType() const noexcept
+    unsigned int align() const noexcept
     {
-        return static_cast<const IntegerType&>(this->dt());
+        return _align;
+    }
+
+    unsigned int len() const noexcept
+    {
+        return _len;
+    }
+
+    ByteOrder bo() const noexcept
+    {
+        return _bo;
+    }
+
+    DisplayBase prefDispBase() const noexcept
+    {
+        return _prefDispBase;
     }
 
     bool hasEncoding() const noexcept
@@ -233,9 +268,60 @@ public:
         _mappedClkTypeName = std::move(name);
     }
 
+    const UnsignedIntegerTypeRoleSet& roles() const noexcept
+    {
+        return _roles;
+    }
+
+    void addRole(const UnsignedIntegerTypeRole role)
+    {
+        _roles.insert(role);
+    }
+
+    bool hasRole(const UnsignedIntegerTypeRole role) const noexcept
+    {
+        return _roles.find(role) != _roles.end();
+    }
+
 private:
+    unsigned int _align;
+    unsigned int _len;
+    ByteOrder _bo;
+    DisplayBase _prefDispBase;
     bool _hasEncoding;
     boost::optional<std::string> _mappedClkTypeName;
+    UnsignedIntegerTypeRoleSet _roles;
+};
+
+/*
+ * Pseudo unsigned enumeration type.
+ */
+class PseudoUEnumType final :
+    public PseudoUIntType
+{
+public:
+    explicit PseudoUEnumType(unsigned int align, unsigned int len, ByteOrder bo,
+                             DisplayBase prefDispBase, UnsignedEnumerationType::Mappings mappings,
+                             bool hasEncoding = false,
+                             boost::optional<std::string> mappedClkTypeName = boost::none,
+                             TextLocation loc = TextLocation {});
+
+    PseudoDt::Kind kind() const noexcept override
+    {
+        return PseudoDt::Kind::UENUM;
+    }
+
+    PseudoDt::UP clone() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
+
+    const UnsignedEnumerationType::Mappings& mappings() const noexcept
+    {
+        return _mappings;
+    }
+
+private:
+    UnsignedEnumerationType::Mappings _mappings;
 };
 
 /*
@@ -259,9 +345,6 @@ public:
     }
 
 private:
-    void _findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const override;
-
-private:
     PseudoDt::UP _pseudoElemType;
 };
 
@@ -282,14 +365,27 @@ public:
 
     PseudoDt::UP clone() const override;
     bool isEmpty() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
 
     Size len() const noexcept
     {
         return _len;
     }
 
+    bool hasTraceTypeUuidRole() const noexcept
+    {
+        return _hasTraceTypeUuidRole;
+    }
+
+    void hasTraceTypeUuidRole(const bool hasTraceTypeUuidRole) noexcept
+    {
+        _hasTraceTypeUuidRole = hasTraceTypeUuidRole;
+    }
+
 private:
     Size _len;
+    bool _hasTraceTypeUuidRole = false;
 };
 
 /*
@@ -311,6 +407,8 @@ public:
 
     PseudoDt::UP clone() const override;
     bool isEmpty() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
 
     const PseudoDataLoc& pseudoLenLoc() const noexcept
     {
@@ -372,6 +470,8 @@ public:
 
     PseudoDt::UP clone() const override;
     bool isEmpty() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
 
     /*
      * Returns the member class named `name`, or `nullptr` if not found.
@@ -383,13 +483,15 @@ public:
         return _minAlign;
     }
 
-    const PseudoNamedDts& pseudoMemberTypes() const noexcept
+    PseudoNamedDts& pseudoMemberTypes() noexcept
     {
         return _pseudoMemberTypes;
     }
 
-private:
-    void _findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const override;
+    const PseudoNamedDts& pseudoMemberTypes() const noexcept
+    {
+        return _pseudoMemberTypes;
+    }
 
 private:
     unsigned int _minAlign;
@@ -415,6 +517,8 @@ public:
 
     PseudoDt::UP clone() const override;
     bool isEmpty() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
 
     const boost::optional<PseudoDataLoc>& pseudoSelLoc() const noexcept
     {
@@ -426,70 +530,19 @@ public:
         _pseudoSelLoc = std::move(loc);
     }
 
+    PseudoNamedDts& pseudoOpts() noexcept
+    {
+        return _pseudoOpts;
+    }
+
     const PseudoNamedDts& pseudoOpts() const noexcept
     {
         return _pseudoOpts;
     }
 
 private:
-    void _findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const override;
-
-private:
     boost::optional<PseudoDataLoc> _pseudoSelLoc;
     PseudoNamedDts _pseudoOpts;
-};
-
-class PseudoValidatableType
-{
-protected:
-    PseudoValidatableType() = default;
-
-    /*
-     * Validates that `pseudoDt`, named `name` (full name) in this
-     * context, is a pseudo unsigned integer type (with a length
-     * property of `*len` bits if available), throwing otherwise.
-     */
-    void _validateIsPseudoUIntType(const PseudoDt& pseudoDt, const std::string& name,
-                                   const boost::optional<Size>& len = boost::none) const;
-
-    /*
-     * Validates that `pseudoDt`, the pseudo data type of a structure
-     * member type named `name` in this context, is a pseudo unsigned
-     * integer type (with a length property of `*len` bits if
-     * available), throwing otherwise.
-     */
-    void _validateIsPseudoUIntTypeMember(const PseudoDt& pseudoDt,
-                                         const std::string& memberTypeName,
-                                         const boost::optional<Size>& len = boost::none) const;
-
-    /*
-     * Validates that the member type named `memberName` of the pseudo
-     * structure type `parentPseudoDt` is a pseudo unsigned integer type
-     * (with a length property of `*len` bits if available) if it
-     * exists.
-     */
-    void _validateIsPseudoUIntTypeMemberIfExists(const PseudoDt& parentPseudoDt,
-                                                 const std::string& memberTypeName,
-                                                 const boost::optional<Size>& len = boost::none) const;
-
-    /*
-     * Throws a `MetadataParseError` instance, following `msg` and
-     * `textLoc` to its constructor.
-     *
-     * This method exists so that `MetadataParseError` only declares
-     * this class as a friend.
-     */
-    void _throwParseError(std::string msg, TextLocation textLoc = TextLocation {}) const;
-
-    /*
-     * Calls `exc._appendErrorMsg()`, following `msg` and `textLoc` to
-     * it.
-     *
-     * This method exists so that `MetadataParseError` only declares
-     * this class as a friend.
-     */
-    void _appendErrorMsgToParseError(MetadataParseError& exc, std::string msg,
-                                     TextLocation textLoc = TextLocation {}) const;
 };
 
 class PseudoDst;
@@ -497,8 +550,7 @@ class PseudoDst;
 /*
  * Pseudo event record type: mutable event record type.
  */
-class PseudoErt final :
-    public PseudoValidatableType
+class PseudoErt final
 {
 public:
     explicit PseudoErt(TypeId id, boost::optional<std::string> name,
@@ -557,6 +609,10 @@ public:
     }
 
 private:
+    void _validateNotEmpty(const PseudoDst& pseudoDst) const;
+    void _validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const;
+
+private:
     TypeId _id = 0;
     boost::optional<std::string> _name;
     boost::optional<LogLevel> _logLevel;
@@ -573,13 +629,12 @@ using PseudoErtSet = std::unordered_set<const PseudoErt *>;
 /*
  * Pseudo data stream type: mutable data stream type.
  */
-class PseudoDst final :
-    public PseudoValidatableType
+class PseudoDst final
 {
 public:
     PseudoDst() = default;
     explicit PseudoDst(TypeId id, PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
-                       PseudoDt::UP pseudoErCommonCtxType);
+                       PseudoDt::UP pseudoErCommonCtxType, const ClockType *defClkType = nullptr);
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -628,11 +683,26 @@ public:
         return _pseudoErCommonCtxType.get();
     }
 
+    const ClockType *defClkType() const noexcept
+    {
+        return _defClkType;
+    }
+
+    void defClkType(const ClockType& clkType) noexcept
+    {
+        _defClkType = &clkType;
+    }
+
+private:
+    void _validateErHeaderType(const PseudoErtSet& pseudoErts) const;
+    void _validateNoMappedClkTypeName() const;
+
 private:
     TypeId _id = 0;
     PseudoDt::UP _pseudoPktCtxType;
     PseudoDt::UP _pseudoErHeaderType;
     PseudoDt::UP _pseudoErCommonCtxType;
+    const ClockType *_defClkType = nullptr;
 };
 
 /*
@@ -665,8 +735,7 @@ private:
 /*
  * Pseudo trace type: mutable trace type.
  */
-class PseudoTraceType final :
-    public PseudoValidatableType
+class PseudoTraceType final
 {
 public:
     using PseudoDsts = std::unordered_map<TypeId, std::unique_ptr<PseudoDst>>;

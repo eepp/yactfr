@@ -7,16 +7,14 @@ trace {
 };
 
 stream {
-
-};
-
-event {
-  name = event;
-
-  fields := struct {
+  event.header := struct {
     integer {
       size = 8;
       map = clock.lol.value;
     } a;
   };
+};
+
+event {
+  name = event;
 };

@@ -7,7 +7,16 @@ trace {
 };
 
 stream {
-
+  event.header := struct {
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 10;
+      byte_order = be;
+      map = clock.the_clock.value;
+    } int_clock;
+  };
 };
 
 clock {
@@ -18,15 +27,6 @@ event {
   name = event;
 
   fields := struct {
-    integer {
-      size = 18;
-      align = 32;
-      encoding = UTF8;
-      base = 10;
-      byte_order = be;
-      map = clock.the_clock.value;
-    } int_clock;
-
     integer {
       size = 18;
       align = 32;

@@ -74,11 +74,14 @@ public:
         Event record header type, or \c nullptr if none.
     @param[in] eventRecordCommonContextType
         Event record common context type, or \c nullptr if none.
+    @param[in] defaultClockType
+        Default clock type, or \c nullptr if none.
     */
     explicit DataStreamType(TypeId id, EventRecordTypeSet&& eventRecordTypes,
                             StructureType::UP packetContextType,
                             StructureType::UP eventRecordHeaderType,
-                            StructureType::UP eventRecordCommonContextType);
+                            StructureType::UP eventRecordCommonContextType,
+                            const ClockType *defaultClockType = nullptr);
 
     /// Numeric ID, unique amongst the IDs of all the data stream types
     /// which are part of the same \link TraceType trace type\endlink.
@@ -145,6 +148,13 @@ public:
         return _erCommonCtxType.get();
     }
 
+    /// Type of the default clock of the data streams describe by this
+    /// type.
+    const ClockType *defaultClockType() const noexcept
+    {
+        return _defClkType;
+    }
+
     /// Parent trace type of this type, or \c nullptr if this type is
     /// not part of a trace type yet.
     const TraceType *traceType() const noexcept
@@ -164,6 +174,7 @@ private:
     StructureType::UP _pktCtxType;
     StructureType::UP _erHeaderType;
     StructureType::UP _erCommonCtxType;
+    const ClockType * const _defClkType;
     mutable const TraceType *_traceType = nullptr;
 };
 

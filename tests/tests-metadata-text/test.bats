@@ -110,46 +110,6 @@ test_metadata_pass() {
   test_metadata_fail trace-type-ph-type-inval-magic-member-2
 }
 
-@test 'trace type: PH type: invalid `magic` member (3) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-magic-member-3
-}
-
-@test 'trace type: PH type: invalid `magic` member (4) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-magic-member-4
-}
-
-@test 'trace type: PH type: invalid `uuid` member (1) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-uuid-member-1
-}
-
-@test 'trace type: PH type: invalid `uuid` member (2) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-uuid-member-2
-}
-
-@test 'trace type: PH type: invalid `uuid` member (3) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-uuid-member-3
-}
-
-@test 'trace type: PH type: invalid `uuid` member (4) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-uuid-member-4
-}
-
-@test 'trace type: PH type: invalid `stream_id` member (1) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-stream-id-member-1
-}
-
-@test 'trace type: PH type: invalid `stream_id` member (2) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-stream-id-member-2
-}
-
-@test 'trace type: PH type: invalid `stream_instance_id` member (1) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-stream-instance-id-member-1
-}
-
-@test 'trace type: PH type: invalid `stream_instance_id` member (2) -> fail' {
-  test_metadata_fail trace-type-ph-type-inval-stream-instance-id-member-2
-}
-
 @test 'trace type: PH type: missing `stream_id` member -> fail' {
   test_metadata_fail trace-type-ph-type-missing-stream-id-member
 }
@@ -288,30 +248,6 @@ test_metadata_pass() {
 
 @test 'data stream type: duplicate ERCC type -> fail' {
   test_metadata_fail dst-dup-ercc-type
-}
-
-@test 'data stream type: PC type: invalid `packet_size` member (1) -> fail' {
-  test_metadata_fail dst-pc-type-inval-packet-size-member-1
-}
-
-@test 'data stream type: PC type: invalid `packet_size` member (2) -> fail' {
-  test_metadata_fail dst-pc-type-inval-packet-size-member-2
-}
-
-@test 'data stream type: PC type: invalid `content_size` member (1) -> fail' {
-  test_metadata_fail dst-pc-type-inval-content-size-member-1
-}
-
-@test 'data stream type: PC type: invalid `content_size` member (2) -> fail' {
-  test_metadata_fail dst-pc-type-inval-content-size-member-2
-}
-
-@test 'data stream type: ERH type: invalid `id` member (1) -> fail' {
-  test_metadata_fail dst-erh-type-inval-id-member-1
-}
-
-@test 'data stream type: ERH type: invalid `id` member (2) -> fail' {
-  test_metadata_fail dst-erh-type-inval-id-member-2
 }
 
 @test 'event record type: unknown attribute -> fail' {
@@ -1292,6 +1228,10 @@ test_metadata_pass() {
   test_metadata_pass int-type-full
 }
 
+@test 'integer type: signed with encoding -> pass' {
+  test_metadata_pass int-type-signed-encoding
+}
+
 @test 'floating point number type: full -> pass' {
   test_metadata_pass float-type-full
 }
@@ -1516,6 +1456,10 @@ test_metadata_pass() {
   test_metadata_pass static-array-type-len-env-ref
 }
 
+@test 'static array type: signed element type -> pass' {
+  test_metadata_pass static-text-array-signed-elem-type
+}
+
 @test 'static text array type: `env` reference for length -> pass' {
   test_metadata_pass static-text-array-type-len-env-ref
 }
@@ -1556,6 +1500,30 @@ test_metadata_pass() {
   test_metadata_pass dst-with-id-attr-after-ert
 }
 
+@test 'data stream type: PC type: string type for `packet_size` member -> pass' {
+  test_metadata_pass dst-pc-type-packet-size-member-1
+}
+
+@test 'data stream type: PC type: signed integer type for `packet_size` member -> pass' {
+  test_metadata_pass dst-pc-type-packet-size-member-2
+}
+
+@test 'data stream type: PC type: string type for `content_size` member -> pass' {
+  test_metadata_pass dst-pc-type-content-size-member-1
+}
+
+@test 'data stream type: PC type: signed integer type for `content_size` member -> pass' {
+  test_metadata_pass dst-pc-type-content-size-member-2
+}
+
+@test 'data stream type: ERH type: string type for `id` member -> pass' {
+  test_metadata_pass dst-erh-type-id-member-1
+}
+
+@test 'data stream type: ERH type: signed integer type for `id` member -> pass' {
+  test_metadata_pass dst-erh-type-id-member-2
+}
+
 @test '`callsite` block: full -> pass' {
   test_metadata_pass callsite-full
 }
@@ -1582,6 +1550,54 @@ test_metadata_pass() {
 
 @test 'trace type: no `uuid` attribute -> pass' {
   test_metadata_pass trace-type-no-uuid-attr
+}
+
+@test 'trace type: PH type: string type for `magic` member -> pass' {
+  test_metadata_pass trace-type-ph-type-magic-member-1
+}
+
+@test 'trace type: PH type: signed integer type for `magic` member -> pass' {
+  test_metadata_pass trace-type-ph-type-magic-member-2
+}
+
+@test 'trace type: PH type: string type for `stream_id` member -> pass' {
+  test_metadata_pass trace-type-ph-type-stream-id-member-1
+}
+
+@test 'trace type: PH type: signed integer type for `stream_id` member -> pass' {
+  test_metadata_pass trace-type-ph-type-stream-id-member-2
+}
+
+@test 'trace type: PH type: string type for `stream_instance_id` member -> pass' {
+  test_metadata_pass trace-type-ph-type-stream-instance-id-member-1
+}
+
+@test 'trace type: PH type: signed integer type for `stream_instance_id` member -> pass' {
+  test_metadata_pass trace-type-ph-type-stream-instance-id-member-2
+}
+
+@test 'trace type: PH type: string type for `uuid` member -> pass' {
+  test_metadata_pass trace-type-ph-type-uuid-member-1
+}
+
+@test 'trace type: PH type: static array of strings type for `uuid` member -> pass' {
+  test_metadata_pass trace-type-ph-type-uuid-member-2
+}
+
+@test 'trace type: PH type: static array of 15 bytes type for `uuid` member -> pass' {
+  test_metadata_pass trace-type-ph-type-uuid-member-3
+}
+
+@test 'trace type: PH type: static array of 16 16-bit integers type for `uuid` member -> pass' {
+  test_metadata_pass trace-type-ph-type-uuid-member-4
+}
+
+@test 'trace type: PH type: static array of 16-bit-aligned integers type for `uuid` member -> pass' {
+  test_metadata_pass trace-type-ph-type-uuid-member-5
+}
+
+@test 'trace type: PH type: dynamic array type for `uuid` member -> pass' {
+  test_metadata_pass trace-type-ph-type-uuid-member-6
 }
 
 @test 'CTF test suite: `array-basic-1dim` -> pass' {

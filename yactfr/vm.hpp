@@ -164,21 +164,19 @@ public:
         return savedVals[pos];
     }
 
-    std::uint64_t updateClkVal(const Index index, const Size len) noexcept
+    std::uint64_t updateDefClkVal(const Size len) noexcept
     {
-        assert(index < clkVals.size());
-
         /*
          * Special case for a 64-bit new value, which is the limit of a
          * clock value as of this version: overwrite the current value
          * directly.
          */
         if (len == 64) {
-            clkVals[index] = lastIntVal.u;
+            defClkVal = lastIntVal.u;
             return lastIntVal.u;
         }
 
-        auto curVal = clkVals[index];
+        auto curVal = defClkVal;
         const auto newValMask = (UINT64_C(1) << len) - 1;
         const auto curValMasked = curVal & newValMask;
 
@@ -198,7 +196,7 @@ public:
         curVal |= lastIntVal.u;
 
         // store this result
-        clkVals[index] = curVal;
+        defClkVal = curVal;
         return curVal;
     }
 
@@ -222,7 +220,7 @@ public:
         curExpectedPktTotalLenBits = SIZE_UNSET;
         curExpectedPktContentLenBits = SIZE_UNSET;
         stack.clear();
-        std::fill(clkVals.begin(), clkVals.end(), 0);
+        defClkVal = 0;
         std::fill(savedVals.begin(), savedVals.end(), SAVED_VAL_UNSET);
     }
 
@@ -251,8 +249,8 @@ public:
         ExpectedPacketContentLengthElement expectedPktContentLen;
         PacketMagicNumberElement pktMagicNumber;
         TraceTypeUuidElement traceTypeUuid;
-        ClockValueElement clkVal;
-        PacketEndClockValueElement pktEndClkVal;
+        DefaultClockValueElement defClkVal;
+        PacketEndDefaultClockValueElement pktEndDefClkVal;
         DataStreamTypeElement dst;
         EventRecordTypeElement ert;
         SignedIntegerElement sInt;
@@ -319,8 +317,8 @@ public:
     // vector of saved values
     std::vector<std::uint64_t> savedVals;
 
-    // vector of clock values
-    std::vector<std::uint64_t> clkVals;
+    // default clock value, if any
+    std::uint64_t defClkVal = 0;
 };
 
 class ItInfos final
@@ -1028,8 +1026,8 @@ private:
     _ExecReaction _execBeginReadVarUSel(const Instr& instr);
     _ExecReaction _execEndReadVar(const Instr& instr);
     _ExecReaction _execSaveVal(const Instr& instr);
-    _ExecReaction _execSetPktEndClkVal(const Instr& instr);
-    _ExecReaction _execUpdateClkVal(const Instr& instr);
+    _ExecReaction _execSetPktEndDefClkVal(const Instr& instr);
+    _ExecReaction _execUpdateDefClkVal(const Instr& instr);
     _ExecReaction _execSetCurrentId(const Instr& instr);
     _ExecReaction _execSetDst(const Instr& instr);
     _ExecReaction _execSetErt(const Instr& instr);

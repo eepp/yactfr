@@ -360,7 +360,7 @@ private:
     void _expectToken(const std::string& token);
 
     /*
-     * Tries to parse a member/option or a data type alias, with a
+     * Tries to parse a member type/option or a data type alias, with a
      * terminating `;`, adding the result to `entries` if found, and
      * adding any parsed data type alias to the map of aliased data
      * types of the current frame on success.
@@ -465,9 +465,10 @@ private:
      */
     PseudoDt::UP _tryParseEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
-    template <typename EnumTypeT>
+    template <typename EnumTypeT, typename CreatePseudoDtFuncT>
     PseudoDt::UP _finishParseEnumType(PseudoDt::UP pseudoDt, bool addDtAlias,
-                                      std::string&& potDtAliasName);
+                                      std::string&& potDtAliasName,
+                                      CreatePseudoDtFuncT&& createPseudoDtFunc);
 
     /*
      * Tries to parse a structure type block.
@@ -732,7 +733,7 @@ private:
 
                 ss << "Illegal character found in literal string: 0x" <<
                       std::hex << static_cast<int>(*it) << ".";
-                throw MetadataParseError {ss.str(), loc};
+                throwMetadataParseError(ss.str(), loc);
             } else {
                 str += *it;
             }
@@ -770,23 +771,18 @@ void TsdlParser<CharIt>::_parseMetadata()
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
     if (!_ss.isDone()) {
-        throw MetadataParseError {
-            "Expecting data type alias (`typealias`, `typedef`, `enum NAME`, "
-            "`struct NAME`, or `variant NAME`), trace type block (`trace`), "
-            "environment block of trace type (`env`), "
-            "clock type block (`clock`), data stream type block (`stream`), "
-            "or event record type block (`event`). Did you forget the `;` "
-            "after the closing `}` of the block?",
-            this->_curLoc()
-        };
+        throwMetadataParseError("Expecting data type alias (`typealias`, `typedef`, `enum NAME`, "
+                                "`struct NAME`, or `variant NAME`), trace type block (`trace`), "
+                                "environment block of trace type (`env`), "
+                                "clock type block (`clock`), data stream type block (`stream`), "
+                                "or event record type block (`event`). Did you forget the `;` "
+                                "after the closing `}` of the block?",
+                                this->_curLoc());
     }
 
     if (!_pseudoTraceType) {
-        throw MetadataParseError {"Missing `trace` block."};
+        throwMetadataParseError("Missing `trace` block.");
     }
-
-    // apply special (implicit) rules to the pseudo trace type contents
-    this->_applyQuirks();
 
     // create a yactfr trace type from the pseudo trace type
     this->_createTraceType();
@@ -808,7 +804,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
             return true;
         }
     } catch (MetadataParseError& error) {
-        error._appendErrorMsg("In `event` root block:", loc);
+        appendMsgToMetadataParseError(error, "In `event` root block:", loc);
         throw;
     }
 
@@ -817,7 +813,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
             return true;
         }
     } catch (MetadataParseError& error) {
-        error._appendErrorMsg("In `stream` root block:", loc);
+        appendMsgToMetadataParseError(error, "In `stream` root block:", loc);
         throw;
     }
 
@@ -826,7 +822,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
             return true;
         }
     } catch (MetadataParseError& error) {
-        error._appendErrorMsg("In `trace` root block:", loc);
+        appendMsgToMetadataParseError(error, "In `trace` root block:", loc);
         throw;
     }
 
@@ -835,7 +831,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
             return true;
         }
     } catch (MetadataParseError& error) {
-        error._appendErrorMsg("In `env` root block:", loc);
+        appendMsgToMetadataParseError(error, "In `env` root block:", loc);
         throw;
     }
 
@@ -844,7 +840,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
             return true;
         }
     } catch (MetadataParseError& error) {
-        error._appendErrorMsg("In `clock` root block:", loc);
+        appendMsgToMetadataParseError(error, "In `clock` root block:", loc);
         throw;
     }
 
@@ -854,7 +850,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
             return true;
         }
     } catch (MetadataParseError& error) {
-        error._appendErrorMsg("In `callsite` root block:", loc);
+        appendMsgToMetadataParseError(error, "In `callsite` root block:", loc);
         throw;
     }
 
@@ -868,7 +864,7 @@ void TsdlParser<CharIt>::_expectToken(const std::string& token)
         std::ostringstream ss;
 
         ss << "Expecting `" << token << "`.";
-        throw MetadataParseError {ss.str(), this->_curLoc()};
+        throwMetadataParseError(ss.str(), this->_curLoc());
     }
 }
 
@@ -889,12 +885,12 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVarDtAlias()
         try {
             pseudoDt = this->_tryParseEnumType(false, &dtAliasName);
         } catch (MetadataParseError& error) {
-            error._appendErrorMsg("In `enum` block:", loc);
+            appendMsgToMetadataParseError(error, "In `enum` block:", loc);
             throw;
         }
 
         if (pseudoDt) {
-            // parse `;` to make sure it's not a member/option
+            // parse `;` to make sure it's not a member type/option
             if (_ss.scanToken(";")) {
                 // we have a winner
                 ssRej.accept();
@@ -919,12 +915,12 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVarDtAlias()
         try {
             pseudoDt = this->_tryParseStructType(false, &dtAliasName);
         } catch (MetadataParseError& error) {
-            error._appendErrorMsg("In `struct` block:", loc);
+            appendMsgToMetadataParseError(error, "In `struct` block:", loc);
             throw;
         }
 
         if (pseudoDt) {
-            // parse `;` to make sure it's not a member/option
+            // parse `;` to make sure it's not a member type/option
             if (_ss.scanToken(";")) {
                 // we have a winner
                 ssRej.accept();
@@ -949,7 +945,7 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVarDtAlias()
         try {
             pseudoDt = this->_tryParseVarType(false, &dtAliasName);
         } catch (MetadataParseError& error) {
-            error._appendErrorMsg("In `variant` block:", loc);
+            appendMsgToMetadataParseError(error, "In `variant` block:", loc);
             throw;
         }
 
@@ -1010,20 +1006,16 @@ bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
                 pseudoDt = this->_aliasedPseudoDt(existingDtAliasName, loc);
 
                 if (!pseudoDt) {
-                    throw MetadataParseError {
-                        "Expecting explicit data type block (`integer`, `floating_point`, "
-                        "`enum`, `string`, `struct`, or `variant`) or "
-                        "existing data type alias name.",
-                        this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting explicit data type block (`integer`, `floating_point`, "
+                                            "`enum`, `string`, `struct`, or `variant`) or "
+                                            "existing data type alias name.",
+                                            this->_curLoc());
                 }
             } else {
-                throw MetadataParseError {
-                    "Expecting explicit data type block (`integer`, `floating_point`, "
-                    "`enum`, `string`, `struct`, or `variant`) or "
-                    "existing data type alias name.",
-                    this->_curLoc()
-                };
+                throwMetadataParseError("Expecting explicit data type block (`integer`, `floating_point`, "
+                                        "`enum`, `string`, `struct`, or `variant`) or "
+                                        "existing data type alias name.",
+                                        this->_curLoc());
             }
         }
 
@@ -1057,7 +1049,7 @@ bool TsdlParser<CharIt>::_tryParseDtAlias()
             return true;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In data type alias:", loc);
+        appendMsgToMetadataParseError(exc, "In data type alias:", loc);
         throw;
     }
 
@@ -1101,7 +1093,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
             return pseudoDt;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In `integer` block:", loc);
+        appendMsgToMetadataParseError(exc, "In `integer` block:", loc);
         throw;
     }
 
@@ -1112,7 +1104,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
             return pseudoDt;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In `string` block:", loc);
+        appendMsgToMetadataParseError(exc, "In `string` block:", loc);
         throw;
     }
 
@@ -1123,7 +1115,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
             return pseudoDt;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In `enum` block:", loc);
+        appendMsgToMetadataParseError(exc, "In `enum` block:", loc);
         throw;
     }
 
@@ -1134,7 +1126,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
             return pseudoDt;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In `floating_point` block:", loc);
+        appendMsgToMetadataParseError(exc, "In `floating_point` block:", loc);
         throw;
     }
 
@@ -1145,7 +1137,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
             return pseudoDt;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In `struct` block:", loc);
+        appendMsgToMetadataParseError(exc, "In `struct` block:", loc);
         throw;
     }
 
@@ -1156,7 +1148,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFullDt()
             return pseudoDt;
         }
     } catch (MetadataParseError& exc) {
-        exc._appendErrorMsg("In `variant` block:", loc);
+        appendMsgToMetadataParseError(exc, "In `variant` block:", loc);
         throw;
     }
 
@@ -1268,7 +1260,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIntType()
 
                 ss << "Invalid `size` attribute (must be greater than 0): " <<
                       attr.uintVal << ".";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             if (attr.uintVal > 64) {
@@ -1276,7 +1268,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIntType()
 
                 ss << "`size` attribute is greater than 64 (unsupported): " <<
                       attr.uintVal << ".";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             size = attr.uintVal;
@@ -1318,20 +1310,17 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIntType()
 
     if (isSigned) {
         if (mappedClkTypeName) {
-            throw MetadataParseError {
-                "Illegal `map` attribute for a signed integer type.", *mapAttrLoc
-            };
+            throwMetadataParseError("Illegal `map` attribute for a signed integer type.",
+                                    *mapAttrLoc);
         }
 
         auto intType = std::make_unique<const SignedIntegerType>(align, size, bo, dispBase);
 
-        pseudoDt = std::make_unique<PseudoIntTypeWrapper>(std::move(intType), hasEncoding,
-                                                          boost::none, beforeKwLoc);
+        pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), hasEncoding,
+                                                           beforeKwLoc);
     } else {
-        auto intType = std::make_unique<const UnsignedIntegerType>(align, size, bo, dispBase);
-
-        pseudoDt = std::make_unique<PseudoIntTypeWrapper>(std::move(intType), hasEncoding,
-                                                          mappedClkTypeName, beforeKwLoc);
+        pseudoDt = std::make_unique<PseudoUIntType>(align, size, bo, dispBase, hasEncoding,
+                                                    mappedClkTypeName, beforeKwLoc);
     }
 
     assert(pseudoDt);
@@ -1417,7 +1406,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFloatType()
 
         ss << "Invalid `exp_dig` or `mant_dig` attribute combination: " <<
               "only (8, 24) and (11, 53) are supported.";
-        throw MetadataParseError {ss.str(), beginLoc};
+        throwMetadataParseError(ss.str(), beginLoc);
     }
 
     auto floatType = std::make_unique<const FloatingPointNumberType>(align, expDig + mantDig, bo);
@@ -1534,24 +1523,22 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
                 std::ostringstream ss;
 
                 ss << "Cannot find data type alias `" << dtAliasName << "`.";
-                throw MetadataParseError {ss.str(), loc};
+                throwMetadataParseError(ss.str(), loc);
             }
 
-            if (pseudoDt->kind() != PseudoDt::Kind::INT_TYPE_WRAPPER) {
+            if (!pseudoDt->isInt()) {
                 std::ostringstream ss;
 
                 ss << "Data type alias `" << dtAliasName << "` isn't an integer type.";
-                throw MetadataParseError {ss.str(), loc};
+                throwMetadataParseError(ss.str(), loc);
             }
         } else {
             // fall back to expecting `integer`
             pseudoDt = this->_tryParseIntType();
 
             if (!pseudoDt) {
-                throw MetadataParseError {
-                    "Expecting `integer` or existing integer type alias name.",
-                    loc
-                };
+                throwMetadataParseError("Expecting `integer` or existing integer type alias name.",
+                                        loc);
             }
 
             pseudoDt->loc(beginLoc);
@@ -1561,17 +1548,13 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
         pseudoDt = this->_aliasedPseudoDt("int", beginLoc);
 
         if (!pseudoDt) {
-            throw MetadataParseError {
-                "Implicit `int` data type alias doesn't exist in this scope.",
-                beginLoc
-            };
+            throwMetadataParseError("Implicit `int` data type alias doesn't exist in this scope.",
+                                    beginLoc);
         }
 
-        if (pseudoDt->kind() != PseudoDt::Kind::INT_TYPE_WRAPPER) {
-            throw MetadataParseError {
-                "Implicit `int` data type alias isn't an integer type.",
-                beginLoc
-            };
+        if (!pseudoDt->isInt()) {
+            throwMetadataParseError("Implicit `int` data type alias isn't an integer type.",
+                                    beginLoc);
         }
     }
 
@@ -1579,17 +1562,34 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseEnumType(const bool addDtAlias,
     this->_expectToken("{");
 
     // parse mappings
-    assert(pseudoDt->kind() == PseudoDt::Kind::INT_TYPE_WRAPPER);
+    assert(pseudoDt->isInt());
 
-    const auto& pseudoIntTypeWrapper = static_cast<const PseudoIntTypeWrapper&>(*pseudoDt);
-    const auto& intType = pseudoIntTypeWrapper.intType();
-
-    if (intType.isUnsignedIntegerType()) {
+    if (pseudoDt->isUInt()) {
         return this->_finishParseEnumType<UnsignedEnumerationType>(std::move(pseudoDt), addDtAlias,
-                                                                   std::move(potDtAliasName));
+                                                                   std::move(potDtAliasName),
+                                                                   [](const auto& pseudoDt,
+                                                                      const auto& mappings) {
+            const auto& pseudoUIntType = static_cast<const PseudoUIntType&>(pseudoDt);
+
+            return std::make_unique<PseudoUEnumType>(pseudoUIntType.align(), pseudoUIntType.len(),
+                                                     pseudoUIntType.bo(),
+                                                     pseudoUIntType.prefDispBase(), mappings,
+                                                     pseudoUIntType.hasEncoding(),
+                                                     pseudoUIntType.mappedClkTypeName(),
+                                                     pseudoDt.loc());
+        });
     } else {
         return this->_finishParseEnumType<SignedEnumerationType>(std::move(pseudoDt), addDtAlias,
-                                                                 std::move(potDtAliasName));
+                                                                 std::move(potDtAliasName),
+                                                                 [](const auto& pseudoDt,
+                                                                    const auto& mappings) {
+            auto& intType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asIntegerType();
+            auto enumType = std::make_unique<SignedEnumerationType>(intType.alignment(),
+                                                                    intType.length(),
+                                                                    intType.byteOrder(), mappings,
+                                                                    intType.preferredDisplayBase());
+            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), pseudoDt.loc());
+        });
     }
 }
 
@@ -1634,8 +1634,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
                 return nullptr;
             }
 
-            // parse data type aliases and members
-            PseudoNamedDts members;
+            // parse data type aliases and member types
+            PseudoNamedDts pseudoMemberTypes;
 
             while (true) {
                 this->_skipCommentsAndWhitespacesAndSemicolons();
@@ -1648,24 +1648,23 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
                 bool success;
 
                 try {
-                    success = this->_tryParseNamedDtOrDtAlias(members);
+                    success = this->_tryParseNamedDtOrDtAlias(pseudoMemberTypes);
                 } catch (MetadataParseError& exc) {
-                    exc._appendErrorMsg("While parsing body of `struct` block:", loc);
+                    appendMsgToMetadataParseError(exc, "While parsing body of `struct` block:", loc);
                     throw;
                 }
 
                 if (!success) {
-                    throw MetadataParseError {
-                        "Expecting member type with known data type or data type alias.",
-                        this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting member type with known data type "
+                                            "or data type alias.",
+                                            this->_curLoc());
                 }
             }
 
             ssRej.accept();
 
-            // check for duplicate member
-            TsdlParser::_checkDupPseudoNamedDt(members, beginLoc);
+            // check for duplicate member type
+            TsdlParser::_checkDupPseudoNamedDt(pseudoMemberTypes, beginLoc);
 
             auto align = 1ULL;
 
@@ -1673,10 +1672,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
                 this->_expectToken("(");
 
                 if (!_ss.scanConstInt(align)) {
-                    throw MetadataParseError {
-                        "Expecting valid constant unsigned integer.",
-                        this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting valid constant unsigned integer.",
+                                            this->_curLoc());
                 }
 
                 if (!isPowOfTwo(align)) {
@@ -1684,13 +1681,14 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
 
                     ss << "Invalid minimum alignment for `struct` block " <<
                           "(must be a power of two): " << align << ".";
-                    throw MetadataParseError {ss.str(), this->_curLoc()};
+                    throwMetadataParseError(ss.str(), this->_curLoc());
                 }
 
                 this->_expectToken(")");
             }
 
-            pseudoDt = std::make_unique<PseudoStructType>(align, std::move(members), beginLoc);
+            pseudoDt = std::make_unique<PseudoStructType>(align, std::move(pseudoMemberTypes),
+                                                          beginLoc);
         }
     }
 
@@ -1745,10 +1743,9 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
                 assert(pseudoDataLoc);
 
                 if (pseudoDataLoc->isEnv()) {
-                    throw MetadataParseError {
-                        "Selector location of variant type cannot start with `env.`.",
-                        this->_curLoc()
-                    };
+                    throwMetadataParseError("Selector location of variant type "
+                                            "cannot start with `env.`.",
+                                            this->_curLoc());
                 }
 
                 this->_expectToken(">");
@@ -1775,24 +1772,21 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
                 try {
                     success = this->_tryParseNamedDtOrDtAlias(opts);
                 } catch (MetadataParseError& exc) {
-                    exc._appendErrorMsg("While parsing body of `variant` block:", loc);
+                    appendMsgToMetadataParseError(exc, "While parsing body of `variant` block:",
+                                                  loc);
                     throw;
                 }
 
                 if (!success) {
-                    throw MetadataParseError {
-                        "Expecting option or data type alias.", this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting option or data type alias.",
+                                            this->_curLoc());
                 }
             }
 
             ssRej.accept();
 
             if (opts.empty()) {
-                throw MetadataParseError {
-                    "Variant type must contain at least one option.",
-                    beginLoc
-                };
+                throwMetadataParseError("Variant type must contain at least one option.", beginLoc);
             }
 
             // check for duplicate option
@@ -1818,9 +1812,7 @@ bool TsdlParser<CharIt>::_tryParseEnvBlock()
     }
 
     if (_traceEnv) {
-        throw MetadataParseError {
-            "Duplicate `env` block.", this->_curLoc()
-        };
+        throwMetadataParseError("Duplicate `env` block.", this->_curLoc());
     }
 
     // parse `{`
@@ -1857,7 +1849,7 @@ bool TsdlParser<CharIt>::_tryParseEnvBlock()
 
             ss << "Environment entry `" << attr.name <<
                   "`: expecting constant integer or literal string.";
-            throw MetadataParseError {ss.str(), attr.valTextLoc()};
+            throwMetadataParseError(ss.str(), attr.valTextLoc());
         }
 
         TraceEnvironment::Entry entry;
@@ -1871,7 +1863,7 @@ bool TsdlParser<CharIt>::_tryParseEnvBlock()
                 ss << "Environment entry `" << attr.name <<
                       "`: value " << attr.uintVal << " is too large " <<
                       "(expecting a 64-bit signed integer).";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             entry = static_cast<long long>(attr.uintVal);
@@ -1974,7 +1966,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
                 std::ostringstream ss;
 
                 ss << "Attribute `name`: expecting identifier or literal string.";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             name = attr.strVal;
@@ -1990,7 +1982,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             uuid = tmpUuid;
@@ -2002,7 +1994,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
 
                 ss << "Invalid `freq` attribute (must be greater than 0): " <<
                       attr.uintVal << ".";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             freq = static_cast<unsigned long long>(attr.uintVal);
@@ -2011,10 +2003,8 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
             precision = attr.uintVal;
         } else if (attr.name == "offset_s") {
             if (attr.kind != TsdlAttr::Kind::SINT && attr.kind != TsdlAttr::Kind::UINT) {
-                throw MetadataParseError {
-                    "Attribute `offset_s`: expecting constant signed integer.",
-                    attr.valTextLoc()
-                };
+                throwMetadataParseError("Attribute `offset_s`: expecting constant signed integer.",
+                                        attr.valTextLoc());
             }
 
             if (attr.kind == TsdlAttr::Kind::UINT) {
@@ -2024,7 +2014,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
                     std::ostringstream ss;
 
                     ss << "Attribute `offset_s`: value is too large: " << attr.uintVal << ".";
-                    throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                    throwMetadataParseError(ss.str(), attr.valTextLoc());
                 }
 
                 offsetSecs = static_cast<long long>(attr.uintVal);
@@ -2061,7 +2051,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
         std::ostringstream ss;
 
         ss << "Duplicate `clock` block named `" << name << "`.";
-        throw MetadataParseError {ss.str(), beginLoc};
+        throwMetadataParseError(ss.str(), beginLoc);
     }
 
     // adjust offset (make sure `offsetCycles` is less than `freq`)
@@ -2095,10 +2085,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
     }
 
     if (_pseudoTraceType) {
-        throw MetadataParseError {
-            "Duplicate `trace` block.",
-            this->_curLoc()
-        };
+        throwMetadataParseError("Duplicate `trace` block.", this->_curLoc());
     }
 
     // parse `{`
@@ -2122,10 +2109,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
 
         if (pseudoDt) {
             if (pseudoPktHeaderType) {
-                throw MetadataParseError {
-                    "Duplicate `packet.header` scope.",
-                    this->_curLoc()
-                };
+                throwMetadataParseError("Duplicate `packet.header` scope.", this->_curLoc());
             }
 
             pseudoPktHeaderType = std::move(pseudoDt);
@@ -2164,7 +2148,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
                     ss << "Invalid `major` attribute: " <<
                           "unsupported major version (expecting 1): " <<
                           attr.uintVal << ".";
-                    throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                    throwMetadataParseError(ss.str(), attr.valTextLoc());
                 }
 
                 majorVersion = attr.uintVal;
@@ -2175,7 +2159,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
                     ss << "Invalid `minor` attribute: " <<
                           "unsupported minor version (expecting 8): " <<
                           attr.uintVal << ".";
-                    throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                    throwMetadataParseError(ss.str(), attr.valTextLoc());
                 }
 
                 minorVersion = attr.uintVal;
@@ -2184,10 +2168,8 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
             nativeBo = attr.bo();
 
             if (!nativeBo) {
-                throw MetadataParseError {
-                    "Invalid `byte_order` attribute: cannot be `native` here.",
-                    attr.valTextLoc()
-                };
+                throwMetadataParseError("Invalid `byte_order` attribute: cannot be `native` here.",
+                                        attr.valTextLoc());
             }
         } else if (attr.name == "uuid") {
             attr.checkKind(TsdlAttr::Kind::STR);
@@ -2196,7 +2178,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             uuid = TsdlParser::_uuidFromStr(attr.strVal);
@@ -2205,7 +2187,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
         } else {
             attr.throwUnknown();
@@ -2290,7 +2272,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
         if (pseudoDt) {
             if (pseudoPktCtxType) {
-                throw MetadataParseError {"Duplicate `packet.context` scope.", this->_curLoc()};
+                throwMetadataParseError("Duplicate `packet.context` scope.", this->_curLoc());
             }
 
             pseudoPktCtxType = std::move(pseudoDt);
@@ -2303,7 +2285,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
         if (pseudoDt) {
             if (pseudoErHeaderType) {
-                throw MetadataParseError {"Duplicate `event.header` scope.", this->_curLoc()};
+                throwMetadataParseError("Duplicate `event.header` scope.", this->_curLoc());
             }
 
             pseudoErHeaderType = std::move(pseudoDt);
@@ -2316,10 +2298,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
 
         if (pseudoDt) {
             if (pseudoErCommonCtxType) {
-                throw MetadataParseError {
-                    "Duplicate `event.context` scope.",
-                    this->_curLoc()
-                };
+                throwMetadataParseError("Duplicate `event.context` scope.", this->_curLoc());
             }
 
             pseudoErCommonCtxType = std::move(pseudoDt);
@@ -2363,7 +2342,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
         std::ostringstream ss;
 
         ss << "Duplicate `stream` block with ID " << id << ".";
-        throw MetadataParseError {ss.str(), beginLoc};
+        throwMetadataParseError(ss.str(), beginLoc);
     }
 
     // create and initialize pseudo data stream type
@@ -2411,7 +2390,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
 
         if (pseudoDt) {
             if (pseudoSpecCtxType) {
-                throw MetadataParseError {"Duplicate `event.context` scope.", this->_curLoc()};
+                throwMetadataParseError("Duplicate `event.context` scope.", this->_curLoc());
             }
 
             pseudoSpecCtxType = std::move(pseudoDt);
@@ -2423,7 +2402,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
 
         if (pseudoDt) {
             if (pseudoPayloadType) {
-                throw MetadataParseError {"Duplicate `event.fields` scope.", this->_curLoc()};
+                throwMetadataParseError("Duplicate `event.fields` scope.", this->_curLoc());
             }
 
             pseudoPayloadType = std::move(pseudoDt);
@@ -2466,10 +2445,8 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
             dstId = attr.uintVal;
         } else if (attr.name == "loglevel") {
             if (attr.kind != TsdlAttr::Kind::SINT && attr.kind != TsdlAttr::Kind::UINT) {
-                throw MetadataParseError {
-                    "Attribute `loglevel`: expecting constant signed integer.",
-                    attr.valTextLoc()
-                };
+                throwMetadataParseError("Attribute `loglevel`: expecting constant signed integer.",
+                                        attr.valTextLoc());
             }
 
             if (attr.kind == TsdlAttr::Kind::UINT) {
@@ -2479,7 +2456,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
                     std::ostringstream ss;
 
                     ss << "Attribute `loglevel`: value is too large: " << attr.uintVal << ".";
-                    throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                    throwMetadataParseError(ss.str(), attr.valTextLoc());
                 }
 
                 logLevel = static_cast<LogLevel>(attr.uintVal);
@@ -2494,7 +2471,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
                 std::ostringstream ss;
 
                 ss << "Attribute `name`: expecting identifier or literal string.";
-                throw MetadataParseError {ss.str(), attr.valTextLoc()};
+                throwMetadataParseError(ss.str(), attr.valTextLoc());
             }
 
             name = attr.strVal;
@@ -2512,7 +2489,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
 
         ss << "Duplicate `event` block with ID " << id <<
               " and data stream type ID " << dstId << ".";
-        throw MetadataParseError {ss.str(), beginLoc};
+        throwMetadataParseError(ss.str(), beginLoc);
     }
 
     // build event record type object
@@ -2553,7 +2530,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
                     std::ostringstream ss;
 
                     ss << "Expecting `" << *secondName << "`.";
-                    throw MetadataParseError {ss.str(), this->_curLoc()};
+                    throwMetadataParseError(ss.str(), this->_curLoc());
                 }
 
                 return nullptr;
@@ -2576,11 +2553,11 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
         }
 
         if (!pseudoDt) {
-            throw MetadataParseError {"Expecting data type or data type alias name.", dtLoc};
+            throwMetadataParseError("Expecting data type or data type alias name.", dtLoc);
         }
 
         if (pseudoDt->kind() != PseudoDt::Kind::STRUCT) {
-            throw MetadataParseError {"Expecting a structure type.", dtLoc};
+            throwMetadataParseError("Expecting a structure type.", dtLoc);
         }
 
         // parse `;`
@@ -2599,7 +2576,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
         }
 
         line += "` scope:";
-        exc._appendErrorMsg(line, beginLoc);
+        appendMsgToMetadataParseError(exc, line, beginLoc);
         throw;
     }
 }
@@ -2625,7 +2602,7 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
     }
 
     if (!nameIsFound) {
-        throw MetadataParseError {"Expecting attribute name.", *attr.nameLoc};
+        throwMetadataParseError("Expecting attribute name.", *attr.nameLoc);
     }
 
     // parse `=`
@@ -2647,10 +2624,7 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
 
         // parse name of clock type
         if (!_ss.scanIdent(begin, end)) {
-            throw MetadataParseError {
-                "Expecting identifier (clock type name).",
-                this->_curLoc()
-            };
+            throwMetadataParseError("Expecting identifier (clock type name).", this->_curLoc());
         }
 
         attr.strVal.assign(begin, end);
@@ -2684,9 +2658,8 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
         attr.kind = TsdlAttr::Kind::SINT;
         assert(attr.intVal != 0 && attr.intVal != 1);
     } else {
-        throw MetadataParseError {
-            "Expecting valid constant integer, literal string, or identifier.", *attr.valLoc
-        };
+        throwMetadataParseError("Expecting valid constant integer, literal string, or identifier.",
+                                *attr.valLoc);
     }
 
     // parse `;`
@@ -2760,10 +2733,8 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
                     auto pseudoSelLoc = this->_expectDataLoc();
 
                     if (pseudoSelLoc.isEnv()) {
-                        throw MetadataParseError {
-                            "Selector location of variant type cannot start with `env.`.",
-                            selLoc
-                        };
+                        throwMetadataParseError("Selector location of variant type cannot start with `env.`.",
+                                                selLoc);
                     }
 
                     this->_expectToken(">");
@@ -2832,7 +2803,7 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
                 std::ostringstream ss;
 
                 ss << "Invalid keyword `" << part << "` in type alias name.";
-                throw MetadataParseError {ss.str(), loc};
+                throwMetadataParseError(ss.str(), loc);
             } else {
                 return false;
             }
@@ -2861,7 +2832,7 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
 
     if (parts.empty()) {
         if (expect) {
-            throw MetadataParseError {"Expecting data type alias name.", this->_curLoc()};
+            throwMetadataParseError("Expecting data type alias name.", this->_curLoc());
         } else {
             return false;
         }
@@ -2903,7 +2874,7 @@ PseudoDataLoc TsdlParser<CharIt>::_expectDataLoc()
     }
 
     if (allPathElems.empty()) {
-        throw MetadataParseError {"Empty data location.", beginLoc};
+        throwMetadataParseError("Empty data location.", beginLoc);
     }
 
     return this->_pseudoDataLocFromAllPathElems(allPathElems, beginLoc);
@@ -2960,7 +2931,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                 std::ostringstream ss;
 
                 ss << "Length of array type cannot be negative: " << value << ".";
-                throw MetadataParseError {ss.str(), subscriptLoc};
+                throwMetadataParseError(ss.str(), subscriptLoc);
             }
 
             lenDescrs.push_back({true, boost::none, static_cast<Size>(value), subscriptLoc});
@@ -2970,8 +2941,9 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
             try {
                 pseudoDataLoc = this->_expectDataLoc();
             } catch (MetadataParseError& exc) {
-                exc._appendErrorMsg("Expecting valid constant integer (static array type) or valid data location (dynamic array type):",
-                                    subscriptLoc);
+                appendMsgToMetadataParseError(exc,
+                                              "Expecting valid constant integer (static array type) or valid data location (dynamic array type):",
+                                              subscriptLoc);
                 throw;
             }
 
@@ -2980,11 +2952,9 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
             if (pseudoDataLoc->isEnv()) {
                 // only the `env.KEY` format is accepted
                 if (pseudoDataLoc->pathElems().size() != 1) {
-                    throw MetadataParseError {
-                        "Invalid environment location: expecting `env.KEY`, "
-                        "where KEY is the key of an existing environment entry.",
-                        subscriptLoc
-                    };
+                    throwMetadataParseError("Invalid environment location: expecting `env.KEY`, "
+                                            "where KEY is the key of an existing environment entry.",
+                                            subscriptLoc);
                 }
 
                 const auto& envKey = pseudoDataLoc->pathElems()[0];
@@ -2995,7 +2965,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
 
                     ss << "Static array type refers to the environment entry `" <<
                           envKey << "`, but no environment exists at this point.";
-                    throw MetadataParseError {ss.str(), subscriptLoc};
+                    throwMetadataParseError(ss.str(), subscriptLoc);
                 }
 
                 const auto entry = (*_traceEnv)[envKey];
@@ -3004,7 +2974,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                     std::ostringstream ss;
 
                     ss << "Cannot find environment entry `" << envKey << "`.";
-                    throw MetadataParseError {ss.str(), subscriptLoc};
+                    throwMetadataParseError(ss.str(), subscriptLoc);
                 }
 
                 if (const auto entryVal = boost::get<long long>(entry)) {
@@ -3012,7 +2982,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
                         std::ostringstream ss;
 
                         ss << "Static array type cannot have a negative size: " << *entryVal << ".";
-                        throw MetadataParseError {ss.str(), subscriptLoc};
+                        throwMetadataParseError(ss.str(), subscriptLoc);
                     }
 
                     lenDescrs.push_back({true, boost::none, static_cast<Size>(*entryVal),
@@ -3022,7 +2992,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
 
                     ss << "Environment entry `" << envKey <<
                           "` isn't a valid static array type size.";
-                    throw MetadataParseError {ss.str(), subscriptLoc};
+                    throwMetadataParseError(ss.str(), subscriptLoc);
                 }
             } else {
                 lenDescrs.push_back({false, *pseudoDataLoc, 0, subscriptLoc});
@@ -3060,9 +3030,10 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
 }
 
 template <typename CharIt>
-template <typename EnumTypeT>
+template <typename EnumTypeT, typename CreatePseudoDtFuncT>
 PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, const bool addDtAlias,
-                                                      std::string&& potDtAliasName)
+                                                      std::string&& potDtAliasName,
+                                                      CreatePseudoDtFuncT&& createPseudoDtFunc)
 {
     // parse mappings (we're after `{`)
     std::unordered_map<std::string, std::set<typename EnumTypeT::RangeSet::Range>> pseudoMappings;
@@ -3081,10 +3052,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
         } else if (_ss.scanLitStr(begin, end)) {
             name = TsdlParser::_escapeLiteralStr(begin, end, *loc);
         } else {
-            throw MetadataParseError {
-                "Expecting mapping name (identifier or literal string).",
-                *loc
-            };
+            throwMetadataParseError("Expecting mapping name (identifier or literal string).", *loc);
         }
 
         auto lower = curVal;
@@ -3098,15 +3066,11 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
 
             if (!_ss.scanConstInt(value)) {
                 if (std::is_signed<decltype(value)>::value) {
-                    throw MetadataParseError {
-                        "Expecting valid constant signed integer.",
-                        this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting valid constant signed integer.",
+                                            this->_curLoc());
                 } else {
-                    throw MetadataParseError {
-                        "Expecting valid constant unsigned integer.",
-                        this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting valid constant unsigned integer.",
+                                            this->_curLoc());
                 }
             }
 
@@ -3116,9 +3080,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
 
             if (_ss.scanToken("...")) {
                 if (!_ss.scanConstInt(value)) {
-                    throw MetadataParseError {
-                        "Expecting valid constant integer.", this->_curLoc()
-                    };
+                    throwMetadataParseError("Expecting valid constant integer.", this->_curLoc());
                 }
 
                 upper = value;
@@ -3141,25 +3103,25 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
 
             ss << "Lower value of range (" << lower << ") is greater than upper value (" <<
                   upper << ").";
-            throw MetadataParseError {ss.str(), *loc};
+            throwMetadataParseError(ss.str(), *loc);
         }
 
         pseudoMappings[name].insert(typename EnumTypeT::RangeSet::Range {lower, upper});
 
         const bool gotComma = _ss.scanToken(",");
 
-        // end of members?
+        // end of member types?
         if (_ss.scanToken("}")) {
             break;
         }
 
         if (!gotComma) {
-            throw MetadataParseError {"Expecting `,` or `}`.", this->_curLoc()};
+            throwMetadataParseError("Expecting `,` or `}`.", this->_curLoc());
         }
     }
 
     if (pseudoMappings.empty()) {
-        throw MetadataParseError {"Expecting at least one mapping.", pseudoDt->loc()};
+        throwMetadataParseError("Expecting at least one mapping.", pseudoDt->loc());
     }
 
     typename EnumTypeT::Mappings mappings;
@@ -3170,20 +3132,27 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseEnumType(PseudoDt::UP pseudoDt, con
         };
     }
 
-    // create enumeration type
-    const auto& pseudoIntTypeWrapper = static_cast<PseudoIntTypeWrapper&>(*pseudoDt);
-
     // validate mappings
-    this->_validateEnumTypeMappings<EnumTypeT>(pseudoIntTypeWrapper, mappings);
+    Size len;
 
-    const auto& intType = pseudoIntTypeWrapper.intType();
-    auto enumType = std::make_unique<EnumTypeT>(intType.alignment(), intType.length(),
-                                                intType.byteOrder(), std::move(mappings),
-                                                intType.preferredDisplayBase());
-    auto pseudoEnumType = std::make_unique<PseudoIntTypeWrapper>(std::move(enumType),
-                                                                 pseudoIntTypeWrapper.hasEncoding(),
-                                                                 std::move(pseudoIntTypeWrapper.mappedClkTypeName()),
-                                                                 pseudoIntTypeWrapper.loc());
+    if (pseudoDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
+        const auto& pseudoDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoDt);
+
+        assert(pseudoDtWrapper.dt().isSignedIntegerType());
+        len = pseudoDtWrapper.dt().asIntegerType().length();
+    } else {
+        assert(pseudoDt->kind() == PseudoDt::Kind::UINT);
+
+        const auto& pseudoUIntType = static_cast<const PseudoUIntType&>(*pseudoDt);
+
+        len = pseudoUIntType.len();
+    }
+
+    this->_validateEnumTypeMappings<EnumTypeT>(len, pseudoDt->loc(), mappings);
+
+    // create pseudo enumeration type
+    auto pseudoEnumType = std::forward<CreatePseudoDtFuncT>(createPseudoDtFunc)(*pseudoDt,
+                                                                                mappings);
 
     // add type alias if this enumeration type has a name
     if (addDtAlias && !potDtAliasName.empty()) {
@@ -3292,7 +3261,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
                  * location at this point.
                  */
                 if (TsdlParser::_isPseudoVarTypeWithoutSelLocRec(*effectivePseudoDt)) {
-                    throw MetadataParseError {"Variant type needs a selector location here.", dtLoc};
+                    throwMetadataParseError("Variant type needs a selector location here.", dtLoc);
                 }
 
                 auto pseudoNamedDt = std::make_unique<PseudoNamedDt>(ident,
@@ -3333,7 +3302,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
                  * location at this point.
                  */
                 if (TsdlParser::_isPseudoVarTypeWithoutSelLocRec(*effectivePseudoDt)) {
-                    throw MetadataParseError {"Variant type needs a selector here.", this->_curLoc()};
+                    throwMetadataParseError("Variant type needs a selector here.", this->_curLoc());
                 }
 
                 auto pseudoNamedDt = std::make_unique<PseudoNamedDt>(ident,
@@ -3351,10 +3320,8 @@ bool TsdlParser<CharIt>::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDt
                  * at this point.
                  */
                 _ss.skipCommentsAndWhitespaces();
-                throw MetadataParseError {
-                    "Expecting identifier (member/option name).",
-                    this->_curLoc()
-                };
+                throwMetadataParseError("Expecting identifier (member type/option name).",
+                                        this->_curLoc());
             }
         }
     }

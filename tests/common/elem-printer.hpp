@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2018-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -92,16 +92,16 @@ public:
         *_os << "TTU:" << elem.uuid() << '\n';
     }
 
-    void visit(const yactfr::ClockValueElement& elem) override
+    void visit(const yactfr::DefaultClockValueElement& elem) override
     {
         this->_indent();
-        *_os << "CV:" << *elem.clockType().name() << ":" << elem.cycles() << '\n';
+        *_os << "DCV:" << elem.cycles() << '\n';
     }
 
-    void visit(const yactfr::PacketEndClockValueElement& elem) override
+    void visit(const yactfr::PacketEndDefaultClockValueElement& elem) override
     {
         this->_indent();
-        *_os << "PECV:" << *elem.clockType().name() << ":" << elem.cycles() << '\n';
+        *_os << "PEDCV:" << elem.cycles() << '\n';
     }
 
     void visit(const yactfr::DataStreamTypeElement& elem) override

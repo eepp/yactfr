@@ -11,9 +11,9 @@
 namespace yactfr {
 
 class BeginningElement;
-class ClockValueElement;
 class DataStreamIdElement;
 class DataStreamTypeElement;
+class DefaultClockValueElement;
 class DynamicArrayBeginningElement;
 class DynamicTextArrayBeginningElement;
 class EndElement;
@@ -24,7 +24,7 @@ class ExpectedPacketTotalLengthElement;
 class FloatingPointNumberElement;
 class PacketBeginningElement;
 class PacketContentBeginningElement;
-class PacketEndClockValueElement;
+class PacketEndDefaultClockValueElement;
 class PacketMagicNumberElement;
 class PacketOriginIndexElement;
 class ScopeBeginningElement;
@@ -56,9 +56,9 @@ class ElementVisitor
 public:
     virtual ~ElementVisitor();
     virtual void visit(const BeginningElement& elem);
-    virtual void visit(const ClockValueElement& elem);
     virtual void visit(const DataStreamIdElement& elem);
     virtual void visit(const DataStreamTypeElement& elem);
+    virtual void visit(const DefaultClockValueElement& elem);
     virtual void visit(const DynamicArrayBeginningElement& elem);
     virtual void visit(const DynamicTextArrayBeginningElement& elem);
     virtual void visit(const EndElement& elem);
@@ -69,7 +69,7 @@ public:
     virtual void visit(const FloatingPointNumberElement& elem);
     virtual void visit(const PacketBeginningElement& elem);
     virtual void visit(const PacketContentBeginningElement& elem);
-    virtual void visit(const PacketEndClockValueElement& elem);
+    virtual void visit(const PacketEndDefaultClockValueElement& elem);
     virtual void visit(const PacketMagicNumberElement& elem);
     virtual void visit(const PacketOriginIndexElement& elem);
     virtual void visit(const ScopeBeginningElement& elem);

@@ -5,7 +5,7 @@ trace {
   minor = 8;
   byte_order = le;
   packet.header := struct {
-    string magic;
+    integer {size = 8;} magic;
   };
 };
 

@@ -186,7 +186,7 @@ descriptions below easier to read and to allow recursion.
 (
   (
     (UnsignedIntegerElement | UnsignedEnumerationElement)
-    [ClockValueElement]
+    [DefaultClockValueElement]
   ) |
   SignedIntegerElement |
   SignedEnumerationElement |
@@ -231,12 +231,12 @@ descriptions below easier to read and to allow recursion.
     (
       (
         (UnsignedIntegerElement | UnsignedEnumerationElement)
-        [ClockValueElement]
+        [DefaultClockValueElement]
         (PacketMagicNumberElement | DataStreamIdElement)
       ) |
       (
         StaticArrayBeginningElement
-        (UnsignedIntegerElement [ClockValueElement]){16}
+        (UnsignedIntegerElement [DefaultClockValueElement]){16}
         TraceTypeUuidElement
         EndElement
       ) |
@@ -252,11 +252,11 @@ descriptions below easier to read and to allow recursion.
     (
       (
         (UnsignedIntegerElement | UnsignedEnumerationElement)
-        PacketEndClockValueElement
+        PacketEndDefaultClockValueElement
       ) |
       (
         (UnsignedIntegerElement | UnsignedEnumerationElement)
-        [ClockValueElement]
+        [DefaultClockValueElement]
         (
           PacketOriginIndexElement |
           ExpectedPacketTotalLengthElement |

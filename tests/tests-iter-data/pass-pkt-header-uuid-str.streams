@@ -1,0 +1,26 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    packet.header := struct {
+        string uuid;
+    };
+};
+
+stream {
+};
+----
+"salut" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         STR:uuid {
+     0           SS:6:salut
+    48         }
+    48       }
+    48     }
+    48     DST:0
+    48   }
+    48 }

@@ -1,0 +1,33 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    event.header := struct {
+        string id;
+    };
+};
+
+event {
+    name = sup;
+};
+----
+"meow" 00
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     ER {
+     0       SC:2 {
+     0         ST {
+     0           STR:id {
+     0             SS:5:meow
+    40           }
+    40         }
+    40       }
+    40       ERT:0:sup
+    40     }
+    40   }
+    40 }

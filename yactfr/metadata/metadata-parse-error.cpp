@@ -53,4 +53,18 @@ void MetadataParseError::_buildFullError()
     _fullError = ss.str();
 }
 
+namespace internal {
+
+void throwMetadataParseError(std::string msg, TextLocation loc)
+{
+    throw MetadataParseError {std::move(msg), std::move(loc)};
+}
+
+void appendMsgToMetadataParseError(MetadataParseError& exc, std::string msg, TextLocation loc)
+{
+    exc._appendErrorMsg(std::move(msg), std::move(loc));
+}
+
+}
+
 } // namespace yactfr

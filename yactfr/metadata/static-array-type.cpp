@@ -10,29 +10,32 @@
 namespace yactfr {
 
 StaticArrayType::StaticArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                 const Size len) :
-    StaticArrayType {_KIND_STATIC_ARRAY, minAlign, std::move(elemType), len}
+                                 const Size len, const bool hasTraceTypeUuidRole) :
+    StaticArrayType {_KIND_STATIC_ARRAY, minAlign, std::move(elemType), len, hasTraceTypeUuidRole}
 {
 }
 
 StaticArrayType::StaticArrayType(const int kind, const unsigned int minAlign,
-                                 DataType::UP elemType, const Size len) :
+                                 DataType::UP elemType, const Size len,
+                                 const bool hasTraceTypeUuidRole) :
     ArrayType {_KIND_STATIC_ARRAY | kind, minAlign, std::move(elemType)},
-    _len {len}
+    _len {len},
+    _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
 {
 }
 
 DataType::UP StaticArrayType::_clone() const
 {
     return std::make_unique<StaticArrayType>(this->minimumAlignment(), this->elementType().clone(),
-                                             _len);
+                                             _len, _hasTraceTypeUuidRole);
 }
 
 bool StaticArrayType::_compare(const DataType& other) const noexcept
 {
     auto& otherStaticArrayType = static_cast<const StaticArrayType&>(other);
 
-    return ArrayType::_compare(other) && _len == otherStaticArrayType._len;
+    return ArrayType::_compare(other) && _len == otherStaticArrayType._len &&
+           otherStaticArrayType._hasTraceTypeUuidRole == _hasTraceTypeUuidRole;
 }
 
 } // namespace yactfr

@@ -15,7 +15,7 @@ namespace yactfr {
 StaticTextArrayType::StaticTextArrayType(const unsigned int minAlign, const Size len) :
     StaticArrayType {
         _KIND_STATIC_TEXT_ARRAY, minAlign,
-        std::make_unique<UnsignedIntegerType>(8, 8, ByteOrder::LITTLE), len
+        std::make_unique<UnsignedIntegerType>(8, 8, ByteOrder::LITTLE), len, false
     }
 {
 }

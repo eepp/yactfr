@@ -83,22 +83,20 @@ void PktProcBuilder::_buildPktProc()
      * 3. Insert `SetCurIdInstr`, `SetDstInstr`, `SetErtInstr`,
      *    `SetDsIdInstr`, `SetPktOriginIndexInstr`,
      *    `SetExpectedPktTotalLenInstr`,
-     *    `SetExpectedPktContentLenInstr`, and `SetPktMagicNumberInstr`
-     *    objects at the appropriate locations in the packet procedure.
+     *    `SetExpectedPktContentLenInstr`, `SetPktMagicNumberInstr`,
+     *    `UpdateDefClkValInstr`, and `SetPktEndDefClkValInstr` objects
+     *    at the appropriate locations in the packet procedure.
      *
-     * 4. Insert `UpdateClkValInstr` objects at appropriate locations.
-     *
-     * 5. Insert `SaveValInstr` objects where needed to accomodate
+     * 4. Insert `SaveValInstr` objects where needed to accomodate
      *    subsequent "read dynamic array" and "begin read variant"
      *    instructions.
      *
-     * 6. Insert "end procedure" instructions at the end of each
+     * 5. Insert "end procedure" instructions at the end of each
      *    top-level procedure.
      */
     this->_buildBasePktProc();
     this->_subUuidInstr();
     this->_insertSpecialInstrs();
-    this->_insertUpdateClkValInstrs();
     this->_setSavedValPoss();
     this->_insertEndInstrs();
 }
@@ -126,57 +124,43 @@ static Proc::SharedIt firstBeginReadScopeInstr(Proc& proc, const Scope scope) no
 }
 
 /*
- * This procedure instruction visitor takes a procedure `proc`, finds
- * all the contained "read data" instructions of which the display name
- * is `dispName`, and calls `callback` with its location.
- *
- * The callback function also receives the level of the instruction,
- * where the instructions found directly in `proc` are at level 0.
+ * This procedure instruction visitor takes a procedure, finds all the
+ * contained "read data" instructions with a given role, and calls a
+ * function with their locations.
  *
  * The iterator allows the callback to insert instructions after it.
  */
-class MemberTypeFinderInstrVisitor :
+class InstrFinder :
     public CallerInstrVisitor
 {
 public:
-    using Func = std::function<void (InstrLoc&, Index)>;
+    using Func = std::function<void (InstrLoc&)>;
 
 public:
-    explicit MemberTypeFinderInstrVisitor(Proc& proc, std::string dispName, Func func) :
-        _dispName {std::move(dispName)},
+    explicit InstrFinder(Proc& proc, const UnsignedIntegerTypeRole role, Func func) :
+        _uIntTypeRole {role},
         _func {std::move(func)}
     {
         this->_visitProc(proc);
     }
 
-    void visit(ReadSIntInstr& instr) override
+    explicit InstrFinder(Proc& proc, Func func) :
+        _findWithTraceTypeUuidRole {true},
+        _func {std::move(func)}
     {
-        this->_visit(instr);
+        this->_visitProc(proc);
     }
 
     void visit(ReadUIntInstr& instr) override
     {
-        this->_visit(instr);
-    }
-
-    void visit(ReadFloatInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(ReadSEnumInstr& instr) override
-    {
-        this->_visit(instr);
+        if (_uIntTypeRole && instr.uIntType().hasRole(*_uIntTypeRole)) {
+            _func(_curInstrLoc);
+        }
     }
 
     void visit(ReadUEnumInstr& instr) override
     {
-        this->_visit(instr);
-    }
-
-    void visit(ReadStrInstr& instr) override
-    {
-        this->_visit(instr);
+        this->visit(static_cast<ReadUIntInstr&>(instr));
     }
 
     void visit(BeginReadStructInstr& instr) override
@@ -186,6 +170,10 @@ public:
 
     void visit(BeginReadStaticArrayInstr& instr) override
     {
+        if (_findWithTraceTypeUuidRole && instr.staticArrayType().hasTraceTypeUuidRole()) {
+            _func(_curInstrLoc);
+        }
+
         this->_visit(instr);
     }
 
@@ -196,7 +184,7 @@ public:
 
     void visit(BeginReadStaticUuidArrayInstr& instr) override
     {
-        this->_visit(instr);
+        this->visit(static_cast<BeginReadStaticArrayInstr&>(instr));
     }
 
     void visit(BeginReadDynArrayInstr& instr) override
@@ -235,19 +223,12 @@ private:
 
     void _visit(BeginReadCompoundInstr& instr)
     {
-        this->_visit(static_cast<ReadDataInstr&>(instr));
         this->_visitProc(instr.proc());
     }
 
-    void _visit(ReadDataInstr& instr)
-    {
-        if (instr.memberType() && instr.memberType()->displayName() == _dispName) {
-            _func(_curInstrLoc, _curLevel - 1);
-        }
-    }
-
 private:
-    const std::string _dispName;
+    const boost::optional<UnsignedIntegerTypeRole> _uIntTypeRole;
+    const bool _findWithTraceTypeUuidRole = false;
     const Func _func;
 };
 
@@ -263,23 +244,15 @@ void PktProcBuilder::_subUuidInstr()
     auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
     Proc::SharedIt readArrayInstrIt = readScopeInstr.proc().end();
 
-    MemberTypeFinderInstrVisitor {
-        readScopeInstr.proc(), "uuid",
-        [&readArrayInstrIt](InstrLoc& instrLoc, const Index level) {
-            if (level != 1) {
-                return;
-            }
-
-            /*
-             * Replace after this visitor finishes because it recurses
-             * into this compound instruction afterwards so we cannot
-             * change it in its back, effectively deleting the old
-             * shared pointer and making a dangling pointer within the
-             * visitor.
-             */
-            readArrayInstrIt = instrLoc.it;
-        }
-    };
+    InstrFinder {readScopeInstr.proc(), [&readArrayInstrIt](InstrLoc& instrLoc) {
+        /*
+         * Replace after this visitor finishes because it recurses into
+         * this compound instruction afterwards so we cannot change it
+         * in its back, effectively deleting the old shared pointer and
+         * making a dangling pointer within the visitor.
+         */
+        readArrayInstrIt = instrLoc.it;
+    }};
 
     if (readArrayInstrIt != readScopeInstr.proc().end()) {
         auto& instrReadArray = static_cast<ReadDataInstr&>(**readArrayInstrIt);
@@ -312,33 +285,25 @@ void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
     if (readScopeInstrIt != _pktProc->preambleProc().end()) {
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "magic",
-            [](InstrLoc& instrLoc, const Index level) {
-                if (level != 1) {
-                    return;
-                }
-
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER,
+            [](InstrLoc& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetPktMagicNumberInstr>());
             }
         };
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "stream_id",
-            [&hasDstId](InstrLoc& instrLoc, const Index level) {
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID,
+            [&hasDstId](InstrLoc& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SetCurIdInstr>());
                 hasDstId = true;
             }
         };
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "stream_instance_id",
-            [](InstrLoc& instrLoc, const Index level) {
-                if (level != 1) {
-                    return;
-                }
-
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::DATA_STREAM_ID,
+            [](InstrLoc& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SetDsIdInstr>());
             }
         };
@@ -367,46 +332,60 @@ void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
 
 void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 {
-    auto hasId = false;
+    auto hasErtIdRole = false;
     auto readScopeInstrIt = firstBeginReadScopeInstr(dsPktProc.pktPreambleProc(),
                                                      Scope::PACKET_CONTEXT);
+
+    const auto insertUpdateDefClkValInstr = [&dsPktProc](auto& instrLoc) {
+        assert(dsPktProc.dst().defaultClockType());
+        assert((*instrLoc.it)->isReadUInt());
+
+        const auto& readBitArrayInstr = static_cast<const ReadBitArrayInstr&>(**instrLoc.it);
+
+        instrLoc.proc->insert(std::next(instrLoc.it),
+                              std::make_shared<UpdateDefClkValInstr>(readBitArrayInstr.len()));
+    };
 
     if (readScopeInstrIt != dsPktProc.pktPreambleProc().end()) {
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "packet_size",
-            [](auto& instrLoc, const Index level) {
-                if (level != 1) {
-                    return;
-                }
-
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH,
+            [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetExpectedPktTotalLenInstr>());
             }
         };
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "content_size",
-            [](auto& instrLoc, const Index level) {
-                if (level != 1) {
-                    return;
-                }
-
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH,
+            [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetExpectedPktContentLenInstr>());
             }
         };
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "packet_seq_num",
-            [](auto& instrLoc, const Index level) {
-                if (level != 1) {
-                    return;
-                }
-
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX,
+            [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetPktOriginIndexInstr>());
+            }
+        };
+
+        InstrFinder {
+            readScopeInstr.proc(),
+            UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
+            insertUpdateDefClkValInstr
+        };
+
+        InstrFinder {
+            readScopeInstr.proc(),
+            UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP,
+            [&dsPktProc](auto& instrLoc) {
+                assert(dsPktProc.dst().defaultClockType());
+                instrLoc.proc->insert(std::next(instrLoc.it),
+                                      std::make_shared<SetPktEndDefClkValInstr>());
             }
         };
     }
@@ -417,12 +396,18 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
     if (readScopeInstrIt != dsPktProc.erPreambleProc().end()) {
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
-        MemberTypeFinderInstrVisitor {
-            readScopeInstr.proc(), "id",
-            [&hasId](auto& instrLoc, const Index level) {
+        InstrFinder {
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID,
+            [&hasErtIdRole](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SetCurIdInstr>());
-                hasId = true;
+                hasErtIdRole = true;
             }
+        };
+
+        InstrFinder {
+            readScopeInstr.proc(),
+            UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
+            insertUpdateDefClkValInstr
         };
     }
 
@@ -434,7 +419,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         insertPoint = std::next(readScopeInstrIt);
     }
 
-    if (hasId) {
+    if (hasErtIdRole) {
         dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErtInstr>());
     } else {
         if (!dsPktProc.dst().eventRecordTypes().empty()) {
@@ -444,143 +429,6 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 
             dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErtInstr>(fixedId));
         }
-    }
-}
-
-/*
- * This procedure instruction visitor calls a callback function `func`
- * for each "read unsigned integer" instruction recursively found in
- * `proc` with an unsigned integer data type mapped to a clock type.
- *
- * The callback function receives the procedure instruction location and
- * the unsigned integer type (containing the mapped clock type pointer)
- * so that it can insert an "update clock value" instruction with the
- * appropriate clock type index and size.
- */
-class UpdateClkValInserterInstrVisitor :
-    public CallerInstrVisitor
-{
-public:
-    using Func = std::function<void (Scope scope, InstrLoc& instrLoc, const UnsignedIntegerType&)>;
-
-public:
-    explicit UpdateClkValInserterInstrVisitor(Proc& proc, Func func) :
-        _func {std::move(func)}
-    {
-        this->_visitProc(proc);
-    }
-
-    void visit(ReadUIntInstr& instr) override
-    {
-        if (instr.uIntType().mappedClockType()) {
-            _func(_curScope, _curInstrLoc, instr.uIntType());
-        }
-    }
-
-    void visit(ReadUEnumInstr& instr) override
-    {
-        this->visit(static_cast<ReadUIntInstr&>(instr));
-    }
-
-    void visit(BeginReadStructInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(BeginReadStaticArrayInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(BeginReadStaticTextArrayInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(BeginReadStaticUuidArrayInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(BeginReadDynArrayInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(BeginReadDynTextArrayInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(BeginReadVarUSelInstr& instr) override
-    {
-        this->_visitBeginReadVarInstr(instr);
-    }
-
-    void visit(BeginReadVarSSelInstr& instr) override
-    {
-        this->_visitBeginReadVarInstr(instr);
-    }
-
-    void visit(BeginReadScopeInstr& instr) override
-    {
-        this->_curScope = instr.scope();
-        this->_visitProc(instr.proc());
-    }
-
-private:
-    template <typename BeginReadVarInstrT>
-    void _visitBeginReadVarInstr(BeginReadVarInstrT& instr)
-    {
-        for (auto& opt : instr.opts()) {
-            this->_visitProc(opt.proc());
-        }
-    }
-
-    void _visit(BeginReadCompoundInstr& instr)
-    {
-        this->_visitProc(instr.proc());
-    }
-
-private:
-    const Func _func;
-    Scope _curScope;
-};
-
-void PktProcBuilder::_insertUpdateClkValInstrs()
-{
-    const auto insertUpdateClkValInstr = [this](const Scope scope, InstrLoc& instrLoc,
-                                                const UnsignedIntegerType& intType) {
-        const Index clkTypeIndex = _pktProc->clkTypeIndex(*intType.mappedClockType());
-        auto& instrRead = static_cast<const ReadDataInstr&>(**instrLoc.it);
-        Instr::SP instrToInsert;
-
-        if (scope == Scope::PACKET_CONTEXT && instrRead.memberType() &&
-                instrRead.memberType()->displayName() == "timestamp_end") {
-            instrToInsert = std::make_shared<SetPktEndClkValInstr>(*intType.mappedClockType(),
-                                                                   clkTypeIndex);
-        } else {
-            instrToInsert = std::make_shared<UpdateClkValInstr>(*intType.mappedClockType(),
-                                                                clkTypeIndex, intType.length());
-        }
-
-        instrLoc.proc->insert(std::next(instrLoc.it), std::move(instrToInsert));
-    };
-
-    UpdateClkValInserterInstrVisitor {_pktProc->preambleProc(), insertUpdateClkValInstr};
-
-    for (auto& dsPktProcPair : _pktProc->dsPktProcs()) {
-        UpdateClkValInserterInstrVisitor {
-            dsPktProcPair.second->pktPreambleProc(), insertUpdateClkValInstr
-        };
-
-        UpdateClkValInserterInstrVisitor {
-            dsPktProcPair.second->erPreambleProc(), insertUpdateClkValInstr
-        };
-
-        dsPktProcPair.second->forEachErProc([&insertUpdateClkValInstr](ErProc& erProc) {
-            UpdateClkValInserterInstrVisitor {erProc.proc(), insertUpdateClkValInstr};
-        });
     }
 }
 

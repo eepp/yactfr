@@ -35,7 +35,9 @@
 #include "../metadata-parse-error.hpp"
 #include "str-scanner.hpp"
 #include "pseudo-types.hpp"
+#include "pseudo-dt-utils.hpp"
 #include "data-loc-map.hpp"
+#include "tsdl-attr.hpp"
 
 namespace yactfr {
 
@@ -217,11 +219,6 @@ protected:
 
 protected:
     /*
-     * Applies various TSDL-specific metadata quirks.
-     */
-    void _applyQuirks();
-
-    /*
      * Creates the yactfr trace type from the pseudo trace type.
      */
     void _createTraceType();
@@ -331,7 +328,7 @@ protected:
      * Throws that the attribute named `name` is missing at location
      * `loc`.
      */
-    static void _throwMissingAttr(const std::string& name, const TextLocation& loc);
+    [[ noreturn ]] static void _throwMissingAttr(const std::string& name, const TextLocation& loc);
 
     /*
      * Checks for duplicate attributes in `attrs`, throwing an error if
@@ -346,13 +343,58 @@ protected:
     static boost::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
 
     template <typename EnumTypeT>
-    void _validateEnumTypeMapping(const PseudoIntTypeWrapper& pseudoIntType,
-                                  const std::string& name,
+    void _validateEnumTypeMapping(Size len, const TextLocation& loc, const std::string& name,
                                   const typename EnumTypeT::RangeSet& ranges) const;
 
     template <typename EnumTypeT>
-    void _validateEnumTypeMappings(const PseudoIntTypeWrapper& pseudoIntType,
+    void _validateEnumTypeMappings(Size len, const TextLocation& loc,
                                    const typename EnumTypeT::Mappings& mappings) const;
+
+private:
+    /*
+     * Sets an implicit mapped clock type name for specific pseudo
+     * unsigned integer types named `memberTypeName` within `basePseudoDt`.
+     */
+    void _setImplicitMappedClkTypeName(PseudoDt& basePseudoDt, const std::string& memberTypeName);
+
+    /*
+     * Sets an implicit mapped clock type name for specific pseudo
+     * unsigned integer types.
+     */
+    void _setImplicitMappedClkTypeName();
+
+    /*
+     * Add the role `role` to all pseudo unsigned integer types named
+     * `name` within `basePseudoDt`.
+     */
+    template <bool OnlyIfMappedClkTypeName = false>
+    void _addPseudoUIntTypeRoles(PseudoDt& basePseudoDt, const std::string& name,
+                                 UnsignedIntegerTypeRole role);
+
+    void _addPseudoUIntTypeDefClkTsRole(PseudoDt& basePseudoDt, const std::string& name);
+
+    /*
+     * Sets the "has trace type UUID role" property of all pseudo static
+     * array types named `name` within `basePseudoDt`.
+     */
+    void _setPseudoStaticArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
+                                                    const std::string& name);
+
+    /*
+     * Adds roles to pseudo data types.
+     */
+    void _addPseudoDtRoles();
+
+    /*
+     * Set default clock type of the pseudo data stream type
+     * `pseudoDst`.
+     */
+    void _setPseudoDstDefClkType(PseudoDst& pseudoDst);
+
+    /*
+     * Set default clock type of pseudo data stream types.
+     */
+    void _setPseudoDstDefClkType();
 
 protected:
     static const char * const _EMF_URI_ATTR_NAME;
@@ -377,13 +419,12 @@ protected:
 
 
 template <typename EnumTypeT>
-void TsdlParserBase::_validateEnumTypeMapping(const PseudoIntTypeWrapper& pseudoIntType,
+void TsdlParserBase::_validateEnumTypeMapping(const Size len, const TextLocation& loc,
                                               const std::string& name,
                                               const typename EnumTypeT::RangeSet& ranges) const
 {
     using Value = typename EnumTypeT::RangeSet::Value;
 
-    const auto len = pseudoIntType.intType().length();
     const auto lenUnitSuffix = (len == 1) ? "" : "s";
 
     for (auto& range : ranges) {
@@ -416,25 +457,41 @@ void TsdlParserBase::_validateEnumTypeMapping(const PseudoIntTypeWrapper& pseudo
                   ", " << range.upper() <<
                   "] don't fit the range [" << minLower << ", " << maxUpper << "] "
                   "(with a length of " << len << " bit" << lenUnitSuffix << ").";
-            throw MetadataParseError {ss.str(), pseudoIntType.loc()};
+            throwMetadataParseError(ss.str(), loc);
         }
     }
 }
 
 template <typename EnumTypeT>
-void TsdlParserBase::_validateEnumTypeMappings(const PseudoIntTypeWrapper& pseudoIntType,
+void TsdlParserBase::_validateEnumTypeMappings(const Size len, const TextLocation& loc,
                                                const typename EnumTypeT::Mappings& mappings) const
 {
-    assert(pseudoIntType.intType().length() > 0);
-    assert(pseudoIntType.intType().length() <= 64);
+    assert(len > 0);
+    assert(len <= 64);
 
     if (mappings.empty()) {
-        throw MetadataParseError {"Enumeration type has no mappings.", pseudoIntType.loc()};
+        throwMetadataParseError("Enumeration type has no mappings.", loc);
     }
 
     for (const auto& nameRangesPair : mappings) {
-        this->_validateEnumTypeMapping<EnumTypeT>(pseudoIntType, nameRangesPair.first,
+        this->_validateEnumTypeMapping<EnumTypeT>(len, loc, nameRangesPair.first,
                                                   nameRangesPair.second);
+    }
+}
+
+template <bool OnlyIfMappedClkTypeName>
+void TsdlParserBase::_addPseudoUIntTypeRoles(PseudoDt& basePseudoDt,
+                                             const std::string& memberTypeName,
+                                             const UnsignedIntegerTypeRole role)
+{
+    for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
+        auto& pseudoIntType = static_cast<PseudoUIntType&>(*pseudoDt);
+
+        if (OnlyIfMappedClkTypeName && !pseudoIntType.mappedClkTypeName()) {
+            continue;
+        }
+
+        pseudoIntType.addRole(role);
     }
 }
 

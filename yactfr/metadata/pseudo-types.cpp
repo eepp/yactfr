@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <iterator>
 #include <cassert>
 #include <tuple>
 #include <set>
@@ -13,6 +14,8 @@
 
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/internal/pseudo-types.hpp>
+#include <yactfr/metadata/internal/pseudo-type-visitor.hpp>
+#include <yactfr/metadata/internal/pseudo-dt-utils.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
 #include <yactfr/metadata/static-text-array-type.hpp>
 #include <yactfr/metadata/dyn-array-type.hpp>
@@ -49,22 +52,14 @@ bool PseudoDt::isEmpty() const
     return false;
 }
 
-PseudoDtSet PseudoDt::findPseudoDtsByName(const std::string& name) const
+bool PseudoDt::isInt() const noexcept
 {
-    PseudoDtSet pseudoDts;
-
-    this->_findPseudoDtsByName(name, pseudoDts);
-    return pseudoDts;
+    return false;
 }
 
-void PseudoDt::_findPseudoDtsByName(const PseudoDt& pseudoDt, const std::string& name,
-                                    PseudoDtSet& pseudoDts)
+bool PseudoDt::isUInt() const noexcept
 {
-    pseudoDt._findPseudoDtsByName(name, pseudoDts);
-}
-
-void PseudoDt::_findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const
-{
+    return false;
 }
 
 PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) :
@@ -73,35 +68,107 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) 
 {
 }
 
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEncoding, TextLocation loc) :
+    PseudoDt {std::move(loc)},
+    _dt {std::move(dt)},
+    _hasEncoding {hasEncoding}
+{
+}
+
 PseudoDt::UP PseudoScalarDtWrapper::clone() const
 {
     return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), this->loc());
 }
 
-PseudoIntTypeWrapper::PseudoIntTypeWrapper(DataType::UP dt, const bool hasEncoding,
-                                           boost::optional<std::string> mappedClkTypeName,
-                                           TextLocation loc) :
-    PseudoScalarDtWrapper {std::move(dt), std::move(loc)},
+void PseudoScalarDtWrapper::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoScalarDtWrapper::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+bool PseudoScalarDtWrapper::isInt() const noexcept
+{
+    return _dt->isIntegerType();
+}
+
+PseudoUIntType::PseudoUIntType(const unsigned int align, const unsigned int len,
+                               const ByteOrder bo, const DisplayBase prefDispBase,
+                               const bool hasEncoding,
+                               boost::optional<std::string> mappedClkTypeName, TextLocation loc) :
+    PseudoDt {std::move(loc)},
+    _align {align},
+    _len {len},
+    _bo {bo},
+    _prefDispBase {prefDispBase},
     _hasEncoding {hasEncoding},
     _mappedClkTypeName {std::move(mappedClkTypeName)}
 {
 }
 
-PseudoDt::UP PseudoIntTypeWrapper::clone() const
+PseudoDt::UP PseudoUIntType::clone() const
 {
-    return std::make_unique<PseudoIntTypeWrapper>(this->dt().clone(), _hasEncoding,
-                                                  _mappedClkTypeName, this->loc());
+    return std::make_unique<PseudoUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
+                                            _mappedClkTypeName, this->loc());
+}
+
+void PseudoUIntType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoUIntType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+bool PseudoUIntType::isInt() const noexcept
+{
+    return true;
+}
+
+bool PseudoUIntType::isUInt() const noexcept
+{
+    return true;
+}
+
+PseudoUEnumType::PseudoUEnumType(const unsigned int align, const unsigned int len,
+                                 const ByteOrder bo, const DisplayBase prefDispBase,
+                                 UnsignedEnumerationType::Mappings mappings,
+                                 const bool hasEncoding,
+                                 boost::optional<std::string> mappedClkTypeName, TextLocation loc) :
+    PseudoUIntType {
+        align, len, bo, prefDispBase, hasEncoding,
+        std::move(mappedClkTypeName), std::move(loc)
+    },
+    _mappings {std::move(mappings)}
+{
+}
+
+PseudoDt::UP PseudoUEnumType::clone() const
+{
+    return std::make_unique<PseudoUEnumType>(this->align(), this->len(), this->bo(),
+                                             this->prefDispBase(), _mappings, this->hasEncoding(),
+                                             this->mappedClkTypeName(), this->loc());
+}
+
+void PseudoUEnumType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoUEnumType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
 }
 
 PseudoArrayType::PseudoArrayType(PseudoDt::UP pseudoElemType, TextLocation loc) :
     PseudoDt {std::move(loc)},
     _pseudoElemType {std::move(pseudoElemType)}
 {
-}
-
-void PseudoArrayType::_findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const
-{
-    PseudoDt::_findPseudoDtsByName(*_pseudoElemType, name, pseudoDts);
 }
 
 PseudoStaticArrayType::PseudoStaticArrayType(const Size len, PseudoDt::UP pseudoElemType,
@@ -126,6 +193,16 @@ bool PseudoStaticArrayType::isEmpty() const
     return this->pseudoElemType().isEmpty();
 }
 
+void PseudoStaticArrayType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoStaticArrayType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
 PseudoDynArrayType::PseudoDynArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
                                        TextLocation loc) :
     PseudoArrayType {std::move(pseudoElemType), std::move(loc)},
@@ -142,6 +219,16 @@ PseudoDt::UP PseudoDynArrayType::clone() const
 bool PseudoDynArrayType::isEmpty() const
 {
     return this->pseudoElemType().isEmpty();
+}
+
+void PseudoDynArrayType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoDynArrayType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
 }
 
 PseudoNamedDt::PseudoNamedDt(std::string name, PseudoDt::UP pseudoDt) :
@@ -187,6 +274,16 @@ bool PseudoStructType::isEmpty() const
     return isEmpty;
 }
 
+void PseudoStructType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoStructType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
 const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const noexcept
 {
     const auto it = std::find_if(_pseudoMemberTypes.begin(), _pseudoMemberTypes.end(),
@@ -199,17 +296,6 @@ const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const
     }
 
     return it->get();
-}
-
-void PseudoStructType::_findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const
-{
-    for (auto& pseudoMemberType : _pseudoMemberTypes) {
-        if (pseudoMemberType->name() == name) {
-            pseudoDts.insert(&pseudoMemberType->pseudoDt());
-        }
-
-        PseudoDt::_findPseudoDtsByName(pseudoMemberType->pseudoDt(), name, pseudoDts);
-    }
 }
 
 PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc, PseudoNamedDts&& pseudoOpts,
@@ -245,77 +331,14 @@ bool PseudoVarType::isEmpty() const
     return isEmpty;
 }
 
-void PseudoVarType::_findPseudoDtsByName(const std::string& name, PseudoDtSet& pseudoDts) const
+void PseudoVarType::accept(PseudoDtVisitor& visitor)
 {
-    for (auto& pseudoOpt : _pseudoOpts) {
-        PseudoDt::_findPseudoDtsByName(pseudoOpt->pseudoDt(), name, pseudoDts);
-    }
+    visitor.visit(*this);
 }
 
-void PseudoValidatableType::_validateIsPseudoUIntType(const PseudoDt& pseudoDt,
-                                                      const std::string& name,
-                                                      const boost::optional<Size>& len) const
+void PseudoVarType::accept(ConstPseudoDtVisitor& visitor) const
 {
-    if (pseudoDt.kind() != PseudoDt::Kind::INT_TYPE_WRAPPER) {
-        std::ostringstream ss;
-
-        ss << "Expecting `" << name << "` to be an integer type.";
-        this->_throwParseError(ss.str(), pseudoDt.loc());
-    }
-
-    auto& pseudoIntType = static_cast<const PseudoIntTypeWrapper&>(pseudoDt);
-
-    if (!pseudoIntType.intType().isUnsignedIntegerType()) {
-        std::ostringstream ss;
-
-        ss << "Expecting `" << name << "` to be an unsigned integer type.";
-        this->_throwParseError(ss.str(), pseudoDt.loc());
-    }
-
-    if (len && pseudoIntType.intType().length() != *len) {
-        std::ostringstream ss;
-
-        ss << "Expecting `" << name << "` to be a " << *len << "-bit "
-              "unsigned integer type.";
-        this->_throwParseError(ss.str(), pseudoDt.loc());
-    }
-}
-
-void PseudoValidatableType::_validateIsPseudoUIntTypeMember(const PseudoDt& pseudoDt,
-                                                            const std::string& memberTypeName,
-                                                            const boost::optional<Size>& len) const
-{
-    std::ostringstream ss;
-
-    ss << "structure member type `" << memberTypeName << "`";
-    this->_validateIsPseudoUIntType(pseudoDt, ss.str(), len);
-}
-
-void PseudoValidatableType::_validateIsPseudoUIntTypeMemberIfExists(const PseudoDt& parentPseudoDt,
-                                                                    const std::string& memberTypeName,
-                                                                    const boost::optional<Size>& len) const
-{
-    assert(parentPseudoDt.kind() == PseudoDt::Kind::STRUCT);
-
-    auto& pseudoStructType = static_cast<const PseudoStructType&>(parentPseudoDt);
-    auto pseudoMemberType = pseudoStructType[memberTypeName];
-
-    if (!pseudoMemberType) {
-        return;
-    }
-
-    this->_validateIsPseudoUIntTypeMember(pseudoMemberType->pseudoDt(), memberTypeName, len);
-}
-
-void PseudoValidatableType::_throwParseError(std::string msg, TextLocation textLoc) const
-{
-    throw MetadataParseError {std::move(msg), std::move(textLoc)};
-}
-
-void PseudoValidatableType::_appendErrorMsgToParseError(MetadataParseError& exc, std::string msg,
-                                                        TextLocation textLoc) const
-{
-    exc._appendErrorMsg(std::move(msg), std::move(textLoc));
+    visitor.visit(*this);
 }
 
 PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> name,
@@ -330,7 +353,7 @@ PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> name,
 {
 }
 
-void PseudoErt::validate(const PseudoDst& pseudoDst) const
+void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
 {
     /*
      * Make sure that we can't guarantee that an instance of this event
@@ -354,9 +377,63 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
 
     std::ostringstream ss;
 
-    ss << "Any event record with type ID " << _id << " within a data stream with "
-          "type ID " << _id << " would be empty (no data).";
-    this->_throwParseError(ss.str());
+    ss << "Any event record would be empty (no data).";
+    throwMetadataParseError(ss.str());
+}
+
+static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
+{
+    const auto pseudoDts = findPseudoUIntTypes(basePseudoDt, [](auto& pseudoIntType, auto) {
+        return pseudoIntType.mappedClkTypeName();
+    });
+
+    if (!pseudoDts.empty()) {
+        throwMetadataParseError("At least one unsigned integer type is mapped to a clock type; "
+                                "this isn't not supported within this scope.",
+                                basePseudoDt.loc());
+    }
+}
+
+void PseudoErt::_validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const
+{
+    if (_pseudoSpecCtxType) {
+        try {
+            validateNoMappedClkTypeName(*_pseudoSpecCtxType);
+        } catch (MetadataParseError& exc) {
+            std::ostringstream ss;
+
+            appendMsgToMetadataParseError(exc, "In the specific context type:",
+                                          _pseudoSpecCtxType->loc());
+            throw;
+        }
+    }
+
+    if (_pseudoPayloadType) {
+        try {
+            validateNoMappedClkTypeName(*_pseudoPayloadType);
+        } catch (MetadataParseError& exc) {
+            std::ostringstream ss;
+
+            appendMsgToMetadataParseError(exc, "In the payload type:",
+                                          _pseudoPayloadType->loc());
+            throw;
+        }
+    }
+}
+
+void PseudoErt::validate(const PseudoDst& pseudoDst) const
+{
+    try {
+        this->_validateNotEmpty(pseudoDst);
+        this->_validateNoMappedClkTypeName(pseudoDst);
+    } catch (MetadataParseError& exc) {
+        std::ostringstream ss;
+
+        ss << "In the event record type " << _id <<
+              " of data stream type " << pseudoDst.id() << ":";
+        appendMsgToMetadataParseError(exc, ss.str());
+        throw;
+    }
 }
 
 PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
@@ -366,59 +443,89 @@ PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
 }
 
 PseudoDst::PseudoDst(const TypeId id, PseudoDt::UP pseudoPktCtxType,
-                     PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType) :
+                     PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
+                     const ClockType * const defClkType) :
     _id {id},
     _pseudoPktCtxType {std::move(pseudoPktCtxType)},
     _pseudoErHeaderType {std::move(pseudoErHeaderType)},
-    _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)}
+    _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)},
+    _defClkType {defClkType}
 {
+}
+
+static auto findPseudoStaticArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseudoDt)
+{
+    return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
+        return pseudoDt.kind() == PseudoDt::Kind::STATIC_ARRAY &&
+            static_cast<const PseudoStaticArrayType&>(pseudoDt).hasTraceTypeUuidRole();
+    });
+}
+
+static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
+                                      const UnsignedIntegerTypeRole role)
+{
+    return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
+        return pseudoIntType.hasRole(role);
+    });
+}
+
+void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
+{
+    if (_pseudoErHeaderType) {
+        try {
+            /*
+             * Validate pseudo unsigned integer types with an "event
+             * record type ID" role.
+             */
+            const auto idPseudoDts = findPseudoUIntTypesByRole(*_pseudoErHeaderType,
+                                                               UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
+
+            /*
+             * Without any pseudo unsigned integer type with an "event
+             * record type ID" role, there may be only one (implicit)
+             * event record type.
+             */
+            if (idPseudoDts.empty() && pseudoErts.size() > 1) {
+                throwMetadataParseError("No structure member type with the "
+                                        "\"event record type ID\" role, "
+                                        "but the data stream type contains "
+                                        "more than one event record type.",
+                                        _pseudoErHeaderType->loc());
+            }
+        } catch (MetadataParseError& exc) {
+            appendMsgToMetadataParseError(exc, "In the event record header type:",
+                                          _pseudoErHeaderType->loc());
+            throw;
+        }
+    }
+}
+
+void PseudoDst::_validateNoMappedClkTypeName() const
+{
+    if (_pseudoErCommonCtxType) {
+        try {
+            validateNoMappedClkTypeName(*_pseudoErCommonCtxType);
+        } catch (MetadataParseError& exc) {
+            std::ostringstream ss;
+
+            appendMsgToMetadataParseError(exc, "In the event record common context type:",
+                                          _pseudoErCommonCtxType->loc());
+            throw;
+        }
+    }
 }
 
 void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 {
-    // validate packet context type
-    if (_pseudoPktCtxType) {
-        try {
-            // validate data types
-            this->_validateIsPseudoUIntTypeMemberIfExists(*_pseudoPktCtxType, "packet_size");
-            this->_validateIsPseudoUIntTypeMemberIfExists(*_pseudoPktCtxType, "content_size");
-            this->_validateIsPseudoUIntTypeMemberIfExists(*_pseudoPktCtxType, "events_discarded");
-        } catch (MetadataParseError& exc) {
-            std::ostringstream ss;
+    try {
+        this->_validateErHeaderType(pseudoErts);
+        this->_validateNoMappedClkTypeName();
+    } catch (MetadataParseError& exc) {
+        std::ostringstream ss;
 
-            ss << "In the packet context type of data stream type " << _id << ":";
-            this->_appendErrorMsgToParseError(exc, ss.str(), _pseudoPktCtxType->loc());
-            throw;
-        }
-    }
-
-    // validate event record header type
-    if (_pseudoErHeaderType) {
-        try {
-            // validate `id` data types
-            const auto idPseudoDts = _pseudoErHeaderType->findPseudoDtsByName("id");
-
-            for (const auto pseudoDt : idPseudoDts) {
-                this->_validateIsPseudoUIntType(*pseudoDt, "id");
-            }
-
-            /*
-             * Without any `id` member, there may be only one (implicit)
-             * event record type.
-             */
-            if (idPseudoDts.empty() && pseudoErts.size() > 1) {
-                this->_throwParseError("No structure member type named `id`, "
-                                       "but the data stream type contains "
-                                       "more than one event record type.",
-                                       _pseudoErHeaderType->loc());
-            }
-        } catch (MetadataParseError& exc) {
-            std::ostringstream ss;
-
-            ss << "In the event record header type of data stream type " << _id << ":";
-            this->_appendErrorMsgToParseError(exc, ss.str(), _pseudoErHeaderType->loc());
-            throw;
-        }
+        ss << "In data stream type " << _id << ":";
+        appendMsgToMetadataParseError(exc, ss.str());
+        throw;
     }
 }
 
@@ -446,72 +553,98 @@ void PseudoTraceType::validate() const
 
             const auto& firstPseudoErt = dstIdPseudoOrphanErtsPair.second.begin()->second;
 
-            this->_throwParseError(ss.str(), firstPseudoErt.loc());
+            throwMetadataParseError(ss.str(), firstPseudoErt.loc());
         }
     }
 
     // validate packet header type
     if (_pseudoPktHeaderType) {
         try {
-            // validate data types
-            this->_validateIsPseudoUIntTypeMemberIfExists(*_pseudoPktHeaderType, "magic", 32);
-            this->_validateIsPseudoUIntTypeMemberIfExists(*_pseudoPktHeaderType, "stream_id");
-            this->_validateIsPseudoUIntTypeMemberIfExists(*_pseudoPktHeaderType,
-                                                          "stream_instance_id");
+            /*
+             * Validate pseudo static array types with the "trace type
+             * UUID" role.
+             */
+            const auto pseudoUuidDts = findPseudoStaticArrayTypesWithTraceTypeUuidRole(*_pseudoPktHeaderType);
 
-            const auto uuidDts = _pseudoPktHeaderType->findPseudoDtsByName("uuid");
+            for (auto& pseudoUuidDt : pseudoUuidDts) {
+                auto& pseudoUuidArrayType = static_cast<const PseudoStaticArrayType&>(*pseudoUuidDt);
 
-            if (uuidDts.size() == 1) {
-                auto& uuidDt = **uuidDts.begin();
+                try {
+                    if (pseudoUuidArrayType.len() != 16) {
+                        throwMetadataParseError("Expecting a 16-element static array type.",
+                                                pseudoUuidDt->loc());
+                    }
 
-                if (uuidDt.kind() != PseudoDt::Kind::STATIC_ARRAY) {
-                    std::ostringstream ss;
+                    if (!pseudoUuidArrayType.pseudoElemType().isUInt()) {
+                        throwMetadataParseError("Expecting an integer type.",
+                                                pseudoUuidArrayType.pseudoElemType().loc());
+                    }
 
-                    ss << "`uuid` member type: expecting a static array type.";
-                    this->_throwParseError(ss.str(), uuidDt.loc());
-                }
+                    auto& pseudoUIntType = static_cast<const PseudoUIntType&>(pseudoUuidArrayType.pseudoElemType());
 
-                auto& uuidArrayType = static_cast<const PseudoStaticArrayType&>(uuidDt);
-
-                if (uuidArrayType.len() != 16) {
-                    this->_throwParseError("`uuid` member type: expecting a 16-element static array type.",
-                                           uuidDt.loc());
-                }
-
-                this->_validateIsPseudoUIntTypeMember(uuidArrayType.pseudoElemType(),
-                                                      "element type of `uuid` member type", 8);
-            } else if (uuidDts.size() > 1) {
-                std::ostringstream ss;
-
-                ss << "Packet header type contains more than one (" << uuidDts.size() << ") type "
-                      "named `uuid`.";
-                this->_throwParseError(ss.str(), _pseudoPktHeaderType->loc());
-            }
-
-            // validate that the `magic` member type is the first, if any
-            auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
-
-            for (auto i = 0U; i < pseudoPktHeaderType.pseudoMemberTypes().size(); ++i) {
-                const auto& pseudoMemberType = pseudoPktHeaderType.pseudoMemberTypes()[i];
-
-                if (pseudoMemberType->name() == "magic" && i != 0) {
-                    this->_throwParseError("`magic` member type must be the first.",
-                                           pseudoMemberType->pseudoDt().loc());
+                    if (pseudoUIntType.len() != 8) {
+                        throwMetadataParseError("Expecting an unsigned integer type with a "
+                                                "length of 8 bits.",
+                                                pseudoUIntType.loc());
+                    }
+                } catch (MetadataParseError& exc) {
+                    appendMsgToMetadataParseError(exc,
+                                                  "Static array type with a \"trace type UUID\" role:",
+                                                  pseudoUuidDt->loc());
+                    throw;
                 }
             }
 
             /*
-             * Without a `stream_id` member, there may be only one
-             * (implicit) data stream type.
+             * Validate pseudo unsigned integer types with the "packet
+             * magic number" role.
              */
-            if (_pseudoDsts.size() > 1 && !pseudoPktHeaderType["stream_id"]) {
-                this->_throwParseError("No structure member type named `stream_id`, but "
-                                       "the trace type contains more than one data stream type.",
-                                       pseudoPktHeaderType.loc());
+            const auto pseudoMagicDts = findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
+                                                                  UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
+
+            if (pseudoMagicDts.size() == 1) {
+                auto& pseudoMagicDt = static_cast<const PseudoUIntType&>(**pseudoMagicDts.begin());
+                auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
+
+                if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &pseudoMagicDt) {
+                    throwMetadataParseError("Unsigned integer type with the "
+                                            "\"packet magic number\" role must be within the "
+                                            "first member type of the packet header structure type.",
+                                            pseudoMagicDt.loc());
+                }
+
+                if (pseudoMagicDt.len() != 32) {
+                    throwMetadataParseError("Unsigned integer type with the "
+                                            "\"packet magic number\" role must have a length of "
+                                            "32 bits.",
+                                            pseudoMagicDt.loc());
+                }
+            } else if (pseudoMagicDts.size() > 1) {
+                throwMetadataParseError("More than one unsigned integer type with the "
+                                        "\"packet magic number\" role found.",
+                                        _pseudoPktHeaderType->loc());
             }
+
+            /*
+             * Without any pseudo unsigned integer type with a "data
+             * stream type ID" role, there may be only one (implicit)
+             * data stream type.
+             */
+            if (_pseudoDsts.size() > 1 &&
+                    findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
+                                              UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
+                throwMetadataParseError("No structure member type with the "
+                                        "\"data stream type ID\" role, "
+                                        "but the trace type contains "
+                                        "more than one data stream type.",
+                                        _pseudoPktHeaderType->loc());
+            }
+
+            // no mapped clock type within the packet header type
+            validateNoMappedClkTypeName(*_pseudoPktHeaderType);
         } catch (MetadataParseError& exc) {
-            this->_appendErrorMsgToParseError(exc, "In the packet header type:",
-                                              _pseudoPktHeaderType->loc());
+            appendMsgToMetadataParseError(exc, "In the packet header type:",
+                                          _pseudoPktHeaderType->loc());
             throw;
         }
     }

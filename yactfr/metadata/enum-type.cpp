@@ -14,18 +14,18 @@ namespace yactfr {
 
 SignedEnumerationType::SignedEnumerationType(const unsigned int align, const unsigned int len,
                                              const ByteOrder bo, const Mappings& mappings,
-                                             const DisplayBase preferedDispBase) :
+                                             const DisplayBase preferredDispBase) :
     EnumerationType<SignedIntegerType, internal::SignedEnumerationTypeValue> {
-        _KIND_SENUM, mappings, align, len, bo, preferedDispBase
+        _KIND_SENUM, mappings, align, len, bo, preferredDispBase
     }
 {
 }
 
 SignedEnumerationType::SignedEnumerationType(const unsigned int align, const unsigned int len,
                                              const ByteOrder bo, Mappings&& mappings,
-                                             const DisplayBase preferedDispBase) :
+                                             const DisplayBase preferredDispBase) :
     EnumerationType<SignedIntegerType, internal::SignedEnumerationTypeValue> {
-        _KIND_SENUM, std::move(mappings), align, len, bo, preferedDispBase
+        _KIND_SENUM, std::move(mappings), align, len, bo, preferredDispBase
     }
 {
 }
@@ -39,21 +39,20 @@ DataType::UP SignedEnumerationType::_clone() const
 
 UnsignedEnumerationType::UnsignedEnumerationType(const unsigned int align, const unsigned int len,
                                                  const ByteOrder bo, const Mappings& mappings,
-                                                 const DisplayBase preferedDispBase,
-                                                 const ClockType * const mappedClkType) :
+                                                 const DisplayBase preferredDispBase,
+                                                 UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<UnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
-        _KIND_UENUM, mappings, align, len, bo, preferedDispBase, mappedClkType
+        _KIND_UENUM, mappings, align, len, bo, preferredDispBase, std::move(roles)
     }
 {
 }
 
 UnsignedEnumerationType::UnsignedEnumerationType(const unsigned int align, const unsigned int len,
                                                  const ByteOrder bo, Mappings&& mappings,
-                                                 const DisplayBase preferedDispBase,
-                                                 const ClockType * const mappedClkType) :
+                                                 const DisplayBase preferredDispBase,
+                                                 UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<UnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
-        _KIND_UENUM, std::move(mappings), align, len, bo, preferedDispBase,
-        mappedClkType
+        _KIND_UENUM, std::move(mappings), align, len, bo, preferredDispBase, std::move(roles)
     }
 {
 }
@@ -62,8 +61,7 @@ DataType::UP UnsignedEnumerationType::_clone() const
 {
     return std::make_unique<UnsignedEnumerationType>(this->alignment(), this->length(),
                                                      this->byteOrder(), this->mappings(),
-                                                     this->preferredDisplayBase(),
-                                                     this->mappedClockType());
+                                                     this->preferredDisplayBase(), this->roles());
 }
 
 } // namespace yactfr

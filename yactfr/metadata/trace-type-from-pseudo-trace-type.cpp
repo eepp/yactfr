@@ -105,7 +105,8 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
     return std::make_unique<const DataStreamType>(pseudoDst.id(), std::move(ertSet),
                                                   std::move(pseudoPktCtxType),
                                                   std::move(erHeaderType),
-                                                  std::move(erCommonCtxType));
+                                                  std::move(erCommonCtxType),
+                                                  pseudoDst.defClkType());
 }
 
 std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_ertFromPseudoErt(const PseudoErt& pseudoErt,

@@ -5,8 +5,8 @@ trace {
   minor = 8;
   byte_order = le;
   packet.header := struct {
-    string a;
-    integer {size = 32;} magic;
+    integer {size = 8;} len;
+    integer {size = 8;} uuid[len];
   };
 };
 

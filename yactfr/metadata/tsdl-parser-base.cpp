@@ -28,74 +28,29 @@ namespace internal {
 
 const char * const TsdlParserBase::_EMF_URI_ATTR_NAME = "model.emf.uri";
 
-struct TsMemberQuirkProcessor
+TsdlParserBase::_StackFrame::_StackFrame(const Kind kind) :
+    kind {kind}
 {
-    explicit TsMemberQuirkProcessor(std::unordered_set<std::string> memberNames,
-                                    PseudoTraceType& pseudoTraceType, PseudoDt& rootDt) :
-        _memberNames {std::move(memberNames)},
-        _pseudoTraceType {&pseudoTraceType}
-    {
-        this->_process(rootDt);
-    }
+}
 
-private:
-    void _process(PseudoDt& pseudoDt)
-    {
-        switch (pseudoDt.kind()) {
-        case PseudoDt::Kind::INT_TYPE_WRAPPER:
-            this->_process(static_cast<PseudoIntTypeWrapper&>(pseudoDt));
-            break;
+void TsdlParserBase::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
+                                                   const std::string& memberTypeName)
+{
+    /*
+     * If there's exactly one clock type in the pseudo trace type:
+     *     Use the name of this clock type.
+     *
+     * If there's no clock type in the pseudo trace type:
+     *     Create a default 1-GHz clock type and use this name.
+     *
+     * If there's more than one clock type in the pseudo trace type:
+     *     Leave it as is (no mapped clock type name).
+     */
+    for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
+        auto& pseudoIntType = static_cast<PseudoUIntType&>(*pseudoDt);
 
-        case PseudoDt::Kind::STATIC_ARRAY:
-            this->_process(static_cast<PseudoStaticArrayType&>(pseudoDt));
-            break;
-
-        case PseudoDt::Kind::DYN_ARRAY:
-            this->_process(static_cast<PseudoDynArrayType&>(pseudoDt));
-            break;
-
-        case PseudoDt::Kind::STRUCT:
-            this->_process(static_cast<PseudoStructType&>(pseudoDt));
-            break;
-
-        case PseudoDt::Kind::VAR:
-            this->_process(static_cast<PseudoVarType&>(pseudoDt));
-            break;
-
-        default:
-            return;
-        }
-    }
-
-    void _process(PseudoIntTypeWrapper& pseudoDt)
-    {
-        if (!_curIdent) {
-            // non-structure or non-variant type root?
-            return;
-        }
-
-        auto doProcess = false;
-
-        for (const auto& memberName : _memberNames) {
-            if (memberName == *_curIdent) {
-                doProcess = true;
-                break;
-            }
-
-            // also check the display name
-            if (!_curIdent->empty() && (*_curIdent)[0] == '_' &&
-                    _curIdent->compare(1, _curIdent->size() - 1, memberName) == 0) {
-                doProcess = true;
-                break;
-            }
-        }
-
-        if (!doProcess) {
-            return;
-        }
-
-        if (pseudoDt.mappedClkTypeName()) {
-            return;
+        if (pseudoIntType.mappedClkTypeName()) {
+            continue;
         }
 
         if (_pseudoTraceType->clkTypes().empty()) {
@@ -105,79 +60,315 @@ private:
 
         if (_pseudoTraceType->clkTypes().size() != 1) {
             // we don't know which clock type to choose: leave it unmapped
-            return;
+            continue;
         }
 
         const auto& clkType = *_pseudoTraceType->clkTypes().begin();
 
         assert(clkType->name());
-        pseudoDt.mappedClkTypeName(*clkType->name());
+        pseudoIntType.mappedClkTypeName(*clkType->name());
     }
+}
 
-    void _process(PseudoStaticArrayType& pseudoDt) {
-        this->_process(pseudoDt.pseudoElemType());
+void TsdlParserBase::_setImplicitMappedClkTypeName()
+{
+   for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        if (pseudoDst->pseudoErHeaderType()) {
+            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoErHeaderType(), "timestamp");
+        }
+
+        if (pseudoDst->pseudoPktCtxType()) {
+            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoPktCtxType(), "timestamp_begin");
+            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoPktCtxType(), "timestamp_end");
+        }
     }
+}
 
-    void _process(PseudoDynArrayType& pseudoDt) {
-        this->_process(pseudoDt.pseudoElemType());
+void TsdlParserBase::_setPseudoStaticArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
+                                                                const std::string& memberTypeName)
+{
+    const auto pseudoDts = findPseudoDtsByName(basePseudoDt, memberTypeName,
+                                               [](auto& pseudoDt) {
+        if (pseudoDt.kind() != PseudoDt::Kind::STATIC_ARRAY) {
+            return false;
+        }
+
+        auto& pseudoArrayType = static_cast<const PseudoStaticArrayType&>(pseudoDt);
+
+        if (pseudoArrayType.len() != 16) {
+            return false;
+        }
+
+        if (!pseudoArrayType.pseudoElemType().isUInt()) {
+            return false;
+        }
+
+        auto& pseudoElemDt = static_cast<const PseudoUIntType&>(pseudoArrayType.pseudoElemType());
+
+        if (pseudoElemDt.len() != 8) {
+            return false;
+        }
+
+        if (pseudoElemDt.align() > 8) {
+            return false;
+        }
+
+        return true;
+    });
+
+    for (auto& pseudoDt : pseudoDts) {
+        auto& pseudoArrayType = static_cast<PseudoStaticArrayType&>(*pseudoDt);
+
+        pseudoArrayType.hasTraceTypeUuidRole(true);
     }
+}
 
-    void _process(PseudoStructType& pseudoDt) {
-        for (auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
-            _curIdent = &pseudoMemberType->name();
-            this->_process(pseudoMemberType->pseudoDt());
+class DefClkTsRoleAdder :
+    public PseudoDtVisitor
+{
+public:
+    DefClkTsRoleAdder() = default;
+
+    void visit(PseudoUIntType& pseudoDt) override
+    {
+        if (pseudoDt.mappedClkTypeName() &&
+                !pseudoDt.hasRole(UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP)) {
+            pseudoDt.addRole(UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP);
         }
     }
 
-    void _process(PseudoVarType& pseudoDt) {
-        for (auto& pseudoOpt : pseudoDt.pseudoOpts()) {
-            this->_process(pseudoOpt->pseudoDt());
+    void visit(PseudoUEnumType& pseudoDt) override
+    {
+        this->visit(static_cast<PseudoUIntType&>(pseudoDt));
+    }
+
+    void visit(PseudoStaticArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoDynArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoStructType& pseudoDt) override
+    {
+        for (const auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
+            pseudoMemberType->pseudoDt().accept(*this);
+        }
+    }
+
+    void visit(PseudoVarType& pseudoDt) override
+    {
+        for (const auto& pseudoOpt : pseudoDt.pseudoOpts()) {
+            pseudoOpt->pseudoDt().accept(*this);
         }
     }
 
 private:
-    const std::unordered_set<std::string> _memberNames;
-    PseudoTraceType *_pseudoTraceType;
-    const std::string *_curIdent = nullptr;
+    void _visit(PseudoArrayType& pseudoDt)
+    {
+        pseudoDt.pseudoElemType().accept(*this);
+    }
 };
 
-TsdlParserBase::_StackFrame::_StackFrame(const Kind kind) :
-    kind {kind}
-{
-}
-
-void TsdlParserBase::_applyQuirks()
+void TsdlParserBase::_addPseudoDtRoles()
 {
     /*
-     * For all the timestamp pseudo member types in pseudo event record
-     * type headers and packet context types, if it doesn't have a
-     * mapped clock type name, then:
+     * First, set an implicit mapped clock type name on specific
+     * pseudo unsigned integer types.
      *
-     * If there's exactly one clock type:
-     *     Use the name of this clock type.
-     *
-     * If there's no clock type:
-     *     Create a default 1-GHz clock type named `default` and use
-     *     this name.
-     *
-     * If there's more than one clock type:
-     *     Leave it as is (no mapped clock type name).
+     * For example, if the current pseudo trace type contains a
+     * single clock type, then any pseudo unsigned integer type
+     * named `timestamp` within pseudo event record header types,
+     * which are not already mapped to a clock type, are mapped to
+     * this single clock type.
      */
+    this->_setImplicitMappedClkTypeName();
+
+    // add/set simple roles
+    if (_pseudoTraceType->pseudoPktHeaderType()) {
+        this->_addPseudoUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "magic",
+                                      UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
+        this->_addPseudoUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(), "stream_id",
+                                      UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID);
+        this->_addPseudoUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(),
+                                      "stream_instance_id",
+                                      UnsignedIntegerTypeRole::DATA_STREAM_ID);
+        this->_setPseudoStaticArrayTypeTraceTypeUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
+                                                         "uuid");
+    }
+
     for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
         auto& pseudoDst = idPseudoDstPair.second;
 
-        if (pseudoDst->pseudoErHeaderType()) {
-            TsMemberQuirkProcessor {
-                {"timestamp"}, *_pseudoTraceType, *pseudoDst->pseudoErHeaderType()
-            };
+        if (pseudoDst->pseudoPktCtxType()) {
+            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
+                                          UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
+            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "content_size",
+                                          UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH);
+            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
+                                          UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH);
+            this->_addPseudoUIntTypeRoles<true>(*pseudoDst->pseudoPktCtxType(), "timestamp_end",
+                                                UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
+            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "discarded_events",
+                                          UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT);
+            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_seq_num",
+                                          UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX);
         }
 
-        if (pseudoDst->pseudoPktCtxType()) {
-            TsMemberQuirkProcessor {
-                {"timestamp_begin", "timestamp_end"},
-                *_pseudoTraceType, *pseudoDst->pseudoPktCtxType()
-            };
+        if (pseudoDst->pseudoErHeaderType()) {
+            this->_addPseudoUIntTypeRoles(*pseudoDst->pseudoErHeaderType(), "id",
+                                          UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
         }
+    }
+
+    // add "default clock timestamp" role
+    DefClkTsRoleAdder visitor;
+
+    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        if (pseudoDst->pseudoPktCtxType()) {
+            pseudoDst->pseudoPktCtxType()->accept(visitor);
+        }
+
+        if (pseudoDst->pseudoErHeaderType()) {
+            pseudoDst->pseudoErHeaderType()->accept(visitor);
+        }
+    }
+}
+
+class PseudoDstDefClkTypeSetter :
+    public PseudoDtVisitor
+{
+public:
+    explicit PseudoDstDefClkTypeSetter(PseudoTraceType& pseudoTraceType, PseudoDst& pseudoDst) :
+        _pseudoTraceType {&pseudoTraceType},
+        _pseudoDst {&pseudoDst}
+    {
+    }
+
+    void visit(PseudoUIntType& pseudoDt) override
+    {
+        if (pseudoDt.mappedClkTypeName()) {
+            if (!_clkTypeName) {
+                _clkTypeName = &*pseudoDt.mappedClkTypeName();
+            }
+
+            if (*pseudoDt.mappedClkTypeName() != *_clkTypeName) {
+                std::ostringstream ss;
+
+                ss << "Unsigned integer type is mapped to a clock type (`" <<
+                      *pseudoDt.mappedClkTypeName() << "` which is "
+                      "different than another mapped clock type (`" <<
+                      *_clkTypeName << "`) within the same data stream type.";
+                throwMetadataParseError(ss.str(), pseudoDt.loc());
+            }
+
+            if (!_pseudoDst->defClkType()) {
+                for (auto& clkType : _pseudoTraceType->clkTypes()) {
+                    assert(clkType->name());
+
+                    if (*clkType->name() == *_clkTypeName) {
+                        _pseudoDst->defClkType(*clkType);
+                    }
+                }
+
+                if (!_pseudoDst->defClkType()) {
+                    // not found
+                    std::ostringstream ss;
+
+                    ss << "`" << *_clkTypeName << "` doesn't name an existing clock type.";
+                    throwMetadataParseError(ss.str(), pseudoDt.loc());
+                }
+            }
+        }
+    }
+
+    void visit(PseudoUEnumType& pseudoDt) override
+    {
+        this->visit(static_cast<PseudoUIntType&>(pseudoDt));
+    }
+
+    void visit(PseudoStaticArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoDynArrayType& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(PseudoStructType& pseudoDt) override
+    {
+        for (const auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
+            pseudoMemberType->pseudoDt().accept(*this);
+        }
+    }
+
+    void visit(PseudoVarType& pseudoDt) override
+    {
+        for (const auto& pseudoOpt : pseudoDt.pseudoOpts()) {
+            pseudoOpt->pseudoDt().accept(*this);
+        }
+    }
+
+private:
+    void _visit(PseudoArrayType& pseudoDt)
+    {
+        pseudoDt.pseudoElemType().accept(*this);
+    }
+
+private:
+    PseudoTraceType * const _pseudoTraceType;
+    PseudoDst * const _pseudoDst;
+    const std::string *_clkTypeName = nullptr;
+};
+
+void TsdlParserBase::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
+{
+    PseudoDstDefClkTypeSetter visitor {*_pseudoTraceType, pseudoDst};
+
+    try {
+        if (pseudoDst.pseudoPktCtxType()) {
+            try {
+                pseudoDst.pseudoPktCtxType()->accept(visitor);
+            } catch (MetadataParseError& exc) {
+                appendMsgToMetadataParseError(exc, "In the packet context type:",
+                                              pseudoDst.pseudoPktCtxType()->loc());
+                throw;
+            }
+        }
+
+        if (pseudoDst.pseudoErHeaderType()) {
+            try {
+                pseudoDst.pseudoErHeaderType()->accept(visitor);
+            } catch (MetadataParseError& exc) {
+                appendMsgToMetadataParseError(exc, "In the event record header type:",
+                                              pseudoDst.pseudoErHeaderType()->loc());
+                throw;
+            }
+        }
+    } catch (MetadataParseError& exc) {
+        std::ostringstream ss;
+
+        ss << "In the data stream type with ID " << pseudoDst.id() << ":";
+        appendMsgToMetadataParseError(exc, ss.str());
+        throw;
+    }
+}
+
+void TsdlParserBase::_setPseudoDstDefClkType()
+{
+    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
+        auto& pseudoDst = idPseudoDstPair.second;
+
+        this->_setPseudoDstDefClkType(*pseudoDst);
     }
 }
 
@@ -206,6 +397,12 @@ void TsdlParserBase::_createTraceType()
         _pseudoTraceType->pseudoDsts()[0] = std::make_unique<PseudoDst>();
     }
 
+    // add roles to specific pseudo data types
+    this->_addPseudoDtRoles();
+
+    // set default clock type of pseudo data stream types
+    this->_setPseudoDstDefClkType();
+
     // create yactfr trace type
     _traceType = traceTypeFromPseudoTraceType(*_pseudoTraceType);
 }
@@ -219,7 +416,7 @@ void TsdlParserBase::_checkDupPseudoNamedDt(const PseudoNamedDts& entries, const
             std::ostringstream ss;
 
             ss << "Duplicate identifier (member type or option name) `" << entry->name() << "`.";
-            throw MetadataParseError {ss.str(), loc};
+            throwMetadataParseError(ss.str(), loc);
         }
 
         entryNames.insert(entry->name());
@@ -253,7 +450,7 @@ void TsdlParserBase::_checkDupAttr(const _Attrs& attrs)
             std::ostringstream ss;
 
             ss << "Duplicate attribute `" << attr.name << "`.";
-            throw MetadataParseError {ss.str(), attr.nameTextLoc()};
+            throwMetadataParseError(ss.str(), attr.nameTextLoc());
         }
 
         attrSet.insert(attr.name);
@@ -265,7 +462,7 @@ void TsdlParserBase::_throwMissingAttr(const std::string& name, const TextLocati
     std::ostringstream ss;
 
     ss << "Missing attribute `" << name << "`.";
-    throw MetadataParseError {ss.str(), loc};
+    throwMetadataParseError(ss.str(), loc);
 }
 
 boost::optional<boost::uuids::uuid> TsdlParserBase::_uuidFromStr(const std::string& str)
@@ -296,7 +493,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromAbsAllPathElems
             }
 
             if (!isAbs) {
-                throw MetadataParseError {"Expecting `packet.header` after `trace.`.", loc};
+                throwMetadataParseError("Expecting `packet.header` after `trace.`.", loc);
             }
         } else if (allPathElems[0] == "stream") {
             if (allPathElems[1] == "packet") {
@@ -315,11 +512,8 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromAbsAllPathElems
             }
 
             if (!isAbs) {
-                throw MetadataParseError {
-                    "Expecting `packet.context`, `event.header`, or "
-                    "`event.context` after `stream.`.",
-                    loc
-                };
+                throwMetadataParseError("Expecting `packet.context`, `event.header`, or "
+                                        "`event.context` after `stream.`.", loc);
             }
         }
 
@@ -339,10 +533,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromAbsAllPathElems
             }
 
             if (!isAbs) {
-                throw MetadataParseError {
-                    "Expecting `context` or `fields` after `event.`.",
-                    loc
-                };
+                throwMetadataParseError("Expecting `context` or `fields` after `event.`.", loc);
             }
         }
 
@@ -434,7 +625,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromRelAllPathElems
                   "data type alias (or named structure/variant type) boundary. "
                   "CTF 1.8 allows this, but this version of yactfr doesn't "
                   "support it.";
-            throw MetadataParseError {ss.str(), loc};
+            throwMetadataParseError(ss.str(), loc);
         } else if (stackIt->kind == _StackFrame::Kind::STRUCT_TYPE) {
             const auto& frameIdents = stackIt->idents;
 
@@ -460,7 +651,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromRelAllPathElems
             }
 
             ss << "`): cannot find `" << firstPathElem << "` (first element).";
-            throw MetadataParseError {ss.str(), loc};
+            throwMetadataParseError(ss.str(), loc);
         }
 
         --stackIt;
@@ -486,7 +677,7 @@ PseudoDataLoc TsdlParserBase::_pseudoDataLocFromAllPathElems(const DataLocation:
         return *pseudoDataLoc;
     }
 
-    throw MetadataParseError {"Invalid data location.", loc};
+    throwMetadataParseError("Invalid data location.", loc);
 }
 
 void TsdlParserBase::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
@@ -504,7 +695,7 @@ void TsdlParserBase::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
         std::ostringstream ss;
 
         ss << "Duplicate data type alias: `" << name << "`.";
-        throw MetadataParseError {ss.str(), curLoc};
+        throwMetadataParseError(ss.str(), curLoc);
     }
 
     // add alias

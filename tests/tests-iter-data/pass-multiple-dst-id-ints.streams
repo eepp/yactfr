@@ -6,7 +6,7 @@ trace {
         u8 stream_id;
         struct {
             string aaa;
-            u8 _stream_id;
+            u8 stream_id;
         } s;
     };
 };

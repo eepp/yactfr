@@ -66,11 +66,11 @@ void ElementVisitor::visit(const TraceTypeUuidElement& elem)
 {
 }
 
-void ElementVisitor::visit(const ClockValueElement& elem)
+void ElementVisitor::visit(const DefaultClockValueElement& elem)
 {
 }
 
-void ElementVisitor::visit(const PacketEndClockValueElement& elem)
+void ElementVisitor::visit(const PacketEndDefaultClockValueElement& elem)
 {
 }
 

@@ -38,7 +38,6 @@ VmPos& VmPos::operator=(const VmPos& other)
 void VmPos::_initVectorsFromPktProc()
 {
     savedVals.resize(pktProc->savedValsCount(), SIZE_UNSET);
-    clkVals.resize(pktProc->indexedClkTypes().size());
 }
 
 void VmPos::_setSimpleFromOther(const VmPos& other)
@@ -66,7 +65,7 @@ void VmPos::_setFromOther(const VmPos& other)
     this->_setSimpleFromOther(other);
     stack = other.stack;
     savedVals = other.savedVals;
-    clkVals = other.clkVals;
+    defClkVal = other.defClkVal;
 }
 
 } // namespace internal
@@ -257,8 +256,8 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_USEL)] = &Vm::_execBeginReadVarUSel;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_VAR)] = &Vm::_execEndReadVar;
     _execFuncs[static_cast<int>(Instr::Kind::SAVE_VAL)] = &Vm::_execSaveVal;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_END_CLK_VAL)] = &Vm::_execSetPktEndClkVal;
-    _execFuncs[static_cast<int>(Instr::Kind::UPDATE_CLK_VAL)] = &Vm::_execUpdateClkVal;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_END_DEF_CLK_VAL)] = &Vm::_execSetPktEndDefClkVal;
+    _execFuncs[static_cast<int>(Instr::Kind::UPDATE_DEF_CLK_VAL)] = &Vm::_execUpdateDefClkVal;
     _execFuncs[static_cast<int>(Instr::Kind::SET_CUR_ID)] = &Vm::_execSetCurrentId;
     _execFuncs[static_cast<int>(Instr::Kind::SET_DST)] = &Vm::_execSetDst;
     _execFuncs[static_cast<int>(Instr::Kind::SET_ERT)] = &Vm::_execSetErt;
@@ -759,24 +758,22 @@ Vm::_ExecReaction Vm::_execSaveVal(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPktEndClkVal(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktEndDefClkVal(const Instr& instr)
 {
-    const auto& setPktEndClkValInstr = static_cast<const SetPktEndClkValInstr&>(instr);
+    const auto& setPktEndDefClkValInstr = static_cast<const SetPktEndDefClkValInstr&>(instr);
 
-    _pos.elems.pktEndClkVal._clkType = &setPktEndClkValInstr.clkType();
-    _pos.elems.pktEndClkVal._cycles = _pos.lastIntVal.u;
-    this->_updateItCurOffset(_pos.elems.pktEndClkVal);
+    _pos.elems.pktEndDefClkVal._cycles = _pos.lastIntVal.u;
+    this->_updateItCurOffset(_pos.elems.pktEndDefClkVal);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execUpdateClkVal(const Instr& instr)
+Vm::_ExecReaction Vm::_execUpdateDefClkVal(const Instr& instr)
 {
-    const auto& updateClkValInstr = static_cast<const UpdateClkValInstr&>(instr);
-    const auto newVal = _pos.updateClkVal(updateClkValInstr.index(), updateClkValInstr.len());
+    const auto& updateDefClkValInstr = static_cast<const UpdateDefClkValInstr&>(instr);
+    const auto newVal = _pos.updateDefClkVal(updateDefClkValInstr.len());
 
-    _pos.elems.clkVal._clkType = &updateClkValInstr.clkType();
-    _pos.elems.clkVal._cycles = newVal;
-    this->_updateItCurOffset(_pos.elems.clkVal);
+    _pos.elems.defClkVal._cycles = newVal;
+    this->_updateItCurOffset(_pos.elems.defClkVal);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

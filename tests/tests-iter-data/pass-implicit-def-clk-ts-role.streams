@@ -1,0 +1,70 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+clock {
+    name = clk;
+};
+
+stream {
+    packet.context := struct {
+        u32 timestamp_begin;
+        u32 timestamp_end;
+    };
+    event.header := struct {
+        u32 timestamp;
+    };
+};
+
+event {
+    name = beth;
+};
+----
+aabbccdd aabbeeff
+
+    aabbccee
+    aabbccff
+    aabbddaa
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     SC:1 {
+     0       ST {
+     0         UI:timestamp_begin:2864434397
+    32         DCV:2864434397
+    32         UI:timestamp_end:2864443135
+    64         PEDCV:2864443135
+    64       }
+    64     }
+    64     ER {
+    64       SC:2 {
+    64         ST {
+    64           UI:timestamp:2864434414
+    96           DCV:2864434414
+    96         }
+    96       }
+    96       ERT:0:beth
+    96     }
+    96     ER {
+    96       SC:2 {
+    96         ST {
+    96           UI:timestamp:2864434431
+   128           DCV:2864434431
+   128         }
+   128       }
+   128       ERT:0:beth
+   128     }
+   128     ER {
+   128       SC:2 {
+   128         ST {
+   128           UI:timestamp:2864438698
+   160           DCV:2864438698
+   160         }
+   160       }
+   160       ERT:0:beth
+   160     }
+   160   }
+   160 }

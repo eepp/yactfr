@@ -165,6 +165,10 @@ test_iter_data() {
   test_iter_data pass-clk-vals
 }
 
+@test 'implicit default clock timestamp role -> pass' {
+  test_iter_data pass-implicit-def-clk-ts-role
+}
+
 @test 'complex arrays -> pass' {
   test_iter_data pass-complex-arrays
 }
@@ -259,4 +263,36 @@ test_iter_data() {
 
 @test 'various variants -> pass' {
   test_iter_data pass-vars
+}
+
+@test 'packet header: string named `magic` -> pass' {
+  test_iter_data pass-vars pass-pkt-header-magic-str
+}
+
+@test 'packet header: string named `uuid` -> pass' {
+  test_iter_data pass-vars pass-pkt-header-uuid-str
+}
+
+@test 'packet header: array of strings named `uuid` -> pass' {
+  test_iter_data pass-vars pass-pkt-header-uuid-array-of-strs
+}
+
+@test 'packet header: string named `stream_id` -> pass' {
+  test_iter_data pass-vars pass-pkt-header-stream-id-str
+}
+
+@test 'packet header: string named `stream_instance_id` -> pass' {
+  test_iter_data pass-vars pass-pkt-header-stream-instance-id-str
+}
+
+@test 'packet context: string named `packet_size` -> pass' {
+  test_iter_data pass-vars pass-pkt-ctx-pkt-size-str
+}
+
+@test 'packet context: string named `content_size` -> pass' {
+  test_iter_data pass-vars pass-pkt-ctx-content-size-str
+}
+
+@test 'event record header: string named `id` -> pass' {
+  test_iter_data pass-vars pass-er-header-id-str
 }

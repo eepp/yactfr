@@ -40,9 +40,9 @@ namespace yactfr {
 namespace internal {
 
 StructureType::UP dtFromPseudoRootDt(const PseudoDt& pseudoDt, Scope scope,
-                                const PseudoTraceType& pseudoTraceType,
-                                const PseudoDst *curPseudoDst = nullptr,
-                                const PseudoErt *curPseudoErt = nullptr);
+                                     const PseudoTraceType& pseudoTraceType,
+                                     const PseudoDst *curPseudoDst = nullptr,
+                                     const PseudoErt *curPseudoErt = nullptr);
 
 /*
  * Converter of root pseudo data type to yactfr data type.
@@ -71,7 +71,7 @@ private:
     /*
      * Finds and returns all the pseudo data types from `loc`.
      */
-    PseudoDtSet _findPseudoDts(const DataLocation& loc, const TextLocation& srcLoc) const;
+    ConstPseudoDtSet _findPseudoDts(const DataLocation& loc, const TextLocation& srcLoc) const;
 
     /*
      * Recursive version of the other _findPseudoDts(), filling
@@ -83,7 +83,7 @@ private:
      */
     void _findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
                         DataLocation::PathElements::const_iterator locIt,
-                        const TextLocation& srcLoc, PseudoDtSet& pseudoDts) const;
+                        const TextLocation& srcLoc, ConstPseudoDtSet& pseudoDts) const;
 
     /*
      * Converts the pseudo data type `pseudoDt` to a yactfr data type,
@@ -104,21 +104,27 @@ private:
     DataType::UP _dtFromPseudoScalarDtWrapper(const PseudoDt& pseudoDt) const;
 
     /*
-     * Converts the pseudo integer type wrapper `pseudoDt` to a yactfr
-     * data type.
+     * Converts the pseudo unsigned integer type wrapper `pseudoDt` to a
+     * yactfr data type.
      */
-    DataType::UP _dtFromPseudoIntTypeWrapper(const PseudoDt& pseudoDt) const;
+    DataType::UP _dtFromPseudoUIntType(const PseudoDt& pseudoDt) const;
 
     /*
-     * Converts the pseudo array type `pseudoArrayType` to a yactfr
-     * array type.
-     *
-     * This function creates an instance of either `StdArrayTypeT` or
-     * `TextArrayTypeT` depending on properties of `pseudoElemType`.
+     * Converts the pseudo unsigned enumeration type wrapper `pseudoDt`
+     * to a yactfr data type.
      */
-    template <typename StdArrayTypeT, typename TextArrayTypeT, typename LenT>
-    DataType::UP _dtFromPseudoArrayType(const PseudoDt& pseudoArrayType,
-                                        const PseudoDt& pseudoElemType, LenT&& len);
+    DataType::UP _dtFromPseudoUEnumType(const PseudoDt& pseudoDt) const;
+
+    /*
+     * Tries to convert the pseudo array type `pseudoArrayType` to a
+     * yactfr text array type having the type `TextArrayTypeT`.
+     *
+     * Returns a null pointer if `pseudoArrayType` doesn't match a text
+     * array type profile.
+     */
+    template <typename TextArrayTypeT, typename LenT>
+    DataType::UP _tryTextArrayDtFromPseudoArrayType(const PseudoDt& pseudoArrayType,
+                                                    const PseudoDt& pseudoElemType, LenT&& len);
 
     /*
      * Converts the pseudo static array type `pseudoDt` to a yactfr
@@ -149,21 +155,20 @@ private:
      * variant type of type `VarTypeT`, the type of the selector being
      * `pseudoSelType` of yactfr type `SelTypeT`.
      */
-    template <typename VarTypeT, typename SelTypeT>
+    template <typename VarTypeT, typename MappingsT>
     DataType::UP _dtFromPseudoVarType(const PseudoVarType& pseudoVarType,
-                                      const PseudoIntTypeWrapper& pseudoSelType,
-                                      const DataLocation& selLoc);
+                                      const MappingsT& selTypeMappings, const DataLocation& selLoc);
 
-    void _appendVarTypeInvalDataLocToMetadataParseErrorExc(const PseudoDt& pseudoDt,
-                                                           const DataLocation& selLoc,
-                                                           MetadataParseError& exc) const;
+    [[ noreturn ]] void _throwVarTypeInvalDataLoc(const std::string& initMsg,
+                                                  const PseudoDt& pseudoDt,
+                                                  const DataLocation& selLoc) const;
 
     template <typename ItT>
     static std::string _dataLocStr(Scope scope, ItT begin, ItT end);
 
 
-    template <typename EnumTypeT>
-    static bool _enumTypeHasOverlaps(const EnumTypeT& enumType);
+    template <typename MappingsT>
+    static bool _enumTypeMappingsOverlap(const MappingsT& mappings);
 
 private:
     // final yactfr data type
@@ -234,36 +239,44 @@ std::string DtFromPseudoRootDtConverter::_dataLocStr(const Scope scope, const It
     return str;
 }
 
-template <typename StdArrayTypeT, typename TextArrayTypeT, typename LenT>
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoArrayType(const PseudoDt& pseudoArrayType,
-                                                                 const PseudoDt& pseudoElemType,
-                                                                 LenT&& len)
+template <typename TextArrayTypeT, typename LenT>
+DataType::UP DtFromPseudoRootDtConverter::_tryTextArrayDtFromPseudoArrayType(const PseudoDt& pseudoArrayType,
+                                                                             const PseudoDt& pseudoElemType,
+                                                                             LenT&& len)
 {
-    if (pseudoElemType.kind() == PseudoDt::Kind::INT_TYPE_WRAPPER) {
-        const auto& pseudoIntElemType = static_cast<const PseudoIntTypeWrapper&>(pseudoElemType);
+    if (pseudoElemType.isInt()) {
+        bool hasEncoding;
+        unsigned int align;
+        unsigned int elemLen;
 
-        if (pseudoIntElemType.hasEncoding() && pseudoIntElemType.intType().alignment() == 8 &&
-                pseudoIntElemType.intType().length() == 8) {
+        if (pseudoElemType.isUInt()) {
+            auto& pseudoIntElemType = static_cast<const PseudoUIntType&>(pseudoElemType);
+
+            hasEncoding = pseudoIntElemType.hasEncoding();
+            align = pseudoIntElemType.align();
+            elemLen = pseudoIntElemType.len();
+        } else {
+            auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(pseudoElemType);
+            auto& intType = pseudoScalarDtWrapper.dt().asSignedIntegerType();
+
+            hasEncoding = pseudoScalarDtWrapper.hasEncoding();
+            align = intType.alignment();
+            elemLen = intType.length();
+        }
+
+        if (hasEncoding && align == 8 && elemLen == 8) {
             return std::make_unique<const TextArrayTypeT>(8, std::forward<LenT>(len));
         }
     }
 
-    // currently being visited
-    _current.insert({&pseudoArrayType, 0});
-
-    auto elemType = this->_dtFromPseudoDt(pseudoElemType);
-
-    // not visited anymore
-    _current.erase(&pseudoArrayType);
-
-    return std::make_unique<const StdArrayTypeT>(1, std::move(elemType), std::forward<LenT>(len));
+    return nullptr;
 }
 
-template <typename EnumTypeT>
-bool DtFromPseudoRootDtConverter::_enumTypeHasOverlaps(const EnumTypeT& enumType)
+template <typename MappingsT>
+bool DtFromPseudoRootDtConverter::_enumTypeMappingsOverlap(const MappingsT& mappings)
 {
-    for (auto it1 = enumType.begin(); it1 != enumType.end(); ++it1) {
-        for (auto it2 = std::next(it1); it2 != enumType.end(); ++it2) {
+    for (auto it1 = mappings.begin(); it1 != mappings.end(); ++it1) {
+        for (auto it2 = std::next(it1); it2 != mappings.end(); ++it2) {
             if (it1->second.intersects(it2->second)) {
                 return true;
             }
@@ -273,23 +286,15 @@ bool DtFromPseudoRootDtConverter::_enumTypeHasOverlaps(const EnumTypeT& enumType
     return false;
 }
 
-template <typename VarTypeT, typename SelTypeT>
+template <typename VarTypeT, typename MappingsT>
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarType& pseudoVarType,
-                                                               const PseudoIntTypeWrapper& pseudoSelType,
+                                                               const MappingsT& selTypeMappings,
                                                                const DataLocation& selLoc)
 {
-    const auto& selType = static_cast<const SelTypeT&>(pseudoSelType.intType());
-
     // validate that the selector type has no overlapping mappings
-    if (this->_enumTypeHasOverlaps(selType)) {
-        std::ostringstream ss;
-
-        ss << "Selector type of variant type contains overlapping mappings.";
-
-        MetadataParseError exc {ss.str(), pseudoSelType.loc()};
-
-        this->_appendVarTypeInvalDataLocToMetadataParseErrorExc(pseudoVarType, selLoc, exc);
-        throw exc;
+    if (this->_enumTypeMappingsOverlap(selTypeMappings)) {
+        this->_throwVarTypeInvalDataLoc("Selector type of variant type contains overlapping mappings.",
+                                        pseudoVarType, selLoc);
     }
 
     typename VarTypeT::Options opts;
@@ -300,23 +305,19 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
 
         const auto& pseudoOpt = pseudoVarType.pseudoOpts()[i];
         auto optDt = this->_dtFromPseudoDt(pseudoOpt->pseudoDt());
-        const auto ranges = selType[pseudoOpt->name()];
+        const auto rangesIt = selTypeMappings.find(pseudoOpt->name());
 
         // validate that the range set exists
-        if (!ranges) {
+        if (rangesIt == selTypeMappings.end()) {
             std::ostringstream ss;
 
-            ss << "Selector type of variant type has no enumerator named `" <<
+            ss << "Selector type of variant type has no mapping named `" <<
                   pseudoOpt->name() << "`.";
-
-            MetadataParseError exc {ss.str(), pseudoSelType.loc()};
-
-            this->_appendVarTypeInvalDataLocToMetadataParseErrorExc(pseudoVarType, selLoc, exc);
-            throw exc;
+            this->_throwVarTypeInvalDataLoc(ss.str(), pseudoVarType, selLoc);
         }
 
         opts.push_back(std::make_unique<const typename VarTypeT::Option>(pseudoOpt->name(),
-                                                                         std::move(optDt), *ranges));
+                                                                         std::move(optDt), rangesIt->second));
     }
 
     // not visited anymore

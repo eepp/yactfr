@@ -4,10 +4,6 @@ trace {
   major = 1;
   minor = 8;
   byte_order = le;
-  packet.header := struct {
-    string a;
-    integer {size = 32;} magic;
-  };
 };
 
 stream {
@@ -18,6 +14,6 @@ event {
   name = event;
 
   fields := struct {
-    string a;
+    integer { size = 8; signed = 1; encoding = ascii; } a;
   };
 };

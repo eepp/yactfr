@@ -368,12 +368,12 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "SAVE_VAL";
         break;
 
-    case Kind::SET_PKT_END_CLK_VAL:
-        kindStr = "SET_PKT_END_CLK_VAL";
+    case Kind::SET_PKT_END_DEF_CLK_VAL:
+        kindStr = "SET_PKT_END_DEF_CLK_VAL";
         break;
 
-    case Kind::UPDATE_CLK_VAL:
-        kindStr = "UPDATE_CLK_VAL";
+    case Kind::UPDATE_DEF_CLK_VAL:
+        kindStr = "UPDATE_DEF_CLK_VAL";
         break;
 
     case Kind::SET_CUR_ID:
@@ -497,20 +497,9 @@ std::string SaveValInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-SetPktEndClkValInstr::SetPktEndClkValInstr(const ClockType& clkType, const Index index) :
-    Instr {Kind::SET_PKT_END_CLK_VAL},
-    _clkType {&clkType},
-    _index {index}
+SetPktEndDefClkValInstr::SetPktEndDefClkValInstr() :
+    Instr {Kind::SET_PKT_END_DEF_CLK_VAL}
 {
-}
-
-std::string SetPktEndClkValInstr::_toStr(const Size indent) const
-{
-    std::ostringstream ss;
-
-    ss << " " << _strProp("clk-type") << _clkType <<
-          " " << _strProp("index") << _index << std::endl;
-    return ss.str();
 }
 
 ReadBitArrayInstr::ReadBitArrayInstr(const Kind kind, const StructureMemberType * const member,
@@ -1114,22 +1103,18 @@ SetExpectedPktContentLenInstr::SetExpectedPktContentLenInstr() :
 {
 }
 
-UpdateClkValInstr::UpdateClkValInstr(const ClockType& clkType, const Index index, const Size len) :
-    Instr {Kind::UPDATE_CLK_VAL},
-    _clkType {&clkType},
-    _index {index},
+UpdateDefClkValInstr::UpdateDefClkValInstr(const Size len) :
+    Instr {Kind::UPDATE_DEF_CLK_VAL},
     _len {len}
 {
     assert(len <= 64);
 }
 
-std::string UpdateClkValInstr::_toStr(const Size indent) const
+std::string UpdateDefClkValInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("clk-type-addr") << _clkType <<
-          " " << _strProp("index") << _index <<
-          " " << _strProp("len") << _len << std::endl;
+    ss << " " << _strProp("len") << _len << std::endl;
     return ss.str();
 }
 
@@ -1353,27 +1338,9 @@ std::string PktProc::toStr(const Size indent) const
     std::ostringstream ss;
 
     ss << internal::indent(indent) << _strTopName("pkt proc") << " " <<
-          _strProp("saved-vals-count") << _savedValsCount << std::endl;
-
-    if (!_indexedClkTypes.empty()) {
-        Index i = 0;
-
-        ss << internal::indent(indent + 1) << "<indexed clk types>" << std::endl;
-
-        for (const auto clkType : _indexedClkTypes) {
-            ss << internal::indent(indent + 2) << i;
-
-            if (clkType->name()) {
-                ss << ": \033[1m" << clkType->name()->c_str() << "\033[0m";
-            }
-
-            ss << " (" << clkType << ")" << std::endl;
-            ++i;
-        }
-    }
-
-    ss << internal::indent(indent + 1) << "<preamble proc>" << std::endl;
-    ss << _preambleProc.toStr(indent + 2);
+          _strProp("saved-vals-count") << _savedValsCount << std::endl <<
+          internal::indent(indent + 1) << "<preamble proc>" << std::endl <<
+          _preambleProc.toStr(indent + 2);
 
     if (!_dsPktProcs.empty()) {
         ss << internal::indent(indent + 1) << "<DS pkt procs>" << std::endl;
@@ -1384,26 +1351,6 @@ std::string PktProc::toStr(const Size indent) const
     }
 
     return ss.str();
-}
-
-Index PktProc::clkTypeIndex(const ClockType& clkType)
-{
-    // check if this clock type is already indexed
-    const auto clkTypeIt = std::find_if(_indexedClkTypes.begin(), _indexedClkTypes.end(),
-                                        [&clkType](const ClockType * const candClkType) {
-        return candClkType == &clkType;
-    });
-    Index index;
-
-    if (clkTypeIt != _indexedClkTypes.end()) {
-        index = clkTypeIt - _indexedClkTypes.begin();
-    } else {
-        // find and index clock type
-        index = _indexedClkTypes.size();
-        _indexedClkTypes.push_back(&clkType);
-    }
-
-    return index;
 }
 
 } // namespace internal

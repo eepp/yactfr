@@ -1,0 +1,26 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        string content_size;
+    };
+};
+----
+"meow" 00
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     SC:1 {
+     0       ST {
+     0         STR:content_size {
+     0           SS:5:meow
+    40         }
+    40       }
+    40     }
+    40   }
+    40 }

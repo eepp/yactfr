@@ -2,7 +2,7 @@
 
 = How yactfr works
 Philippe Proulx
-15 January 2020
+10 February 2022
 :toc: left
 :nofooter:
 
@@ -42,6 +42,7 @@ documented uses unabbreviated names.
 |Ctx |Context
 |Cur |Current
 |Decr |Decrement
+|Def |Default
 |Disp |Display
 |DS |Data stream
 |DST |Data stream type
@@ -137,8 +138,8 @@ Trace type
   Clock types (0 or more)
   Data stream types (0 or more)
     Packet context type (optional)
-    Event header type (optional)
-    Event common context type (optional)
+    Event record header type (optional)
+    Event record common context type (optional)
     Event record types (0 or more)
       Specific context type (optional)
       Payload type (optional)
@@ -273,9 +274,9 @@ Other instructions are related to the last decoded integer, for example:
   expected total length of the current packet to the last decoded
   integer value.
 
-* `internal::UpdateClkValInstr` indicates to the VM to update the value
-  of a specific data stream clock with the value (or partial value) of
-  the last decoded integer.
+* `internal::UpdateDefClkValInstr` indicates to the VM to update the
+  value of a specific data stream default clock with the value (or
+  partial value) of the last decoded integer.
 
 An `internal::PktProcBuilder` object translates a trace type to a packet
 procedure.
@@ -371,7 +372,7 @@ state of the VM, including:
 * Stack of frames containing the next instruction to execute and
   the parent procedure.
 * Array of saved values.
-* Array of data stream clock values.
+* Current data stream clock value.
 * Concrete element objects to set when executing the VM.
 
 The VM position is a different object because this is what
