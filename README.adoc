@@ -5,8 +5,6 @@ Philippe Proulx
 22 March 2022
 :toc: left
 
-image::https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
-
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
 
 The yactfr library is written in pass:[C++14] and offers a (🥁...)
