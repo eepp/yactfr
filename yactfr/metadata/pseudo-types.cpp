@@ -20,6 +20,7 @@
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-str-type.hpp>
+#include <yactfr/metadata/sl-blob-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>
@@ -79,6 +80,11 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEnco
 PseudoDt::UP PseudoScalarDtWrapper::clone() const
 {
     return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), this->loc());
+}
+
+bool PseudoScalarDtWrapper::isEmpty() const
+{
+    return _dt->isStaticLengthBlobType() && _dt->asStaticLengthBlobType().length() == 0;
 }
 
 void PseudoScalarDtWrapper::accept(PseudoDtVisitor& visitor)
@@ -257,33 +263,6 @@ PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, TextLocat
     PseudoDt {std::move(loc)},
     _mediaType {std::move(mediaType)}
 {
-}
-
-PseudoSlBlobType::PseudoSlBlobType(const Size len, boost::optional<std::string> mediaType,
-                                   TextLocation loc) :
-    PseudoBlobType {std::move(mediaType), std::move(loc)},
-    PseudoSlType {len}
-{
-}
-
-PseudoDt::UP PseudoSlBlobType::clone() const
-{
-    return std::make_unique<PseudoSlBlobType>(_len, this->mediaType(), this->loc());
-}
-
-bool PseudoSlBlobType::isEmpty() const
-{
-    return _len == 0;
-}
-
-void PseudoSlBlobType::accept(PseudoDtVisitor& visitor)
-{
-    visitor.visit(*this);
-}
-
-void PseudoSlBlobType::accept(ConstPseudoDtVisitor& visitor) const
-{
-    visitor.visit(*this);
 }
 
 PseudoDlBlobType::PseudoDlBlobType(PseudoDataLoc pseudoLenLoc,

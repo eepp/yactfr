@@ -107,9 +107,6 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
     case PseudoDt::Kind::DL_ARRAY:
         return this->_dtFromPseudoDlArrayType(pseudoDt);
 
-    case PseudoDt::Kind::SL_BLOB:
-        return this->_dtFromPseudoSlBlobType(pseudoDt);
-
     case PseudoDt::Kind::DL_BLOB:
         return this->_dtFromPseudoDlBlobType(pseudoDt);
 
@@ -224,18 +221,6 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
     _current.erase(&pseudoArrayType);
 
     return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemType), lenLoc);
-}
-
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlBlobType(const PseudoDt& pseudoDt)
-{
-    auto& pseudoBlobType = static_cast<const PseudoSlBlobType&>(pseudoDt);
-
-    if (pseudoBlobType.mediaType()) {
-        return std::make_unique<const StaticLengthBlobType>(1, pseudoBlobType.len(),
-                                                            *pseudoBlobType.mediaType());
-    } else {
-        return std::make_unique<const StaticLengthBlobType>(1, pseudoBlobType.len());
-    }
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt& pseudoDt)

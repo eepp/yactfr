@@ -114,7 +114,6 @@ public:
         FL_UENUM,
         SL_ARRAY,
         DL_ARRAY,
-        SL_BLOB,
         DL_BLOB,
         STRUCT,
         VAR,
@@ -183,6 +182,7 @@ public:
     PseudoDt::UP clone() const override;
     bool isInt() const noexcept override;
     bool isUInt() const noexcept override;
+    bool isEmpty() const override;
 
     const DataType& dt() const noexcept
     {
@@ -469,28 +469,6 @@ public:
 private:
     boost::optional<std::string> _mediaType;
     PseudoDt::UP _pseudoElemType;
-};
-
-/*
- * Pseudo static-length BLOB type.
- */
-class PseudoSlBlobType final :
-    public PseudoBlobType,
-    public PseudoSlType
-{
-public:
-    explicit PseudoSlBlobType(Size len, boost::optional<std::string> mediaType,
-                              TextLocation loc = TextLocation {});
-
-    PseudoDt::Kind kind() const noexcept override
-    {
-        return PseudoDt::Kind::SL_BLOB;
-    }
-
-    PseudoDt::UP clone() const override;
-    bool isEmpty() const override;
-    void accept(PseudoDtVisitor& visitor) override;
-    void accept(ConstPseudoDtVisitor& visitor) const override;
 };
 
 /*

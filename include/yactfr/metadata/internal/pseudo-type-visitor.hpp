@@ -43,10 +43,6 @@ public:
     {
     }
 
-    virtual void visit(PseudoSlBlobType&)
-    {
-    }
-
     virtual void visit(PseudoDlBlobType&)
     {
     }
@@ -87,10 +83,6 @@ public:
     }
 
     virtual void visit(const PseudoDlArrayType&)
-    {
-    }
-
-    virtual void visit(const PseudoSlBlobType&)
     {
     }
 

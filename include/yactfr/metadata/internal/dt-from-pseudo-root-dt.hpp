@@ -146,12 +146,6 @@ private:
     DataType::UP _dtFromPseudoDlArrayType(const PseudoDt& pseudoDt);
 
     /*
-     * Converts the pseudo static-length BLOB type `pseudoDt` to a
-     * yactfr static BLOB type.
-     */
-    DataType::UP _dtFromPseudoSlBlobType(const PseudoDt& pseudoDt);
-
-    /*
      * Converts the pseudo dynamic-length BLOB type `pseudoDt` to a
      * yactfr dynamic BLOB type.
      */
