@@ -69,8 +69,8 @@ An instance is thrown when there is a text parse error.
 
 The exception object contains a stack of error messages (in reverse
 order) which place the error in its parsing context. Each error message
-has a text location (line and column numbers) to indicate where it's
-located in the original text.
+has a text location (offset and line/column numbers) to indicate where
+it's located in the original text.
 */
 class TextParseError final :
     public std::runtime_error
