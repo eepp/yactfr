@@ -1787,8 +1787,7 @@ packet.
 All the elements between this one and the following
 PacketContentEndElement within a given element sequence are part of the
 packet content, which does \em not include the optional padding bits
-before the end of the packet (indicated by an PacketEndElement at a
-higher level).
+before the end of the packet (indicated by the next PacketEndElement).
 
 @sa PacketContentEndElement
 */
@@ -1885,7 +1884,7 @@ public:
     /// Expected magic number value.
     static constexpr unsigned long long expectedValue() noexcept
     {
-        return UINT64_C(0xc1fc1fc1);
+        return 0xc1fc1fc1;
     }
 
 private:
@@ -2133,7 +2132,7 @@ public:
     /*!
     @brief
         Value of the default clock of the data stream of the current
-        packet at its end
+        packet at its end.
 
     During the packet decoding process, this default clock value is
     known \em before decoding the event records.
