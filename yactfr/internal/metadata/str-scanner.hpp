@@ -9,6 +9,7 @@
 #define _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
 
 #include <cstdlib>
+#include <cassert>
 #include <memory>
 #include <vector>
 #include <limits>
@@ -749,8 +750,9 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
                 // hexadecimal
                 _at += 2;
                 val = this->_tryScanConstInt<ValT, 16>(negate);
-            } else if (_at[1] >= '1' && _at[1] <= '9') {
+            } else {
                 // octal: leave prefix to catch 0 too
+                assert(_at[1] >= '1' && _at[1] <= '9');
                 val = this->_tryScanConstInt<ValT, 8>(negate);
             }
 
