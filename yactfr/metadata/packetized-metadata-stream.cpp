@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <cassert>
+
 #include <yactfr/metadata/metadata-stream.hpp>
 #include <yactfr/metadata/packetized-metadata-stream.hpp>
 
@@ -21,6 +23,8 @@ PacketizedMetadataStream::PacketizedMetadataStream(std::string text, const Size 
     _bo {bo},
     _uuid {std::move(uuid)}
 {
+    assert(majorVersion == 1);
+    assert(minorVersion == 8);
 }
 
 } // namespace yactfr
