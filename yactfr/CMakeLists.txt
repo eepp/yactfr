@@ -18,6 +18,7 @@ add_library (
     elem-seq-it.cpp
     elem-seq.cpp
     elem-visitor.cpp
+    item.cpp
     logging/zf_log.c
     metadata/array-type.cpp
     metadata/blob-type.cpp

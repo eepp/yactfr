@@ -16,7 +16,7 @@ decoding completeness, and flexibility of data input.
 
 <hr>
 
-The yactfr API is divided into three parts:
+The yactfr API is divided into four parts:
 
 - The \ref metadata API deals with everything related to CTF metadata
   streams. This API makes it possible to:
@@ -41,6 +41,9 @@ The yactfr API is divided into three parts:
 - The \ref trace API makes it possible to obtain TraceType and
   TraceEnvironment objects from metadata (TSDL) text with
   fromMetadataText().
+
+- The \ref item API contains basic value objects, similar to the
+  <a href="https://www.json.org/">JSON</a> model.
 
 - The \ref element_seq API deals with CTF binary data stream decoding.
 

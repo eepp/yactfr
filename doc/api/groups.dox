@@ -90,6 +90,54 @@ type).
 Therefore, fromMetadataText() returns both a trace type and
 a trace environment.
 
+@defgroup item Item
+@brief
+    %Item API.
+
+A yactfr item is similar to a <a
+href="https://www.json.org/json-en.html">JSON</a> value:
+
+<table>
+  <tr>
+    <th>JSON value
+    <th>%Item type
+    <th>Creation
+  <tr>
+    <td>\c null
+    <td>
+      Item having the ItemKind::NUL kind.
+    <td>
+      Item::createNull()
+  <tr>
+    <td>\c true or \c false
+    <td>BooleanItem
+    <td>
+      Constructor or createItem(bool)
+  <tr>
+    <td>Number
+    <td>
+      UnsignedIntegerItem, SignedIntegerItem, and RealItem
+    <td>
+      Constructors or createItem(unsigned long long),
+      createItem(long long), and createItem(double)
+  <tr>
+    <td>String
+    <td>
+      StringItem
+    <td>
+      Constructor or createItem(std::string)
+  <tr>
+    <td>Array
+    <td>ArrayItem
+    <td>
+      Constructor or createItem(ArrayItem::Container&&)
+  <tr>
+    <td>Object
+    <td>MapItem
+    <td>
+      Constructor or createItem(MapItem::Container&&)
+</table>
+
 @defgroup element_seq Element sequence
 @brief
     Element sequence API.
