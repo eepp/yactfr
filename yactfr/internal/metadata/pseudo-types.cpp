@@ -73,6 +73,11 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEnco
 {
 }
 
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) :
+    PseudoScalarDtWrapper {std::move(dt), false, std::move(loc)}
+{
+}
+
 PseudoDt::UP PseudoScalarDtWrapper::clone() const
 {
     return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), _hasEncoding, this->loc());

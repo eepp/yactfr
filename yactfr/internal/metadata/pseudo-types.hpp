@@ -177,6 +177,8 @@ public:
     explicit PseudoScalarDtWrapper(DataType::UP dt, bool hasEncoding = false,
                                    TextLocation loc = TextLocation {});
 
+    explicit PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc = TextLocation {});
+
     PseudoDt::Kind kind() const noexcept override
     {
         return PseudoDt::Kind::SCALAR_DT_WRAPPER;
