@@ -19,6 +19,7 @@ add_library (
     elem-seq.cpp
     elem-visitor.cpp
     from-metadata-text.cpp
+    item-from-json-val.cpp
     item.cpp
     json-val-from-text.cpp
     json-val.cpp
