@@ -63,10 +63,12 @@ private:
     /*
      * Releases and returns the resulting yactfr data type.
      */
-    StructureType::UP releaseDt()
+    StructureType::UP _releaseDt()
     {
         return std::move(_dt);
     }
+
+    using _PseudoDtSels = std::pair<DataLocation, ConstPseudoDtSet>;
 
 private:
     /*
@@ -134,6 +136,9 @@ private:
      */
     const DataLocation& _getLenLoc(const PseudoDt& pseudoDt) const;
 
+    template <typename PseudoDtT, typename FuncT>
+    DataType::UP _whileVisitingPseudoDt(const PseudoDtT& pseudoDt, FuncT&& func);
+
     /*
      * Converts the pseudo static-length array type `pseudoDt` to a
      * yactfr static-length array type.
@@ -172,9 +177,17 @@ private:
 
     /*
      * Returns the yactfr data location and all the pseudo selector
-     * types of the pseudo variant type `pseudoDt`.
+     * types of the pseudo data type `pseudoDt`.
      */
-    std::pair<DataLocation, ConstPseudoDtSet> _pseudoVarTypeSels(const PseudoDt& pseudoDt) const;
+    _PseudoDtSels _pseudoDtSels(const PseudoDt& pseudoDt) const;
+
+    /*
+     * Returns the yactfr data location and all the pseudo integer
+     * selector types, validating them, of the pseudo data type
+     * `pseudoDt` of which the name is `dtName` (either `variant` or
+     * `optional`).
+     */
+    _PseudoDtSels _pseudoDtIntSels(const PseudoDt& pseudoDt, const std::string& dtName) const;
 
     /*
      * Converts the pseudo variant type `pseudoVarType` to a yactfr
@@ -193,7 +206,19 @@ private:
      */
     template <typename VarTypeT, typename IntRangeValueT>
     DataType::UP _dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
-                                                   const DataLocation& selLoc);
+                                                   DataLocation&& selLoc);
+
+    /*
+     * Converts the pseudo optional (with boolean selector) type
+     * `pseudoDt` to a yactfr optional type.
+     */
+    DataType::UP _dtFromPseudoOptWithBoolSelType(const PseudoDt& pseudoDt);
+
+    /*
+     * Converts the pseudo optional (with integer selector) type
+     * `pseudoDt` to a yactfr optional type.
+     */
+    DataType::UP _dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt);
 
     [[ noreturn ]] void _throwInvalDataLoc(const std::string& initMsg, const TextLocation& initLoc,
                                            const DataLocation& dataLoc, const TextLocation& loc) const;
@@ -227,9 +252,10 @@ private:
     DataLocMap _locMap;
 
     /*
-     * Option/element indexes of currently visited pseudo variant,
-     * dynamic-length array, and dynamic-length string types (always 0
-     * for pseudo dynamic-length array/string type).
+     * Option/element indexes of currently visited pseudo
+     * variant/optional, dynamic-length array/string/BLOB types (always
+     * 0 for pseudo dynamic-length array/string/BLOB and pseudo optional
+     * type).
      */
     std::unordered_map<const PseudoDt *, Index> _current;
 };
@@ -370,7 +396,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
 
 template <typename VarTypeT, typename IntRangeValueT>
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
-                                                                            const DataLocation& selLoc)
+                                                                            DataLocation&& selLoc)
 {
     typename VarTypeT::Options opts;
 
@@ -398,8 +424,20 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
     // not visited anymore
     _current.erase(&pseudoVarType);
 
-    return std::make_unique<const VarTypeT>(1, std::move(opts), selLoc,
+    return std::make_unique<const VarTypeT>(1, std::move(opts), std::move(selLoc),
                                             this->_tryCloneUserAttrs(pseudoVarType.userAttrs()));
+}
+
+template <typename PseudoDtT, typename FuncT>
+DataType::UP DtFromPseudoRootDtConverter::_whileVisitingPseudoDt(const PseudoDtT& pseudoCompoundDt,
+                                                                 FuncT&& func)
+{
+    _current[&pseudoCompoundDt] = 0;
+
+    auto pseudoDt = std::forward<FuncT>(func)(pseudoCompoundDt);
+
+    _current.erase(&pseudoCompoundDt);
+    return pseudoDt;
 }
 
 } // namespace internal

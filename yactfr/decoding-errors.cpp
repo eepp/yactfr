@@ -187,8 +187,8 @@ static const std::string formatInvalidVarSelValueReason(const SelValueT selVal)
     return ss.str();
 };
 
-InvalidVariantSignedSelectorValueDecodingError::InvalidVariantSignedSelectorValueDecodingError(const Index offset,
-                                                                                               const long long selVal) :
+InvalidVariantSignedIntegerSelectorValueDecodingError::InvalidVariantSignedIntegerSelectorValueDecodingError(const Index offset,
+                                                                                                             const long long selVal) :
     DecodingError {
         formatInvalidVarSelValueReason(selVal),
         offset
@@ -197,8 +197,8 @@ InvalidVariantSignedSelectorValueDecodingError::InvalidVariantSignedSelectorValu
 {
 }
 
-InvalidVariantUnsignedSelectorValueDecodingError::InvalidVariantUnsignedSelectorValueDecodingError(const Index offset,
-                                                                                                   const unsigned long long selVal) :
+InvalidVariantUnsignedIntegerSelectorValueDecodingError::InvalidVariantUnsignedIntegerSelectorValueDecodingError(const Index offset,
+                                                                                                                 const unsigned long long selVal) :
     DecodingError {
         formatInvalidVarSelValueReason(selVal),
         offset

@@ -49,13 +49,14 @@ class DataLocMap :
 public:
     /*
      * Builds a data location map for `pseudoDt` (pseudo dynamic-length
-     * array/string or variant type) within the scope `scope`.
+     * array/string/BLOB or variant/optional type) within the scope
+     * `scope`.
      */
     explicit DataLocMap(const PseudoDt& pseudoDt, Scope scope);
 
     /*
      * Returns the data location of the pseudo dynamic-length
-     * array/string or variant type `pseudoDt`.
+     * array/string/BLOB or variant/optional type `pseudoDt`.
      */
     const DataLocation& operator[](const PseudoDt& pseudoDt) const noexcept;
 
@@ -81,8 +82,8 @@ private:
 
     /*
      * Fills `_map` to contain the yactfr data locations of all pseudo
-     * dynamic-length array/string and variant types within
-     * `*_pseudoDt`.
+     * dynamic-length array/string/BLOB and variant/optional types
+     * within `*_pseudoDt`.
      */
     void _create(const PseudoDt& pseudoDt);
 

@@ -252,25 +252,72 @@ public:
 
     /*!
     @brief
-        Visits the type of data stream variants with an unsigned
+        Visits the type of data stream variants with an unsigned integer
         selector \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const VariantWithUnsignedSelectorType& type)
+    virtual void visit(const VariantWithUnsignedIntegerSelectorType& type)
     {
     }
 
     /*!
     @brief
-        Visits the type of data stream variants with a signed
+        Visits the type of data stream variants with a signed integer
         selector \p type.
 
     @param[in] type
         Data type to visit.
     */
-    virtual void visit(const VariantWithSignedSelectorType& type)
+    virtual void visit(const VariantWithSignedIntegerSelectorType& type)
+    {
+    }
+
+    /*!
+    @brief
+        Visits the type of data stream optionals \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const OptionalType& type)
+    {
+    }
+
+    /*!
+    @brief
+        Visits the type of data stream optionals with a boolean selector
+        \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const OptionalWithBooleanSelectorType& type)
+    {
+    }
+
+    /*!
+    @brief
+        Visits the type of data stream optionals with an unsigned
+        integer selector \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const OptionalWithUnsignedIntegerSelectorType& type)
+    {
+    }
+
+    /*!
+    @brief
+        Visits the type of data stream optionals with a signed integer
+        selector \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const OptionalWithSignedIntegerSelectorType& type)
     {
     }
 };

@@ -30,6 +30,7 @@
 #include "metadata/sl-blob-type.hpp"
 #include "metadata/dl-blob-type.hpp"
 #include "metadata/var-type.hpp"
+#include "metadata/opt-type.hpp"
 #include "elem-visitor.hpp"
 #include "aliases.hpp"
 
@@ -160,11 +161,20 @@ public:
         /// DynamicLengthStringBeginningElement
         DYNAMIC_LENGTH_STRING_BEGINNING,
 
-        /// VariantWithSignedSelectorBeginningElement
-        VARIANT_WITH_SIGNED_SELECTOR_BEGINNING,
+        /// VariantWithSignedIntegerSelectorBeginningElement
+        VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING,
 
-        /// VariantWithUnsignedSelectorBeginningElement
-        VARIANT_WITH_UNSIGNED_SELECTOR_BEGINNING,
+        /// VariantWithUnsignedIntegerSelectorBeginningElement
+        VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING,
+
+        /// OptionalWithBooleanSelectorBeginningElement
+        OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING,
+
+        /// OptionalWithSignedIntegerSelectorBeginningElement
+        OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING,
+
+        /// OptionalWithUnsignedIntegerSelectorBeginningElement
+        OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING,
     };
 
 protected:
@@ -1925,8 +1935,8 @@ private:
 
 @ingroup elems
 
-@sa VariantWithUnsignedSelectorBeginningElement
-@sa VariantWithSignedSelectorBeginningElement
+@sa VariantWithUnsignedIntegerSelectorBeginningElement
+@sa VariantWithSignedIntegerSelectorBeginningElement
 @sa EndElement
 */
 class VariantBeginningElement :
@@ -1945,22 +1955,22 @@ protected:
 
 /*!
 @brief
-    Variant with selector beginning base element.
+    Variant with integer selector beginning base element.
 
 @ingroup elems
 
-@sa VariantWithUnsignedSelectorBeginningElement
-@sa VariantWithSignedSelectorBeginningElement
+@sa VariantWithUnsignedIntegerSelectorBeginningElement
+@sa VariantWithSignedIntegerSelectorBeginningElement
 */
 template <typename VariantTypeT, typename SelectorValueT, Element::Kind KindV>
-class VariantWithSelectorBeginningElement :
+class VariantWithIntegerSelectorBeginningElement :
     public VariantBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
-    explicit VariantWithSelectorBeginningElement() :
+    explicit VariantWithIntegerSelectorBeginningElement() :
         VariantBeginningElement {KindV}
     {
     }
@@ -1992,27 +2002,27 @@ private:
 
 /*!
 @brief
-    Variant with unsigned selector beginning element.
+    Variant with unsigned integer selector beginning element.
 
 @ingroup elems
 
-This element indicates the beginning of a data stream variant with a
-unsigned selector.
+This element indicates the beginning of a data stream variant with an
+unsigned integer selector.
 
-The next element is the selected element of this variant.
-Expect an EndElement after this next element at the same level.
+The next element is the selected element of this variant. Expect an
+EndElement after this next element at the same level.
 
 @sa EndElement
 */
-class VariantWithUnsignedSelectorBeginningElement final :
-    public VariantWithSelectorBeginningElement<VariantWithUnsignedSelectorType, unsigned long long,
-                                               Element::Kind::VARIANT_WITH_UNSIGNED_SELECTOR_BEGINNING>
+class VariantWithUnsignedIntegerSelectorBeginningElement final :
+    public VariantWithIntegerSelectorBeginningElement<VariantWithUnsignedIntegerSelectorType, unsigned long long,
+                                                      Element::Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit VariantWithUnsignedSelectorBeginningElement()
+    explicit VariantWithUnsignedIntegerSelectorBeginningElement()
     {
     }
 
@@ -2025,27 +2035,219 @@ public:
 
 /*!
 @brief
-    Variant with signed selector beginning element.
+    Variant with signed integer selector beginning element.
 
 @ingroup elems
 
 This element indicates the beginning of a data stream variant with a
-signed selector.
+signed integer selector.
 
 The next element is the selected element of this variant. Expect an
 EndElement after this next element at the same level.
 
 @sa EndElement
 */
-class VariantWithSignedSelectorBeginningElement final :
-    public VariantWithSelectorBeginningElement<VariantWithSignedSelectorType, long long,
-                                               Element::Kind::VARIANT_WITH_SIGNED_SELECTOR_BEGINNING>
+class VariantWithSignedIntegerSelectorBeginningElement final :
+    public VariantWithIntegerSelectorBeginningElement<VariantWithSignedIntegerSelectorType, long long,
+                                                      Element::Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit VariantWithSignedSelectorBeginningElement()
+    explicit VariantWithSignedIntegerSelectorBeginningElement()
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Common optional beginning element.
+
+@ingroup elems
+
+@sa OptionalWithBooleanSelectorBeginningElement
+@sa OptionalWithUnsignedIntegerSelectorBeginningElement
+@sa OptionalWithSignedIntegerSelectorBeginningElement
+@sa EndElement
+*/
+class OptionalBeginningElement :
+    public BeginningElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    OptionalBeginningElement(const Kind kind) :
+        BeginningElement {kind}
+    {
+    }
+
+public:
+    /// Optional type.
+    const OptionalType& type() const noexcept
+    {
+        return *_dt;
+    }
+
+    /// Whether or not this optional is enabled (contains data).
+    bool isEnabled() const noexcept
+    {
+        return _isEnabled;
+    }
+
+protected:
+    const OptionalType *_dt;
+
+private:
+    bool _isEnabled;
+};
+
+/*!
+@brief
+    Optional with boolean selector beginning element.
+
+@ingroup elems
+
+This element indicates the beginning of a data stream optional with a
+boolean selector.
+
+The next element, if the isEnabled() returns \c true, is the contained
+element of this optional. Expect an EndElement after this at the same
+level.
+
+@sa EndElement
+*/
+class OptionalWithBooleanSelectorBeginningElement final :
+    public OptionalBeginningElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit OptionalWithBooleanSelectorBeginningElement() :
+        OptionalBeginningElement {Element::Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING}
+    {
+    }
+
+public:
+    /// Optional type.
+    const OptionalWithBooleanSelectorType& type() const noexcept
+    {
+        return static_cast<const OptionalWithBooleanSelectorType&>(*_dt);
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Optional with integer selector beginning base element.
+
+@ingroup elems
+
+@sa OptionalWithUnsignedIntegerSelectorBeginningElement
+@sa OptionalWithSignedIntegerSelectorBeginningElement
+*/
+template <typename OptionalTypeT, typename SelectorValueT, Element::Kind KindV>
+class OptionalWithIntegerSelectorBeginningElement :
+    public OptionalBeginningElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit OptionalWithIntegerSelectorBeginningElement() :
+        OptionalBeginningElement {KindV}
+    {
+    }
+
+public:
+    /// Optional type.
+    const OptionalTypeT& type() const noexcept
+    {
+        return static_cast<const OptionalTypeT&>(*_dt);
+    }
+
+    /// Value of the optional selector.
+    SelectorValueT selectorValue() const noexcept
+    {
+        return _selVal;
+    }
+
+private:
+    SelectorValueT _selVal;
+};
+
+/*!
+@brief
+    Optional with unsigned integer selector beginning element.
+
+@ingroup elems
+
+This element indicates the beginning of a data stream optional with an
+unsigned integer selector.
+
+The next element, if the isEnabled() returns \c true, is the contained
+element of this optional. Expect an EndElement after this at the same
+level.
+
+@sa EndElement
+*/
+class OptionalWithUnsignedIntegerSelectorBeginningElement final :
+    public OptionalWithIntegerSelectorBeginningElement<OptionalWithUnsignedIntegerSelectorType, unsigned long long,
+                                                       Element::Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING>
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit OptionalWithUnsignedIntegerSelectorBeginningElement()
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Optional with signed integer selector beginning element.
+
+@ingroup elems
+
+This element indicates the beginning of a data stream optional with a
+signed integer selector.
+
+The next element, if the isEnabled() returns \c true, is the contained
+element of this optional. Expect an EndElement after this at the same
+level.
+
+@sa EndElement
+*/
+class OptionalWithSignedIntegerSelectorBeginningElement final :
+    public OptionalWithIntegerSelectorBeginningElement<OptionalWithSignedIntegerSelectorType, long long,
+                                                       Element::Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING>
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit OptionalWithSignedIntegerSelectorBeginningElement()
     {
     }
 

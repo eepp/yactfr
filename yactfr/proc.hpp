@@ -84,6 +84,7 @@
 #include <yactfr/metadata/sl-blob-type.hpp>
 #include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
+#include <yactfr/metadata/opt-type.hpp>
 #include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/ert.hpp>
 #include <yactfr/metadata/dst.hpp>
@@ -104,8 +105,11 @@ class BeginReadDlBlobInstr;
 class BeginReadSlBlobInstr;
 class BeginReadSlUuidBlobInstr;
 class BeginReadStructInstr;
-class BeginReadVarSSelInstr;
-class BeginReadVarUSelInstr;
+class BeginReadVarSIntSelInstr;
+class BeginReadVarUIntSelInstr;
+class BeginReadOptBoolSelInstr;
+class BeginReadOptUIntSelInstr;
+class BeginReadOptSIntSelInstr;
 class DecrRemainingElemsInstr;
 class EndDsErPreambleProcInstr;
 class EndDsPktPreambleProcInstr;
@@ -232,11 +236,23 @@ public:
     {
     }
 
-    virtual void visit(BeginReadVarUSelInstr& instr)
+    virtual void visit(BeginReadVarUIntSelInstr& instr)
     {
     }
 
-    virtual void visit(BeginReadVarSSelInstr& instr)
+    virtual void visit(BeginReadVarSIntSelInstr& instr)
+    {
+    }
+
+    virtual void visit(BeginReadOptBoolSelInstr& instr)
+    {
+    }
+
+    virtual void visit(BeginReadOptUIntSelInstr& instr)
+    {
+    }
+
+    virtual void visit(BeginReadOptSIntSelInstr& instr)
     {
     }
 
@@ -418,8 +434,11 @@ public:
         BEGIN_READ_SL_BLOB,
         BEGIN_READ_SL_UUID_BLOB,
         BEGIN_READ_STRUCT,
-        BEGIN_READ_VAR_SSEL,
-        BEGIN_READ_VAR_USEL,
+        BEGIN_READ_VAR_SINT_SEL,
+        BEGIN_READ_VAR_UINT_SEL,
+        BEGIN_READ_OPT_BOOL_SEL,
+        BEGIN_READ_OPT_SINT_SEL,
+        BEGIN_READ_OPT_UINT_SEL,
         DECR_REMAINING_ELEMS,
         END_DS_ER_PREAMBLE_PROC,
         END_DS_PKT_PREAMBLE_PROC,
@@ -434,6 +453,7 @@ public:
         END_READ_DL_BLOB,
         END_READ_STRUCT,
         END_READ_VAR,
+        END_READ_OPT,
         READ_FL_BIT_ARRAY_A16_BE,
         READ_FL_BIT_ARRAY_A16_LE,
         READ_FL_BIT_ARRAY_A32_BE,
@@ -758,18 +778,40 @@ public:
 
     bool isBeginReadVar() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_VAR_SSEL ||
-               _theKind == Kind::BEGIN_READ_VAR_USEL;
+        return _theKind == Kind::BEGIN_READ_VAR_SINT_SEL ||
+               _theKind == Kind::BEGIN_READ_VAR_UINT_SEL;
     }
 
-    bool isBeginReadVarSSel() const noexcept
+    bool isBeginReadVarSIntSel() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_VAR_SSEL;
+        return _theKind == Kind::BEGIN_READ_VAR_SINT_SEL;
     }
 
-    bool isBeginReadVarUSel() const noexcept
+    bool isBeginReadVarUIntSel() const noexcept
     {
-        return _theKind == Kind::BEGIN_READ_VAR_USEL;
+        return _theKind == Kind::BEGIN_READ_VAR_UINT_SEL;
+    }
+
+    bool isBeginReadOpt() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_OPT_BOOL_SEL ||
+               _theKind == Kind::BEGIN_READ_OPT_SINT_SEL ||
+               _theKind == Kind::BEGIN_READ_OPT_UINT_SEL;
+    }
+
+    bool isBeginReadOptBoolSel() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_OPT_BOOL_SEL;
+    }
+
+    bool isBeginReadOptSIntSel() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_OPT_SINT_SEL;
+    }
+
+    bool isBeginReadOptUIntSel() const noexcept
+    {
+        return _theKind == Kind::BEGIN_READ_OPT_UINT_SEL;
     }
 
     bool isEndReadData() const noexcept
@@ -781,7 +823,8 @@ public:
                _theKind == Kind::END_READ_DL_STR ||
                _theKind == Kind::END_READ_SL_BLOB ||
                _theKind == Kind::END_READ_DL_BLOB ||
-               _theKind == Kind::END_READ_VAR;
+               _theKind == Kind::END_READ_VAR ||
+               _theKind == Kind::END_READ_OPT;
     }
 
     bool isEndProc() const noexcept
@@ -844,8 +887,8 @@ private:
  *
  * This instruction requires the VM to save the last decoded integer
  * value to a position (index) in its saved value vector so that it can
- * be used later (for the length of a dynamic-length array/string or for
- * the selector of a variant).
+ * be used later (for the length of a dynamic-length array/string/BLOB
+ * or for the selector of a variant/optional).
  */
 class SaveValInstr final :
     public Instr
@@ -1654,7 +1697,7 @@ static inline std::string _strProp(const std::string& prop)
  * selector of the variant, find the corresponding option for this
  * selector value, and then execute the subprocedure of the option.
  */
-template <typename VarTypeT, Instr::Kind SelfKind>
+template <typename VarTypeT, Instr::Kind SelfKindV>
 class BeginReadVarInstr :
     public ReadDataInstr
 {
@@ -1664,7 +1707,7 @@ public:
 
 protected:
     explicit BeginReadVarInstr(const StructureMemberType * const memberType, const DataType& dt) :
-        ReadDataInstr {SelfKind, memberType, dt}
+        ReadDataInstr {SelfKindV, memberType, dt}
     {
         auto& varType = static_cast<const VarTypeT&>(dt);
 
@@ -1736,11 +1779,11 @@ private:
     Index _selPos;
 };
 
-class BeginReadVarUSelInstr final :
-    public BeginReadVarInstr<VariantWithUnsignedSelectorType, Instr::Kind::BEGIN_READ_VAR_USEL>
+class BeginReadVarUIntSelInstr final :
+    public BeginReadVarInstr<VariantWithUnsignedIntegerSelectorType, Instr::Kind::BEGIN_READ_VAR_UINT_SEL>
 {
 public:
-    explicit BeginReadVarUSelInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit BeginReadVarUIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1748,11 +1791,146 @@ public:
     }
 };
 
-class BeginReadVarSSelInstr final :
-    public BeginReadVarInstr<VariantWithSignedSelectorType, Instr::Kind::BEGIN_READ_VAR_SSEL>
+class BeginReadVarSIntSelInstr final :
+    public BeginReadVarInstr<VariantWithSignedIntegerSelectorType, Instr::Kind::BEGIN_READ_VAR_SINT_SEL>
 {
 public:
-    explicit BeginReadVarSSelInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit BeginReadVarSIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Begin reading optional" abstract procedure instruction class.
+ *
+ * The VM must use selPos() to retrieve the saved value which is the
+ * selector of the optional, and, depending on the value and the type of
+ * optional, execute its subprocedure.
+ */
+class BeginReadOptInstr :
+    public BeginReadCompoundInstr
+{
+protected:
+    explicit BeginReadOptInstr(Kind kind, const StructureMemberType *memberType,
+                               const DataType& dt);
+
+public:
+    const OptionalType& optType() const noexcept
+    {
+        return static_cast<const OptionalType&>(this->dt());
+    }
+
+    const Index selPos() const noexcept
+    {
+        return _selPos;
+    }
+
+    void selPos(const Index pos) noexcept
+    {
+        _selPos = pos;
+    }
+
+private:
+    std::string _toStr(Size indent = 0) const override;
+
+private:
+    Index _selPos;
+};
+
+/*
+ * "Begin reading optional with boolean selector" procedure instruction.
+ */
+class BeginReadOptBoolSelInstr :
+    public BeginReadOptInstr
+{
+public:
+    explicit BeginReadOptBoolSelInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    const OptionalWithBooleanSelectorType& optType() const noexcept
+    {
+        return static_cast<const OptionalWithBooleanSelectorType&>(this->dt());
+    }
+
+    bool isEnabled(const bool selVal) const noexcept
+    {
+        return selVal;
+    }
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Begin reading optional with integer selector" procedure instruction
+ * template.
+ */
+template <typename OptTypeT, Instr::Kind SelfKindV>
+class BeginReadOptIntSelInstr :
+    public BeginReadOptInstr
+{
+public:
+    using SelRanges = typename OptTypeT::SelectorRangeSet;
+
+protected:
+    explicit BeginReadOptIntSelInstr(const StructureMemberType * const memberType,
+                                     const DataType& dt) :
+        BeginReadOptInstr {SelfKindV, memberType, dt},
+        _selRanges {static_cast<const OptTypeT&>(dt).selectorRanges()}
+    {
+    }
+
+public:
+    const OptTypeT& optType() const noexcept
+    {
+        return static_cast<const OptTypeT&>(this->dt());
+    }
+
+    const SelRanges& selRanges() const noexcept
+    {
+        return _selRanges;
+    }
+
+    bool isEnabled(const typename SelRanges::Value selVal) const noexcept
+    {
+        return _selRanges.contains(selVal);
+    }
+
+private:
+    SelRanges _selRanges;
+};
+
+/*
+ * "Begin reading optional with unsigned integer selector" procedure
+ * instruction.
+ */
+class BeginReadOptUIntSelInstr :
+    public BeginReadOptIntSelInstr<OptionalWithUnsignedIntegerSelectorType,
+                                   Instr::Kind::BEGIN_READ_OPT_UINT_SEL>
+{
+public:
+    explicit BeginReadOptUIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Begin reading optional with signed integer selector" procedure
+ * instruction.
+ */
+class BeginReadOptSIntSelInstr :
+    public BeginReadOptIntSelInstr<OptionalWithSignedIntegerSelectorType,
+                                   Instr::Kind::BEGIN_READ_OPT_SINT_SEL>
+{
+public:
+    explicit BeginReadOptSIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {

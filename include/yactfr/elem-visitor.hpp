@@ -46,8 +46,12 @@ class VariableLengthSignedIntegerElement;
 class VariableLengthUnsignedEnumerationElement;
 class VariableLengthUnsignedIntegerElement;
 class VariantBeginningElement;
-class VariantWithSignedSelectorBeginningElement;
-class VariantWithUnsignedSelectorBeginningElement;
+class VariantWithSignedIntegerSelectorBeginningElement;
+class VariantWithUnsignedIntegerSelectorBeginningElement;
+class OptionalBeginningElement;
+class OptionalWithBooleanSelectorBeginningElement;
+class OptionalWithSignedIntegerSelectorBeginningElement;
+class OptionalWithUnsignedIntegerSelectorBeginningElement;
 
 /*!
 @brief
@@ -97,8 +101,12 @@ public:
     virtual void visit(const VariableLengthUnsignedEnumerationElement& elem);
     virtual void visit(const VariableLengthUnsignedIntegerElement& elem);
     virtual void visit(const VariantBeginningElement& elem);
-    virtual void visit(const VariantWithSignedSelectorBeginningElement& elem);
-    virtual void visit(const VariantWithUnsignedSelectorBeginningElement& elem);
+    virtual void visit(const VariantWithSignedIntegerSelectorBeginningElement& elem);
+    virtual void visit(const VariantWithUnsignedIntegerSelectorBeginningElement& elem);
+    virtual void visit(const OptionalBeginningElement& elem);
+    virtual void visit(const OptionalWithBooleanSelectorBeginningElement& elem);
+    virtual void visit(const OptionalWithSignedIntegerSelectorBeginningElement& elem);
+    virtual void visit(const OptionalWithUnsignedIntegerSelectorBeginningElement& elem);
 };
 
 } // namespace yactfr

@@ -187,17 +187,18 @@ private:
 
 /*!
 @brief
-    Type of data stream variants with an unsigned selector.
+    Type of data stream variants with an unsigned integer selector.
 
 @ingroup metadata_dt
 */
-class VariantWithUnsignedSelectorType final :
-    public VariantType<VariantWithUnsignedSelectorTypeOption::SelectorValue>
+class VariantWithUnsignedIntegerSelectorType final :
+    public VariantType<VariantWithUnsignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
     /*!
     @brief
-        Builds a type of data stream variants with an unsigned selector.
+        Builds a type of data stream variants with an unsigned integer
+        selector.
 
     @param[in] minimumAlignment
         Minimum alignment of data stream variants described by this
@@ -222,8 +223,10 @@ public:
         The options of \p options don't contain overlapping integer
         ranges between them.
     */
-    explicit VariantWithUnsignedSelectorType(unsigned int minimumAlignment, Options&& options,
-                                             DataLocation selectorLocation, MapItem::UP userAttributes);
+    explicit VariantWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
+                                                    Options&& options,
+                                                    DataLocation selectorLocation,
+                                                    MapItem::UP userAttributes);
 
 private:
     DataType::UP _clone() const override;
@@ -236,17 +239,18 @@ private:
 
 /*!
 @brief
-    Type of data stream variants with a signed selector.
+    Type of data stream variants with a signed integer selector.
 
 @ingroup metadata_dt
 */
-class VariantWithSignedSelectorType final :
-    public VariantType<VariantWithSignedSelectorTypeOption::SelectorValue>
+class VariantWithSignedIntegerSelectorType final :
+    public VariantType<VariantWithSignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
     /*!
     @brief
-        Builds a type of data stream variants with a signed selector.
+        Builds a type of data stream variants with a signed integer
+        selector.
 
     @param[in] minimumAlignment
         Minimum alignment of data stream variants described by this
@@ -272,8 +276,9 @@ public:
         The options of \p options don't contain overlapping integer
         ranges between them.
     */
-    explicit VariantWithSignedSelectorType(unsigned int minimumAlignment, Options&& options,
-                                           DataLocation selectorLocation, MapItem::UP userAttributes);
+    explicit VariantWithSignedIntegerSelectorType(unsigned int minimumAlignment, Options&& options,
+                                                  DataLocation selectorLocation,
+                                                  MapItem::UP userAttributes);
 
 private:
     DataType::UP _clone() const override;

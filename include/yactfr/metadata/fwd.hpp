@@ -43,6 +43,10 @@ class MetadataStream;
 class MetadataTextLocation;
 class NonNullTerminatedStringType;
 class NullTerminatedStringType;
+class OptionalType;
+class OptionalWithBooleanSelectorType;
+class OptionalWithSignedIntegerSelectorType;
+class OptionalWithUnsignedIntegerSelectorType;
 class PacketizedMetadataStream;
 class ParseError;
 class PlainTextMetadataStream;
@@ -59,8 +63,8 @@ class VariableLengthSignedEnumerationType;
 class VariableLengthSignedIntegerType;
 class VariableLengthUnsignedEnumerationType;
 class VariableLengthUnsignedIntegerType;
-class VariantWithSignedSelectorType;
-class VariantWithUnsignedSelectorType;
+class VariantWithSignedIntegerSelectorType;
+class VariantWithUnsignedIntegerSelectorType;
 
 } // namespace yactfr
 

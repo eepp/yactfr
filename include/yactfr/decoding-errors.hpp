@@ -439,29 +439,29 @@ private:
 
 /*!
 @brief
-    Invalid signed selector value of variant decoding error.
+    Invalid signed integer selector value of variant decoding error.
 
 @ingroup dec_errors
 
 This is thrown when an
 \link ElementSequenceIterator element sequence iterator\endlink needs to
 select an option of a variant type, but the previously decoded signed
-selector value doesn't select any option.
+integer selector value doesn't select any option.
 */
-class InvalidVariantSignedSelectorValueDecodingError final :
+class InvalidVariantSignedIntegerSelectorValueDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit InvalidVariantSignedSelectorValueDecodingError(Index offset, long long selVal);
+    explicit InvalidVariantSignedIntegerSelectorValueDecodingError(Index offset, long long selVal);
 
 public:
     /// Default copy constructor.
-    InvalidVariantSignedSelectorValueDecodingError(const InvalidVariantSignedSelectorValueDecodingError&) = default;
+    InvalidVariantSignedIntegerSelectorValueDecodingError(const InvalidVariantSignedIntegerSelectorValueDecodingError&) = default;
 
     /// Default copy assignment operator.
-    InvalidVariantSignedSelectorValueDecodingError& operator=(const InvalidVariantSignedSelectorValueDecodingError&) = default;
+    InvalidVariantSignedIntegerSelectorValueDecodingError& operator=(const InvalidVariantSignedIntegerSelectorValueDecodingError&) = default;
 
     /// Invalid selector value.
     long long selectorValue() const noexcept
@@ -475,30 +475,30 @@ private:
 
 /*!
 @brief
-    Invalid unsigned selector value of variant decoding error.
+    Invalid unsigned integer selector value of variant decoding error.
 
 @ingroup dec_errors
 
 This is thrown when an
 \link ElementSequenceIterator element sequence iterator\endlink needs to
 select an option of a variant type, but the previously decoded unsigned
-selector value does not select any option.
+integer selector value does not select any option.
 */
-class InvalidVariantUnsignedSelectorValueDecodingError final :
+class InvalidVariantUnsignedIntegerSelectorValueDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit InvalidVariantUnsignedSelectorValueDecodingError(Index offset,
-                                                              unsigned long long selVal);
+    explicit InvalidVariantUnsignedIntegerSelectorValueDecodingError(Index offset,
+                                                                     unsigned long long selVal);
 
 public:
     /// Default copy constructor.
-    InvalidVariantUnsignedSelectorValueDecodingError(const InvalidVariantUnsignedSelectorValueDecodingError&) = default;
+    InvalidVariantUnsignedIntegerSelectorValueDecodingError(const InvalidVariantUnsignedIntegerSelectorValueDecodingError&) = default;
 
     /// Default copy assignment operator.
-    InvalidVariantUnsignedSelectorValueDecodingError& operator=(const InvalidVariantUnsignedSelectorValueDecodingError&) = default;
+    InvalidVariantUnsignedIntegerSelectorValueDecodingError& operator=(const InvalidVariantUnsignedIntegerSelectorValueDecodingError&) = default;
 
     /// Invalid selector value.
     unsigned long long selectorValue() const noexcept

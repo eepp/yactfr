@@ -289,14 +289,31 @@ public:
         ++_indentLevel;
     }
 
-    void visit(const yactfr::VariantWithSignedSelectorBeginningElement& elem) override
+    void visit(const yactfr::VariantWithSignedIntegerSelectorBeginningElement& elem) override
     {
-        this->_visit(elem, "VS");
+        this->_visitVarBegElem(elem, "VS");
     }
 
-    void visit(const yactfr::VariantWithUnsignedSelectorBeginningElement& elem) override
+    void visit(const yactfr::VariantWithUnsignedIntegerSelectorBeginningElement& elem) override
     {
-        this->_visit(elem, "VU");
+        this->_visitVarBegElem(elem, "VU");
+    }
+
+    void visit(const yactfr::OptionalWithBooleanSelectorBeginningElement& elem) override
+    {
+        this->_visitOptBegElem(elem, "OB");
+        *_os << " {\n";
+        ++_indentLevel;
+    }
+
+    void visit(const yactfr::OptionalWithSignedIntegerSelectorBeginningElement& elem) override
+    {
+        this->_visitOptBegWithIntSelElem(elem, "OS");
+    }
+
+    void visit(const yactfr::OptionalWithUnsignedIntegerSelectorBeginningElement& elem) override
+    {
+        this->_visitOptBegWithIntSelElem(elem, "OU");
     }
 
     void visit(const yactfr::EndElement& elem) override
@@ -308,9 +325,23 @@ public:
 
 private:
     template <typename VarBegElemT>
-    void _visit(const VarBegElemT& elem, const char * const id)
+    void _visitVarBegElem(const VarBegElemT& elem, const char * const id)
     {
         this->_visitDataElem(elem, id);
+        *_os << ':' << elem.selectorValue() << " {\n";
+        ++_indentLevel;
+    }
+
+    void _visitOptBegElem(const yactfr::OptionalBeginningElement& elem, const char * const id)
+    {
+        this->_visitDataElem(elem, id);
+        *_os << ':' << (elem.isEnabled() ? "enabled" : "disabled");
+    }
+
+    template <typename OptBegElemT>
+    void _visitOptBegWithIntSelElem(const OptBegElemT& elem, const char * const id)
+    {
+        this->_visitOptBegElem(elem, id);
         *_os << ':' << elem.selectorValue() << " {\n";
         ++_indentLevel;
     }

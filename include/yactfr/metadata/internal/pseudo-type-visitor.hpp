@@ -58,6 +58,14 @@ public:
     virtual void visit(PseudoVarWithIntRangesType&)
     {
     }
+
+    virtual void visit(PseudoOptWithBoolSelType&)
+    {
+    }
+
+    virtual void visit(PseudoOptWithIntSelType&)
+    {
+    }
 };
 
 class ConstPseudoDtVisitor
@@ -103,6 +111,14 @@ public:
     }
 
     virtual void visit(const PseudoVarWithIntRangesType&)
+    {
+    }
+
+    virtual void visit(const PseudoOptWithBoolSelType&)
+    {
+    }
+
+    virtual void visit(const PseudoOptWithIntSelType&)
     {
     }
 };

@@ -44,6 +44,7 @@ add_library (
     metadata/metadata.cpp
     metadata/non-nt-str-type.cpp
     metadata/nt-str-type.cpp
+    metadata/opt-type.cpp
     metadata/packetized-metadata-stream.cpp
     metadata/plain-text-metadata-stream.cpp
     metadata/pseudo-types.cpp

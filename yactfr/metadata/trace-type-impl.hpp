@@ -91,8 +91,8 @@ public:
         return dt._maxLenTypes();
     }
 
-    template <typename VarTypeT>
-    static DataTypeSet& varTypeSelTypes(const VarTypeT& dt) noexcept
+    template <typename DtT>
+    static DataTypeSet& varOptTypeSelTypes(const DtT& dt) noexcept
     {
         return dt._selTypes();
     }

@@ -205,6 +205,12 @@ In the following descriptions, consider this language:
   (zero or more iterations).
 </dd>
 
+<dt><code>A ?</code></dt>
+<dd>
+  Element of type <code>A</code> occuring zero or one time
+  (zero or one iteration).
+</dd>
+
 <dt><code>A{n}</code></dt>
 <dd>
   Element of type <code>A</code> occuring \em n times
@@ -258,8 +264,20 @@ descriptions below easier to read and to allow recursion.
   (DynamicLengthBlobBeginningElement BlobSectionElement * EndElement) |
   (StructureBeginningElement DATA * EndElement) |
   (
-    (VariantWithUnsignedSelectorBeginningElement | VariantWithSignedSelectorBeginningElement)
-    DATA *
+    (
+      VariantWithUnsignedIntegerSelectorBeginningElement |
+      VariantWithSignedIntegerSelectorBeginningElement
+    )
+    DATA ?
+    EndElement
+  ) |
+  (
+    (
+      OptionalWithBooleanSelectorBeginningElement
+      OptionalWithUnsignedIntegerSelectorBeginningElement
+      OptionalWithSignedIntegerSelectorBeginningElement
+    )
+    DATA ?
     EndElement
   )
 )
@@ -394,8 +412,11 @@ when the current element of the iterator is:
   <dt>DynamicLengthArrayBeginningElement</dt>
   <dt>StaticLengthStringBeginningElement</dt>
   <dt>DynamicLengthStringBeginningElement</dt>
-  <dt>VariantWithUnsignedSelectorBeginningElement</dt>
-  <dt>VariantWithSignedSelectorBeginningElement</dt>
+  <dt>VariantWithUnsignedIntegerSelectorBeginningElement</dt>
+  <dt>VariantWithSignedIntegerSelectorBeginningElement</dt>
+  <dt>OptionalWithBooleanSelectorBeginningElement</dt>
+  <dt>OptionalWithUnsignedIntegerSelectorBeginningElement</dt>
+  <dt>OptionalWithSignedIntegerSelectorBeginningElement</dt>
   <dd>
     The offset is the beginning of the container, that is, it's aligned
     according to the alignment of the container type (with relation to

@@ -20,6 +20,7 @@
 #include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
+#include <yactfr/metadata/opt-type.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
@@ -35,7 +36,7 @@ StructureType::UP dtFromPseudoRootDt(const PseudoDt& pseudoDt, const Scope scope
 {
     return DtFromPseudoRootDtConverter {
         pseudoDt, scope, pseudoTraceType, curPseudoDst, curPseudoErt
-    }.releaseDt();
+    }._releaseDt();
 }
 
 DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoDt,
@@ -67,7 +68,7 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoD
      *    * The length integer types of dynamic-length array, string,
      *      and BLOB types.
      *
-     *    * The selector enumeration types of variant types.
+     *    * The selector type of variant and optional types.
      *
      *    To do so:
      *
@@ -77,6 +78,10 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(const PseudoDt& pseudoD
      *
      *    b) When visiting the element type of an array type AT, we make
      *       `_current` contain that AT is currently being visited.
+     *
+     *    c) When visiting the pseudo data type of an optional type OT,
+     *       we make `_current` contain that OT is currently being
+     *       visited.
      *
      *    _findPseudoDts() uses the data above to make sure that it only
      *    finds the accessible data types depending on the context.
@@ -120,6 +125,12 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
 
     case PseudoDt::Kind::VAR_WITH_INT_RANGES:
         return this->_dtFromPseudoVarWithIntRangesType(pseudoDt);
+
+    case PseudoDt::Kind::OPT_WITH_BOOL_SEL:
+        return this->_dtFromPseudoOptWithBoolSelType(pseudoDt);
+
+    case PseudoDt::Kind::OPT_WITH_INT_SEL:
+        return this->_dtFromPseudoOptWithIntSelType(pseudoDt);
 
     default:
         std::abort();
@@ -167,15 +178,14 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
         return arrayType;
     }
 
-    // currently being visited
-    _current.insert({&pseudoDt, 0});
-
-    auto elemType = this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
+    auto elemDt = this->_whileVisitingPseudoDt(pseudoArrayType, [this](auto& pseudoArrayType) {
+        return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
+    });
 
     // not visited anymore
     _current.erase(&pseudoArrayType);
 
-    return std::make_unique<const StaticLengthArrayType>(1, std::move(elemType),
+    return std::make_unique<const StaticLengthArrayType>(1, std::move(elemDt),
                                                          pseudoArrayType.len(),
                                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()),
                                                          pseudoArrayType.hasTraceTypeUuidRole());
@@ -210,15 +220,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
         return strType;
     }
 
-    // currently being visited
-    _current.insert({&pseudoDt, 0});
+    auto elemDt = this->_whileVisitingPseudoDt(pseudoArrayType, [this](auto& pseudoArrayType) {
+        return this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
+    });
 
-    auto elemType = this->_dtFromPseudoDt(pseudoArrayType.pseudoElemType());
-
-    // not visited anymore
-    _current.erase(&pseudoArrayType);
-
-    return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemType), lenLoc,
+    return std::make_unique<const DynamicLengthArrayType>(1, std::move(elemDt), lenLoc,
                                                           tryCloneUserAttrs(pseudoArrayType.userAttrs()));
 }
 
@@ -309,6 +315,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
     }
 
     case PseudoDt::Kind::VAR:
+    case PseudoDt::Kind::VAR_WITH_INT_RANGES:
     {
         auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
         const auto it = _current.find(&pseudoDt);
@@ -324,6 +331,23 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
                                  srcLoc, pseudoDts);
         }
 
+        break;
+    }
+
+    case PseudoDt::Kind::OPT_WITH_BOOL_SEL:
+    case PseudoDt::Kind::OPT_WITH_INT_SEL:
+    {
+        if (_current.find(&pseudoDt) == _current.end()) {
+            std::ostringstream ss;
+
+            ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
+                  "unreachable optional data.";
+            throwMetadataParseError(ss.str(), pseudoDt.loc());
+        }
+
+        auto& pseudoOptType = static_cast<const PseudoOptType&>(pseudoDt);
+
+        this->_findPseudoDts(pseudoOptType.pseudoDt(), loc, locIt, srcLoc, pseudoDts);
         break;
     }
 
@@ -388,22 +412,68 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
     return pseudoDts;
 }
 
-std::pair<DataLocation, ConstPseudoDtSet> DtFromPseudoRootDtConverter::_pseudoVarTypeSels(const PseudoDt& pseudoDt) const
+DtFromPseudoRootDtConverter::_PseudoDtSels DtFromPseudoRootDtConverter::_pseudoDtSels(const PseudoDt& pseudoDt) const
 {
-    auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
     const auto& selLoc = _locMap[pseudoDt];
-    const auto pseudoSelDts = this->_findPseudoDts(selLoc, pseudoDt.loc());
+    auto pseudoSelDts = this->_findPseudoDts(selLoc, pseudoDt.loc());
 
     assert(!pseudoSelDts.empty());
+    return {selLoc, std::move(pseudoSelDts)};
+}
 
-    for (const auto pseudoSelDt : pseudoSelDts) {
+DtFromPseudoRootDtConverter::_PseudoDtSels DtFromPseudoRootDtConverter::_pseudoDtIntSels(const PseudoDt& pseudoDt,
+                                                                                         const std::string& dtName) const
+{
+    auto pseudoDtSels = this->_pseudoDtSels(pseudoDt);
+
+    // validate selector types
+    Size unsignedIntSelTypeCount = 0;
+
+    for (const auto pseudoSelDt : pseudoDtSels.second) {
         if (!pseudoSelDt->isInt()) {
-            this->_throwInvalDataLoc("Selector type of variant type isn't an integer type.",
-                                     pseudoSelDt->loc(), selLoc, pseudoDt.loc());
+            std::ostringstream ss;
+
+            ss << "Selector type of " << dtName << " type isn't an integer type.";
+            this->_throwInvalDataLoc(ss.str(), pseudoSelDt->loc(), pseudoDtSels.first,
+                                     pseudoDt.loc());
+        }
+
+        if (pseudoSelDt->isUInt()) {
+            ++unsignedIntSelTypeCount;
         }
     }
 
-    return std::make_pair(selLoc, pseudoSelDts);
+    if (unsignedIntSelTypeCount > 0 && unsignedIntSelTypeCount < pseudoDtSels.second.size()) {
+        std::ostringstream ss;
+
+        ss << "All selector types of " << dtName << " type don't have the same signedness.";
+        this->_throwInvalDataLoc(ss.str(), pseudoDt.loc(), pseudoDtSels.first, pseudoDt.loc());
+    }
+
+    return pseudoDtSels;
+}
+
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(const PseudoDt& pseudoDt)
+{
+    assert(_pseudoTraceType->majorVersion() == 2);
+
+    auto& pseudoVarType = static_cast<const PseudoVarWithIntRangesType&>(pseudoDt);
+    auto selLocPseudoDtsPair = this->_pseudoDtIntSels(pseudoDt, "variant");
+    auto& selLoc = selLocPseudoDtsPair.first;
+    const auto& pseudoSelDts = selLocPseudoDtsPair.second;
+
+    assert(!pseudoSelDts.empty());
+
+    if ((*pseudoSelDts.begin())->isUInt()) {
+        return this->_dtFromPseudoVarWithIntRangesType<VariantWithUnsignedIntegerSelectorType,
+                                                       unsigned long long>(pseudoVarType,
+                                                                           std::move(selLoc));
+    } else {
+        return this->_dtFromPseudoVarWithIntRangesType<VariantWithSignedIntegerSelectorType,
+                                                       long long>(pseudoVarType, std::move(selLoc));
+    }
+
+    return nullptr;
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& pseudoDt)
@@ -411,7 +481,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     assert(_pseudoTraceType->majorVersion() == 1);
 
     auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
-    const auto selLocPseudoDtsPair = this->_pseudoVarTypeSels(pseudoDt);
+    const auto selLocPseudoDtsPair = this->_pseudoDtSels(pseudoDt);
     auto& selLoc = selLocPseudoDtsPair.first;
     auto& pseudoSelDts = selLocPseudoDtsPair.second;
     const PseudoDt *pseudoSelDt = nullptr;
@@ -425,6 +495,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
         }
 
         pseudoSelDt = *pseudoSelDts.begin();
+
+        if (!pseudoSelDt->isInt()) {
+            this->_throwInvalDataLoc("Selector type of variant type isn't an integer type.",
+                                     pseudoSelDt->loc(), selLoc, pseudoDt.loc());
+        }
 
         bool isFlEnumType;
 
@@ -450,51 +525,78 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     if (selIsFlUEnumType) {
         auto& pseudoUEnumSelType = static_cast<const PseudoFlUEnumType&>(*pseudoSelDt);
 
-        return this->_dtFromPseudoVarType<VariantWithUnsignedSelectorType>(pseudoVarType,
-                                                                           pseudoUEnumSelType.mappings(),
-                                                                           selLoc);
+        return this->_dtFromPseudoVarType<VariantWithUnsignedIntegerSelectorType>(pseudoVarType,
+                                                                                  pseudoUEnumSelType.mappings(),
+                                                                                  selLoc);
     } else {
         auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
         auto& mappings = pseudoScalarDtWrapper.dt().asFixedLengthSignedEnumerationType().mappings();
 
-        return this->_dtFromPseudoVarType<VariantWithSignedSelectorType>(pseudoVarType, mappings,
-                                                                         selLoc);
+        return this->_dtFromPseudoVarType<VariantWithSignedIntegerSelectorType>(pseudoVarType,
+                                                                                mappings, selLoc);
     }
 }
 
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(const PseudoDt& pseudoDt)
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const PseudoDt& pseudoDt)
 {
     assert(_pseudoTraceType->majorVersion() == 2);
 
-    auto& pseudoVarType = static_cast<const PseudoVarWithIntRangesType&>(pseudoDt);
-    const auto selLocPseudoDtsPair = this->_pseudoVarTypeSels(pseudoDt);
-    auto& selLoc = selLocPseudoDtsPair.first;
-    auto& pseudoSelDts = selLocPseudoDtsPair.second;
+    auto& pseudoOptType = static_cast<const PseudoOptType&>(pseudoDt);
+    auto selLocPseudoDtsPair = this->_pseudoDtSels(pseudoDt);
 
-    assert(!pseudoSelDts.empty());
-
-    // validate selector types
-    Size unsignedSelTypeCount = 0;
-
-    for (const auto pseudoSelDt : pseudoSelDts) {
-        assert(pseudoSelDt->isInt());
-
-        if (pseudoSelDt->isUInt()) {
-            ++unsignedSelTypeCount;
+    for (const auto pseudoSelDt : selLocPseudoDtsPair.second) {
+        if (pseudoSelDt->kind() != PseudoDt::Kind::SCALAR_DT_WRAPPER ||
+                !static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt).dt().isFixedLengthBooleanType()) {
+            this->_throwInvalDataLoc("Selector type of optional type isn't a boolean type.",
+                                     pseudoSelDt->loc(), selLocPseudoDtsPair.first, pseudoDt.loc());
         }
     }
 
-    if (unsignedSelTypeCount > 0 && unsignedSelTypeCount < pseudoSelDts.size()) {
-        this->_throwInvalDataLoc("All selector types of variant type don't have the same signedness.",
-                                 pseudoDt.loc(), selLoc, pseudoDt.loc());
-    }
+    auto containedDt = this->_whileVisitingPseudoDt(pseudoOptType, [this](auto& pseudoOptType) {
+        return this->_dtFromPseudoDt(pseudoOptType.pseudoDt());
+    });
 
-    if (unsignedSelTypeCount > 0) {
-        return this->_dtFromPseudoVarWithIntRangesType<VariantWithUnsignedSelectorType,
-                                                       unsigned long long>(pseudoVarType, selLoc);
+    return std::make_unique<const OptionalWithBooleanSelectorType>(1, std::move(containedDt),
+                                                                   std::move(selLocPseudoDtsPair.first),
+                                                                   tryCloneUserAttrs(pseudoDt.userAttrs()));
+}
+
+DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt)
+{
+    assert(_pseudoTraceType->majorVersion() == 2);
+
+    auto& pseudoOptType = static_cast<const PseudoOptWithIntSelType&>(pseudoDt);
+    auto selLocPseudoDtsPair = this->_pseudoDtIntSels(pseudoDt, "optional");
+    auto& selLoc = selLocPseudoDtsPair.first;
+    const auto& pseudoSelDts = selLocPseudoDtsPair.second;
+
+    auto containedDt = this->_whileVisitingPseudoDt(pseudoOptType, [this](auto& pseudoOptType) {
+        return this->_dtFromPseudoDt(pseudoOptType.pseudoDt());
+    });
+
+    assert(!pseudoSelDts.empty());
+
+    if ((*pseudoSelDts.begin())->isUInt()) {
+        return std::make_unique<OptionalWithUnsignedIntegerSelectorType>(1, std::move(containedDt),
+                                                                         std::move(selLoc),
+                                                                         pseudoOptType.selRanges(),
+                                                                         tryCloneUserAttrs(pseudoDt.userAttrs()));
     } else {
-        return this->_dtFromPseudoVarWithIntRangesType<VariantWithSignedSelectorType,
-                                                       long long>(pseudoVarType, selLoc);
+        using SInt = long long;
+
+        std::set<IntegerRange<SInt>> ranges;
+
+        for (auto& range : pseudoOptType.selRanges()) {
+            ranges.insert(IntegerRange<SInt> {
+                static_cast<SInt>(range.lower()),
+                static_cast<SInt>(range.upper())
+            });
+        }
+
+        return std::make_unique<OptionalWithSignedIntegerSelectorType>(1, std::move(containedDt),
+                                                                       std::move(selLoc),
+                                                                       IntegerRangeSet<SInt> {std::move(ranges)},
+                                                                       tryCloneUserAttrs(pseudoDt.userAttrs()));
     }
 
     return nullptr;

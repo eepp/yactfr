@@ -119,6 +119,9 @@ public:
         STRUCT,
         VAR,
         VAR_WITH_INT_RANGES,
+        OPT,
+        OPT_WITH_BOOL_SEL,
+        OPT_WITH_INT_SEL,
     };
 
 protected:
@@ -690,6 +693,112 @@ public:
 
 private:
     RangeSets _rangeSets;
+};
+
+/*
+ * Pseudo optional type.
+ *
+ * `pseudoSelLoc` may be a relative data location.
+ */
+class PseudoOptType :
+    public PseudoDt
+{
+protected:
+    explicit PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
+                           MapItem::UP userAttrs, TextLocation&& loc);
+
+public:
+    bool isEmpty() const override;
+
+    PseudoDt& pseudoDt() noexcept
+    {
+        return *_pseudoDt;
+    }
+
+    const PseudoDt& pseudoDt() const noexcept
+    {
+        return *_pseudoDt;
+    }
+
+    const PseudoDataLoc& pseudoSelLoc() const noexcept
+    {
+        return _pseudoSelLoc;
+    }
+
+    void pseudoSelLoc(PseudoDataLoc loc) noexcept
+    {
+        _pseudoSelLoc = std::move(loc);
+    }
+
+private:
+    PseudoDt::UP _pseudoDt;
+    PseudoDataLoc _pseudoSelLoc;
+};
+
+/*
+ * Pseudo optional (with boolean selector) type.
+ *
+ * `pseudoSelLoc` may be a relative data location.
+ */
+class PseudoOptWithBoolSelType :
+    public PseudoOptType
+{
+public:
+    explicit PseudoOptWithBoolSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
+                                      MapItem::UP userAttrs = nullptr,
+                                      TextLocation loc = TextLocation {});
+
+    PseudoDt::Kind kind() const noexcept override
+    {
+        return PseudoDt::Kind::OPT_WITH_BOOL_SEL;
+    }
+
+    PseudoDt::UP clone() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
+};
+
+/*
+ * Pseudo optional (with integer selector) type.
+ *
+ * `pseudoSelLoc` may be a relative data location.
+ */
+class PseudoOptWithIntSelType :
+    public PseudoOptType
+{
+public:
+    /*
+     * This is a hack: such an integer range set may in fact contain
+     * signed integer ranges, but we'll only know in
+     * DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(), at
+     * which point a signed integer range set will be created, casting
+     * the lower and upper values to `long long`.
+     *
+     * Hackish, but safe.
+     */
+    using RangeSet = IntegerRangeSet<unsigned long long>;
+
+public:
+    explicit PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
+                                     RangeSet&& selRanges, MapItem::UP userAttrs = nullptr,
+                                     TextLocation loc = TextLocation {});
+
+    const RangeSet& selRanges() const noexcept
+    {
+        return _selRanges;
+    }
+
+    PseudoDt::Kind kind() const noexcept override
+    {
+        return PseudoDt::Kind::OPT_WITH_INT_SEL;
+    }
+
+    PseudoDt::UP clone() const override;
+    void accept(PseudoDtVisitor& visitor) override;
+    void accept(ConstPseudoDtVisitor& visitor) const override;
+
+private:
+    RangeSet _selRanges;
 };
 
 class PseudoDst;

@@ -460,8 +460,8 @@ int main(const int argc, const char * const argv[])
         case yactfr::Element::Kind::DYNAMIC_LENGTH_STRING_BEGINNING:
         case yactfr::Element::Kind::STATIC_BLOB_STRING_BEGINNING:
         case yactfr::Element::Kind::DYNAMIC_BLOB_STRING_BEGINNING:
-        case yactfr::Element::Kind::VARIANT_WITH_SIGNED_SELECTOR_BEGINNING:
-        case yactfr::Element::Kind::VARIANT_WITH_UNSIGNED_SELECTOR_BEGINNING:
+        case yactfr::Element::Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING:
+        case yactfr::Element::Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING:
             // beginning element: increment current level
             ++level;
             break;

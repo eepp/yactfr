@@ -173,14 +173,34 @@ void ElementVisitor::visit(const VariantBeginningElement& elem)
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariantWithSignedSelectorBeginningElement& elem)
+void ElementVisitor::visit(const VariantWithSignedIntegerSelectorBeginningElement& elem)
 {
     this->visit(static_cast<const VariantBeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const VariantWithUnsignedSelectorBeginningElement& elem)
+void ElementVisitor::visit(const VariantWithUnsignedIntegerSelectorBeginningElement& elem)
 {
     this->visit(static_cast<const VariantBeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const OptionalBeginningElement& elem)
+{
+    this->visit(static_cast<const BeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const OptionalWithBooleanSelectorBeginningElement& elem)
+{
+    this->visit(static_cast<const OptionalBeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const OptionalWithSignedIntegerSelectorBeginningElement& elem)
+{
+    this->visit(static_cast<const OptionalBeginningElement&>(elem));
+}
+
+void ElementVisitor::visit(const OptionalWithUnsignedIntegerSelectorBeginningElement& elem)
+{
+    this->visit(static_cast<const OptionalBeginningElement&>(elem));
 }
 
 } // namespace yactfr

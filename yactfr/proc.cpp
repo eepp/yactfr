@@ -460,16 +460,32 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "END_READ_DL_BLOB";
         break;
 
-    case Kind::BEGIN_READ_VAR_SSEL:
-        kindStr = "BEGIN_READ_VAR_SSEL";
+    case Kind::BEGIN_READ_VAR_SINT_SEL:
+        kindStr = "BEGIN_READ_VAR_SINT_SEL";
         break;
 
-    case Kind::BEGIN_READ_VAR_USEL:
-        kindStr = "BEGIN_READ_VAR_USEL";
+    case Kind::BEGIN_READ_VAR_UINT_SEL:
+        kindStr = "BEGIN_READ_VAR_UINT_SEL";
+        break;
+
+    case Kind::BEGIN_READ_OPT_BOOL_SEL:
+        kindStr = "BEGIN_READ_OPT_BOOL_SEL";
+        break;
+
+    case Kind::BEGIN_READ_OPT_SINT_SEL:
+        kindStr = "BEGIN_READ_OPT_SINT_SEL";
+        break;
+
+    case Kind::BEGIN_READ_OPT_UINT_SEL:
+        kindStr = "BEGIN_READ_OPT_UINT_SEL";
         break;
 
     case Kind::END_READ_VAR:
         kindStr = "END_READ_VAR";
+        break;
+
+    case Kind::END_READ_OPT:
+        kindStr = "END_READ_OPT";
         break;
 
     case Kind::SAVE_VAL:
@@ -1139,7 +1155,8 @@ EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * 
            kind == Kind::END_READ_DL_STR ||
            kind == Kind::END_READ_SL_BLOB ||
            kind == Kind::END_READ_DL_BLOB ||
-           kind == Kind::END_READ_VAR);
+           kind == Kind::END_READ_VAR ||
+           kind == Kind::END_READ_OPT);
 }
 
 std::string EndReadDataInstr::_toStr(const Size indent) const
@@ -1166,15 +1183,48 @@ std::string BeginReadStructInstr::_toStr(const Size indent) const
     return ss.str();
 }
 
-BeginReadVarUSelInstr::BeginReadVarUSelInstr(const StructureMemberType * const memberType,
-                                             const DataType& dt) :
+BeginReadVarUIntSelInstr::BeginReadVarUIntSelInstr(const StructureMemberType * const memberType,
+                                                   const DataType& dt) :
     BeginReadVarInstr {memberType, dt}
 {
 }
 
-BeginReadVarSSelInstr::BeginReadVarSSelInstr(const StructureMemberType * const memberType,
-                                             const DataType& dt) :
+BeginReadVarSIntSelInstr::BeginReadVarSIntSelInstr(const StructureMemberType * const memberType,
+                                                   const DataType& dt) :
     BeginReadVarInstr {memberType, dt}
+{
+}
+
+BeginReadOptInstr::BeginReadOptInstr(const Kind kind, const StructureMemberType * const memberType,
+                                     const DataType& dt) :
+    BeginReadCompoundInstr {kind, memberType, dt}
+{
+}
+
+std::string BeginReadOptInstr::_toStr(const Size indent) const
+{
+    std::ostringstream ss;
+
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("sel-pos") << _selPos << std::endl <<
+          this->_procToStr(indent + 1);
+    return ss.str();
+}
+
+BeginReadOptBoolSelInstr::BeginReadOptBoolSelInstr(const StructureMemberType * const memberType,
+                                                   const DataType& dt) :
+    BeginReadOptInstr {Kind::BEGIN_READ_OPT_BOOL_SEL, memberType, dt}
+{
+}
+
+BeginReadOptUIntSelInstr::BeginReadOptUIntSelInstr(const StructureMemberType * const memberType,
+                                                   const DataType& dt) :
+    BeginReadOptIntSelInstr {memberType, dt}
+{
+}
+
+BeginReadOptSIntSelInstr::BeginReadOptSIntSelInstr(const StructureMemberType * const memberType,
+                                                   const DataType& dt) :
+    BeginReadOptIntSelInstr {memberType, dt}
 {
 }
 

@@ -99,12 +99,29 @@ public:
         this->visit(static_cast<_PseudoDt<PseudoVarType>&>(pseudoDt));
     }
 
+    void visit(_PseudoDt<PseudoOptWithBoolSelType>& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
+    void visit(_PseudoDt<PseudoOptWithIntSelType>& pseudoDt) override
+    {
+        this->_visit(pseudoDt);
+    }
+
 private:
     void _visit(_PseudoDt<PseudoArrayType>& pseudoDt)
     {
         this->_tryAdd(pseudoDt);
         _curMemberTypeName = nullptr;
         pseudoDt.pseudoElemType().accept(*this);
+    }
+
+    void _visit(_PseudoDt<PseudoOptType>& pseudoDt)
+    {
+        this->_tryAdd(pseudoDt);
+        _curMemberTypeName = nullptr;
+        pseudoDt.pseudoDt().accept(*this);
     }
 
     void _tryAdd(_PseudoDt<PseudoDt>& pseudoDt)

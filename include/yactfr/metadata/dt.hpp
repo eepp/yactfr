@@ -81,10 +81,16 @@ protected:
         _KIND_SL_BLOB               = _KIND_SL | _KIND_BLOB,
         _KIND_DL_BLOB               = _KIND_DL | _KIND_BLOB,
         _KIND_VAR                   = (1 << 19) | _KIND_COMPOUND,
-        _KIND_USEL                  = 1 << 20,
-        _KIND_SSEL                  = 1 << 21,
-        _KIND_VAR_USEL              = _KIND_VAR | _KIND_USEL,
-        _KIND_VAR_SSEL              = _KIND_VAR | _KIND_SSEL,
+        _KIND_UINT_SEL              = 1 << 20,
+        _KIND_SINT_SEL              = 1 << 21,
+        _KIND_BOOL_SEL              = 1 << 22,
+        _KIND_VAR_UINT_SEL          = _KIND_VAR | _KIND_UINT_SEL,
+        _KIND_VAR_SINT_SEL          = _KIND_VAR | _KIND_SINT_SEL,
+        _KIND_OPT                   = (1 << 23) | _KIND_COMPOUND,
+        _KIND_OPT_UINT_SEL          = _KIND_OPT | _KIND_UINT_SEL,
+        _KIND_OPT_SINT_SEL          = _KIND_OPT | _KIND_SINT_SEL,
+        _KIND_OPT_INT_SEL           = _KIND_OPT_UINT_SEL | _KIND_OPT_SINT_SEL,
+        _KIND_OPT_BOOL_SEL          = _KIND_OPT | _KIND_BOOL_SEL,
     };
 
 protected:
@@ -327,17 +333,51 @@ public:
     }
 
     /// \c true if this type is the type of data stream variants with an
-    /// unsigned selector.
-    bool isVariantWithUnsignedSelectorType() const noexcept
+    /// unsigned integer selector.
+    bool isVariantWithUnsignedIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_VAR_USEL);
+        return this->_isKind(_KIND_VAR_UINT_SEL);
     }
 
     /// \c true if this type is the type of data stream variants with a
-    /// signed selector.
-    bool isVariantWithSignedSelectorType() const noexcept
+    /// signed integer selector.
+    bool isVariantWithSignedIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_VAR_SSEL);
+        return this->_isKind(_KIND_VAR_SINT_SEL);
+    }
+
+    /// \c true if this type is a optional type.
+    bool isOptionalType() const noexcept
+    {
+        return this->_isKind(_KIND_OPT);
+    }
+
+    /// \c true if this type is the type of data stream optionals with
+    /// a boolean selector.
+    bool isOptionalWithBooleanSelectorType() const noexcept
+    {
+        return this->_isKind(_KIND_OPT_BOOL_SEL);
+    }
+
+    /// \c true if this type is the type of data stream optionals with
+    /// an integer selector.
+    bool isOptionalWithIntegerSelectorType() const noexcept
+    {
+        return this->_isKind(_KIND_OPT_INT_SEL);
+    }
+
+    /// \c true if this type is the type of data stream optionals with
+    /// an unsigned integer selector.
+    bool isOptionalWithUnsignedIntegerSelectorType() const noexcept
+    {
+        return this->_isKind(_KIND_OPT_UINT_SEL);
+    }
+
+    /// \c true if this type is the type of data stream optionals with a
+    /// signed integer selector.
+    bool isOptionalWithSignedIntegerSelectorType() const noexcept
+    {
+        return this->_isKind(_KIND_OPT_SINT_SEL);
     }
 
     /// \c true if this type is a scalar type (doesn't contains another
@@ -583,24 +623,66 @@ public:
     /*!
     @brief
         Returns this type as the type of data stream variants with an
-        unsigned selector.
+        unsigned integer selector.
 
     @pre
         This type is the type of data stream variants with an unsigned
-        selector.
+        integer selector.
     */
-    const VariantWithUnsignedSelectorType& asVariantWithUnsignedSelectorType() const noexcept;
+    const VariantWithUnsignedIntegerSelectorType& asVariantWithUnsignedIntegerSelectorType() const noexcept;
 
     /*!
     @brief
         Returns this type as the type of data stream variants with a
-        signed selector.
+        signed integer selector.
 
     @pre
         This type is the type of data stream variants with a signed
+        integer selector.
+    */
+    const VariantWithSignedIntegerSelectorType& asVariantWithSignedIntegerSelectorType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as an optional type.
+
+    @pre
+        This type is an optional type.
+    */
+    const OptionalType& asOptionalType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as the type of data stream optionals with a
+        boolean selector.
+
+    @pre
+        This type is the type of data stream optionals with a boolean
         selector.
     */
-    const VariantWithSignedSelectorType& asVariantWithSignedSelectorType() const noexcept;
+    const OptionalWithBooleanSelectorType& asOptionalWithBooleanSelectorType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as the type of data stream optionals with an
+        integer unsigned selector.
+
+    @pre
+        This type is the type of data stream optionals with an unsigned
+        integer selector.
+    */
+    const OptionalWithUnsignedIntegerSelectorType& asOptionalWithUnsignedIntegerSelectorType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as the type of data stream optionals with a
+        signed integer selector.
+
+    @pre
+        This type is the type of data stream optionals with a signed
+        integer selector.
+    */
+    const OptionalWithSignedIntegerSelectorType& asOptionalWithSignedIntegerSelectorType() const noexcept;
 
     /*!
     @brief

@@ -312,8 +312,11 @@ public:
         StaticLengthBlobBeginningElement slBlobBeginning;
         DynamicLengthBlobBeginningElement dlBlobBeginning;
         StructureBeginningElement structBeginning;
-        VariantWithSignedSelectorBeginningElement varSSelBeginning;
-        VariantWithUnsignedSelectorBeginningElement varUSelBeginning;
+        VariantWithSignedIntegerSelectorBeginningElement varSIntSelBeginning;
+        VariantWithUnsignedIntegerSelectorBeginningElement varUIntSelBeginning;
+        OptionalWithBooleanSelectorBeginningElement optBoolSelBeginning;
+        OptionalWithSignedIntegerSelectorBeginningElement optSIntSelBeginning;
+        OptionalWithUnsignedIntegerSelectorBeginningElement optUIntSelBeginning;
     } elems;
 
     // next state to handle
@@ -1238,9 +1241,13 @@ private:
     _ExecReaction _execEndReadSlBlob(const Instr& instr);
     _ExecReaction _execBeginReadDlBlob(const Instr& instr);
     _ExecReaction _execEndReadDlBlob(const Instr& instr);
-    _ExecReaction _execBeginReadVarSSel(const Instr& instr);
-    _ExecReaction _execBeginReadVarUSel(const Instr& instr);
+    _ExecReaction _execBeginReadVarSIntSel(const Instr& instr);
+    _ExecReaction _execBeginReadVarUIntSel(const Instr& instr);
+    _ExecReaction _execBeginReadOptBoolSel(const Instr& instr);
+    _ExecReaction _execBeginReadOptSIntSel(const Instr& instr);
+    _ExecReaction _execBeginReadOptUIntSel(const Instr& instr);
     _ExecReaction _execEndReadVar(const Instr& instr);
+    _ExecReaction _execEndReadOpt(const Instr& instr);
     _ExecReaction _execSaveVal(const Instr& instr);
     _ExecReaction _execSetPktEndDefClkVal(const Instr& instr);
     _ExecReaction _execUpdateDefClkValFl(const Instr& instr);
@@ -1502,12 +1509,12 @@ private:
 
         if (!proc) {
             if (std::is_signed<typename ReadVarInstrT::Opt::Val>::value) {
-                throw InvalidVariantSignedSelectorValueDecodingError {
+                throw InvalidVariantSignedIntegerSelectorValueDecodingError {
                     _pos.headOffsetInElemSeqBits(),
                     static_cast<std::int64_t>(selVal)
                 };
             } else {
-                throw InvalidVariantUnsignedSelectorValueDecodingError {
+                throw InvalidVariantUnsignedIntegerSelectorValueDecodingError {
                     _pos.headOffsetInElemSeqBits(),
                     static_cast<std::uint64_t>(selVal)
                 };
@@ -1521,6 +1528,40 @@ private:
         _pos.gotoNextInstr();
         _pos.stackPush(proc);
         _pos.state(VmState::EXEC_INSTR);
+    }
+
+    template <typename ReadOptInstrT, typename SelValT, typename ElemT>
+    SelValT _execBeginReadOpt(const Instr& instr, ElemT& elem)
+    {
+        this->_alignHead(instr);
+
+        const auto& beginReadOptInstr = static_cast<const ReadOptInstrT&>(instr);
+        const auto selVal = static_cast<SelValT>(_pos.savedVal(beginReadOptInstr.selPos()));
+        const auto isEnabled = beginReadOptInstr.isEnabled(selVal);
+
+        Vm::_setDataElemFromInstr(elem, beginReadOptInstr);
+        elem._dt = &beginReadOptInstr.optType();
+        this->_updateItCurOffset(elem);
+        _pos.gotoNextInstr();
+        _pos.stackPush(&beginReadOptInstr.proc());
+
+        if (isEnabled) {
+            elem._isEnabled = true;
+        } else {
+            elem._isEnabled = false;
+
+            /*
+             * Disabled: go directly to the last instruction of the
+             * loaded subprocedure, which has the kind
+             * `Instr::Kind::END_READ_OPT`.
+             */
+            assert(!_pos.stackTop().proc->empty());
+            _pos.stackTop().it = _pos.stackTop().proc->end() - 1;
+            assert(_pos.nextInstr().kind() == Instr::Kind::END_READ_OPT);
+        }
+
+        _pos.state(VmState::EXEC_INSTR);
+        return selVal;
     }
 
     template <typename ElemT>

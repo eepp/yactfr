@@ -111,14 +111,29 @@ public:
         this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dlBlobTypeLenTypes(dt));
     }
 
-    void visit(const VariantWithUnsignedSelectorType& dt) override
+    void visit(const VariantWithUnsignedIntegerSelectorType& dt) override
     {
         this->_visitVarType(dt);
     }
 
-    void visit(const VariantWithSignedSelectorType& dt) override
+    void visit(const VariantWithSignedIntegerSelectorType& dt) override
     {
         this->_visitVarType(dt);
+    }
+
+    void visit(const OptionalWithBooleanSelectorType& dt) override
+    {
+        this->_visitOptType(dt);
+    }
+
+    void visit(const OptionalWithUnsignedIntegerSelectorType& dt) override
+    {
+        this->_visitOptType(dt);
+    }
+
+    void visit(const OptionalWithSignedIntegerSelectorType& dt) override
+    {
+        this->_visitOptType(dt);
     }
 
 private:
@@ -136,7 +151,7 @@ private:
     template <typename VarTypeT>
     void _visitVarType(const VarTypeT& varType)
     {
-        this->_setTypeDeps(varType.selectorLocation(), TraceTypeImpl::varTypeSelTypes(varType));
+        this->_setTypeDeps(varType.selectorLocation(), TraceTypeImpl::varOptTypeSelTypes(varType));
 
         for (auto i = 0U; i < varType.size(); ++i) {
             // currently being visited
@@ -147,6 +162,20 @@ private:
 
         // not visited anymore
         _current.erase(&varType);
+    }
+
+    template <typename OptTypeT>
+    void _visitOptType(const OptTypeT& optType)
+    {
+        this->_setTypeDeps(optType.selectorLocation(), TraceTypeImpl::varOptTypeSelTypes(optType));
+
+        // currently being visited
+        _current.insert({&optType, 0});
+
+        optType.dataType().accept(*this);
+
+        // not visited anymore
+        _current.erase(&optType);
     }
 
     template <typename VarTypeT>
@@ -169,7 +198,8 @@ private:
     void _setTypeDeps(const DataType& dt, const DataLocation& loc,
                       const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
     {
-        if (dt.isIntegerType()) {
+        if (dt.isFixedLengthBooleanType() || dt.isIntegerType()) {
+            // those are the only valid length/selector data types
             assert(locIt == loc.pathElements().end());
             dts.insert(&dt);
         } else if (dt.isStructureType()) {
@@ -180,10 +210,13 @@ private:
         } else if (dt.isArrayType()) {
             assert(_current.find(&dt) != _current.end());
             this->_setTypeDeps(dt.asArrayType().elementType(), loc, locIt, dts);
-        } else if (dt.isVariantWithUnsignedSelectorType()) {
-            this->_setTypeDepsVar(dt.asVariantWithUnsignedSelectorType(), loc, locIt, dts);
-        } else if (dt.isVariantWithSignedSelectorType()) {
-            this->_setTypeDepsVar(dt.asVariantWithSignedSelectorType(), loc, locIt, dts);
+        } else if (dt.isVariantWithUnsignedIntegerSelectorType()) {
+            this->_setTypeDepsVar(dt.asVariantWithUnsignedIntegerSelectorType(), loc, locIt, dts);
+        } else if (dt.isVariantWithSignedIntegerSelectorType()) {
+            this->_setTypeDepsVar(dt.asVariantWithSignedIntegerSelectorType(), loc, locIt, dts);
+        } else if (dt.isOptionalType()) {
+            assert(_current.find(&dt) != _current.end());
+            this->_setTypeDeps(dt.asOptionalType().dataType(), loc, locIt, dts);
         } else {
             std::abort();
         }
@@ -237,8 +270,9 @@ private:
     const EventRecordType * const _curErt;
 
     /*
-     * Option/element indexes of currently visited variant and dynamic
-     * array types (always 0 for a dynamic array type).
+     * Option/element indexes of currently visited variant/optional and
+     * dynamic array/string/BLOB types (always 0 for a dynamic array or
+     * optional type).
      */
     std::unordered_map<const DataType *, Index> _current;
 };

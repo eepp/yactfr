@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    using _IntTypeReadIntInstrMap = std::unordered_map<const DataType *, InstrLoc>;
+    using _DtReadLenSelInstrMap = std::unordered_map<const DataType *, InstrLoc>;
 
 private:
     void _buildPktProc();
@@ -59,7 +59,7 @@ private:
     void _insertSpecialPktProcPreambleProcInstrs();
     void _insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc);
     void _insertUpdateDefClkValInstrs();
-    _IntTypeReadIntInstrMap _createIntTypeReadIntInstrMap() const;
+    _DtReadLenSelInstrMap _createDtReadLenSelInstrMap() const;
     void _setSavedValPoss();
     void _insertEndInstrs();
     std::unique_ptr<DsPktProc> _buildDsPktProc(const DataStreamType& dst);
@@ -119,11 +119,24 @@ private:
     void _buildReadVarInstr(const StructureMemberType *memberType, const VarTypeT& varType,
                             Proc& baseProc);
 
-    void _buildReadVarUSelInstr(const StructureMemberType *memberType, const DataType& dt,
-                                Proc& baseProc);
+    void _buildReadVarUIntSelInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
 
-    void _buildReadVarSSelInstr(const StructureMemberType *memberType, const DataType& dt,
-                                Proc& baseProc);
+    void _buildReadVarSIntSelInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
+
+    void _buildReadOptBoolSelInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
+
+    template <typename BeginReadOptIntSelInstrT, typename OptTypeT>
+    void _buildReadOptIntSelInstr(const StructureMemberType *memberType, const OptTypeT& optType,
+                                  Proc& baseProc);
+
+    void _buildReadOptUIntSelInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
+
+    void _buildReadOptSIntSelInstr(const StructureMemberType *memberType, const DataType& dt,
+                                   Proc& baseProc);
 
     template <typename InstrT>
     void _commonSpecBuildReadArrayInstrWithLen(InstrT& instr, const DataType& dt)
@@ -183,6 +196,18 @@ void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const member
         optProc.pushBack(std::move(endInstr));
     }
 
+    baseProc.pushBack(std::move(instr));
+}
+
+template <typename BeginReadOptIntSelInstrT, typename OptTypeT>
+void PktProcBuilder::_buildReadOptIntSelInstr(const StructureMemberType * const memberType,
+                                              const OptTypeT& optType, Proc& baseProc)
+{
+    auto instr = std::make_shared<BeginReadOptIntSelInstrT>(memberType, optType);
+
+    this->_buildReadInstr(nullptr, optType.dataType(), instr->proc());
+    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_OPT,
+                                                              memberType, optType));
     baseProc.pushBack(std::move(instr));
 }
 

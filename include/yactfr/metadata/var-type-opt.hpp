@@ -191,20 +191,20 @@ private:
 /*!
 @brief
     Option of the type of data stream variants with an unsigned selector
-    (VariantWithUnsignedSelectorType).
+    (VariantWithUnsignedIntegerSelectorType).
 
 @ingroup metadata_dt
 */
-using VariantWithUnsignedSelectorTypeOption = VariantTypeOption<unsigned long long>;
+using VariantWithUnsignedIntegerSelectorTypeOption = VariantTypeOption<unsigned long long>;
 
 /*!
 @brief
     Option of the type of data stream variants with a signed selector
-    (VariantWithSignedSelectorType).
+    (VariantWithSignedIntegerSelectorType).
 
 @ingroup metadata_dt
 */
-using VariantWithSignedSelectorTypeOption = VariantTypeOption<long long>;
+using VariantWithSignedIntegerSelectorTypeOption = VariantTypeOption<long long>;
 
 } // namespace yactfr
 

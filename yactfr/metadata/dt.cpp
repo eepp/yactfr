@@ -27,6 +27,7 @@
 #include <yactfr/metadata/sl-blob-type.hpp>
 #include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
+#include <yactfr/metadata/opt-type.hpp>
 #include <yactfr/internal/utils.hpp>
 
 namespace yactfr {
@@ -214,16 +215,41 @@ const StructureType& DataType::asStructureType() const noexcept
     return static_cast<const StructureType&>(*this);
 }
 
-const VariantWithUnsignedSelectorType& DataType::asVariantWithUnsignedSelectorType() const noexcept
+const VariantWithUnsignedIntegerSelectorType& DataType::asVariantWithUnsignedIntegerSelectorType() const noexcept
 {
-    assert(this->isVariantWithUnsignedSelectorType());
-    return static_cast<const VariantWithUnsignedSelectorType&>(*this);
+    assert(this->isVariantWithUnsignedIntegerSelectorType());
+    return static_cast<const VariantWithUnsignedIntegerSelectorType&>(*this);
 }
 
-const VariantWithSignedSelectorType& DataType::asVariantWithSignedSelectorType() const noexcept
+const VariantWithSignedIntegerSelectorType& DataType::asVariantWithSignedIntegerSelectorType() const noexcept
 {
-    assert(this->isVariantWithSignedSelectorType());
-    return static_cast<const VariantWithSignedSelectorType&>(*this);
+    assert(this->isVariantWithSignedIntegerSelectorType());
+    return static_cast<const VariantWithSignedIntegerSelectorType&>(*this);
 }
+
+const OptionalType& DataType::asOptionalType() const noexcept
+{
+    assert(this->isOptionalType());
+    return static_cast<const OptionalType&>(*this);
+}
+
+const OptionalWithBooleanSelectorType& DataType::asOptionalWithBooleanSelectorType() const noexcept
+{
+    assert(this->isOptionalWithBooleanSelectorType());
+    return static_cast<const OptionalWithBooleanSelectorType&>(*this);
+}
+
+const OptionalWithUnsignedIntegerSelectorType& DataType::asOptionalWithUnsignedIntegerSelectorType() const noexcept
+{
+    assert(this->isOptionalWithUnsignedIntegerSelectorType());
+    return static_cast<const OptionalWithUnsignedIntegerSelectorType&>(*this);
+}
+
+const OptionalWithSignedIntegerSelectorType& DataType::asOptionalWithSignedIntegerSelectorType() const noexcept
+{
+    assert(this->isOptionalWithSignedIntegerSelectorType());
+    return static_cast<const OptionalWithSignedIntegerSelectorType&>(*this);
+}
+
 
 } // namespace yactfr

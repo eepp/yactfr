@@ -95,8 +95,8 @@ void PktProcBuilder::_buildPktProc()
      *
      * 4. Insert `SaveValInstr` objects where needed to accomodate
      *    subsequent "begin read dynamic-length array", "begin read
-     *    dynamic-length string", "begin read dynamic-length BLOB", and
-     *    "begin read variant" instructions.
+     *    dynamic-length string", "begin read dynamic-length BLOB",
+     *    "begin read variant", and "begin read optional" instructions.
      *
      * 5. Insert "end procedure" instructions at the end of each
      *    top-level procedure.
@@ -204,14 +204,29 @@ public:
         this->_visit(instr);
     }
 
-    void visit(BeginReadVarUSelInstr& instr) override
+    void visit(BeginReadVarUIntSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
     }
 
-    void visit(BeginReadVarSSelInstr& instr) override
+    void visit(BeginReadVarSIntSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
+    }
+
+    void visit(BeginReadOptBoolSelInstr& instr) override
+    {
+        this->_visit(instr);
+    }
+
+    void visit(BeginReadOptUIntSelInstr& instr) override
+    {
+        this->_visit(instr);
+    }
+
+    void visit(BeginReadOptSIntSelInstr& instr) override
+    {
+        this->_visit(instr);
     }
 
     void visit(BeginReadScopeInstr& instr) override
@@ -458,17 +473,22 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
     dsPktProc.erPreambleProc().insert(insertPoint, std::make_shared<SetErInfoInstr>());
 }
 
-class IntTypeReadIntInstrMapCreator :
+class DtReadLenSelInstrMapCreator :
     public CallerInstrVisitor
 {
 public:
     using Func = std::function<void (InstrLoc&)>;
 
 public:
-    explicit IntTypeReadIntInstrMapCreator(Proc& proc, Func func) :
+    explicit DtReadLenSelInstrMapCreator(Proc& proc, Func func) :
         _func {std::move(func)}
     {
         this->_visitProc(proc);
+    }
+
+    void visit(ReadFlBoolInstr& instr) override
+    {
+        this->_visit(instr);
     }
 
     void visit(ReadFlSIntInstr& instr) override
@@ -513,14 +533,29 @@ public:
         this->_visit(instr);
     }
 
-    void visit(BeginReadVarUSelInstr& instr) override
+    void visit(BeginReadVarUIntSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
     }
 
-    void visit(BeginReadVarSSelInstr& instr) override
+    void visit(BeginReadVarSIntSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
+    }
+
+    void visit(BeginReadOptBoolSelInstr& instr) override
+    {
+        this->_visit(instr);
+    }
+
+    void visit(BeginReadOptUIntSelInstr& instr) override
+    {
+        this->_visit(instr);
+    }
+
+    void visit(BeginReadOptSIntSelInstr& instr) override
+    {
+        this->_visit(instr);
     }
 
     void visit(BeginReadScopeInstr& instr) override
@@ -551,9 +586,9 @@ private:
     const Func _func;
 };
 
-PktProcBuilder::_IntTypeReadIntInstrMap PktProcBuilder::_createIntTypeReadIntInstrMap() const
+PktProcBuilder::_DtReadLenSelInstrMap PktProcBuilder::_createDtReadLenSelInstrMap() const
 {
-    _IntTypeReadIntInstrMap map;
+    _DtReadLenSelInstrMap map;
 
     const auto insertFunc = [&map](InstrLoc& instrLoc) {
         auto& readDataInstr = static_cast<const ReadDataInstr&>(**instrLoc.it);
@@ -561,16 +596,16 @@ PktProcBuilder::_IntTypeReadIntInstrMap PktProcBuilder::_createIntTypeReadIntIns
         map[&readDataInstr.dt()] = instrLoc;
     };
 
-    IntTypeReadIntInstrMapCreator {_pktProc->preambleProc(), insertFunc};
+    DtReadLenSelInstrMapCreator {_pktProc->preambleProc(), insertFunc};
 
     for (auto& dsPktProcPair : _pktProc->dsPktProcs()) {
         auto& dsPktProc = dsPktProcPair.second;
 
-        IntTypeReadIntInstrMapCreator {dsPktProc->pktPreambleProc(), insertFunc};
-        IntTypeReadIntInstrMapCreator {dsPktProc->erPreambleProc(), insertFunc};
+        DtReadLenSelInstrMapCreator {dsPktProc->pktPreambleProc(), insertFunc};
+        DtReadLenSelInstrMapCreator {dsPktProc->erPreambleProc(), insertFunc};
 
         dsPktProcPair.second->forEachErProc([&insertFunc](ErProc& erProc) {
-            IntTypeReadIntInstrMapCreator {erProc.proc(), insertFunc};
+            DtReadLenSelInstrMapCreator {erProc.proc(), insertFunc};
         });
     }
 
@@ -616,14 +651,29 @@ public:
         instr.lenPos(_func(instr.dlBlobType().lengthTypes()));
     }
 
-    void visit(BeginReadVarUSelInstr& instr) override
+    void visit(BeginReadVarUIntSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
     }
 
-    void visit(BeginReadVarSSelInstr& instr) override
+    void visit(BeginReadVarSIntSelInstr& instr) override
     {
         this->_visitBeginReadVarInstr(instr);
+    }
+
+    void visit(BeginReadOptBoolSelInstr& instr) override
+    {
+        this->_visit(instr);
+    }
+
+    void visit(BeginReadOptUIntSelInstr& instr) override
+    {
+        this->_visit(instr);
+    }
+
+    void visit(BeginReadOptSIntSelInstr& instr) override
+    {
+        this->_visit(instr);
     }
 
     void visit(BeginReadScopeInstr& instr) override
@@ -647,6 +697,12 @@ private:
         this->_visitProc(instr.proc());
     }
 
+    void _visit(BeginReadOptInstr& instr)
+    {
+        instr.selPos(_func(instr.optType().selectorTypes()));
+        this->_visit(static_cast<BeginReadCompoundInstr&>(instr));
+    }
+
 private:
     const GetPosFunc _func;
 };
@@ -657,36 +713,38 @@ void PktProcBuilder::_setSavedValPoss()
      * Here's the idea.
      *
      * We swipe the whole packet procedure tree to find the "begin read
-     * dynamic-length array", "begin read dynamic-length string", "
-       "begin read dynamic-length BLOB", and
-     * "begin read variant" instructions, each of which having a data
-     * type containing the length/selector types.
+     * dynamic-length array", "begin read dynamic-length string", "begin
+     * read dynamic-length BLOB", "begin read variant" instructions, and
+     * "begin read optional" each of which having a data type containing
+     * the length/selector types.
      *
      * For a given length/selector type, we can find the corresponding
-     * "read integer" instruction as data types are unique.
+     * "read boolean" or "read integer" instruction as data types are
+     * unique.
      *
      * We insert "save value" instructions at the appropriate locations
      * in the associated procedure and then return the saved value
      * position to the visitor so that it changes the requesting
      * instruction.
      */
-    auto intTypeReadIntInstrMap = this->_createIntTypeReadIntInstrMap();
+    auto dtReadLenSelInstrMap = this->_createDtReadLenSelInstrMap();
     Index nextPos = 0;
 
-    const auto getPosFunc = [&intTypeReadIntInstrMap, &nextPos](const DataTypeSet& dts) {
+    const auto getPosFunc = [&dtReadLenSelInstrMap, &nextPos](const DataTypeSet& dts) {
         // saved value position to update
         const auto pos = nextPos;
 
         /*
          * For each data type of `dts`, insert a "save value"
-         * instruction after its corresponding "read integer"
-         * instruction.
+         * instruction after its corresponding "read boolean" or "read
+         * integer" instruction.
          */
         for (auto& dt : dts) {
             /*
-             * Find corresponding "read integer" instruction location.
+             * Find corresponding "read boolean" or "read integer"
+             * instruction location.
              */
-            auto& instrLoc = intTypeReadIntInstrMap[dt];
+            auto& instrLoc = dtReadLenSelInstrMap[dt];
 
             // insert "save value" instruction just after
             instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SaveValInstr>(pos));
@@ -913,14 +971,29 @@ public:
         _pktProcBuilder->_buildReadDlBlobInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const VariantWithUnsignedSelectorType& dt) override
+    void visit(const VariantWithUnsignedIntegerSelectorType& dt) override
     {
-        _pktProcBuilder->_buildReadVarUSelInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadVarUIntSelInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const VariantWithSignedSelectorType& dt) override
+    void visit(const VariantWithSignedIntegerSelectorType& dt) override
     {
-        _pktProcBuilder->_buildReadVarSSelInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadVarSIntSelInstr(_memberType, dt, *_baseProc);
+    }
+
+    void visit(const OptionalWithBooleanSelectorType& dt) override
+    {
+        _pktProcBuilder->_buildReadOptBoolSelInstr(_memberType, dt, *_baseProc);
+    }
+
+    void visit(const OptionalWithUnsignedIntegerSelectorType& dt) override
+    {
+        _pktProcBuilder->_buildReadOptUIntSelInstr(_memberType, dt, *_baseProc);
+    }
+
+    void visit(const OptionalWithSignedIntegerSelectorType& dt) override
+    {
+        _pktProcBuilder->_buildReadOptSIntSelInstr(_memberType, dt, *_baseProc);
     }
 
 private:
@@ -1073,19 +1146,47 @@ void PktProcBuilder::_buildReadDlBlobInstr(const StructureMemberType * const mem
                                  Instr::Kind::END_READ_DL_BLOB>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadVarUSelInstr(const StructureMemberType * const memberType,
-                                            const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadVarUIntSelInstr(const StructureMemberType * const memberType,
+                                               const DataType& dt, Proc& baseProc)
 {
-    this->_buildReadVarInstr<BeginReadVarUSelInstr>(memberType,
-                                                    dt.asVariantWithUnsignedSelectorType(),
-                                                    baseProc);
+    this->_buildReadVarInstr<BeginReadVarUIntSelInstr>(memberType,
+                                                       dt.asVariantWithUnsignedIntegerSelectorType(),
+                                                       baseProc);
 }
 
-void PktProcBuilder::_buildReadVarSSelInstr(const StructureMemberType * const memberType,
-                                            const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadVarSIntSelInstr(const StructureMemberType * const memberType,
+                                               const DataType& dt, Proc& baseProc)
 {
-    this->_buildReadVarInstr<BeginReadVarSSelInstr>(memberType,
-                                                    dt.asVariantWithSignedSelectorType(), baseProc);
+    this->_buildReadVarInstr<BeginReadVarSIntSelInstr>(memberType,
+                                                       dt.asVariantWithSignedIntegerSelectorType(),
+                                                       baseProc);
+}
+
+void PktProcBuilder::_buildReadOptBoolSelInstr(const StructureMemberType * const memberType,
+                                               const DataType& dt, Proc& baseProc)
+{
+    auto instr = std::make_shared<BeginReadOptBoolSelInstr>(memberType, dt);
+
+    this->_buildReadInstr(nullptr, dt.asOptionalType().dataType(), instr->proc());
+    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_OPT,
+                                                              memberType, dt));
+    baseProc.pushBack(std::move(instr));
+}
+
+void PktProcBuilder::_buildReadOptUIntSelInstr(const StructureMemberType * const memberType,
+                                               const DataType& dt, Proc& baseProc)
+{
+    this->_buildReadOptIntSelInstr<BeginReadOptUIntSelInstr>(memberType,
+                                                             dt.asOptionalWithUnsignedIntegerSelectorType(),
+                                                             baseProc);
+}
+
+void PktProcBuilder::_buildReadOptSIntSelInstr(const StructureMemberType * const memberType,
+                                               const DataType& dt, Proc& baseProc)
+{
+    this->_buildReadOptIntSelInstr<BeginReadOptSIntSelInstr>(memberType,
+                                                             dt.asOptionalWithSignedIntegerSelectorType(),
+                                                             baseProc);
 }
 
 } // namespace internal

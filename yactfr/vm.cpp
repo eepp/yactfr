@@ -281,9 +281,13 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::END_READ_DL_STR>(&Vm::_execEndReadDlStr);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_DL_BLOB>(&Vm::_execBeginReadDlBlob);
     this->_initExecFunc<Instr::Kind::END_READ_DL_BLOB>(&Vm::_execEndReadDlBlob);
-    this->_initExecFunc<Instr::Kind::BEGIN_READ_VAR_SSEL>(&Vm::_execBeginReadVarSSel);
-    this->_initExecFunc<Instr::Kind::BEGIN_READ_VAR_USEL>(&Vm::_execBeginReadVarUSel);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_VAR_SINT_SEL>(&Vm::_execBeginReadVarSIntSel);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_VAR_UINT_SEL>(&Vm::_execBeginReadVarUIntSel);
     this->_initExecFunc<Instr::Kind::END_READ_VAR>(&Vm::_execEndReadVar);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_OPT_BOOL_SEL>(&Vm::_execBeginReadOptBoolSel);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_OPT_SINT_SEL>(&Vm::_execBeginReadOptSIntSel);
+    this->_initExecFunc<Instr::Kind::BEGIN_READ_OPT_UINT_SEL>(&Vm::_execBeginReadOptUIntSel);
+    this->_initExecFunc<Instr::Kind::END_READ_OPT>(&Vm::_execEndReadOpt);
     this->_initExecFunc<Instr::Kind::SAVE_VAL>(&Vm::_execSaveVal);
     this->_initExecFunc<Instr::Kind::SET_PKT_END_DEF_CLK_VAL>(&Vm::_execSetPktEndDefClkVal);
     this->_initExecFunc<Instr::Kind::UPDATE_DEF_CLK_VAL_FL>(&Vm::_execUpdateDefClkValFl);
@@ -928,19 +932,51 @@ Vm::_ExecReaction Vm::_execEndReadDlBlob(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadVarSSel(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadVarSIntSel(const Instr& instr)
 {
-    this->_execBeginReadVar<BeginReadVarSSelInstr>(instr, _pos.elems.varSSelBeginning);
+    this->_execBeginReadVar<BeginReadVarSIntSelInstr>(instr, _pos.elems.varSIntSelBeginning);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadVarUSel(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadVarUIntSel(const Instr& instr)
 {
-    this->_execBeginReadVar<BeginReadVarUSelInstr>(instr, _pos.elems.varUSelBeginning);
+    this->_execBeginReadVar<BeginReadVarUIntSelInstr>(instr, _pos.elems.varUIntSelBeginning);
+    return _ExecReaction::STOP;
+}
+
+Vm::_ExecReaction Vm::_execBeginReadOptBoolSel(const Instr& instr)
+{
+    this->_execBeginReadOpt<BeginReadOptBoolSelInstr, bool>(instr, _pos.elems.optBoolSelBeginning);
+    return _ExecReaction::STOP;
+}
+
+Vm::_ExecReaction Vm::_execBeginReadOptSIntSel(const Instr& instr)
+{
+    const auto selVal = this->_execBeginReadOpt<BeginReadOptSIntSelInstr,
+                                                long long>(instr, _pos.elems.optSIntSelBeginning);
+
+    _pos.elems.optSIntSelBeginning._selVal = selVal;
+    return _ExecReaction::STOP;
+}
+
+Vm::_ExecReaction Vm::_execBeginReadOptUIntSel(const Instr& instr)
+{
+    const auto selVal = this->_execBeginReadOpt<BeginReadOptUIntSelInstr,
+                                                unsigned long long>(instr,
+                                                                    _pos.elems.optUIntSelBeginning);
+
+    _pos.elems.optUIntSelBeginning._selVal = selVal;
     return _ExecReaction::STOP;
 }
 
 Vm::_ExecReaction Vm::_execEndReadVar(const Instr& instr)
+{
+    this->_updateItCurOffset(_pos.elems.end);
+    _pos.setParentStateAndStackPop();
+    return _ExecReaction::STOP;
+}
+
+Vm::_ExecReaction Vm::_execEndReadOpt(const Instr& instr)
 {
     this->_updateItCurOffset(_pos.elems.end);
     _pos.setParentStateAndStackPop();

@@ -71,7 +71,7 @@ documented uses unabbreviated names.
 |Max |Maximum
 |Min |Minimum
 |NT |Null-terminated
-|Opt |Option
+|Opt |Option, optional
 |Pkt |Packet
 |Pos |Position
 |Pow |Power
@@ -324,17 +324,22 @@ the VM to save the value of the last decoded integer to a specific
 position (index) within an array of saved values.
 
 This is how the VM knows where to dynamically find the length of a
-dynamic-length array/string, or the selector of a variant, as the
-`internal::BeginReadDlArrayInstr`, `internal::BeginReadDlStrInstr`,
-`internal::BeginReadVarUSelInstr`, and `internal::BeginReadVarSSelInstr`
-instructions contain a numeric position (index) within this saved value
-array where to find the length or selector value.
+dynamic-length array/string, or the selector of a variant/optional, as
+the `internal::BeginReadDlArrayInstr`, `internal::BeginReadDlStrInstr`,
+`internal::BeginReadDlBlobInstr`, `internal::BeginReadVarUIntSelInstr`,
+`internal::BeginReadVarSIntSelInstr`,
+`internal::BeginReadOptBoolSelInstr`,
+`internal::BeginReadOptUIntSelInstr`, and
+`internal::BeginReadOptSIntSelInstr` instructions contain a numeric
+position (index) within this saved value array where to find the length
+or selector value.
 
 `internal::PktProcBuilder` contains the logic to insert
 `internal::SaveValInstr` instructions at specific locations within the
 procedures and to assign appropriate positions to link "`begin read
-dynamic-length array`", "`begin read dynamic-length string`", and
-"`begin read variant`" instructions to their length/selector values.
+dynamic-length array`", "`begin read dynamic-length string`", "`begin
+read variant`", and "`begin read optional`" instructions to their
+length/selector values.
 
 [[data-src-factory]]
 == Data source factory

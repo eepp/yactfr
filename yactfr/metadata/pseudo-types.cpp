@@ -435,11 +435,9 @@ PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(boost::optional<PseudoDat
 
 PseudoDt::UP PseudoVarWithIntRangesType::clone() const
 {
-    RangeSets rangeSets {_rangeSets};
-
     return std::make_unique<PseudoVarWithIntRangesType>(this->pseudoSelLoc(),
                                                         this->_clonePseudoOpts(),
-                                                        std::move(rangeSets),
+                                                        RangeSets {_rangeSets},
                                                         tryCloneUserAttrs(this->userAttrs()),
                                                         this->loc());
 }
@@ -450,6 +448,76 @@ void PseudoVarWithIntRangesType::accept(PseudoDtVisitor& visitor)
 }
 
 void PseudoVarWithIntRangesType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+PseudoOptType::PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
+                             MapItem::UP userAttrs, TextLocation&& loc) :
+    PseudoDt {std::move(userAttrs), std::move(loc)},
+    _pseudoDt {std::move(pseudoDt)},
+    _pseudoSelLoc {std::move(pseudoSelLoc)}
+{
+}
+
+bool PseudoOptType::isEmpty() const
+{
+    return _pseudoDt->isEmpty();
+}
+
+PseudoOptWithBoolSelType::PseudoOptWithBoolSelType(PseudoDt::UP pseudoDt,
+                                                   PseudoDataLoc pseudoSelLoc,
+                                                   MapItem::UP userAttrs, TextLocation loc) :
+    PseudoOptType {
+        std::move(pseudoDt), std::move(pseudoSelLoc),
+        std::move(userAttrs), std::move(loc)
+    }
+{
+}
+
+PseudoDt::UP PseudoOptWithBoolSelType::clone() const
+{
+    return std::make_unique<PseudoOptWithBoolSelType>(this->pseudoDt().clone(),
+                                                      this->pseudoSelLoc(),
+                                                      tryCloneUserAttrs(this->userAttrs()),
+                                                      this->loc());
+}
+
+void PseudoOptWithBoolSelType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoOptWithBoolSelType::accept(ConstPseudoDtVisitor& visitor) const
+{
+    visitor.visit(*this);
+}
+
+PseudoOptWithIntSelType::PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
+                                                 RangeSet&& selRanges, MapItem::UP userAttrs,
+                                                 TextLocation loc) :
+    PseudoOptType {
+        std::move(pseudoDt), std::move(pseudoSelLoc),
+        std::move(userAttrs), std::move(loc)
+    },
+    _selRanges {std::move(selRanges)}
+{
+}
+
+PseudoDt::UP PseudoOptWithIntSelType::clone() const
+{
+    return std::make_unique<PseudoOptWithIntSelType>(this->pseudoDt().clone(),
+                                                     this->pseudoSelLoc(), RangeSet {_selRanges},
+                                                     tryCloneUserAttrs(this->userAttrs()),
+                                                     this->loc());
+}
+
+void PseudoOptWithIntSelType::accept(PseudoDtVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+void PseudoOptWithIntSelType::accept(ConstPseudoDtVisitor& visitor) const
 {
     visitor.visit(*this);
 }
