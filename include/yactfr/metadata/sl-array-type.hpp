@@ -55,6 +55,8 @@ public:
     @pre
         \p minimumAlignment is a power of two.
     @pre
+        \p elementType is set.
+    @pre
         @parblock
         If \p hasTraceTypeUuidRole is true, then \p length is 16 and all
         of the following are true:
@@ -89,6 +91,8 @@ public:
         Whether or not the static-length arrays described by this type
         have the "trace type UUID" role.
 
+    @pre
+        \p elementType is set.
     @pre
         @parblock
         If \p hasTraceTypeUuidRole is true, then \p length is 16 and all

@@ -60,6 +60,8 @@ public:
     @pre
         \p minimumAlignment is a power of two.
     @pre
+        \p elementType is set.
+    @pre
         \p lengthLocation only locates unsigned integers.
     */
     explicit DynamicLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
@@ -84,6 +86,8 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
 
+    @pre
+        \p elementType is set.
     @pre
         \p lengthLocation only locates unsigned integers.
     */

@@ -45,6 +45,9 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
+
+    @pre
+        \p type is set.
     */
     explicit StructureMemberType(std::string name, DataType::UP type,
                                  MapItem::UP userAttributes = nullptr);

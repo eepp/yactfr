@@ -116,6 +116,8 @@ public:
     @pre
         \p minimumAlignment is a power of two.
     @pre
+        \p dataType is set.
+    @pre
         \p selectorLocation only locates booleans.
     */
     explicit OptionalWithBooleanSelectorType(unsigned int minimumAlignment, DataType::UP dataType,
@@ -140,6 +142,8 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
 
+    @pre
+        \p dataType is set.
     @pre
         \p selectorLocation only locates booleans.
     */
@@ -234,6 +238,8 @@ public:
     @pre
         \p minimumAlignment is a power of two.
     @pre
+        \p dataType is set.
+    @pre
         \p selectorLocation only locates booleans.
     */
     explicit OptionalWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
@@ -262,6 +268,8 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
 
+    @pre
+        \p dataType is set.
     @pre
         \p selectorLocation only locates booleans.
     */
@@ -319,6 +327,8 @@ public:
     @pre
         \p minimumAlignment is a power of two.
     @pre
+        \p dataType is set.
+    @pre
         \p selectorLocation only locates booleans.
     */
     explicit OptionalWithSignedIntegerSelectorType(unsigned int minimumAlignment,
@@ -347,6 +357,8 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
 
+    @pre
+        \p dataType is set.
     @pre
         \p selectorLocation only locates booleans.
     */

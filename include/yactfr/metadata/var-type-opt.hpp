@@ -59,6 +59,8 @@ public:
         @endparblock
 
     @pre
+        \p dataType is set.
+    @pre
         \p selectorRanges is not empty.
     */
     explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
@@ -89,6 +91,8 @@ public:
         @endparblock
 
     @pre
+        \p dataType is set.
+    @pre
         \p selectorRanges is not empty.
     */
     explicit VariantTypeOption(DataType::UP dataType, const SelectorRangeSet& selectorRanges,
@@ -109,6 +113,8 @@ public:
     @param[in] selectorRanges
         Selector values for which this option is selected (moved).
 
+    @pre
+        \p dataType is set.
     @pre
         \p selectorRanges is not empty.
     */
@@ -131,6 +137,8 @@ public:
     @param[in] selectorRanges
         Selector values for which this option is selected (moved).
 
+    @pre
+        \p dataType is set.
     @pre
         \p selectorRanges is not empty.
     */
