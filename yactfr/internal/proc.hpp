@@ -457,8 +457,11 @@ public:
         END_READ_SL_BLOB,
         END_READ_DL_BLOB,
         END_READ_STRUCT,
-        END_READ_VAR,
-        END_READ_OPT,
+        END_READ_VAR_SINT_SEL,
+        END_READ_VAR_UINT_SEL,
+        END_READ_OPT_BOOL_SEL,
+        END_READ_OPT_SINT_SEL,
+        END_READ_OPT_UINT_SEL,
         READ_FL_BIT_ARRAY_A16_BE,
         READ_FL_BIT_ARRAY_A16_LE,
         READ_FL_BIT_ARRAY_A32_BE,
@@ -561,284 +564,127 @@ public:
     // only used for debugging purposes
     std::string toStr(Size indent = 0) const;
 
+    // only used to debug and for assertions
+    bool isBeginReadData() const noexcept
+    {
+        switch (_theKind) {
+        case Instr::Kind::BEGIN_READ_DL_ARRAY:
+        case Instr::Kind::BEGIN_READ_DL_STR:
+        case Instr::Kind::BEGIN_READ_DL_BLOB:
+        case Instr::Kind::BEGIN_READ_SCOPE:
+        case Instr::Kind::BEGIN_READ_SL_ARRAY:
+        case Instr::Kind::BEGIN_READ_SL_STR:
+        case Instr::Kind::BEGIN_READ_SL_UUID_ARRAY:
+        case Instr::Kind::BEGIN_READ_SL_BLOB:
+        case Instr::Kind::BEGIN_READ_SL_UUID_BLOB:
+        case Instr::Kind::BEGIN_READ_STRUCT:
+        case Instr::Kind::BEGIN_READ_VAR_SINT_SEL:
+        case Instr::Kind::BEGIN_READ_VAR_UINT_SEL:
+        case Instr::Kind::BEGIN_READ_OPT_BOOL_SEL:
+        case Instr::Kind::BEGIN_READ_OPT_SINT_SEL:
+        case Instr::Kind::BEGIN_READ_OPT_UINT_SEL:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A16_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A16_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A32_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A32_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A64_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A64_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A8:
+        case Instr::Kind::READ_FL_BIT_ARRAY_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_LE:
+        case Instr::Kind::READ_FL_FLOAT_32_BE:
+        case Instr::Kind::READ_FL_FLOAT_32_LE:
+        case Instr::Kind::READ_FL_FLOAT_64_BE:
+        case Instr::Kind::READ_FL_FLOAT_64_LE:
+        case Instr::Kind::READ_FL_FLOAT_A32_BE:
+        case Instr::Kind::READ_FL_FLOAT_A32_LE:
+        case Instr::Kind::READ_FL_FLOAT_A64_BE:
+        case Instr::Kind::READ_FL_FLOAT_A64_LE:
+        case Instr::Kind::READ_FL_SENUM_A16_BE:
+        case Instr::Kind::READ_FL_SENUM_A16_LE:
+        case Instr::Kind::READ_FL_SENUM_A32_BE:
+        case Instr::Kind::READ_FL_SENUM_A32_LE:
+        case Instr::Kind::READ_FL_SENUM_A64_BE:
+        case Instr::Kind::READ_FL_SENUM_A64_LE:
+        case Instr::Kind::READ_FL_SENUM_A8:
+        case Instr::Kind::READ_FL_SENUM_BE:
+        case Instr::Kind::READ_FL_SENUM_LE:
+        case Instr::Kind::READ_FL_SINT_A16_BE:
+        case Instr::Kind::READ_FL_SINT_A16_LE:
+        case Instr::Kind::READ_FL_SINT_A32_BE:
+        case Instr::Kind::READ_FL_SINT_A32_LE:
+        case Instr::Kind::READ_FL_SINT_A64_BE:
+        case Instr::Kind::READ_FL_SINT_A64_LE:
+        case Instr::Kind::READ_FL_SINT_A8:
+        case Instr::Kind::READ_FL_SINT_BE:
+        case Instr::Kind::READ_FL_SINT_LE:
+        case Instr::Kind::READ_NT_STR:
+        case Instr::Kind::READ_FL_UENUM_A16_BE:
+        case Instr::Kind::READ_FL_UENUM_A16_LE:
+        case Instr::Kind::READ_FL_UENUM_A32_BE:
+        case Instr::Kind::READ_FL_UENUM_A32_LE:
+        case Instr::Kind::READ_FL_UENUM_A64_BE:
+        case Instr::Kind::READ_FL_UENUM_A64_LE:
+        case Instr::Kind::READ_FL_UENUM_A8:
+        case Instr::Kind::READ_FL_UENUM_BE:
+        case Instr::Kind::READ_FL_UENUM_LE:
+        case Instr::Kind::READ_FL_UINT_A16_BE:
+        case Instr::Kind::READ_FL_UINT_A16_LE:
+        case Instr::Kind::READ_FL_UINT_A32_BE:
+        case Instr::Kind::READ_FL_UINT_A32_LE:
+        case Instr::Kind::READ_FL_UINT_A64_BE:
+        case Instr::Kind::READ_FL_UINT_A64_LE:
+        case Instr::Kind::READ_FL_UINT_A8:
+        case Instr::Kind::READ_FL_UINT_BE:
+        case Instr::Kind::READ_FL_UINT_LE:
+        case Instr::Kind::READ_FL_BOOL_A16_BE:
+        case Instr::Kind::READ_FL_BOOL_A16_LE:
+        case Instr::Kind::READ_FL_BOOL_A32_BE:
+        case Instr::Kind::READ_FL_BOOL_A32_LE:
+        case Instr::Kind::READ_FL_BOOL_A64_BE:
+        case Instr::Kind::READ_FL_BOOL_A64_LE:
+        case Instr::Kind::READ_FL_BOOL_A8:
+        case Instr::Kind::READ_FL_BOOL_BE:
+        case Instr::Kind::READ_FL_BOOL_LE:
+        case Instr::Kind::READ_VL_BIT_ARRAY:
+        case Instr::Kind::READ_VL_UINT:
+        case Instr::Kind::READ_VL_SINT:
+        case Instr::Kind::READ_VL_UENUM:
+        case Instr::Kind::READ_VL_SENUM:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    // only used to debug and for assertions
+    bool isEndReadData() const noexcept
+    {
+        switch (_theKind) {
+        case Instr::Kind::END_READ_SL_ARRAY:
+        case Instr::Kind::END_READ_DL_ARRAY:
+        case Instr::Kind::END_READ_SL_STR:
+        case Instr::Kind::END_READ_DL_STR:
+        case Instr::Kind::END_READ_SL_BLOB:
+        case Instr::Kind::END_READ_DL_BLOB:
+        case Instr::Kind::END_READ_STRUCT:
+        case Instr::Kind::END_READ_VAR_SINT_SEL:
+        case Instr::Kind::END_READ_VAR_UINT_SEL:
+        case Instr::Kind::END_READ_OPT_BOOL_SEL:
+        case Instr::Kind::END_READ_OPT_SINT_SEL:
+        case Instr::Kind::END_READ_OPT_UINT_SEL:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
     Kind kind() const noexcept
     {
         assert(_theKind != Kind::UNSET);
         return _theKind;
-    }
-
-    /*
-     * Please DO NOT FREAK OUT about the isX() methods belows.
-     *
-     * They are only helpers which are used when _building_ the
-     * procedures. The yactfr VM uses kind() directly and a function
-     * table.
-     */
-
-    bool isReadData() const noexcept
-    {
-        return this->isReadFlBitArray() ||
-               this->isReadVlBitArray() ||
-               this->isReadNtStr() ||
-               this->isBeginReadCompound() ||
-               this->isBeginReadVar();
-    }
-
-    bool isBeginReadScope() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_SCOPE;
-    }
-
-    bool isBeginReadCompound() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_STRUCT ||
-               _theKind == Kind::BEGIN_READ_SL_ARRAY ||
-               _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY ||
-               _theKind == Kind::BEGIN_READ_DL_ARRAY;
-    }
-
-    bool isReadFlBitArray() const noexcept
-    {
-        return _theKind == Kind::READ_FL_BIT_ARRAY_LE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_BE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A8 ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A16_LE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A32_LE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A64_LE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A16_BE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A32_BE ||
-               _theKind == Kind::READ_FL_BIT_ARRAY_A64_BE ||
-               this->isReadFlBool() ||
-               this->isReadFlInt() ||
-               this->isReadFlFloat();
-    }
-
-    bool isReadFlBool() const noexcept
-    {
-        return _theKind == Kind::READ_FL_BOOL_LE ||
-               _theKind == Kind::READ_FL_BOOL_BE ||
-               _theKind == Kind::READ_FL_BOOL_A8 ||
-               _theKind == Kind::READ_FL_BOOL_A16_LE ||
-               _theKind == Kind::READ_FL_BOOL_A32_LE ||
-               _theKind == Kind::READ_FL_BOOL_A64_LE ||
-               _theKind == Kind::READ_FL_BOOL_A16_BE ||
-               _theKind == Kind::READ_FL_BOOL_A32_BE ||
-               _theKind == Kind::READ_FL_BOOL_A64_BE;
-    }
-
-    bool isReadFlInt() const noexcept
-    {
-        return this->isReadFlSInt() || this->isReadFlUInt();
-    }
-
-    bool isReadFlSInt() const noexcept
-    {
-        return _theKind == Kind::READ_FL_SINT_LE ||
-               _theKind == Kind::READ_FL_SINT_BE ||
-               _theKind == Kind::READ_FL_SINT_A8 ||
-               _theKind == Kind::READ_FL_SINT_A16_LE ||
-               _theKind == Kind::READ_FL_SINT_A32_LE ||
-               _theKind == Kind::READ_FL_SINT_A64_LE ||
-               _theKind == Kind::READ_FL_SINT_A16_BE ||
-               _theKind == Kind::READ_FL_SINT_A32_BE ||
-               _theKind == Kind::READ_FL_SINT_A64_BE ||
-               this->isReadFlSEnum();
-    }
-
-    bool isReadFlUInt() const noexcept
-    {
-        return _theKind == Kind::READ_FL_UINT_LE ||
-               _theKind == Kind::READ_FL_UINT_BE ||
-               _theKind == Kind::READ_FL_UINT_A8 ||
-               _theKind == Kind::READ_FL_UINT_A16_LE ||
-               _theKind == Kind::READ_FL_UINT_A32_LE ||
-               _theKind == Kind::READ_FL_UINT_A64_LE ||
-               _theKind == Kind::READ_FL_UINT_A16_BE ||
-               _theKind == Kind::READ_FL_UINT_A32_BE ||
-               _theKind == Kind::READ_FL_UINT_A64_BE ||
-               this->isReadFlUEnum();
-    }
-
-    bool isReadFlFloat() const noexcept
-    {
-        return _theKind == Kind::READ_FL_FLOAT_32_LE ||
-               _theKind == Kind::READ_FL_FLOAT_32_BE ||
-               _theKind == Kind::READ_FL_FLOAT_A32_LE ||
-               _theKind == Kind::READ_FL_FLOAT_A32_BE ||
-               _theKind == Kind::READ_FL_FLOAT_64_LE ||
-               _theKind == Kind::READ_FL_FLOAT_64_BE ||
-               _theKind == Kind::READ_FL_FLOAT_A64_LE ||
-               _theKind == Kind::READ_FL_FLOAT_A64_BE;
-    }
-
-    bool isReadFlEnum() const noexcept
-    {
-        return this->isReadFlSEnum() || this->isReadFlUEnum();
-    }
-
-    bool isReadFlSEnum() const noexcept
-    {
-        return _theKind == Kind::READ_FL_SENUM_LE ||
-               _theKind == Kind::READ_FL_SENUM_BE ||
-               _theKind == Kind::READ_FL_SENUM_A8 ||
-               _theKind == Kind::READ_FL_SENUM_A16_LE ||
-               _theKind == Kind::READ_FL_SENUM_A32_LE ||
-               _theKind == Kind::READ_FL_SENUM_A64_LE ||
-               _theKind == Kind::READ_FL_SENUM_A16_BE ||
-               _theKind == Kind::READ_FL_SENUM_A32_BE ||
-               _theKind == Kind::READ_FL_SENUM_A64_BE;
-    }
-
-    bool isReadFlUEnum() const noexcept
-    {
-
-        return _theKind == Kind::READ_FL_UENUM_LE ||
-               _theKind == Kind::READ_FL_UENUM_BE ||
-               _theKind == Kind::READ_FL_UENUM_A8 ||
-               _theKind == Kind::READ_FL_UENUM_A16_LE ||
-               _theKind == Kind::READ_FL_UENUM_A32_LE ||
-               _theKind == Kind::READ_FL_UENUM_A64_LE ||
-               _theKind == Kind::READ_FL_UENUM_A16_BE ||
-               _theKind == Kind::READ_FL_UENUM_A32_BE ||
-               _theKind == Kind::READ_FL_UENUM_A64_BE;
-    }
-
-    bool isReadVlBitArray() const noexcept
-    {
-        return _theKind == Kind::READ_VL_BIT_ARRAY ||
-               this->isReadVlInt();
-    }
-
-    bool isReadVlInt() const noexcept
-    {
-        return this->isReadVlUInt() || this->isReadVlSInt();
-    }
-
-    bool isReadVlUInt() const noexcept
-    {
-        return _theKind == Kind::READ_VL_UINT ||
-               _theKind == Kind::READ_VL_UENUM;
-    }
-
-    bool isReadVlSInt() const noexcept
-    {
-        return _theKind == Kind::READ_VL_SINT ||
-               _theKind == Kind::READ_VL_SENUM;
-    }
-
-    bool isReadUInt() const noexcept
-    {
-        return this->isReadFlUInt() || this->isReadVlUInt();
-    }
-
-    bool isReadNtStr() const noexcept
-    {
-        return _theKind == Kind::READ_NT_STR;
-    }
-
-    bool isBeginReadSlArray() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_SL_ARRAY ||
-               _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY;
-    }
-
-    bool isBeginReadSlStr() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_SL_STR;
-    }
-
-    bool isBeginReadSlUuidArray() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_SL_UUID_ARRAY;
-    }
-
-    bool isBeginReadDlArray() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_DL_ARRAY;
-    }
-
-    bool isBeginReadDlStr() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_DL_STR;
-    }
-
-    bool isBeginReadSlBlob() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_SL_BLOB;
-    }
-
-    bool isBeginReadSlUuidBlob() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_SL_UUID_BLOB;
-    }
-
-    bool isBeginReadDlBlob() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_DL_BLOB;
-    }
-
-    bool isBeginReadStruct() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_STRUCT;
-    }
-
-    bool isBeginReadVar() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_VAR_SINT_SEL ||
-               _theKind == Kind::BEGIN_READ_VAR_UINT_SEL;
-    }
-
-    bool isBeginReadVarSIntSel() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_VAR_SINT_SEL;
-    }
-
-    bool isBeginReadVarUIntSel() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_VAR_UINT_SEL;
-    }
-
-    bool isBeginReadOpt() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_OPT_BOOL_SEL ||
-               _theKind == Kind::BEGIN_READ_OPT_SINT_SEL ||
-               _theKind == Kind::BEGIN_READ_OPT_UINT_SEL;
-    }
-
-    bool isBeginReadOptBoolSel() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_OPT_BOOL_SEL;
-    }
-
-    bool isBeginReadOptSIntSel() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_OPT_SINT_SEL;
-    }
-
-    bool isBeginReadOptUIntSel() const noexcept
-    {
-        return _theKind == Kind::BEGIN_READ_OPT_UINT_SEL;
-    }
-
-    bool isEndReadData() const noexcept
-    {
-        return _theKind == Kind::END_READ_STRUCT ||
-               _theKind == Kind::END_READ_SL_ARRAY ||
-               _theKind == Kind::END_READ_DL_ARRAY ||
-               _theKind == Kind::END_READ_SL_STR ||
-               _theKind == Kind::END_READ_DL_STR ||
-               _theKind == Kind::END_READ_SL_BLOB ||
-               _theKind == Kind::END_READ_DL_BLOB ||
-               _theKind == Kind::END_READ_VAR ||
-               _theKind == Kind::END_READ_OPT;
-    }
-
-    bool isEndProc() const noexcept
-    {
-        return _theKind == Kind::END_PKT_PREAMBLE_PROC ||
-               _theKind == Kind::END_DS_PKT_PREAMBLE_PROC ||
-               _theKind == Kind::END_DS_ER_PREAMBLE_PROC ||
-               _theKind == Kind::END_ER_PROC;
     }
 
 private:
@@ -1786,7 +1632,8 @@ private:
 };
 
 class BeginReadVarUIntSelInstr final :
-    public BeginReadVarInstr<VariantWithUnsignedIntegerSelectorType, Instr::Kind::BEGIN_READ_VAR_UINT_SEL>
+    public BeginReadVarInstr<VariantWithUnsignedIntegerSelectorType,
+                             Instr::Kind::BEGIN_READ_VAR_UINT_SEL>
 {
 public:
     explicit BeginReadVarUIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
@@ -1798,7 +1645,8 @@ public:
 };
 
 class BeginReadVarSIntSelInstr final :
-    public BeginReadVarInstr<VariantWithSignedIntegerSelectorType, Instr::Kind::BEGIN_READ_VAR_SINT_SEL>
+    public BeginReadVarInstr<VariantWithSignedIntegerSelectorType,
+                             Instr::Kind::BEGIN_READ_VAR_SINT_SEL>
 {
 public:
     explicit BeginReadVarSIntSelInstr(const StructureMemberType *memberType, const DataType& dt);

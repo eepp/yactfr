@@ -280,10 +280,13 @@ public:
     // current elements
     struct {
         PacketBeginningElement pktBeginning;
-        EndElement end;
+        PacketEndElement pktEnd;
         ScopeBeginningElement scopeBeginning;
+        ScopeEndElement scopeEnd;
         PacketContentBeginningElement pktContentBeginning;
+        PacketContentEndElement pktContentEnd;
         EventRecordBeginningElement erBeginning;
+        EventRecordEndElement erEnd;
         PacketMagicNumberElement pktMagicNumber;
         TraceTypeUuidElement traceTypeUuid;
         DataStreamInfoElement dsInfo;
@@ -303,20 +306,33 @@ public:
         VariableLengthSignedEnumerationElement vlSEnum;
         VariableLengthUnsignedEnumerationElement vlUEnum;
         NullTerminatedStringBeginningElement ntStrBeginning;
+        NullTerminatedStringEndElement ntStrEnd;
         SubstringElement substr;
         BlobSectionElement blobSection;
         StaticLengthArrayBeginningElement slArrayBeginning;
+        StaticLengthArrayEndElement slArrayEnd;
         DynamicLengthArrayBeginningElement dlArrayBeginning;
+        DynamicLengthArrayEndElement dlArrayEnd;
         StaticLengthStringBeginningElement slStrBeginning;
+        StaticLengthStringEndElement slStrEnd;
         DynamicLengthStringBeginningElement dlStrBeginning;
+        DynamicLengthStringEndElement dlStrEnd;
         StaticLengthBlobBeginningElement slBlobBeginning;
+        StaticLengthBlobEndElement slBlobEnd;
         DynamicLengthBlobBeginningElement dlBlobBeginning;
+        DynamicLengthBlobEndElement dlBlobEnd;
         StructureBeginningElement structBeginning;
+        StructureEndElement structEnd;
         VariantWithSignedIntegerSelectorBeginningElement varSIntSelBeginning;
+        VariantWithSignedIntegerSelectorEndElement varSIntSelEnd;
         VariantWithUnsignedIntegerSelectorBeginningElement varUIntSelBeginning;
+        VariantWithUnsignedIntegerSelectorEndElement varUIntSelEnd;
         OptionalWithBooleanSelectorBeginningElement optBoolSelBeginning;
+        OptionalWithBooleanSelectorEndElement optBoolSelEnd;
         OptionalWithSignedIntegerSelectorBeginningElement optSIntSelBeginning;
+        OptionalWithSignedIntegerSelectorEndElement optSIntSelEnd;
         OptionalWithUnsignedIntegerSelectorBeginningElement optUIntSelBeginning;
+        OptionalWithUnsignedIntegerSelectorEndElement optUIntSelEnd;
     } elems;
 
     // next state to handle
@@ -695,7 +711,7 @@ private:
             _pos.state(VmState::END_PKT);
         }
 
-        this->_updateItCurOffset(_pos.elems.end);
+        this->_updateItCurOffset(_pos.elems.pktContentEnd);
         return true;
     }
 
@@ -720,7 +736,7 @@ private:
             _bufLenBits -= (_bufAddr - oldBufAddr) * 8;
         }
 
-        this->_updateIt(_pos.elems.end, offset);
+        this->_updateIt(_pos.elems.pktEnd, offset);
         _pos.state(VmState::BEGIN_PKT);
         return true;
     }
@@ -760,7 +776,7 @@ private:
     {
         assert(_pos.curErProc);
         _pos.curErProc = nullptr;
-        this->_updateItCurOffset(_pos.elems.end);
+        this->_updateItCurOffset(_pos.elems.erEnd);
         _pos.state(VmState::BEGIN_ER);
         return true;
     }
@@ -999,7 +1015,11 @@ private:
 
     bool _stateEndStr()
     {
-        this->_updateItCurOffset(_pos.elems.end);
+        /*
+         * NOTE: _setDataElemFromInstr() was already called from
+         * _execReadNtStr() for `_pos.elems.ntStrEnd`.
+         */
+        this->_updateItCurOffset(_pos.elems.ntStrEnd);
         _pos.state(_pos.nextState);
         assert(_pos.state() == VmState::EXEC_INSTR || _pos.state() == VmState::EXEC_ARRAY_INSTR);
         return true;
@@ -1246,8 +1266,11 @@ private:
     _ExecReaction _execBeginReadOptBoolSel(const Instr& instr);
     _ExecReaction _execBeginReadOptSIntSel(const Instr& instr);
     _ExecReaction _execBeginReadOptUIntSel(const Instr& instr);
-    _ExecReaction _execEndReadVar(const Instr& instr);
-    _ExecReaction _execEndReadOpt(const Instr& instr);
+    _ExecReaction _execEndReadVarUIntSel(const Instr& instr);
+    _ExecReaction _execEndReadVarSIntSel(const Instr& instr);
+    _ExecReaction _execEndReadOptBoolSel(const Instr& instr);
+    _ExecReaction _execEndReadOptUIntSel(const Instr& instr);
+    _ExecReaction _execEndReadOptSIntSel(const Instr& instr);
     _ExecReaction _execSaveVal(const Instr& instr);
     _ExecReaction _execSetPktEndDefClkVal(const Instr& instr);
     _ExecReaction _execUpdateDefClkValFl(const Instr& instr);
@@ -1269,8 +1292,14 @@ private:
     _ExecReaction _execSetPktInfo(const Instr& instr);
     _ExecReaction _execSetErInfo(const Instr& instr);
 
-    static void _setDataElemFromInstr(DataElement& elem, const ReadDataInstr& readDataInstr) noexcept
+    template <typename ElemT>
+    static void _setDataElemFromInstr(ElemT& elem, const Instr& instr) noexcept
     {
+        assert(instr.isBeginReadData() || instr.isEndReadData());
+
+        auto& readDataInstr = static_cast<const ReadDataInstr&>(instr);
+
+        elem._dt = &readDataInstr.dt();
         elem._structMemberType = readDataInstr.memberType();
     }
 
@@ -1287,12 +1316,7 @@ private:
     template <typename ValT, typename ElemT>
     void _setBitArrayElemBase(const ValT val, const Instr& instr, ElemT& elem) noexcept
     {
-        using DataTypeT = typename std::remove_const<typename std::remove_reference<decltype(elem.type())>::type>::type;
-
-        auto& readDataInstr = static_cast<const ReadDataInstr&>(instr);
-
-        Vm::_setDataElemFromInstr(elem, readDataInstr);
-        elem._dt = static_cast<const DataTypeT *>(&readDataInstr.dt());
+        Vm::_setDataElemFromInstr(elem, instr);
         this->_setLastIntVal(val);
         elem._val(val);
         this->_updateItCurOffset(elem);
@@ -1321,7 +1345,6 @@ private:
     void _setFlFloatVal(const double val, const ReadDataInstr& instr) noexcept
     {
         Vm::_setDataElemFromInstr(_pos.elems.flFloat, instr);
-        _pos.elems.flFloat._dt = static_cast<const FixedLengthFloatingPointNumberType *>(&instr.dt());
         _pos.elems.flFloat._val(val);
         this->_updateItCurOffset(_pos.elems.flFloat);
     }
@@ -1522,13 +1545,19 @@ private:
             }
         }
 
-        Vm::_setDataElemFromInstr(elem, beginReadVarInstr);
-        elem._dt = &beginReadVarInstr.varType();
+        Vm::_setDataElemFromInstr(elem, instr);
         elem._selVal = selVal;
         this->_updateItCurOffset(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(proc);
         _pos.state(VmState::EXEC_INSTR);
+    }
+
+    static bool isEndReadOpt(const Instr& instr) noexcept
+    {
+        return instr.kind() == Instr::Kind::END_READ_OPT_BOOL_SEL ||
+               instr.kind() == Instr::Kind::END_READ_OPT_UINT_SEL ||
+               instr.kind() == Instr::Kind::END_READ_OPT_SINT_SEL;
     }
 
     template <typename ReadOptInstrT, typename SelValT, typename ElemT>
@@ -1540,8 +1569,7 @@ private:
         const auto selVal = static_cast<SelValT>(_pos.savedVal(beginReadOptInstr.selPos()));
         const auto isEnabled = beginReadOptInstr.isEnabled(selVal);
 
-        Vm::_setDataElemFromInstr(elem, beginReadOptInstr);
-        elem._dt = &beginReadOptInstr.optType();
+        Vm::_setDataElemFromInstr(elem, instr);
         this->_updateItCurOffset(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(&beginReadOptInstr.proc());
@@ -1558,7 +1586,7 @@ private:
              */
             assert(!_pos.stackTop().proc->empty());
             _pos.stackTop().it = _pos.stackTop().proc->end() - 1;
-            assert(_pos.nextInstr().kind() == Instr::Kind::END_READ_OPT);
+            assert(isEndReadOpt(_pos.nextInstr()));
         }
 
         _pos.state(VmState::EXEC_INSTR);
@@ -1582,7 +1610,6 @@ private:
     {
         const auto& beginReadStaticArrayInstr = static_cast<const BeginReadSlArrayInstr&>(instr);
 
-        _pos.elems.slArrayBeginning._dt = &beginReadStaticArrayInstr.slArrayType();
         _pos.elems.slArrayBeginning._len = beginReadStaticArrayInstr.len();
         this->_execBeginReadStaticData(beginReadStaticArrayInstr, _pos.elems.slArrayBeginning,
                                        beginReadStaticArrayInstr.len(),
@@ -1594,7 +1621,6 @@ private:
     {
         const auto& beginReadSlBlobInstr = static_cast<const BeginReadSlBlobInstr&>(instr);
 
-        _pos.elems.slBlobBeginning._dt = &beginReadSlBlobInstr.slBlobType();
         _pos.elems.slBlobBeginning._len = beginReadSlBlobInstr.len();
         this->_execBeginReadStaticData(beginReadSlBlobInstr, _pos.elems.slBlobBeginning,
                                        beginReadSlBlobInstr.len(), nullptr, nextState);

@@ -117,7 +117,7 @@ private:
 
     template <typename BeginReadVarInstrT, typename VarTypeT>
     void _buildReadVarInstr(const StructureMemberType *memberType, const VarTypeT& varType,
-                            Proc& baseProc);
+                            Proc& baseProc, Instr::Kind endInstrKind);
 
     void _buildReadVarUIntSelInstr(const StructureMemberType *memberType, const DataType& dt,
                                    Proc& baseProc);
@@ -130,7 +130,7 @@ private:
 
     template <typename BeginReadOptIntSelInstrT, typename OptTypeT>
     void _buildReadOptIntSelInstr(const StructureMemberType *memberType, const OptTypeT& optType,
-                                  Proc& baseProc);
+                                  Proc& baseProc, Instr::Kind endInstrKind);
 
     void _buildReadOptUIntSelInstr(const StructureMemberType *memberType, const DataType& dt,
                                    Proc& baseProc);
@@ -176,7 +176,8 @@ private:
 
 template <typename BeginReadVarInstrT, typename VarTypeT>
 void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const memberType,
-                                        const VarTypeT& varType, Proc& baseProc)
+                                        const VarTypeT& varType, Proc& baseProc,
+                                        const Instr::Kind endInstrKind)
 {
     auto instr = std::make_shared<BeginReadVarInstrT>(memberType, varType);
 
@@ -190,8 +191,7 @@ void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const member
          * one, so each one ends with an "end read variant" instruction
          * to be consistent with other begin/end instruction pairs.
          */
-        auto endInstr = std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_VAR, memberType,
-                                                           varType);
+        auto endInstr = std::make_shared<EndReadDataInstr>(endInstrKind, memberType, varType);
 
         optProc.pushBack(std::move(endInstr));
     }
@@ -201,13 +201,13 @@ void PktProcBuilder::_buildReadVarInstr(const StructureMemberType * const member
 
 template <typename BeginReadOptIntSelInstrT, typename OptTypeT>
 void PktProcBuilder::_buildReadOptIntSelInstr(const StructureMemberType * const memberType,
-                                              const OptTypeT& optType, Proc& baseProc)
+                                              const OptTypeT& optType, Proc& baseProc,
+                                              const Instr::Kind endInstrKind)
 {
     auto instr = std::make_shared<BeginReadOptIntSelInstrT>(memberType, optType);
 
     this->_buildReadInstr(nullptr, optType.dataType(), instr->proc());
-    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_OPT,
-                                                              memberType, optType));
+    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(endInstrKind, memberType, optType));
     baseProc.pushBack(std::move(instr));
 }
 

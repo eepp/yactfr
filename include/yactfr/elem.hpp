@@ -58,123 +58,210 @@ class VmPos;
 */
 class Element
 {
+private:
+    enum _Kind
+    {
+        _KIND_END                               = 1 << 0,
+        _KIND_BEG                               = 1 << 1,
+        _KIND_PKT                               = 1 << 2,
+        _KIND_SCOPE                             = 1 << 3,
+        _KIND_PKT_CONTENT                       = 1 << 4,
+        _KIND_ER                                = 1 << 5,
+        _KIND_PKT_MAGIC_NUMBER                  = 1 << 6,
+        _KIND_TRACE_TYPE_UUID                   = 1 << 7,
+        _KIND_DS                                = 1 << 8,
+        _KIND_INFO                              = 1 << 9,
+        _KIND_DEF_CLK_VAL                       = 1 << 10,
+        _KIND_FL_BIT_ARRAY                      = 1 << 11,
+        _KIND_BOOL_DATA                         = 1 << 12,
+        _KIND_INT_DATA                          = 1 << 13,
+        _KIND_SIGNED                            = 1 << 14,
+        _KIND_UNSIGNED                          = 1 << 15,
+        _KIND_FLOAT_DATA                        = 1 << 16,
+        _KIND_ENUM_DATA                         = _KIND_INT_DATA | (1 << 17),
+        _KIND_VL_BIT_ARRAY                      = 1 << 18,
+        _KIND_NT_STR                            = 1 << 19,
+        _KIND_SUBSTR                            = 1 << 20,
+        _KIND_BLOB_SECTION                      = 1 << 21,
+        _KIND_STRUCT                            = 1 << 22,
+        _KIND_SL_DATA                           = 1 << 23,
+        _KIND_DL_DATA                           = 1 << 24,
+        _KIND_ARRAY                             = 1 << 25,
+        _KIND_NON_NT_STR                        = 1 << 26,
+        _KIND_BLOB                              = 1 << 27,
+        _KIND_VAR                               = 1 << 28,
+        _KIND_INT_SEL                           = 1 << 29,
+        _KIND_BOOL_SEL                          = 1 << 30,
+        _KIND_OPT                               = 1 << 31,
+    };
+
+    using _U = unsigned long long;
+
 public:
     /// %Kind of element.
-    enum class Kind
+    enum class Kind : _U
     {
-        /// EndElement
-        END,
-
         /// PacketBeginningElement
-        PACKET_BEGINNING,
+        PACKET_BEGINNING                                    = static_cast<_U>(_KIND_PKT | _KIND_BEG),
+
+        /// PacketEndElement
+        PACKET_END                                          = static_cast<_U>(_KIND_PKT | _KIND_END),
 
         /// ScopeBeginningElement
-        SCOPE_BEGINNING,
+        SCOPE_BEGINNING                                     = static_cast<_U>(_KIND_SCOPE | _KIND_BEG),
+
+        /// ScopeEndElement
+        SCOPE_END                                           = static_cast<_U>(_KIND_SCOPE | _KIND_END),
 
         /// PacketContentBeginningElement
-        PACKET_CONTENT_BEGINNING,
+        PACKET_CONTENT_BEGINNING                            = static_cast<_U>(_KIND_PKT_CONTENT | _KIND_BEG),
+
+        /// PacketContentEndElement
+        PACKET_CONTENT_END                                  = static_cast<_U>(_KIND_PKT_CONTENT | _KIND_END),
 
         /// EventRecordBeginningElement
-        EVENT_RECORD_BEGINNING,
+        EVENT_RECORD_BEGINNING                              = static_cast<_U>(_KIND_ER | _KIND_BEG),
+
+        /// EventRecordEndElement
+        EVENT_RECORD_END                                    = static_cast<_U>(_KIND_ER | _KIND_END),
 
         /// PacketMagicNumberElement
-        PACKET_MAGIC_NUMBER,
+        PACKET_MAGIC_NUMBER                                 = static_cast<_U>(_KIND_PKT_MAGIC_NUMBER),
 
         /// TraceTypeUuidElement
-        TRACE_TYPE_UUID,
+        TRACE_TYPE_UUID                                     = static_cast<_U>(_KIND_TRACE_TYPE_UUID),
 
         /// DataStreamInfoElement
-        DATA_STREAM_INFO,
+        DATA_STREAM_INFO                                    = static_cast<_U>(_KIND_DS | _KIND_INFO),
 
         /// DefaultClockValueElement
-        DEFAULT_CLOCK_VALUE,
+        DEFAULT_CLOCK_VALUE                                 = static_cast<_U>(_KIND_DEF_CLK_VAL),
 
         /// PacketInfoElement
-        PACKET_INFO,
+        PACKET_INFO                                         = static_cast<_U>(_KIND_PKT | _KIND_INFO),
 
         /// EventRecordInfoElement
-        EVENT_RECORD_INFO,
+        EVENT_RECORD_INFO                                   = static_cast<_U>(_KIND_ER | _KIND_INFO),
 
         /// FixedLengthBitArrayElement
-        FIXED_LENGTH_BIT_ARRAY,
+        FIXED_LENGTH_BIT_ARRAY                              = static_cast<_U>(_KIND_FL_BIT_ARRAY),
 
         /// FixedLengthBooleanElement
-        FIXED_LENGTH_BOOLEAN,
+        FIXED_LENGTH_BOOLEAN                                = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_BOOL_DATA),
 
         /// FixedLengthSignedIntegerElement
-        FIXED_LENGTH_SIGNED_INTEGER,
+        FIXED_LENGTH_SIGNED_INTEGER                         = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED),
 
         /// FixedLengthUnsignedIntegerElement
-        FIXED_LENGTH_UNSIGNED_INTEGER,
+        FIXED_LENGTH_UNSIGNED_INTEGER                       = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED),
 
         /// FixedLengthFloatingPointNumberElement
-        FIXED_LENGTH_FLOATING_POINT_NUMBER,
+        FIXED_LENGTH_FLOATING_POINT_NUMBER                  = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_FLOAT_DATA),
 
         /// FixedLengthSignedEnumerationElement
-        FIXED_LENGTH_SIGNED_ENUMERATION,
+        FIXED_LENGTH_SIGNED_ENUMERATION                     = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED),
 
         /// FixedLengthUnsignedEnumerationElement
-        FIXED_LENGTH_UNSIGNED_ENUMERATION,
+        FIXED_LENGTH_UNSIGNED_ENUMERATION                   = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED),
 
         /// VariableLengthBitArrayElement
-        VARIABLE_LENGTH_BIT_ARRAY,
+        VARIABLE_LENGTH_BIT_ARRAY                           = static_cast<_U>(_KIND_VL_BIT_ARRAY),
 
         /// VariableLengthSignedIntegerElement
-        VARIABLE_LENGTH_SIGNED_INTEGER,
+        VARIABLE_LENGTH_SIGNED_INTEGER                      = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED),
 
         /// VariableLengthUnsignedIntegerElement
-        VARIABLE_LENGTH_UNSIGNED_INTEGER,
+        VARIABLE_LENGTH_UNSIGNED_INTEGER                    = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED),
 
         /// VariableLengthSignedEnumerationElement
-        VARIABLE_LENGTH_SIGNED_ENUMERATION,
+        VARIABLE_LENGTH_SIGNED_ENUMERATION                  = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED),
 
         /// VariableLengthUnsignedEnumerationElement
-        VARIABLE_LENGTH_UNSIGNED_ENUMERATION,
+        VARIABLE_LENGTH_UNSIGNED_ENUMERATION                = static_cast<_U>(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED),
 
         /// NullTerminatedStringBeginningElement
-        NULL_TERMINATED_STRING_BEGINNING,
+        NULL_TERMINATED_STRING_BEGINNING                    = static_cast<_U>(_KIND_NT_STR | _KIND_BEG),
+
+        /// NullTerminatedStringEndElement
+        NULL_TERMINATED_STRING_END                          = static_cast<_U>(_KIND_NT_STR | _KIND_END),
 
         /// SubstringElement
-        SUBSTRING,
+        SUBSTRING                                           = static_cast<_U>(_KIND_SUBSTR),
 
         /// BlobSectionElement
-        BLOB_SECTION,
+        BLOB_SECTION                                        = static_cast<_U>(_KIND_BLOB_SECTION),
 
         /// StructureBeginningElement
-        STRUCTURE_BEGINNING,
+        STRUCTURE_BEGINNING                                 = static_cast<_U>(_KIND_STRUCT | _KIND_BEG),
+
+        /// StructureEndElement
+        STRUCTURE_END                                       = static_cast<_U>(_KIND_STRUCT | _KIND_END),
 
         /// StaticLengthArrayBeginningElement
-        STATIC_LENGTH_ARRAY_BEGINNING,
+        STATIC_LENGTH_ARRAY_BEGINNING                       = static_cast<_U>(_KIND_SL_DATA | _KIND_ARRAY | _KIND_BEG),
+
+        /// StaticLengthArrayEndElement
+        STATIC_LENGTH_ARRAY_END                             = static_cast<_U>(_KIND_SL_DATA | _KIND_ARRAY | _KIND_END),
 
         /// DynamicLengthArrayBeginningElement
-        DYNAMIC_LENGTH_ARRAY_BEGINNING,
+        DYNAMIC_LENGTH_ARRAY_BEGINNING                      = static_cast<_U>(_KIND_DL_DATA | _KIND_ARRAY | _KIND_BEG),
+
+        /// DynamicLengthArrayEndElement
+        DYNAMIC_LENGTH_ARRAY_END                            = static_cast<_U>(_KIND_DL_DATA | _KIND_ARRAY | _KIND_END),
 
         /// StaticLengthBlobBeginningElement
-        STATIC_LENGTH_BLOB_BEGINNING,
+        STATIC_LENGTH_BLOB_BEGINNING                        = static_cast<_U>(_KIND_SL_DATA | _KIND_BLOB | _KIND_BEG),
+
+        /// StaticLengthBlobEndElement
+        STATIC_LENGTH_BLOB_END                              = static_cast<_U>(_KIND_SL_DATA | _KIND_BLOB | _KIND_END),
 
         /// DynamicLengthBlobBeginningElement
-        DYNAMIC_LENGTH_BLOB_BEGINNING,
+        DYNAMIC_LENGTH_BLOB_BEGINNING                       = static_cast<_U>(_KIND_DL_DATA | _KIND_BLOB | _KIND_BEG),
+
+        /// DynamicLengthBlobEndElement
+        DYNAMIC_LENGTH_BLOB_END                             = static_cast<_U>(_KIND_DL_DATA | _KIND_BLOB | _KIND_END),
 
         /// StaticLengthStringBeginningElement
-        STATIC_LENGTH_STRING_BEGINNING,
+        STATIC_LENGTH_STRING_BEGINNING                      = static_cast<_U>(_KIND_SL_DATA | _KIND_NON_NT_STR | _KIND_BEG),
+
+        /// StaticLengthStringEndElement
+        STATIC_LENGTH_STRING_END                            = static_cast<_U>(_KIND_SL_DATA | _KIND_NON_NT_STR | _KIND_END),
 
         /// DynamicLengthStringBeginningElement
-        DYNAMIC_LENGTH_STRING_BEGINNING,
+        DYNAMIC_LENGTH_STRING_BEGINNING                     = static_cast<_U>(_KIND_DL_DATA | _KIND_NON_NT_STR | _KIND_BEG),
+
+        /// DynamicLengthStringEndElement
+        DYNAMIC_LENGTH_STRING_END                           = static_cast<_U>(_KIND_DL_DATA | _KIND_NON_NT_STR | _KIND_END),
 
         /// VariantWithSignedIntegerSelectorBeginningElement
-        VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING,
+        VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING      = static_cast<_U>(_KIND_VAR | _KIND_SIGNED | _KIND_BEG),
+
+        /// VariantWithSignedIntegerSelectorEndElement
+        VARIANT_WITH_SIGNED_INTEGER_SELECTOR_END            = static_cast<_U>(_KIND_VAR | _KIND_SIGNED | _KIND_END),
 
         /// VariantWithUnsignedIntegerSelectorBeginningElement
-        VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING,
+        VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING    = static_cast<_U>(_KIND_VAR | _KIND_UNSIGNED | _KIND_BEG),
+
+        /// VariantWithUnsignedIntegerSelectorEndElement
+        VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_END          = static_cast<_U>(_KIND_VAR | _KIND_UNSIGNED | _KIND_END),
 
         /// OptionalWithBooleanSelectorBeginningElement
-        OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING,
+        OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING            = static_cast<_U>(_KIND_OPT | _KIND_BOOL_SEL | _KIND_BEG),
+
+        /// OptionalWithBooleanSelectorEndElement
+        OPTIONAL_WITH_BOOLEAN_SELECTOR_END                  = static_cast<_U>(_KIND_OPT | _KIND_BOOL_SEL | _KIND_END),
 
         /// OptionalWithSignedIntegerSelectorBeginningElement
-        OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING,
+        OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING     = static_cast<_U>(_KIND_OPT | _KIND_SIGNED | _KIND_BEG),
+
+        /// OptionalWithSignedIntegerSelectorEndElement
+        OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_END           = static_cast<_U>(_KIND_OPT | _KIND_SIGNED | _KIND_END),
 
         /// OptionalWithUnsignedIntegerSelectorBeginningElement
-        OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING,
+        OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING   = static_cast<_U>(_KIND_OPT | _KIND_UNSIGNED | _KIND_BEG),
+
+        /// OptionalWithUnsignedIntegerSelectorEndElement
+        OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END         = static_cast<_U>(_KIND_OPT | _KIND_UNSIGNED | _KIND_END),
     };
 
 protected:
@@ -207,6 +294,1140 @@ public:
         Visitor to accept.
     */
     virtual void accept(ElementVisitor& visitor) const = 0;
+
+    /// \c true if this element is a beginning element.
+    bool isBeginningElement() const noexcept
+    {
+        return this->_isKind(_KIND_BEG);
+    }
+
+    /// \c true if this element is an end element.
+    bool isEndElement() const noexcept
+    {
+        return this->_isKind(_KIND_END);
+    }
+
+    /// \c true if this element is a packet beginning/end element.
+    bool isPacketElement() const noexcept
+    {
+        return this->_isKind(_KIND_PKT);
+    }
+
+    /// \c true if this element is a packet beginning element.
+    bool isPacketBeginningElement() const noexcept
+    {
+        return _kind == Kind::PACKET_BEGINNING;
+    }
+
+    /// \c true if this element is a packet end element.
+    bool isPacketEndElement() const noexcept
+    {
+        return _kind == Kind::PACKET_END;
+    }
+
+    /// \c true if this element is a scope beginning/end element.
+    bool isScopeElement() const noexcept
+    {
+        return this->_isKind(_KIND_SCOPE);
+    }
+
+    /// \c true if this element is a scope beginning element.
+    bool isScopeBeginningElement() const noexcept
+    {
+        return _kind == Kind::SCOPE_BEGINNING;
+    }
+
+    /// \c true if this element is a scope end element.
+    bool isScopeEndElement() const noexcept
+    {
+        return _kind == Kind::SCOPE_END;
+    }
+
+    /// \c true if this element is a packet content beginning/end element.
+    bool isPacketContentElement() const noexcept
+    {
+        return this->_isKind(_KIND_PKT_CONTENT);
+    }
+
+    /// \c true if this element is a packet content beginning element.
+    bool isPacketContentBeginningElement() const noexcept
+    {
+        return _kind == Kind::PACKET_CONTENT_BEGINNING;
+    }
+
+    /// \c true if this element is a packet content end element.
+    bool isPacketContentEndElement() const noexcept
+    {
+        return _kind == Kind::PACKET_CONTENT_END;
+    }
+
+    /// \c true if this element is an event record beginning/end element.
+    bool isEventRecordElement() const noexcept
+    {
+        return this->_isKind(_KIND_ER);
+    }
+
+    /// \c true if this element is an event record beginning element.
+    bool isEventRecordBeginningElement() const noexcept
+    {
+        return _kind == Kind::EVENT_RECORD_BEGINNING;
+    }
+
+    /// \c true if this element is an event record end element.
+    bool isEventRecordEndElement() const noexcept
+    {
+        return _kind == Kind::EVENT_RECORD_END;
+    }
+
+    /// \c true if this element is a packet magic number element.
+    bool isPacketMagicNumberElement() const noexcept
+    {
+        return _kind == Kind::PACKET_MAGIC_NUMBER;
+    }
+
+    /// \c true if this element is a trace type UUID element.
+    bool isTraceTypeUuidElement() const noexcept
+    {
+        return _kind == Kind::TRACE_TYPE_UUID;
+    }
+
+    /// \c true if this element is a data stream info element.
+    bool isDataStreamInfoElement() const noexcept
+    {
+        return _kind == Kind::DATA_STREAM_INFO;
+    }
+
+    /// \c true if this element is a default clock value element.
+    bool isDefaultClockValueElement() const noexcept
+    {
+        return _kind == Kind::DEFAULT_CLOCK_VALUE;
+    }
+
+    /// \c true if this element is an info element.
+    bool isInfoElement() const noexcept
+    {
+        return this->_isKind(_KIND_INFO);
+    }
+
+    /// \c true if this element is a packet info element.
+    bool isPacketInfoElement() const noexcept
+    {
+        return _kind == Kind::PACKET_INFO;
+    }
+
+    /// \c true if this element is an event record info element.
+    bool isEventRecordInfoElement() const noexcept
+    {
+        return _kind == Kind::EVENT_RECORD_INFO;
+    }
+
+    /// \c true if this element is a fixed-length bit array element.
+    bool isFixedLengthBitArrayElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY);
+    }
+
+    /// \c true if this element is a fixed-length boolean element.
+    bool isFixedLengthBooleanElement() const noexcept
+    {
+        return _kind == Kind::FIXED_LENGTH_BOOLEAN;
+    }
+
+    /// \c true if this element is an integer element.
+    bool isIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_INT_DATA);
+    }
+
+    /// \c true if this element is a fixed-length integer element.
+    bool isFixedLengthIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA);
+    }
+
+    /// \c true if this element is a signed integer element.
+    bool isSignedIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_INT_DATA | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is an unsigned integer element.
+    bool isUnsignedIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_INT_DATA | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a fixed-length signed integer element.
+    bool isFixedLengthSignedIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is a fixed-length unsigned integer element.
+    bool isFixedLengthUnsignedIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a fixed-length floating-point number element.
+    bool isFixedLengthFloatingPointNumberElement() const noexcept
+    {
+        return _kind == Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER;
+    }
+
+    /// \c true if this element is an enumeration element.
+    bool isEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_ENUM_DATA);
+    }
+
+    /// \c true if this element is a fixed-length enumeration element.
+    bool isFixedLengthEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA);
+    }
+
+    /// \c true if this element is a signed enumeration element.
+    bool isSignedEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_ENUM_DATA | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is an unsigned enumeration element.
+    bool isUnsignedEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_ENUM_DATA | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a fixed-length signed enumeration element.
+    bool isFixedLengthSignedEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is a fixed-length unsigned enumeration element.
+    bool isFixedLengthUnsignedEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a variable-length bit array element.
+    bool isVariableLengthBitArrayElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY);
+    }
+
+    /// \c true if this element is a variable-length integer element.
+    bool isVariableLengthIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA);
+    }
+
+    /// \c true if this element is a variable-length signed integer element.
+    bool isVariableLengthSignedIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is a variable-length unsigned integer element.
+    bool isVariableLengthUnsignedIntegerElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a variable-length enumeration element.
+    bool isVariableLengthEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA);
+    }
+
+    /// \c true if this element is a variable-length signed enumeration element.
+    bool isVariableLengthSignedEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is a variable-length unsigned enumeration element.
+    bool isVariableLengthUnsignedEnumerationElement() const noexcept
+    {
+        return this->_isKind(_KIND_VL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a null-terminated string beginning/end element.
+    bool isNullTerminatedStringElement() const noexcept
+    {
+        return this->_isKind(_KIND_NT_STR);
+    }
+
+    /// \c true if this element is a null-terminated string beginning element.
+    bool isNullTerminatedStringBeginningElement() const noexcept
+    {
+        return _kind == Kind::NULL_TERMINATED_STRING_BEGINNING;
+    }
+
+    /// \c true if this element is a null-terminated string end element.
+    bool isNullTerminatedStringEndElement() const noexcept
+    {
+        return _kind == Kind::NULL_TERMINATED_STRING_END;
+    }
+
+    /// \c true if this element is a substring element.
+    bool isSubstringElement() const noexcept
+    {
+        return _kind == Kind::SUBSTRING;
+    }
+
+    /// \c true if this element is a BLOB section element.
+    bool isBlobSectionElement() const noexcept
+    {
+        return _kind == Kind::BLOB_SECTION;
+    }
+
+    /// \c true if this element is a structure beginning/end element.
+    bool isStructureElement() const noexcept
+    {
+        return this->_isKind(_KIND_STRUCT);
+    }
+
+    /// \c true if this element is a structure beginning element.
+    bool isStructureBeginningElement() const noexcept
+    {
+        return _kind == Kind::STRUCTURE_BEGINNING;
+    }
+
+    /// \c true if this element is a structure end element.
+    bool isStructureEndElement() const noexcept
+    {
+        return _kind == Kind::STRUCTURE_END;
+    }
+
+    /// \c true if this element is an array beginning/end element.
+    bool isArrayElement() const noexcept
+    {
+        return this->_isKind(_KIND_ARRAY);
+    }
+
+    /// \c true if this element is a static-length array beginning/end element.
+    bool isStaticLengthArrayElement() const noexcept
+    {
+        return this->_isKind(_KIND_SL_DATA | _KIND_ARRAY);
+    }
+
+    /// \c true if this element is a static-length array beginning element.
+    bool isStaticLengthArrayBeginningElement() const noexcept
+    {
+        return _kind == Kind::STATIC_LENGTH_ARRAY_BEGINNING;
+    }
+
+    /// \c true if this element is a static-length array end element.
+    bool isStaticLengthArrayEndElement() const noexcept
+    {
+        return _kind == Kind::STATIC_LENGTH_ARRAY_END;
+    }
+
+    /// \c true if this element is a dynamic-length array beginning/end element.
+    bool isDynamicLengthArrayElement() const noexcept
+    {
+        return this->_isKind(_KIND_DL_DATA | _KIND_ARRAY);
+    }
+
+    /// \c true if this element is a dynamic-length array beginning element.
+    bool isDynamicLengthArrayBeginningElement() const noexcept
+    {
+        return _kind == Kind::DYNAMIC_LENGTH_ARRAY_BEGINNING;
+    }
+
+    /// \c true if this element is a dynamic-length array end element.
+    bool isDynamicLengthArrayEndElement() const noexcept
+    {
+        return _kind == Kind::DYNAMIC_LENGTH_ARRAY_END;
+    }
+
+    /// \c true if this element is a BLOB beginning/end element.
+    bool isBlobElement() const noexcept
+    {
+        return this->_isKind(_KIND_BLOB);
+    }
+
+    /// \c true if this element is a static-length BLOB beginning/end element.
+    bool isStaticLengthBlobElement() const noexcept
+    {
+        return this->_isKind(_KIND_SL_DATA | _KIND_BLOB);
+    }
+
+    /// \c true if this element is a static-length BLOB beginning element.
+    bool isStaticLengthBlobBeginningElement() const noexcept
+    {
+        return _kind == Kind::STATIC_LENGTH_BLOB_BEGINNING;
+    }
+
+    /// \c true if this element is a static-length BLOB end element.
+    bool isStaticLengthBlobEndElement() const noexcept
+    {
+        return _kind == Kind::STATIC_LENGTH_BLOB_END;
+    }
+
+    /// \c true if this element is a dynamic-length BLOB beginning/end element.
+    bool isDynamicLengthBlobElement() const noexcept
+    {
+        return this->_isKind(_KIND_DL_DATA | _KIND_BLOB);
+    }
+
+    /// \c true if this element is a dynamic-length BLOB beginning element.
+    bool isDynamicLengthBlobBeginningElement() const noexcept
+    {
+        return _kind == Kind::DYNAMIC_LENGTH_BLOB_BEGINNING;
+    }
+
+    /// \c true if this element is a dynamic-length BLOB end element.
+    bool isDynamicLengthBlobEndElement() const noexcept
+    {
+        return _kind == Kind::DYNAMIC_LENGTH_BLOB_END;
+    }
+
+    /// \c true if this element is a non-null-terminated string beginning/end element.
+    bool isNonNullTerminatedStringElement() const noexcept
+    {
+        return this->_isKind(_KIND_NON_NT_STR);
+    }
+
+    /// \c true if this element is a static-length string beginning/end element.
+    bool isStaticLengthStringElement() const noexcept
+    {
+        return this->_isKind(_KIND_SL_DATA | _KIND_NON_NT_STR);
+    }
+
+    /// \c true if this element is a static-length string beginning element.
+    bool isStaticLengthStringBeginningElement() const noexcept
+    {
+        return _kind == Kind::STATIC_LENGTH_STRING_BEGINNING;
+    }
+
+    /// \c true if this element is a static-length string end element.
+    bool isStaticLengthStringEndElement() const noexcept
+    {
+        return _kind == Kind::STATIC_LENGTH_STRING_END;
+    }
+
+    /// \c true if this element is a dynamic-length string beginning/end element.
+    bool isDynamicLengthStringElement() const noexcept
+    {
+        return this->_isKind(_KIND_DL_DATA | _KIND_NON_NT_STR);
+    }
+
+    /// \c true if this element is a dynamic-length string beginning element.
+    bool isDynamicLengthStringBeginningElement() const noexcept
+    {
+        return _kind == Kind::DYNAMIC_LENGTH_STRING_BEGINNING;
+    }
+
+    /// \c true if this element is a dynamic-length string end element.
+    bool isDynamicLengthStringEndElement() const noexcept
+    {
+        return _kind == Kind::DYNAMIC_LENGTH_STRING_END;
+    }
+
+    /// \c true if this element is a variant beginning/end element.
+    bool isVariantElement() const noexcept
+    {
+        return this->_isKind(_KIND_VAR);
+    }
+
+    /// \c true if this element is a variant beginning element.
+    bool isVariantBeginningElement() const noexcept
+    {
+        return this->_isKind(_KIND_VAR | _KIND_BEG);
+    }
+
+    /// \c true if this element is a variant end element.
+    bool isVariantEndElement() const noexcept
+    {
+        return this->_isKind(_KIND_VAR | _KIND_END);
+    }
+
+    /// \c true if this element is a variant with a signed integer selector beginning/end element.
+    bool isVariantWithSignedIntegerSelectorElement() const noexcept
+    {
+        return this->_isKind(_KIND_VAR | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is a variant with a signed integer selector beginning element.
+    bool isVariantWithSignedIntegerSelectorBeginningElement() const noexcept
+    {
+        return _kind == Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING;
+    }
+
+    /// \c true if this element is a variant with a signed integer selector end element.
+    bool isVariantWithSignedIntegerSelectorEndElement() const noexcept
+    {
+        return _kind == Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_END;
+    }
+
+    /// \c true if this element is a variant with an unsigned integer selector beginning/end element.
+    bool isVariantWithUnsignedIntegerSelectorElement() const noexcept
+    {
+        return this->_isKind(_KIND_VAR | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is a variant with an unsigned integer selector beginning element.
+    bool isVariantWithUnsignedIntegerSelectorBeginningElement() const noexcept
+    {
+        return _kind == Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING;
+    }
+
+    /// \c true if this element is a variant with an unsigned integer selector end element.
+    bool isVariantWithUnsignedIntegerSelectorEndElement() const noexcept
+    {
+        return _kind == Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_END;
+    }
+
+    /// \c true if this element is an optional beginning/end element.
+    bool isOptionalElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT);
+    }
+
+    /// \c true if this element is an optional beginning element.
+    bool isOptionalBeginningElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_BEG);
+    }
+
+    /// \c true if this element is an optional end element.
+    bool isOptionalEndElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_END);
+    }
+
+    /// \c true if this element is an optional with a boolean selector beginning/end element.
+    bool isOptionalWithBooleanSelectorElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_BOOL_SEL);
+    }
+
+    /// \c true if this element is an optional with a boolean selector beginning element.
+    bool isOptionalWithBooleanSelectorBeginningElement() const noexcept
+    {
+        return _kind == Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING;
+    }
+
+    /// \c true if this element is an optional with a boolean selector end element.
+    bool isOptionalWithBooleanSelectorEndElement() const noexcept
+    {
+        return _kind == Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_END;
+    }
+
+    /// \c true if this element is an optional with an integer selector beginning/end element.
+    bool isOptionalWithIntegerSelectorElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_SIGNED | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is an optional with an integer selector beginning element.
+    bool isOptionalWithIntegerSelectorBeginningElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_SIGNED | _KIND_UNSIGNED | _KIND_BEG);
+    }
+
+    /// \c true if this element is an optional with an integer selector end element.
+    bool isOptionalWithIntegerSelectorEndElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_SIGNED | _KIND_UNSIGNED | _KIND_END);
+    }
+
+    /// \c true if this element is an optional with a signed integer selector beginning/end element.
+    bool isOptionalWithSignedIntegerSelectorElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_SIGNED);
+    }
+
+    /// \c true if this element is an optional with a signed integer selector beginning element.
+    bool isOptionalWithSignedIntegerSelectorBeginningElement() const noexcept
+    {
+        return _kind == Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING;
+    }
+
+    /// \c true if this element is an optional with a signed integer selector end element.
+    bool isOptionalWithSignedIntegerSelectorEndElement() const noexcept
+    {
+        return _kind == Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_END;
+    }
+
+    /// \c true if this element is an optional with an unsigned integer selector beginning/end element.
+    bool isOptionalWithUnsignedIntegerSelectorElement() const noexcept
+    {
+        return this->_isKind(_KIND_OPT | _KIND_UNSIGNED);
+    }
+
+    /// \c true if this element is an optional with an unsigned integer selector beginning element.
+    bool isOptionalWithUnsignedIntegerSelectorBeginningElement() const noexcept
+    {
+        return _kind == Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING;
+    }
+
+    /// \c true if this element is an optional with an unsigned integer selector end element.
+    bool isOptionalWithUnsignedIntegerSelectorEndElement() const noexcept
+    {
+        return _kind == Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END;
+    }
+
+    /*!
+    @brief
+        Returns this element as a BLOB element.
+
+    @pre
+        This type is a BLOB element.
+    */
+    const BlobSectionElement& asBlobSectionElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a data stream info element.
+
+    @pre
+        This type is a data stream info element.
+    */
+    const DataStreamInfoElement& asDataStreamInfoElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a default clock value element.
+
+    @pre
+        This type is a default clock value element.
+    */
+    const DefaultClockValueElement& asDefaultClockValueElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a dynamic-length array beginning
+        element.
+
+    @pre
+        This type is a dynamic-length array beginning element.
+    */
+    const DynamicLengthArrayBeginningElement& asDynamicLengthArrayBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a dynamic-length array end element.
+
+    @pre
+        This type is a dynamic-length array end element.
+    */
+    const DynamicLengthArrayEndElement& asDynamicLengthArrayEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a dynamic-length BLOB beginning element.
+
+    @pre
+        This type is a dynamic-length BLOB beginning element.
+    */
+    const DynamicLengthBlobBeginningElement& asDynamicLengthBlobBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a dynamic-length BLOB end element.
+
+    @pre
+        This type is a dynamic-length BLOB end element.
+    */
+    const DynamicLengthBlobEndElement& asDynamicLengthBlobEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a dynamic-length string beginning
+        element.
+
+    @pre
+        This type is a dynamic-length string beginning element.
+    */
+    const DynamicLengthStringBeginningElement& asDynamicLengthStringBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a dynamic-length string end element.
+
+    @pre
+        This type is a dynamic-length string end element.
+    */
+    const DynamicLengthStringEndElement& asDynamicLengthStringEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an event record beginning element.
+
+    @pre
+        This type is an event record beginning element.
+    */
+    const EventRecordBeginningElement& asEventRecordBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an event record end element.
+
+    @pre
+        This type is an event record end element.
+    */
+    const EventRecordEndElement& asEventRecordEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an event record info element.
+
+    @pre
+        This type is an event record info element.
+    */
+    const EventRecordInfoElement& asEventRecordInfoElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length bit array element.
+
+    @pre
+        This type is a fixed-length bit array element.
+    */
+    const FixedLengthBitArrayElement& asFixedLengthBitArrayElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length boolean element.
+
+    @pre
+        This type is a fixed-length boolean element.
+    */
+    const FixedLengthBooleanElement& asFixedLengthBooleanElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length floating-point number
+        element.
+
+    @pre
+        This type is a fixed-length floating-point number element.
+    */
+    const FixedLengthFloatingPointNumberElement& asFixedLengthFloatingPointNumberElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length signed enumeration
+        element.
+
+    @pre
+        This type is a fixed-length signed enumeration element.
+    */
+    const FixedLengthSignedEnumerationElement& asFixedLengthSignedEnumerationElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length signed integer element.
+
+    @pre
+        This type is a fixed-length signed integer element.
+    */
+    const FixedLengthSignedIntegerElement& asFixedLengthSignedIntegerElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length unsigned enumeration
+        element.
+
+    @pre
+        This type is a fixed-length unsigned enumeration element.
+    */
+    const FixedLengthUnsignedEnumerationElement& asFixedLengthUnsignedEnumerationElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length unsigned integer element.
+
+    @pre
+        This type is a fixed-length unsigned integer element.
+    */
+    const FixedLengthUnsignedIntegerElement& asFixedLengthUnsignedIntegerElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a null-terminated string beginning
+        element.
+
+    @pre
+        This type is a null-terminated string beginning element.
+    */
+    const NullTerminatedStringBeginningElement& asNullTerminatedStringBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a null-terminated string end element.
+
+    @pre
+        This type is a null-terminated string end element.
+    */
+    const NullTerminatedStringEndElement& asNullTerminatedStringEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional beginning element.
+
+    @pre
+        This type is an optional beginning element.
+    */
+    const OptionalBeginningElement& asOptionalBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional end element.
+
+    @pre
+        This type is an optional end element.
+    */
+    const OptionalEndElement& asOptionalEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional with a boolean selector
+        beginning element.
+
+    @pre
+        This type is an optional with a boolean selector beginning
+        element.
+    */
+    const OptionalWithBooleanSelectorBeginningElement& asOptionalWithBooleanSelectorBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional with a boolean selector end
+        element.
+
+    @pre
+        This type is an optional with a boolean selector end element.
+    */
+    const OptionalWithBooleanSelectorEndElement& asOptionalWithBooleanSelectorEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional with a signed integer
+        selector beginning element.
+
+    @pre
+        This type is an optional with a signed integer selector
+        beginning element.
+    */
+    const OptionalWithSignedIntegerSelectorBeginningElement& asOptionalWithSignedIntegerSelectorBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional with a signed integer
+        selector end element.
+
+    @pre
+        This type is an optional with a signed integer selector end
+        element.
+    */
+    const OptionalWithSignedIntegerSelectorEndElement& asOptionalWithSignedIntegerSelectorEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional with an unsigned integer
+        selector beginning element.
+
+    @pre
+        This type is an optional with an unsigned integer selector
+        beginning element.
+    */
+    const OptionalWithUnsignedIntegerSelectorBeginningElement& asOptionalWithUnsignedIntegerSelectorBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as an optional with an unsigned integer
+        selector end element.
+
+    @pre
+        This type is an optional with an unsigned integer selector end
+        element.
+    */
+    const OptionalWithUnsignedIntegerSelectorEndElement& asOptionalWithUnsignedIntegerSelectorEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a packet beginning element.
+
+    @pre
+        This type is a packet beginning element.
+    */
+    const PacketBeginningElement& asPacketBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a packet content beginning element.
+
+    @pre
+        This type is a packet content beginning element.
+    */
+    const PacketContentBeginningElement& asPacketContentBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a packet content end element.
+
+    @pre
+        This type is a packet content end element.
+    */
+    const PacketContentEndElement& asPacketContentEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a packet end element.
+
+    @pre
+        This type is a packet end element.
+    */
+    const PacketEndElement& asPacketEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a packet info element.
+
+    @pre
+        This type is a packet info element.
+    */
+    const PacketInfoElement& asPacketInfoElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a packet magic number element.
+
+    @pre
+        This type is a packet magic number element.
+    */
+    const PacketMagicNumberElement& asPacketMagicNumberElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a scope beginning element.
+
+    @pre
+        This type is a scope beginning element.
+    */
+    const ScopeBeginningElement& asScopeBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a scope end element.
+
+    @pre
+        This type is a scope end element.
+    */
+    const ScopeEndElement& asScopeEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a static-length array beginning element.
+
+    @pre
+        This type is a static-length array beginning element.
+    */
+    const StaticLengthArrayBeginningElement& asStaticLengthArrayBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a static-length array end element.
+
+    @pre
+        This type is a static-length array end element.
+    */
+    const StaticLengthArrayEndElement& asStaticLengthArrayEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a static-length BLOB beginning element.
+
+    @pre
+        This type is a static-length BLOB beginning element.
+    */
+    const StaticLengthBlobBeginningElement& asStaticLengthBlobBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a static-length BLOB end element.
+
+    @pre
+        This type is a static-length BLOB end element.
+    */
+    const StaticLengthBlobEndElement& asStaticLengthBlobEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a static-length string beginning
+        element.
+
+    @pre
+        This type is a static-length string beginning element.
+    */
+    const StaticLengthStringBeginningElement& asStaticLengthStringBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a static-length string end element.
+
+    @pre
+        This type is a static-length string end element.
+    */
+    const StaticLengthStringEndElement& asStaticLengthStringEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a structure beginning element.
+
+    @pre
+        This type is a structure beginning element.
+    */
+    const StructureBeginningElement& asStructureBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a structure end element.
+
+    @pre
+        This type is a structure end element.
+    */
+    const StructureEndElement& asStructureEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a substring element.
+
+    @pre
+        This type is a substring element.
+    */
+    const SubstringElement& asSubstringElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a trace type UUID element.
+
+    @pre
+        This type is a trace type UUID element.
+    */
+    const TraceTypeUuidElement& asTraceTypeUuidElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variable-length bit array element.
+
+    @pre
+        This type is a variable-length bit array element.
+    */
+    const VariableLengthBitArrayElement& asVariableLengthBitArrayElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variable-length signed enumeration
+        element.
+
+    @pre
+        This type is a variable-length signed enumeration element.
+    */
+    const VariableLengthSignedEnumerationElement& asVariableLengthSignedEnumerationElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variable-length signed integer
+        element.
+
+    @pre
+        This type is a variable-length signed integer element.
+    */
+    const VariableLengthSignedIntegerElement& asVariableLengthSignedIntegerElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variable-length unsigned enumeration
+        element.
+
+    @pre
+        This type is a variable-length unsigned enumeration element.
+    */
+    const VariableLengthUnsignedEnumerationElement& asVariableLengthUnsignedEnumerationElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variable-length unsigned integer
+        element.
+
+    @pre
+        This type is a variable-length unsigned integer element.
+    */
+    const VariableLengthUnsignedIntegerElement& asVariableLengthUnsignedIntegerElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variant beginning element.
+
+    @pre
+        This type is a variant beginning element.
+    */
+    const VariantBeginningElement& asVariantBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variant end element.
+
+    @pre
+        This type is a variant end element.
+    */
+    const VariantEndElement& asVariantEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variant with a signed integer selector
+        beginning element.
+
+    @pre
+        This type is a variant with a signed integer selector beginning
+        element.
+    */
+    const VariantWithSignedIntegerSelectorBeginningElement& asVariantWithSignedIntegerSelectorBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variant with a signed integer selector
+        end element.
+
+    @pre
+        This type is a variant with a signed integer selector end
+        element.
+    */
+    const VariantWithSignedIntegerSelectorEndElement& asVariantWithSignedIntegerSelectorEndElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variant with an unsigned integer
+        selector beginning element.
+
+    @pre
+        This type is a variant with an unsigned integer selector
+        beginning element.
+    */
+    const VariantWithUnsignedIntegerSelectorBeginningElement& asVariantWithUnsignedIntegerSelectorBeginningElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a variant with an unsigned integer
+        selector end element.
+
+    @pre
+        This type is a variant with an unsigned integer selector end
+        element.
+    */
+    const VariantWithUnsignedIntegerSelectorEndElement& asVariantWithUnsignedIntegerSelectorEndElement() const noexcept;
+
+private:
+    bool _isKind(const unsigned long long kind) const noexcept
+    {
+        return (static_cast<unsigned long long>(_kind) & kind) == kind;
+    }
 
 private:
     Kind _kind;
@@ -241,15 +1462,10 @@ protected:
 class EndElement :
     public Element
 {
-public:
-    explicit EndElement() :
-        Element {Kind::END}
+protected:
+    explicit EndElement(const Kind kind) :
+        Element {kind}
     {
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
     }
 };
 
@@ -258,6 +1474,8 @@ public:
     Packet beginning element.
 
 @ingroup elems
+
+@sa PacketEndElement
 */
 class PacketBeginningElement final :
     public BeginningElement
@@ -280,12 +1498,67 @@ public:
 
 /*!
 @brief
+    Packet end element.
+
+@ingroup elems
+
+@sa PacketBeginningElement
+*/
+class PacketEndElement final :
+    public EndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit PacketEndElement() :
+        EndElement {Kind::PACKET_END}
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Scope element.
+
+@ingroup elems
+
+@sa ScopeBeginningElement
+@sa ScopeEndElement
+*/
+class ScopeElement
+{
+protected:
+    explicit ScopeElement() = default;
+
+public:
+    /// Scope.
+    Scope scope() const noexcept
+    {
+        return _scope;
+    }
+
+protected:
+    Scope _scope;
+};
+
+/*!
+@brief
     Scope beginning element.
 
 @ingroup elems
+
+@sa ScopeEndElement
 */
 class ScopeBeginningElement final :
-    public BeginningElement
+    public BeginningElement,
+    public ScopeElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -301,15 +1574,34 @@ public:
     {
         visitor.visit(*this);
     }
+};
 
-    /// Scope.
-    Scope scope() const noexcept
-    {
-        return _scope;
-    }
+/*!
+@brief
+    Scope end element.
+
+@ingroup elems
+
+@sa ScopeBeginningElement
+*/
+class ScopeEndElement final :
+    public EndElement,
+    public ScopeElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
 
 private:
-    Scope _scope;
+    explicit ScopeEndElement() :
+        EndElement {Kind::SCOPE_END}
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
 };
 
 /*!
@@ -317,6 +1609,8 @@ private:
     Event record beginning element.
 
 @ingroup elems
+
+@sa EventRecordEndElement
 */
 class EventRecordBeginningElement final :
     public BeginningElement
@@ -339,6 +1633,33 @@ public:
 
 /*!
 @brief
+    Event record end element.
+
+@ingroup elems
+
+@sa EventRecordBeginningElement
+*/
+class EventRecordEndElement final :
+    public EndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit EventRecordEndElement() :
+        EndElement {Kind::EVENT_RECORD_END}
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
     Packet content beginning element.
 
 @ingroup elems
@@ -346,10 +1667,13 @@ public:
 This element indicates the beginning of the \em content of the current
 packet.
 
-All the elements between this one and the following EndElement at the
-same level within a given element sequence are part of the packet
-content, which does \em not include the optional padding bits before the
-end of the packet (indicated by an EndElement at a higher level).
+All the elements between this one and the following
+PacketContentEndElement within a given element sequence are part of the
+packet content, which does \em not include the optional padding bits
+before the end of the packet (indicated by an PacketEndElement at a
+higher level).
+
+@sa PacketContentEndElement
 */
 class PacketContentBeginningElement final :
     public BeginningElement
@@ -360,6 +1684,35 @@ class PacketContentBeginningElement final :
 private:
     explicit PacketContentBeginningElement() :
         BeginningElement {Kind::PACKET_CONTENT_BEGINNING}
+    {
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Packet content end element.
+
+@ingroup elems
+
+This element indicates the end of the \em content of the current packet.
+
+@sa PacketContentBeginningElement
+*/
+class PacketContentEndElement final :
+    public EndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit PacketContentEndElement() :
+        EndElement {Kind::PACKET_CONTENT_END}
     {
     }
 
@@ -401,19 +1754,19 @@ public:
     }
 
     /// \c true if the decoded magic number is valid.
-    bool isValid() const
+    bool isValid() const noexcept
     {
         return _val == _expectedValue;
     }
 
     /// Decoded magic number value.
-    unsigned long long value() const
+    unsigned long long value() const noexcept
     {
         return _val;
     }
 
     /// Expected magic number value.
-    static constexpr unsigned long long expectedValue()
+    static constexpr unsigned long long expectedValue() noexcept
     {
         return UINT64_C(0xc1fc1fc1);
     }
@@ -454,19 +1807,19 @@ public:
     }
 
     /// \c true if the decoded UUID is valid.
-    bool isValid() const
+    bool isValid() const noexcept
     {
         return _uuid == _expectedUuid;
     }
 
     /// Decoded UUID.
-    const boost::uuids::uuid& uuid() const
+    const boost::uuids::uuid& uuid() const noexcept
     {
         return _uuid;
     }
 
     /// Expected UUID.
-    const boost::uuids::uuid& expectedUuid() const
+    const boost::uuids::uuid& expectedUuid() const noexcept
     {
         return _expectedUuid;
     }
@@ -760,8 +2113,15 @@ public:
         return _structMemberType;
     }
 
+    /// Data type.
+    const DataType& dataType() const noexcept
+    {
+        return *_dt;
+    }
+
 private:
     const StructureMemberType *_structMemberType;
+    const DataType *_dt;
 };
 
 /*!
@@ -858,7 +2218,7 @@ public:
     /// Fixed-length bit array type.
     const FixedLengthBitArrayType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asFixedLengthBitArrayType();
     }
 
     /*!
@@ -877,7 +2237,7 @@ public:
     */
     bool operator[](const Index index) const noexcept
     {
-        assert(index < _dt->length());
+        assert(index < this->type().length());
         return BitArrayElement::operator[](index);
     }
 
@@ -903,8 +2263,6 @@ private:
     }
 
 protected:
-    const FixedLengthBitArrayType *_dt;
-
     union {
         std::uint64_t u;
         std::int64_t i;
@@ -934,7 +2292,7 @@ public:
     /// Fixed-length boolean type.
     const FixedLengthBooleanType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asFixedLengthBooleanType();
     }
 
     /// Boolean value.
@@ -947,9 +2305,6 @@ public:
     {
         visitor.visit(*this);
     }
-
-protected:
-    const FixedLengthBooleanType *_dt;
 };
 
 /*!
@@ -980,7 +2335,7 @@ public:
     /// Fixed-length signed integer type.
     const FixedLengthSignedIntegerType& type() const noexcept
     {
-        return _dt->asFixedLengthSignedIntegerType();
+        return this->dataType().asFixedLengthSignedIntegerType();
     }
 
     /// Integral value.
@@ -1023,7 +2378,7 @@ public:
     /// Fixed-length unsigned integer type.
     const FixedLengthUnsignedIntegerType& type() const noexcept
     {
-        return _dt->asFixedLengthUnsignedIntegerType();
+        return this->dataType().asFixedLengthUnsignedIntegerType();
     }
 
     /// Integral value.
@@ -1060,7 +2415,7 @@ public:
     /// Fixed-length signed enumeration type.
     const FixedLengthSignedEnumerationType& type() const noexcept
     {
-        return _dt->asFixedLengthSignedEnumerationType();
+        return this->dataType().asFixedLengthSignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1091,7 +2446,7 @@ public:
     /// Fixed-length unsigned enumeration type.
     const FixedLengthUnsignedEnumerationType& type() const noexcept
     {
-        return _dt->asFixedLengthUnsignedEnumerationType();
+        return this->dataType().asFixedLengthUnsignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1122,7 +2477,7 @@ public:
     /// Fixed-length floating point number type.
     const FixedLengthFloatingPointNumberType& type() const noexcept
     {
-        return _dt->asFixedLengthFloatingPointNumberType();
+        return this->dataType().asFixedLengthFloatingPointNumberType();
     }
 
     /// Real value.
@@ -1166,7 +2521,7 @@ public:
     /// Variable-length bit array type.
     const VariableLengthBitArrayType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asVariableLengthBitArrayType();
     }
 
     /// Bit-array length (bits).
@@ -1200,9 +2555,6 @@ public:
         visitor.visit(*this);
     }
 
-protected:
-    const VariableLengthBitArrayType *_dt;
-
 private:
     Size _len;
 };
@@ -1235,7 +2587,7 @@ public:
     /// Variable-length signed integer type.
     const VariableLengthSignedIntegerType& type() const noexcept
     {
-        return _dt->asVariableLengthSignedIntegerType();
+        return this->dataType().asVariableLengthSignedIntegerType();
     }
 
     /// Integral value.
@@ -1278,7 +2630,7 @@ public:
     /// Variable-length unsigned integer type.
     const VariableLengthUnsignedIntegerType& type() const noexcept
     {
-        return _dt->asVariableLengthUnsignedIntegerType();
+        return this->dataType().asVariableLengthUnsignedIntegerType();
     }
 
     /// Integral value.
@@ -1291,9 +2643,6 @@ public:
     {
         visitor.visit(*this);
     }
-
-protected:
-    const VariableLengthUnsignedIntegerType *_dt;
 };
 
 /*!
@@ -1318,7 +2667,7 @@ public:
     /// Variable-length signed enumeration type.
     const VariableLengthSignedEnumerationType& type() const noexcept
     {
-        return _dt->asVariableLengthSignedEnumerationType();
+        return this->dataType().asVariableLengthSignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1349,7 +2698,7 @@ public:
     /// Variable-length unsigned enumeration type.
     const VariableLengthUnsignedEnumerationType& type() const noexcept
     {
-        return _dt->asVariableLengthUnsignedEnumerationType();
+        return this->dataType().asVariableLengthUnsignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1367,11 +2716,12 @@ public:
 This element indicates the beginning of a data stream null-terminated
 string.
 
-The next SubstringElement elements before the next EndElement are
-consecutive substrings of this beginning null-terminated string.
+The next SubstringElement elements before the next
+NullTerminatedStringEndElement are consecutive substrings of this
+beginning null-terminated string.
 
 @sa SubstringElement
-@sa EndElement
+@sa NullTerminatedStringEndElement
 */
 class NullTerminatedStringBeginningElement final :
     public BeginningElement,
@@ -1390,16 +2740,49 @@ public:
     /// Null-terminated string type.
     const NullTerminatedStringType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asNullTerminatedStringType();
     }
 
     void accept(ElementVisitor& visitor) const override
     {
         visitor.visit(*this);
     }
+};
+
+/*!
+@brief
+    Null-terminated string end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream null-terminated string.
+
+@sa NullTerminatedStringBeginningElement
+*/
+class NullTerminatedStringEndElement final :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
 
 private:
-    const NullTerminatedStringType *_dt;
+    explicit NullTerminatedStringEndElement() :
+        EndElement {Kind::NULL_TERMINATED_STRING_END}
+    {
+    }
+
+public:
+    /// Null-terminated string type.
+    const NullTerminatedStringType& type() const noexcept
+    {
+        return this->dataType().asNullTerminatedStringType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
 };
 
 /*!
@@ -1413,17 +2796,20 @@ This element can occur:
 <dl>
   <dt>Data stream null-terminated string</dt>
   <dd>
-    Between NullTerminatedStringBeginningElement and EndElement elements.
+    Between NullTerminatedStringBeginningElement and
+    NullTerminatedStringEndElement elements.
   </dd>
 
   <dt>Data stream static-length string</dt>
   <dd>
-    Between StaticLengthStringBeginningElement and EndElement elements.
+    Between StaticLengthStringBeginningElement and
+    StaticLengthStringEndElement elements.
   </dd>
 
   <dt>Data stream dynamic-length string</dt>
   <dd>
-    Between DynamicLengthStringBeginningElement and EndElement elements.
+    Between DynamicLengthStringBeginningElement and
+    DynamicLengthStringEndElement elements.
   </dd>
 </dl>
 
@@ -1492,12 +2878,14 @@ This element can occur:
 <dl>
   <dt>Data stream static-length BLOB</dt>
   <dd>
-    Between StaticLengthBlobBeginningElement and EndElement elements.
+    Between StaticLengthBlobBeginningElement and
+    StaticLengthBlobEndElement elements.
   </dd>
 
   <dt>Data stream dynamic-length BLOB</dt>
   <dd>
-    Between DynamicLengthBlobBeginningElement and EndElement elements.
+    Between DynamicLengthBlobBeginningElement and
+    DynamicLengthBlobEndElement elements.
   </dd>
 </dl>
 
@@ -1551,6 +2939,8 @@ private:
     Array beginning base element.
 
 @ingroup elems
+
+@sa ArrayEndElement
 */
 class ArrayBeginningElement :
     public BeginningElement,
@@ -1569,7 +2959,7 @@ public:
     /// Array type.
     const ArrayType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asArrayType();
     }
 
     /// Array length.
@@ -1579,8 +2969,36 @@ public:
     }
 
 protected:
-    const ArrayType *_dt;
     Size _len;
+};
+
+/*!
+@brief
+    Array end base element.
+
+@ingroup elems
+
+@sa ArrayBeginningElement
+*/
+class ArrayEndElement :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    ArrayEndElement(const Kind kind) :
+        EndElement {kind}
+    {
+    }
+
+public:
+    /// Array type.
+    const ArrayType& type() const noexcept
+    {
+        return this->dataType().asArrayType();
+    }
 };
 
 /*!
@@ -1592,10 +3010,10 @@ protected:
 This element indicates the beginning of a data stream static-length
 array.
 
-The next elements until the next EndElement at the same level are all
-part of this static-length array.
+The next elements until the next StaticLengthArrayEndElement at the same
+level are all part of this static-length array.
 
-@sa EndElement
+@sa StaticLengthArrayEndElement
 */
 class StaticLengthArrayBeginningElement final :
     public ArrayBeginningElement
@@ -1613,7 +3031,42 @@ public:
     /// Static-length array type.
     const StaticLengthArrayType& type() const noexcept
     {
-        return _dt->asStaticLengthArrayType();
+        return this->dataType().asStaticLengthArrayType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Static-length array end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream static-length array.
+
+@sa StaticLengthArrayBeginningElement
+*/
+class StaticLengthArrayEndElement final :
+    public ArrayEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit StaticLengthArrayEndElement() :
+        ArrayEndElement {Kind::STATIC_LENGTH_ARRAY_END}
+    {
+    }
+
+public:
+    /// Static-length array type.
+    const StaticLengthArrayType& type() const noexcept
+    {
+        return this->dataType().asStaticLengthArrayType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1631,10 +3084,10 @@ public:
 This element indicates the beginning of a data stream dynamic-length
 array.
 
-The next elements until the next EndElement at the same level are all
-part of this dynamic-length array.
+The next elements until the next DynamicLengthArrayEndElement at the
+same level are all part of this dynamic-length array.
 
-@sa EndElement
+@sa DynamicLengthArrayEndElement
 */
 class DynamicLengthArrayBeginningElement final :
     public ArrayBeginningElement
@@ -1652,7 +3105,42 @@ public:
     /// Dynamic-length array type.
     const DynamicLengthArrayType& type() const noexcept
     {
-        return _dt->asDynamicLengthArrayType();
+        return this->dataType().asDynamicLengthArrayType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Dynamic-length array end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream dynamic-length array.
+
+@sa DynamicLengthArrayBeginningElement
+*/
+class DynamicLengthArrayEndElement final :
+    public ArrayEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit DynamicLengthArrayEndElement() :
+        ArrayEndElement {Kind::DYNAMIC_LENGTH_ARRAY_END}
+    {
+    }
+
+public:
+    /// Dynamic-length array type.
+    const DynamicLengthArrayType& type() const noexcept
+    {
+        return this->dataType().asDynamicLengthArrayType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1666,6 +3154,8 @@ public:
     Non null-terminated string beginning base element.
 
 @ingroup elems
+
+@sa NonNullTerminatedStringEndElement
 */
 class NonNullTerminatedStringBeginningElement :
     public BeginningElement,
@@ -1684,7 +3174,7 @@ public:
     /// Non null-terminated string type.
     const NonNullTerminatedStringType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asNonNullTerminatedStringType();
     }
 
     /// Maximum length (bytes).
@@ -1694,8 +3184,36 @@ public:
     }
 
 protected:
-    const NonNullTerminatedStringType *_dt;
     Size _maxLen;
+};
+
+/*!
+@brief
+    Non null-terminated string end base element.
+
+@ingroup elems
+
+@sa NonNullTerminatedStringBeginningElement
+*/
+class NonNullTerminatedStringEndElement :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    NonNullTerminatedStringEndElement(const Kind kind) :
+        EndElement {kind}
+    {
+    }
+
+public:
+    /// Non null-terminated string type.
+    const NonNullTerminatedStringType& type() const noexcept
+    {
+        return this->dataType().asNonNullTerminatedStringType();
+    }
 };
 
 /*!
@@ -1707,11 +3225,12 @@ protected:
 This element indicates the beginning of a data stream static-length
 string.
 
-The next SubstringElement elements before the next EndElement are
-consecutive substrings of this beginning static-length string.
+The next SubstringElement elements before the next
+StaticLengthStringEndElement are consecutive substrings of this
+beginning static-length string.
 
 @sa SubstringElement
-@sa EndElement
+@sa StaticLengthStringEndElement
 */
 class StaticLengthStringBeginningElement final :
     public NonNullTerminatedStringBeginningElement
@@ -1729,7 +3248,43 @@ public:
     /// Static-length string type.
     const StaticLengthStringType& type() const noexcept
     {
-        return _dt->asStaticLengthStringType();
+        return this->dataType().asStaticLengthStringType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Static-length string end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream static-length string.
+
+@sa SubstringElement
+@sa StaticLengthStringBeginningElement
+*/
+class StaticLengthStringEndElement final :
+    public NonNullTerminatedStringEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit StaticLengthStringEndElement() :
+        NonNullTerminatedStringEndElement {Kind::STATIC_LENGTH_STRING_END}
+    {
+    }
+
+public:
+    /// Static-length string type.
+    const StaticLengthStringType& type() const noexcept
+    {
+        return this->dataType().asStaticLengthStringType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1747,11 +3302,12 @@ public:
 This element indicates the beginning of a data stream dynamic-length
 string.
 
-The next SubstringElement elements before the next EndElement are
-consecutive substrings of this beginning dynamic-length string.
+The next SubstringElement elements before the next
+DynamicLengthStringEndElement are consecutive substrings of this
+beginning dynamic-length string.
 
 @sa SubstringElement
-@sa EndElement
+@sa DynamicLengthStringEndElement
 */
 class DynamicLengthStringBeginningElement final :
     public NonNullTerminatedStringBeginningElement
@@ -1769,7 +3325,43 @@ public:
     /// Dynamic-length string type.
     const DynamicLengthStringType& type() const noexcept
     {
-        return _dt->asDynamicLengthStringType();
+        return this->dataType().asDynamicLengthStringType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Dynamic-length string end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream dynamic-length string.
+
+@sa SubstringElement
+@sa DynamicLengthStringBeginningElement
+*/
+class DynamicLengthStringEndElement final :
+    public NonNullTerminatedStringEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit DynamicLengthStringEndElement() :
+        NonNullTerminatedStringEndElement {Kind::DYNAMIC_LENGTH_STRING_END}
+    {
+    }
+
+public:
+    /// Dynamic-length string type.
+    const DynamicLengthStringType& type() const noexcept
+    {
+        return this->dataType().asDynamicLengthStringType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1783,6 +3375,8 @@ public:
     BLOB beginning base element.
 
 @ingroup elems
+
+@sa BlobEndElement
 */
 class BlobBeginningElement :
     public BeginningElement,
@@ -1801,7 +3395,7 @@ public:
     /// BLOB type.
     const BlobType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asBlobType();
     }
 
     /// BLOB length (bytes).
@@ -1810,9 +3404,47 @@ public:
         return _len;
     }
 
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
 protected:
-    const BlobType *_dt;
     Size _len;
+};
+
+/*!
+@brief
+    BLOB end base element.
+
+@ingroup elems
+
+@sa BlobBeginningElement
+*/
+class BlobEndElement :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    BlobEndElement(const Kind kind) :
+        EndElement {kind}
+    {
+    }
+
+public:
+    /// BLOB type.
+    const BlobType& type() const noexcept
+    {
+        return this->dataType().asBlobType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
 };
 
 /*!
@@ -1824,11 +3456,12 @@ protected:
 This element indicates the beginning of a data stream static-length
 BLOB.
 
-The next BlobSectionElement elements before the next EndElement are
-consecutive BLOB sections of this beginning static-length BLOB.
+The next BlobSectionElement elements before the next
+StaticLengthBlobEndElement are consecutive BLOB sections of this
+beginning static-length BLOB.
 
 @sa BlobSectionElement
-@sa EndElement
+@sa StaticLengthBlobEndElement
 */
 class StaticLengthBlobBeginningElement final :
     public BlobBeginningElement
@@ -1846,7 +3479,43 @@ public:
     /// Static-length BLOB type.
     const StaticLengthBlobType& type() const noexcept
     {
-        return _dt->asStaticLengthBlobType();
+        return this->dataType().asStaticLengthBlobType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Static-length BLOB end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream static-length BLOB.
+
+@sa BlobSectionElement
+@sa StaticLengthBlobEndElement
+*/
+class StaticLengthBlobEndElement final :
+    public BlobEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit StaticLengthBlobEndElement() :
+        BlobEndElement {Kind::STATIC_LENGTH_BLOB_END}
+    {
+    }
+
+public:
+    /// Static-length BLOB type.
+    const StaticLengthBlobType& type() const noexcept
+    {
+        return this->dataType().asStaticLengthBlobType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1864,10 +3533,12 @@ public:
 This element indicates the beginning of a data stream dynamic-length
 BLOB.
 
-The next BlobSectionElement elements before the next EndElement are
-consecutive BLOB sections of this beginning dynamic-length BLOB.
+The next BlobSectionElement elements before the next
+DynamicLengthBlobEndElement are consecutive BLOB sections of this
+beginning dynamic-length BLOB.
 
-@sa EndElement
+@sa BlobSectionElement
+@sa DynamicLengthBlobEndElement
 */
 class DynamicLengthBlobBeginningElement final :
     public BlobBeginningElement
@@ -1885,7 +3556,43 @@ public:
     /// Dynamic-length BLOB type.
     const DynamicLengthBlobType& type() const noexcept
     {
-        return _dt->asDynamicLengthBlobType();
+        return this->dataType().asDynamicLengthBlobType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Dynamic-length BLOB end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream dynamic-length BLOB.
+
+@sa BlobSectionElement
+@sa DynamicLengthBlobEndElement
+*/
+class DynamicLengthBlobEndElement final :
+    public BlobEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit DynamicLengthBlobEndElement() :
+        BlobEndElement {Kind::DYNAMIC_LENGTH_BLOB_END}
+    {
+    }
+
+public:
+    /// Dynamic-length BLOB type.
+    const DynamicLengthBlobType& type() const noexcept
+    {
+        return this->dataType().asDynamicLengthBlobType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1902,10 +3609,10 @@ public:
 
 This element indicates the beginning of a data stream structure.
 
-The next elements until the next EndElement at the same level are all
-part of this structure.
+The next elements until the next StructureEndElement at the same level
+are all part of this structure.
 
-@sa EndElement
+@sa StructureEndElement
 */
 class StructureBeginningElement final :
     public BeginningElement,
@@ -1924,16 +3631,49 @@ public:
     /// Structure type.
     const StructureType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asStructureType();
     }
 
     void accept(ElementVisitor& visitor) const override
     {
         visitor.visit(*this);
     }
+};
+
+/*!
+@brief
+    Structure end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream structure.
+
+@sa StructureBeginningElement
+*/
+class StructureEndElement final :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
 
 private:
-    const StructureType *_dt;
+    explicit StructureEndElement() :
+        EndElement {Kind::STRUCTURE_END}
+    {
+    }
+
+public:
+    /// Structure type.
+    const StructureType& type() const noexcept
+    {
+        return this->dataType().asStructureType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
 };
 
 /*!
@@ -1942,9 +3682,9 @@ private:
 
 @ingroup elems
 
-@sa VariantWithUnsignedIntegerSelectorBeginningElement
-@sa VariantWithSignedIntegerSelectorBeginningElement
-@sa EndElement
+@sa VariantWithUnsignedIntegerSelectorEndElement
+@sa VariantWithSignedIntegerSelectorEndElement
+@sa VariantEndElement
 */
 class VariantBeginningElement :
     public BeginningElement,
@@ -1962,12 +3702,36 @@ protected:
 
 /*!
 @brief
-    Variant with integer selector beginning base element.
+    Common variant end element.
 
 @ingroup elems
 
 @sa VariantWithUnsignedIntegerSelectorBeginningElement
 @sa VariantWithSignedIntegerSelectorBeginningElement
+@sa VariantBeginningElement
+*/
+class VariantEndElement :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    VariantEndElement(const Kind kind) :
+        EndElement {kind}
+    {
+    }
+};
+
+/*!
+@brief
+    Variant with integer selector beginning base element.
+
+@ingroup elems
+
+@sa VariantWithUnsignedIntegerSelectorEndElement
+@sa VariantWithSignedIntegerSelectorEndElement
 */
 template <typename VariantTypeT, typename SelectorValueT, Element::Kind KindV>
 class VariantWithIntegerSelectorBeginningElement :
@@ -1986,7 +3750,7 @@ public:
     /// Variant type.
     const VariantTypeT& type() const noexcept
     {
-        return *_dt;
+        return static_cast<const VariantTypeT&>(this->dataType());
     }
 
     /// Value of the variant selector.
@@ -2002,9 +3766,38 @@ public:
     }
 
 private:
-    const VariantTypeT *_dt;
     SelectorValueT _selVal;
     const typename VariantTypeT::Option *_opt;
+};
+
+/*!
+@brief
+    Variant with integer selector end base element.
+
+@ingroup elems
+
+@sa VariantWithUnsignedIntegerSelectorBeginningElement
+@sa VariantWithSignedIntegerSelectorBeginningElement
+*/
+template <typename VariantTypeT, Element::Kind KindV>
+class VariantWithIntegerSelectorEndElement :
+    public VariantEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit VariantWithIntegerSelectorEndElement() :
+        VariantEndElement {KindV}
+    {
+    }
+
+public:
+    /// Variant type.
+    const VariantTypeT& type() const noexcept
+    {
+        return static_cast<const VariantTypeT&>(this->dataType());
+    }
 };
 
 /*!
@@ -2017,9 +3810,10 @@ This element indicates the beginning of a data stream variant with an
 unsigned integer selector.
 
 The next element is the selected element of this variant. Expect an
-EndElement after this next element at the same level.
+VariantWithUnsignedIntegerSelectorEndElement after this next element at
+the same level.
 
-@sa EndElement
+@sa VariantWithUnsignedIntegerSelectorEndElement
 */
 class VariantWithUnsignedIntegerSelectorBeginningElement final :
     public VariantWithIntegerSelectorBeginningElement<VariantWithUnsignedIntegerSelectorType, unsigned long long,
@@ -2029,9 +3823,35 @@ class VariantWithUnsignedIntegerSelectorBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    explicit VariantWithUnsignedIntegerSelectorBeginningElement()
+    explicit VariantWithUnsignedIntegerSelectorBeginningElement() = default;
+
+public:
+    void accept(ElementVisitor& visitor) const override
     {
+        visitor.visit(*this);
     }
+};
+
+/*!
+@brief
+    Variant with unsigned integer selector end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream variant with an unsigned
+integer selector.
+
+@sa VariantWithUnsignedIntegerSelectorBeginningElement
+*/
+class VariantWithUnsignedIntegerSelectorEndElement final :
+    public VariantWithIntegerSelectorEndElement<VariantWithUnsignedIntegerSelectorType,
+                                                Element::Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_END>
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit VariantWithUnsignedIntegerSelectorEndElement() = default;
 
 public:
     void accept(ElementVisitor& visitor) const override
@@ -2050,9 +3870,10 @@ This element indicates the beginning of a data stream variant with a
 signed integer selector.
 
 The next element is the selected element of this variant. Expect an
-EndElement after this next element at the same level.
+VariantWithSignedIntegerSelectorEndElement after this next element at
+the same level.
 
-@sa EndElement
+@sa VariantWithSignedIntegerSelectorEndElement
 */
 class VariantWithSignedIntegerSelectorBeginningElement final :
     public VariantWithIntegerSelectorBeginningElement<VariantWithSignedIntegerSelectorType, long long,
@@ -2062,9 +3883,35 @@ class VariantWithSignedIntegerSelectorBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    explicit VariantWithSignedIntegerSelectorBeginningElement()
+    explicit VariantWithSignedIntegerSelectorBeginningElement() = default;
+
+public:
+    void accept(ElementVisitor& visitor) const override
     {
+        visitor.visit(*this);
     }
+};
+
+/*!
+@brief
+    Variant with signed integer selector end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream variant with a signed
+integer selector.
+
+@sa VariantWithSignedIntegerSelectorBeginningElement
+*/
+class VariantWithSignedIntegerSelectorEndElement final :
+    public VariantWithIntegerSelectorEndElement<VariantWithSignedIntegerSelectorType,
+                                                Element::Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_END>
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit VariantWithSignedIntegerSelectorEndElement() = default;
 
 public:
     void accept(ElementVisitor& visitor) const override
@@ -2082,7 +3929,7 @@ public:
 @sa OptionalWithBooleanSelectorBeginningElement
 @sa OptionalWithUnsignedIntegerSelectorBeginningElement
 @sa OptionalWithSignedIntegerSelectorBeginningElement
-@sa EndElement
+@sa OptionalEndElement
 */
 class OptionalBeginningElement :
     public BeginningElement,
@@ -2101,7 +3948,7 @@ public:
     /// Optional type.
     const OptionalType& type() const noexcept
     {
-        return *_dt;
+        return this->dataType().asOptionalType();
     }
 
     /// Whether or not this optional is enabled (contains data).
@@ -2110,11 +3957,40 @@ public:
         return _isEnabled;
     }
 
-protected:
-    const OptionalType *_dt;
-
 private:
     bool _isEnabled;
+};
+
+/*!
+@brief
+    Common optional end element.
+
+@ingroup elems
+
+@sa OptionalWithBooleanSelectorEndElement
+@sa OptionalWithUnsignedIntegerSelectorEndElement
+@sa OptionalWithSignedIntegerSelectorEndElement
+@sa OptionalBeginningElement
+*/
+class OptionalEndElement :
+    public EndElement,
+    public DataElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    OptionalEndElement(const Kind kind) :
+        EndElement {kind}
+    {
+    }
+
+public:
+    /// Optional type.
+    const OptionalType& type() const noexcept
+    {
+        return this->dataType().asOptionalType();
+    }
 };
 
 /*!
@@ -2127,10 +4003,10 @@ This element indicates the beginning of a data stream optional with a
 boolean selector.
 
 The next element, if the isEnabled() returns \c true, is the contained
-element of this optional. Expect an EndElement after this at the same
-level.
+element of this optional. Expect an
+OptionalWithBooleanSelectorEndElement after this at the same level.
 
-@sa EndElement
+@sa OptionalWithBooleanSelectorEndElement
 */
 class OptionalWithBooleanSelectorBeginningElement final :
     public OptionalBeginningElement
@@ -2148,7 +4024,44 @@ public:
     /// Optional type.
     const OptionalWithBooleanSelectorType& type() const noexcept
     {
-        return static_cast<const OptionalWithBooleanSelectorType&>(*_dt);
+        return this->dataType().asOptionalWithBooleanSelectorType();
+    }
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Optional with boolean selector end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream optional with a boolean
+selector.
+
+@sa OptionalWithBooleanSelectorBeginningElement
+*/
+class OptionalWithBooleanSelectorEndElement final :
+    public OptionalEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit OptionalWithBooleanSelectorEndElement() :
+        OptionalEndElement {Element::Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_END}
+    {
+    }
+
+public:
+    /// Optional type.
+    const OptionalWithBooleanSelectorType& type() const noexcept
+    {
+        return this->dataType().asOptionalWithBooleanSelectorType();
     }
 
 public:
@@ -2166,6 +4079,7 @@ public:
 
 @sa OptionalWithUnsignedIntegerSelectorBeginningElement
 @sa OptionalWithSignedIntegerSelectorBeginningElement
+@sa OptionalWithIntegerSelectorEndElement
 */
 template <typename OptionalTypeT, typename SelectorValueT, Element::Kind KindV>
 class OptionalWithIntegerSelectorBeginningElement :
@@ -2184,7 +4098,7 @@ public:
     /// Optional type.
     const OptionalTypeT& type() const noexcept
     {
-        return static_cast<const OptionalTypeT&>(*_dt);
+        return static_cast<const OptionalTypeT&>(this->dataType());
     }
 
     /// Value of the optional selector.
@@ -2199,6 +4113,37 @@ private:
 
 /*!
 @brief
+    Optional with integer selector end base element.
+
+@ingroup elems
+
+@sa OptionalWithUnsignedIntegerSelectorEndElement
+@sa OptionalWithSignedIntegerSelectorEndElement
+@sa OptionalWithIntegerSelectorBeginningElement
+*/
+template <typename OptionalTypeT, Element::Kind KindV>
+class OptionalWithIntegerSelectorEndElement :
+    public OptionalEndElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+protected:
+    explicit OptionalWithIntegerSelectorEndElement() :
+        OptionalEndElement {KindV}
+    {
+    }
+
+public:
+    /// Optional type.
+    const OptionalTypeT& type() const noexcept
+    {
+        return static_cast<const OptionalTypeT&>(this->dataType());
+    }
+};
+
+/*!
+@brief
     Optional with unsigned integer selector beginning element.
 
 @ingroup elems
@@ -2207,10 +4152,11 @@ This element indicates the beginning of a data stream optional with an
 unsigned integer selector.
 
 The next element, if the isEnabled() returns \c true, is the contained
-element of this optional. Expect an EndElement after this at the same
+element of this optional. Expect an
+OptionalWithUnsignedIntegerSelectorEndElement after this at the same
 level.
 
-@sa EndElement
+@sa OptionalWithUnsignedIntegerSelectorEndElement
 */
 class OptionalWithUnsignedIntegerSelectorBeginningElement final :
     public OptionalWithIntegerSelectorBeginningElement<OptionalWithUnsignedIntegerSelectorType, unsigned long long,
@@ -2220,9 +4166,35 @@ class OptionalWithUnsignedIntegerSelectorBeginningElement final :
     friend class internal::VmPos;
 
 private:
-    explicit OptionalWithUnsignedIntegerSelectorBeginningElement()
+    explicit OptionalWithUnsignedIntegerSelectorBeginningElement() = default;
+
+public:
+    void accept(ElementVisitor& visitor) const override
     {
+        visitor.visit(*this);
     }
+};
+
+/*!
+@brief
+    Optional with unsigned integer selector end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream optional with an
+unsigned integer selector.
+
+@sa OptionalWithUnsignedIntegerSelectorBeginningElement
+*/
+class OptionalWithUnsignedIntegerSelectorEndElement final :
+    public OptionalWithIntegerSelectorEndElement<OptionalWithUnsignedIntegerSelectorType,
+                                                 Element::Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END>
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit OptionalWithUnsignedIntegerSelectorEndElement() = default;
 
 public:
     void accept(ElementVisitor& visitor) const override
@@ -2241,10 +4213,11 @@ This element indicates the beginning of a data stream optional with a
 signed integer selector.
 
 The next element, if the isEnabled() returns \c true, is the contained
-element of this optional. Expect an EndElement after this at the same
+element of this optional. Expect an
+OptionalWithSignedIntegerSelectorEndElement after this at the same
 level.
 
-@sa EndElement
+@sa OptionalWithSignedIntegerSelectorEndElement
 */
 class OptionalWithSignedIntegerSelectorBeginningElement final :
     public OptionalWithIntegerSelectorBeginningElement<OptionalWithSignedIntegerSelectorType, long long,
@@ -2264,6 +4237,324 @@ public:
         visitor.visit(*this);
     }
 };
+
+/*!
+@brief
+    Optional with signed integer selector end element.
+
+@ingroup elems
+
+This element indicates the end of a data stream optional with a signed
+integer selector.
+
+@sa OptionalWithSignedIntegerSelectorBeginningElement
+*/
+class OptionalWithSignedIntegerSelectorEndElement final :
+    public OptionalWithIntegerSelectorEndElement<OptionalWithSignedIntegerSelectorType,
+                                                 Element::Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_END>
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit OptionalWithSignedIntegerSelectorEndElement() = default;
+
+public:
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+};
+
+inline const BlobSectionElement& Element::asBlobSectionElement() const noexcept
+{
+    return static_cast<const BlobSectionElement&>(*this);
+}
+
+inline const DataStreamInfoElement& Element::asDataStreamInfoElement() const noexcept
+{
+    return static_cast<const DataStreamInfoElement&>(*this);
+}
+
+inline const DefaultClockValueElement& Element::asDefaultClockValueElement() const noexcept
+{
+    return static_cast<const DefaultClockValueElement&>(*this);
+}
+
+inline const DynamicLengthArrayBeginningElement& Element::asDynamicLengthArrayBeginningElement() const noexcept
+{
+    return static_cast<const DynamicLengthArrayBeginningElement&>(*this);
+}
+
+inline const DynamicLengthArrayEndElement& Element::asDynamicLengthArrayEndElement() const noexcept
+{
+    return static_cast<const DynamicLengthArrayEndElement&>(*this);
+}
+
+inline const DynamicLengthBlobBeginningElement& Element::asDynamicLengthBlobBeginningElement() const noexcept
+{
+    return static_cast<const DynamicLengthBlobBeginningElement&>(*this);
+}
+
+inline const DynamicLengthBlobEndElement& Element::asDynamicLengthBlobEndElement() const noexcept
+{
+    return static_cast<const DynamicLengthBlobEndElement&>(*this);
+}
+
+inline const DynamicLengthStringBeginningElement& Element::asDynamicLengthStringBeginningElement() const noexcept
+{
+    return static_cast<const DynamicLengthStringBeginningElement&>(*this);
+}
+
+inline const DynamicLengthStringEndElement& Element::asDynamicLengthStringEndElement() const noexcept
+{
+    return static_cast<const DynamicLengthStringEndElement&>(*this);
+}
+
+inline const EventRecordBeginningElement& Element::asEventRecordBeginningElement() const noexcept
+{
+    return static_cast<const EventRecordBeginningElement&>(*this);
+}
+
+inline const EventRecordEndElement& Element::asEventRecordEndElement() const noexcept
+{
+    return static_cast<const EventRecordEndElement&>(*this);
+}
+
+inline const EventRecordInfoElement& Element::asEventRecordInfoElement() const noexcept
+{
+    return static_cast<const EventRecordInfoElement&>(*this);
+}
+
+inline const FixedLengthBitArrayElement& Element::asFixedLengthBitArrayElement() const noexcept
+{
+    return static_cast<const FixedLengthBitArrayElement&>(*this);
+}
+
+inline const FixedLengthBooleanElement& Element::asFixedLengthBooleanElement() const noexcept
+{
+    return static_cast<const FixedLengthBooleanElement&>(*this);
+}
+
+inline const FixedLengthFloatingPointNumberElement& Element::asFixedLengthFloatingPointNumberElement() const noexcept
+{
+    return static_cast<const FixedLengthFloatingPointNumberElement&>(*this);
+}
+
+inline const FixedLengthSignedEnumerationElement& Element::asFixedLengthSignedEnumerationElement() const noexcept
+{
+    return static_cast<const FixedLengthSignedEnumerationElement&>(*this);
+}
+
+inline const FixedLengthSignedIntegerElement& Element::asFixedLengthSignedIntegerElement() const noexcept
+{
+    return static_cast<const FixedLengthSignedIntegerElement&>(*this);
+}
+
+inline const FixedLengthUnsignedEnumerationElement& Element::asFixedLengthUnsignedEnumerationElement() const noexcept
+{
+    return static_cast<const FixedLengthUnsignedEnumerationElement&>(*this);
+}
+
+inline const FixedLengthUnsignedIntegerElement& Element::asFixedLengthUnsignedIntegerElement() const noexcept
+{
+    return static_cast<const FixedLengthUnsignedIntegerElement&>(*this);
+}
+
+inline const NullTerminatedStringBeginningElement& Element::asNullTerminatedStringBeginningElement() const noexcept
+{
+    return static_cast<const NullTerminatedStringBeginningElement&>(*this);
+}
+
+inline const NullTerminatedStringEndElement& Element::asNullTerminatedStringEndElement() const noexcept
+{
+    return static_cast<const NullTerminatedStringEndElement&>(*this);
+}
+
+inline const OptionalBeginningElement& Element::asOptionalBeginningElement() const noexcept
+{
+    return static_cast<const OptionalBeginningElement&>(*this);
+}
+
+inline const OptionalEndElement& Element::asOptionalEndElement() const noexcept
+{
+    return static_cast<const OptionalEndElement&>(*this);
+}
+
+inline const OptionalWithBooleanSelectorBeginningElement& Element::asOptionalWithBooleanSelectorBeginningElement() const noexcept
+{
+    return static_cast<const OptionalWithBooleanSelectorBeginningElement&>(*this);
+}
+
+inline const OptionalWithBooleanSelectorEndElement& Element::asOptionalWithBooleanSelectorEndElement() const noexcept
+{
+    return static_cast<const OptionalWithBooleanSelectorEndElement&>(*this);
+}
+
+inline const OptionalWithSignedIntegerSelectorBeginningElement& Element::asOptionalWithSignedIntegerSelectorBeginningElement() const noexcept
+{
+    return static_cast<const OptionalWithSignedIntegerSelectorBeginningElement&>(*this);
+}
+
+inline const OptionalWithSignedIntegerSelectorEndElement& Element::asOptionalWithSignedIntegerSelectorEndElement() const noexcept
+{
+    return static_cast<const OptionalWithSignedIntegerSelectorEndElement&>(*this);
+}
+
+inline const OptionalWithUnsignedIntegerSelectorBeginningElement& Element::asOptionalWithUnsignedIntegerSelectorBeginningElement() const noexcept
+{
+    return static_cast<const OptionalWithUnsignedIntegerSelectorBeginningElement&>(*this);
+}
+
+inline const OptionalWithUnsignedIntegerSelectorEndElement& Element::asOptionalWithUnsignedIntegerSelectorEndElement() const noexcept
+{
+    return static_cast<const OptionalWithUnsignedIntegerSelectorEndElement&>(*this);
+}
+
+inline const PacketBeginningElement& Element::asPacketBeginningElement() const noexcept
+{
+    return static_cast<const PacketBeginningElement&>(*this);
+}
+
+inline const PacketContentBeginningElement& Element::asPacketContentBeginningElement() const noexcept
+{
+    return static_cast<const PacketContentBeginningElement&>(*this);
+}
+
+inline const PacketContentEndElement& Element::asPacketContentEndElement() const noexcept
+{
+    return static_cast<const PacketContentEndElement&>(*this);
+}
+
+inline const PacketEndElement& Element::asPacketEndElement() const noexcept
+{
+    return static_cast<const PacketEndElement&>(*this);
+}
+
+inline const PacketInfoElement& Element::asPacketInfoElement() const noexcept
+{
+    return static_cast<const PacketInfoElement&>(*this);
+}
+
+inline const PacketMagicNumberElement& Element::asPacketMagicNumberElement() const noexcept
+{
+    return static_cast<const PacketMagicNumberElement&>(*this);
+}
+
+inline const ScopeBeginningElement& Element::asScopeBeginningElement() const noexcept
+{
+    return static_cast<const ScopeBeginningElement&>(*this);
+}
+
+inline const ScopeEndElement& Element::asScopeEndElement() const noexcept
+{
+    return static_cast<const ScopeEndElement&>(*this);
+}
+
+inline const StaticLengthArrayBeginningElement& Element::asStaticLengthArrayBeginningElement() const noexcept
+{
+    return static_cast<const StaticLengthArrayBeginningElement&>(*this);
+}
+
+inline const StaticLengthArrayEndElement& Element::asStaticLengthArrayEndElement() const noexcept
+{
+    return static_cast<const StaticLengthArrayEndElement&>(*this);
+}
+
+inline const StaticLengthBlobBeginningElement& Element::asStaticLengthBlobBeginningElement() const noexcept
+{
+    return static_cast<const StaticLengthBlobBeginningElement&>(*this);
+}
+
+inline const StaticLengthBlobEndElement& Element::asStaticLengthBlobEndElement() const noexcept
+{
+    return static_cast<const StaticLengthBlobEndElement&>(*this);
+}
+
+inline const StaticLengthStringBeginningElement& Element::asStaticLengthStringBeginningElement() const noexcept
+{
+    return static_cast<const StaticLengthStringBeginningElement&>(*this);
+}
+
+inline const StaticLengthStringEndElement& Element::asStaticLengthStringEndElement() const noexcept
+{
+    return static_cast<const StaticLengthStringEndElement&>(*this);
+}
+
+inline const StructureBeginningElement& Element::asStructureBeginningElement() const noexcept
+{
+    return static_cast<const StructureBeginningElement&>(*this);
+}
+
+inline const StructureEndElement& Element::asStructureEndElement() const noexcept
+{
+    return static_cast<const StructureEndElement&>(*this);
+}
+
+inline const SubstringElement& Element::asSubstringElement() const noexcept
+{
+    return static_cast<const SubstringElement&>(*this);
+}
+
+inline const TraceTypeUuidElement& Element::asTraceTypeUuidElement() const noexcept
+{
+    return static_cast<const TraceTypeUuidElement&>(*this);
+}
+
+inline const VariableLengthBitArrayElement& Element::asVariableLengthBitArrayElement() const noexcept
+{
+    return static_cast<const VariableLengthBitArrayElement&>(*this);
+}
+
+inline const VariableLengthSignedEnumerationElement& Element::asVariableLengthSignedEnumerationElement() const noexcept
+{
+    return static_cast<const VariableLengthSignedEnumerationElement&>(*this);
+}
+
+inline const VariableLengthSignedIntegerElement& Element::asVariableLengthSignedIntegerElement() const noexcept
+{
+    return static_cast<const VariableLengthSignedIntegerElement&>(*this);
+}
+
+inline const VariableLengthUnsignedEnumerationElement& Element::asVariableLengthUnsignedEnumerationElement() const noexcept
+{
+    return static_cast<const VariableLengthUnsignedEnumerationElement&>(*this);
+}
+
+inline const VariableLengthUnsignedIntegerElement& Element::asVariableLengthUnsignedIntegerElement() const noexcept
+{
+    return static_cast<const VariableLengthUnsignedIntegerElement&>(*this);
+}
+
+inline const VariantBeginningElement& Element::asVariantBeginningElement() const noexcept
+{
+    return static_cast<const VariantBeginningElement&>(*this);
+}
+
+inline const VariantEndElement& Element::asVariantEndElement() const noexcept
+{
+    return static_cast<const VariantEndElement&>(*this);
+}
+
+inline const VariantWithSignedIntegerSelectorBeginningElement& Element::asVariantWithSignedIntegerSelectorBeginningElement() const noexcept
+{
+    return static_cast<const VariantWithSignedIntegerSelectorBeginningElement&>(*this);
+}
+
+inline const VariantWithSignedIntegerSelectorEndElement& Element::asVariantWithSignedIntegerSelectorEndElement() const noexcept
+{
+    return static_cast<const VariantWithSignedIntegerSelectorEndElement&>(*this);
+}
+
+inline const VariantWithUnsignedIntegerSelectorBeginningElement& Element::asVariantWithUnsignedIntegerSelectorBeginningElement() const noexcept
+{
+    return static_cast<const VariantWithUnsignedIntegerSelectorBeginningElement&>(*this);
+}
+
+inline const VariantWithUnsignedIntegerSelectorEndElement& Element::asVariantWithUnsignedIntegerSelectorEndElement() const noexcept
+{
+    return static_cast<const VariantWithUnsignedIntegerSelectorEndElement&>(*this);
+}
 
 } // namespace yactfr
 

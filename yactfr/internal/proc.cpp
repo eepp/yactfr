@@ -107,6 +107,20 @@ std::string Instr::_toStr(Size) const
     return ss.str();
 }
 
+static bool isEndProc(const Instr& instr) noexcept
+{
+    switch (instr.kind()) {
+    case Instr::Kind::END_DS_ER_PREAMBLE_PROC:
+    case Instr::Kind::END_DS_PKT_PREAMBLE_PROC:
+    case Instr::Kind::END_ER_PROC:
+    case Instr::Kind::END_PKT_PREAMBLE_PROC:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 std::string Instr::toStr(const Size indent) const
 {
     std::string kindStr;
@@ -480,12 +494,24 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "BEGIN_READ_OPT_UINT_SEL";
         break;
 
-    case Kind::END_READ_VAR:
-        kindStr = "END_READ_VAR";
+    case Kind::END_READ_VAR_SINT_SEL:
+        kindStr = "END_READ_VAR_SINT_SEL";
         break;
 
-    case Kind::END_READ_OPT:
-        kindStr = "END_READ_OPT";
+    case Kind::END_READ_VAR_UINT_SEL:
+        kindStr = "END_READ_VAR_UINT_SEL";
+        break;
+
+    case Kind::END_READ_OPT_BOOL_SEL:
+        kindStr = "END_READ_OPT_BOOL_SEL";
+        break;
+
+    case Kind::END_READ_OPT_SINT_SEL:
+        kindStr = "END_READ_OPT_SINT_SEL";
+        break;
+
+    case Kind::END_READ_OPT_UINT_SEL:
+        kindStr = "END_READ_OPT_UINT_SEL";
         break;
 
     case Kind::SAVE_VAL:
@@ -580,9 +606,9 @@ std::string Instr::toStr(const Size indent) const
 
     ss << internal::indent(indent);
 
-    if (this->isReadData() || this->isBeginReadScope()) {
+    if (this->isBeginReadData() || _theKind == Instr::Kind::BEGIN_READ_SCOPE) {
         ss << _strName(kindStr);
-    } else if (this->isEndReadData() || _theKind == Kind::END_READ_SCOPE || this->isEndProc()) {
+    } else if (this->isEndReadData() || _theKind == Kind::END_READ_SCOPE || isEndProc(*this)) {
         ss << _strEndName(kindStr);
     } else {
         ss << _strSpecName(kindStr);
@@ -1159,8 +1185,11 @@ EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * 
            kind == Kind::END_READ_DL_STR ||
            kind == Kind::END_READ_SL_BLOB ||
            kind == Kind::END_READ_DL_BLOB ||
-           kind == Kind::END_READ_VAR ||
-           kind == Kind::END_READ_OPT);
+           kind == Kind::END_READ_VAR_UINT_SEL ||
+           kind == Kind::END_READ_VAR_SINT_SEL ||
+           kind == Kind::END_READ_OPT_BOOL_SEL ||
+           kind == Kind::END_READ_OPT_UINT_SEL ||
+           kind == Kind::END_READ_OPT_SINT_SEL);
 }
 
 std::string EndReadDataInstr::_toStr(Size) const

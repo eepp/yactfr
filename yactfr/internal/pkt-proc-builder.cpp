@@ -60,6 +60,56 @@ protected:
     Index _curLevel = 0;
 };
 
+static bool isReadVlUInt(const Instr& instr) noexcept
+{
+    return instr.kind() == Instr::Kind::READ_VL_UINT ||
+           instr.kind() == Instr::Kind::READ_VL_UENUM;
+}
+
+static bool isReadVlSInt(const Instr& instr) noexcept
+{
+    return instr.kind() == Instr::Kind::READ_VL_SINT ||
+           instr.kind() == Instr::Kind::READ_VL_SENUM;
+}
+
+static bool isReadVlInt(const Instr& instr) noexcept
+{
+    return isReadVlUInt(instr) || isReadVlSInt(instr);
+}
+
+static bool isReadFlUInt(const Instr& instr) noexcept
+{
+    switch (instr.kind()) {
+    case Instr::Kind::READ_FL_UENUM_A16_BE:
+    case Instr::Kind::READ_FL_UENUM_A16_LE:
+    case Instr::Kind::READ_FL_UENUM_A32_BE:
+    case Instr::Kind::READ_FL_UENUM_A32_LE:
+    case Instr::Kind::READ_FL_UENUM_A64_BE:
+    case Instr::Kind::READ_FL_UENUM_A64_LE:
+    case Instr::Kind::READ_FL_UENUM_A8:
+    case Instr::Kind::READ_FL_UENUM_BE:
+    case Instr::Kind::READ_FL_UENUM_LE:
+    case Instr::Kind::READ_FL_UINT_A16_BE:
+    case Instr::Kind::READ_FL_UINT_A16_LE:
+    case Instr::Kind::READ_FL_UINT_A32_BE:
+    case Instr::Kind::READ_FL_UINT_A32_LE:
+    case Instr::Kind::READ_FL_UINT_A64_BE:
+    case Instr::Kind::READ_FL_UINT_A64_LE:
+    case Instr::Kind::READ_FL_UINT_A8:
+    case Instr::Kind::READ_FL_UINT_BE:
+    case Instr::Kind::READ_FL_UINT_LE:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+static bool isReadUInt(const Instr& instr) noexcept
+{
+    return isReadFlUInt(instr) || isReadVlUInt(instr);
+}
+
 PktProcBuilder::PktProcBuilder(const TraceType& traceType) :
     _traceType {&traceType}
 {
@@ -110,7 +160,7 @@ void PktProcBuilder::_buildPktProc()
 
 static bool instrIsSpecScope(const Instr& instr, const Scope scope) noexcept
 {
-    if (!instr.isBeginReadScope()) {
+    if (instr.kind() != Instr::Kind::BEGIN_READ_SCOPE) {
         return false;
     }
 
@@ -167,7 +217,7 @@ public:
 
     void visit(ReadVlBitArrayInstr& instr) override
     {
-        if (_uIntTypeRole && instr.isReadVlUInt() &&
+        if (_uIntTypeRole && isReadVlUInt(instr) &&
                 instr.vlBitArrayType().asVariableLengthUnsignedIntegerType().hasRole(*_uIntTypeRole)) {
             _func(_curInstrLoc);
         }
@@ -280,7 +330,7 @@ void PktProcBuilder::_subUuidInstr()
     for (auto& instrLoc : instrLocs) {
         const auto& origInstr = static_cast<const ReadDataInstr&>(**instrLoc.it);
 
-        if (origInstr.isBeginReadSlArray()) {
+        if (origInstr.kind() == Instr::Kind::BEGIN_READ_SL_ARRAY) {
             auto& origBeginReadArrayInstr = static_cast<const BeginReadSlArrayInstr&>(**instrLoc.it);
 
             // replace instruction
@@ -293,7 +343,7 @@ void PktProcBuilder::_subUuidInstr()
             this->_buildReadInstr(nullptr, beginReadUuidArrayInstr.slArrayType().elementType(),
                                   beginReadUuidArrayInstr.proc());
         } else {
-            assert(origInstr.isBeginReadSlBlob());
+            assert(origInstr.kind() == Instr::Kind::BEGIN_READ_SL_BLOB);
 
             // replace instruction
             *instrLoc.it = std::make_shared<BeginReadSlUuidBlobInstr>(origInstr.memberType(),
@@ -373,15 +423,15 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 
         const auto& readUIntInstr = **instrLoc.it;
 
-        assert(readUIntInstr.isReadUInt());
+        assert(isReadUInt(readUIntInstr));
 
-        if (readUIntInstr.isReadFlUInt()) {
+        if (isReadFlUInt(readUIntInstr)) {
             const auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(readUIntInstr);
 
             instrLoc.proc->insert(std::next(instrLoc.it),
                                   std::make_shared<UpdateDefClkValFlInstr>(readFlBitArrayInstr.len()));
         } else {
-            assert(readUIntInstr.isReadVlUInt());
+            assert(isReadVlUInt(readUIntInstr));
             instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<UpdateDefClkValInstr>());
         }
     };
@@ -521,7 +571,7 @@ public:
 
     void visit(ReadVlBitArrayInstr& instr) override
     {
-        if (instr.isReadVlInt()) {
+        if (isReadVlInt(instr)) {
             this->_visit(instr);
         }
     }
@@ -1159,7 +1209,8 @@ void PktProcBuilder::_buildReadVarUIntSelInstr(const StructureMemberType * const
 {
     this->_buildReadVarInstr<BeginReadVarUIntSelInstr>(memberType,
                                                        dt.asVariantWithUnsignedIntegerSelectorType(),
-                                                       baseProc);
+                                                       baseProc,
+                                                       Instr::Kind::END_READ_VAR_UINT_SEL);
 }
 
 void PktProcBuilder::_buildReadVarSIntSelInstr(const StructureMemberType * const memberType,
@@ -1167,7 +1218,8 @@ void PktProcBuilder::_buildReadVarSIntSelInstr(const StructureMemberType * const
 {
     this->_buildReadVarInstr<BeginReadVarSIntSelInstr>(memberType,
                                                        dt.asVariantWithSignedIntegerSelectorType(),
-                                                       baseProc);
+                                                       baseProc,
+                                                       Instr::Kind::END_READ_VAR_SINT_SEL);
 }
 
 void PktProcBuilder::_buildReadOptBoolSelInstr(const StructureMemberType * const memberType,
@@ -1176,7 +1228,7 @@ void PktProcBuilder::_buildReadOptBoolSelInstr(const StructureMemberType * const
     auto instr = std::make_shared<BeginReadOptBoolSelInstr>(memberType, dt);
 
     this->_buildReadInstr(nullptr, dt.asOptionalType().dataType(), instr->proc());
-    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_OPT,
+    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_OPT_BOOL_SEL,
                                                               memberType, dt));
     baseProc.pushBack(std::move(instr));
 }
@@ -1186,7 +1238,8 @@ void PktProcBuilder::_buildReadOptUIntSelInstr(const StructureMemberType * const
 {
     this->_buildReadOptIntSelInstr<BeginReadOptUIntSelInstr>(memberType,
                                                              dt.asOptionalWithUnsignedIntegerSelectorType(),
-                                                             baseProc);
+                                                             baseProc,
+                                                             Instr::Kind::END_READ_OPT_UINT_SEL);
 }
 
 void PktProcBuilder::_buildReadOptSIntSelInstr(const StructureMemberType * const memberType,
@@ -1194,7 +1247,8 @@ void PktProcBuilder::_buildReadOptSIntSelInstr(const StructureMemberType * const
 {
     this->_buildReadOptIntSelInstr<BeginReadOptSIntSelInstr>(memberType,
                                                              dt.asOptionalWithSignedIntegerSelectorType(),
-                                                             baseProc);
+                                                             baseProc,
+                                                             Instr::Kind::END_READ_OPT_SINT_SEL);
 }
 
 } // namespace internal

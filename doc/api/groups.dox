@@ -255,30 +255,70 @@ descriptions below easier to read and to allow recursion.
   VariableLengthBitArrayElement |
   VariableLengthSignedIntegerElement |
   VariableLengthSignedEnumerationElement |
-  (NullTerminatedStringBeginningElement SubstringElement * EndElement) |
-  (StaticLengthArrayBeginningElement DATA * EndElement) |
-  (DynamicLengthArrayBeginningElement DATA * EndElement) |
-  (StaticLengthStringBeginningElement SubstringElement * EndElement) |
-  (DynamicLengthStringBeginningElement SubstringElement * EndElement) |
-  (StaticLengthBlobBeginningElement BlobSectionElement * EndElement) |
-  (DynamicLengthBlobBeginningElement BlobSectionElement * EndElement) |
-  (StructureBeginningElement DATA * EndElement) |
   (
-    (
-      VariantWithUnsignedIntegerSelectorBeginningElement |
-      VariantWithSignedIntegerSelectorBeginningElement
-    )
-    DATA ?
-    EndElement
+    NullTerminatedStringBeginningElement
+    SubstringElement *
+    NullTerminatedStringEndElement
   ) |
   (
-    (
-      OptionalWithBooleanSelectorBeginningElement
-      OptionalWithUnsignedIntegerSelectorBeginningElement
-      OptionalWithSignedIntegerSelectorBeginningElement
-    )
+    StaticLengthArrayBeginningElement
+    DATA *
+    StaticLengthArrayEndElement
+  ) |
+  (
+    DynamicLengthArrayBeginningElement
+    DATA *
+    DynamicLengthArrayEndElement
+  ) |
+  (
+    StaticLengthStringBeginningElement
+    SubstringElement *
+    StaticLengthStringEndElement
+  ) |
+  (
+    DynamicLengthStringBeginningElement
+    SubstringElement *
+    DynamicLengthStringEndElement
+  ) |
+  (
+    StaticLengthBlobBeginningElement
+    BlobSectionElement *
+    StaticLengthBlobEndElement
+  ) |
+  (
+    DynamicLengthBlobBeginningElement
+    BlobSectionElement *
+    DynamicLengthBlobEndElement
+  ) |
+  (
+    StructureBeginningElement
+    DATA *
+    StructureEndElement
+  ) |
+  (
+    VariantWithUnsignedIntegerSelectorBeginningElement
     DATA ?
-    EndElement
+    VariantWithUnsignedIntegerSelectorEndElement
+  ) |
+  (
+    VariantWithSignedIntegerSelectorBeginningElement
+    DATA ?
+    VariantWithSignedIntegerSelectorEndElement
+  ) |
+  (
+    OptionalWithBooleanSelectorBeginningElement
+    DATA ?
+    OptionalWithBooleanSelectorEndElement
+  ) |
+  (
+    OptionalWithUnsignedIntegerSelectorBeginningElement
+    DATA ?
+    OptionalWithUnsignedIntegerSelectorEndElement
+  ) |
+  (
+    OptionalWithSignedIntegerSelectorBeginningElement
+    DATA ?
+    OptionalWithSignedIntegerSelectorEndElement
   )
 )
 </pre>
@@ -288,12 +328,28 @@ descriptions below easier to read and to allow recursion.
 <pre>
 (
   EventRecordBeginningElement
-  [ScopeBeginningElement&lt;EVENT_RECORD_HEADER&gt; DATA EndElement]
+  [
+    ScopeBeginningElement&lt;EVENT_RECORD_HEADER&gt;
+    DATA
+    ScopeEndElement&lt;EVENT_RECORD_HEADER&gt;
+  ]
   EventRecordInfoElement
-  [ScopeBeginningElement&lt;EVENT_RECORD_COMMON_CONTEXT&gt; DATA EndElement]
-  [ScopeBeginningElement&lt;EVENT_RECORD_SPECIFIC_CONTEXT&gt; DATA EndElement]
-  [ScopeBeginningElement&lt;EVENT_RECORD_PAYLOAD&gt; DATA EndElement]
-  EndElement
+  [
+    ScopeBeginningElement&lt;EVENT_RECORD_COMMON_CONTEXT&gt;
+    DATA
+    ScopeEndElement&lt;EVENT_RECORD_COMMON_CONTEXT&gt;
+  ]
+  [
+    ScopeBeginningElement&lt;EVENT_RECORD_SPECIFIC_CONTEXT&gt;
+    DATA
+    ScopeEndElement&lt;EVENT_RECORD_SPECIFIC_CONTEXT&gt;
+  ]
+  [
+    ScopeBeginningElement&lt;EVENT_RECORD_PAYLOAD&gt;
+    DATA
+    ScopeEndElement&lt;EVENT_RECORD_PAYLOAD&gt;
+  ]
+  EventRecordEndElement
 )
 </pre>
 
@@ -315,25 +371,29 @@ descriptions below easier to read and to allow recursion.
         StaticLengthArrayBeginningElement
         (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement){16}
         TraceTypeUuidElement
-        EndElement
+        StaticLengthArrayEndElement
       ) |
       (
         StaticLengthBlobBeginningElement
         BlobSectionElement *
         TraceTypeUuidElement
-        EndElement
+        StaticLengthBlobEndElement
       ) |
       DATA
     ) *
-    EndElement
-    EndElement
+    StructureEndElement
+    ScopeBeginningElement&lt;PACKET_HEADER&gt;
   ]
   DataStreamInfoElement
-  [ScopeBeginningElement&lt;PACKET_CONTEXT&gt; DATA EndElement]
+  [
+    ScopeBeginningElement&lt;PACKET_CONTEXT&gt;
+    DATA
+    ScopeBeginningElement&lt;PACKET_CONTEXT&gt;
+  ]
   PacketInfoElement
   EVENT-RECORD *
-  EndElement
-  EndElement
+  PacketContentEndElement
+  PacketEndElement
 )
 </pre>
 
@@ -362,13 +422,12 @@ when the current element of the iterator is:
     padding following the previous packet content.
   </dd>
 
-  <dt>EndElement closing a PacketBeginningElement</dt>
+  <dt>PacketEndElement</dt>
   <dd>
     The offset is the end of the packet, that is, following any padding
     following its content (the difference between the offset of this
-    element and the offset at the prior EndElement for a
-    PacketContentBeginningElement). It's the same as it will be at the
-    next PacketBeginningElement.
+    element and the offset at the prior PacketContentEndElement). It's
+    the same as it will be at the next PacketBeginningElement.
   </dd>
 
   <dt>PacketContentBeginningElement</dt>
@@ -376,10 +435,9 @@ when the current element of the iterator is:
     The offset is the same as it was at the last PacketBeginningElement.
   </dd>
 
-  <dt>EndElement closing a PacketContentBeginningElement</dt>
+  <dt>PacketContentEndElement</dt>
   <dd>
-    The offset is the same as it was at the last EndElement closing
-    a ScopeBeginningElement.
+    The offset is the same as it was at the last ScopeEndElement.
   </dd>
 
   <dt>EventRecordBeginningElement</dt>
@@ -388,10 +446,9 @@ when the current element of the iterator is:
     ScopeBeginningElement.
   </dd>
 
-  <dt>EndElement closing an EventRecordBeginningElement</dt>
+  <dt>EventRecordEndElement</dt>
   <dd>
-    The offset is the same as it was at the last EndElement closing
-    a ScopeBeginningElement.
+    The offset is the same as it was at the last ScopeEndElement.
   </dd>
 
   <dt>ScopeBeginningElement</dt>
@@ -400,10 +457,9 @@ when the current element of the iterator is:
     StructureBeginningElement.
   </dd>
 
-  <dt>EndElement closing a ScopeBeginningElement</dt>
+  <dt>ScopeEndElement</dt>
   <dd>
-    The offset is the same as it was at the last EndElement closing
-    a StructureBeginningElement.
+    The offset is the same as it was at the last StructureEndElement.
   </dd>
 
   <dt>NullTerminatedStringBeginningElement</dt>
@@ -431,9 +487,9 @@ when the current element of the iterator is:
     * FixedLengthBooleanElement
     * FixedLengthUnsignedIntegerElement
     * FixedLengthSignedIntegerElement
-    * FixedLengthFloatingPointNumberElement
     * FixedLengthUnsignedEnumerationElement
     * FixedLengthSignedEnumerationElement
+    * FixedLengthFloatingPointNumberElement
     * VariableLengthBitArrayElement
     * VariableLengthUnsignedIntegerElement
     * VariableLengthSignedIntegerElement
@@ -454,8 +510,8 @@ example, if a given FixedLengthFloatingPointNumberElement is at offset
 64 and its length is 32&nbsp;bits, and the offset of the next element is
 128, then there are 64&nbsp;bits of padding between offsets 64 and 128.
 As such, if the offset of a PacketContentEndElement is 8,387,154 and the
-offset of the corresponding EndElement is 8,388,608, then there's 1454
-padding bits between those two offsets.
+offset of the corresponding PacketEndElement is 8,388,608, then there's
+1454 padding bits between those two offsets.
 */
 
 } // namespace yactfr
