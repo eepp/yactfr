@@ -316,23 +316,48 @@ public:
     }
 
     /*
-     * Scans and decodes a constant integer string, with an optional
-     * `0`, `0x`, or `0b` prefix, and possibly negative.
+     * Tries to scan and decode a constant integer string, with an
+     * optional `0`, `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
+     * true, and possibly negative if `ValT` is signed.
+     *
+     * Returns `boost::none` if it could not scan a constant integer.
      *
      * The current iterator is placed after this constant integer
      * string on success.
      */
-    template <typename ValueT>
-    boost::optional<ValueT> tryScanConstInt();
+    template <typename ValT, bool AllowPrefixV = true>
+    boost::optional<ValT> tryScanConstInt();
 
+    /*
+     * Tries to scan and decode a constant unsigned integer string, with
+     * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
+     * true.
+     *
+     * Returns `boost::none` if it could not scan a constant integer.
+     *
+     * The current iterator is placed after this constant integer
+     * string on success.
+     */
+    template <bool AllowPrefixV = true>
     boost::optional<unsigned long long> tryScanConstUInt()
     {
-        return this->tryScanConstInt<unsigned long long>();
+        return this->tryScanConstInt<unsigned long long, AllowPrefixV>();
     }
 
+    /*
+     * Tries to scan and decode a constant signed integer string, with
+     * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
+     * true, and possibly negative.
+     *
+     * Returns `boost::none` if it could not scan a constant integer.
+     *
+     * The current iterator is placed after this constant integer
+     * string on success.
+     */
+    template <bool AllowPrefixV = true>
     boost::optional<long long> tryScanConstSInt()
     {
-        return this->tryScanConstInt<long long>();
+        return this->tryScanConstInt<long long, AllowPrefixV>();
     }
 
     /*
@@ -396,6 +421,15 @@ private:
     };
 
 private:
+    template <typename ValT>
+    static boost::optional<ValT> _tryNegateConstInt(unsigned long long ullVal, bool negate);
+
+    template <typename ValT>
+    boost::optional<ValT> _tryScanConstBinInt(bool negate);
+
+    template <typename ValT, int BaseV>
+    boost::optional<ValT> _tryScanConstInt(bool negate);
+
     void _skipWhitespaces()
     {
         while (!this->isDone()) {
@@ -577,24 +611,140 @@ private:
 };
 
 template <typename CharIt>
-template <typename ValueT>
-boost::optional<ValueT> StrScanner<CharIt>::tryScanConstInt()
+template <typename ValT>
+boost::optional<ValT> StrScanner<CharIt>::_tryNegateConstInt(const unsigned long long ullVal,
+                                                             const bool negate)
 {
-    static_assert(std::is_same<ValueT, long long>::value ||
-                  std::is_same<ValueT, unsigned long long>::value,
-                  "`ValueT` is `long long` or `unsigned long long`.");
+    // negate if needed
+    if (std::is_signed<ValT>::value) {
+        constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
+
+        if (negate) {
+            if (ullVal > llMaxAsUll + 1) {
+                return boost::none;
+            }
+        } else {
+            if (ullVal > llMaxAsUll) {
+                return boost::none;
+            }
+        }
+    }
+
+    // success: cast, negate if needed, and update position
+    auto val = static_cast<ValT>(ullVal);
+
+    if (negate) {
+        val *= static_cast<ValT>(-1);
+    }
+
+    return val;
+}
+
+template <typename CharIt>
+template <typename ValT>
+boost::optional<ValT> StrScanner<CharIt>::_tryScanConstBinInt(const bool negate)
+{
+    const auto at = _at;
+
+    // accumulate `0` and `1` characters into conversion buffer
+    auto convBufIt = _convBuf.begin();
+
+    while (!this->isDone()) {
+        if (*_at != '0' && *_at != '1') {
+            // no more
+            break;
+        }
+
+        *convBufIt = *_at;
+        ++_at;
+        ++convBufIt;
+
+        if (convBufIt - _convBuf.begin() > 64) {
+            // too many bits!
+            _at = at;
+            return boost::none;
+        }
+    }
+
+    if (convBufIt == _convBuf.begin()) {
+        // `0b`/`0B` followed by something else than `0` or `1`
+        _at = at;
+        return boost::none;
+    }
+
+    // convert to unsigned integer value
+    auto ullVal = 0ULL;
+    auto curMul = 1ULL;
+    auto it = convBufIt - 1;
+
+    while (true) {
+        if (*it == '1') {
+            ullVal += curMul;
+        }
+
+        curMul *= 2;
+
+        if (it == _convBuf.begin()) {
+            break;
+        }
+
+        --it;
+    }
+
+    const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
+
+    if (!val) {
+        _at = at;
+    }
+
+    return val;
+}
+
+template <typename CharIt>
+template <typename ValT, int BaseV>
+boost::optional<ValT> StrScanner<CharIt>::_tryScanConstInt(const bool negate)
+{
+    char *strEnd = nullptr;
+    const auto ullVal = std::strtoull(&(*_at), &strEnd, BaseV);
+
+    if ((ullVal == 0 && &(*_at) == strEnd) || errno == ERANGE) {
+        // could not parse
+        errno = 0;
+        return boost::none;
+    }
+
+    const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
+
+    if (val) {
+        // success: update position
+        _at += (strEnd - &(*_at));
+    }
+
+    return val;
+}
+
+template <typename CharIt>
+template <typename ValT, bool AllowPrefixV>
+boost::optional<ValT> StrScanner<CharIt>::tryScanConstInt()
+{
+    static_assert(std::is_same<ValT, long long>::value ||
+                  std::is_same<ValT, unsigned long long>::value,
+                  "`ValT` is `long long` or `unsigned long long`.");
+
     this->skipCommentsAndWhitespaces();
 
     const auto at = _at;
     const auto c = this->_scanAnyChar();
 
     if (c < 0) {
+        // nothing left
         return boost::none;
     }
 
+    // check for negation
     const bool negate = (c == '-');
 
-    if (negate && !std::is_signed<ValueT>::value) {
+    if (negate && !std::is_signed<ValT>::value) {
         _at = at;
         return boost::none;
     }
@@ -603,111 +753,44 @@ boost::optional<ValueT> StrScanner<CharIt>::tryScanConstInt()
         --_at;
     }
 
-    auto convBufIt = _convBuf.begin();
-    constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
-    ValueT value;
+    // check for radix prefix
+    boost::optional<ValT> val;
 
-    if (this->charsLeft() >= 2) {
-        if (*_at == '0' && (*(_at + 1) == 'b' || *(_at + 1) == 'B')) {
-            // binary
-            _at += 2;
-
-            while (!this->isDone()) {
-                if (*_at != '0' && *_at != '1') {
-                    break;
-                }
-
-                *convBufIt = *_at;
-                ++_at;
-                ++convBufIt;
-
-                if (std::distance(_convBuf.begin(), convBufIt) > 64) {
-                    // too many bits!
-                    _at = at;
-                    return boost::none;
-                }
+    if (AllowPrefixV && *_at == '0' && this->charsLeft() >= 2) {
+        if (_at[1] == 'b' || _at[1] == 'B' ||
+                _at[1] == 'x' || _at[1] == 'X' ||
+                _at[1] >= '1' && _at[1] <= '9') {
+            if (_at[1] == 'b' || _at[1] == 'B') {
+                // binary
+                _at += 2;
+                val = this->_tryScanConstBinInt<ValT>(negate);
+            } else if (_at[1] == 'x' || _at[1] == 'X') {
+                // hexadecimal
+                _at += 2;
+                val = this->_tryScanConstInt<ValT, 16>(negate);
+            } else if (_at[1] >= '1' && _at[1] <= '9') {
+                // octal: leave prefix to catch 0 too
+                val = this->_tryScanConstInt<ValT, 8>(negate);
             }
 
-            if (convBufIt == _convBuf.begin()) {
-                // `0b` followed by something else than `0` or `1`
+            if (!val) {
                 _at = at;
                 return boost::none;
             }
 
-            auto tmpValue = 0ULL;
-            auto curMul = 1ULL;
-            value = 0;
-            auto it = convBufIt - 1;
-
-            while (true) {
-                if (*it == '1') {
-                    tmpValue += curMul;
-                }
-
-                curMul *= 2;
-
-                if (it == _convBuf.begin()) {
-                    break;
-                }
-
-                --it;
-            }
-
-            if (std::is_signed<ValueT>::value) {
-                if (negate) {
-                    if (tmpValue > llMaxAsUll + 1) {
-                        _at = at;
-                        return boost::none;
-                    }
-                } else {
-                    if (tmpValue > llMaxAsUll) {
-                        _at = at;
-                        return boost::none;
-                    }
-                }
-            }
-
-            value = static_cast<ValueT>(tmpValue);
-
-            if (negate) {
-                value *= static_cast<ValueT>(-1);
-            }
-
-            return value;
+            return val;
         }
     }
 
-    char *strEnd = nullptr;
-    auto tmpValue = std::strtoull(&(*_at), &strEnd, 0);
+    // fall back to decimal
+    val = this->_tryScanConstInt<ValT, 10>(negate);
 
-    if ((tmpValue == 0 && &(*_at) == strEnd) || errno == ERANGE) {
+    if (!val) {
+        // no constant integer
         _at = at;
-        errno = 0;
-        return boost::none;
     }
 
-    if (std::is_signed<ValueT>::value) {
-        if (negate) {
-            if (tmpValue > llMaxAsUll + 1) {
-                _at = at;
-                return boost::none;
-            }
-        } else {
-            if (tmpValue > llMaxAsUll) {
-                _at = at;
-                return boost::none;
-            }
-        }
-    }
-
-    value = static_cast<ValueT>(tmpValue);
-    _at += (strEnd - &(*_at));
-
-    if (negate) {
-        value *= static_cast<ValueT>(-1);
-    }
-
-    return value;
+    return val;
 }
 
 /*
