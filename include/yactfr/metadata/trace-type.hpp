@@ -16,7 +16,7 @@
 #include "dst.hpp"
 #include "dt.hpp"
 #include "struct-type.hpp"
-#include "../item.hpp"
+#include "item.hpp"
 
 namespace yactfr {
 namespace internal {

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_ITEM_HPP
-#define _YACTFR_ITEM_HPP
+#ifndef _YACTFR_METADATA_ITEM_HPP
+#define _YACTFR_METADATA_ITEM_HPP
 
 #include <cassert>
 #include <string>
@@ -14,7 +14,7 @@
 #include <boost/noncopyable.hpp>
 
 #include "aliases.hpp"
-#include "internal/item-mixin.hpp"
+#include "../internal/metadata/item-mixin.hpp"
 
 namespace yactfr {
 
@@ -588,4 +588,4 @@ MapItem::UP createItem(MapItem::Container&& items);
 
 } // namespace yactfr
 
-#endif // _YACTFR_ITEM_HPP
+#endif // _YACTFR_METADATA_ITEM_HPP

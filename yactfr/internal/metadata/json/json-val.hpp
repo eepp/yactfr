@@ -15,7 +15,7 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
-#include <yactfr/internal/item-mixin.hpp>
+#include <yactfr/internal/metadata/item-mixin.hpp>
 
 namespace yactfr {
 namespace internal {

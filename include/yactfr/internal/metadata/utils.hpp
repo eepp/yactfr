@@ -14,7 +14,7 @@
 #include <map>
 #include <memory>
 
-#include "../../item.hpp"
+#include "../../metadata/item.hpp"
 
 namespace yactfr {
 namespace internal {

@@ -25,7 +25,7 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/trace-env.hpp>
-#include <yactfr/item.hpp>
+#include <yactfr/metadata/item.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/dst.hpp>

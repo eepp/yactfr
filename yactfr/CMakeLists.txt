@@ -21,6 +21,7 @@ add_library (
     from-metadata-text.cpp
     internal/metadata/data-loc-map.cpp
     internal/metadata/dt-from-pseudo-root-dt.cpp
+    internal/metadata/item.cpp
     internal/metadata/json/ctf-2-json-val-req.cpp
     internal/metadata/json/item-from-json-val.cpp
     internal/metadata/json/json-val-from-text.cpp
@@ -37,7 +38,6 @@ add_library (
     internal/proc.cpp
     internal/utils.cpp
     internal/vm.cpp
-    item.cpp
     logging/zf_log.c
     metadata/array-type.cpp
     metadata/blob-type.cpp

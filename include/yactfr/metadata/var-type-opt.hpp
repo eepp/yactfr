@@ -18,7 +18,7 @@
 
 #include "dt.hpp"
 #include "int-range-set.hpp"
-#include "../item.hpp"
+#include "item.hpp"
 
 namespace yactfr {
 

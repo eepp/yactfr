@@ -7,7 +7,7 @@
 
 #include <cassert>
 
-#include <yactfr/item.hpp>
+#include <yactfr/metadata/item.hpp>
 
 namespace yactfr {
 

@@ -13,7 +13,7 @@
 #include <boost/noncopyable.hpp>
 
 #include "fwd.hpp"
-#include "../item.hpp"
+#include "item.hpp"
 
 namespace yactfr {
 

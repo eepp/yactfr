@@ -16,7 +16,7 @@
 
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
-#include <yactfr/item.hpp>
+#include <yactfr/metadata/item.hpp>
 
 #include "../proc.hpp"
 #include "../utils.hpp"

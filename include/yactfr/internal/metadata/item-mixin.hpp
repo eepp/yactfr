@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_ITEM_MIXIN_HPP
-#define _YACTFR_INTERNAL_ITEM_MIXIN_HPP
+#ifndef _YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
+#define _YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
 
 #include <cassert>
 #include <string>
@@ -14,7 +14,7 @@
 #include <map>
 #include <memory>
 
-#include "../aliases.hpp"
+#include "../../aliases.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -211,4 +211,4 @@ protected:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_ITEM_MIXIN_HPP
+#endif // _YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP

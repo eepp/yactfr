@@ -16,7 +16,7 @@
 #include "aliases.hpp"
 #include "clk-offset.hpp"
 #include "clk-value-interval.hpp"
-#include "../item.hpp"
+#include "item.hpp"
 
 namespace yactfr {
 

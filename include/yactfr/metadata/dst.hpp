@@ -17,7 +17,7 @@
 #include "aliases.hpp"
 #include "ert.hpp"
 #include "struct-type.hpp"
-#include "../item.hpp"
+#include "item.hpp"
 
 namespace yactfr {
 namespace internal {

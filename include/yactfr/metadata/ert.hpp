@@ -14,7 +14,7 @@
 #include <boost/optional.hpp>
 
 #include "aliases.hpp"
-#include "../item.hpp"
+#include "item.hpp"
 
 namespace yactfr {
 namespace internal {
