@@ -7,7 +7,7 @@ trace {
 };
 
 env {
-  salut = "backslash \\ quote \" tab \t newline \n carriage return \r vertical tab \v unknown \u yeah";
+  salut = "backslash \\quote \" tab \t newline \n carriage return \r vertical tab \v unknown \u yeah";
 };
 
 event {
