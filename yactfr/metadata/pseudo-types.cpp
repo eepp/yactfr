@@ -515,6 +515,33 @@ void PseudoErt::_validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const
     }
 }
 
+static std::string pseudoDstIdenStr(const PseudoDst& pseudoDst)
+{
+    std::ostringstream ss;
+
+    ss << pseudoDst.id();
+
+    if (pseudoDst.name() || pseudoDst.ns()) {
+        ss << '(';
+
+        if (pseudoDst.name()) {
+            ss << "named `" << *pseudoDst.name() << '`';
+
+            if (pseudoDst.ns()) {
+                ss << ' ';
+            }
+        }
+
+        if (pseudoDst.ns()) {
+            ss << "within namespace `" << *pseudoDst.ns() << '`';
+        }
+
+        ss << ')';
+    }
+
+    return ss.str();
+}
+
 void PseudoErt::validate(const PseudoDst& pseudoDst) const
 {
     try {
@@ -524,7 +551,7 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
         std::ostringstream ss;
 
         ss << "In the event record type " << _id <<
-              " of data stream type " << pseudoDst.id() << ":";
+              " of data stream type " << pseudoDstIdenStr(pseudoDst) << ":";
         appendMsgToMetadataParseError(exc, ss.str());
         throw;
     }
@@ -628,17 +655,7 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
     } catch (MetadataParseError& exc) {
         std::ostringstream ss;
 
-        ss << "In data stream type " << _id;
-
-        if (_name) {
-            ss << " named `" << *_name << "`";
-        }
-
-        if (_ns) {
-            ss << " within namespace `" << *_ns << "`";
-        }
-
-        ss << ':';
+        ss << "In data stream type " << pseudoDstIdenStr(*this) << ':';
         appendMsgToMetadataParseError(exc, ss.str());
         throw;
     }
