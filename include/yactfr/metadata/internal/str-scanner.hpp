@@ -25,6 +25,43 @@ namespace yactfr {
 namespace internal {
 
 /*
+ * Invalid escape sequence error.
+ */
+class InvalEscapeSeq final :
+    public std::runtime_error
+{
+public:
+    explicit InvalEscapeSeq(std::string message, const Index offset, const Index lineNumber,
+                            const Index colNumber) :
+        std::runtime_error {std::move(message)},
+        _offset {offset},
+        _lineNumber {lineNumber},
+        _colNumber {colNumber}
+    {
+    }
+
+    Size offset() const noexcept
+    {
+        return _offset;
+    }
+
+    Size lineNumber() const noexcept
+    {
+        return _lineNumber;
+    }
+
+    Size colNumber() const noexcept
+    {
+        return _colNumber;
+    }
+
+private:
+    Size _offset;
+    Size _lineNumber;
+    Size _colNumber;
+};
+
+/*
  * String scanner.
  *
  * A string scanner wraps an input string using two random access `char`
@@ -350,6 +387,7 @@ private:
     boost::optional<ValT> _tryScanConstInt(bool negate);
 
     void _skipComment();
+    void _appendEscapedUnicodeChar(CharIt at);
 
     /*
      * Tries to append an escaped character to `_strBuf` from the
@@ -542,6 +580,54 @@ bool StrScanner<CharIt>::tryScanToken(const std::string& str)
 }
 
 template <typename CharIt>
+void StrScanner<CharIt>::_appendEscapedUnicodeChar(const CharIt at)
+{
+    // create array of four hex characters
+    const std::string hexCpBuf {at, at + 4};
+
+    // validate hex characters
+    for (const auto ch : hexCpBuf) {
+        if (!std::isxdigit(ch)) {
+            std::ostringstream ss;
+
+            ss << "In `\\u` escape sequence: unexpected character `" << ch << "`.";
+            throw InvalEscapeSeq {
+                ss.str(), static_cast<Index>(_at - _begin),
+                this->curLineNumber(), this->curColNumber()
+            };
+        }
+    }
+
+    // convert hex characters to integral codepoint (always works)
+    const auto cp = std::strtoull(hexCpBuf.data(), nullptr, 16);
+
+    // append UTF-8 bytes from integral codepoint
+    if (cp <= 0x7f) {
+        _strBuf.push_back(cp);
+    } else if (cp <= 0x7ff) {
+        _strBuf.push_back(static_cast<char>((cp >> 6) + 192));
+        _strBuf.push_back(static_cast<char>((cp & 63) + 128));
+    } else if (cp > 0xd800 && cp <= 0xdfff) {
+        std::ostringstream ss;
+
+        ss << "In `\\u` escape sequence: invalid codepoint " << cp << ".";
+        throw InvalEscapeSeq {
+            ss.str(), static_cast<Index>(_at - _begin),
+            this->curLineNumber(), this->curColNumber()
+        };
+    } else if (cp <= 0xffff) {
+        _strBuf.push_back(static_cast<char>((cp >> 12) + 224));
+        _strBuf.push_back(static_cast<char>(((cp >> 6) & 63) + 128));
+        _strBuf.push_back(static_cast<char>((cp & 63) + 128));
+    } else if (cp <= 0x10ffff) {
+        _strBuf.push_back(static_cast<char>((cp >> 18) + 240));
+        _strBuf.push_back(static_cast<char>(((cp >> 12) & 63) + 128));
+        _strBuf.push_back(static_cast<char>(((cp >> 6) & 63) + 128));
+        _strBuf.push_back(static_cast<char>((cp & 63) + 128));
+    }
+}
+
+template <typename CharIt>
 bool StrScanner<CharIt>::_tryAppendEscapedChar(const char * const escapeSeqStartList)
 {
     if (this->charsLeft() < 2) {
@@ -556,42 +642,56 @@ bool StrScanner<CharIt>::_tryAppendEscapedChar(const char * const escapeSeqStart
 
     while (*escapeSeqStart != '\0') {
         if (_at[1] == '"' || _at[1] == *escapeSeqStart) {
-            switch (_at[1]) {
-            case 'a':
-                _strBuf.push_back('\a');
-                break;
+            if (_at[1] == 'u') {
+                if (this->charsLeft() < 6) {
+                    throw InvalEscapeSeq {
+                        "`\\u` escape sequence needs four hexadecimal digits.",
+                        static_cast<Index>(_at - _begin),
+                        this->curLineNumber(), this->curColNumber()
+                    };
+                }
 
-            case 'b':
-                _strBuf.push_back('\b');
-                break;
+                this->_appendEscapedUnicodeChar(_at + 2);
+                _at += 6;
+            } else {
+                switch (_at[1]) {
+                case 'a':
+                    _strBuf.push_back('\a');
+                    break;
 
-            case 'f':
-                _strBuf.push_back('\f');
-                break;
+                case 'b':
+                    _strBuf.push_back('\b');
+                    break;
 
-            case 'n':
-                _strBuf.push_back('\n');
-                break;
+                case 'f':
+                    _strBuf.push_back('\f');
+                    break;
 
-            case 'r':
-                _strBuf.push_back('\r');
-                break;
+                case 'n':
+                    _strBuf.push_back('\n');
+                    break;
 
-            case 't':
-                _strBuf.push_back('\t');
-                break;
+                case 'r':
+                    _strBuf.push_back('\r');
+                    break;
 
-            case 'v':
-                _strBuf.push_back('\v');
-                break;
+                case 't':
+                    _strBuf.push_back('\t');
+                    break;
 
-            default:
-                // as is
-                _strBuf.push_back(_at[1]);
-                break;
+                case 'v':
+                    _strBuf.push_back('\v');
+                    break;
+
+                default:
+                    // as is
+                    _strBuf.push_back(_at[1]);
+                    break;
+                }
+
+                _at += 2;
             }
 
-            _at += 2;
             return true;
         }
 

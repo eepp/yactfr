@@ -669,7 +669,11 @@ private:
 
         const auto loc = this->_curLoc();
 
-        litStr = _ss.tryScanLitStr("abfnrtv'?\\");
+        try {
+            litStr = _ss.tryScanLitStr("abfnrtv'?\\");
+        } catch (const InvalEscapeSeq& exc) {
+            throwMetadataParseError(exc.what(), TextLocation {exc.lineNumber(), exc.colNumber()});
+        }
 
         if (!litStr) {
             return nullptr;
