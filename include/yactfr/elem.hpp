@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_ELEMENT_HPP
-#define _YACTFR_ELEMENT_HPP
+#ifndef _YACTFR_ELEM_HPP
+#define _YACTFR_ELEM_HPP
 
 #include <cstdint>
 #include <string>
@@ -1498,4 +1498,4 @@ public:
 
 } // namespace yactfr
 
-#endif // _YACTFR_ELEMENT_HPP
+#endif // _YACTFR_ELEM_HPP
