@@ -81,7 +81,10 @@ yactfr_create_all_streams (
     pass-pkt-header-stream-instance-id-nt-str
     pass-pkt-header-uuid-sl-array-of-nt-strs
     pass-pkt-header-uuid-nt-str
+    pass-pkt-disc-er-counter-snap
+    pass-pkt-disc-er-counter-snap-alt
     pass-pkt-seq-num
+    pass-pkt-seq-num-alt
     pass-pkt-total-len-no-pkt-content-len
     pass-sl-strs
     pass-std-fl-enums
@@ -153,7 +156,10 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-stream-instance-id-nt-str/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-sl-array-of-nt-strs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-header-uuid-nt-str/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-disc-er-counter-snap/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-disc-er-counter-snap-alt/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-seq-num/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-seq-num-alt/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-total-len-no-pkt-content-len/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-sl-strs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-fl-enums/metadata"

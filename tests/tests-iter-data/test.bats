@@ -233,6 +233,18 @@ test_iter_data() {
   test_iter_data pass-pkt-seq-num
 }
 
+@test 'packet sequence number: alternating -> pass' {
+  test_iter_data pass-pkt-seq-num-alt
+}
+
+@test 'discarded event record counter snapshot -> pass' {
+  test_iter_data pass-pkt-disc-er-counter-snap
+}
+
+@test 'discarded event record counter snapshot: alternating -> pass' {
+  test_iter_data pass-pkt-disc-er-counter-snap-alt
+}
+
 @test 'packet total length without packet content length -> pass' {
   test_iter_data pass-pkt-total-len-no-pkt-content-len
 }
