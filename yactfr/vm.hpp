@@ -700,7 +700,7 @@ private:
     {
         const auto offset = _pos.headOffsetInElemSeqBits();
 
-        // readjust buffer address and offsets
+        // adjust buffer address and offsets
         _pos.curPktOffsetInElemSeqBits = _pos.headOffsetInElemSeqBits();
         _pos.headOffsetInCurPktBits = 0;
         assert((_pos.curPktOffsetInElemSeqBits & 7) == 0);
