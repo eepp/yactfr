@@ -769,6 +769,14 @@ PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned
 {
 }
 
+bool PseudoTraceType::hasClkType(const std::string& name) const noexcept
+{
+    return std::find_if(_clkTypes.begin(), _clkTypes.end(),
+                        [&name](const auto& clkType) {
+        return clkType->name() == name;
+    }) != _clkTypes.end();
+}
+
 void PseudoTraceType::validate() const
 {
     // validate that all orphan ERTs match the real ERTs

@@ -1991,13 +1991,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     }
 
     // make sure clock type doesn't exist
-    const auto res = std::find_if(_pseudoTraceType->clkTypes().begin(),
-                                  _pseudoTraceType->clkTypes().end(),
-                                  [&name](const auto& clkType) {
-        return clkType->name() == name;
-    });
-
-    if (res != _pseudoTraceType->clkTypes().end()) {
+    if (_pseudoTraceType->hasClkType(name)) {
         std::ostringstream ss;
 
         ss << "Duplicate `clock` block named `" << name << "`.";

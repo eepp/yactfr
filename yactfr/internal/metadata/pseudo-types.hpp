@@ -1081,6 +1081,8 @@ public:
         return _clkTypes;
     }
 
+    bool hasClkType(const std::string& name) const noexcept;
+
     const PseudoDsts& pseudoDsts() const noexcept
     {
         return _pseudoDsts;
