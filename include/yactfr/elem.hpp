@@ -2140,7 +2140,7 @@ protected:
 
 public:
     /// Value as an unsigned integer.
-    std::uint64_t unsignedIntegerValue() const noexcept
+    unsigned long long unsignedIntegerValue() const noexcept
     {
         return _theVal.u;
     }
@@ -2182,8 +2182,8 @@ private:
 
 protected:
     union {
-        std::uint64_t u;
-        std::int64_t i;
+        unsigned long long u;
+        long long i;
         double d;
     } _theVal;
 };
@@ -2244,29 +2244,6 @@ public:
     {
         visitor.visit(*this);
     }
-
-private:
-    void _val(const std::uint64_t val) noexcept
-    {
-        _theVal.u = val;
-    }
-
-    void _val(const std::int64_t val) noexcept
-    {
-        _theVal.i = val;
-    }
-
-    void _val(const double val) noexcept
-    {
-        _theVal.d = val;
-    }
-
-protected:
-    union {
-        std::uint64_t u;
-        std::int64_t i;
-        double d;
-    } _theVal;
 };
 
 /*!
