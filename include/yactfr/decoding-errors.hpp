@@ -47,6 +47,8 @@ class DecodingError :
 
 protected:
     explicit DecodingError(std::string reason, Index offset);
+
+public:
     DecodingError(const DecodingError&) = default;
     DecodingError& operator=(const DecodingError&) = default;
 
