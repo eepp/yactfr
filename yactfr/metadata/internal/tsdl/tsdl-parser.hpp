@@ -57,7 +57,7 @@ namespace internal {
 /*
  * TSDL metadata stream parser.
  *
- * This parser parses a CTF (TSDL) metadata string and then contains:
+ * This parser parses a CTF 1 (TSDL) metadata string and then contains:
  *
  * * A corresponding trace type object.
  * * A corresponding trace environment object.
@@ -70,7 +70,7 @@ class TsdlParser final
 public:
     /*
      * Builds a metadata parser, wrapping a string between `begin`
-     * (included) and `end` (excluded) and parses it.
+     * (included) and `end` (excluded), and parses it.
      *
      * You can release the resulting trace type from this parser with
      * releaseTraceType() and get the trace environment with traceEnv().
@@ -267,7 +267,7 @@ private:
 private:
     /*
      * Parses the whole metadata string, creating the resulting trace
-     * type and trace environment on success, throwing an exception
+     * type and trace environment on success, throwing `TextParseError`
      * otherwise.
      */
     void _parseMetadata();
@@ -384,9 +384,10 @@ private:
      * `firstName` and optional `secondName` are the one or two words
      * naming the scope, e.g., `event` and `header`, or just `context`.
      *
-     * If `expect` is true, then the method throws if it cannot parse
-     * the scope data type successfully. Otherwise, the method can
-     * return `nullptr` if it cannot parse the scope data type.
+     * If `expect` is true, then the method throws `TextParseError` if
+     * it cannot parse the scope data type successfully. Otherwise, the
+     * method can return `nullptr` if it cannot parse the scope data
+     * type.
      *
      * Examples:
      *
@@ -440,9 +441,9 @@ private:
      *
      * On success, `dtAliasName` contains the name of the alias.
      *
-     * If `expect` is true, then the method throws if it fails to parse
-     * a data type alias name. Otherwise, returns whether or not a data
-     * type alias name was parsed.
+     * If `expect` is true, then the method throws `TextParseError` if
+     * it fails to parse a data type alias name. Otherwise, returns
+     * whether or not a data type alias name was parsed.
      *
      * Examples:
      *
@@ -499,8 +500,8 @@ private:
     PseudoDt::UP _tryParseDtAliasRef();
 
     /*
-     * Expects the specific token `token`, throwing an exception if not
-     * found.
+     * Expects the specific token `token`, throwing `TextParseError` if
+     * not found.
      */
     void _expectToken(const char *token);
 
@@ -890,7 +891,7 @@ private:
 
     /*
      * Checks for duplicate named data types in `entries` (by name),
-     * throwing an error if any is found.
+     * throwing `TextParseError` if any is found.
      */
     static void _checkDupPseudoNamedDt(const PseudoNamedDts& entries, const TextLocation& loc);
 
@@ -907,8 +908,8 @@ private:
     [[ noreturn ]] static void _throwMissingAttr(const std::string& name, const TextLocation& loc);
 
     /*
-     * Checks for duplicate attributes in `attrs`, throwing an error if
-     * any is found.
+     * Checks for duplicate attributes in `attrs`, throwing
+     * `TextParseError` if any is found.
      */
     static void _checkDupAttr(const _Attrs& attrs);
 
