@@ -251,7 +251,9 @@ public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
                               DisplayBase prefDispBase, bool hasEncoding = false,
                               boost::optional<std::string> mappedClkTypeName = boost::none,
-                              MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                              MapItem::UP userAttrs = nullptr,
+                              UnsignedIntegerTypeRoleSet roles = {},
+                              TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -337,7 +339,9 @@ public:
                                FixedLengthUnsignedEnumerationType::Mappings mappings,
                                bool hasEncoding = false,
                                boost::optional<std::string> mappedClkTypeName = boost::none,
-                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                               MapItem::UP userAttrs = nullptr,
+                               UnsignedIntegerTypeRoleSet roles = {},
+                               TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {

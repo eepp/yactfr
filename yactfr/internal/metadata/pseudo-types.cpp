@@ -117,7 +117,8 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
                                    const ByteOrder bo, const DisplayBase prefDispBase,
                                    const bool hasEncoding,
                                    boost::optional<std::string> mappedClkTypeName,
-                                   MapItem::UP userAttrs, TextLocation loc) :
+                                   MapItem::UP userAttrs, UnsignedIntegerTypeRoleSet roles,
+                                   TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithUserAttrsMixin {std::move(userAttrs)},
     _align {align},
@@ -125,7 +126,8 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
     _bo {bo},
     _prefDispBase {prefDispBase},
     _hasEncoding {hasEncoding},
-    _mappedClkTypeName {std::move(mappedClkTypeName)}
+    _mappedClkTypeName {std::move(mappedClkTypeName)},
+    _roles {std::move(roles)}
 {
 }
 
@@ -133,7 +135,8 @@ PseudoDt::UP PseudoFlUIntType::clone() const
 {
     return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
                                               _mappedClkTypeName,
-                                              tryCloneUserAttrs(this->userAttrs()), this->loc());
+                                              tryCloneUserAttrs(this->userAttrs()), this->roles(),
+                                              this->loc());
 }
 
 void PseudoFlUIntType::accept(PseudoDtVisitor& visitor)
@@ -166,10 +169,12 @@ PseudoFlUEnumType::PseudoFlUEnumType(const unsigned int align, const unsigned in
                                      FixedLengthUnsignedEnumerationType::Mappings mappings,
                                      const bool hasEncoding,
                                      boost::optional<std::string> mappedClkTypeName,
-                                     MapItem::UP userAttrs, TextLocation loc) :
+                                     MapItem::UP userAttrs, UnsignedIntegerTypeRoleSet roles,
+                                     TextLocation loc) :
     PseudoFlUIntType {
         align, len, bo, prefDispBase, hasEncoding,
-        std::move(mappedClkTypeName), std::move(userAttrs), std::move(loc)
+        std::move(mappedClkTypeName), std::move(userAttrs),
+        std::move(roles), std::move(loc)
     },
     _mappings {std::move(mappings)}
 {
@@ -180,7 +185,8 @@ PseudoDt::UP PseudoFlUEnumType::clone() const
     return std::make_unique<PseudoFlUEnumType>(this->align(), this->len(), this->bo(),
                                                this->prefDispBase(), _mappings,
                                                this->hasEncoding(), this->mappedClkTypeName(),
-                                               tryCloneUserAttrs(this->userAttrs()), this->loc());
+                                               tryCloneUserAttrs(this->userAttrs()), this->roles(),
+                                               this->loc());
 }
 
 void PseudoFlUEnumType::accept(PseudoDtVisitor& visitor)

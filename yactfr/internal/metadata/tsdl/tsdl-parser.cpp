@@ -1272,7 +1272,8 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
                                                            beforeKwLoc);
     } else {
         pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, hasEncoding,
-                                                      mappedClkTypeName, nullptr, beforeKwLoc);
+                                                      mappedClkTypeName, nullptr,
+                                                      UnsignedIntegerTypeRoleSet {}, beforeKwLoc);
     }
 
     assert(pseudoDt);
@@ -1367,7 +1368,7 @@ PseudoDt::UP TsdlParser::_tryParseFlFloatType()
                                                                                 expDig + mantDig,
                                                                                 bo);
 
-    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), false, beginLoc);
+    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), beginLoc);
 }
 
 PseudoDt::UP TsdlParser::_tryParseNtStrType()
@@ -1384,7 +1385,7 @@ PseudoDt::UP TsdlParser::_tryParseNtStrType()
     // try to parse `{`
     if (!_ss.tryScanToken("{")) {
         return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
-                                                       false, beginLoc);
+                                                       beginLoc);
     }
 
     // parse attributes
@@ -1416,7 +1417,7 @@ PseudoDt::UP TsdlParser::_tryParseNtStrType()
     }
 
     return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
-                                                   false, beginLoc);
+                                                   beginLoc);
 }
 
 PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
@@ -1530,6 +1531,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                        pseudoUIntType.prefDispBase(), mappings,
                                                        pseudoUIntType.hasEncoding(),
                                                        pseudoUIntType.mappedClkTypeName(), nullptr,
+                                                       UnsignedIntegerTypeRoleSet {},
                                                        pseudoDt.loc());
         });
     } else {
@@ -1544,8 +1546,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                                                mappings,
                                                                                intType.preferredDisplayBase());
 
-            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), false,
-                                                           pseudoDt.loc());
+            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), pseudoDt.loc());
         });
     }
 }
