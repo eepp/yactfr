@@ -212,10 +212,10 @@ public:
         std::ios init {nullptr};
 
         init.copyfmt(*_os);
-        *_os << std::hex << std::setw(2) << std::setfill('0');
+        *_os << std::hex << std::setfill('0');
 
         for (const auto byte : elem) {
-            *_os << static_cast<unsigned int>(byte);
+            *_os << std::setw(2) << static_cast<unsigned int>(byte);
         }
 
         _os->copyfmt(init);
