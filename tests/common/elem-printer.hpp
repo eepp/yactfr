@@ -124,8 +124,8 @@ public:
             *_os << ':' << *elem.endDefaultClockValue();
         }
 
-        if (elem.originIndex()) {
-            *_os << ':' << *elem.originIndex();
+        if (elem.sequenceNumber()) {
+            *_os << ':' << *elem.sequenceNumber();
         }
 
         *_os << '\n';

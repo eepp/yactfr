@@ -86,7 +86,7 @@ void PktProcBuilder::_buildPktProc()
      *    object.
      *
      * 3. Insert `SetCurIdInstr`, `SetDstInstr`, `SetErtInstr`,
-     *    `SetDsIdInstr`, `SetPktOriginIndexInstr`,
+     *    `SetDsIdInstr`, `SetPktSeqNumInstr`,
      *    `SetExpectedPktTotalLenInstr`,
      *    `SetExpectedPktContentLenInstr`, `SetPktMagicNumberInstr`,
      *    `UpdateDefClkValInstr`, `UpdateDefClkValFlInstr`, and
@@ -406,10 +406,10 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER,
             [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
-                                      std::make_shared<SetPktOriginIndexInstr>());
+                                      std::make_shared<SetPktSeqNumInstr>());
             }
         };
 

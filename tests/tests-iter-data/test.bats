@@ -229,8 +229,8 @@ test_iter_data() {
   test_iter_data pass-pkt-content-len-no-pkt-total-len
 }
 
-@test 'packet origin index -> pass' {
-  test_iter_data pass-pkt-origin-index
+@test 'packet sequence number -> pass' {
+  test_iter_data pass-pkt-seq-num
 }
 
 @test 'packet total length without packet content length -> pass' {

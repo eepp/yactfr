@@ -1256,7 +1256,7 @@ private:
     _ExecReaction _execSetDst(const Instr& instr);
     _ExecReaction _execSetErt(const Instr& instr);
     _ExecReaction _execSetDsId(const Instr& instr);
-    _ExecReaction _execSetPktOriginIndex(const Instr& instr);
+    _ExecReaction _execSetPktSeqNum(const Instr& instr);
     _ExecReaction _execSetPktTotalLen(const Instr& instr);
     _ExecReaction _execSetPktContentLen(const Instr& instr);
     _ExecReaction _execSetPktMagicNumber(const Instr& instr);

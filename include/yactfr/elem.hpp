@@ -616,19 +616,13 @@ public:
 
     /*!
     @brief
-        Numeric origin index of the current packet
+        Numeric sequence number of the current packet
         within its <em>data stream</em> (\em not within its element
         sequence).
-
-    @note
-        This is sometimes called <em>packet sequence number</em> in the
-        specification terminology, although this term would be confusing
-        in yactfr's scope since an ElementSequence object can "contain"
-        packets from different data streams.
     */
-    const boost::optional<Index>& originIndex() const noexcept
+    const boost::optional<Index>& sequenceNumber() const noexcept
     {
-        return _originIndex;
+        return _seqNum;
     }
 
     /*!
@@ -674,14 +668,14 @@ public:
 private:
     void _reset() noexcept
     {
-        _originIndex = boost::none;
+        _seqNum = boost::none;
         _expectedTotalLen = boost::none;
         _expectedContentLen = boost::none;
         _endDefClkVal = boost::none;
     }
 
 private:
-    boost::optional<Index> _originIndex;
+    boost::optional<Index> _seqNum;
     boost::optional<Size> _expectedTotalLen;
     boost::optional<Size> _expectedContentLen;
     boost::optional<Cycles> _endDefClkVal;

@@ -138,7 +138,7 @@ class SetErInfoInstr;
 class SetExpectedPktContentLenInstr;
 class SetPktEndDefClkValInstr;
 class SetPktMagicNumberInstr;
-class SetPktOriginIndexInstr;
+class SetPktSeqNumInstr;
 class SetExpectedPktTotalLenInstr;
 class SetPktInfoInstr;
 class UpdateDefClkValInstr;
@@ -288,7 +288,7 @@ public:
     {
     }
 
-    virtual void visit(SetPktOriginIndexInstr& instr)
+    virtual void visit(SetPktSeqNumInstr& instr)
     {
     }
 
@@ -532,7 +532,7 @@ public:
         SET_PKT_CONTENT_LEN,
         SET_PKT_END_DEF_CLK_VAL,
         SET_PKT_MAGIC_NUMBER,
-        SET_PKT_ORIGIN_INDEX,
+        SET_PKT_SEQ_NUM,
         SET_PKT_TOTAL_LEN,
         SET_PKT_INFO,
         UPDATE_DEF_CLK_VAL,
@@ -2015,16 +2015,16 @@ public:
 };
 
 /*
- * "Set packet origin index" procedure instruction.
+ * "Set packet sequence number" procedure instruction.
  *
- * This instruction requires the VM to set the packet origin index
- * (sequence number) to the last decoded value.
+ * This instruction requires the VM to set the packet sequence number to
+ * the last decoded value.
  */
-class SetPktOriginIndexInstr final :
+class SetPktSeqNumInstr final :
     public Instr
 {
 public:
-    explicit SetPktOriginIndexInstr();
+    explicit SetPktSeqNumInstr();
 
     void accept(InstrVisitor& visitor) override
     {

@@ -205,7 +205,7 @@ void TsdlParser::_addPseudoDtRoles()
             this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "discarded_events",
                                             UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT);
             this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_seq_num",
-                                            UnsignedIntegerTypeRole::PACKET_ORIGIN_INDEX);
+                                            UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER);
         }
 
         if (pseudoDst->pseudoErHeaderType()) {

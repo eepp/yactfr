@@ -520,8 +520,8 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "SET_DS_ID";
         break;
 
-    case Kind::SET_PKT_ORIGIN_INDEX:
-        kindStr = "SET_PKT_ORIGIN_INDEX";
+    case Kind::SET_PKT_SEQ_NUM:
+        kindStr = "SET_PKT_SEQ_NUM";
         break;
 
     case Kind::SET_PKT_TOTAL_LEN:
@@ -1437,8 +1437,8 @@ SetErtInstr::SetErtInstr(boost::optional<TypeId> fixedId) :
 {
 }
 
-SetPktOriginIndexInstr::SetPktOriginIndexInstr() :
-    Instr {Kind::SET_PKT_ORIGIN_INDEX}
+SetPktSeqNumInstr::SetPktSeqNumInstr() :
+    Instr {Kind::SET_PKT_SEQ_NUM}
 {
 }
 

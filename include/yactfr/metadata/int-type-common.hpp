@@ -95,8 +95,8 @@ enum class UnsignedIntegerTypeRole
     /// Discarded event record counter snapshot.
     DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT,
 
-    /// Packet origin index.
-    PACKET_ORIGIN_INDEX,
+    /// Packet sequence number.
+    PACKET_SEQUENCE_NUMBER,
 
     /// \link EventRecordType Event record type\endlink ID.
     EVENT_RECORD_TYPE_ID,
