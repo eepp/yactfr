@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_JSON_VAL_HPP
-#define _YACTFR_METADATA_INTERNAL_JSON_VAL_HPP
+#ifndef _YACTFR_METADATA_INTERNAL_JSON_JSON_VAL_HPP
+#define _YACTFR_METADATA_INTERNAL_JSON_JSON_VAL_HPP
 
 #include <cassert>
 #include <string>
@@ -404,4 +404,4 @@ JsonObjVal::UP createJsonVal(JsonObjVal::Container&& items, TextLocation loc);
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_JSON_VAL_HPP
+#endif // _YACTFR_METADATA_INTERNAL_JSON_JSON_VAL_HPP
