@@ -28,7 +28,7 @@ class PacketizedMetadataStream final :
     friend std::unique_ptr<const MetadataStream> createMetadataStream(std::istream&);
 
 private:
-    explicit PacketizedMetadataStream(std::string&& text, Size pktCount, unsigned int majorVersion,
+    explicit PacketizedMetadataStream(std::string text, Size pktCount, unsigned int majorVersion,
                                       unsigned int minorVersion, ByteOrder bo,
                                       boost::uuids::uuid uuid);
 

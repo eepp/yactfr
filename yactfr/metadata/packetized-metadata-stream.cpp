@@ -10,7 +10,7 @@
 
 namespace yactfr {
 
-PacketizedMetadataStream::PacketizedMetadataStream(std::string&& text, const Size pktCount,
+PacketizedMetadataStream::PacketizedMetadataStream(std::string text, const Size pktCount,
                                                    const unsigned int majorVersion,
                                                    const unsigned int minorVersion,
                                                    const ByteOrder bo, boost::uuids::uuid uuid) :

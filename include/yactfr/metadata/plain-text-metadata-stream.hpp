@@ -30,7 +30,7 @@ class PlainTextMetadataStream final :
     friend std::unique_ptr<const MetadataStream> createMetadataStream(std::istream&);
 
 private:
-    explicit PlainTextMetadataStream(std::string&& text);
+    explicit PlainTextMetadataStream(std::string text);
 };
 
 } // namespace yactfr
