@@ -803,8 +803,6 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execEndReadScope(const Instr& instr)
 {
-    const auto& endReadScopeInstr = static_cast<const EndReadScopeInstr&>(instr);
-
     this->_updateItCurOffset(_pos.elems.end);
     _pos.stackPop();
     assert(_pos.state() == VmState::EXEC_INSTR);
@@ -993,8 +991,6 @@ Vm::_ExecReaction Vm::_execSaveVal(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execSetPktEndDefClkVal(const Instr& instr)
 {
-    const auto& setPktEndDefClkValInstr = static_cast<const SetPktEndDefClkValInstr&>(instr);
-
     _pos.elems.pktInfo._endDefClkVal = _pos.lastIntVal.u;
     return _ExecReaction::EXEC_NEXT_INSTR;
 }

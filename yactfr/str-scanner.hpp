@@ -740,7 +740,7 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
     if (AllowPrefixV && *_at == '0' && this->charsLeft() >= 2) {
         if (_at[1] == 'b' || _at[1] == 'B' ||
                 _at[1] == 'x' || _at[1] == 'X' ||
-                _at[1] >= '1' && _at[1] <= '9') {
+                (_at[1] >= '1' && _at[1] <= '9')) {
             if (_at[1] == 'b' || _at[1] == 'B') {
                 // binary
                 _at += 2;
@@ -778,8 +778,6 @@ template <bool SkipWsV, bool SkipCommentsV>
 boost::optional<double> StrScanner::tryScanConstReal()
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
-
-    const auto at = _at;
 
     /*
      * Validate JSON number format (with fraction and/or exponent part).

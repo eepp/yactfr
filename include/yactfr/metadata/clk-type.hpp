@@ -141,8 +141,8 @@ public:
     }
 
 private:
-    const boost::optional<std::string> _name;
     const unsigned long long _freq;
+    const boost::optional<std::string> _name;
     const boost::optional<std::string> _descr;
     const boost::optional<boost::uuids::uuid> _uuid;
     const Cycles _prec;

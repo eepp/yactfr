@@ -1265,7 +1265,7 @@ std::string BeginReadScopeInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("scope") << scopeStr(_scope) <<
+    ss << " " << _strProp("scope") << _strScopeName(scopeStr(_scope)) <<
           " " << _strProp("align") << _align << std::endl;
     ss << _proc.toStr(indent + 1);
     return ss.str();

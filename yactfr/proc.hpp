@@ -896,7 +896,7 @@ class SaveValInstr final :
 public:
     explicit SaveValInstr(Index pos);
 
-    const Index pos() const noexcept
+    Index pos() const noexcept
     {
         return _pos;
     }
@@ -1453,7 +1453,7 @@ public:
         return static_cast<const DynamicLengthArrayType&>(this->dt());
     }
 
-    const Index lenPos() const noexcept
+    Index lenPos() const noexcept
     {
         return _lenPos;
     }
@@ -1492,7 +1492,7 @@ public:
         return static_cast<const DynamicLengthStringType&>(this->dt());
     }
 
-    const Index maxLenPos() const noexcept
+    Index maxLenPos() const noexcept
     {
         return _maxLenPos;
     }
@@ -1586,7 +1586,7 @@ public:
         return static_cast<const DynamicLengthBlobType&>(this->dt());
     }
 
-    const Index lenPos() const noexcept
+    Index lenPos() const noexcept
     {
         return _lenPos;
     }
@@ -1750,7 +1750,7 @@ public:
         return nullptr;
     }
 
-    const Index selPos() const noexcept
+    Index selPos() const noexcept
     {
         return _selPos;
     }
@@ -1823,7 +1823,7 @@ public:
         return static_cast<const OptionalType&>(this->dt());
     }
 
-    const Index selPos() const noexcept
+    Index selPos() const noexcept
     {
         return _selPos;
     }

@@ -2628,7 +2628,7 @@ PseudoDt::UP TsdlParser::_tryParseDtAliasRef()
             const std::string kw {*ident};
 
             if (kw == "enum" || kw == "struct") {
-                if (ident = _ss.tryScanIdent()) {
+                if ((ident = _ss.tryScanIdent())) {
                     if (!_ss.tryScanToken("{") && !_ss.tryScanToken(":")) {
                         std::string dtAliasName = kw + ' ';
 

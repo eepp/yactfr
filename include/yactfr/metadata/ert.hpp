@@ -145,8 +145,8 @@ private:
 
 private:
     const TypeId _id;
-    const boost::optional<std::string> _name;
     const boost::optional<std::string> _ns;
+    const boost::optional<std::string> _name;
     const boost::optional<LogLevel> _logLevel;
     const boost::optional<std::string> _emfUri;
     std::unique_ptr<const StructureType> _specCtxType;

@@ -374,7 +374,7 @@ void MetadataStreamDecoder::_readPacketized()
                 std::ostringstream ss;
 
                 ss << "content size (" <<
-                      static_cast<unsigned  const int>(header->contentSize) <<
+                      static_cast<unsigned int>(header->contentSize) <<
                       ") is greater than total size (" <<
                       static_cast<unsigned int>(header->totalSize) << ").";
                 this->_throwInvalid(curPktOffset, ss.str());

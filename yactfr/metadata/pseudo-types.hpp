@@ -1048,7 +1048,7 @@ public:
 
     unsigned int minorVersion() const noexcept
     {
-        return _majorVersion;
+        return _minorVersion;
     }
 
     ByteOrder nativeBo() const noexcept
