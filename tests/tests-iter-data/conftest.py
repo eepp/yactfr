@@ -182,7 +182,8 @@ typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
 
 class _StreamsItem(pytest.Item):
     def __init__(self, parent, path):
-        super().__init__(parent=parent, name=os.path.splitext(os.path.basename(path))[0])
+        name = name=os.path.splitext(os.path.basename(path))[0].replace('.', '-')
+        super().__init__(parent=parent, name=name)
         self._path = path
 
     def runtest(self):

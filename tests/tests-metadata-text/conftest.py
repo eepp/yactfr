@@ -31,7 +31,7 @@ import pathlib
 class _MetadataTextItem(pytest.Item):
     def __init__(self, parent, path):
         self._basename = os.path.basename(path)
-        super().__init__(parent=parent, name=self._basename)
+        super().__init__(parent=parent, name=self._basename.replace('.', '-'))
         self._path = path
 
     def runtest(self):
