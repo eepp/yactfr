@@ -49,8 +49,7 @@ namespace internal {
  * accept(), and reject() manually (see StrScannerRejecter) when
  * possible.
  *
- * The variable string parsing methods, like scanIdent() and
- * scanLitStr(), don't copy anything: the `begin` and `end` iterator
+ * tryScanIdent() doesn't copy anything: the `begin` and `end` iterator
  * reference parameters are set to the limits of the parsed string, if
  * any is found.
  */
@@ -203,27 +202,35 @@ public:
     }
 
     /*
-     * Scans a C identifier, placing the current iterator after this
-     * string on success.
+     * Tries to scan a C identifier, placing the current iterator after
+     * this string on success.
+     *
+     * Returns the identifier string or `nullptr` if there's no
+     * identifier.
+     *
+     * The returned string remains valid as long as you don't call any
+     * method of this object.
      */
-    bool scanIdent(CharIt& begin, CharIt& end)
+    const std::string *tryScanIdent()
     {
         this->skipCommentsAndWhitespaces();
-        begin = _at;
 
         // first character: `_` or alpha
         const auto c = this->_scanAnyChar();
 
         if (c < 0) {
-            return false;
+            return nullptr;
         }
 
         auto chr = static_cast<char>(c);
 
         if (chr != '_' && !std::isalpha(chr)) {
             --_at;
-            return false;
+            return nullptr;
         }
+
+        _strBuf.clear();
+        _strBuf.push_back(chr);
 
         // other characters: `_` or alphanumeric
         while (!this->isDone()) {
@@ -233,21 +240,28 @@ public:
                 break;
             }
 
+            _strBuf.push_back(chr);
             ++_at;
         }
 
-        end = _at;
-        return true;
+        return &_strBuf;
     }
 
     /*
-     * Scans a double-quoted literal string, advancing the current
-     * iterator after the closing double quote on success.
+     * Tries to scan a double-quoted literal string, considering the
+     * characters of `escapeSeqStartList` and `"` as escape sequence
+     * starting characters, placing the current iterator after the
+     * closing double quote on success.
      *
-     * The string from `begin` to `end` excludes the double quotes, but
-     * includes escape characters.
+     * Returns the escaped string, without beginning/end double quotes,
+     * on success, or `nullptr` if there's no double-quoted literal
+     * string (or if the method reaches the end iterator before a
+     * closing `"`).
+     *
+     * The returned string remains valid as long as you don't call any
+     * method of this object.
      */
-    bool scanLitStr(CharIt& begin, CharIt& end)
+    const std::string *tryScanLitStr(const char * const escapeSeqStartList)
     {
         this->skipCommentsAndWhitespaces();
 
@@ -259,33 +273,35 @@ public:
         auto c = this->_scanAnyChar();
 
         if (c < 0) {
-            return false;
+            return nullptr;
         }
 
         if (c != '"') {
             _at = at;
             _lineBegin = lineBegin;
             _nbLines = nbLines;
-            return false;
+            return nullptr;
         }
 
-        begin = _at;
+        _strBuf.clear();
 
         while (!this->isDone()) {
-            // scan escape character first
-            if (this->_scanEscapeChar("\\nrtv\"") > 0) {
+            // try to append escape character first
+            if (this->_tryAppendEscapedChar(escapeSeqStartList)) {
                 continue;
             }
 
             // check for end of string
             if (*_at == '"') {
-                end = _at;
                 ++_at;
-                return true;
+                return &_strBuf;
             }
 
             // check for newline
             this->_checkNewLine();
+
+            // append character
+            _strBuf.push_back(*_at);
 
             // go to next character
             ++_at;
@@ -295,7 +311,7 @@ public:
         _at = at;
         _lineBegin = lineBegin;
         _nbLines = nbLines;
-        return false;
+        return nullptr;
     }
 
     /*
@@ -309,10 +325,10 @@ public:
     bool scanConstInt(ValueT& value);
 
     /*
-     * Scans a specific token, placing the current iterator after this
-     * string on success.
+     * Tries to scan a specific token, placing the current iterator
+     * after this string on success.
      */
-    bool scanToken(const std::string& str)
+    bool tryScanToken(const std::string& str)
     {
         this->skipCommentsAndWhitespaces();
 
@@ -445,30 +461,69 @@ private:
         return c;
     }
 
-    int _scanEscapeChar(const std::string& escape)
+    /*
+     * Tries to append an escaped character to `_strBuf` from the
+     * characters at the current position, considering the characters of
+     * `escapeSeqStartList` and `"` as escape sequence starting
+     * characters.
+     */
+    bool _tryAppendEscapedChar(const char * const escapeSeqStartList)
     {
         if (this->charsLeft() < 2) {
-            return -1;
+            return false;
         }
 
         if (_at[0] != '\\') {
-            return -1;
+            return false;
         }
 
-        auto c = escape.begin();
+        auto escapeSeqStart = escapeSeqStartList;
 
-        while (c != escape.end()) {
-            if (_at[1] == *c) {
-                const auto chr = _at[1];
+        while (*escapeSeqStart != '\0') {
+            if (_at[1] == '"' || _at[1] == *escapeSeqStart) {
+                switch (_at[1]) {
+                case 'a':
+                    _strBuf.push_back('\a');
+                    break;
+
+                case 'b':
+                    _strBuf.push_back('\b');
+                    break;
+
+                case 'f':
+                    _strBuf.push_back('\f');
+                    break;
+
+                case 'n':
+                    _strBuf.push_back('\n');
+                    break;
+
+                case 'r':
+                    _strBuf.push_back('\r');
+                    break;
+
+                case 't':
+                    _strBuf.push_back('\t');
+                    break;
+
+                case 'v':
+                    _strBuf.push_back('\v');
+                    break;
+
+                default:
+                    // as is
+                    _strBuf.push_back(_at[1]);
+                    break;
+                }
 
                 _at += 2;
-                return chr;
+                return true;
             }
 
-            ++c;
+            ++escapeSeqStart;
         }
 
-        return -1;
+        return false;
     }
 
     _StackFrame& _stackTop()
@@ -505,6 +560,9 @@ private:
 
     // conversion buffer used to scan constant integers
     std::array<char, 72> _convBuf;
+
+    // string buffer
+    std::string _strBuf;
 };
 
 template <typename CharIt>

@@ -655,96 +655,43 @@ private:
         while (true) {
             _ss.skipCommentsAndWhitespaces();
 
-            if (!_ss.scanToken(";")) {
+            if (!_ss.tryScanToken(";")) {
                 break;
             }
         }
     }
 
-    void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt)
+    const std::string *_tryScanLitStr()
     {
-        TsdlParserBase::_addDtAlias(std::move(name), pseudoDt, this->_curLoc());
-    }
+        const std::string *litStr = nullptr;
 
-private:
-    /*
-     * Escapes the literal string between `begin` (inclusive) and `end`
-     * (exclusive).
-     *
-     * The passed substring excludes the double quotes.
-     *
-     * Examples:
-     *
-     *     salut\nvous -> "salut\nvous" (C string)
-     *     lenovo\tx230 -> "lenovo\tx230" (C string)
-     */
-    static std::string _escapeLiteralStr(const CharIt begin, const CharIt end,
-                                         const TextLocation& loc)
-    {
-        std::string str;
+        _ss.skipCommentsAndWhitespaces();
 
-        str.reserve(end - begin);
+        const auto loc = this->_curLoc();
 
-        auto it = begin;
+        litStr = _ss.tryScanLitStr("abfnrtv'?\\");
 
-        while (it < end) {
-            if (*it == '\\') {
-                if (it + 2 < end) {
-                    const auto eChar = *(it + 1);
+        if (!litStr) {
+            return nullptr;
+        }
 
-                    switch (eChar) {
-                    case '\\':
-                    case '"':
-                        str += eChar;
-                        ++it;
-                        break;
-
-                    case 't':
-                        str += '\t';
-                        ++it;
-                        break;
-
-                    case 'n':
-                        str += '\n';
-                        ++it;
-                        break;
-
-                    case 'r':
-                        str += '\r';
-                        ++it;
-                        break;
-
-                    case 'v':
-                        str += '\v';
-                        ++it;
-                        break;
-
-                    default:
-                        str += '\\';
-                        break;
-                    }
-                } else {
-                    str += '\\';
-                }
-            } else if (*it == 13) {
-                // skip carriage return
-                ++it;
-                continue;
-            } else if ((*it >= 0 && *it <= 8) || (*it >= 12 && *it <= 31) || *it == 127) {
+        for (const auto ch : *litStr) {
+            if ((ch >= 0 && ch <= 8) || (ch >= 14 && ch <= 31) || ch == 127) {
                 // disallow those control characters in the metadata text
                 std::ostringstream ss;
 
                 ss << "Illegal character found in literal string: 0x" <<
-                      std::hex << static_cast<int>(*it) << ".";
+                      std::hex << static_cast<int>(ch) << ".";
                 throwMetadataParseError(ss.str(), loc);
-            } else {
-                str += *it;
             }
-
-            ++it;
         }
 
-        return str;
+        return litStr;
+    }
+
+    void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt)
+    {
+        TsdlParserBase::_addDtAlias(std::move(name), pseudoDt, this->_curLoc());
     }
 
 private:
@@ -863,7 +810,7 @@ bool TsdlParser<CharIt>::_tryParseRootBlock()
 template <typename CharIt>
 void TsdlParser<CharIt>::_expectToken(const std::string& token)
 {
-    if (!_ss.scanToken(token)) {
+    if (!_ss.tryScanToken(token)) {
         std::ostringstream ss;
 
         ss << "Expecting `" << token << "`.";
@@ -894,7 +841,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
         if (pseudoDt) {
             // parse `;` to make sure it's not a member type/option
-            if (_ss.scanToken(";")) {
+            if (_ss.tryScanToken(";")) {
                 // we have a winner
                 ssRej.accept();
 
@@ -924,7 +871,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
         if (pseudoDt) {
             // parse `;` to make sure it's not a member type/option
-            if (_ss.scanToken(";")) {
+            if (_ss.tryScanToken(";")) {
                 // we have a winner
                 ssRej.accept();
 
@@ -954,7 +901,7 @@ bool TsdlParser<CharIt>::_tryParseFlEnumStructVarDtAlias()
 
         if (pseudoDt) {
             // parse `;` to make sure it's not a field/option
-            if (_ss.scanToken(";")) {
+            if (_ss.tryScanToken(";")) {
                 // we have a winner
                 ssRej.accept();
 
@@ -979,9 +926,9 @@ bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
 {
     bool isTypealias = false;
 
-    if (_ss.scanToken("typealias")) {
+    if (_ss.tryScanToken("typealias")) {
         isTypealias = true;
-    } else if (!_ss.scanToken("typedef")) {
+    } else if (!_ss.tryScanToken("typedef")) {
         return false;
     }
 
@@ -999,14 +946,10 @@ bool TsdlParser<CharIt>::_tryParseGenericDtAlias()
              * Cannot parse a full data type: try an existing data type
              * alias name.
              */
-            std::string existingDtAliasName;
-            CharIt begin, end;
             const auto loc = this->_curLoc();
 
-            if (_ss.scanIdent(begin, end)) {
-                existingDtAliasName.assign(begin, end);
-
-                pseudoDt = this->_aliasedPseudoDt(existingDtAliasName, loc);
+            if (const auto ident = _ss.tryScanIdent()) {
+                pseudoDt = this->_aliasedPseudoDt(*ident, loc);
 
                 if (!pseudoDt) {
                     throwMetadataParseError("Expecting explicit data type block (`integer`, `floating_point`, "
@@ -1204,7 +1147,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
     const auto beforeKwLoc = this->_curLoc();
 
     // parse `integer`
-    if (!_ss.scanToken("integer")) {
+    if (!_ss.tryScanToken("integer")) {
         return nullptr;
     }
 
@@ -1229,7 +1172,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlIntType()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -1347,7 +1290,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
     const auto beginLoc = this->_curLoc();
 
     // parse `floating_point`
-    if (!_ss.scanToken("floating_point")) {
+    if (!_ss.tryScanToken("floating_point")) {
         return nullptr;
     }
 
@@ -1361,7 +1304,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlFloatType()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -1430,12 +1373,12 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
     const auto beginLoc = this->_curLoc();
 
     // parse `string`
-    if (!_ss.scanToken("string")) {
+    if (!_ss.tryScanToken("string")) {
         return nullptr;
     }
 
     // try to parse `{`
-    if (!_ss.scanToken("{")) {
+    if (!_ss.tryScanToken("{")) {
         return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
                                                        nullptr, beginLoc);
     }
@@ -1447,7 +1390,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseNtStrType()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -1483,17 +1426,16 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
     const auto beginLoc = this->_curLoc();
 
     // parse `enum`
-    if (!_ss.scanToken("enum")) {
+    if (!_ss.tryScanToken("enum")) {
         return nullptr;
     }
 
     // try to parse name
-    CharIt begin, end;
     std::string potDtAliasName;
 
-    if (_ss.scanIdent(begin, end)) {
+    if (const auto ident = _ss.tryScanIdent()) {
         potDtAliasName = "enum ";
-        potDtAliasName.append(begin, end);
+        potDtAliasName += *ident;
 
         if (dtAliasName) {
             *dtAliasName = potDtAliasName;
@@ -1503,7 +1445,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
     {
         _StrScannerRejecter ssRejOp {_ss};
 
-        if (!_ss.scanToken(":") && !_ss.scanToken("{")) {
+        if (!_ss.tryScanToken(":") && !_ss.tryScanToken("{")) {
             return nullptr;
         }
     }
@@ -1515,7 +1457,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseFlEnumType(const bool addDtAlias,
     PseudoDt::UP pseudoDt;
 
     // try to parse the fixed-length integer type
-    if (_ss.scanToken(":")) {
+    if (_ss.tryScanToken(":")) {
         _ss.skipCommentsAndWhitespaces();
 
         // remember location
@@ -1616,21 +1558,20 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
     const auto beginLoc = this->_curLoc();
 
     // parse `struct`
-    if (!_ss.scanToken("struct")) {
+    if (!_ss.tryScanToken("struct")) {
         return nullptr;
     }
 
     // try to parse name
-    CharIt begin, end;
     std::string potDtAliasName;
     PseudoDt::UP pseudoDt;
 
     {
         _LexicalScope dtAliasLexScope;
 
-        if (_ss.scanIdent(begin, end)) {
+        if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "struct ";
-            potDtAliasName.append(begin, end);
+            potDtAliasName += *ident;
 
             if (dtAliasName) {
                 dtAliasLexScope = _LexicalScope {*this, _StackFrame::Kind::DT_ALIAS};
@@ -1642,7 +1583,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
             _LexicalScope structTypeLexScope {*this, _StackFrame::Kind::STRUCT_TYPE};
 
             // parse `{`
-            if (!_ss.scanToken("{")) {
+            if (!_ss.tryScanToken("{")) {
                 return nullptr;
             }
 
@@ -1652,7 +1593,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
             while (true) {
                 this->_skipCommentsAndWhitespacesAndSemicolons();
 
-                if (_ss.scanToken("}")) {
+                if (_ss.tryScanToken("}")) {
                     break;
                 }
 
@@ -1680,7 +1621,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseStructType(const bool addDtAlias,
 
             auto align = 1ULL;
 
-            if (_ss.scanToken("align")) {
+            if (_ss.tryScanToken("align")) {
                 this->_expectToken("(");
 
                 if (!_ss.scanConstInt(align)) {
@@ -1722,21 +1663,20 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
     const auto beginLoc = this->_curLoc();
 
     // parse `variant`
-    if (!_ss.scanToken("variant")) {
+    if (!_ss.tryScanToken("variant")) {
         return nullptr;
     }
 
     // try to parse name
-    CharIt begin, end;
     std::string potDtAliasName;
     PseudoDt::UP pseudoDt;
 
     {
         _LexicalScope dtAliasLexScope;
 
-        if (_ss.scanIdent(begin, end)) {
+        if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "variant ";
-            potDtAliasName.append(begin, end);
+            potDtAliasName += *ident;
 
             if (dtAliasName) {
                 dtAliasLexScope = _LexicalScope {*this, _StackFrame::Kind::DT_ALIAS};
@@ -1750,7 +1690,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
             // try to parse `<`
             boost::optional<PseudoDataLoc> pseudoDataLoc;
 
-            if (_ss.scanToken("<")) {
+            if (_ss.tryScanToken("<")) {
                 pseudoDataLoc = this->_expectDataLoc();
                 assert(pseudoDataLoc);
 
@@ -1764,7 +1704,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
             }
 
             // parse `{`
-            if (!_ss.scanToken("{")) {
+            if (!_ss.tryScanToken("{")) {
                 return nullptr;
             }
 
@@ -1774,7 +1714,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseVarType(const bool addDtAlias,
             while (true) {
                 this->_skipCommentsAndWhitespacesAndSemicolons();
 
-                if (_ss.scanToken("}")) {
+                if (_ss.tryScanToken("}")) {
                     break;
                 }
 
@@ -1820,7 +1760,7 @@ template <typename CharIt>
 bool TsdlParser<CharIt>::_tryParseEnvBlock()
 {
     // parse `env`
-    if (!_ss.scanToken("env")) {
+    if (!_ss.tryScanToken("env")) {
         return false;
     }
 
@@ -1838,7 +1778,7 @@ bool TsdlParser<CharIt>::_tryParseEnvBlock()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -1895,7 +1835,7 @@ template <typename CharIt>
 bool TsdlParser<CharIt>::_tryParseCallsiteBlock()
 {
     // parse `callsite`
-    if (!_ss.scanToken("callsite")) {
+    if (!_ss.tryScanToken("callsite")) {
         return false;
     }
 
@@ -1910,7 +1850,7 @@ bool TsdlParser<CharIt>::_tryParseCallsiteBlock()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -1931,7 +1871,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
     const auto beginLoc = this->_curLoc();
 
     // parse `clock`
-    if (!_ss.scanToken("clock")) {
+    if (!_ss.tryScanToken("clock")) {
         return false;
     }
 
@@ -1945,7 +1885,7 @@ bool TsdlParser<CharIt>::_tryParseClkTypeBlock()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -2093,7 +2033,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
     const auto beginLoc = this->_curLoc();
 
     // parse `trace`
-    if (!_ss.scanToken("trace")) {
+    if (!_ss.tryScanToken("trace")) {
         return false;
     }
 
@@ -2112,7 +2052,7 @@ bool TsdlParser<CharIt>::_tryParseTraceTypeBlock()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -2258,7 +2198,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
     const auto beginLoc = this->_curLoc();
 
     // parse `stream`
-    if (!_ss.scanToken("stream")) {
+    if (!_ss.tryScanToken("stream")) {
         return false;
     }
 
@@ -2275,7 +2215,7 @@ bool TsdlParser<CharIt>::_tryParseDstBlock()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -2379,7 +2319,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
     const auto beginLoc = this->_curLoc();
 
     // parse `event`
-    if (!_ss.scanToken("event")) {
+    if (!_ss.tryScanToken("event")) {
         return false;
     }
 
@@ -2395,7 +2335,7 @@ bool TsdlParser<CharIt>::_tryParseErtBlock()
         this->_skipCommentsAndWhitespacesAndSemicolons();
 
         // end of block?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
@@ -2532,7 +2472,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
     const auto beginLoc = this->_curLoc();
 
     // parse name
-    if (!_ss.scanToken(firstName)) {
+    if (!_ss.tryScanToken(firstName)) {
         return nullptr;
     }
 
@@ -2540,7 +2480,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseScopeDt(const _StackFrame::Kind scopeD
         if (secondName) {
             this->_expectToken(".");
 
-            if (!_ss.scanToken(*secondName)) {
+            if (!_ss.tryScanToken(*secondName)) {
                 if (expect) {
                     std::ostringstream ss;
 
@@ -2602,18 +2542,17 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
     TsdlAttr attr;
 
     // parse name
-    CharIt begin, end;
     auto nameIsFound = false;
 
     _ss.skipCommentsAndWhitespaces();
     attr.nameLoc = this->_curLoc();
 
-    if (_ss.scanToken(TsdlParser::_EMF_URI_ATTR_NAME)) {
+    if (_ss.tryScanToken(TsdlParser::_EMF_URI_ATTR_NAME)) {
         nameIsFound = true;
         attr.name = TsdlParser::_EMF_URI_ATTR_NAME;
-    } else if (_ss.scanIdent(begin, end)) {
+    } else if (const auto ident = _ss.tryScanIdent()) {
         nameIsFound = true;
-        attr.name.assign(begin, end);
+        attr.name = *ident;
     }
 
     if (!nameIsFound) {
@@ -2638,11 +2577,13 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
         this->_expectToken(".");
 
         // parse name of clock type
-        if (!_ss.scanIdent(begin, end)) {
+        const auto ident = _ss.tryScanIdent();
+
+        if (!ident) {
             throwMetadataParseError("Expecting identifier (clock type name).", this->_curLoc());
         }
 
-        attr.strVal.assign(begin, end);
+        attr.strVal = *ident;
 
         // parse `.`
         this->_expectToken(".");
@@ -2655,15 +2596,13 @@ TsdlAttr TsdlParser<CharIt>::_expectAttr()
         return attr;
     }
 
-    if (_ss.scanLitStr(begin, end)) {
+    if (const auto escapedStr = this->_tryScanLitStr()) {
         // literal string
-        const auto escapedStr = TsdlParser::_escapeLiteralStr(begin, end, attr.valTextLoc());
-
-        attr.strVal = escapedStr;
+        attr.strVal = *escapedStr;
         attr.kind = TsdlAttr::Kind::STR;
-    } else if (_ss.scanIdent(begin, end)) {
+    } else if (const auto ident = _ss.tryScanIdent()) {
         // identifier
-        attr.strVal.assign(begin, end);
+        attr.strVal = *ident;
         attr.kind = TsdlAttr::Kind::IDENT;
     } else if (_ss.scanConstInt(attr.uintVal)) {
         // constant unsigned integer
@@ -2688,21 +2627,20 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
     _ss.skipCommentsAndWhitespaces();
 
     const auto beginLoc = this->_curLoc();
-    CharIt begin, end;
 
     // try `enum`/`struct` followed by name
     {
         _StrScannerRejecter ssRej {_ss};
 
-        if (_ss.scanIdent(begin, end)) {
-            const std::string kw {begin, end};
+        if (auto ident = _ss.tryScanIdent()) {
+            const std::string kw {*ident};
 
             if (kw == "enum" || kw == "struct") {
-                if (_ss.scanIdent(begin, end)) {
-                    if (!_ss.scanToken("{") && !_ss.scanToken(":")) {
+                if (ident = _ss.tryScanIdent()) {
+                    if (!_ss.tryScanToken("{") && !_ss.tryScanToken(":")) {
                         std::string dtAliasName = kw + ' ';
 
-                        dtAliasName.append(begin, end);
+                        dtAliasName += *ident;
 
                         // get from data type alias
                         auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc);
@@ -2721,11 +2659,11 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
     {
         _StrScannerRejecter ssRej {_ss};
 
-        if (_ss.scanToken("variant")) {
-            if (_ss.scanIdent(begin, end)) {
+        if (_ss.tryScanToken("variant")) {
+            if (const auto ident = _ss.tryScanIdent()) {
                 std::string dtAliasName {"variant "};
 
-                dtAliasName.append(begin, end);
+                dtAliasName += *ident;
 
                 // get from data type alias
                 auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc);
@@ -2741,7 +2679,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
                     return pseudoDt;
                 }
 
-                if (_ss.scanToken("<")) {
+                if (_ss.tryScanToken("<")) {
                     _ss.skipCommentsAndWhitespaces();
 
                     const auto selLoc = this->_curLoc();
@@ -2754,7 +2692,7 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseDtAliasRef()
 
                     this->_expectToken(">");
 
-                    if (!_ss.scanToken("{")) {
+                    if (!_ss.tryScanToken("{")) {
                         /*
                          * Create new pseudo variant type with this selector
                          * location.
@@ -2797,37 +2735,36 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
 
     while (true) {
         _StrScannerRejecter ssRej {_ss};
-        CharIt begin, end;
 
         _ss.skipCommentsAndWhitespaces();
 
         const auto loc = this->_curLoc();
+        const auto ident = _ss.tryScanIdent();
 
-        if (!_ss.scanIdent(begin, end)) {
+        if (!ident) {
             ssRej.accept();
             break;
         }
 
-        std::string part {begin, end};
-
         // disallow reserved words
-        if (part == "integer" || part == "floating_point" || part == "enum" || part == "string" ||
-                part == "struct" || part == "variant" || part == "trace" || part == "stream" ||
-                part == "clock" || part == "event" || part == "env") {
+        if (*ident == "integer" || *ident == "floating_point" || *ident == "enum" ||
+                *ident == "string" || *ident == "struct" || *ident == "variant" ||
+                *ident == "trace" || *ident == "stream" ||
+                *ident == "clock" || *ident == "event" || *ident == "env") {
             if (expect) {
                 std::ostringstream ss;
 
-                ss << "Invalid keyword `" << part << "` in type alias name.";
+                ss << "Invalid keyword `" << *ident << "` in type alias name.";
                 throwMetadataParseError(ss.str(), loc);
             } else {
                 return false;
             }
         }
 
-        if (part == "const" || part == "char" || part == "double" || part == "float" ||
-                part == "int" || part == "long" || part == "short" || part == "signed" ||
-                part == "unsigned" || part == "void" || part == "_Bool" || part == "_Complex" ||
-                part == "_Imaginary") {
+        if (*ident == "const" || *ident == "char" || *ident == "double" || *ident == "float" ||
+                *ident == "int" || *ident == "long" || *ident == "short" || *ident == "signed" ||
+                *ident == "unsigned" || *ident == "void" || *ident == "_Bool" ||
+                *ident == "_Complex" || *ident == "_Imaginary") {
             isMulti = true;
         } else {
             if (isMulti) {
@@ -2837,7 +2774,7 @@ bool TsdlParser<CharIt>::_parseDtAliasName(std::string& dtAliasName, const bool 
         }
 
         ssRej.accept();
-        parts.push_back(part);
+        parts.push_back(*ident);
 
         if (!isMulti) {
             // single word data type alias name: break now
@@ -2875,15 +2812,15 @@ PseudoDataLoc TsdlParser<CharIt>::_expectDataLoc()
     DataLocation::PathElements allPathElems;
 
     while (true) {
-        CharIt begin, end;
+        const auto ident = _ss.tryScanIdent();
 
-        if (!_ss.scanIdent(begin, end)) {
+        if (!ident) {
             break;
         }
 
-        allPathElems.push_back({begin, end});
+        allPathElems.push_back(*ident);
 
-        if (!_ss.scanToken(".")) {
+        if (!_ss.tryScanToken(".")) {
             break;
         }
     }
@@ -2900,13 +2837,13 @@ PseudoDt::UP TsdlParser<CharIt>::_tryParseIdentArraySubscripts(std::string& iden
                                                                PseudoDt::UP innerPseudoDt)
 {
     // parse identifier
-    CharIt begin, end;
+    const auto identRes = _ss.tryScanIdent();
 
-    if (!_ss.scanIdent(begin, end)) {
+    if (!identRes) {
         return nullptr;
     }
 
-    ident.assign(begin, end);
+    ident = *identRes;
     return this->_parseArraySubscripts(std::move(innerPseudoDt));
 }
 
@@ -2932,7 +2869,7 @@ PseudoDt::UP TsdlParser<CharIt>::_parseArraySubscripts(PseudoDt::UP innerPseudoD
     std::vector<LenDescr> lenDescrs;
 
     while (true) {
-        if (!_ss.scanToken("[")) {
+        if (!_ss.tryScanToken("[")) {
             break;
         }
 
@@ -3057,17 +2994,16 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
     typename FlEnumTypeT::RangeSet::Value curVal = 0;
 
     while (true) {
-        CharIt begin, end;
         std::string name;
 
         _ss.skipCommentsAndWhitespaces();
 
         boost::optional<TextLocation> loc {this->_curLoc()};
 
-        if (_ss.scanIdent(begin, end)) {
-            name.assign(begin, end);
-        } else if (_ss.scanLitStr(begin, end)) {
-            name = TsdlParser::_escapeLiteralStr(begin, end, *loc);
+        if (const auto ident = _ss.tryScanIdent()) {
+            name = *ident;
+        } else if (const auto escapedStr = this->_tryScanLitStr()) {
+            name = *escapedStr;
         } else {
             throwMetadataParseError("Expecting mapping name (identifier or literal string).", *loc);
         }
@@ -3075,7 +3011,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
         auto lower = curVal;
         auto upper = curVal;
 
-        if (_ss.scanToken("=")) {
+        if (_ss.tryScanToken("=")) {
             _ss.skipCommentsAndWhitespaces();
             loc = this->_curLoc();
 
@@ -3095,7 +3031,7 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
             upper = lower;
             curVal = lower;
 
-            if (_ss.scanToken("...")) {
+            if (_ss.tryScanToken("...")) {
                 if (!_ss.scanConstInt(value)) {
                     throwMetadataParseError("Expecting valid constant integer.", this->_curLoc());
                 }
@@ -3125,10 +3061,10 @@ PseudoDt::UP TsdlParser<CharIt>::_finishParseFlEnumType(PseudoDt::UP pseudoDt,
 
         pseudoMappings[name].insert(typename FlEnumTypeT::RangeSet::Range {lower, upper});
 
-        const bool gotComma = _ss.scanToken(",");
+        const bool gotComma = _ss.tryScanToken(",");
 
         // end of member types?
-        if (_ss.scanToken("}")) {
+        if (_ss.tryScanToken("}")) {
             break;
         }
 
