@@ -21,7 +21,7 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/opt-type.hpp>
-#include <yactfr/metadata/metadata-parse-error.hpp>
+#include <yactfr/text-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
 #include "utils.hpp"
@@ -273,7 +273,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
                   "nothing past scalar data type.";
-            throwMetadataParseError(ss.str(), pseudoDt.loc());
+            throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
         pseudoDts.insert(&pseudoDt);
@@ -288,7 +288,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt + 1) << "`: "
                   "cannot find `" << *locIt << "` (last element).";
-            throwMetadataParseError(ss.str(), pseudoDt.loc());
+            throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
         this->_findPseudoDts(pseudoMemberType->pseudoDt(), loc, locIt + 1, srcLoc, pseudoDts);
@@ -303,7 +303,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
                   "unreachable array element.";
-            throwMetadataParseError(ss.str(), pseudoDt.loc());
+            throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
         auto& pseudoArrayType = static_cast<const PseudoArrayType&>(pseudoDt);
@@ -340,7 +340,7 @@ void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
 
             ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), locIt) << "`: "
                   "unreachable optional data.";
-            throwMetadataParseError(ss.str(), pseudoDt.loc());
+            throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
         auto& pseudoOptType = static_cast<const PseudoOptType&>(pseudoDt);
@@ -362,7 +362,7 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
 
         ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "`: "
               "data would be unreachable.";
-        throwMetadataParseError(ss.str(), srcLoc);
+        throwTextParseError(ss.str(), srcLoc);
     }
 
     const PseudoDt *pseudoDt = nullptr;
@@ -401,7 +401,7 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
 
         ss << "`" << this->_dataLocStr(loc.scope(), loc.begin(), loc.end()) << "`: "
               "cannot find scope data type.";
-        throwMetadataParseError(ss.str(), srcLoc);
+        throwTextParseError(ss.str(), srcLoc);
     }
 
     ConstPseudoDtSet pseudoDts;
@@ -606,13 +606,13 @@ void DtFromPseudoRootDtConverter::_throwInvalDataLoc(const std::string& initMsg,
                                                      const TextLocation& loc) const
 {
     try {
-        throwMetadataParseError(initMsg, initLoc);
-    } catch (MetadataParseError& exc) {
+        throwTextParseError(initMsg, initLoc);
+    } catch (TextParseError& exc) {
         std::ostringstream ss;
 
         ss << "Invalid data location (`" <<
               this->_dataLocStr(dataLoc.scope(), dataLoc.begin(), dataLoc.end()) << "`):";
-        appendMsgToMetadataParseError(exc, ss.str(), loc);
+        appendMsgToTextParseError(exc, ss.str(), loc);
         throw;
     }
 }

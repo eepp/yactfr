@@ -821,7 +821,7 @@ public:
 
     /*
      * Validates this pseudo event record type, as belonging to
-     * `pseudoDst`, throwing `MetadataParseError` on any error.
+     * `pseudoDst`, throwing `TextParseError` on any error.
      */
     void validate(const PseudoDst& pseudoDst) const;
 
@@ -914,7 +914,7 @@ public:
 
     /*
      * Validates this pseudo data stream type, as containing the pseudo
-     * event record types `pseudoErts`, throwing `MetadataParseError` on
+     * event record types `pseudoErts`, throwing `TextParseError` on
      * any error.
      */
     void validate(const PseudoErtSet& pseudoErts) const;
@@ -1036,7 +1036,7 @@ public:
                              PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs = nullptr);
 
     /*
-     * Validates this pseudo trace type, throwing `MetadataParseError`
+     * Validates this pseudo trace type, throwing `TextParseError`
      * on any error.
      */
     void validate() const;

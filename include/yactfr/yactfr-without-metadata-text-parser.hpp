@@ -51,7 +51,6 @@
 #include "metadata/int-range.hpp"
 #include "metadata/int-type-common.hpp"
 #include "metadata/invalid-metadata-stream.hpp"
-#include "metadata/metadata-parse-error.hpp"
 #include "metadata/metadata-stream.hpp"
 #include "metadata/non-nt-str-type.hpp"
 #include "metadata/nt-str-type.hpp"
@@ -71,6 +70,7 @@
 #include "metadata/vl-enum-type.hpp"
 #include "metadata/vl-int-type.hpp"
 #include "mmap-file-view-factory.hpp"
+#include "text-parse-error.hpp"
 #include "trace-env.hpp"
 
 #endif // _YACTFR_YACTFR_WITHOUT_METADATA_TEXT_PARSER_HPP

@@ -19,7 +19,7 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
-#include <yactfr/metadata/metadata-parse-error.hpp>
+#include <yactfr/text-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
 #include "utils.hpp"

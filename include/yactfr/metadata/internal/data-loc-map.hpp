@@ -31,7 +31,7 @@
 #include "../fl-enum-type.hpp"
 #include "../int-range.hpp"
 #include "../aliases.hpp"
-#include "../metadata-parse-error.hpp"
+#include "../../text-parse-error.hpp"
 #include "pseudo-types.hpp"
 
 namespace yactfr {

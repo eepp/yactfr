@@ -20,7 +20,7 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
-#include <yactfr/metadata/metadata-parse-error.hpp>
+#include <yactfr/text-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
 namespace yactfr {
@@ -270,7 +270,7 @@ public:
                       *pseudoDt.mappedClkTypeName() << "` which is "
                       "different than another mapped clock type (`" <<
                       *_clkTypeName << "`) within the same data stream type.";
-                throwMetadataParseError(ss.str(), pseudoDt.loc());
+                throwTextParseError(ss.str(), pseudoDt.loc());
             }
 
             if (!_pseudoDst->defClkType()) {
@@ -287,7 +287,7 @@ public:
                     std::ostringstream ss;
 
                     ss << "`" << *_clkTypeName << "` doesn't name an existing clock type.";
-                    throwMetadataParseError(ss.str(), pseudoDt.loc());
+                    throwTextParseError(ss.str(), pseudoDt.loc());
                 }
             }
         }
@@ -342,9 +342,9 @@ void TsdlParserBase::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
         if (pseudoDst.pseudoPktCtxType()) {
             try {
                 pseudoDst.pseudoPktCtxType()->accept(visitor);
-            } catch (MetadataParseError& exc) {
-                appendMsgToMetadataParseError(exc, "In the packet context type:",
-                                              pseudoDst.pseudoPktCtxType()->loc());
+            } catch (TextParseError& exc) {
+                appendMsgToTextParseError(exc, "In the packet context type:",
+                                          pseudoDst.pseudoPktCtxType()->loc());
                 throw;
             }
         }
@@ -352,17 +352,17 @@ void TsdlParserBase::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
         if (pseudoDst.pseudoErHeaderType()) {
             try {
                 pseudoDst.pseudoErHeaderType()->accept(visitor);
-            } catch (MetadataParseError& exc) {
-                appendMsgToMetadataParseError(exc, "In the event record header type:",
-                                              pseudoDst.pseudoErHeaderType()->loc());
+            } catch (TextParseError& exc) {
+                appendMsgToTextParseError(exc, "In the event record header type:",
+                                          pseudoDst.pseudoErHeaderType()->loc());
                 throw;
             }
         }
-    } catch (MetadataParseError& exc) {
+    } catch (TextParseError& exc) {
         std::ostringstream ss;
 
         ss << "In the data stream type with ID " << pseudoDst.id() << ":";
-        appendMsgToMetadataParseError(exc, ss.str());
+        appendMsgToTextParseError(exc, ss.str());
         throw;
     }
 }
@@ -420,7 +420,7 @@ void TsdlParserBase::_checkDupPseudoNamedDt(const PseudoNamedDts& entries, const
             std::ostringstream ss;
 
             ss << "Duplicate identifier (member type or option name) `" << entry->name() << "`.";
-            throwMetadataParseError(ss.str(), loc);
+            throwTextParseError(ss.str(), loc);
         }
 
         entryNames.insert(entry->name());
@@ -454,7 +454,7 @@ void TsdlParserBase::_checkDupAttr(const _Attrs& attrs)
             std::ostringstream ss;
 
             ss << "Duplicate attribute `" << attr.name << "`.";
-            throwMetadataParseError(ss.str(), attr.nameTextLoc());
+            throwTextParseError(ss.str(), attr.nameTextLoc());
         }
 
         attrSet.insert(attr.name);
@@ -466,7 +466,7 @@ void TsdlParserBase::_throwMissingAttr(const std::string& name, const TextLocati
     std::ostringstream ss;
 
     ss << "Missing attribute `" << name << "`.";
-    throwMetadataParseError(ss.str(), loc);
+    throwTextParseError(ss.str(), loc);
 }
 
 boost::optional<boost::uuids::uuid> TsdlParserBase::_uuidFromStr(const std::string& str)
@@ -497,7 +497,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromAbsAllPathElems
             }
 
             if (!isAbs) {
-                throwMetadataParseError("Expecting `packet.header` after `trace.`.", loc);
+                throwTextParseError("Expecting `packet.header` after `trace.`.", loc);
             }
         } else if (allPathElems[0] == "stream") {
             if (allPathElems[1] == "packet") {
@@ -516,8 +516,8 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromAbsAllPathElems
             }
 
             if (!isAbs) {
-                throwMetadataParseError("Expecting `packet.context`, `event.header`, or "
-                                        "`event.context` after `stream.`.", loc);
+                throwTextParseError("Expecting `packet.context`, `event.header`, or "
+                                    "`event.context` after `stream.`.", loc);
             }
         }
 
@@ -537,7 +537,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromAbsAllPathElems
             }
 
             if (!isAbs) {
-                throwMetadataParseError("Expecting `context` or `fields` after `event.`.", loc);
+                throwTextParseError("Expecting `context` or `fields` after `event.`.", loc);
             }
         }
 
@@ -629,7 +629,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromRelAllPathElems
                   "data type alias (or named structure/variant type) boundary. "
                   "CTF 1.8 allows this, but this version of yactfr doesn't "
                   "support it.";
-            throwMetadataParseError(ss.str(), loc);
+            throwTextParseError(ss.str(), loc);
         } else if (stackIt->kind == _StackFrame::Kind::STRUCT_TYPE) {
             const auto& frameIdents = stackIt->idents;
 
@@ -655,7 +655,7 @@ boost::optional<PseudoDataLoc> TsdlParserBase::_pseudoDataLocFromRelAllPathElems
             }
 
             ss << "`): cannot find `" << firstPathElem << "` (first element).";
-            throwMetadataParseError(ss.str(), loc);
+            throwTextParseError(ss.str(), loc);
         }
 
         --stackIt;
@@ -681,7 +681,7 @@ PseudoDataLoc TsdlParserBase::_pseudoDataLocFromAllPathElems(const DataLocation:
         return *pseudoDataLoc;
     }
 
-    throwMetadataParseError("Invalid data location.", loc);
+    throwTextParseError("Invalid data location.", loc);
 }
 
 void TsdlParserBase::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
@@ -699,7 +699,7 @@ void TsdlParserBase::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
         std::ostringstream ss;
 
         ss << "Duplicate data type alias: `" << name << "`.";
-        throwMetadataParseError(ss.str(), curLoc);
+        throwTextParseError(ss.str(), curLoc);
     }
 
     // add alias

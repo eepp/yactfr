@@ -37,8 +37,6 @@ class FixedLengthSignedIntegerType;
 class FixedLengthUnsignedEnumerationType;
 class FixedLengthUnsignedIntegerType;
 class InvalidMetadataStream;
-class MetadataParseError;
-class MetadataParseErrorMessage;
 class MetadataStream;
 class NonNullTerminatedStringType;
 class NullTerminatedStringType;

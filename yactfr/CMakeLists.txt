@@ -39,7 +39,6 @@ add_library (
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp
     metadata/int-type-common.cpp
-    metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
     metadata/non-nt-str-type.cpp
@@ -69,6 +68,7 @@ add_library (
     pkt-proc-builder.cpp
     proc.cpp
     text-loc.cpp
+    text-parse-error.cpp
     trace-env.cpp
     utils.cpp
     vm.cpp

@@ -26,7 +26,7 @@
 #include "../../aliases.hpp"
 #include "../int-type-common.hpp"
 #include "../aliases.hpp"
-#include "../metadata-parse-error.hpp"
+#include "../../text-parse-error.hpp"
 
 namespace yactfr {
 namespace internal {

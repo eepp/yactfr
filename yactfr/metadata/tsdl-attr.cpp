@@ -18,7 +18,7 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
-#include <yactfr/metadata/metadata-parse-error.hpp>
+#include <yactfr/text-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
 namespace yactfr {
@@ -37,7 +37,7 @@ boost::optional<ByteOrder> TsdlAttr::_toBo() const
     std::ostringstream ss;
 
     ss << "Invalid byte order `" << strVal << "`.";
-    throwMetadataParseError(ss.str(), this->valTextLoc());
+    throwTextParseError(ss.str(), this->valTextLoc());
 }
 
 DisplayBase TsdlAttr::dispBase() const
@@ -49,7 +49,7 @@ DisplayBase TsdlAttr::dispBase() const
 
         ss << "Attribute `" << name <<
               "`: expecting constant unsigned integer or identifier.";
-        throwMetadataParseError(ss.str(), this->valTextLoc());
+        throwTextParseError(ss.str(), this->valTextLoc());
     }
 
     if (kind == Kind::UINT) {
@@ -57,7 +57,7 @@ DisplayBase TsdlAttr::dispBase() const
             std::ostringstream ss;
 
             ss << "Invalid `base` attribute: " << uintVal << ".";
-            throwMetadataParseError(ss.str(), this->valTextLoc());
+            throwTextParseError(ss.str(), this->valTextLoc());
         }
 
         dispBase = static_cast<DisplayBase>(uintVal);
@@ -78,7 +78,7 @@ DisplayBase TsdlAttr::dispBase() const
         std::ostringstream ss;
 
         ss << "Invalid `base` attribute: `" << strVal << "`.";
-        throwMetadataParseError(ss.str(), this->valTextLoc());
+        throwTextParseError(ss.str(), this->valTextLoc());
     }
 
     return *dispBase;
@@ -116,7 +116,7 @@ void TsdlAttr::checkKind(const Kind expectedKind) const
             std::abort();
         }
 
-        throwMetadataParseError(ss.str(), this->valTextLoc());
+        throwTextParseError(ss.str(), this->valTextLoc());
     }
 }
 
@@ -125,7 +125,7 @@ void TsdlAttr::throwUnknown() const
     std::ostringstream ss;
 
     ss << "Unknown attribute `" << name << "`.";
-    throwMetadataParseError(ss.str(), this->nameTextLoc());
+    throwTextParseError(ss.str(), this->nameTextLoc());
 }
 
 unsigned int TsdlAttr::align() const
@@ -136,7 +136,7 @@ unsigned int TsdlAttr::align() const
         std::ostringstream ss;
 
         ss << "Invalid `align` attribute (must be a power of two): " << uintVal << ".";
-        throwMetadataParseError(ss.str(), this->valTextLoc());
+        throwTextParseError(ss.str(), this->valTextLoc());
     }
 
     return uintVal;
@@ -161,7 +161,7 @@ bool TsdlAttr::hasEncoding() const
     std::ostringstream ss;
 
     ss << "Invalid encoding `" << strVal << "`.";
-    throwMetadataParseError(ss.str(), this->valTextLoc());
+    throwTextParseError(ss.str(), this->valTextLoc());
 }
 
 bool TsdlAttr::boolEquiv() const
@@ -190,7 +190,7 @@ bool TsdlAttr::boolEquiv() const
 
     ss << "Expecting `0`, `false`, `FALSE`, `1`, `true`, or `TRUE` for `" <<
           name << "` attribute.";
-    throwMetadataParseError(ss.str(), this->valTextLoc());
+    throwTextParseError(ss.str(), this->valTextLoc());
 }
 
 } // namespace internal

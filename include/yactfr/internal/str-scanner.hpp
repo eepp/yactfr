@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INTERNAL_STR_SCANNER_HPP
-#define _YACTFR_METADATA_INTERNAL_STR_SCANNER_HPP
+#ifndef _YACTFR_INTERNAL_STR_SCANNER_HPP
+#define _YACTFR_INTERNAL_STR_SCANNER_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -18,8 +18,8 @@
 #include <boost/utility.hpp>
 #include <boost/optional.hpp>
 
-#include "../../aliases.hpp"
-#include "../../text-loc.hpp"
+#include "../aliases.hpp"
+#include "../text-loc.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -339,10 +339,10 @@ public:
     boost::optional<double> tryScanConstReal();
 
     /*
-     * Tries to scan a specific token, placing the current iterator
-     * after this string on success.
+     * Tries to scan a specific token `token`, placing the current
+     * iterator after this string on success.
      */
-    bool tryScanToken(const std::string& str);
+    bool tryScanToken(const char *token);
 
     /*
      * Skips the following comments and whitespaces.
@@ -555,23 +555,23 @@ const std::string *StrScanner<CharIt>::tryScanLitStr(const char * const escapeSe
 }
 
 template <typename CharIt>
-bool StrScanner<CharIt>::tryScanToken(const std::string& str)
+bool StrScanner<CharIt>::tryScanToken(const char * const token)
 {
     this->skipCommentsAndWhitespaces();
 
-    auto strAt = str.begin();
+    auto tokenAt = token;
     auto at = _at;
 
-    while (strAt != str.end() && at != _end) {
-        if (*at != *strAt) {
+    while (*tokenAt != '\0' && at != _end) {
+        if (*at != *tokenAt) {
             return false;
         }
 
         ++at;
-        ++strAt;
+        ++tokenAt;
     }
 
-    if (strAt != str.end()) {
+    if (*tokenAt != '\0') {
         return false;
     }
 
@@ -1038,4 +1038,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INTERNAL_STR_SCANNER_HPP
+#endif // _YACTFR_INTERNAL_STR_SCANNER_HPP

@@ -23,7 +23,7 @@
 #include <yactfr/metadata/sl-blob-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
-#include <yactfr/metadata/metadata-parse-error.hpp>
+#include <yactfr/text-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
 #include "utils.hpp"
@@ -562,7 +562,7 @@ void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
     std::ostringstream ss;
 
     ss << "Any event record would be empty (no data).";
-    throwMetadataParseError(ss.str());
+    throwTextParseError(ss.str());
 }
 
 static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
@@ -576,10 +576,10 @@ static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
     });
 
     if (!pseudoDts.empty()) {
-        throwMetadataParseError("At least one fixed-length unsigned integer type "
-                                "is mapped to a clock type; "
-                                "this isn't not supported within this scope.",
-                                basePseudoDt.loc());
+        throwTextParseError("At least one fixed-length unsigned integer type "
+                            "is mapped to a clock type; "
+                            "this isn't not supported within this scope.",
+                            basePseudoDt.loc());
     }
 }
 
@@ -588,11 +588,11 @@ void PseudoErt::_validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const
     if (_pseudoSpecCtxType) {
         try {
             validateNoMappedClkTypeName(*_pseudoSpecCtxType);
-        } catch (MetadataParseError& exc) {
+        } catch (TextParseError& exc) {
             std::ostringstream ss;
 
-            appendMsgToMetadataParseError(exc, "In the specific context type:",
-                                          _pseudoSpecCtxType->loc());
+            appendMsgToTextParseError(exc, "In the specific context type:",
+                                      _pseudoSpecCtxType->loc());
             throw;
         }
     }
@@ -600,11 +600,10 @@ void PseudoErt::_validateNoMappedClkTypeName(const PseudoDst& pseudoDst) const
     if (_pseudoPayloadType) {
         try {
             validateNoMappedClkTypeName(*_pseudoPayloadType);
-        } catch (MetadataParseError& exc) {
+        } catch (TextParseError& exc) {
             std::ostringstream ss;
 
-            appendMsgToMetadataParseError(exc, "In the payload type:",
-                                          _pseudoPayloadType->loc());
+            appendMsgToTextParseError(exc, "In the payload type:", _pseudoPayloadType->loc());
             throw;
         }
     }
@@ -643,12 +642,12 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
     try {
         this->_validateNotEmpty(pseudoDst);
         this->_validateNoMappedClkTypeName(pseudoDst);
-    } catch (MetadataParseError& exc) {
+    } catch (TextParseError& exc) {
         std::ostringstream ss;
 
         ss << "In the event record type " << pseudoTypeIdenStr(*this) <<
               " of data stream type " << pseudoTypeIdenStr(pseudoDst) << ":";
-        appendMsgToMetadataParseError(exc, ss.str());
+        appendMsgToTextParseError(exc, ss.str());
         throw;
     }
 }
@@ -715,15 +714,15 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
              * event record type.
              */
             if (idPseudoDts.empty() && pseudoErts.size() > 1) {
-                throwMetadataParseError("No structure member type with the "
-                                        "\"event record type ID\" role, "
-                                        "but the data stream type contains "
-                                        "more than one event record type.",
-                                        _pseudoErHeaderType->loc());
+                throwTextParseError("No structure member type with the "
+                                    "\"event record type ID\" role, "
+                                    "but the data stream type contains "
+                                    "more than one event record type.",
+                                    _pseudoErHeaderType->loc());
             }
-        } catch (MetadataParseError& exc) {
-            appendMsgToMetadataParseError(exc, "In the event record header type:",
-                                          _pseudoErHeaderType->loc());
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "In the event record header type:",
+                                      _pseudoErHeaderType->loc());
             throw;
         }
     }
@@ -734,11 +733,11 @@ void PseudoDst::_validateNoMappedClkTypeName() const
     if (_pseudoErCommonCtxType) {
         try {
             validateNoMappedClkTypeName(*_pseudoErCommonCtxType);
-        } catch (MetadataParseError& exc) {
+        } catch (TextParseError& exc) {
             std::ostringstream ss;
 
-            appendMsgToMetadataParseError(exc, "In the event record common context type:",
-                                          _pseudoErCommonCtxType->loc());
+            appendMsgToTextParseError(exc, "In the event record common context type:",
+                                      _pseudoErCommonCtxType->loc());
             throw;
         }
     }
@@ -749,11 +748,11 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
     try {
         this->_validateErHeaderType(pseudoErts);
         this->_validateNoMappedClkTypeName();
-    } catch (MetadataParseError& exc) {
+    } catch (TextParseError& exc) {
         std::ostringstream ss;
 
         ss << "In data stream type " << pseudoTypeIdenStr(*this) << ':';
-        appendMsgToMetadataParseError(exc, ss.str());
+        appendMsgToTextParseError(exc, ss.str());
         throw;
     }
 }
@@ -784,7 +783,7 @@ void PseudoTraceType::validate() const
 
             const auto& firstPseudoErt = dstIdPseudoOrphanErtsPair.second.begin()->second;
 
-            throwMetadataParseError(ss.str(), firstPseudoErt.loc());
+            throwTextParseError(ss.str(), firstPseudoErt.loc());
         }
     }
 
@@ -802,26 +801,26 @@ void PseudoTraceType::validate() const
 
                 try {
                     if (pseudoUuidArrayType.len() != 16) {
-                        throwMetadataParseError("Expecting a 16-element static-length array type.",
-                                                pseudoUuidDt->loc());
+                        throwTextParseError("Expecting a 16-element static-length array type.",
+                                            pseudoUuidDt->loc());
                     }
 
                     if (!pseudoUuidArrayType.pseudoElemType().isFlUInt()) {
-                        throwMetadataParseError("Expecting a fixed-length integer type.",
-                                                pseudoUuidArrayType.pseudoElemType().loc());
+                        throwTextParseError("Expecting a fixed-length integer type.",
+                                            pseudoUuidArrayType.pseudoElemType().loc());
                     }
 
                     auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoUuidArrayType.pseudoElemType());
 
                     if (pseudoUIntType.len() != 8) {
-                        throwMetadataParseError("Expecting a fixed-length unsigned integer type "
-                                                "with a length of 8 bits.",
-                                                pseudoUIntType.loc());
+                        throwTextParseError("Expecting a fixed-length unsigned integer type "
+                                            "with a length of 8 bits.",
+                                            pseudoUIntType.loc());
                     }
-                } catch (MetadataParseError& exc) {
-                    appendMsgToMetadataParseError(exc,
-                                                  "Static-length array type with a \"trace type UUID\" role:",
-                                                  pseudoUuidDt->loc());
+                } catch (TextParseError& exc) {
+                    appendMsgToTextParseError(exc,
+                                              "Static-length array type with a \"trace type UUID\" role:",
+                                              pseudoUuidDt->loc());
                     throw;
                 }
             }
@@ -837,32 +836,32 @@ void PseudoTraceType::validate() const
                 auto& firstPseudoDt = **pseudoMagicDts.begin();
 
                 if (!firstPseudoDt.isFlUInt()) {
-                    throwMetadataParseError("Unsigned integer type with the "
-                                            "\"packet magic number\" role must be a "
-                                            "fixed-length integer type.",
-                                            firstPseudoDt.loc());
+                    throwTextParseError("Unsigned integer type with the "
+                                        "\"packet magic number\" role must be a "
+                                        "fixed-length integer type.",
+                                        firstPseudoDt.loc());
                 }
 
                 auto& pseudoMagicDt = static_cast<const PseudoFlUIntType&>(firstPseudoDt);
                 auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
 
                 if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &pseudoMagicDt) {
-                    throwMetadataParseError("Fixed-length unsigned integer type with the "
-                                            "\"packet magic number\" role must be within the "
-                                            "first member type of the packet header structure type.",
-                                            pseudoMagicDt.loc());
+                    throwTextParseError("Fixed-length unsigned integer type with the "
+                                        "\"packet magic number\" role must be within the "
+                                        "first member type of the packet header structure type.",
+                                        pseudoMagicDt.loc());
                 }
 
                 if (pseudoMagicDt.len() != 32) {
-                    throwMetadataParseError("Fixed-length unsigned integer type with the "
-                                            "\"packet magic number\" role must have a length of "
-                                            "32 bits.",
-                                            pseudoMagicDt.loc());
+                    throwTextParseError("Fixed-length unsigned integer type with the "
+                                        "\"packet magic number\" role must have a length of "
+                                        "32 bits.",
+                                        pseudoMagicDt.loc());
                 }
             } else if (pseudoMagicDts.size() > 1) {
-                throwMetadataParseError("More than one fixed-length unsigned integer type with the "
-                                        "\"packet magic number\" role found.",
-                                        _pseudoPktHeaderType->loc());
+                throwTextParseError("More than one fixed-length unsigned integer type with the "
+                                    "\"packet magic number\" role found.",
+                                    _pseudoPktHeaderType->loc());
             }
 
             /*
@@ -873,18 +872,18 @@ void PseudoTraceType::validate() const
             if (_pseudoDsts.size() > 1 &&
                     findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
                                               UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
-                throwMetadataParseError("No structure member type with the "
-                                        "\"data stream type ID\" role, "
-                                        "but the trace type contains "
-                                        "more than one data stream type.",
-                                        _pseudoPktHeaderType->loc());
+                throwTextParseError("No structure member type with the "
+                                    "\"data stream type ID\" role, "
+                                    "but the trace type contains "
+                                    "more than one data stream type.",
+                                    _pseudoPktHeaderType->loc());
             }
 
             // no mapped clock type within the packet header type
             validateNoMappedClkTypeName(*_pseudoPktHeaderType);
-        } catch (MetadataParseError& exc) {
-            appendMsgToMetadataParseError(exc, "In the packet header type:",
-                                          _pseudoPktHeaderType->loc());
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "In the packet header type:",
+                                      _pseudoPktHeaderType->loc());
             throw;
         }
     }

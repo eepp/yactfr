@@ -51,7 +51,7 @@ std::pair<yactfr::Trace::UP, yactfr::TraceEnvironment> fromMetadataText(const st
     -# \link TraceEnvironment Trace environment\endlink
     @endparblock
 
-@throws MetadataParseError
+@throws TextParseError
     An error occurred while parsing the document.
 */
 template <typename CharIt>

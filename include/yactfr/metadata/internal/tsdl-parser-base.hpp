@@ -32,7 +32,7 @@
 #include "../fl-enum-type.hpp"
 #include "../int-range.hpp"
 #include "../aliases.hpp"
-#include "../metadata-parse-error.hpp"
+#include "../../text-parse-error.hpp"
 #include "pseudo-types.hpp"
 #include "pseudo-dt-utils.hpp"
 #include "data-loc-map.hpp"
@@ -456,7 +456,7 @@ void TsdlParserBase::_validateFlEnumTypeMapping(const Size len, const TextLocati
                   ", " << range.upper() <<
                   "] don't fit the range [" << minLower << ", " << maxUpper << "] "
                   "(with a length of " << len << " bit" << lenUnitSuffix << ").";
-            throwMetadataParseError(ss.str(), loc);
+            throwTextParseError(ss.str(), loc);
         }
     }
 }
@@ -469,7 +469,7 @@ void TsdlParserBase::_validateFlEnumTypeMappings(const Size len, const TextLocat
     assert(len <= 64);
 
     if (mappings.empty()) {
-        throwMetadataParseError("Fixed-length enumeration type has no mappings.", loc);
+        throwTextParseError("Fixed-length enumeration type has no mappings.", loc);
     }
 
     for (const auto& nameRangesPair : mappings) {

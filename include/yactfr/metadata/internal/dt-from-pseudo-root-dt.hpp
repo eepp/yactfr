@@ -33,7 +33,7 @@
 #include "../fl-enum-type.hpp"
 #include "../int-range.hpp"
 #include "../aliases.hpp"
-#include "../metadata-parse-error.hpp"
+#include "../../text-parse-error.hpp"
 #include "pseudo-types.hpp"
 #include "data-loc-map.hpp"
 
