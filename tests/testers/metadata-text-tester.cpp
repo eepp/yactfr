@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,18 +8,14 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
-#include <yactfr/metadata/trace-type-from-metadata-text.hpp>
-#include <yactfr/metadata/metadata-stream.hpp>
-#include <yactfr/metadata/io.hpp>
+#include <yactfr/yactfr.hpp>
 
-int main(int argc, const char* argv[])
+int main(const int argc, const char * const argv[])
 {
     try {
         std::ifstream file {argv[1]};
-        auto metadataStream = yactfr::createMetadataStream(file);
-        auto traceType = yactfr::traceTypeFromMetadataText(std::begin(metadataStream->text()),
-                                                           std::end(metadataStream->text()));
-        std::cout << *traceType << std::endl;
+        const auto metadataStream = yactfr::createMetadataStream(file);
+        yactfr::traceFromMetadataText(metadataStream->text().begin(), metadataStream->text().end());
     } catch (const yactfr::MetadataParseError& ex) {
         std::cerr << ex.what() << std::endl;
         return 2;

@@ -32,53 +32,53 @@ yactfr_create_all_streams (
     fail-int-one-bit-beyond-content
     fail-int-one-bit-beyond-data
     fail-le-to-be-change-in-byte
-    fail-packet-content-size-gt-packet-total-size-1
-    fail-packet-content-size-gt-packet-total-size-2
-    fail-packet-content-size-too-small
-    fail-packet-total-size-not-multiple-eight
-    fail-packet-total-size-too-small
-    fail-dynamic-array-beyond-content
-    fail-dynamic-array-beyond-data
-    fail-string-beyond-content
-    fail-string-beyond-data
-    fail-text-array-beyond-content
-    fail-text-array-beyond-data
-    fail-text-dynamic-array-beyond-content
-    fail-text-dynamic-array-beyond-data
+    fail-pkt-content-len-gt-pkt-total-len-1
+    fail-pkt-content-len-gt-pkt-total-len-2
+    fail-pkt-content-len-too-small
+    fail-pkt-total-len-not-multiple-eight
+    fail-pkt-total-len-too-small
+    fail-dyn-array-beyond-content
+    fail-dyn-array-beyond-data
+    fail-str-beyond-content
+    fail-str-beyond-data
+    fail-static-text-array-beyond-content
+    fail-static-text-array-beyond-data
+    fail-dyn-text-array-beyond-content
+    fail-dyn-text-array-beyond-data
     fail-unknown-dst-id
     fail-unknown-ert-id
-    fail-variant-beyond-content
-    fail-variant-beyond-data
-    fail-variant-unknown-tag
+    fail-var-beyond-content
+    fail-var-beyond-data
+    fail-var-inval-sel
     pass-all-basic-features-be
     pass-all-basic-features-le
-    pass-array-empty-struct
+    pass-array-empty-structs
     pass-arrays
-    pass-clock-values
+    pass-clk-vals
     pass-complex-arrays
-    pass-data-stream-id
+    pass-dst
     pass-diff-magic
     pass-diff-uuid
     pass-empty-data
     pass-floats
-    pass-multiple-id
-    pass-multiple-id-in-array
-    pass-multiple-stream-id
-    pass-no-events-no-stream-id
-    pass-no-events-with-stream-id
+    pass-multiple-ert-id-ints
+    pass-multiple-dst-id-ints
+    pass-no-ers-no-dst-id-ints
+    pass-no-ers-with-dst-id
     pass-odd-enums
     pass-odd-ints
-    pass-packet-content-size-no-packet-total-size
-    pass-packet-origin-index
-    pass-packet-total-size-no-packet-content-size
-    pass-dynamic-array-empty-struct
-    pass-dynamic-arrays
+    pass-pkt-content-len-no-pkt-total-len
+    pass-pkt-origin-index
+    pass-pkt-total-len-no-pkt-content-len
+    pass-dyn-array-empty-structs
+    pass-dyn-array-multi-len
+    pass-dyn-arrays
     pass-std-enums
     pass-std-ints
-    pass-string-alignment
-    pass-text-arrays
-    pass-text-dynamic-arrays
-    pass-variants
+    pass-str-align
+    pass-static-text-arrays
+    pass-dyn-text-arrays
+    pass-vars
 )
 
 add_custom_target (
@@ -95,52 +95,52 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/fail-int-one-bit-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-int-one-bit-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-le-to-be-change-in-byte/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-content-size-gt-packet-total-size-1/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-content-size-gt-packet-total-size-2/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-content-size-too-small/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-total-size-not-multiple-eight/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-total-size-too-small/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-dynamic-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-dynamic-array-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-string-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-string-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-array-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-dynamic-array-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-dynamic-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-content-len-gt-pkt-total-len-1/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-content-len-gt-pkt-total-len-2/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-content-len-too-small/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-total-len-not-multiple-eight/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-pkt-total-len-too-small/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-str-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-str-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-static-text-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-static-text-array-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-text-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dyn-text-array-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-dst-id/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-ert-id/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-variant-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-variant-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-variant-unknown-tag/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-var-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-var-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-var-inval-sel/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-all-basic-features-be/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-all-basic-features-le/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-array-empty-struct/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-array-empty-structs/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-arrays/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-clock-values/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-clk-vals/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-complex-arrays/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-data-stream-id/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dst/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-diff-magic/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-diff-uuid/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-empty-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-floats/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-multiple-id/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-multiple-id-in-array/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-multiple-stream-id/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-no-events-no-stream-id/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-no-events-with-stream-id/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-multiple-ert-id-ints/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-multiple-dst-id-ints/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-no-ers-no-dst-id-ints/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-no-ers-with-dst-id/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-odd-enums/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-odd-ints/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-packet-content-size-no-packet-total-size/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-packet-origin-index/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-packet-total-size-no-packet-content-size/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-dynamic-array-empty-struct/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-dynamic-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-content-len-no-pkt-total-len/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-origin-index/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-pkt-total-len-no-pkt-content-len/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-array-empty-structs/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-array-multi-len/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-enums/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-ints/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-string-alignment/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-text-arrays/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-text-dynamic-arrays/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-variants/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-str-align/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-static-text-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dyn-text-arrays/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-vars/metadata"
     VERBATIM
 )

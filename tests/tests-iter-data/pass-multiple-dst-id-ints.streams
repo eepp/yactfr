@@ -1,0 +1,67 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = le;
+    packet.header := struct {
+        u8 stream_id;
+        struct {
+            string aaa;
+            u8 _stream_id;
+        } s;
+    };
+};
+
+stream {
+    id = 0x42;
+};
+
+stream {
+    id = 0x43;
+};
+
+event {
+    name = test42;
+    stream_id = 0x42;
+    fields := struct {
+        string salut;
+    };
+};
+
+event {
+    name = test43;
+    stream_id = 0x43;
+    fields := struct {
+        u32 hi;
+    };
+};
+----
+43 "paste" 00 42
+
+    "the string" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         UI:stream_id:67
+     8         ST:s {
+     8           STR:aaa {
+     8             SS:6:paste
+    56           }
+    56           UI:stream_id:66
+    64         }
+    64       }
+    64     }
+    64     DST:66
+    64     ER {
+    64       ERT:0:test42
+    64       SC:5 {
+    64         ST {
+    64           STR:salut {
+    64             SS:11:the string
+   152           }
+   152         }
+   152       }
+   152     }
+   152   }
+   152 }

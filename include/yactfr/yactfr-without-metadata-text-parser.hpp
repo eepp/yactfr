@@ -1,6 +1,4 @@
 /*
- * Master header, without the metadata text parser.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -9,65 +7,62 @@
 
 /*!
 @file
-@brief  Master header, without the metadata text parser.
+@brief
+    Master header, without the metadata text parser.
 */
 
 #ifndef _YACTFR_YACTFR_WITHOUT_METADATA_TEXT_PARSER_HPP
 #define _YACTFR_YACTFR_WITHOUT_METADATA_TEXT_PARSER_HPP
 
 #include "aliases.hpp"
-#include "data-block.hpp"
-#include "data-source-factory.hpp"
-#include "data-source.hpp"
+#include "data-blk.hpp"
+#include "data-src-factory.hpp"
+#include "data-src.hpp"
 #include "decoding-errors.hpp"
-#include "element-visitor.hpp"
-#include "element.hpp"
+#include "elem-seq-it-pos.hpp"
+#include "elem-seq-it.hpp"
+#include "elem-seq.hpp"
+#include "elem-visitor.hpp"
+#include "elem.hpp"
 #include "io-error.hpp"
-#include "memory-mapped-file-view-factory.hpp"
 #include "metadata/aliases.hpp"
 #include "metadata/array-type.hpp"
 #include "metadata/bit-array-type.hpp"
-#include "metadata/byte-order.hpp"
-#include "metadata/clock-type.hpp"
-#include "metadata/compound-type.hpp"
-#include "metadata/data-stream-type.hpp"
-#include "metadata/data-type-visitor.hpp"
-#include "metadata/data-type.hpp"
-#include "metadata/dynamic-array-type.hpp"
-#include "metadata/dynamic-text-array-type.hpp"
-#include "metadata/encoding.hpp"
+#include "metadata/bo.hpp"
+#include "metadata/clk-offset.hpp"
+#include "metadata/clk-type.hpp"
+#include "metadata/clk-value-interval.hpp"
+#include "metadata/compound-dt.hpp"
+#include "metadata/data-loc.hpp"
+#include "metadata/dst.hpp"
+#include "metadata/dt-visitor.hpp"
+#include "metadata/dt.hpp"
+#include "metadata/dyn-array-type.hpp"
+#include "metadata/dyn-text-array-type.hpp"
 #include "metadata/enum-type.hpp"
-#include "metadata/event-record-type.hpp"
-#include "metadata/field-ref.hpp"
+#include "metadata/ert.hpp"
 #include "metadata/float-type.hpp"
 #include "metadata/fwd.hpp"
+#include "metadata/int-range-set.hpp"
+#include "metadata/int-range.hpp"
 #include "metadata/int-type.hpp"
 #include "metadata/invalid-metadata-stream.hpp"
-#include "metadata/invalid-metadata.hpp"
-#include "metadata/io.hpp"
 #include "metadata/metadata-parse-error.hpp"
 #include "metadata/metadata-stream.hpp"
-#include "metadata/metadata-text-location.hpp"
-#include "metadata/named-data-type.hpp"
-#include "metadata/no-such-index.hpp"
-#include "metadata/no-such-name.hpp"
-#include "metadata/no-such-type-id.hpp"
 #include "metadata/packetized-metadata-stream.hpp"
 #include "metadata/plain-text-metadata-stream.hpp"
-#include "metadata/scalar-type.hpp"
+#include "metadata/scalar-dt.hpp"
 #include "metadata/scope.hpp"
 #include "metadata/static-array-type.hpp"
 #include "metadata/static-text-array-type.hpp"
-#include "metadata/string-type.hpp"
-#include "metadata/struct-type-field.hpp"
+#include "metadata/str-type.hpp"
+#include "metadata/struct-member-type.hpp"
 #include "metadata/struct-type.hpp"
-#include "metadata/struct-variant-type-base.hpp"
-#include "metadata/trace-type-env.hpp"
 #include "metadata/trace-type.hpp"
-#include "metadata/variant-type-option.hpp"
-#include "metadata/variant-type.hpp"
-#include "element-sequence-iterator-position.hpp"
-#include "element-sequence-iterator.hpp"
-#include "element-sequence.hpp"
+#include "metadata/var-type-opt.hpp"
+#include "metadata/var-type.hpp"
+#include "mmap-file-view-factory.hpp"
+#include "trace-env.hpp"
+#include "trace.hpp"
 
 #endif // _YACTFR_YACTFR_WITHOUT_METADATA_TEXT_PARSER_HPP

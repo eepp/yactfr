@@ -1,0 +1,93 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u8 packet_size;
+        u8 packet_seq_num;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        string str;
+    };
+};
+----
+48 02 "coucou" 00
+40 b4 "salut" 00
+58 17 "meow mix" 00
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     SC:1 {
+     0       ST {
+     0         UI:packet_size:72
+     8         EPTL:72
+     8         UI:packet_seq_num:2
+    16         POI:2
+    16       }
+    16     }
+    16     ER {
+    16       ERT:0:test
+    16       SC:5 {
+    16         ST {
+    16           STR:str {
+    16             SS:7:coucou
+    72           }
+    72         }
+    72       }
+    72     }
+    72   }
+    72 }
+    72 P {
+    72   PC {
+    72     DST:0
+    72     SC:1 {
+    72       ST {
+    72         UI:packet_size:64
+    80         EPTL:64
+    80         UI:packet_seq_num:180
+    88         POI:180
+    88       }
+    88     }
+    88     ER {
+    88       ERT:0:test
+    88       SC:5 {
+    88         ST {
+    88           STR:str {
+    88             SS:6:salut
+   136           }
+   136         }
+   136       }
+   136     }
+   136   }
+   136 }
+   136 P {
+   136   PC {
+   136     DST:0
+   136     SC:1 {
+   136       ST {
+   136         UI:packet_size:88
+   144         EPTL:88
+   144         UI:packet_seq_num:23
+   152         POI:23
+   152       }
+   152     }
+   152     ER {
+   152       ERT:0:test
+   152       SC:5 {
+   152         ST {
+   152           STR:str {
+   152             SS:9:meow mix
+   224           }
+   224         }
+   224       }
+   224     }
+   224   }
+   224 }

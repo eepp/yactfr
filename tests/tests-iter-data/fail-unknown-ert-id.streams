@@ -20,13 +20,13 @@ event {
 ----
 43 01 42 02
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     ERB
-     0       SCB:2
-     0         STB
-     0           U:id:67
-     8         STE
-     8       SCE
-     8 Event record type ID 67 does not select a valid event record type.
+     0     ER {
+     0       SC:2 {
+     0         ST {
+     0           UI:id:67
+     8         }
+     8       }
+     8 Event record type ID 67 doesn't select an existing event record type.

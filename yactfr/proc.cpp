@@ -1,6 +1,4 @@
 /*
- * Procedure instructions.
- *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -14,8 +12,54 @@
 namespace yactfr {
 namespace internal {
 
-InstrVisitor::InstrVisitor()
+static inline std::string _strName(const std::string& name)
 {
+    std::string rName;
+
+    rName = "[\033[1m\033[36m";
+    rName += name;
+    rName += "\033[0m]";
+    return rName;
+}
+
+static inline std::string _strEndName(const std::string& name)
+{
+    std::string rName;
+
+    rName = "[\033[1m\033[32m";
+    rName += name;
+    rName += "\033[0m]";
+    return rName;
+}
+
+static inline std::string _strSpecName(const std::string& name)
+{
+    std::string rName;
+
+    rName = "[\033[1m\033[33m";
+    rName += name;
+    rName += "\033[0m]";
+    return rName;
+}
+
+static inline std::string _strTopName(const std::string& name)
+{
+    std::string rName;
+
+    rName = "{\033[1m\033[35m";
+    rName += name;
+    rName += "\033[0m}";
+    return rName;
+}
+
+static inline std::string _strScopeName(const std::string& name)
+{
+    std::string rName;
+
+    rName = "|\033[1m\033[33m";
+    rName += name;
+    rName += "\033[0m|";
+    return rName;
 }
 
 InstrVisitor::~InstrVisitor()
@@ -27,18 +71,18 @@ void Proc::buildRawProcFromShared()
     // in case we call this more than once...
     _rawProc.clear();
 
-    for (auto& instrSp : _sharedProc) {
-        instrSp->buildRawProcFromShared();
-        _rawProc.push_back(instrSp.get());
+    for (auto& instr : _sharedProc) {
+        instr->buildRawProcFromShared();
+        _rawProc.push_back(instr.get());
     }
 }
 
-std::string Proc::toString(const Size indent) const
+std::string Proc::toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    for (const auto& instrSp : _sharedProc) {
-        ss << instrSp->toString(indent);
+    for (const auto& instr : _sharedProc) {
+        ss << instr->toStr(indent);
     }
 
     return ss.str();
@@ -49,22 +93,17 @@ void Proc::pushBack(std::shared_ptr<Instr> instr)
     _sharedProc.push_back(instr);
 }
 
-void Proc::insert(SharedIterator iter, std::shared_ptr<Instr> instr)
+void Proc::insert(SharedIt it, std::shared_ptr<Instr> instr)
 {
-    _sharedProc.insert(iter, instr);
+    _sharedProc.insert(it, instr);
 }
 
-Instr::Instr() :
-    _kind {Kind::UNSET}
-{
-}
-
-Instr::Instr(Kind kind) :
-    _kind {kind}
+Instr::Instr(const Kind kind) noexcept :
+    _theKind {kind}
 {
 }
 
-std::string Instr::_toString(const Size indent) const
+std::string Instr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -72,85 +111,85 @@ std::string Instr::_toString(const Size indent) const
     return ss.str();
 }
 
-std::string Instr::toString(const Size indent) const
+std::string Instr::toStr(const Size indent) const
 {
-    const char *kindStr;
+    std::string kindStr;
 
-    switch (_kind) {
+    switch (_theKind) {
     case Kind::UNSET:
         kindStr = "UNSET";
         break;
 
-    case Kind::READ_SIGNED_INT_LE:
-        kindStr = "READ_SIGNED_INT_LE";
+    case Kind::READ_SINT_LE:
+        kindStr = "READ_SINT_LE";
         break;
 
-    case Kind::READ_SIGNED_INT_BE:
-        kindStr = "READ_SIGNED_INT_BE";
+    case Kind::READ_SINT_BE:
+        kindStr = "READ_SINT_BE";
         break;
 
-    case Kind::READ_SIGNED_INT_A8:
-        kindStr = "READ_SIGNED_INT_A8";
+    case Kind::READ_SINT_A8:
+        kindStr = "READ_SINT_A8";
         break;
 
-    case Kind::READ_SIGNED_INT_A16_LE:
-        kindStr = "READ_SIGNED_INT_A16_LE";
+    case Kind::READ_SINT_A16_LE:
+        kindStr = "READ_SINT_A16_LE";
         break;
 
-    case Kind::READ_SIGNED_INT_A32_LE:
-        kindStr = "READ_SIGNED_INT_A32_LE";
+    case Kind::READ_SINT_A32_LE:
+        kindStr = "READ_SINT_A32_LE";
         break;
 
-    case Kind::READ_SIGNED_INT_A64_LE:
-        kindStr = "READ_SIGNED_INT_A64_LE";
+    case Kind::READ_SINT_A64_LE:
+        kindStr = "READ_SINT_A64_LE";
         break;
 
-    case Kind::READ_SIGNED_INT_A16_BE:
-        kindStr = "READ_SIGNED_INT_A16_BE";
+    case Kind::READ_SINT_A16_BE:
+        kindStr = "READ_SINT_A16_BE";
         break;
 
-    case Kind::READ_SIGNED_INT_A32_BE:
-        kindStr = "READ_SIGNED_INT_A32_BE";
+    case Kind::READ_SINT_A32_BE:
+        kindStr = "READ_SINT_A32_BE";
         break;
 
-    case Kind::READ_SIGNED_INT_A64_BE:
-        kindStr = "READ_SIGNED_INT_A64_BE";
+    case Kind::READ_SINT_A64_BE:
+        kindStr = "READ_SINT_A64_BE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_LE:
-        kindStr = "READ_UNSIGNED_INT_LE";
+    case Kind::READ_UINT_LE:
+        kindStr = "READ_UINT_LE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_BE:
-        kindStr = "READ_UNSIGNED_INT_BE";
+    case Kind::READ_UINT_BE:
+        kindStr = "READ_UINT_BE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A8:
-        kindStr = "READ_UNSIGNED_INT_A8";
+    case Kind::READ_UINT_A8:
+        kindStr = "READ_UINT_A8";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A16_LE:
-        kindStr = "READ_UNSIGNED_INT_A16_LE";
+    case Kind::READ_UINT_A16_LE:
+        kindStr = "READ_UINT_A16_LE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A32_LE:
-        kindStr = "READ_UNSIGNED_INT_A32_LE";
+    case Kind::READ_UINT_A32_LE:
+        kindStr = "READ_UINT_A32_LE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A64_LE:
-        kindStr = "READ_UNSIGNED_INT_A64_LE";
+    case Kind::READ_UINT_A64_LE:
+        kindStr = "READ_UINT_A64_LE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A16_BE:
-        kindStr = "READ_UNSIGNED_INT_A16_BE";
+    case Kind::READ_UINT_A16_BE:
+        kindStr = "READ_UINT_A16_BE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A32_BE:
-        kindStr = "READ_UNSIGNED_INT_A32_BE";
+    case Kind::READ_UINT_A32_BE:
+        kindStr = "READ_UINT_A32_BE";
         break;
 
-    case Kind::READ_UNSIGNED_INT_A64_BE:
-        kindStr = "READ_UNSIGNED_INT_A64_BE";
+    case Kind::READ_UINT_A64_BE:
+        kindStr = "READ_UINT_A64_BE";
         break;
 
     case Kind::READ_FLOAT_32_LE:
@@ -185,80 +224,80 @@ std::string Instr::toString(const Size indent) const
         kindStr = "READ_FLOAT_A64_BE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_LE:
-        kindStr = "READ_SIGNED_ENUM_LE";
+    case Kind::READ_SENUM_LE:
+        kindStr = "READ_SENUM_LE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_BE:
-        kindStr = "READ_SIGNED_ENUM_BE";
+    case Kind::READ_SENUM_BE:
+        kindStr = "READ_SENUM_BE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A8:
-        kindStr = "READ_SIGNED_ENUM_A8";
+    case Kind::READ_SENUM_A8:
+        kindStr = "READ_SENUM_A8";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A16_LE:
-        kindStr = "READ_SIGNED_ENUM_A16_LE";
+    case Kind::READ_SENUM_A16_LE:
+        kindStr = "READ_SENUM_A16_LE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A32_LE:
-        kindStr = "READ_SIGNED_ENUM_A32_LE";
+    case Kind::READ_SENUM_A32_LE:
+        kindStr = "READ_SENUM_A32_LE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A64_LE:
-        kindStr = "READ_SIGNED_ENUM_A64_LE";
+    case Kind::READ_SENUM_A64_LE:
+        kindStr = "READ_SENUM_A64_LE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A16_BE:
-        kindStr = "READ_SIGNED_ENUM_A16_BE";
+    case Kind::READ_SENUM_A16_BE:
+        kindStr = "READ_SENUM_A16_BE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A32_BE:
-        kindStr = "READ_SIGNED_ENUM_A32_BE";
+    case Kind::READ_SENUM_A32_BE:
+        kindStr = "READ_SENUM_A32_BE";
         break;
 
-    case Kind::READ_SIGNED_ENUM_A64_BE:
-        kindStr = "READ_SIGNED_ENUM_A64_BE";
+    case Kind::READ_SENUM_A64_BE:
+        kindStr = "READ_SENUM_A64_BE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_LE:
-        kindStr = "READ_UNSIGNED_ENUM_LE";
+    case Kind::READ_UENUM_LE:
+        kindStr = "READ_UENUM_LE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_BE:
-        kindStr = "READ_UNSIGNED_ENUM_BE";
+    case Kind::READ_UENUM_BE:
+        kindStr = "READ_UENUM_BE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A8:
-        kindStr = "READ_UNSIGNED_ENUM_A8";
+    case Kind::READ_UENUM_A8:
+        kindStr = "READ_UENUM_A8";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A16_LE:
-        kindStr = "READ_UNSIGNED_ENUM_A16_LE";
+    case Kind::READ_UENUM_A16_LE:
+        kindStr = "READ_UENUM_A16_LE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A32_LE:
-        kindStr = "READ_UNSIGNED_ENUM_A32_LE";
+    case Kind::READ_UENUM_A32_LE:
+        kindStr = "READ_UENUM_A32_LE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A64_LE:
-        kindStr = "READ_UNSIGNED_ENUM_A64_LE";
+    case Kind::READ_UENUM_A64_LE:
+        kindStr = "READ_UENUM_A64_LE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A16_BE:
-        kindStr = "READ_UNSIGNED_ENUM_A16_BE";
+    case Kind::READ_UENUM_A16_BE:
+        kindStr = "READ_UENUM_A16_BE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A32_BE:
-        kindStr = "READ_UNSIGNED_ENUM_A32_BE";
+    case Kind::READ_UENUM_A32_BE:
+        kindStr = "READ_UENUM_A32_BE";
         break;
 
-    case Kind::READ_UNSIGNED_ENUM_A64_BE:
-        kindStr = "READ_UNSIGNED_ENUM_A64_BE";
+    case Kind::READ_UENUM_A64_BE:
+        kindStr = "READ_UENUM_A64_BE";
         break;
 
-    case Kind::READ_STRING:
-        kindStr = "READ_STRING";
+    case Kind::READ_STR:
+        kindStr = "READ_STR";
         break;
 
     case Kind::BEGIN_READ_SCOPE:
@@ -297,120 +336,115 @@ std::string Instr::toString(const Size indent) const
         kindStr = "BEGIN_READ_STATIC_UUID_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_DYNAMIC_ARRAY:
-        kindStr = "BEGIN_READ_DYNAMIC_ARRAY";
+    case Kind::BEGIN_READ_DYN_ARRAY:
+        kindStr = "BEGIN_READ_DYN_ARRAY";
         break;
 
-    case Kind::END_READ_DYNAMIC_ARRAY:
-        kindStr = "END_READ_DYNAMIC_ARRAY";
+    case Kind::END_READ_DYN_ARRAY:
+        kindStr = "END_READ_DYN_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY:
-        kindStr = "BEGIN_READ_DYNAMIC_TEXT_ARRAY";
+    case Kind::BEGIN_READ_DYN_TEXT_ARRAY:
+        kindStr = "BEGIN_READ_DYN_TEXT_ARRAY";
         break;
 
-    case Kind::END_READ_DYNAMIC_TEXT_ARRAY:
-        kindStr = "END_READ_DYNAMIC_TEXT_ARRAY";
+    case Kind::END_READ_DYN_TEXT_ARRAY:
+        kindStr = "END_READ_DYN_TEXT_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_VARIANT_SIGNED_TAG:
-        kindStr = "BEGIN_READ_VARIANT_SIGNED_TAG";
+    case Kind::BEGIN_READ_VAR_SSEL:
+        kindStr = "BEGIN_READ_VAR_SSEL";
         break;
 
-    case Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG:
-        kindStr = "BEGIN_READ_VARIANT_UNSIGNED_TAG";
+    case Kind::BEGIN_READ_VAR_USEL:
+        kindStr = "BEGIN_READ_VAR_USEL";
         break;
 
-    case Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG:
-        kindStr = "BEGIN_READ_VARIANT_UNKNOWN_TAG";
+    case Kind::END_READ_VAR:
+        kindStr = "END_READ_VAR";
         break;
 
-    case Kind::END_READ_VARIANT:
-        kindStr = "END_READ_VARIANT";
+    case Kind::SAVE_VAL:
+        kindStr = "SAVE_VAL";
         break;
 
-    case Kind::SAVE_VALUE:
-        kindStr = "SAVE_VALUE";
+    case Kind::SET_PKT_END_CLK_VAL:
+        kindStr = "SET_PKT_END_CLK_VAL";
         break;
 
-    case Kind::SET_PACKET_END_CLOCK_VALUE:
-        kindStr = "SET_PACKET_END_CLOCK_VALUE";
+    case Kind::UPDATE_CLK_VAL:
+        kindStr = "UPDATE_CLK_VAL";
         break;
 
-    case Kind::UPDATE_CLOCK_VALUE:
-        kindStr = "UPDATE_CLOCK_VALUE";
+    case Kind::SET_CUR_ID:
+        kindStr = "SET_CUR_ID";
         break;
 
-    case Kind::SET_CURRENT_ID:
-        kindStr = "SET_CURRENT_ID";
+    case Kind::SET_DST:
+        kindStr = "SET_DST";
         break;
 
-    case Kind::SET_DATA_STREAM_TYPE:
-        kindStr = "SET_DATA_STREAM_TYPE";
+    case Kind::SET_ERT:
+        kindStr = "SET_ERT";
         break;
 
-    case Kind::SET_EVENT_RECORD_TYPE:
-        kindStr = "SET_EVENT_RECORD_TYPE";
+    case Kind::SET_DS_ID:
+        kindStr = "SET_DS_ID";
         break;
 
-    case Kind::SET_DATA_STREAM_ID:
-        kindStr = "SET_DATA_STREAM_ID";
+    case Kind::SET_PKT_ORIGIN_INDEX:
+        kindStr = "SET_PKT_ORIGIN_INDEX";
         break;
 
-    case Kind::SET_PACKET_ORIGIN_INDEX:
-        kindStr = "SET_PACKET_ORIGIN_INDEX";
+    case Kind::SET_PKT_TOTAL_LEN:
+        kindStr = "SET_PKT_TOTAL_LEN";
         break;
 
-    case Kind::SET_PACKET_TOTAL_SIZE:
-        kindStr = "SET_PACKET_TOTAL_SIZE";
+    case Kind::SET_PKT_CONTENT_LEN:
+        kindStr = "SET_PKT_CONTENT_LEN";
         break;
 
-    case Kind::SET_PACKET_CONTENT_SIZE:
-        kindStr = "SET_PACKET_CONTENT_SIZE";
+    case Kind::SET_PKT_MAGIC_NUMBER:
+        kindStr = "SET_PKT_MAGIC_NUMBER";
         break;
 
-    case Kind::SET_PACKET_MAGIC_NUMBER:
-        kindStr = "SET_PACKET_MAGIC_NUMBER";
+    case Kind::END_PKT_PREAMBLE_PROC:
+        kindStr = "END_PKT_PREAMBLE_PROC";
         break;
 
-    case Kind::END_PACKET_PREAMBLE_PROC:
-        kindStr = "END_PACKET_PREAMBLE_PROC";
+    case Kind::END_DS_PKT_PREAMBLE_PROC:
+        kindStr = "END_DS_PKT_PREAMBLE_PROC";
         break;
 
-    case Kind::END_DST_PACKET_PREAMBLE_PROC:
-        kindStr = "END_DST_PACKET_PREAMBLE_PROC";
+    case Kind::END_DS_ER_PREAMBLE_PROC:
+        kindStr = "END_DS_ER_PREAMBLE_PROC";
         break;
 
-    case Kind::END_DST_ERT_PREAMBLE_PROC:
-        kindStr = "END_DST_ERT_PREAMBLE_PROC";
+    case Kind::END_ER_PROC:
+        kindStr = "END_ER_PROC";
         break;
 
-    case Kind::END_ERT_PROC:
-        kindStr = "END_ERT_PROC";
-        break;
-
-    case Kind::DECR_REMAINING_ELEMENTS:
-        kindStr = "DECR_REMAINING_ELEMENTS";
+    case Kind::DECR_REMAINING_ELEMS:
+        kindStr = "DECR_REMAINING_ELEMS";
         break;
 
     default:
-        abort();
+        std::abort();
     }
 
     std::ostringstream ss;
 
-    ss << utils::indent(indent);
+    ss << internal::indent(indent);
 
     if (this->isReadData() || this->isBeginReadScope()) {
         ss << _strName(kindStr);
-    } else if (this->isEndReadCompound() || _kind == Kind::END_READ_SCOPE ||
-            this->isEndProc()) {
+    } else if (this->isEndReadCompound() || _theKind == Kind::END_READ_SCOPE || this->isEndProc()) {
         ss << _strEndName(kindStr);
     } else {
         ss << _strSpecName(kindStr);
     }
 
-    ss << this->_toString(indent);
+    ss << this->_toStr(indent);
     return ss.str();
 }
 
@@ -422,50 +456,40 @@ void Instr::buildRawProcFromShared()
 {
 }
 
-InstrReadData::InstrReadData(const std::string *fieldName,
-                             const std::string *fieldDisplayName,
-                             const DataType *type) :
-    _fieldName {fieldName},
-    _fieldDisplayName {fieldDisplayName},
-    _type {type},
-    _alignment {type ? type->alignment() : 1}
+ReadDataInstr::ReadDataInstr(const Kind kind, const StructureMemberType * const memberType,
+                             const DataType& dt) :
+    Instr {kind},
+    _memberType {memberType},
+    _dt {&dt},
+    _align {dt.alignment()}
 {
-    assert(type);
 }
 
-std::string InstrReadData::_commonToString() const
+std::string ReadDataInstr::_commonToStr() const
 {
     std::ostringstream ss;
 
-    if (_fieldName) {
-        ss << " " << _strProp("field-name") << "`" << *_fieldName << "`";
+    if (_memberType) {
+        ss << " " << _strProp("member-type-name") << "`" << _memberType->name() << "`";
 
-        if (_fieldDisplayName && *_fieldName != *_fieldDisplayName) {
-            ss << " " << _strProp("field-disp-name") << "`" << *_fieldDisplayName << "`";
+        if (_memberType->name() != _memberType->displayName()) {
+            ss << " " << _strProp("member-type-disp-name") << "`" <<
+                  _memberType->displayName() << "`";
         }
     }
 
-    if (_type) {
-        ss << " " << _strProp("type") << _type <<
-              " " << _strProp("alignment") << _alignment;
-    }
+    ss << " " << _strProp("dt-addr") << _dt << " " << _strProp("align") << _align;
 
     return ss.str();
 }
 
-InstrLocation InstrReadData::findInstr(std::vector<std::string>::const_iterator begin,
-                                       std::vector<std::string>::const_iterator end)
-{
-    return {};
-}
-
-InstrSaveValue::InstrSaveValue(const Index pos) :
+SaveValInstr::SaveValInstr(const Index pos) :
+    Instr {Kind::SAVE_VAL},
     _pos {pos}
 {
-    this->_setKind(Kind::SAVE_VALUE);
 }
 
-std::string InstrSaveValue::_toString(const Size indent) const
+std::string SaveValInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -473,830 +497,582 @@ std::string InstrSaveValue::_toString(const Size indent) const
     return ss.str();
 }
 
-InstrSetPacketEndClockValue::InstrSetPacketEndClockValue(const ClockType& clockType,
-                                                         const Index index) :
-    _clockType {&clockType},
+SetPktEndClkValInstr::SetPktEndClkValInstr(const ClockType& clkType, const Index index) :
+    Instr {Kind::SET_PKT_END_CLK_VAL},
+    _clkType {&clkType},
     _index {index}
 {
-    this->_setKind(Kind::SET_PACKET_END_CLOCK_VALUE);
 }
 
-std::string InstrSetPacketEndClockValue::_toString(const Size indent) const
+std::string SetPktEndClkValInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("clock-type") << _clockType <<
+    ss << " " << _strProp("clk-type") << _clkType <<
           " " << _strProp("index") << _index << std::endl;
     return ss.str();
 }
 
-InstrReadBitArray::InstrReadBitArray(const std::string *fieldName,
-                                     const std::string *fieldDisplayName,
-                                     const DataType *type) :
-    InstrReadData {fieldName, fieldDisplayName, type},
-    _size {type->asBitArrayType()->size()},
-    _byteOrder {type->asBitArrayType()->byteOrder()}
+ReadBitArrayInstr::ReadBitArrayInstr(const Kind kind, const StructureMemberType * const member,
+                                     const DataType& dt) :
+    ReadDataInstr {kind, member, dt},
+    _len {dt.asBitArrayType().length()},
+    _bo {dt.asBitArrayType().byteOrder()}
 {
-    assert(type->isBitArrayType());
 }
 
-std::string InstrReadBitArray::_toString(const Size indent) const
+std::string ReadBitArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-std::string InstrReadBitArray::_commonToString() const
+std::string ReadBitArrayInstr::_commonToStr() const
 {
     std::ostringstream ss;
 
-    ss << InstrReadData::_commonToString();
-    ss << " " << _strProp("size") << _size;
+    ss << ReadDataInstr::_commonToStr();
+    ss << " " << _strProp("len") << _len;
     return ss.str();
 }
 
-InstrReadIntBase::InstrReadIntBase(const std::string *fieldName,
-                                   const std::string *fieldDisplayName,
-                                   const DataType *type) :
-    InstrReadBitArray {fieldName, fieldDisplayName, type}
+ReadIntInstr::ReadIntInstr(const Kind kind, const StructureMemberType * const member,
+                           const DataType& dt) :
+    ReadBitArrayInstr {kind, member, dt}
 {
+    assert(dt.isIntegerType());
 }
 
-InstrReadSignedInt::InstrReadSignedInt(const std::string *fieldName,
-                                       const std::string *fieldDisplayName,
-                                       const DataType *type) :
-    InstrReadIntBase {fieldName, fieldDisplayName, type}
+static inline Instr::Kind kindFromIntType(const DataType& dt) noexcept
 {
-    assert(type->isSignedIntType());
+    assert(dt.isIntegerType());
 
-    Kind kind = Kind::UNSET;
-    auto intType = this->signedIntType();
+    Instr::Kind kind = Instr::Kind::UNSET;
+    const auto& intType = dt.asIntegerType();
 
-    if (intType.byteOrder() == ByteOrder::LITTLE) {
-        kind = Kind::READ_SIGNED_INT_LE;
+    if (dt.isUnsignedIntegerType()) {
+        if (intType.byteOrder() == ByteOrder::LITTLE) {
+            kind = Instr::Kind::READ_UINT_LE;
 
-        if (intType.alignment() % 8 == 0) {
-            switch (intType.size()) {
-            case 8:
-                kind = Kind::READ_SIGNED_INT_A8;
-                break;
+            if (dt.alignment() % 8 == 0) {
+                switch (intType.length()) {
+                case 8:
+                    return Instr::Kind::READ_UINT_A8;
 
-            case 16:
-                kind = Kind::READ_SIGNED_INT_A16_LE;
-                break;
+                case 16:
+                    return Instr::Kind::READ_UINT_A16_LE;
 
-            case 32:
-                kind = Kind::READ_SIGNED_INT_A32_LE;
-                break;
+                case 32:
+                    return Instr::Kind::READ_UINT_A32_LE;
 
-            case 64:
-                kind = Kind::READ_SIGNED_INT_A64_LE;
-                break;
+                case 64:
+                    return Instr::Kind::READ_UINT_A64_LE;
 
-            default:
-                break;
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_UINT_BE;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (intType.length()) {
+                case 8:
+                    return Instr::Kind::READ_UINT_A8;
+
+                case 16:
+                    return Instr::Kind::READ_UINT_A16_BE;
+
+                case 32:
+                    return Instr::Kind::READ_UINT_A32_BE;
+
+                case 64:
+                    return Instr::Kind::READ_UINT_A64_BE;
+
+                default:
+                    break;
+                }
             }
         }
     } else {
-        kind = Kind::READ_SIGNED_INT_BE;
+        if (intType.byteOrder() == ByteOrder::LITTLE) {
+            kind = Instr::Kind::READ_SINT_LE;
 
-        if (intType.alignment() % 8 == 0) {
-            switch (intType.size()) {
-            case 8:
-                kind = Kind::READ_SIGNED_INT_A8;
-                break;
+            if (dt.alignment() % 8 == 0) {
+                switch (intType.length()) {
+                case 8:
+                    return Instr::Kind::READ_SINT_A8;
 
-            case 16:
-                kind = Kind::READ_SIGNED_INT_A16_BE;
-                break;
+                case 16:
+                    return Instr::Kind::READ_SINT_A16_LE;
 
-            case 32:
-                kind = Kind::READ_SIGNED_INT_A32_BE;
-                break;
+                case 32:
+                    return Instr::Kind::READ_SINT_A32_LE;
 
-            case 64:
-                kind = Kind::READ_SIGNED_INT_A64_BE;
-                break;
+                case 64:
+                    return Instr::Kind::READ_SINT_A64_LE;
 
-            default:
-                break;
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_SINT_BE;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (intType.length()) {
+                case 8:
+                    return Instr::Kind::READ_SINT_A8;
+
+                case 16:
+                    return Instr::Kind::READ_SINT_A16_BE;
+
+                case 32:
+                    return Instr::Kind::READ_SINT_A32_BE;
+
+                case 64:
+                    return Instr::Kind::READ_SINT_A64_BE;
+
+                default:
+                    break;
+                }
             }
         }
     }
 
-    assert(kind != Kind::UNSET);
-    this->_setKind(kind);
+    assert(kind != Instr::Kind::UNSET);
+    return kind;
 }
 
-std::string InstrReadSignedInt::_toString(const Size indent) const
+ReadSIntInstr::ReadSIntInstr(const Kind kind, const StructureMemberType * const member,
+                             const DataType& dt) :
+    ReadIntInstr {kind, member, dt}
+{
+    assert(dt.isSignedIntegerType());
+}
+
+ReadSIntInstr::ReadSIntInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadSIntInstr {kindFromIntType(dt), member, dt}
+{
+}
+
+std::string ReadSIntInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrReadUnsignedInt::InstrReadUnsignedInt(const std::string *fieldName,
-                                           const std::string *fieldDisplayName,
-                                           const DataType *type) :
-    InstrReadIntBase {fieldName, fieldDisplayName, type}
+ReadUIntInstr::ReadUIntInstr(const Kind kind, const StructureMemberType * const member,
+                             const DataType& dt) :
+    ReadIntInstr {kind, member, dt}
 {
-    assert(type->isUnsignedIntType());
-
-    Kind kind = Kind::UNSET;
-    auto intType = this->unsignedIntType();
-
-    if (intType.byteOrder() == ByteOrder::LITTLE) {
-        kind = Kind::READ_UNSIGNED_INT_LE;
-
-        if (intType.alignment() % 8 == 0) {
-            switch (intType.size()) {
-            case 8:
-                kind = Kind::READ_UNSIGNED_INT_A8;
-                break;
-
-            case 16:
-                kind = Kind::READ_UNSIGNED_INT_A16_LE;
-                break;
-
-            case 32:
-                kind = Kind::READ_UNSIGNED_INT_A32_LE;
-                break;
-
-            case 64:
-                kind = Kind::READ_UNSIGNED_INT_A64_LE;
-                break;
-
-            default:
-                break;
-            }
-        }
-    } else {
-        kind = Kind::READ_UNSIGNED_INT_BE;
-
-        if (intType.alignment() % 8 == 0) {
-            switch (intType.size()) {
-            case 8:
-                kind = Kind::READ_UNSIGNED_INT_A8;
-                break;
-
-            case 16:
-                kind = Kind::READ_UNSIGNED_INT_A16_BE;
-                break;
-
-            case 32:
-                kind = Kind::READ_UNSIGNED_INT_A32_BE;
-                break;
-
-            case 64:
-                kind = Kind::READ_UNSIGNED_INT_A64_BE;
-                break;
-
-            default:
-                break;
-            }
-        }
-    }
-
-    assert(kind != Kind::UNSET);
-    this->_setKind(kind);
+    assert(dt.isUnsignedIntegerType());
 }
 
-std::string InstrReadUnsignedInt::_toString(const Size indent) const
+ReadUIntInstr::ReadUIntInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadUIntInstr {kindFromIntType(dt), member, dt}
+{
+}
+
+std::string ReadUIntInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrReadFloat::InstrReadFloat(const std::string *fieldName,
-                               const std::string *fieldDisplayName,
-                               const DataType *type) :
-    InstrReadBitArray {fieldName, fieldDisplayName, type}
+static inline Instr::Kind kindFromFloatType(const DataType& dt) noexcept
 {
-    assert(type->isFloatType());
+    assert(dt.isFloatingPointNumberType());
 
-    Kind kind = Kind::UNSET;
-    auto floatType = this->floatType();
+    const auto& floatType = dt.asFloatingPointNumberType();
 
     if (floatType.byteOrder() == ByteOrder::LITTLE) {
-        if (floatType.alignment() % 8 == 0) {
-            switch (floatType.size()) {
+        if (dt.alignment() % 8 == 0) {
+            switch (floatType.length()) {
             case 32:
-                kind = Kind::READ_FLOAT_A32_LE;
-                break;
+                return Instr::Kind::READ_FLOAT_A32_LE;
 
             case 64:
-                kind = Kind::READ_FLOAT_A64_LE;
-                break;
+                return Instr::Kind::READ_FLOAT_A64_LE;
 
             default:
-                abort();
+                std::abort();
             }
         } else {
-            switch (floatType.size()) {
+            switch (floatType.length()) {
             case 32:
-                kind = Kind::READ_FLOAT_32_LE;
-                break;
+                return Instr::Kind::READ_FLOAT_32_LE;
 
             case 64:
-                kind = Kind::READ_FLOAT_64_LE;
-                break;
+                return Instr::Kind::READ_FLOAT_64_LE;
 
             default:
-                abort();
+                std::abort();
             }
         }
     } else {
-        if (floatType.alignment() % 8 == 0) {
-            switch (floatType.size()) {
+        if (dt.alignment() % 8 == 0) {
+            switch (floatType.length()) {
             case 32:
-                kind = Kind::READ_FLOAT_A32_BE;
-                break;
+                return Instr::Kind::READ_FLOAT_A32_BE;
 
             case 64:
-                kind = Kind::READ_FLOAT_A64_BE;
-                break;
+                return Instr::Kind::READ_FLOAT_A64_BE;
 
             default:
-                abort();
+                std::abort();
             }
         } else {
-            switch (floatType.size()) {
+            switch (floatType.length()) {
             case 32:
-                kind = Kind::READ_FLOAT_32_BE;
-                break;
+                return Instr::Kind::READ_FLOAT_32_BE;
 
             case 64:
-                kind = Kind::READ_FLOAT_64_BE;
-                break;
+                return Instr::Kind::READ_FLOAT_64_BE;
 
             default:
-                abort();
+                std::abort();
             }
         }
     }
-
-    assert(kind != Kind::UNSET);
-    this->_setKind(kind);
 }
 
-std::string InstrReadFloat::_toString(const Size indent) const
+ReadFloatInstr::ReadFloatInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadBitArrayInstr {kindFromFloatType(dt), member, dt}
+{
+    assert(dt.isFloatingPointNumberType());
+}
+
+std::string ReadFloatInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrReadSignedEnum::InstrReadSignedEnum(const std::string *fieldName,
-                                         const std::string *fieldDisplayName,
-                                         const DataType *type) :
-    InstrReadSignedInt {fieldName, fieldDisplayName, type}
+static inline Instr::Kind kindFromEnumType(const DataType& dt) noexcept
 {
-    assert(type->isSignedEnumType());
+    switch (kindFromIntType(dt)) {
+    case Instr::Kind::READ_SINT_LE:
+        return Instr::Kind::READ_SENUM_LE;
 
-    switch (this->kind()) {
-    case Kind::READ_SIGNED_INT_LE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_LE);
-        break;
+    case Instr::Kind::READ_SINT_BE:
+        return Instr::Kind::READ_SENUM_BE;
 
-    case Kind::READ_SIGNED_INT_BE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_BE);
-        break;
+    case Instr::Kind::READ_SINT_A8:
+        return Instr::Kind::READ_SENUM_A8;
 
-    case Kind::READ_SIGNED_INT_A8:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A8);
-        break;
+    case Instr::Kind::READ_SINT_A16_LE:
+        return Instr::Kind::READ_SENUM_A16_LE;
 
-    case Kind::READ_SIGNED_INT_A16_LE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A16_LE);
-        break;
+    case Instr::Kind::READ_SINT_A32_LE:
+        return Instr::Kind::READ_SENUM_A32_LE;
 
-    case Kind::READ_SIGNED_INT_A32_LE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A32_LE);
-        break;
+    case Instr::Kind::READ_SINT_A64_LE:
+        return Instr::Kind::READ_SENUM_A64_LE;
 
-    case Kind::READ_SIGNED_INT_A64_LE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A64_LE);
-        break;
+    case Instr::Kind::READ_SINT_A16_BE:
+        return Instr::Kind::READ_SENUM_A16_BE;
 
-    case Kind::READ_SIGNED_INT_A16_BE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A16_BE);
-        break;
+    case Instr::Kind::READ_SINT_A32_BE:
+        return Instr::Kind::READ_SENUM_A32_BE;
 
-    case Kind::READ_SIGNED_INT_A32_BE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A32_BE);
-        break;
+    case Instr::Kind::READ_SINT_A64_BE:
+        return Instr::Kind::READ_SENUM_A64_BE;
 
-    case Kind::READ_SIGNED_INT_A64_BE:
-        this->_setKind(Kind::READ_SIGNED_ENUM_A64_BE);
-        break;
+    case Instr::Kind::READ_UINT_LE:
+        return Instr::Kind::READ_UENUM_LE;
+
+    case Instr::Kind::READ_UINT_BE:
+        return Instr::Kind::READ_UENUM_BE;
+
+    case Instr::Kind::READ_UINT_A8:
+        return Instr::Kind::READ_UENUM_A8;
+
+    case Instr::Kind::READ_UINT_A16_LE:
+        return Instr::Kind::READ_UENUM_A16_LE;
+
+    case Instr::Kind::READ_UINT_A32_LE:
+        return Instr::Kind::READ_UENUM_A32_LE;
+
+    case Instr::Kind::READ_UINT_A64_LE:
+        return Instr::Kind::READ_UENUM_A64_LE;
+
+    case Instr::Kind::READ_UINT_A16_BE:
+        return Instr::Kind::READ_UENUM_A16_BE;
+
+    case Instr::Kind::READ_UINT_A32_BE:
+        return Instr::Kind::READ_UENUM_A32_BE;
+
+    case Instr::Kind::READ_UINT_A64_BE:
+        return Instr::Kind::READ_UENUM_A64_BE;
 
     default:
-        abort();
+        std::abort();
     }
 }
 
-std::string InstrReadSignedEnum::_toString(const Size indent) const
+ReadSEnumInstr::ReadSEnumInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadSIntInstr {kindFromEnumType(dt), member, dt}
+{
+    assert(dt.isSignedEnumerationType());
+}
+
+std::string ReadSEnumInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrReadUnsignedEnum::InstrReadUnsignedEnum(const std::string *fieldName,
-                                             const std::string *fieldDisplayName,
-                                             const DataType *type) :
-    InstrReadUnsignedInt {fieldName, fieldDisplayName, type}
+ReadUEnumInstr::ReadUEnumInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadUIntInstr {kindFromEnumType(dt), member, dt}
 {
-    assert(type->isUnsignedEnumType());
-
-    switch (this->kind()) {
-    case Kind::READ_UNSIGNED_INT_LE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_LE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_BE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_BE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A8:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A8);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A16_LE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A16_LE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A32_LE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A32_LE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A64_LE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A64_LE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A16_BE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A16_BE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A32_BE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A32_BE);
-        break;
-
-    case Kind::READ_UNSIGNED_INT_A64_BE:
-        this->_setKind(Kind::READ_UNSIGNED_ENUM_A64_BE);
-        break;
-
-    default:
-        abort();
-    }
+    assert(dt.isUnsignedEnumerationType());
 }
 
-std::string InstrReadUnsignedEnum::_toString(const Size indent) const
+std::string ReadUEnumInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrReadString::InstrReadString(const std::string *fieldName,
-                                 const std::string *fieldDisplayName,
-                                 const DataType *type) :
-    InstrReadData {fieldName, fieldDisplayName, type},
-    _alignment {type->asStringType()->alignment()}
+ReadStrInstr::ReadStrInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadDataInstr {Kind::READ_STR, member, dt}
 {
-    assert(type->isStringType());
-    this->_setKind(Kind::READ_STRING);
+    assert(dt.isStringType());
 }
 
-std::string InstrReadString::_toString(const Size indent) const
+std::string ReadStrInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrBeginReadCompound::InstrBeginReadCompound(const std::string *fieldName,
-                                               const std::string *fieldDisplayName,
-                                               const DataType *type) :
-    InstrReadData {fieldName, fieldDisplayName, type}
+BeginReadCompoundInstr::BeginReadCompoundInstr(const Kind kind,
+                                               const StructureMemberType * const member,
+                                               const DataType& dt) :
+    ReadDataInstr {kind, member, dt}
 {
 }
 
-Instr *InstrBeginReadCompound::findInstrByFieldName(const std::string& fieldName)
-{
-    for (auto& instr : _proc) {
-        if (!instr->isReadData()) {
-            continue;
-        }
-
-        auto& instrRead = static_cast<InstrReadData&>(*instr);
-
-        if (instrRead.fieldName() && *instrRead.fieldName() == fieldName) {
-            return instr.get();
-        }
-    }
-
-    return nullptr;
-}
-
-void InstrBeginReadCompound::buildRawProcFromShared()
+void BeginReadCompoundInstr::buildRawProcFromShared()
 {
     _proc.buildRawProcFromShared();
 }
 
-InstrEndReadCompound::InstrEndReadCompound(const Kind kind,
-                                           const std::string *fieldName,
-                                           const std::string *fieldDisplayName,
-                                           const DataType *type) :
-    InstrReadData {fieldName, fieldDisplayName, type}
+EndReadCompoundInstr::EndReadCompoundInstr(const Kind kind,
+                                           const StructureMemberType * const member,
+                                           const DataType& dt) :
+    ReadDataInstr {kind, member, dt}
 {
     assert(kind == Kind::END_READ_STRUCT ||
            kind == Kind::END_READ_STATIC_ARRAY ||
            kind == Kind::END_READ_STATIC_TEXT_ARRAY ||
-           kind == Kind::END_READ_DYNAMIC_ARRAY ||
-           kind == Kind::END_READ_DYNAMIC_TEXT_ARRAY ||
-           kind == Kind::END_READ_VARIANT);
-    this->_setKind(kind);
+           kind == Kind::END_READ_DYN_ARRAY ||
+           kind == Kind::END_READ_DYN_TEXT_ARRAY ||
+           kind == Kind::END_READ_VAR);
 }
 
-std::string InstrEndReadCompound::_toString(const Size indent) const
+std::string EndReadCompoundInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
+    ss << this->_commonToStr() << std::endl;
     return ss.str();
 }
 
-InstrBeginReadStruct::InstrBeginReadStruct(const std::string *fieldName,
-                                           const std::string *fieldDisplayName,
-                                           const DataType *type) :
-    InstrBeginReadCompound {fieldName, fieldDisplayName, type}
+BeginReadStructInstr::BeginReadStructInstr(const StructureMemberType * const member,
+                                           const DataType& dt) :
+    BeginReadCompoundInstr {Kind::BEGIN_READ_STRUCT, member, dt}
 {
-    assert(type->isStructType());
-    this->_setKind(Kind::BEGIN_READ_STRUCT);
+    assert(dt.isStructureType());
 }
 
-std::string InstrBeginReadStruct::_toString(const Size indent) const
+std::string BeginReadStructInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
-    ss << this->_procToString(indent + 1);
+    ss << this->_commonToStr() << std::endl;
+    ss << this->_procToStr(indent + 1);
     return ss.str();
 }
 
-InstrLocation InstrBeginReadStruct::findInstr(std::vector<std::string>::const_iterator begin,
-                                                          std::vector<std::string>::const_iterator end)
+BeginReadVarUSelInstr::BeginReadVarUSelInstr(const StructureMemberType * const memberType,
+                                             const DataType& dt) :
+    BeginReadVarInstr {memberType, dt}
 {
-    if (begin == end) {
-        return {};
-    }
-
-    for (auto it = std::begin(this->proc()); it != std::end(this->proc()); ++it) {
-        auto& instr = *it;
-
-        if (!instr->isReadData()) {
-            continue;
-        }
-
-        auto& instrRead = static_cast<InstrReadData&>(*instr);
-
-        if (!instrRead.fieldName()) {
-            continue;
-        }
-
-        if (*instrRead.fieldName() == *begin) {
-            ++begin;
-
-            if (begin == end) {
-                return {&this->proc().sharedProc(), it};
-            }
-
-            return instrRead.findInstr(begin, end);
-        }
-    }
-
-    return {};
 }
 
-static const char *scopeToString(const Scope scope)
+BeginReadVarSSelInstr::BeginReadVarSSelInstr(const StructureMemberType * const memberType,
+                                             const DataType& dt) :
+    BeginReadVarInstr {memberType, dt}
+{
+}
+
+static std::string scopeStr(const Scope scope)
 {
     switch (scope) {
     case Scope::PACKET_HEADER:
-        return "PACKET_HEADER";
+        return "PH";
 
     case Scope::PACKET_CONTEXT:
-        return "PACKET_CONTEXT";
+        return "PC";
 
     case Scope::EVENT_RECORD_HEADER:
-        return "EVENT_RECORD_HEADER";
+        return "ERH";
 
-    case Scope::EVENT_RECORD_FIRST_CONTEXT:
-        return "EVENT_RECORD_FIRST_CONTEXT";
+    case Scope::EVENT_RECORD_COMMON_CONTEXT:
+        return "ERCC";
 
-    case Scope::EVENT_RECORD_SECOND_CONTEXT:
-        return "EVENT_RECORD_SECOND_CONTEXT";
+    case Scope::EVENT_RECORD_SPECIFIC_CONTEXT:
+        return "ERSC";
 
     case Scope::EVENT_RECORD_PAYLOAD:
-        return "EVENT_RECORD_PAYLOAD";
+        return "ERP";
 
     default:
-        abort();
+        std::abort();
     }
 }
 
-InstrBeginReadScope::InstrBeginReadScope(const Scope scope,
-                                         const unsigned int alignment) :
+BeginReadScopeInstr::BeginReadScopeInstr(const Scope scope, const unsigned int align) :
+    Instr {Kind::BEGIN_READ_SCOPE},
     _scope {scope},
-    _alignment {alignment}
+    _align {align}
 {
-    this->_setKind(Kind::BEGIN_READ_SCOPE);
 }
 
-std::string InstrBeginReadScope::_toString(const Size indent) const
+std::string BeginReadScopeInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("scope") << scopeToString(_scope) <<
-          " " << _strProp("alignment") << _alignment << std::endl;
-    ss << _proc.toString(indent + 1);
+    ss << " " << _strProp("scope") << scopeStr(_scope) <<
+          " " << _strProp("align") << _align << std::endl;
+    ss << _proc.toStr(indent + 1);
     return ss.str();
 }
 
-void InstrBeginReadScope::buildRawProcFromShared()
+void BeginReadScopeInstr::buildRawProcFromShared()
 {
     _proc.buildRawProcFromShared();
 }
 
-InstrEndReadScope::InstrEndReadScope(const Scope scope) :
+EndReadScopeInstr::EndReadScopeInstr(const Scope scope) :
+    Instr {Kind::END_READ_SCOPE},
     _scope {scope}
 {
-    this->_setKind(Kind::END_READ_SCOPE);
 }
 
-std::string InstrEndReadScope::_toString(const Size indent) const
+std::string EndReadScopeInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("scope") << scopeToString(_scope) << std::endl;
+    ss << " " << _strProp("scope") << scopeStr(_scope) << std::endl;
     return ss.str();
 }
 
-InstrLocation InstrBeginReadScope::findInstr(const FieldRef& fieldRef)
+BeginReadStaticArrayInstr::BeginReadStaticArrayInstr(const Kind kind,
+                                                     const StructureMemberType * const member,
+                                                     const DataType& dt) :
+    BeginReadCompoundInstr {kind, member, dt},
+    _len {dt.asStaticArrayType().length()}
 {
-    if (fieldRef.scope() != _scope) {
-        return {};
-    }
-
-    for (auto& instr : _proc) {
-        if (!instr->isBeginReadStruct()) {
-            continue;
-        }
-
-        auto& instrReadStruct = static_cast<InstrBeginReadStruct&>(*instr);
-        auto beginIt = std::begin(fieldRef.pathElements());
-        auto endIt = std::end(fieldRef.pathElements());
-
-        return instrReadStruct.findInstr(beginIt, endIt);
-    }
-
-    return {};
 }
 
-InstrBeginReadStaticArray::InstrBeginReadStaticArray(const std::string *fieldName,
-                                                     const std::string *fieldDisplayName,
-                                                     const DataType *type) :
-    InstrBeginReadCompound {fieldName, fieldDisplayName, type},
-    _length {type->asStaticArrayType()->length()}
+BeginReadStaticArrayInstr::BeginReadStaticArrayInstr(const StructureMemberType * const member,
+                                                     const DataType& dt) :
+    BeginReadStaticArrayInstr {Kind::BEGIN_READ_STATIC_ARRAY, member, dt}
 {
-    assert(type->isStaticArrayType());
-    this->_setKind(Kind::BEGIN_READ_STATIC_ARRAY);
 }
 
-Instr *InstrBeginReadStaticArray::findInstrByFieldName(const std::string& fieldName)
-{
-    for (auto& instrUp : this->proc()) {
-        if (instrUp->isReadData()) {
-            return instrUp.get();
-        }
-    }
-
-    return nullptr;
-}
-
-std::string InstrBeginReadStaticArray::_commonToString() const
+std::string BeginReadStaticArrayInstr::_commonToStr() const
 {
     std::ostringstream ss;
 
-    ss << InstrReadData::_commonToString();
-    ss << " " << _strProp("length") << _length;
-
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len") << _len;
     return ss.str();
 }
 
-std::string InstrBeginReadStaticArray::_toString(const Size indent) const
+std::string BeginReadStaticArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
-    ss << this->_procToString(indent + 1);
+    ss << this->_commonToStr() << std::endl << this->_procToStr(indent + 1);
     return ss.str();
 }
 
-InstrLocation InstrBeginReadStaticArray::findInstr(std::vector<std::string>::const_iterator begin,
-                                                   std::vector<std::string>::const_iterator end)
+BeginReadStaticTextArrayInstr::BeginReadStaticTextArrayInstr(const StructureMemberType * const member,
+                                                             const DataType& dt) :
+    BeginReadStaticArrayInstr {Kind::BEGIN_READ_STATIC_TEXT_ARRAY, member, dt}
 {
-    for (auto& instr : this->proc()) {
-        if (!instr->isReadData()) {
-            continue;
-        }
-
-        auto& instrReadData = static_cast<InstrReadData&>(*instr);
-
-        return instrReadData.findInstr(begin, end);
-    }
-
-    return {};
 }
 
-InstrBeginReadStaticTextArray::InstrBeginReadStaticTextArray(const std::string *fieldName,
-                                                             const std::string *fieldDisplayName,
-                                                             const DataType *type) :
-    InstrBeginReadStaticArray {fieldName, fieldDisplayName, type}
+BeginReadStaticUuidArrayInstr::BeginReadStaticUuidArrayInstr(const StructureMemberType * const member,
+                                                             const DataType& dt) :
+    BeginReadStaticArrayInstr {Kind::BEGIN_READ_STATIC_UUID_ARRAY, member, dt}
 {
-    this->_setKind(Kind::BEGIN_READ_STATIC_TEXT_ARRAY);
 }
 
-InstrBeginReadStaticUuidArray::InstrBeginReadStaticUuidArray(const std::string *fieldName,
-                                                             const std::string *fieldDisplayName,
-                                                             const DataType *type) :
-    InstrBeginReadStaticArray {fieldName, fieldDisplayName, type}
+BeginReadDynArrayInstr::BeginReadDynArrayInstr(const Kind kind,
+                                               const StructureMemberType * const member,
+                                               const DataType& dt) :
+    BeginReadCompoundInstr {kind, member, dt}
 {
-    this->_setKind(Kind::BEGIN_READ_STATIC_UUID_ARRAY);
 }
 
-InstrBeginReadDynamicArray::InstrBeginReadDynamicArray(const std::string *fieldName,
-                                                       const std::string *fieldDisplayName,
-                                                       const DataType *type) :
-    InstrBeginReadCompound {fieldName, fieldDisplayName, type}
+BeginReadDynArrayInstr::BeginReadDynArrayInstr(const StructureMemberType * const member,
+                                               const DataType& dt) :
+    BeginReadDynArrayInstr {Kind::BEGIN_READ_DYN_ARRAY, member, dt}
 {
-    assert(type->isDynamicArrayType());
-    this->_setKind(Kind::BEGIN_READ_DYNAMIC_ARRAY);
 }
 
-Instr *InstrBeginReadDynamicArray::findInstrByFieldName(const std::string& fieldName)
-{
-    for (auto& instrUp : this->proc()) {
-        if (instrUp->isReadData()) {
-            return instrUp.get();
-        }
-    }
-
-    return nullptr;
-}
-
-std::string InstrBeginReadDynamicArray::_toString(const Size indent) const
+std::string BeginReadDynArrayInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << this->_commonToString() << std::endl;
-    ss << this->_procToString(indent + 1);
+    ss << this->_commonToStr() << std::endl << this->_procToStr(indent + 1);
     return ss.str();
 }
 
-std::string InstrBeginReadDynamicArray::_commonToString() const
+std::string BeginReadDynArrayInstr::_commonToStr() const
 {
     std::ostringstream ss;
 
-    ss << InstrReadData::_commonToString();
-    ss << " " << _strProp("length-pos") << _lengthPos;
+    ss << ReadDataInstr::_commonToStr() << " " << _strProp("len-pos") << _lenPos;
     return ss.str();
 }
 
-InstrLocation InstrBeginReadDynamicArray::findInstr(std::vector<std::string>::const_iterator begin,
-                                                    std::vector<std::string>::const_iterator end)
-{
-    for (auto& instr : this->proc()) {
-        if (!instr->isReadData()) {
-            continue;
-        }
-
-        auto& instrReadData = static_cast<InstrReadData&>(*instr);
-
-        return instrReadData.findInstr(begin, end);
-    }
-
-    return {};
-}
-
-InstrBeginReadDynamicTextArray::InstrBeginReadDynamicTextArray(const std::string *fieldName,
-                                                               const std::string *fieldDisplayName,
-                                                               const DataType *type) :
-    InstrBeginReadDynamicArray {fieldName, fieldDisplayName, type}
-{
-    this->_setKind(Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY);
-}
-
-InstrBeginReadVariantUnknownTag::InstrBeginReadVariantUnknownTag(const std::string *fieldName,
-                                                                 const std::string *fieldDisplayName,
-                                                                 const DataType *type) :
-    InstrReadData {fieldName, fieldDisplayName, type}
-{
-    assert(type->isVariantType());
-    this->_setKind(Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG);
-}
-
-std::string InstrBeginReadVariantUnknownTag::_toString(const Size indent) const
-{
-    std::ostringstream ss;
-
-    ss << this->_commonToString() <<
-          " " << _strProp("tag-pos") << _tagPos <<
-          std::endl;
-
-    for (const auto& option : _options) {
-        ss << utils::indent(indent + 1) << "<procedure for option `" <<
-              option.first << "`>" << std::endl;
-        ss << option.second.toString(indent + 2);
-    }
-
-    return ss.str();
-}
-
-InstrLocation InstrBeginReadVariantUnknownTag::findInstr(std::vector<std::string>::const_iterator begin,
-                                                         std::vector<std::string>::const_iterator end)
-{
-    if (begin == end) {
-        return {};
-    }
-
-    for (auto& option : _options) {
-        const auto& optionName = option.first;
-
-        if (optionName != *begin) {
-            continue;
-        }
-
-        /*
-         * Name matches: "read data" instruction is the procedure's
-         * first instruction.
-         */
-        auto& proc = option.second;
-
-        assert(!proc.sharedProc().empty());
-        assert(proc.sharedProc().front()->isReadData());
-        ++begin;
-
-        auto instrReadIt = std::begin(proc);
-
-        if (begin == end) {
-            return {&proc.sharedProc(), instrReadIt};
-        } else {
-            auto& instrRead = static_cast<InstrReadData&>(**instrReadIt);
-
-            return instrRead.findInstr(begin, end);
-        }
-    }
-
-    return {};
-}
-
-InstrBeginReadVariantUnsignedTag::InstrBeginReadVariantUnsignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
-                                                                   const EnumType& tagType) :
-    InstrBeginReadVariant<UnsignedEnumType, Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG> {
-        instrReadUnkVariant, tagType
-    }
+BeginReadDynTextArrayInstr::BeginReadDynTextArrayInstr(const StructureMemberType * const member,
+                                                       const DataType& dt) :
+    BeginReadDynArrayInstr {Kind::BEGIN_READ_DYN_TEXT_ARRAY, member, dt}
 {
 }
 
-InstrBeginReadVariantSignedTag::InstrBeginReadVariantSignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
-                                                               const EnumType& tagType) :
-    InstrBeginReadVariant<SignedEnumType, Kind::BEGIN_READ_VARIANT_SIGNED_TAG> {
-        instrReadUnkVariant, tagType
-    }
+SetCurIdInstr::SetCurIdInstr() :
+    Instr {Kind::SET_CUR_ID}
 {
 }
 
-InstrSetCurrentId::InstrSetCurrentId()
-{
-    this->_setKind(Kind::SET_CURRENT_ID);
-}
-
-InstrSetType::InstrSetType(const boost::optional<TypeId>& fixedId) :
-    _fixedId {fixedId}
+SetTypeInstr::SetTypeInstr(const Kind kind, boost::optional<TypeId> fixedId) :
+    Instr {kind},
+    _fixedId {std::move(fixedId)}
 {
 }
 
-std::string InstrSetType::_toString(const Size indent) const
+std::string SetTypeInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -1308,426 +1084,323 @@ std::string InstrSetType::_toString(const Size indent) const
     return ss.str();
 }
 
-InstrSetDataStreamType::InstrSetDataStreamType(const boost::optional<TypeId>& fixedId) :
-    InstrSetType {fixedId}
+SetDstInstr::SetDstInstr(boost::optional<TypeId> fixedId) :
+    SetTypeInstr {Kind::SET_DST, std::move(fixedId)}
 {
-    this->_setKind(Kind::SET_DATA_STREAM_TYPE);
 }
 
-InstrSetEventRecordType::InstrSetEventRecordType(const boost::optional<TypeId>& fixedId) :
-    InstrSetType {fixedId}
+SetErtInstr::SetErtInstr(boost::optional<TypeId> fixedId) :
+    SetTypeInstr {Kind::SET_ERT, std::move(fixedId)}
 {
-    this->_setKind(Kind::SET_EVENT_RECORD_TYPE);
 }
 
-InstrSetPacketOriginIndex::InstrSetPacketOriginIndex()
+SetPktOriginIndexInstr::SetPktOriginIndexInstr() :
+    Instr {Kind::SET_PKT_ORIGIN_INDEX}
 {
-    this->_setKind(Kind::SET_PACKET_ORIGIN_INDEX);
 }
 
-InstrSetDataStreamId::InstrSetDataStreamId()
+SetDsIdInstr::SetDsIdInstr() :
+    Instr {Kind::SET_DS_ID}
 {
-    this->_setKind(Kind::SET_DATA_STREAM_ID);
 }
 
-InstrSetPacketTotalSize::InstrSetPacketTotalSize()
+SetExpectedPktTotalLenInstr::SetExpectedPktTotalLenInstr() :
+    Instr {Kind::SET_PKT_TOTAL_LEN}
 {
-    this->_setKind(Kind::SET_PACKET_TOTAL_SIZE);
 }
 
-InstrSetPacketContentSize::InstrSetPacketContentSize()
+SetExpectedPktContentLenInstr::SetExpectedPktContentLenInstr() :
+    Instr {Kind::SET_PKT_CONTENT_LEN}
 {
-    this->_setKind(Kind::SET_PACKET_CONTENT_SIZE);
 }
 
-InstrUpdateClockValue::InstrUpdateClockValue(const ClockType& clockType,
-                                             const Index index,
-                                             const Size size) :
-    _clockType {&clockType},
+UpdateClkValInstr::UpdateClkValInstr(const ClockType& clkType, const Index index, const Size len) :
+    Instr {Kind::UPDATE_CLK_VAL},
+    _clkType {&clkType},
     _index {index},
-    _size {size}
+    _len {len}
 {
-    assert(size <= 64);
-    this->_setKind(Kind::UPDATE_CLOCK_VALUE);
+    assert(len <= 64);
 }
 
-std::string InstrUpdateClockValue::_toString(const Size indent) const
+std::string UpdateClkValInstr::_toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("clock-type") << _clockType <<
+    ss << " " << _strProp("clk-type-addr") << _clkType <<
           " " << _strProp("index") << _index <<
-          " " << _strProp("size") << _size << std::endl;
+          " " << _strProp("len") << _len << std::endl;
     return ss.str();
 }
 
-InstrSetPacketMagicNumber::InstrSetPacketMagicNumber()
-{
-    this->_setKind(Kind::SET_PACKET_MAGIC_NUMBER);
-}
-
-InstrEndPacketPreambleProc::InstrEndPacketPreambleProc()
-{
-    this->_setKind(Kind::END_PACKET_PREAMBLE_PROC);
-}
-
-InstrEndDstPacketPreambleProc::InstrEndDstPacketPreambleProc()
-{
-    this->_setKind(Kind::END_DST_PACKET_PREAMBLE_PROC);
-}
-
-InstrEndDstErtPreambleProc::InstrEndDstErtPreambleProc()
-{
-    this->_setKind(Kind::END_DST_ERT_PREAMBLE_PROC);
-}
-
-InstrEndErtProc::InstrEndErtProc()
-{
-    this->_setKind(Kind::END_ERT_PROC);
-}
-
-InstrDecrRemainingElements::InstrDecrRemainingElements()
-{
-    this->_setKind(Kind::DECR_REMAINING_ELEMENTS);
-}
-
-EventRecordTypeProc::EventRecordTypeProc(const EventRecordType& eventRecordType) :
-    _eventRecordType {&eventRecordType}
+SetPktMagicNumberInstr::SetPktMagicNumberInstr() :
+    Instr {Kind::SET_PKT_MAGIC_NUMBER}
 {
 }
 
-void EventRecordTypeProc::buildRawProcFromShared()
+EndPktPreambleProcInstr::EndPktPreambleProcInstr() :
+    Instr {Kind::END_PKT_PREAMBLE_PROC}
+{
+}
+
+EndDsPktPreambleProcInstr::EndDsPktPreambleProcInstr() :
+    Instr {Kind::END_DS_PKT_PREAMBLE_PROC}
+{
+}
+
+EndDsErPreambleProcInstr::EndDsErPreambleProcInstr() :
+    Instr {Kind::END_DS_ER_PREAMBLE_PROC}
+{
+}
+
+EndErProcInstr::EndErProcInstr() :
+    Instr {Kind::END_ER_PROC}
+{
+}
+
+DecrRemainingElemsInstr::DecrRemainingElemsInstr() :
+    Instr {Kind::DECR_REMAINING_ELEMS}
+{
+}
+
+ErProc::ErProc(const EventRecordType& eventRecordType) :
+    _ert {&eventRecordType}
+{
+}
+
+void ErProc::buildRawProcFromShared()
 {
     _proc.buildRawProcFromShared();
 }
 
-std::string EventRecordTypeProc::toString(const Size indent) const
+std::string ErProc::toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << utils::indent(indent) << _strTopName("event record type proc") <<
-          " " << _strProp("event-record-type-id") << _eventRecordType->id();
+    ss << internal::indent(indent) << _strTopName("ER proc") <<
+          " " << _strProp("ert-id") << _ert->id();
 
-    if (_eventRecordType->name()) {
-          ss << " " << _strProp("event-record-type-name") << "`" <<
-                *_eventRecordType->name() << "`";
+    if (_ert->name()) {
+          ss << " " << _strProp("ert-name") << "`" << *_ert->name() << "`";
     }
 
     ss << std::endl;
-    ss << utils::indent(indent + 1) << "<procedure>" << std::endl;
-    ss << _proc.toString(indent + 2);
+    ss << internal::indent(indent + 1) << "<proc>" << std::endl;
+    ss << _proc.toStr(indent + 2);
     return ss.str();
 }
 
-InstrLocation EventRecordTypeProc::findInstr(const FieldRef& fieldRef)
-{
-    assert(fieldRef.scope() == Scope::EVENT_RECORD_SECOND_CONTEXT ||
-           fieldRef.scope() == Scope::EVENT_RECORD_PAYLOAD);
-
-    for (auto& instr : _proc) {
-        if (!instr->isBeginReadScope()) {
-            continue;
-        }
-
-        auto& instrReadScope = instrAsBeginReadScope(*instr);
-
-        if (instrReadScope.scope() != fieldRef.scope()) {
-            continue;
-        }
-
-        const auto loc = instrReadScope.findInstr(fieldRef);
-
-        if (loc.proc) {
-            return loc;
-        }
-    }
-
-    return {};
-}
-
-DataStreamTypePacketProc::DataStreamTypePacketProc(const DataStreamType& dataStreamType) :
-    _dataStreamType {&dataStreamType}
+DsPktProc::DsPktProc(const DataStreamType& dst) :
+    _dst {&dst}
 {
     /*
      * Allocate twice the event record type count so that we tolerate
      * small "holes" in the event record type ID span.
      */
-    _eventRecordTypeProcsVec.resize(dataStreamType.eventRecordTypes().size() * 2);
+    _erProcsVec.resize(dst.eventRecordTypes().size() * 2);
 }
 
-void DataStreamTypePacketProc::buildRawProcFromShared()
+void DsPktProc::buildRawProcFromShared()
 {
-    _packetPreambleProc.buildRawProcFromShared();
-    _eventRecordPreambleProc.buildRawProcFromShared();
+    _pktPreambleProc.buildRawProcFromShared();
+    _erPreambleProc.buildRawProcFromShared();
 
-    this->forEachEventRecordTypeProc([](EventRecordTypeProc& ertProc) {
-        ertProc.buildRawProcFromShared();
+    this->forEachErProc([](ErProc& erProc) {
+        erProc.buildRawProcFromShared();
     });
 }
 
-void DataStreamTypePacketProc::forEachEventRecordTypeProc(ForEachEventRecordTypeProcFunc func)
+void DsPktProc::addErProc(std::unique_ptr<ErProc> erProc)
 {
-    for (auto& ertProcUp : _eventRecordTypeProcsVec) {
-        if (ertProcUp) {
-            func(*ertProcUp);
-        }
-    }
+    const auto id = erProc->ert().id();
 
-    for (auto& idErtProcUpPair : _eventRecordTypeProcsMap) {
-        func(*idErtProcUpPair.second);
-    }
-}
-
-void DataStreamTypePacketProc::addEventRecordTypeProc(std::unique_ptr<EventRecordTypeProc> ertProc)
-{
-    const auto id = ertProc->eventRecordType().id();
-
-    if (id < _eventRecordTypeProcsVec.size()) {
-        _eventRecordTypeProcsVec[id] = std::move(ertProc);
+    if (id < _erProcsVec.size()) {
+        _erProcsVec[id] = std::move(erProc);
     } else {
-        _eventRecordTypeProcsMap[id] = std::move(ertProc);
+        _erProcsMap[id] = std::move(erProc);
     }
 }
 
-const EventRecordTypeProc *DataStreamTypePacketProc::operator[](const TypeId id) const
+const ErProc *DsPktProc::operator[](const TypeId id) const noexcept
 {
-    if (id < _eventRecordTypeProcsVec.size()) {
-        return _eventRecordTypeProcsVec[id].get();
+    if (id < _erProcsVec.size()) {
+        return _erProcsVec[id].get();
     }
 
     // fall back on map
-    auto eventRecordTypeProcIt = _eventRecordTypeProcsMap.find(id);
+    auto erProcIt = _erProcsMap.find(id);
 
-    if (eventRecordTypeProcIt == std::end(_eventRecordTypeProcsMap)) {
+    if (erProcIt == _erProcsMap.end()) {
         return nullptr;
     }
 
-    return eventRecordTypeProcIt->second.get();
+    return erProcIt->second.get();
 }
 
-const EventRecordTypeProc *DataStreamTypePacketProc::singleEventRecordTypeProc() const
+const ErProc *DsPktProc::singleErProc() const noexcept
 {
-    assert(this->eventRecordTypeProcsCount() == 1);
+    assert(this->erProcsCount() == 1);
 
-    if (_eventRecordTypeProcsMap.size() == 1) {
-        auto eventRecordTypeProcIt = std::begin(_eventRecordTypeProcsMap);
+    if (_erProcsMap.size() == 1) {
+        auto erProcIt = _erProcsMap.begin();
 
-        if (eventRecordTypeProcIt == std::end(_eventRecordTypeProcsMap)) {
+        if (erProcIt == _erProcsMap.end()) {
             return nullptr;
         }
 
-        return eventRecordTypeProcIt->second.get();
+        return erProcIt->second.get();
     }
 
-    for (auto& ertProcUp : _eventRecordTypeProcsVec) {
-        if (ertProcUp) {
-            return ertProcUp.get();
+    for (auto& erProc : _erProcsVec) {
+        if (erProc) {
+            return erProc.get();
         }
     }
 
     return nullptr;
 }
 
-std::string DataStreamTypePacketProc::toString(const Size indent) const
+std::string DsPktProc::toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << utils::indent(indent) << _strTopName("data stream type packet proc") <<
-          " " << _strProp("data-stream-type-id") << _dataStreamType->id() << std::endl <<
-          " " << _strProp("er-alignment") << _erAlignment;
-    ss << utils::indent(indent + 1) << "<packet preamble procedure>" << std::endl;
-    ss << _packetPreambleProc.toString(indent + 2);
-    ss << utils::indent(indent + 1) << "<event record preamble procedure>" << std::endl;
-    ss << _eventRecordPreambleProc.toString(indent + 2);
+    ss << internal::indent(indent) << _strTopName("DS packet proc") <<
+          " " << _strProp("dst-id") << _dst->id() <<
+          " " << _strProp("er-align") << _erAlign << std::endl;
+    ss << internal::indent(indent + 1) << "<pkt preamble proc>" << std::endl;
+    ss << _pktPreambleProc.toStr(indent + 2);
+    ss << internal::indent(indent + 1) << "<ER preamble proc>" << std::endl;
+    ss << _erPreambleProc.toStr(indent + 2);
 
-    if (this->eventRecordTypeProcsCount() > 0) {
-        ss << utils::indent(indent + 1) << "<event record type procs>" << std::endl;
+    if (this->erProcsCount() > 0) {
+        ss << internal::indent(indent + 1) << "<ER procs>" << std::endl;
 
-        for (const auto& ertProcUp : _eventRecordTypeProcsVec) {
-            if (ertProcUp) {
-                ss << ertProcUp->toString(indent + 2);
+        for (const auto& erProcUp : _erProcsVec) {
+            if (erProcUp) {
+                ss << erProcUp->toStr(indent + 2);
             }
         }
 
-        for (const auto& idEventRecordTypeProcUpPair : _eventRecordTypeProcsMap) {
-            ss << idEventRecordTypeProcUpPair.second->toString(indent + 2);
+        for (const auto& idErProcUpPair : _erProcsMap) {
+            ss << idErProcUpPair.second->toStr(indent + 2);
         }
     }
 
     return ss.str();
 }
 
-InstrLocation DataStreamTypePacketProc::findInstr(const FieldRef& fieldRef)
-{
-    assert(fieldRef.scope() == Scope::PACKET_CONTEXT ||
-           fieldRef.scope() == Scope::EVENT_RECORD_HEADER ||
-           fieldRef.scope() == Scope::EVENT_RECORD_FIRST_CONTEXT);
-
-    if (fieldRef.scope() == Scope::PACKET_CONTEXT) {
-        for (auto& instr : _packetPreambleProc) {
-            if (!instr->isBeginReadScope()) {
-                continue;
-            }
-
-            auto loc = instrAsBeginReadScope(*instr).findInstr(fieldRef);
-
-            if (loc.proc) {
-                return loc;
-            }
-        }
-
-        return {};
-    }
-
-    for (auto& instr : _eventRecordPreambleProc) {
-        if (!instr->isBeginReadScope()) {
-            continue;
-        }
-
-        auto& instrReadScope = instrAsBeginReadScope(*instr);
-
-        if (instrReadScope.scope() != fieldRef.scope()) {
-            continue;
-        }
-
-        auto loc = instrReadScope.findInstr(fieldRef);
-
-        if (loc.proc) {
-            return loc;
-        }
-    }
-
-    return {};
-}
-
-PacketProc::PacketProc(const TraceType &traceType) :
+PktProc::PktProc(const TraceType& traceType) :
     _traceType {&traceType}
 {
 }
 
-void PacketProc::buildRawProcFromShared()
+void PktProc::buildRawProcFromShared()
 {
     _preambleProc.buildRawProcFromShared();
 
-    for (const auto& idDataStreamTypePacketProcUpPair : _dataStreamTypePacketProcs) {
-        idDataStreamTypePacketProcUpPair.second->buildRawProcFromShared();
+    for (const auto& idDsPktProcPair : _dsPktProcs) {
+        idDsPktProcPair.second->buildRawProcFromShared();
     }
 }
 
-const DataStreamTypePacketProc *PacketProc::operator[](const TypeId id) const
+const DsPktProc *PktProc::operator[](const TypeId id) const noexcept
 {
-    auto dataStreamTypePacketProcIt = _dataStreamTypePacketProcs.find(id);
+    auto dsPktProcIt = _dsPktProcs.find(id);
 
-    if (dataStreamTypePacketProcIt == std::end(_dataStreamTypePacketProcs)) {
+    if (dsPktProcIt == _dsPktProcs.end()) {
         return nullptr;
     }
 
-    return dataStreamTypePacketProcIt->second.get();
+    return dsPktProcIt->second.get();
 }
 
-const DataStreamTypePacketProc *PacketProc::singleDataStreamTypePacketProc() const
+const DsPktProc *PktProc::singleDsPktProc() const noexcept
 {
-    auto dataStreamTypePacketProcIt = std::begin(_dataStreamTypePacketProcs);
+    auto dsPktProcIt = _dsPktProcs.begin();
 
-    if (dataStreamTypePacketProcIt == std::end(_dataStreamTypePacketProcs)) {
+    if (dsPktProcIt == _dsPktProcs.end()) {
         return nullptr;
     }
 
-    return dataStreamTypePacketProcIt->second.get();
+    return dsPktProcIt->second.get();
 }
 
-void DataStreamTypePacketProc::setEventRecordAlignment()
+void DsPktProc::setErAlign()
 {
-    assert(_dataStreamType);
+    assert(_dst);
 
-    if (_dataStreamType->eventRecordHeaderType()) {
-        _erAlignment = _dataStreamType->eventRecordHeaderType()->alignment();
-    } else if (_dataStreamType->eventRecordFirstContextType()) {
-        _erAlignment = _dataStreamType->eventRecordFirstContextType()->alignment();
+    if (_dst->eventRecordHeaderType()) {
+        _erAlign = _dst->eventRecordHeaderType()->alignment();
+    } else if (_dst->eventRecordCommonContextType()) {
+        _erAlign = _dst->eventRecordCommonContextType()->alignment();
     } else {
-        assert(_dataStreamType->eventRecordTypes().size() <= 1);
+        assert(_dst->eventRecordTypes().size() <= 1);
 
-        if (!_dataStreamType->eventRecordTypes().empty()) {
-            auto& ert = **std::begin(_dataStreamType->eventRecordTypes());
+        if (!_dst->eventRecordTypes().empty()) {
+            auto& ert = **_dst->eventRecordTypes().begin();
 
-            if (ert.secondContextType()) {
-                _erAlignment = ert.secondContextType()->alignment();
+            if (ert.specificContextType()) {
+                _erAlign = ert.specificContextType()->alignment();
             } else if (ert.payloadType()) {
-                _erAlignment = ert.payloadType()->alignment();
+                _erAlign = ert.payloadType()->alignment();
             }
         }
     }
 }
 
-std::string PacketProc::toString(const Size indent) const
+std::string PktProc::toStr(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << utils::indent(indent) << _strTopName("packet proc") << " " <<
-          _strProp("saved-values-count") << _savedValuesCounts << std::endl;
+    ss << internal::indent(indent) << _strTopName("pkt proc") << " " <<
+          _strProp("saved-vals-count") << _savedValsCount << std::endl;
 
-    if (!_indexedClockTypes.empty()) {
+    if (!_indexedClkTypes.empty()) {
         Index i = 0;
 
-        ss << utils::indent(indent + 1) << "<indexed clock types>" << std::endl;
+        ss << internal::indent(indent + 1) << "<indexed clk types>" << std::endl;
 
-        for (auto clockType : _indexedClockTypes) {
-            ss << utils::indent(indent + 2) << i << ": \033[1m" <<
-                  clockType->name().c_str() <<
-                  "\033[0m (" << clockType << ")" << std::endl;
+        for (const auto clkType : _indexedClkTypes) {
+            ss << internal::indent(indent + 2) << i;
+
+            if (clkType->name()) {
+                ss << ": \033[1m" << clkType->name()->c_str() << "\033[0m";
+            }
+
+            ss << " (" << clkType << ")" << std::endl;
             ++i;
         }
     }
 
-    ss << utils::indent(indent + 1) << "<preamble procedure>" << std::endl;
-    ss << _preambleProc.toString(indent + 2);
+    ss << internal::indent(indent + 1) << "<preamble proc>" << std::endl;
+    ss << _preambleProc.toStr(indent + 2);
 
-    if (!_dataStreamTypePacketProcs.empty()) {
-        ss << utils::indent(indent + 1) << "<data stream type procs>" << std::endl;
+    if (!_dsPktProcs.empty()) {
+        ss << internal::indent(indent + 1) << "<DS pkt procs>" << std::endl;
 
-        for (const auto& idDataStreamTypePacketProcUpPair : _dataStreamTypePacketProcs) {
-            ss << idDataStreamTypePacketProcUpPair.second->toString(indent + 2);
+        for (const auto& idDsPktProcPair : _dsPktProcs) {
+            ss << idDsPktProcPair.second->toStr(indent + 2);
         }
     }
 
     return ss.str();
 }
 
-InstrLocation PacketProc::findInstr(const FieldRef& fieldRef)
-{
-    assert(fieldRef.scope() == Scope::PACKET_HEADER);
-
-    for (auto& instr : _preambleProc) {
-        if (!instr->isBeginReadScope()) {
-            continue;
-        }
-
-        return instrAsBeginReadScope(*instr).findInstr(fieldRef);
-    }
-
-    return {};
-}
-
-Index PacketProc::clockTypeIndex(const std::string& clockTypeName)
+Index PktProc::clkTypeIndex(const ClockType& clkType)
 {
     // check if this clock type is already indexed
-    auto pred = [&clockTypeName](const ClockType *ccType) {
-        return ccType->name() == clockTypeName;
-    };
-    auto ccIt = std::find_if(std::begin(_indexedClockTypes),
-                             std::end(_indexedClockTypes), pred);
+    const auto clkTypeIt = std::find_if(_indexedClkTypes.begin(), _indexedClkTypes.end(),
+                                        [&clkType](const ClockType * const candClkType) {
+        return candClkType == &clkType;
+    });
     Index index;
 
-    if (ccIt != std::end(_indexedClockTypes)) {
-        index = std::distance(std::begin(_indexedClockTypes), ccIt);
+    if (clkTypeIt != _indexedClkTypes.end()) {
+        index = clkTypeIt - _indexedClkTypes.begin();
     } else {
         // find and index clock type
-        index = _indexedClockTypes.size();
-
-        auto ccType = _traceType->findClockType(clockTypeName);
-
-        assert(ccType);
-        _indexedClockTypes.push_back(ccType);
+        index = _indexedClkTypes.size();
+        _indexedClkTypes.push_back(&clkType);
     }
 
     return index;

@@ -1,6 +1,4 @@
 /*
- * CTF trace type implementation.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -19,24 +17,19 @@
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
 
-#include "field-resolver.hpp"
 #include "../proc.hpp"
 #include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {
 
-class TraceTypeImpl
+class TraceTypeImpl final
 {
 public:
-    TraceTypeImpl(const unsigned int majorVersion,
-                  const unsigned int minorVersion,
-                  const boost::optional<boost::uuids::uuid>& uuid,
-                  DataType::UP packetHeaderType,
-                  std::unique_ptr<const TraceTypeEnv> env,
-                  ClockTypeSet&& clockTypes,
-                  DataStreamTypeSet&& dataStreamTypes,
-                  const TraceType *traceType);
+    explicit TraceTypeImpl(unsigned int majorVersion, unsigned int minorVersion,
+                           boost::optional<boost::uuids::uuid> uuid,
+                           StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
+                           DataStreamTypeSet&& dsts, const TraceType& traceType);
 
     unsigned int majorVersion() const noexcept
     {
@@ -53,37 +46,42 @@ public:
         return _uuid;
     }
 
-    const DataType *packetHeaderType() const noexcept
+    const StructureType *pktHeaderType() const noexcept
     {
-        return _packetHeaderType.get();
+        return _pktHeaderType.get();
     }
 
-    const TraceTypeEnv& env() const noexcept
+    const ClockTypeSet& clkTypes() const noexcept
     {
-        return *_env;
+        return _clkTypes;
     }
 
-    const ClockTypeSet& clockTypes() const noexcept
+    const DataStreamTypeSet& dsts() const noexcept
     {
-        return _clockTypes;
+        return _dsts;
     }
 
-    const DataStreamTypeSet& dataStreamTypes() const noexcept
-    {
-        return _dataStreamTypes;
-    }
-
-    const DataStreamType *findDataStreamType(TypeId id) const;
-    const ClockType *findClockType(const std::string& name) const;
+    const DataStreamType *findDst(TypeId id) const noexcept;
 
     /*
      * It is safe to keep a pointer to the returned object as long as
      * this trace type lives.
      */
-    const PacketProc& packetProc() const;
+    const PktProc& pktProc() const;
+
+    static DataTypeSet& dynArrayTypeLenTypes(const DynamicArrayType& dt) noexcept
+    {
+        return dt._lenTypes();
+    }
+
+    template <typename VarTypeT>
+    static DataTypeSet& varTypeSelTypes(const VarTypeT& dt) noexcept
+    {
+        return dt._selTypes();
+    }
 
 private:
-    struct _StackFrame
+    struct _StackFrame final
     {
         const DataType *parentType;
         Index curChildIndex;
@@ -91,49 +89,21 @@ private:
 
 private:
     void _buildDstMap();
-    void _validate(const TraceType *traceType);
-    void _validateSpecialFields();
-    void _resolveDynamicTypes();
-    void _resolveDynamicTypesInScope(const Scope scope, const DataType *type,
-                                     const FieldResolver& fieldResolver);
-    void _resolveDynamicTypeInScope(const Scope scope, const DataType *type,
-                                    const FieldResolver& fieldResolver);
-    void _validateVariantTypeTagType(const DataType *variantType,
-                                     const DataType *tagType);
-    FieldResolver::Entry _getEntryAt(const Scope scope,
-                                     const FieldResolver::Position& pos);
-    void _stackPush(const _StackFrame& frame);
-    void _stackPop();
-    _StackFrame& _stackTop();
-    FieldResolver::Position _curPos();
-    void _validateMappedClockTypeName(const DataType *type);
-    void _validateMappedClockTypeNames();
-    void _validateUniqueClockTypes();
-    void _createParentLinks(const TraceType *traceType);
+    void _createParentLinks(const TraceType& traceType) const;
+    void _setTypeDeps() const;
 
 private:
     const unsigned int _majorVersion;
     const unsigned int _minorVersion;
     const boost::optional<boost::uuids::uuid> _uuid;
-    DataType::UP _packetHeaderType;
-    std::unique_ptr<const TraceTypeEnv> _env;
-    const ClockTypeSet _clockTypes;
-    const DataStreamTypeSet _dataStreamTypes;
-    std::unordered_map<TypeId, const DataStreamType *> _idsToDataStreamTypes;
+    const StructureType::UP _pktHeaderType;
+    const ClockTypeSet _clkTypes;
+    const DataStreamTypeSet _dsts;
+    std::unordered_map<TypeId, const DataStreamType *> _idsToDsts;
     const TraceType *_traceType;
 
     // packet procedure cache; created the first time we need it
-    mutable std::unique_ptr<const PacketProc> _packetProc;
-
-    struct {
-        const DataType *packetHeaderType;
-        const DataType *packetContextType;
-        const DataType *eventRecordHeaderType;
-        const DataType *eventRecordFirstContextType;
-        const DataType *eventRecordSecondContextType;
-        const DataType *eventRecordPayloadType;
-        std::vector<_StackFrame> stack;
-    } _resolveState;
+    mutable std::unique_ptr<const PktProc> _pktProc;
 };
 
 } // namespace internal

@@ -10,30 +10,30 @@ trace {
 ----
 cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
 ----
-     0 PB
-     0   PCB
-     0     SCB:0
-     0       STB
-     0         SAB:uuid
-     0           U:uuid:204
-     8           U:uuid:28
-    16           U:uuid:188
-    24           U:uuid:228
-    32           U:uuid:119
-    40           U:uuid:24
-    48           U:uuid:67
-    56           U:uuid:177
-    64           U:uuid:160
-    72           U:uuid:22
-    80           U:uuid:108
-    88           U:uuid:184
-    96           U:uuid:204
-   104           U:uuid:60
-   112           U:uuid:43
-   120           U:uuid:74
-   128           PU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
-   128         SAE
-   128       STE
-   128     SCE
-   128   PCE
-   128 PE
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         SA:uuid {
+     0           UI:204
+     8           UI:28
+    16           UI:188
+    24           UI:228
+    32           UI:119
+    40           UI:24
+    48           UI:67
+    56           UI:177
+    64           UI:160
+    72           UI:22
+    80           UI:108
+    88           UI:184
+    96           UI:204
+   104           UI:60
+   112           UI:43
+   120           UI:74
+   128           TTU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
+   128         }
+   128       }
+   128     }
+   128   }
+   128 }

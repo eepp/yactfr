@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2018-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,22 +13,20 @@
 
 #include <yactfr/yactfr.hpp>
 
-#include <mem-data-source-factory.hpp>
-#include <element-printer.hpp>
+#include <mem-data-src-factory.hpp>
+#include <elem-printer.hpp>
 #include <common-trace.hpp>
 
-static const char * const expected = "PB\n";
+static const auto expected = "P {\n";
 
 int main()
 {
-    auto traceType = yactfr::traceTypeFromMetadataText(metadata,
-                                                       metadata + std::strlen(metadata));
-    auto factory = std::make_shared<MemDataSourceFactory>(stream,
-                                                          sizeof(stream));
-    yactfr::ElementSequence seq {traceType, factory};
+    const auto trace = yactfr::traceFromMetadataText(metadata, metadata + std::strlen(metadata));
+    MemDataSrcFactory factory {stream, sizeof stream};
+    yactfr::ElementSequence seq {trace->type(), factory};
     std::ostringstream ss;
-    ElementPrinter printer {ss, 0};
-    auto it = std::begin(seq);
+    ElemPrinter printer {ss, 0};
+    const auto it = seq.begin();
 
     it->accept(printer);
 

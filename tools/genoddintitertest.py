@@ -80,9 +80,9 @@ def _gen_int_meta(at, size, is_le, is_signed):
     line = 'struct { '
 
     if at > 0:
-        line += 'integer {{ align = 1; size = {}; {} {} }} pad; '.format(at, bo, signed)
+        line += f'integer {{ align = 1; size = {at}; {bo} {signed} }} pad; '
 
-    line += 'integer {{ align = 1; size = {}; {} {} }} int;'.format(size, bo, signed)
+    line += f'integer {{ align = 1; size = {size}; {bo} {signed} }} int;'
     line += ' } align(8)'
     return line
 
@@ -111,7 +111,7 @@ event {
 '''
 
     for line in int_meta_lines:
-        meta += '        {}\n'.format(line)
+        meta += f'        {line}\n'
 
     meta += '''        struct {} align(8) pad;
     };
@@ -123,7 +123,7 @@ def _gen_data(data_lines):
     data = '[\n'
 
     for line in data_lines:
-        data += '    {}\n'.format(line)
+        data += f'    {line}\n'
 
     data += ']'
     return data
@@ -146,7 +146,7 @@ def _gen_expect(expect_infos):
         else:
             pref = 'U'
 
-        expect += '{: >6}           STB:{}\n'.format(offset, info.name)
+        expect += f'{offset: >6}           STB:{info.name}\n'
 
         if info.at > 0:
             if info.is_signed:
@@ -154,21 +154,21 @@ def _gen_expect(expect_infos):
             else:
                 pad_value = 2**info.at - 1
 
-            expect += '{: >6}             {}:pad:{}\n'.format(offset, pref, pad_value)
+            expect += f'{offset: >6}             {pref}:pad:{pad_value}\n'
             offset += info.at
 
-        expect += '{: >6}             {}:int:{}\n'.format(offset, pref, info.value)
+        expect += f'{offset: >6}             {pref}:int:{info.value}\n'
         offset += info.size
-        expect += '{: >6}           STE\n'.format(offset)
+        expect += f'{offset: >6}           STE\n'
         offset = ((offset) + 7) & ~7
 
-    expect += '''{offset: >6}           STB:pad
+    expect += f'''{offset: >6}           STB:pad
 {offset: >6}           STE
 {offset: >6}         STE
 {offset: >6}       SCE
 {offset: >6}     ERE
 {offset: >6}   PCE
-{offset: >6} PE'''.format(offset=offset)
+{offset: >6} PE'''
     return expect
 
 
@@ -189,11 +189,11 @@ def _gen():
 
             for size in range(1, 65):
                 for at in range(0, 8):
-                    name = '{}{}{}at{}'.format(sign, bo, size, at)
+                    name = f'{sign}{bo}{size}at{at}'
 
                     # meta
                     int_meta_line = _gen_int_meta(at, size, is_le, is_signed)
-                    int_meta_line += ' {};'.format(name)
+                    int_meta_line += f' {name};'
                     int_meta_lines.append(int_meta_line)
 
                     # expect

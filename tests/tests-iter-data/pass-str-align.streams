@@ -1,0 +1,35 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = le;
+};
+
+event {
+    name = test;
+    fields := struct {
+        integer { align = 1; size = 3; byte_order = be; } pad;
+        string salut;
+    };
+};
+----
+[
+    101 <00000>
+]
+"hello there" 00
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     ER {
+     0       ERT:0:test
+     0       SC:5 {
+     0         ST {
+     0           UI:pad:5
+     8           STR:salut {
+     8             SS:12:hello there
+   104           }
+   104         }
+   104       }
+   104     }
+   104   }
+   104 }

@@ -1,6 +1,4 @@
 /*
- * Metadata parse error.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -13,41 +11,42 @@
 
 namespace yactfr {
 
-MetadataParseErrorMessage::MetadataParseErrorMessage(const std::string& message,
-                                                     const MetadataTextLocation& location) :
-    _message {message},
-    _location {location}
+MetadataParseErrorMessage::MetadataParseErrorMessage(std::string msg, TextLocation loc) :
+    _msg {std::move(msg)},
+    _loc {std::move(loc)}
 {
 }
 
-MetadataParseError::MetadataParseError(const std::string& initMessage,
-                                       const MetadataTextLocation& initLocation) :
+MetadataParseError::MetadataParseError(std::string initMsg, TextLocation initLoc) :
     std::runtime_error {"Parse error"}
 {
-    _errorMessages.push_back(MetadataParseErrorMessage {initMessage, initLocation});
+    _msgs.push_back(MetadataParseErrorMessage {std::move(initMsg), std::move(initLoc)});
     this->_buildFullError();
 }
 
-MetadataParseError::MetadataParseError(const std::string& initMessage) :
-    MetadataParseError {initMessage, MetadataTextLocation {0, 0}}
+MetadataParseError::MetadataParseError(std::string initMsg) :
+    MetadataParseError {std::move(initMsg), TextLocation {0, 0}}
 {
 }
 
-void MetadataParseError::_appendErrorMessage(const std::string& message,
-                                             const MetadataTextLocation& location)
+void MetadataParseError::_appendErrorMsg(std::string msg, TextLocation loc)
 {
-    _errorMessages.push_back(MetadataParseErrorMessage {message, location});
+    _msgs.push_back(MetadataParseErrorMessage {std::move(msg), std::move(loc)});
     this->_buildFullError();
 }
 
+void MetadataParseError::_appendErrorMsg(std::string msg)
+{
+    this->_appendErrorMsg(std::move(msg), TextLocation {0, 0});
+}
 
 void MetadataParseError::_buildFullError()
 {
     std::ostringstream ss;
 
-    for (auto it = _errorMessages.rbegin(); it != _errorMessages.rend(); ++it) {
-        ss << "[" << it->location().natLineNumber() << ":" <<
-              it->location().natColNumber() << "] ";
+    for (auto it = _msgs.rbegin(); it != _msgs.rend(); ++it) {
+        ss << "[" << it->location().naturalLineNumber() << ":" <<
+              it->location().naturalColumnNumber() << "] ";
         ss << it->message() << std::endl;
     }
 

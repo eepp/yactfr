@@ -13,8 +13,8 @@
 #include <memory>
 #include <vector>
 
-#include <yactfr/element-visitor.hpp>
-#include <yactfr/element.hpp>
+#include <yactfr/elem-visitor.hpp>
+#include <yactfr/elem.hpp>
 
 class ElementCollector :
     public yactfr::ElementVisitor
@@ -70,12 +70,12 @@ private:
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::ExpectedPacketTotalSizeElement& elem)
+    void visit(const yactfr::ExpectedPacketTotalLengthElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::ExpectedPacketContentSizeElement& elem)
+    void visit(const yactfr::ExpectedPacketContentLengthElement& elem)
     {
         this->_appendElement(elem);
     }
@@ -85,7 +85,7 @@ private:
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::PacketUuidElement& elem)
+    void visit(const yactfr::TraceTypeUuidElement& elem)
     {
         this->_appendElement(elem);
     }
@@ -110,27 +110,27 @@ private:
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::SignedIntElement& elem)
+    void visit(const yactfr::SignedIntegerElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::UnsignedIntElement& elem)
+    void visit(const yactfr::UnsignedIntegerElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::SignedEnumElement& elem)
+    void visit(const yactfr::SignedEnumerationElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::UnsignedEnumElement& elem)
+    void visit(const yactfr::UnsignedEnumerationElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::FloatElement& elem)
+    void visit(const yactfr::RealElement& elem)
     {
         this->_appendElement(elem);
     }
@@ -190,22 +190,22 @@ private:
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::StructBeginningElement& elem)
+    void visit(const yactfr::StructureBeginningElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::StructEndElement& elem)
+    void visit(const yactfr::StructureEndElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::VariantBeginningSignedTagElement& elem)
+    void visit(const yactfr::VariantWithSignedSelectorBeginningElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::VariantBeginningUnsignedTagElement& elem)
+    void visit(const yactfr::VariantWithUnsignedSelectorBeginningElement& elem)
     {
         this->_appendElement(elem);
     }

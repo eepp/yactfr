@@ -21,11 +21,11 @@ event {
 ----
 24 01 02 03
 ----
-     0 PB
-     0   PCB
-     0     SCB:0
-     0       STB
-     0         U:stream_id:36
-     8       STE
-     8     SCE
-     8 Data stream type ID 36 does not select a valid data stream type.
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         UI:stream_id:36
+     8       }
+     8     }
+     8 Data stream type ID 36 doesn't select an existing data stream type.

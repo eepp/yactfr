@@ -1,37 +1,30 @@
 /*
- * I/O error.
- *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  I/O error.
-*/
-
 #ifndef _YACTFR_IO_ERROR_HPP
 #define _YACTFR_IO_ERROR_HPP
 
-// for std::runtime_error
 #include <stdexcept>
-
-// for std::string
 #include <string>
 
 namespace yactfr {
 
 /*!
-@brief  Generic I/O error.
+@brief
+    Generic I/O error.
+
+@ingroup common
 */
 class IOError final :
     public std::runtime_error
 {
 public:
-    explicit IOError(const std::string& msg) :
-        std::runtime_error {msg}
+    explicit IOError(std::string message) :
+        std::runtime_error {std::move(message)}
     {
     }
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2018-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,7 @@
 
 #include <yactfr/yactfr.hpp>
 
-#include <mem-data-source-factory.hpp>
+#include <mem-data-src-factory.hpp>
 #include <common-trace.hpp>
 
 static bool testOpsEq(const yactfr::ElementSequenceIterator& it1,
@@ -78,13 +78,11 @@ static bool testOpsGt(const yactfr::ElementSequenceIterator& it1,
 
 int main()
 {
-    auto traceType = yactfr::traceTypeFromMetadataText(metadata,
-                                                       metadata + std::strlen(metadata));
-    auto factory = std::make_shared<MemDataSourceFactory>(stream,
-                                                          sizeof(stream));
-    yactfr::ElementSequence seq {traceType, factory};
-    auto it1 = std::begin(seq);
-    auto it2 = std::begin(seq);
+    const auto trace = yactfr::traceFromMetadataText(metadata, metadata + std::strlen(metadata));
+    MemDataSrcFactory factory {stream, sizeof stream};
+    yactfr::ElementSequence seq {trace->type(), factory};
+    auto it1 = seq.begin();
+    auto it2 = seq.begin();
 
     if (!testOpsEq(it1, it2)) {
         return 1;
@@ -103,13 +101,13 @@ int main()
     }
 
     it2 = it1;
-    it1 = std::end(seq);
+    it1 = seq.end();
 
     if (!testOpsGt(it2, it1)) {
         return 1;
     }
 
-    it2 = std::end(seq);
+    it2 = seq.end();
 
     if (!testOpsEq(it1, it2)) {
         return 1;

@@ -23,33 +23,33 @@ event {
     feedface
     "mein"
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     SCB:1
-     0       STB
-     0         U:content_size:80
-     8         EPCS:80
-     8       STE
-     8     SCE
-     8     ERB
+     0     SC:1 {
+     0       ST {
+     0         UI:content_size:80
+     8         EPCL:80
+     8       }
+     8     }
+     8     ER {
      8       ERT:0:test
-     8       SCB:5
-     8         STB
-     8           U:yy:3735928559
-    40         STE
-    40       SCE
-    40     ERE
-    40     ERB
+     8       SC:5 {
+     8         ST {
+     8           UI:yy:3735928559
+    40         }
+    40       }
+    40     }
+    40     ER {
     40       ERT:0:test
-    40       SCB:5
-    40         STB
-    40           U:yy:4277009102
-    72         STE
-    72       SCE
-    72     ERE
-    72     ERB
+    40       SC:5 {
+    40         ST {
+    40           UI:yy:4277009102
+    72         }
+    72       }
+    72     }
+    72     ER {
     72       ERT:0:test
-    72       SCB:5
-    72         STB
-    72 Cannot read 32 bits at this point: would move beyond the current packet's content (8 bits remaining).
+    72       SC:5 {
+    72         ST {
+    72 Cannot read 32 bits at this point: would move beyond the content of the current packet (8 bits remaining).

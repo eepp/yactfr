@@ -1,6 +1,4 @@
 /*
- * CTF integer type.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -11,156 +9,102 @@
 
 namespace yactfr {
 
-IntType::IntType(const int kind, const unsigned int alignment,
-                 const unsigned int size, const ByteOrder byteOrder,
-                 const DisplayBase displayBase, const Encoding encoding,
-                 const boost::optional<std::string>& mappedClockTypeName) :
-    BitArrayType {_KIND_INT | kind, alignment, size, byteOrder},
-    _displayBase {displayBase},
-    _encoding {encoding},
-    _mappedClockTypeName {mappedClockTypeName}
+IntegerType::IntegerType(const int kind, const unsigned int align, const unsigned int len,
+                         const ByteOrder bo, const DisplayBase prefDispBase) :
+    BitArrayType {_KIND_INT | kind, align, len, bo},
+    _prefDispBase {prefDispBase}
 {
 }
 
-bool IntType::_compare(const DataType& otherType) const noexcept
+bool IntegerType::_compare(const DataType& other) const noexcept
 {
-    auto& intType = static_cast<const IntType&>(otherType);
+    auto& otherIntType = static_cast<const IntegerType&>(other);
 
-    return intType.alignment() == this->alignment() &&
-           intType.size() == this->size() &&
-           intType.byteOrder() == this->byteOrder() &&
-           intType.displayBase() == this->displayBase() &&
-           intType.encoding() == this->encoding() &&
-           intType.mappedClockTypeName() == this->mappedClockTypeName();
+    return BitArrayType::_compare(other) && _prefDispBase == otherIntType._prefDispBase;
 }
 
-bool IntType::operator<(const IntType& intType) const noexcept
+bool IntegerType::operator<(const IntegerType& other) const noexcept
 {
-    if (this->alignment() < intType.alignment()) {
+    if (_prefDispBase < other._prefDispBase) {
         return true;
     }
 
-    if (intType.alignment() < this->alignment()) {
+    if (other._prefDispBase < _prefDispBase) {
         return false;
     }
 
-    if (this->size() < intType.size()) {
+    return BitArrayType::operator<(other);
+}
+
+SignedIntegerType::SignedIntegerType(const int kind, const unsigned int align,
+                                     const unsigned int len, const ByteOrder bo,
+                                     const DisplayBase prefDispBase) :
+    IntegerType {_KIND_SINT | kind, align, len, bo, prefDispBase}
+{
+}
+
+SignedIntegerType::SignedIntegerType(const unsigned int align, const unsigned int len,
+                                     const ByteOrder bo, const DisplayBase prefDispBase) :
+    IntegerType {_KIND_SINT, align, len, bo, prefDispBase}
+{
+}
+
+DataType::UP SignedIntegerType::_clone() const
+{
+    return std::make_unique<SignedIntegerType>(this->alignment(), this->length(),
+                                               this->byteOrder(), this->preferredDisplayBase());
+}
+
+UnsignedIntegerType::UnsignedIntegerType(const int kind, const unsigned int align,
+                                         const unsigned int len, const ByteOrder bo,
+                                         const DisplayBase prefDispBase,
+                                         const ClockType * const mappedClkType) :
+    IntegerType {_KIND_UINT | kind, align, len, bo, prefDispBase},
+    _mappedClkType {mappedClkType}
+{
+}
+
+UnsignedIntegerType::UnsignedIntegerType(const unsigned int align, const unsigned int len,
+                                         const ByteOrder bo, const DisplayBase prefDispBase,
+                                         const ClockType * const mappedClkType) :
+    IntegerType {_KIND_UINT, align, len, bo, prefDispBase},
+    _mappedClkType {mappedClkType}
+{
+}
+
+UnsignedIntegerType::UnsignedIntegerType(const UnsignedIntegerType& other) :
+    UnsignedIntegerType {
+        other.alignment(), other.length(), other.byteOrder(),
+        other.preferredDisplayBase(), other._mappedClkType
+    }
+{
+}
+
+DataType::UP UnsignedIntegerType::_clone() const
+{
+    return std::make_unique<UnsignedIntegerType>(this->alignment(), this->length(),
+                                                 this->byteOrder(), this->preferredDisplayBase(),
+                                                 _mappedClkType);
+}
+
+bool UnsignedIntegerType::_compare(const DataType& other) const noexcept
+{
+    auto& otherIntType = static_cast<const UnsignedIntegerType&>(other);
+
+    return IntegerType::_compare(other) && otherIntType._mappedClkType == _mappedClkType;
+}
+
+bool UnsignedIntegerType::operator<(const UnsignedIntegerType& other) const noexcept
+{
+    if (_mappedClkType < other._mappedClkType) {
         return true;
     }
 
-    if (intType.size() < this->size()) {
+    if (other._mappedClkType < _mappedClkType) {
         return false;
     }
 
-    if (this->byteOrder() < intType.byteOrder()) {
-        return true;
-    }
-
-    if (intType.byteOrder() < this->byteOrder()) {
-        return false;
-    }
-
-    if (this->displayBase() < intType.displayBase()) {
-        return true;
-    }
-
-    if (intType.displayBase() < this->displayBase()) {
-        return false;
-    }
-
-    if (this->encoding() < intType.encoding()) {
-        return true;
-    }
-
-    if (intType.encoding() < this->encoding()) {
-        return false;
-    }
-
-    if (this->mappedClockTypeName() < intType.mappedClockTypeName()) {
-        return true;
-    }
-
-    return false;
-}
-
-SignedIntType::SignedIntType(const int kind, const unsigned int alignment,
-                             const unsigned int size, const ByteOrder byteOrder,
-                             const DisplayBase displayBase, const Encoding encoding,
-                             const boost::optional<std::string>& mappedClockTypeName) :
-    IntType {
-        _KIND_SIGNED_INT | kind, alignment, size,
-        byteOrder, displayBase, encoding, mappedClockTypeName
-    }
-{
-}
-
-SignedIntType::SignedIntType(const unsigned int alignment, const unsigned int size,
-                             const ByteOrder byteOrder, const DisplayBase displayBase,
-                             const Encoding encoding,
-                             const boost::optional<std::string>& mappedClockTypeName) :
-    IntType {
-        _KIND_SIGNED_INT, alignment, size, byteOrder, displayBase, encoding,
-        mappedClockTypeName
-    }
-{
-}
-
-SignedIntType::SignedIntType(const SignedIntType& signedIntType) :
-    SignedIntType {
-        signedIntType.alignment(), signedIntType.size(),
-        signedIntType.byteOrder(), signedIntType.displayBase(),
-        signedIntType.encoding(), signedIntType.mappedClockTypeName()
-    }
-{
-}
-
-DataType::UP SignedIntType::_clone() const
-{
-    return std::make_unique<SignedIntType>(this->alignment(), this->size(),
-                                           this->byteOrder(), this->displayBase(),
-                                           this->encoding(),
-                                           this->mappedClockTypeName());
-}
-
-UnsignedIntType::UnsignedIntType(const int kind, const unsigned int alignment,
-                                 const unsigned int size, const ByteOrder byteOrder,
-                                 const DisplayBase displayBase, const Encoding encoding,
-                                 const boost::optional<std::string>& mappedClockTypeName) :
-    IntType {
-        _KIND_UNSIGNED_INT | kind, alignment, size,
-        byteOrder, displayBase, encoding, mappedClockTypeName
-    }
-{
-}
-
-UnsignedIntType::UnsignedIntType(const unsigned int alignment,
-                                 const unsigned int size, const ByteOrder byteOrder,
-                                 const DisplayBase displayBase, const Encoding encoding,
-                                 const boost::optional<std::string>& mappedClockTypeName) :
-    IntType {
-        _KIND_UNSIGNED_INT, alignment, size, byteOrder, displayBase,
-        encoding, mappedClockTypeName
-    }
-{
-}
-
-UnsignedIntType::UnsignedIntType(const UnsignedIntType& unsignedIntType) :
-    UnsignedIntType {
-        unsignedIntType.alignment(), unsignedIntType.size(),
-        unsignedIntType.byteOrder(), unsignedIntType.displayBase(),
-        unsignedIntType.encoding(), unsignedIntType.mappedClockTypeName()
-    }
-{
-}
-
-DataType::UP UnsignedIntType::_clone() const
-{
-    return std::make_unique<UnsignedIntType>(this->alignment(),
-                                             this->size(),
-                                             this->byteOrder(),
-                                             this->displayBase(),
-                                             this->encoding(),
-                                             this->mappedClockTypeName());
+    return IntegerType::operator<(other);
 }
 
 } // namespace yactfr

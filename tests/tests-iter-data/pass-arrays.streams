@@ -22,85 +22,85 @@ event {
 
 11 22 33 44 55 66
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     ERB
+     0     ER {
      0       ERT:0:test
-     0       SCB:5
-     0         STB
-     0           SAB:arr
-     0             STB:arr
-     0               SAB:arr
-     0                 STRB:arr
-     0                   SUB:7:copper
-    56                 STRE
-    56                 STRB:arr
-    56                   SUB:8:explain
-   120                 STRE
-   120                 STRB:arr
-   120                   SUB:6:truck
-   168                 STRE
-   168               SAE
-   168             STE
-   168             STB:arr
-   168               SAB:arr
-   168                 STRB:arr
-   168                   SUB:5:neat
-   208                 STRE
-   208                 STRB:arr
-   208                   SUB:1:
-   216                 STRE
-   216                 STRB:arr
-   216                   SUB:9:decisive
-   288                 STRE
-   288               SAE
-   288             STE
-   288             STB:arr
-   288               SAB:arr
-   288                 STRB:arr
-   288                   SUB:7:notice
-   344                 STRE
-   344                 STRB:arr
-   344                   SUB:4:hum
-   376                 STRE
-   376                 STRB:arr
-   376                   SUB:6:nerve
-   424                 STRE
-   424               SAE
-   424             STE
-   424             STB:arr
-   424               SAB:arr
-   424                 STRB:arr
-   424                   SUB:1:
-   432                 STRE
-   432                 STRB:arr
-   432                   SUB:6:blood
-   480                 STRE
-   480                 STRB:arr
-   480                   SUB:5:calm
-   520                 STRE
-   520               SAE
-   520             STE
-   520           SAE
-   520           SAB:arr3
-   520             SAB:arr3
-   520               SAB:arr3
-   520                 U:arr3:17
-   528                 U:arr3:34
-   536                 U:arr3:51
-   544               SAE
-   544               SAB:arr3
-   544                 U:arr3:68
-   552                 U:arr3:85
-   560                 U:arr3:102
-   568               SAE
-   568             SAE
-   568           SAE
-   568           SAB:arr0
-   568           SAE
-   568         STE
-   568       SCE
-   568     ERE
-   568   PCE
-   568 PE
+     0       SC:5 {
+     0         ST {
+     0           SA:arr {
+     0             ST {
+     0               SA:arr {
+     0                 STR {
+     0                   SS:7:copper
+    56                 }
+    56                 STR {
+    56                   SS:8:explain
+   120                 }
+   120                 STR {
+   120                   SS:6:truck
+   168                 }
+   168               }
+   168             }
+   168             ST {
+   168               SA:arr {
+   168                 STR {
+   168                   SS:5:neat
+   208                 }
+   208                 STR {
+   208                   SS:1:
+   216                 }
+   216                 STR {
+   216                   SS:9:decisive
+   288                 }
+   288               }
+   288             }
+   288             ST {
+   288               SA:arr {
+   288                 STR {
+   288                   SS:7:notice
+   344                 }
+   344                 STR {
+   344                   SS:4:hum
+   376                 }
+   376                 STR {
+   376                   SS:6:nerve
+   424                 }
+   424               }
+   424             }
+   424             ST {
+   424               SA:arr {
+   424                 STR {
+   424                   SS:1:
+   432                 }
+   432                 STR {
+   432                   SS:6:blood
+   480                 }
+   480                 STR {
+   480                   SS:5:calm
+   520                 }
+   520               }
+   520             }
+   520           }
+   520           SA:arr3 {
+   520             SA {
+   520               SA {
+   520                 UI:17
+   528                 UI:34
+   536                 UI:51
+   544               }
+   544               SA {
+   544                 UI:68
+   552                 UI:85
+   560                 UI:102
+   568               }
+   568             }
+   568           }
+   568           SA:arr0 {
+   568           }
+   568         }
+   568       }
+   568     }
+   568   }
+   568 }

@@ -15,21 +15,21 @@ event {
 22 <11 22 33> deadbeef
 33 <11 22>
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     ERB
+     0     ER {
      0       ERT:0:test
-     0       SCB:5
-     0         STB
-     0           U:xx:34
-    32           U:yy:222
-    40         STE
-    40       SCE
-    40     ERE
-    64     ERB
+     0       SC:5 {
+     0         ST {
+     0           UI:xx:34
+    32           UI:yy:222
+    40         }
+    40       }
+    40     }
+    64     ER {
     64       ERT:0:test
-    64       SCB:5
-    64         STB
-    64           U:xx:51
-    88 Cannot request 1 bit at this point: reaching end of data source.
+    64       SC:5 {
+    64         ST {
+    64           UI:xx:51
+    88 Cannot read 1 bit at this point: reaching end of data source.

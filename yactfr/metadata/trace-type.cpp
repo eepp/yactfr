@@ -1,6 +1,4 @@
 /*
- * CTF trace type.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -13,51 +11,38 @@
 #include <sstream>
 #include <functional>
 #include <cstdlib>
+#include <cstring>
 
 #ifndef NDEBUG
 # include <iostream>
 #endif
 
-#include <yactfr/metadata/enum-type.hpp>
-#include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/dynamic-array-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/trace-type-env.hpp>
+#include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/aliases.hpp>
 
 #include "trace-type-impl.hpp"
-#include "field-resolver.hpp"
 #include "../proc.hpp"
-#include "../packet-proc-builder.hpp"
-#include "../utils.hpp"
+#include "../pkt-proc-builder.hpp"
 
 namespace yactfr {
 
-TraceType::TraceType(const unsigned int majorVersion,
-                     const unsigned int minorVersion,
-                     const boost::optional<boost::uuids::uuid>& uuid,
-                     DataType::UP packetHeaderType,
-                     std::unique_ptr<const TraceTypeEnv> env,
-                     ClockTypeSet&& clockTypes,
-                     DataStreamTypeSet&& dataStreamTypes) :
+TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
+                     boost::optional<boost::uuids::uuid> uuid, StructureType::UP pktHeaderType,
+                     ClockTypeSet&& clkTypes, DataStreamTypeSet&& dsts) :
     _pimpl {
-        std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, uuid,
-                                                  std::move(packetHeaderType),
-                                                  std::move(env),
-                                                  std::move(clockTypes),
-                                                  std::move(dataStreamTypes),
-                                                  this)
+        std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(uuid),
+                                                  std::move(pktHeaderType), std::move(clkTypes),
+                                                  std::move(dsts), *this)
     }
 {
 #ifndef NDEBUG
     const auto var = std::getenv("YACTFR_DEBUG_PRINT_PROC");
 
     if (var && std::strcmp(var, "1") == 0) {
-        auto& packetProc = _pimpl->packetProc();
-        std::cout << packetProc.toString(0) << std::endl;
+        auto& pktProc = _pimpl->pktProc();
+        std::cout << pktProc.toStr(0) << std::endl;
     }
 #endif
 }
@@ -81,60 +66,34 @@ const boost::optional<boost::uuids::uuid>& TraceType::uuid() const noexcept
     return _pimpl->uuid();
 }
 
-const TraceTypeEnv& TraceType::env() const noexcept
+const StructureType* TraceType::packetHeaderType() const noexcept
 {
-    return _pimpl->env();
-}
-
-const DataType* TraceType::packetHeaderType() const noexcept
-{
-    return _pimpl->packetHeaderType();
+    return _pimpl->pktHeaderType();
 }
 
 const ClockTypeSet& TraceType::clockTypes() const noexcept
 {
-    return _pimpl->clockTypes();
+    return _pimpl->clkTypes();
 }
 
 const DataStreamTypeSet& TraceType::dataStreamTypes() const noexcept
 {
-    return _pimpl->dataStreamTypes();
+    return _pimpl->dsts();
 }
 
 const DataStreamType *TraceType::operator[](const TypeId id) const
 {
-    return _pimpl->findDataStreamType(id);
-}
-
-const ClockType *TraceType::findClockType(const std::string& name) const
-{
-    return _pimpl->findClockType(name);
+    return _pimpl->findDst(id);
 }
 
 DataStreamTypeSet::const_iterator TraceType::begin() const noexcept
 {
-    return std::begin(_pimpl->dataStreamTypes());
+    return _pimpl->dsts().begin();
 }
 
 DataStreamTypeSet::const_iterator TraceType::end() const noexcept
 {
-    return std::end(_pimpl->dataStreamTypes());
-}
-
-const DataType *TraceType::findDataType(const FieldRef& ref) const
-{
-    if (ref.scope() != Scope::PACKET_HEADER) {
-        return nullptr;
-    }
-
-    auto scopeType = this->packetHeaderType();
-
-    if (!scopeType) {
-        return nullptr;
-    }
-
-    return utils::findType(scopeType, std::begin(ref.pathElements()),
-                           std::end(ref.pathElements()));
+    return _pimpl->dsts().end();
 }
 
 } // namespace yactfr

@@ -23,27 +23,27 @@ event {
     deadbeef 11
     feedface 22
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     SCB:1
-     0       STB
-     0         U:content_size:80
-     8         EPCS:80
-     8       STE
-     8     SCE
-     8     ERB
+     0     SC:1 {
+     0       ST {
+     0         UI:content_size:80
+     8         EPCL:80
+     8       }
+     8     }
+     8     ER {
      8       ERT:0:test
-     8       SCB:5
-     8         STB
-     8           U:yy:3735928559
-    40           U:rem:0
-    41         STE
-    41       SCE
-    41     ERE
-    48     ERB
+     8       SC:5 {
+     8         ST {
+     8           UI:yy:3735928559
+    40           UI:rem:0
+    41         }
+    41       }
+    41     }
+    48     ER {
     48       ERT:0:test
-    48       SCB:5
-    48         STB
-    48           U:yy:4277009102
-    80 Cannot read 1 bit at this point: would move beyond the current packet's content (0 bits remaining).
+    48       SC:5 {
+    48         ST {
+    48           UI:yy:4277009102
+    80 Cannot read 1 bit at this point: would move beyond the content of the current packet (0 bits remaining).

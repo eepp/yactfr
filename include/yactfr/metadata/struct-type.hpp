@@ -1,165 +1,130 @@
 /*
- * CTF structure type.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  Structure type.
-
-@ingroup metadata_dt
-*/
-
 #ifndef _YACTFR_METADATA_STRUCT_TYPE_HPP
 #define _YACTFR_METADATA_STRUCT_TYPE_HPP
 
-// for std::string
+#include <cassert>
 #include <string>
+#include <vector>
+#include <unordered_map>
 
-// for StructVariantTypeBase
-#include "struct-variant-type-base.hpp"
-
-// for StructTypeField
-#include "struct-type-field.hpp"
-
-// for DataType
-#include "data-type.hpp"
-
-// for DataTypeVisitor
-#include "data-type-visitor.hpp"
-
-// for Index
+#include "compound-dt.hpp"
+#include "struct-member-type.hpp"
+#include "dt.hpp"
+#include "dt-visitor.hpp"
 #include "../aliases.hpp"
 
 namespace yactfr {
 
 /*!
-@brief  Structure type.
+@brief
+    Structure type.
 
 @ingroup metadata_dt
 
 A structure type describes data stream structures.
 */
-class StructType final :
-    public StructVariantTypeBase<StructTypeField>
+class StructureType final :
+    public CompoundDataType
 {
 public:
+    /// Unique pointer to constant structure type.
+    using UP = std::unique_ptr<const StructureType>;
+
+    /// Map of member names to member types.
+    using NamesToMemberTypes = std::unordered_map<std::string, const StructureMemberType *>;
+
+    /// Member types.
+    using MemberTypes = std::vector<std::unique_ptr<const StructureMemberType>>;
+
+public:
     /*!
-    @brief  Builds a structure type.
+    @brief
+        Builds a structure type.
 
-    @param minAlign Minimal alignment of data stream structures
-                    described by this structure type (power of two,
-                    greater than 0).
-    @param fields   Fields of the structure type (moved to this
-                    new structure type).
-
-    @throws InvalidMetadata The string type is invalid.
+    @param[in] minimumAlignment
+        Minimum alignment of data stream structures described by this
+        type.
+    @param[in] memberTypes
+        Member types of the structure type (moved to this type).
     */
-    explicit StructType(unsigned int minAlign, StructTypeFields&& fields);
+    explicit StructureType(unsigned int minimumAlignment, MemberTypes&& memberTypes);
 
-    /// Fields contained in this structure type.
-    const StructTypeFields& fields() const noexcept
+    /// Member types contained in this structure type.
+    const MemberTypes& memberTypes() const noexcept
     {
-        return this->_entries();
+        return _memberTypes;
     }
 
-    /// Field iterator set at the first field of this structure type.
-    StructTypeFields::const_iterator begin() const noexcept
+    /// Member type iterator set at the first member type of this type.
+    MemberTypes::const_iterator begin() const noexcept
     {
-        return this->_begin();
+        return _memberTypes.begin();
     }
 
-    /// Field iterator set \em after the last field of this structure type.
-    StructTypeFields::const_iterator end() const noexcept
+    /// Member type iterator set \em after the last member type of
+    /// this type.
+    MemberTypes::const_iterator end() const noexcept
     {
-        return this->_end();
+        return _memberTypes.end();
     }
 
-    /*!
-    @brief  Checks whether or not this structure type has a field
-            at index \p index.
-
-    @param index    Index to check.
-    @returns        \c true if this structure type has a field at
-                    index \p index.
-    */
-    bool hasField(const Index index) const
+    /// Number of member types this type has.
+    Size size() const noexcept
     {
-        return this->_hasEntry(index);
-    }
-
-    /*!
-    @brief  Checks whether or not this structure type has a field
-            named \p name.
-
-    @param name Name to check.
-    @returns    \c true if this structure type has a field named \p name.
-    */
-    bool hasField(const std::string& name) const
-    {
-        return this->_hasEntry(name);
+        return _memberTypes.size();
     }
 
     /*!
-    @brief  Finds a field by index.
+    @brief
+        Returns the member type at the index \p index.
 
-    @param index    Index of field to find.
-    @returns        Field at index \p index.
+    @param[in] index
+        Index of the member type to return.
 
-    @throws NoSuchIndex There's no field at index \p index.
+    @returns
+        Member type at the index \p index.
+
+    @pre
+        \p index < <code>size()</code>
     */
-    const StructTypeField& operator[](Index index) const
+    const StructureMemberType& operator[](const Index index) const noexcept
     {
-        return StructVariantTypeBase<StructTypeField>::operator[](index);
+        assert(index < _memberTypes.size());
+        return *_memberTypes[index];
     }
 
     /*!
-    @brief  Finds a field by name.
+    @brief
+        Returns the member type named \p name, or \c nullptr if not
+        found.
 
-    @param name Name of field to find.
-    @returns    Field named \p name.
+    @param[in] name
+        Name of the member type to find.
 
-    @throws NoSuchName There's no field named \p name.
+    @returns
+        Member type named \p name, or \c nullptr if not found.
     */
-    const StructTypeField& operator[](const std::string& name) const
-    {
-        return StructVariantTypeBase<StructTypeField>::operator[](name);
-    }
+    const StructureMemberType *operator[](const std::string& name) const noexcept;
 
     /*!
-    @brief  Finds a field by exact name and returns its type, returning
-            \c nullptr if the field is not found not found.
+    @brief
+        Returns the member type having the display name \p displayName,
+        or \c nullptr if not found.
 
-    @param fieldName    Name of the field to find.
-    @returns            Type of the field named \p name or nullptr if no
-                        field was found.
+    @param[in] displayName
+        Display name of the member type to find.
 
-    @sa findTypeByDisplayName(): Finds a field by display name and
-                                 returns its type.
+    @returns
+        Member type having the display name \p displayName,
+        or \c nullptr if not found.
     */
-    const DataType *findType(const std::string& fieldName) const
-    {
-        return this->_findEntryType(fieldName);
-    }
-
-    /*!
-    @brief  Finds a field by display name and returns its type,
-            returning \c nullptr if the field is not found not found.
-
-    @param dispName     Display name of the field to find.
-    @returns            Type of the field of which the display name is
-                        \p name or nullptr if no field was found.
-
-    @sa findType(): Finds a field by exact name and returns its type.
-    */
-    const DataType *findTypeByDisplayName(const std::string& dispName) const
-    {
-        return this->_findEntryTypeByDisplayName(dispName);
-    }
+    const StructureMemberType *memberTypeByDisplayName(const std::string& displayName) const noexcept;
 
 private:
     DataType::UP _clone() const override;
@@ -169,8 +134,13 @@ private:
         visitor.visit(*this);
     }
 
-    bool _compare(const DataType& otherType) const override;
-    void _setRealAlign();
+    bool _compare(const DataType& other) const noexcept override;
+    void _initNamesToMemberTypes();
+
+private:
+    const MemberTypes _memberTypes;
+    NamesToMemberTypes _namesToMemberTypes;
+    NamesToMemberTypes _dispNamesToMemberTypes;
 };
 
 } // namespace yactfr

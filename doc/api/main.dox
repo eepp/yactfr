@@ -1,3 +1,5 @@
+namespace yactfr {
+
 /*!
 @mainpage yactfr C++ API
 
@@ -5,42 +7,71 @@ Welcome to the API documentation of the
 <a href="https://github.com/eepp/yactfr"><strong>yactfr</strong></a>
 project!
 
-yactfr is a <a href="http://diamon.org/ctf/">CTF</a> reading library
-with a C++ API. The yactfr API focuses on simplicity, object
-immutability, as well as automatic ownership management, while the
-library's implementation focuses on performance, CTF decoding
-completeness, and flexibility of data input.
+yactfr is a library to read <a href="http://diamon.org/ctf/">CTF</a>
+streams with a C++14 API.
+
+The yactfr API focuses on simplicity and object immutability, while the
+implementation of the library focuses on performance, CTF stream
+decoding completeness, and flexibility of data input.
 
 <hr>
 
-The yactfr API is divided into two parts: \ref metadata and
-\ref element_seq.
+The yactfr API is divided into three parts:
 
-The \ref metadata API deals with everything related to CTF metadata
-streams. This API makes it possible to:
+- The \ref metadata API deals with everything related to CTF metadata
+  streams. This API makes it possible to:
 
-- Create your own \link metadata_dt data types\endlink,
-  \link yactfr::ClockType clock types\endlink,
-  \link yactfr::EventRecordType event record types\endlink,
-  \link yactfr::DataStreamType data stream types\endlink, and
-  \link yactfr::TraceType trace types\endlink to represent
-  binary data streams. See \ref metadata_dt.
-- Get the metadata (TSDL) text and other properties from the content
-  of a metadata stream. See \ref metadata_stream.
-- Get a trace type from a metadata text. See
-  yactfr::traceTypeFromMetadataText().
+  - Create your own \link metadata_dt data types\endlink,
+    \link yactfr::ClockType clock types\endlink,
+    \link yactfr::EventRecordType event record types\endlink,
+    \link yactfr::DataStreamType data stream types\endlink, and
+    \link yactfr::TraceType trace types\endlink to represent
+    binary data streams.
 
-The \ref metadata API is completely independent from the \ref element_seq
-API.
+    See \ref metadata_dt.
 
-The \ref element_seq API deals with CTF binary data stream decoding. This
-API makes it possible to \link yactfr::ElementSequenceIterator
-iterate\endlink the
-\link yactfr::Element elements\endlink of a \link yactfr::ElementSequence
-element sequence\endlink represented by a given \link yactfr::TraceType
-trace type\endlink (programmatically built or obtained with the \ref
-metadata API). The \ref element_seq API supports custom
-\link yactfr::DataSource data sources\endlink, but a convenient
-\link yactfr::MemoryMappedFileViewFactory memory-mapped file view\endlink
-data source is provided by the project.
+  - Get the metadata (TSDL) text and other properties from the content
+    of a metadata stream.
+
+    See \ref metadata_stream.
+
+  The \ref metadata API is completely independent from the \ref
+  element_seq API.
+
+- The \ref trace API makes it possible to obtain a Trace object from
+  metadata (TSDL) text with traceFromMetadataText().
+
+  A Trace object contains a \link TraceType trace type\endlink and
+  an \link TraceEnvironment environment\endlink.
+
+- The \ref element_seq API deals with CTF binary data stream decoding.
+
+  This API makes it possible to \link yactfr::ElementSequenceIterator
+  iterate\endlink the
+  \link yactfr::Element elements\endlink of a \link yactfr::ElementSequence
+  element sequence\endlink represented by a given \link yactfr::TraceType
+  trace type\endlink (programmatically built or obtained with the \ref
+  metadata API).
+
+  The \ref element_seq API supports custom \link yactfr::DataSource data
+  sources\endlink, but a convenient
+  \link yactfr::MemoryMappedFileViewFactory memory-mapped file view\endlink
+  data source is provided by the project.
+
+<hr>
+
+To include all the yactfr API:
+
+@code
+#include <yactfr/yactfr.hpp>
+@endcode
+
+To include all the yactfr API except the metadata text parsing part
+(which can be heavy to compile):
+
+@code
+#include <yactfr/yactfr-without-metadata-text-parser.hpp>
+@endcode
 */
+
+}

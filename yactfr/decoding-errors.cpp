@@ -1,7 +1,5 @@
 /*
- * Decoding errors.
- *
- * Copyright (C) 2017-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,9 +11,9 @@
 
 namespace yactfr {
 
-DecodingError::DecodingError(const std::string& reason, const Index offset) :
+DecodingError::DecodingError(std::string reason, const Index offset) :
     std::runtime_error {reason},
-    _reason {reason},
+    _reason {std::move(reason)},
     _offset {offset}
 {
 }
@@ -26,8 +24,7 @@ UnknownDataStreamTypeDecodingError::UnknownDataStreamTypeDecodingError(const Ind
         [](const auto id) {
             std::ostringstream ss;
 
-            ss << "Data stream type ID " << id <<
-                  " does not select a valid data stream type.";
+            ss << "Data stream type ID " << id << " doesn't select an existing data stream type.";
             return ss.str();
         }(id),
         offset
@@ -42,8 +39,7 @@ UnknownEventRecordTypeDecodingError::UnknownEventRecordTypeDecodingError(const I
         [](const auto id) {
             std::ostringstream ss;
 
-            ss << "Event record type ID " << id <<
-                  " does not select a valid event record type.";
+            ss << "Event record type ID " << id << " doesn't select an existing event record type.";
             return ss.str();
         }(id),
         offset
@@ -52,108 +48,107 @@ UnknownEventRecordTypeDecodingError::UnknownEventRecordTypeDecodingError(const I
 {
 }
 
-ExpectedPacketTotalSizeNotMultipleOf8DecodingError::ExpectedPacketTotalSizeNotMultipleOf8DecodingError(const Index offset,
-                                                                                                       const Size expectedSize) :
+ExpectedPacketTotalLengthNotMultipleOf8DecodingError::ExpectedPacketTotalLengthNotMultipleOf8DecodingError(const Index offset,
+                                                                                                           const Size expectedLen) :
     DecodingError {
-        [](const auto expectedSize) {
+        [](const auto expectedLen) {
             std::ostringstream ss;
 
-            ss << "Expected packet total size (" << expectedSize <<
-                  ") is not a multiple of 8.";
+            ss << "Expected packet total length (" << expectedLen << ") is not a multiple of 8.";
             return ss.str();
-        }(expectedSize),
+        }(expectedLen),
         offset
     },
-    _expectedSize {expectedSize}
+    _expectedLen {expectedLen}
 {
 }
 
-ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError::ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError(const Index offset,
-                                                                                                                                             const Size expectedTotalSize,
-                                                                                                                                             const Size expectedContentSize) :
+ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError::ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError(const Index offset,
+                                                                                                                                                     const Size expectedTotalLen,
+                                                                                                                                                     const Size expectedContentLen) :
     DecodingError {
-        [](const auto expectedTotalSize, const auto expectedContentSize) {
+        [](const auto expectedTotalLen, const auto expectedContentLen) {
             std::ostringstream ss;
 
-            ss << "Expected packet total size (" << expectedTotalSize <<
-                  ") is less than expected packet content size (" <<
-                  expectedContentSize << ").";
+            ss << "Expected packet total length (" << expectedTotalLen <<
+                  ") is less than expected packet content length (" <<
+                  expectedContentLen << ").";
             return ss.str();
-        }(expectedTotalSize, expectedContentSize),
+        }(expectedTotalLen, expectedContentLen),
         offset
     },
-    _expectedTotalSize {expectedTotalSize},
-    _expectedContentSize {expectedContentSize}
+    _expectedTotalLen {expectedTotalLen},
+    _expectedContentLen {expectedContentLen}
 {
 }
 
-ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError::ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError(const Index offset,
-                                                                                                                       const Size expectedSize,
-                                                                                                                       const Index offsetInPacket) :
+ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError::ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError(const Index offset,
+                                                                                                                           const Size expectedLen,
+                                                                                                                           const Index offsetInPkt) :
     DecodingError {
-        [](const auto offsetInPacket, const auto expectedSize) {
+        [](const auto offsetInPkt, const auto expectedLen) {
             std::ostringstream ss;
 
-            ss << "Expected packet total size (" << expectedSize <<
+            ss << "Expected packet total length (" << expectedLen <<
                   ") is less then current position in packet (" <<
-                  offsetInPacket << ").";
+                  offsetInPkt << ").";
             return ss.str();
-        }(offsetInPacket, expectedSize),
+        }(offsetInPkt, expectedLen),
         offset
     },
-    _expectedSize {expectedSize},
-    _offsetInPacket {offsetInPacket}
+    _expectedLen {expectedLen},
+    _offsetInPkt {offsetInPkt}
 {
 }
 
-ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError::ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError(const Index offset,
-                                                                                                                           const Size expectedSize,
-                                                                                                                           const Index offsetInPacket) :
+ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError::ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError(const Index offset,
+                                                                                                                               const Size expectedLen,
+                                                                                                                               const Index offsetInPkt) :
     DecodingError {
-        [](const auto offsetInPacket, const auto expectedSize) {
+        [](const auto offsetInPkt, const auto expectedLen) {
             std::ostringstream ss;
 
-            ss << "Expected packet content size (" << expectedSize <<
+            ss << "Expected packet content length (" << expectedLen <<
                   ") is less then current position in packet (" <<
-                  offsetInPacket << ").";
+                  offsetInPkt << ").";
             return ss.str();
-        }(offsetInPacket, expectedSize),
+        }(offsetInPkt, expectedLen),
         offset
     },
-    _expectedSize {expectedSize},
-    _offsetInPacket {offsetInPacket}
+    _expectedLen {expectedLen},
+    _offsetInPkt {offsetInPkt}
 {
 }
 
 CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketContentDecodingError(const Index offset,
-                                                                                                   const Size size,
-                                                                                                   const Size remainingSize) :
+                                                                                                   const Size len,
+                                                                                                   const Size remLen) :
     DecodingError {
-        [](const auto size, const auto remainingSize) {
+        [](const auto len, const auto remLen) {
             std::ostringstream ss;
 
-            ss << "Cannot read " << size << " bit" << (size == 1 ? "" : "s") <<
-                  " at this point: would move beyond the current packet's "
-                  "content (" << remainingSize <<
-                  " bit" << (remainingSize == 1 ? "" : "s") << " remaining).";
+            ss << "Cannot read " << len << " bit" << (len == 1 ? "" : "s") <<
+                  " at this point: would move beyond the content of the current packet "
+                  "(" << remLen <<
+                  " bit" << (remLen == 1 ? "" : "s") << " remaining).";
             return ss.str();
-        }(size, remainingSize),
+        }(len, remLen),
         offset
     }
 {
 }
 
 PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index offset,
-                                                                 const Size size) :
+                                                                 const Size len) :
     DecodingError {
-        [](const auto size) {
+        [](const auto len) {
             std::ostringstream ss;
 
-            ss << "Cannot request " << size <<
-                  " bit" << (size == 1 ? "" : "s") << " at this point: "
+            ss << "Cannot read " << len <<
+                  " bit" << (len == 1 ? "" : "s") << " at this point: "
                   "reaching end of data source.";
             return ss.str();
-        }(size),
+        }(len),
         offset
     }
 {
@@ -165,8 +160,8 @@ static inline const char *byteOrderString(const ByteOrder bo)
 }
 
 ByteOrderChangeWithinByteDecodingError::ByteOrderChangeWithinByteDecodingError(const Index offset,
-                                                                               const ByteOrder previousByteOrder,
-                                                                               const ByteOrder nextByteOrder) :
+                                                                               const ByteOrder previousBo,
+                                                                               const ByteOrder nextBo) :
     DecodingError {
         [](const auto previousBo, const auto nextBo) {
             std::ostringstream ss;
@@ -175,45 +170,40 @@ ByteOrderChangeWithinByteDecodingError::ByteOrderChangeWithinByteDecodingError(c
                   byteOrderString(previousBo) << "-endian to " <<
                   byteOrderString(nextBo) << "-endian.";
             return ss.str();
-        }(previousByteOrder, nextByteOrder),
+        }(previousBo, nextBo),
         offset
     },
-    _previousByteOrder {previousByteOrder},
-    _nextByteOrder {nextByteOrder}
+    _previousBo {previousBo},
+    _nextBo {nextBo}
 {
 }
 
-static const auto formatUnknownVariantTagValueReason = [](const auto tagValue) {
+template <typename SelValueT>
+static const std::string formatInvalidVarSelValueReason(const SelValueT selVal)
+{
     std::ostringstream ss;
 
-    ss << "Tag value " << tagValue <<
-          " does not select a valid variant option.";
+    ss << "Selector value " << selVal << " doesn't select a valid variant option.";
     return ss.str();
 };
 
-
-UnknownVariantSignedTagValueDecodingError::UnknownVariantSignedTagValueDecodingError(const Index offset,
-                                                                                     const std::int64_t tagValue) :
+InvalidVariantSignedSelectorValueDecodingError::InvalidVariantSignedSelectorValueDecodingError(const Index offset,
+                                                                                               const long long selVal) :
     DecodingError {
-        formatUnknownVariantTagValueReason(tagValue),
+        formatInvalidVarSelValueReason(selVal),
         offset
     },
-    _tagValue {tagValue}
+    _selVal {selVal}
 {
 }
 
-UnknownVariantUnsignedTagValueDecodingError::UnknownVariantUnsignedTagValueDecodingError(const Index offset,
-                                                                                         const std::uint64_t tagValue) :
+InvalidVariantUnsignedSelectorValueDecodingError::InvalidVariantUnsignedSelectorValueDecodingError(const Index offset,
+                                                                                                   const unsigned long long selVal) :
     DecodingError {
-        formatUnknownVariantTagValueReason(tagValue),
+        formatInvalidVarSelValueReason(selVal),
         offset
     },
-    _tagValue {tagValue}
-{
-}
-
-DynamicArrayLengthNotSetDecodingError::DynamicArrayLengthNotSetDecodingError(const Index offset) :
-    DecodingError {"Dynamic array length is not set.", offset}
+    _selVal {selVal}
 {
 }
 

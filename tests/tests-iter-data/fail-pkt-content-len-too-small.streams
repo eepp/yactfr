@@ -1,0 +1,28 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u16 content_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 lel;
+    };
+};
+----
+0008 01 02 03
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     SC:1 {
+     0       ST {
+     0         UI:content_size:8
+    16 Expected packet content length (8) is less then current position in packet (16).

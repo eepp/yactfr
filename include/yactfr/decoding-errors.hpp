@@ -1,46 +1,41 @@
 /*
- * Decoding errors.
- *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  Decoding errors.
-
-@ingroup element_seq
-*/
-
 #ifndef _YACTFR_DECODING_ERRORS_HPP
 #define _YACTFR_DECODING_ERRORS_HPP
 
-// for std::runtime_error
 #include <stdexcept>
-
-// for std::string
 #include <string>
 
-// for ByteOrder
-#include "metadata/byte-order.hpp"
-
-// for TypeId
+#include "metadata/bo.hpp"
 #include "metadata/aliases.hpp"
-
-// for Index, Size
 #include "aliases.hpp"
 
 namespace yactfr {
 namespace internal {
 
-    class Vm;
+class Vm;
 
 } // namespace internal
 
 /*!
-@brief  %Base decoding error.
+@defgroup dec_errors Decoding errors
+
+@brief
+    Decoding errors.
+
+@ingroup element_seq
+*/
+
+/*!
+@brief
+    %Base decoding error.
+
+@ingroup dec_errors
 
 This is thrown when there's an error in the decoding process of an
 element sequence (ElementSequenceIterator::operator++(), for example).
@@ -51,22 +46,19 @@ class DecodingError :
     friend class internal::Vm;
 
 protected:
-    explicit DecodingError(const std::string& reason, Index offset);
-
-public:
+    explicit DecodingError(std::string reason, Index offset);
     DecodingError(const DecodingError&) = default;
     DecodingError& operator=(const DecodingError&) = default;
 
+public:
     /// Reason of the error.
     const std::string& reason() const noexcept
     {
         return _reason;
     }
 
-    /*!
-    @brief  Offset (bits) from the beginning of the element sequence
-            which created this iterator.
-    */
+    /// Offset (bits) from the beginning of the element sequence which
+    /// created this iterator.
     Index offset() const noexcept
     {
         return _offset;
@@ -78,12 +70,16 @@ private:
 };
 
 /*!
-@brief  "Unknown data stream type" decoding error.
+@brief
+    Unknown data stream type decoding error.
 
-This is thrown when an ElementSequenceIterator cannot find a data stream
-type by ID during the decoding process.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink
+cannot find a data stream type by ID during the decoding process.
 */
-class UnknownDataStreamTypeDecodingError :
+class UnknownDataStreamTypeDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
@@ -92,7 +88,10 @@ private:
     explicit UnknownDataStreamTypeDecodingError(Index offset, TypeId id);
 
 public:
+    /// Default copy constructor.
     UnknownDataStreamTypeDecodingError(const UnknownDataStreamTypeDecodingError&) = default;
+
+    /// Default copy assignment operator.
     UnknownDataStreamTypeDecodingError& operator=(const UnknownDataStreamTypeDecodingError&) = default;
 
     /// Unknown data stream type ID.
@@ -106,12 +105,16 @@ private:
 };
 
 /*!
-@brief  "Unknown event record type" decoding error.
+@brief
+    Unknown event record type decoding error.
 
-This is thrown when an ElementSequenceIterator cannot find an event record
-type by ID during the decoding process.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink cannot
+find an event record type by ID during the decoding process.
 */
-class UnknownEventRecordTypeDecodingError :
+class UnknownEventRecordTypeDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
@@ -120,7 +123,10 @@ private:
     explicit UnknownEventRecordTypeDecodingError(Index offset, TypeId id);
 
 public:
+    /// Default copy constructor.
     UnknownEventRecordTypeDecodingError(const UnknownEventRecordTypeDecodingError&) = default;
+
+    /// Default copy assignment operator.
     UnknownEventRecordTypeDecodingError& operator=(const UnknownEventRecordTypeDecodingError&) = default;
 
     /// Unknown event record type ID.
@@ -134,333 +140,374 @@ private:
 };
 
 /*!
-@brief  "Expected packet's total size is not a multiple of 8" decoding
-        error.
+@brief
+    Expected total length of packet is not a multiple of 8 decoding
+    error.
 
-This is thrown when an ElementSequenceIterator has decoded an
-expected packet's total size and it's not a multiple of 8.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink has
+decoded an expected total length of packet and it's not a multiple of 8.
 */
-class ExpectedPacketTotalSizeNotMultipleOf8DecodingError :
+class ExpectedPacketTotalLengthNotMultipleOf8DecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit ExpectedPacketTotalSizeNotMultipleOf8DecodingError(Index offset,
-                                                                Size expectedSize);
+    explicit ExpectedPacketTotalLengthNotMultipleOf8DecodingError(Index offset, Size expectedLen);
 
 public:
-    ExpectedPacketTotalSizeNotMultipleOf8DecodingError(const ExpectedPacketTotalSizeNotMultipleOf8DecodingError&) = default;
-    ExpectedPacketTotalSizeNotMultipleOf8DecodingError& operator=(const ExpectedPacketTotalSizeNotMultipleOf8DecodingError&) = default;
+    /// Default copy constructor.
+    ExpectedPacketTotalLengthNotMultipleOf8DecodingError(const ExpectedPacketTotalLengthNotMultipleOf8DecodingError&) = default;
 
-    /// Expected packet's total size (bits).
-    Size expectedSize() const noexcept
+    /// Default copy assignment operator.
+    ExpectedPacketTotalLengthNotMultipleOf8DecodingError& operator=(const ExpectedPacketTotalLengthNotMultipleOf8DecodingError&) = default;
+
+    /// Expected total length of packet (bits).
+    Size expectedLength() const noexcept
     {
-        return _expectedSize;
+        return _expectedLen;
     }
 
 private:
-    Size _expectedSize;
+    Size _expectedLen;
 };
 
 /*!
-@brief  "Expected packet's total size is less than expected packet's
-        content size" decoding error.
+@brief
+    Expected total length of packet is less than expected content
+    length of packet decoding error.
 
-This is thrown when an ElementSequenceIterator has decoded both an
-expected packet's total size and an expected packet's content size, and
-the total size is less than the content size.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink has
+decoded both an expected total length of packet and an expected content
+length of packet, and the total length is less than the content length.
 */
-class ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError :
+class ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError(Index offset,
-                                                                                   Size expectedTotalSize,
-                                                                                   Size expectedContentSize);
+    explicit ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError(Index offset,
+                                                                                       Size expectedTotalLen,
+                                                                                       Size expectedContentLen);
 
 public:
-    ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError(const ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError&) = default;
-    ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError& operator=(const ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError&) = default;
+    /// Default copy constructor.
+    ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError(const ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError&) = default;
 
-    /// Expected packet's total size (bits).
-    Size expectedTotalSize() const noexcept
+    /// Default copy assignment operator.
+    ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError& operator=(const ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError&) = default;
+
+    /// Expected total length of packet (bits).
+    Size expectedTotalLength() const noexcept
     {
-        return _expectedTotalSize;
+        return _expectedTotalLen;
     }
 
-    /// Expected packet's content size (bits).
-    Size expectedContentSize() const noexcept
+    /// Expected content length of packet (bits).
+    Size expectedContentLength() const noexcept
     {
-        return _expectedContentSize;
+        return _expectedContentLen;
     }
 
 private:
-    Size _expectedTotalSize;
-    Size _expectedContentSize;
+    Size _expectedTotalLen;
+    Size _expectedContentLen;
 };
 
 /*!
-@brief  "Expected packet's total size is less than current offset within
-        packet" decoding error.
+@brief
+    Expected total length of packet is less than current offset within
+    packet decoding error.
 
-This is thrown when an ElementSequenceIterator has decoded an expected
-packet's total size and it's is less than the current decoding offset
-within this packet.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink has
+decoded an expected total length of packet and it's is less than the
+current decoding offset within this packet.
 */
-class ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError :
+class ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError(Index offset,
-                                                                        Size expectedSize,
-                                                                        Index offsetInPacket);
+    explicit ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError(Index offset,
+                                                                          Size expectedLen,
+                                                                          Index offsetInPkt);
 
 public:
-    ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError(const ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError&) = default;
-    ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError& operator=(const ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError&) = default;
+    /// Default copy constructor.
+    ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError(const ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError&) = default;
 
-    /// Expected packet's total size (bits).
-    Size expectedSize() const noexcept
+    /// Default copy assignment operator.
+    ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError& operator=(const ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError&) = default;
+
+    /// Expected total length of packet (bits).
+    Size expectedLength() const noexcept
     {
-        return _expectedSize;
+        return _expectedLen;
     }
 
     /// Current offset in packet (bits).
     Index offsetInPacket() const noexcept
     {
-        return _offsetInPacket;
+        return _offsetInPkt;
     }
 
 private:
-    Size _expectedSize;
-    Index _offsetInPacket;
+    Size _expectedLen;
+    Index _offsetInPkt;
 };
 
 /*!
-@brief  "Expected packet's content size is less than current offset
-        within packet" decoding error.
+@brief
+    Expected content length of packet is less than current offset within
+    packet decoding error.
 
-This is thrown when an ElementSequenceIterator has decoded an expected
-packet's content size and it's is less than the current decoding offset
-within this packet.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink has
+decoded an expected content length of packet and it's is less than the
+current decoding offset within this packet.
 */
-class ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError :
+class ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError(Index offset,
-                                                                          Size expectedSize,
-                                                                          Index offsetInPacket);
+    explicit ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError(Index offset,
+                                                                            Size expectedLen,
+                                                                            Index offsetInPkt);
 
 public:
-    ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError(const ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError&) = default;
-    ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError& operator=(const ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError&) = default;
+    /// Default copy constructor.
+    ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError(const ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError&) = default;
 
-    /// Expected packet's content size (bits).
-    Size expectedSize() const noexcept
+    /// Default copy assignment operator.
+    ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError& operator=(const ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError&) = default;
+
+    /// Expected content length of packet (bits).
+    Size expectedLength() const noexcept
     {
-        return _expectedSize;
+        return _expectedLen;
     }
 
     /// Current offset in packet (bits).
     Index offsetInPacket() const noexcept
     {
-        return _offsetInPacket;
+        return _offsetInPkt;
     }
 
 private:
-    Size _expectedSize;
-    Index _offsetInPacket;
+    Size _expectedLen;
+    Index _offsetInPkt;
 };
 
 /*!
-@brief  "Cannot decode data beyond packet's content" decoding error.
+@brief
+    Cannot decode data beyond the packet content decoding error.
 
-This is thrown when an ElementSequenceIterator would need data passed the
-current packet's content to continue decoding.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink would
+need data passed the content of the current packet to continue decoding.
 */
-class CannotDecodeDataBeyondPacketContentDecodingError :
+class CannotDecodeDataBeyondPacketContentDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit CannotDecodeDataBeyondPacketContentDecodingError(Index offset,
-                                                              Size size,
-                                                              Size remainingSize);
+    explicit CannotDecodeDataBeyondPacketContentDecodingError(Index offset, Size reqLen,
+                                                              Size remLen);
 
 public:
+    /// Default copy constructor.
     CannotDecodeDataBeyondPacketContentDecodingError(const CannotDecodeDataBeyondPacketContentDecodingError&) = default;
+
+    /// Default copy assignment operator.
     CannotDecodeDataBeyondPacketContentDecodingError& operator=(const CannotDecodeDataBeyondPacketContentDecodingError&) = default;
 
-    /// Needed size (bits).
-    Size size() const noexcept
+    /// Required length (bits).
+    Size requiredLength() const noexcept
     {
-        return _size;
+        return _reqLen;
     }
 
-    /// Remaining size in packet's content (bits).
-    Size remainingSize() const noexcept
+    /// Remaining length in packet content (bits).
+    Size remainingLength() const noexcept
     {
-        return _size;
+        return _remLen;
     }
 
 private:
-    Size _size;
-    Size _remainingSize;
+    Size _reqLen;
+    Size _remLen;
 };
 
 /*!
-@brief  "Premature end of data" decoding error.
+@brief
+    Premature end of data decoding error.
 
-This is thrown when an ElementSequenceIterator needs data to continue
-decoding the current packet, but its data source indicates that there's
-no more data at the requested offset.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink needs
+data to continue decoding the current packet, but its data source
+indicates that there's no more data at the requested offset.
 */
-class PrematureEndOfDataDecodingError :
+class PrematureEndOfDataDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit PrematureEndOfDataDecodingError(Index offset, Size size);
+    explicit PrematureEndOfDataDecodingError(Index offset, Size reqLen);
 
 public:
+    /// Default copy constructor.
     PrematureEndOfDataDecodingError(const PrematureEndOfDataDecodingError&) = default;
+
+    /// Default copy assignment operator.
     PrematureEndOfDataDecodingError& operator=(const PrematureEndOfDataDecodingError&) = default;
 
-    /// Needed size (bits).
-    Size size() const noexcept
+    /// Required size (bits).
+    Size requiredLength() const noexcept
     {
-        return _size;
+        return _reqLen;
     }
 
 private:
-    Size _size;
+    Size _reqLen;
 };
 
 /*!
-@brief  "Byte order change within byte" decoding error.
+@brief
+    Byte order change within byte decoding error.
 
-This is thrown when an ElementSequenceIterator previously decoded a data
-stream datum with a given byte order and the following one has a
-different byte order when the current offset is not a multiple of 8.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink
+previously decoded a data stream datum with a given byte order and the
+following one has a different byte order when the current offset is not
+a multiple of 8.
 */
-class ByteOrderChangeWithinByteDecodingError :
+class ByteOrderChangeWithinByteDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit ByteOrderChangeWithinByteDecodingError(Index offset,
-                                                    ByteOrder previousByteOrder,
-                                                    ByteOrder nextByteOrder);
+    explicit ByteOrderChangeWithinByteDecodingError(Index offset, ByteOrder previousBo,
+                                                    ByteOrder nextBo);
 
 public:
+    /// Default copy constructor.
     ByteOrderChangeWithinByteDecodingError(const ByteOrderChangeWithinByteDecodingError&) = default;
+
+    /// Default copy assignment operator.
     ByteOrderChangeWithinByteDecodingError& operator=(const ByteOrderChangeWithinByteDecodingError&) = default;
 
     /// Previous byte order.
     ByteOrder previousByteOrder() const noexcept
     {
-        return _previousByteOrder;
+        return _previousBo;
     }
 
     /// Next byte order.
     ByteOrder nextByteOrder() const noexcept
     {
-        return _nextByteOrder;
+        return _nextBo;
     }
 
 private:
-    ByteOrder _previousByteOrder;
-    ByteOrder _nextByteOrder;
+    ByteOrder _previousBo;
+    ByteOrder _nextBo;
 };
 
 /*!
-@brief  "Unknown variant's signed tag value" decoding error.
+@brief
+    Invalid signed selector value of variant decoding error.
 
-This is thrown when an ElementSequenceIterator needs to select a variant
-type's option, but the previously decoded signed tag value does not
-select a option.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink needs to
+select an option of a variant type, but the previously decoded signed
+selector value doesn't select any option.
 */
-class UnknownVariantSignedTagValueDecodingError :
+class InvalidVariantSignedSelectorValueDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit UnknownVariantSignedTagValueDecodingError(Index offset,
-                                                       std::int64_t tagValue);
+    explicit InvalidVariantSignedSelectorValueDecodingError(Index offset, long long selVal);
 
 public:
-    UnknownVariantSignedTagValueDecodingError(const UnknownVariantSignedTagValueDecodingError&) = default;
-    UnknownVariantSignedTagValueDecodingError& operator=(const UnknownVariantSignedTagValueDecodingError&) = default;
+    /// Default copy constructor.
+    InvalidVariantSignedSelectorValueDecodingError(const InvalidVariantSignedSelectorValueDecodingError&) = default;
 
-    /// Unknown tag value.
-    std::int64_t tagValue() const noexcept
+    /// Default copy assignment operator.
+    InvalidVariantSignedSelectorValueDecodingError& operator=(const InvalidVariantSignedSelectorValueDecodingError&) = default;
+
+    /// Invalid selector value.
+    long long selectorValue() const noexcept
     {
-        return _tagValue;
+        return _selVal;
     }
 
 private:
-    std::int64_t _tagValue;
+    long long _selVal;
 };
 
 /*!
-@brief  "Unknown variant's unsigned tag value" decoding error.
+@brief
+    Invalid unsigned selector value of variant decoding error.
 
-This is thrown when an ElementSequenceIterator needs to select a variant
-type's option, but the previously decoded unsigned tag value does not
-select a option.
+@ingroup dec_errors
+
+This is thrown when an
+\link ElementSequenceIterator element sequence iterator\endlink needs to
+select an option of a variant type, but the previously decoded unsigned
+selector value does not select any option.
 */
-class UnknownVariantUnsignedTagValueDecodingError :
+class InvalidVariantUnsignedSelectorValueDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit UnknownVariantUnsignedTagValueDecodingError(Index offset,
-                                                         std::uint64_t tagValue);
+    explicit InvalidVariantUnsignedSelectorValueDecodingError(Index offset,
+                                                              unsigned long long selVal);
 
 public:
-    UnknownVariantUnsignedTagValueDecodingError(const UnknownVariantUnsignedTagValueDecodingError&) = default;
-    UnknownVariantUnsignedTagValueDecodingError& operator=(const UnknownVariantUnsignedTagValueDecodingError&) = default;
+    /// Default copy constructor.
+    InvalidVariantUnsignedSelectorValueDecodingError(const InvalidVariantUnsignedSelectorValueDecodingError&) = default;
 
-    /// Unknown tag value.
-    std::uint64_t tagValue() const noexcept
+    /// Default copy assignment operator.
+    InvalidVariantUnsignedSelectorValueDecodingError& operator=(const InvalidVariantUnsignedSelectorValueDecodingError&) = default;
+
+    /// Invalid selector value.
+    unsigned long long selectorValue() const noexcept
     {
-        return _tagValue;
+        return _selVal;
     }
 
 private:
-    std::uint64_t _tagValue;
-};
-
-/*!
-@brief  "Dynamic array length is not set" decoding error.
-
-This is thrown when an ElementSequenceIterator needs to decode a data
-stream dynamic array, but its length was not previously decoded.
-*/
-class DynamicArrayLengthNotSetDecodingError :
-    public DecodingError
-{
-    friend class internal::Vm;
-
-private:
-    explicit DynamicArrayLengthNotSetDecodingError(Index offset);
-
-public:
-    DynamicArrayLengthNotSetDecodingError(const DynamicArrayLengthNotSetDecodingError&) = default;
-    DynamicArrayLengthNotSetDecodingError& operator=(const DynamicArrayLengthNotSetDecodingError&) = default;
+    unsigned long long _selVal;
 };
 
 } // namespace yactfr

@@ -14,9 +14,9 @@ message (STATUS "API documentation will be built")
 file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/doc/api)
 
 if (GIT_COMMIT_HASH)
-    set (DOC_VERSION "${PROJECT_VERSION} (${GIT_COMMIT_HASH})")
+    set (YACTFR_DOC_VERSION "${PROJECT_VERSION} (${YACTFR_GIT_COMMIT_HASH})")
 else ()
-    set (DOC_VERSION "${PROJECT_VERSION}")
+    set (YACTFR_DOC_VERSION "${PROJECT_VERSION}")
 endif ()
 
 configure_file (
@@ -24,12 +24,12 @@ configure_file (
     ${CMAKE_BINARY_DIR}/doc/api/Doxyfile
     @ONLY
 )
-set (DOC_WORKDIR "${CMAKE_BINARY_DIR}/doc/api")
-set (DOC_CMD "${DOXYGEN_EXECUTABLE}" Doxyfile)
+set (YACTFR_DOC_WORKDIR "${CMAKE_BINARY_DIR}/doc/api")
+set (YACTFR_DOC_CMD "${DOXYGEN_EXECUTABLE}" Doxyfile)
 add_custom_command (
     OUTPUT "${CMAKE_BINARY_DIR}/doc/api/output/html/index.html"
-    COMMAND ${DOC_CMD}
-    WORKING_DIRECTORY "${DOC_WORKDIR}"
+    COMMAND ${YACTFR_DOC_CMD}
+    WORKING_DIRECTORY "${YACTFR_DOC_WORKDIR}"
     COMMENT "Building API documentation with Doxygen"
     VERBATIM
 )
@@ -38,7 +38,7 @@ add_custom_target (
 )
 add_custom_target (
     force-doc
-    COMMAND ${DOC_CMD}
-    WORKING_DIRECTORY "${DOC_WORKDIR}"
+    COMMAND ${YACTFR_DOC_CMD}
+    WORKING_DIRECTORY "${YACTFR_DOC_WORKDIR}"
     VERBATIM
 )

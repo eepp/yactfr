@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2018-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,55 +13,53 @@
 
 #include <yactfr/yactfr.hpp>
 
-#include <mem-data-source-factory.hpp>
-#include <element-printer.hpp>
+#include <elem-printer.hpp>
+#include <mem-data-src-factory.hpp>
 #include <common-trace.hpp>
 
 int main()
 {
-    auto traceType = yactfr::traceTypeFromMetadataText(metadata,
-                                                       metadata + std::strlen(metadata));
-    auto factory = std::make_shared<MemDataSourceFactory>(stream,
-                                                          sizeof(stream));
-    yactfr::ElementSequence seq {traceType, factory};
+    const auto trace = yactfr::traceFromMetadataText(metadata, metadata + std::strlen(metadata));
+    MemDataSrcFactory factory {stream, sizeof stream};
+    yactfr::ElementSequence seq {trace->type(), factory};
     std::vector<std::unique_ptr<std::ostringstream>> stringStreams;
-    std::vector<std::unique_ptr<ElementPrinter>> printers;
+    std::vector<std::unique_ptr<ElemPrinter>> printers;
 
     stringStreams.push_back(std::make_unique<std::ostringstream>());
-    printers.push_back(std::make_unique<ElementPrinter>(*stringStreams.back(), 0));
+    printers.push_back(std::make_unique<ElemPrinter>(*stringStreams.back(), 0));
 
-    std::vector<yactfr::ElementSequenceIterator> psIts {std::begin(seq)};
+    std::vector<yactfr::ElementSequenceIterator> esIts {seq.begin()};
 
     while (true) {
-        auto printersIt = std::begin(printers);
-        auto psItsIt = std::begin(psIts);
+        auto printersIt = printers.begin();
+        auto esItsIt = esIts.begin();
 
         // print element sequence iterator elements
-        while (psItsIt != std::end(psIts)) {
-            auto& psIt = *psItsIt;
-            auto& printerUp = *printersIt;
+        while (esItsIt != esIts.end()) {
+            auto& esIt = *esItsIt;
+            auto& printer = *printersIt;
 
-            psIt->accept(*printerUp);
-            ++psItsIt;
+            esIt->accept(*printer);
+            ++esItsIt;
             ++printersIt;
         }
 
         // advance element sequence iterators
-        for (auto& psIt : psIts) {
-            ++psIt;
+        for (auto& esIt : esIts) {
+            ++esIt;
         }
 
-        if (psIts.front() == std::end(seq)) {
+        if (esIts.front() == seq.end()) {
             break;
         }
 
         // copy last element sequence iterator
-        psIts.push_back(std::begin(seq));
-        psIts.back() = *(std::end(psIts) - 2);
+        esIts.push_back(seq.begin());
+        esIts.back() = *(esIts.end() - 2);
 
         // create new string stream and printer for copy
         stringStreams.push_back(std::make_unique<std::ostringstream>());
-        printers.push_back(std::make_unique<ElementPrinter>(*stringStreams.back(), 0));
+        printers.push_back(std::make_unique<ElemPrinter>(*stringStreams.back(), 0));
     }
 
     const auto totalStr = stringStreams.front()->str();
@@ -84,26 +82,26 @@ int main()
     }
 
     if (*at != '\0') {
-        std::cerr << "Didn't reach end of first printer's string.\n";
+        std::cerr << "Didn't reach end of first string of printer.\n";
         return 1;
     }
 
     // copy end iterator
-    auto end = std::end(seq);
-    yactfr::ElementSequenceIterator itCopy {std::begin(seq)};
+    const auto end = seq.end();
+    yactfr::ElementSequenceIterator itCopy {seq.begin()};
 
     itCopy = end;
 
-    if (itCopy != std::end(seq)) {
+    if (itCopy != seq.end()) {
         std::cerr << "Invalid copy of end element sequence iterator.\n";
         return 1;
     }
 
-    auto begin = std::begin(seq);
+    const auto begin = seq.begin();
 
     itCopy = begin;
 
-    if (itCopy != std::begin(seq)) {
+    if (itCopy != seq.begin()) {
         std::cerr << "Invalid copy of beginning element sequence iterator.\n";
         return 1;
     }

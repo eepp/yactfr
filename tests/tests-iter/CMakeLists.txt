@@ -30,10 +30,10 @@ include_directories (
 add_custom_target (
     tests-iter
     DEPENDS
+        test-iter-cmp
         test-iter-seek-packet
         test-iter-copy-ctor
         test-iter-copy-assign
         test-iter-move-ctor
         test-iter-move-assign
-        test-iter-cmp
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,20 +10,15 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
-#include <yactfr/io-error.hpp>
-#include <yactfr/metadata/trace-type-from-metadata-text.hpp>
-#include <yactfr/metadata/invalid-metadata-stream.hpp>
-#include <yactfr/metadata/metadata-stream.hpp>
-#include <yactfr/metadata/plain-text-metadata-stream.hpp>
-#include <yactfr/metadata/packetized-metadata-stream.hpp>
+#include <yactfr/yactfr.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-int main(int argc, const char* argv[])
+int main(const int argc, const char * const argv[])
 {
     assert(argc >= 3);
 
-    auto useStdin = argv[1];
-    auto path = argv[2];
+    const auto useStdin = argv[1];
+    const auto path = argv[2];
 
     try {
         std::istream *stream;
@@ -36,16 +31,16 @@ int main(int argc, const char* argv[])
             stream = &file;
         }
 
-        auto metaStream = yactfr::createMetadataStream(*stream);
+        const auto metaStream = yactfr::createMetadataStream(*stream);
 
         std::cout << "text-size=" << metaStream->text().size() <<
                      ",has-signature=" << metaStream->hasSignature();
 
-        if (auto pktMetadataStream = dynamic_cast<const yactfr::PacketizedMetadataStream *>(metaStream.get())) {
-            std::cout << ",packet-count=" << pktMetadataStream->packetCount() <<
+        if (const auto pktMetadataStream = dynamic_cast<const yactfr::PacketizedMetadataStream *>(metaStream.get())) {
+            std::cout << ",pkt-count=" << pktMetadataStream->packetCount() <<
                          ",major-version=" << pktMetadataStream->majorVersion() <<
                          ",minor-version=" << pktMetadataStream->minorVersion() <<
-                         ",byte-order=";
+                         ",bo=";
 
             if (pktMetadataStream->byteOrder() == yactfr::ByteOrder::LITTLE) {
                 std::cout << "le";

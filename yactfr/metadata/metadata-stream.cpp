@@ -1,6 +1,4 @@
 /*
- * Metadata stream.
- *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -24,10 +22,10 @@ MetadataStream::~MetadataStream()
 
 bool MetadataStream::hasSignature() const noexcept
 {
-    const char * const sig = "/* CTF 1.8";
+    static const std::string sig {"/* CTF 1.8"};
 
-    /* Using std::strncmp() to avoid exceptions */
-    return std::strncmp(_text.c_str(), sig, std::strlen(sig)) == 0;
+    // using std::strncmp() to avoid exceptions
+    return std::strncmp(_text.c_str(), sig.c_str(), sig.size()) == 0;
 }
 
 } // namespace yactfr

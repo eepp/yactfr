@@ -594,7 +594,7 @@ int main(int argc, char *argv[])
             curPacketOffset = it.offset();
         } else if (it->kind() == yactfr::Element::Kind::EXPECTED_PACKET_TOTAL_SIZE) {
             // this element indicates the expected size of the current packet
-            auto& elem = static_cast<const yactfr::ExpectedPacketTotalSizeElement&>(*it);
+            auto& elem = static_cast<const yactfr::ExpectedPacketTotalLengthElement&>(*it);
 
             std::cout << "Packet #" << curPacketNumber <<
                          ":    Offset: " << std::setw(10) << curPacketOffset <<

@@ -1,0 +1,48 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+typealias integer { size = 8; encoding = utf8; } := chr;
+
+event {
+    name = test;
+    fields := struct {
+        u8 len2;
+        u8 len1;
+        chr text1[len1];
+        u8 zlen;
+        chr text2[zlen];
+        chr text3[len2];
+    };
+};
+----
+0b 2a
+"I've tasted both the fantasy" 00 " and the deed"
+00
+"dan boucher"
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     ER {
+     0       ERT:0:test
+     0       SC:5 {
+     0         ST {
+     0           UI:len2:11
+     8           UI:len1:42
+    16           DTA:text1 {
+    16             SS:42:I've tasted both the fantasy
+   352           }
+   352           UI:zlen:0
+   360           DTA:text2 {
+   360           }
+   360           DTA:text3 {
+   360             SS:11:dan boucher
+   448           }
+   448         }
+   448       }
+   448     }
+   448   }
+   448 }

@@ -1,0 +1,107 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    packet.header := struct {
+        u8 stream_instance_id;
+    };
+};
+
+stream {
+    packet.context := struct {
+        u8 packet_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        string str;
+    };
+};
+----
+02 78 "heille Marie" 00
+05 78 "heille Serge" 00
+ff 78 "heille Lynda" 00
+----
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         UI:stream_instance_id:2
+     8         DSID:2
+     8       }
+     8     }
+     8     DST:0
+     8     SC:1 {
+     8       ST {
+     8         UI:packet_size:120
+    16         EPTL:120
+    16       }
+    16     }
+    16     ER {
+    16       ERT:0:test
+    16       SC:5 {
+    16         ST {
+    16           STR:str {
+    16             SS:13:heille Marie
+   120           }
+   120         }
+   120       }
+   120     }
+   120   }
+   120 }
+   120 P {
+   120   PC {
+   120     SC:0 {
+   120       ST {
+   120         UI:stream_instance_id:5
+   128         DSID:5
+   128       }
+   128     }
+   128     DST:0
+   128     SC:1 {
+   128       ST {
+   128         UI:packet_size:120
+   136         EPTL:120
+   136       }
+   136     }
+   136     ER {
+   136       ERT:0:test
+   136       SC:5 {
+   136         ST {
+   136           STR:str {
+   136             SS:13:heille Serge
+   240           }
+   240         }
+   240       }
+   240     }
+   240   }
+   240 }
+   240 P {
+   240   PC {
+   240     SC:0 {
+   240       ST {
+   240         UI:stream_instance_id:255
+   248         DSID:255
+   248       }
+   248     }
+   248     DST:0
+   248     SC:1 {
+   248       ST {
+   248         UI:packet_size:120
+   256         EPTL:120
+   256       }
+   256     }
+   256     ER {
+   256       ERT:0:test
+   256       SC:5 {
+   256         ST {
+   256           STR:str {
+   256             SS:13:heille Lynda
+   360           }
+   360         }
+   360       }
+   360     }
+   360   }
+   360 }

@@ -22,32 +22,32 @@ a8
     deadbeef feedface baaaaaad
     fadedead cdcdcdcd cafefeed
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     SCB:1
-     0       STB
-     0         U:content_size:168
-     8         EPCS:168
-     8       STE
-     8     SCE
-     8     ERB
+     0     SC:1 {
+     0       ST {
+     0         UI:content_size:168
+     8         EPCL:168
+     8       }
+     8     }
+     8     ER {
      8       ERT:0:test
-     8       SCB:5
-     8         STB
-     8           SAB:yy
-     8             U:yy:3735928559
-    40             U:yy:4277009102
-    72             U:yy:3131746989
-   104           SAE
-   104         STE
-   104       SCE
-   104     ERE
-   104     ERB
+     8       SC:5 {
+     8         ST {
+     8           SA:yy {
+     8             UI:3735928559
+    40             UI:4277009102
+    72             UI:3131746989
+   104           }
+   104         }
+   104       }
+   104     }
+   104     ER {
    104       ERT:0:test
-   104       SCB:5
-   104         STB
-   104           SAB:yy
-   104             U:yy:4208909997
-   136             U:yy:3452816845
-   168 Cannot request 32 bits at this point: would move beyond the current packet's content (0 bits remaining).
+   104       SC:5 {
+   104         ST {
+   104           SA:yy {
+   104             UI:4208909997
+   136             UI:3452816845
+   168 Cannot read 32 bits at this point: would move beyond the content of the current packet (0 bits remaining).

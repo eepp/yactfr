@@ -7,17 +7,17 @@
 
 tests_elem_seq_path="$build_tests_path/tests-elem-seq"
 
-@test 'begin' {
+@test 'begin()' {
   run "$tests_elem_seq_path/test-elem-seq-begin"
-  [ $status -eq 0 ]
+  (($status == 0))
 }
 
-@test 'end' {
+@test 'end()' {
   run "$tests_elem_seq_path/test-elem-seq-end"
-  [ $status -eq 0 ]
+  (($status == 0))
 }
 
-@test 'at' {
+@test 'at()' {
   run "$tests_elem_seq_path/test-elem-seq-at"
-  [ $status -eq 0 ]
+  (($status == 0))
 }

@@ -47,31 +47,31 @@ e6357a669ea0f63f
     10111010 10000100 01000011 01101111 11100101 10010101 00000011 <11111> 010
 ]
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     ERB
+     0     ER {
      0       ERT:0:test
-     0       SCB:5
-     0         STB
-     0           F:flt32le1:-3.14159
-    32           F:flt32le2:2.71828
-    64           F:flt32be1:0
-    96           F:flt32be2:-1
-   128           F:flt64le1:1.41421
-   192           F:flt64le2:0
-   256           F:flt64be1:1.20206
-   320           F:flt64be2:1.61803
-   384           U:pad:7
-   387           F:flt32bedis3:-2.68545
-   419           F:flt64bedis3:1.28243
-   512           F:flt32lealigned:8.31446
-   544           U:pad2:7
-   547           F:flt32ledis3:-22.5
-   579           F:flt64ledis3:299.792
-   643           U:pad3:31
-   648         STE
-   648       SCE
-   648     ERE
-   648   PCE
-   648 PE
+     0       SC:5 {
+     0         ST {
+     0           FPN:flt32le1:-3.14159
+    32           FPN:flt32le2:2.71828
+    64           FPN:flt32be1:0
+    96           FPN:flt32be2:-1
+   128           FPN:flt64le1:1.41421
+   192           FPN:flt64le2:0
+   256           FPN:flt64be1:1.20206
+   320           FPN:flt64be2:1.61803
+   384           UI:pad:7
+   387           FPN:flt32bedis3:-2.68545
+   419           FPN:flt64bedis3:1.28243
+   512           FPN:flt32lealigned:8.31446
+   544           UI:pad2:7
+   547           FPN:flt32ledis3:-22.5
+   579           FPN:flt64ledis3:299.792
+   643           UI:pad3:31
+   648         }
+   648       }
+   648     }
+   648   }
+   648 }

@@ -1,0 +1,34 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    typealias integer {size = 8; signed = false;} := uint8;
+
+    enum : uint8 {
+      x, y
+    } tag;
+
+    variant <tag> {
+      struct {
+        uint8 len2;
+      } x;
+
+      struct {
+        variant <tag> {
+          string x;
+          uint8 y;
+        } len2;
+      } y;
+    } len1;
+
+    string seq[len1.len2];
+  };
+};

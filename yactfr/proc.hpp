@@ -1,9 +1,16 @@
 /*
- * Procedure and instructions.
+ * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
  *
- * Here are the possible instructions for the yactfr VM. No bytecode is
- * involved here: the VM deals with a sequence of procedure instruction
- * objects, some of them also containing a subprocedure, and so on.
+ * This software may be modified and distributed under the terms of the
+ * MIT license. See the LICENSE file for details.
+ */
+
+/*
+ * Here are the possible instructions for the yactfr VM.
+ *
+ * No numeric bytecode is involved here: the VM deals with a sequence of
+ * procedure instruction objects, some of them also containing a
+ * subprocedure, and so on.
  *
  * Some definitions:
  *
@@ -17,36 +24,35 @@
  *     An instruction for the yactfr VM, possibly containing one or
  *     more subprocedures.
  *
- * The top-level procedure is a PacketProc. A PacketProc object contains
- * all the instructions to apply for a whole packet. At the beginning
- * of a packet, execute:
+ * The top-level procedure is a `PktProc`. A `PktProc` object contains
+ * all the instructions to apply for a whole packet.
  *
- * * The packet procedure's preamble procedure.
+ * At the beginning of a packet:
  *
- * A DataStreamTypePacketProc object contains the instructions to
- * execute after the packet procedure's preamble procedure for a
- * specific data stream type. To execute a data stream type packet
- * procedure:
+ * * Execute the preamble procedure of the packet procedure.
+ *
+ * A `DsPktProc` object contains the instructions to execute after the
+ * preamble procedure of the packet procedure for any data stream of a
+ * specific type.
+ *
+ * To execute a data stream packet procedure:
  *
  * 1. Execute the per-packet preamble procedure.
- * 2. Until the end of the packet, repeat:
- *   a) Execute the per-event record type preamble procedure.
- *   b) Depending on the chosen event record type, execute the
- *      corresponding event record type procedure
- *      (EventRecordTypeProc).
  *
- * An EventRecordTypeProc object contains a single procedure, that is,
- * the instructions to execute after the per-event record type preamble
- * procedure of its parent DataStreamTypePacketProc.
+ * 2. Until the end of the packet, repeat:
+ *
+ *    a) Execute the common event record preamble procedure.
+ *
+ *    b) Depending on the chosen event record type, execute the
+ *       corresponding event record procedure (`ErProc`).
+ *
+ * An `ErProc` object contains a single procedure, that is, the
+ * instructions to execute after the common event record preamble
+ * procedure of its parent `DsPktProc`.
  *
  * Details such as how to choose the current data stream and event
  * record types, and how to determine the end of the packet, are left to
  * the implementation of the VM.
- *
- * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
- *
- * This software may be modified and distributed under the terms of the
- * MIT license. See the LICENSE file for details.
  */
 
 #ifndef _YACTFR_PROC_HPP
@@ -57,25 +63,26 @@
 #include <sstream>
 #include <list>
 #include <vector>
+#include <utility>
 #include <functional>
 #include <type_traits>
 #include <boost/optional/optional.hpp>
 
 #include <yactfr/aliases.hpp>
-#include <yactfr/metadata/data-type.hpp>
+#include <yactfr/metadata/dt.hpp>
 #include <yactfr/metadata/int-type.hpp>
 #include <yactfr/metadata/float-type.hpp>
 #include <yactfr/metadata/enum-type.hpp>
-#include <yactfr/metadata/string-type.hpp>
+#include <yactfr/metadata/str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/static-array-type.hpp>
 #include <yactfr/metadata/static-text-array-type.hpp>
-#include <yactfr/metadata/dynamic-array-type.hpp>
-#include <yactfr/metadata/dynamic-text-array-type.hpp>
-#include <yactfr/metadata/variant-type.hpp>
-#include <yactfr/metadata/clock-type.hpp>
-#include <yactfr/metadata/event-record-type.hpp>
-#include <yactfr/metadata/data-stream-type.hpp>
+#include <yactfr/metadata/dyn-array-type.hpp>
+#include <yactfr/metadata/dyn-text-array-type.hpp>
+#include <yactfr/metadata/var-type.hpp>
+#include <yactfr/metadata/clk-type.hpp>
+#include <yactfr/metadata/ert.hpp>
+#include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 
 #include "utils.hpp"
@@ -83,190 +90,185 @@
 namespace yactfr {
 namespace internal {
 
+class BeginReadDynArrayInstr;
+class BeginReadDynTextArrayInstr;
+class BeginReadScopeInstr;
+class BeginReadStaticArrayInstr;
+class BeginReadStaticTextArrayInstr;
+class BeginReadStaticUuidArrayInstr;
+class BeginReadStructInstr;
+class BeginReadVarSSelInstr;
+class BeginReadVarUSelInstr;
+class DecrRemainingElemsInstr;
+class EndDsErPreambleProcInstr;
+class EndDsPktPreambleProcInstr;
+class EndErProcInstr;
+class EndPktPreambleProcInstr;
+class EndReadCompoundInstr;
+class EndReadScopeInstr;
 class Instr;
-class InstrReadData;
-class InstrReadBitArray;
-class InstrReadSignedInt;
-class InstrReadUnsignedInt;
-class InstrReadFloat;
-class InstrReadSignedEnum;
-class InstrReadUnsignedEnum;
-class InstrReadString;
-class InstrBeginReadScope;
-class InstrEndReadScope;
-class InstrBeginReadStruct;
-class InstrBeginReadStaticArray;
-class InstrBeginReadStaticTextArray;
-class InstrBeginReadStaticUuidArray;
-class InstrBeginReadDynamicArray;
-class InstrBeginReadDynamicTextArray;
-class InstrBeginReadVariantUnknownTag;
-class InstrBeginReadVariantSignedTag;
-class InstrBeginReadVariantUnsignedTag;
-class InstrEndReadCompound;
-class InstrUpdateClockValue;
-class InstrSetPacketEndClockValue;
-class InstrSaveValue;
-class InstrSetCurrentId;
-class InstrSetDataStreamType;
-class InstrSetEventRecordType;
-class InstrSetDataStreamId;
-class InstrSetPacketOriginIndex;
-class InstrSetPacketTotalSize;
-class InstrSetPacketContentSize;
-class InstrSetPacketMagicNumber;
-class InstrEndPacketPreambleProc;
-class InstrEndDstPacketPreambleProc;
-class InstrEndDstErtPreambleProc;
-class InstrEndErtProc;
-class InstrDecrRemainingElements;
+class ReadBitArrayInstr;
+class ReadDataInstr;
+class ReadFloatInstr;
+class ReadSEnumInstr;
+class ReadSIntInstr;
+class ReadStrInstr;
+class ReadUEnumInstr;
+class ReadUIntInstr;
+class SaveValInstr;
+class SetCurIdInstr;
+class SetDsIdInstr;
+class SetDstInstr;
+class SetErtInstr;
+class SetExpectedPktContentLenInstr;
+class SetPktEndClkValInstr;
+class SetPktMagicNumberInstr;
+class SetPktOriginIndexInstr;
+class SetExpectedPktTotalLenInstr;
+class UpdateClkValInstr;
 
 /*
  * A classic abstract visitor class for procedure instructions.
  *
- * Used by PacketProcBuilder, NOT by the VM.
+ * Used by `PktProcBuilder`, NOT by the VM.
  */
 class InstrVisitor
 {
 protected:
-    InstrVisitor();
+    InstrVisitor() = default;
 
 public:
     virtual ~InstrVisitor();
 
-    virtual void visit(InstrReadSignedInt& instr)
+    virtual void visit(ReadSIntInstr& instr)
     {
     }
 
-    virtual void visit(InstrReadUnsignedInt& instr)
+    virtual void visit(ReadUIntInstr& instr)
     {
     }
 
-    virtual void visit(InstrReadFloat& instr)
+    virtual void visit(ReadFloatInstr& instr)
     {
     }
 
-    virtual void visit(InstrReadSignedEnum& instr)
+    virtual void visit(ReadSEnumInstr& instr)
     {
     }
 
-    virtual void visit(InstrReadUnsignedEnum& instr)
+    virtual void visit(ReadUEnumInstr& instr)
     {
     }
 
-    virtual void visit(InstrReadString& instr)
+    virtual void visit(ReadStrInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadScope& instr)
+    virtual void visit(BeginReadScopeInstr& instr)
     {
     }
 
-    virtual void visit(InstrEndReadScope& instr)
+    virtual void visit(EndReadScopeInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadStruct& instr)
+    virtual void visit(BeginReadStructInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadStaticArray& instr)
+    virtual void visit(BeginReadStaticArrayInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadStaticUuidArray& instr)
+    virtual void visit(BeginReadStaticUuidArrayInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadStaticTextArray& instr)
+    virtual void visit(BeginReadStaticTextArrayInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadDynamicArray& instr)
+    virtual void visit(BeginReadDynArrayInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadDynamicTextArray& instr)
+    virtual void visit(BeginReadDynTextArrayInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadVariantUnknownTag& instr)
+    virtual void visit(BeginReadVarUSelInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadVariantSignedTag& instr)
+    virtual void visit(BeginReadVarSSelInstr& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadVariantUnsignedTag& instr)
+    virtual void visit(EndReadCompoundInstr& instr)
     {
     }
 
-    virtual void visit(InstrEndReadCompound& instr)
+    virtual void visit(UpdateClkValInstr& instr)
     {
     }
 
-    virtual void visit(InstrUpdateClockValue& instr)
+    virtual void visit(SetCurIdInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetCurrentId& instr)
+    virtual void visit(SetDstInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetDataStreamType& instr)
+    virtual void visit(SetErtInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetEventRecordType& instr)
+    virtual void visit(SetDsIdInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetDataStreamId& instr)
+    virtual void visit(SetPktOriginIndexInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetPacketOriginIndex& instr)
+    virtual void visit(SetExpectedPktTotalLenInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetPacketTotalSize& instr)
+    virtual void visit(SetExpectedPktContentLenInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetPacketContentSize& instr)
+    virtual void visit(SaveValInstr& instr)
     {
     }
 
-    virtual void visit(InstrSaveValue& instr)
+    virtual void visit(SetPktEndClkValInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetPacketEndClockValue& instr)
+    virtual void visit(SetPktMagicNumberInstr& instr)
     {
     }
 
-    virtual void visit(InstrSetPacketMagicNumber& instr)
+    virtual void visit(EndPktPreambleProcInstr& instr)
     {
     }
 
-    virtual void visit(InstrEndPacketPreambleProc& instr)
+    virtual void visit(EndDsPktPreambleProcInstr& instr)
     {
     }
 
-    virtual void visit(InstrEndDstPacketPreambleProc& instr)
+    virtual void visit(EndDsErPreambleProcInstr& instr)
     {
     }
 
-    virtual void visit(InstrEndDstErtPreambleProc& instr)
+    virtual void visit(EndErProcInstr& instr)
     {
     }
 
-    virtual void visit(InstrEndErtProc& instr)
-    {
-    }
-
-    virtual void visit(InstrDecrRemainingElements& instr)
+    virtual void visit(DecrRemainingElemsInstr& instr)
     {
     }
 };
@@ -274,60 +276,59 @@ public:
 /*
  * A procedure, that is, a sequence of instructions.
  *
- * The procedure is first built as a list of shared pointers because
- * the build process needs to insert and replace instructions and it's
+ * The procedure is first built as a list of shared pointers because the
+ * build process needs to insert and replace instructions and it's
  * easier with a linked list.
  *
  * Then, when the build is complete, we call buildRawProcFromShared()
  * which builds a vector of raw instruction object (weak) pointers from
- * the list of shared pointers. The list must remain alive because it
- * keeps the instructions alive. Going from raw pointer to raw pointer
- * in a vector seems more efficient than going from shared pointer to
- * shared pointer in a linked list. I did not measure the difference yet
+ * the list of shared pointers. The list must remain alive as it keeps
+ * the instructions alive. Going from raw pointer to raw pointer in a
+ * vector seems more efficient than going from shared pointer to shared
+ * pointer in a linked list. I did not measure the difference yet
  * however.
  *
  * Instructions are shared because sometimes they are reused, for
- * example multiple range procedures of a InstrBeginReadVariantSignedTag
- * or InstrBeginReadVariantUnsignedTag instruction can refer to the
- * exact same instructions.
+ * example multiple range procedures of a `BeginReadVarInstr`
+ * instruction can refer to the exact same instructions.
  */
 class Proc final
 {
 public:
     using Raw = std::vector<const Instr *>;
     using Shared = std::list<std::shared_ptr<Instr>>;
-    using RawIterator = Raw::const_iterator;
-    using SharedIterator = Shared::iterator;
+    using RawIt = Raw::const_iterator;
+    using SharedIt = Shared::iterator;
 
 public:
     void buildRawProcFromShared();
-    std::string toString(Size indent = 0) const;
+    std::string toStr(Size indent = 0) const;
     void pushBack(std::shared_ptr<Instr> instr);
-    void insert(SharedIterator iter, std::shared_ptr<Instr> instr);
+    void insert(SharedIt it, std::shared_ptr<Instr> instr);
 
-    std::list<std::shared_ptr<Instr>>& sharedProc() noexcept
+    Shared& sharedProc() noexcept
     {
         return _sharedProc;
     }
 
-    const std::list<std::shared_ptr<Instr>>& sharedProc() const noexcept
+    const Shared& sharedProc() const noexcept
     {
         return _sharedProc;
     }
 
-    const std::vector<const Instr *>& rawProc() const noexcept
+    const Raw& rawProc() const noexcept
     {
         return _rawProc;
     }
 
-    SharedIterator begin()
+    SharedIt begin() noexcept
     {
-        return std::begin(_sharedProc);
+        return _sharedProc.begin();
     }
 
-    SharedIterator end()
+    SharedIt end() noexcept
     {
-        return std::end(_sharedProc);
+        return _sharedProc.end();
     }
 
 private:
@@ -335,167 +336,116 @@ private:
     Shared _sharedProc;
 };
 
-static inline std::string _strName(const char *name)
-{
-    std::string rName;
-
-    rName = "[\033[1m\033[36m";
-    rName += name;
-    rName += "\033[0m]";
-    return rName;
-}
-
-static inline std::string _strEndName(const char *name)
-{
-    std::string rName;
-
-    rName = "[\033[1m\033[32m";
-    rName += name;
-    rName += "\033[0m]";
-    return rName;
-}
-
-static inline std::string _strSpecName(const char *name)
-{
-    std::string rName;
-
-    rName = "[\033[1m\033[33m";
-    rName += name;
-    rName += "\033[0m]";
-    return rName;
-}
-
-static inline std::string _strProp(const char *prop)
-{
-    std::string rProp;
-
-    rProp = "\033[1m";
-    rProp += prop;
-    rProp += "\033[0m=";
-    return rProp;
-}
-
-static inline std::string _strTopName(const char *name)
-{
-    std::string rName;
-
-    rName = "{\033[1m\033[35m";
-    rName += name;
-    rName += "\033[0m}";
-    return rName;
-}
-
-static inline std::string _strScopeName(const char *name)
-{
-    std::string rName;
-
-    rName = "|\033[1m\033[33m";
-    rName += name;
-    rName += "\033[0m|";
-    return rName;
-}
-
-// A pair of procedure and instruction iterator.
-struct InstrLocation
+/*
+ * A pair of procedure and instruction iterator.
+ */
+struct InstrLoc final
 {
     Proc::Shared *proc = nullptr;
     Proc::Shared::iterator it;
 };
 
-// Procedure instruction abstract class.
+/*
+ * List of instruction locations.
+ */
+using InstrLocs = std::vector<InstrLoc>;
+
+/*
+ * Procedure instruction abstract class.
+ */
 class Instr
 {
 public:
-    // Kind of instruction (opcode).
+    // kind of instruction (opcode)
     enum class Kind
     {
         UNSET,
-        READ_SIGNED_INT_LE,
-        READ_SIGNED_INT_BE,
-        READ_SIGNED_INT_A8,
-        READ_SIGNED_INT_A16_LE,
-        READ_SIGNED_INT_A32_LE,
-        READ_SIGNED_INT_A64_LE,
-        READ_SIGNED_INT_A16_BE,
-        READ_SIGNED_INT_A32_BE,
-        READ_SIGNED_INT_A64_BE,
-        READ_UNSIGNED_INT_LE,
-        READ_UNSIGNED_INT_BE,
-        READ_UNSIGNED_INT_A8,
-        READ_UNSIGNED_INT_A16_LE,
-        READ_UNSIGNED_INT_A32_LE,
-        READ_UNSIGNED_INT_A64_LE,
-        READ_UNSIGNED_INT_A16_BE,
-        READ_UNSIGNED_INT_A32_BE,
-        READ_UNSIGNED_INT_A64_BE,
-        READ_FLOAT_32_LE,
-        READ_FLOAT_32_BE,
-        READ_FLOAT_A32_LE,
-        READ_FLOAT_A32_BE,
-        READ_FLOAT_64_LE,
-        READ_FLOAT_64_BE,
-        READ_FLOAT_A64_LE,
-        READ_FLOAT_A64_BE,
-        READ_SIGNED_ENUM_LE,
-        READ_SIGNED_ENUM_BE,
-        READ_SIGNED_ENUM_A8,
-        READ_SIGNED_ENUM_A16_LE,
-        READ_SIGNED_ENUM_A32_LE,
-        READ_SIGNED_ENUM_A64_LE,
-        READ_SIGNED_ENUM_A16_BE,
-        READ_SIGNED_ENUM_A32_BE,
-        READ_SIGNED_ENUM_A64_BE,
-        READ_UNSIGNED_ENUM_LE,
-        READ_UNSIGNED_ENUM_BE,
-        READ_UNSIGNED_ENUM_A8,
-        READ_UNSIGNED_ENUM_A16_LE,
-        READ_UNSIGNED_ENUM_A32_LE,
-        READ_UNSIGNED_ENUM_A64_LE,
-        READ_UNSIGNED_ENUM_A16_BE,
-        READ_UNSIGNED_ENUM_A32_BE,
-        READ_UNSIGNED_ENUM_A64_BE,
-        READ_STRING,
+        BEGIN_READ_DYN_ARRAY,
+        BEGIN_READ_DYN_TEXT_ARRAY,
         BEGIN_READ_SCOPE,
-        END_READ_SCOPE,
-        BEGIN_READ_STRUCT,
-        END_READ_STRUCT,
         BEGIN_READ_STATIC_ARRAY,
-        END_READ_STATIC_ARRAY,
         BEGIN_READ_STATIC_TEXT_ARRAY,
-        END_READ_STATIC_TEXT_ARRAY,
         BEGIN_READ_STATIC_UUID_ARRAY,
-        BEGIN_READ_DYNAMIC_ARRAY,
-        END_READ_DYNAMIC_ARRAY,
-        BEGIN_READ_DYNAMIC_TEXT_ARRAY,
-        END_READ_DYNAMIC_TEXT_ARRAY,
-        BEGIN_READ_VARIANT_SIGNED_TAG,
-        BEGIN_READ_VARIANT_UNSIGNED_TAG,
-        BEGIN_READ_VARIANT_UNKNOWN_TAG,
-        END_READ_VARIANT,
-        SAVE_VALUE,
-        SET_PACKET_END_CLOCK_VALUE,
-        UPDATE_CLOCK_VALUE,
-        SET_CURRENT_ID,
-        SET_DATA_STREAM_TYPE,
-        SET_EVENT_RECORD_TYPE,
-        SET_DATA_STREAM_ID,
-        SET_PACKET_ORIGIN_INDEX,
-        SET_PACKET_TOTAL_SIZE,
-        SET_PACKET_CONTENT_SIZE,
-        SET_PACKET_MAGIC_NUMBER,
-        END_PACKET_PREAMBLE_PROC,
-        END_DST_PACKET_PREAMBLE_PROC,
-        END_DST_ERT_PREAMBLE_PROC,
-        END_ERT_PROC,
-        DECR_REMAINING_ELEMENTS,
+        BEGIN_READ_STRUCT,
+        BEGIN_READ_VAR_SSEL,
+        BEGIN_READ_VAR_USEL,
+        DECR_REMAINING_ELEMS,
+        END_DS_ER_PREAMBLE_PROC,
+        END_DS_PKT_PREAMBLE_PROC,
+        END_ER_PROC,
+        END_PKT_PREAMBLE_PROC,
+        END_READ_DYN_ARRAY,
+        END_READ_DYN_TEXT_ARRAY,
+        END_READ_SCOPE,
+        END_READ_STATIC_ARRAY,
+        END_READ_STATIC_TEXT_ARRAY,
+        END_READ_STRUCT,
+        END_READ_VAR,
+        READ_FLOAT_32_BE,
+        READ_FLOAT_32_LE,
+        READ_FLOAT_64_BE,
+        READ_FLOAT_64_LE,
+        READ_FLOAT_A32_BE,
+        READ_FLOAT_A32_LE,
+        READ_FLOAT_A64_BE,
+        READ_FLOAT_A64_LE,
+        READ_SENUM_A16_BE,
+        READ_SENUM_A16_LE,
+        READ_SENUM_A32_BE,
+        READ_SENUM_A32_LE,
+        READ_SENUM_A64_BE,
+        READ_SENUM_A64_LE,
+        READ_SENUM_A8,
+        READ_SENUM_BE,
+        READ_SENUM_LE,
+        READ_SINT_A16_BE,
+        READ_SINT_A16_LE,
+        READ_SINT_A32_BE,
+        READ_SINT_A32_LE,
+        READ_SINT_A64_BE,
+        READ_SINT_A64_LE,
+        READ_SINT_A8,
+        READ_SINT_BE,
+        READ_SINT_LE,
+        READ_STR,
+        READ_UENUM_A16_BE,
+        READ_UENUM_A16_LE,
+        READ_UENUM_A32_BE,
+        READ_UENUM_A32_LE,
+        READ_UENUM_A64_BE,
+        READ_UENUM_A64_LE,
+        READ_UENUM_A8,
+        READ_UENUM_BE,
+        READ_UENUM_LE,
+        READ_UINT_A16_BE,
+        READ_UINT_A16_LE,
+        READ_UINT_A32_BE,
+        READ_UINT_A32_LE,
+        READ_UINT_A64_BE,
+        READ_UINT_A64_LE,
+        READ_UINT_A8,
+        READ_UINT_BE,
+        READ_UINT_LE,
+        SAVE_VAL,
+        SET_CUR_ID,
+        SET_DS_ID,
+        SET_DST,
+        SET_ERT,
+        SET_PKT_CONTENT_LEN,
+        SET_PKT_END_CLK_VAL,
+        SET_PKT_MAGIC_NUMBER,
+        SET_PKT_ORIGIN_INDEX,
+        SET_PKT_TOTAL_LEN,
+        UPDATE_CLK_VAL,
     };
 
 public:
     using SP = std::shared_ptr<Instr>;
+    using FindInstrsCurrent = std::unordered_map<const Instr *, Index>;
 
 protected:
-    Instr();
-    explicit Instr(Kind kind);
+    Instr() noexcept = default;
+    explicit Instr(Kind kind) noexcept;
 
 public:
     virtual ~Instr();
@@ -503,515 +453,500 @@ public:
     virtual void buildRawProcFromShared();
 
     // only used for debugging purposes
-    std::string toString(Size indent = 0) const;
+    std::string toStr(Size indent = 0) const;
 
     Kind kind() const noexcept
     {
-        assert(_kind != Kind::UNSET);
-        return _kind;
+        assert(_theKind != Kind::UNSET);
+        return _theKind;
     }
 
     /*
-     * Please DO NOT FREAK OUT about the isX() methods belows. They are
-     * only helpers which are used when building the procedures. The
-     * yactfr VM uses kind() directly and a function table.
+     * Please DO NOT FREAK OUT about the isX() methods belows.
+     *
+     * They are only helpers which are used when _building_ the
+     * procedures. The yactfr VM uses kind() directly and a function
+     * table.
      */
 
     bool isReadData() const noexcept
     {
-        return this->isReadInt() || this->isReadFloat() ||
-               this->isReadString() || this->isBeginReadCompound() ||
-               this->isBeginReadVariant();
+        return this->isReadInt() ||
+               this->isReadFloat() ||
+               this->isReadStr() ||
+               this->isBeginReadCompound() ||
+               this->isBeginReadVar();
     }
 
     bool isBeginReadScope() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_SCOPE;
+        return _theKind == Kind::BEGIN_READ_SCOPE;
     }
 
     bool isBeginReadCompound() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_STRUCT ||
-               _kind == Kind::BEGIN_READ_STATIC_ARRAY ||
-               _kind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
-               _kind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY ||
-               _kind == Kind::BEGIN_READ_DYNAMIC_ARRAY ||
-               _kind == Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_STRUCT ||
+               _theKind == Kind::BEGIN_READ_STATIC_ARRAY ||
+               _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
+               _theKind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY ||
+               _theKind == Kind::BEGIN_READ_DYN_ARRAY ||
+               _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
     }
 
     bool isReadInt() const noexcept
     {
-        return this->isReadSignedInt() || this->isReadUnsignedInt();
+        return this->isReadSInt() || this->isReadUInt();
     }
 
-    bool isReadSignedInt() const noexcept
+    bool isReadSInt() const noexcept
     {
-        return _kind == Kind::READ_SIGNED_INT_LE ||
-               _kind == Kind::READ_SIGNED_INT_BE ||
-               _kind == Kind::READ_SIGNED_INT_A8 ||
-               _kind == Kind::READ_SIGNED_INT_A16_LE ||
-               _kind == Kind::READ_SIGNED_INT_A32_LE ||
-               _kind == Kind::READ_SIGNED_INT_A64_LE ||
-               _kind == Kind::READ_SIGNED_INT_A16_BE ||
-               _kind == Kind::READ_SIGNED_INT_A32_BE ||
-               _kind == Kind::READ_SIGNED_INT_A64_BE ||
-               this->isReadSignedEnum();
+        return _theKind == Kind::READ_SINT_LE ||
+               _theKind == Kind::READ_SINT_BE ||
+               _theKind == Kind::READ_SINT_A8 ||
+               _theKind == Kind::READ_SINT_A16_LE ||
+               _theKind == Kind::READ_SINT_A32_LE ||
+               _theKind == Kind::READ_SINT_A64_LE ||
+               _theKind == Kind::READ_SINT_A16_BE ||
+               _theKind == Kind::READ_SINT_A32_BE ||
+               _theKind == Kind::READ_SINT_A64_BE ||
+               this->isReadSEnum();
     }
 
-    bool isReadUnsignedInt() const noexcept
+    bool isReadUInt() const noexcept
     {
-        return _kind == Kind::READ_UNSIGNED_INT_LE ||
-               _kind == Kind::READ_UNSIGNED_INT_BE ||
-               _kind == Kind::READ_UNSIGNED_INT_A8 ||
-               _kind == Kind::READ_UNSIGNED_INT_A16_LE ||
-               _kind == Kind::READ_UNSIGNED_INT_A32_LE ||
-               _kind == Kind::READ_UNSIGNED_INT_A64_LE ||
-               _kind == Kind::READ_UNSIGNED_INT_A16_BE ||
-               _kind == Kind::READ_UNSIGNED_INT_A32_BE ||
-               _kind == Kind::READ_UNSIGNED_INT_A64_BE ||
-               this->isReadUnsignedEnum();
+        return _theKind == Kind::READ_UINT_LE ||
+               _theKind == Kind::READ_UINT_BE ||
+               _theKind == Kind::READ_UINT_A8 ||
+               _theKind == Kind::READ_UINT_A16_LE ||
+               _theKind == Kind::READ_UINT_A32_LE ||
+               _theKind == Kind::READ_UINT_A64_LE ||
+               _theKind == Kind::READ_UINT_A16_BE ||
+               _theKind == Kind::READ_UINT_A32_BE ||
+               _theKind == Kind::READ_UINT_A64_BE ||
+               this->isReadUEnum();
     }
 
     bool isReadFloat() const noexcept
     {
-        return _kind == Kind::READ_FLOAT_32_LE ||
-               _kind == Kind::READ_FLOAT_32_BE ||
-               _kind == Kind::READ_FLOAT_A32_LE ||
-               _kind == Kind::READ_FLOAT_A32_BE ||
-               _kind == Kind::READ_FLOAT_64_LE ||
-               _kind == Kind::READ_FLOAT_64_BE ||
-               _kind == Kind::READ_FLOAT_A64_LE ||
-               _kind == Kind::READ_FLOAT_A64_BE;
+        return _theKind == Kind::READ_FLOAT_32_LE ||
+               _theKind == Kind::READ_FLOAT_32_BE ||
+               _theKind == Kind::READ_FLOAT_A32_LE ||
+               _theKind == Kind::READ_FLOAT_A32_BE ||
+               _theKind == Kind::READ_FLOAT_64_LE ||
+               _theKind == Kind::READ_FLOAT_64_BE ||
+               _theKind == Kind::READ_FLOAT_A64_LE ||
+               _theKind == Kind::READ_FLOAT_A64_BE;
     }
 
     bool isReadEnum() const noexcept
     {
-        return this->isReadSignedEnum() || this->isReadUnsignedEnum();
+        return this->isReadSEnum() || this->isReadUEnum();
     }
 
-    bool isReadSignedEnum() const noexcept
+    bool isReadSEnum() const noexcept
     {
-        return _kind == Kind::READ_SIGNED_ENUM_LE ||
-               _kind == Kind::READ_SIGNED_ENUM_BE ||
-               _kind == Kind::READ_SIGNED_ENUM_A8 ||
-               _kind == Kind::READ_SIGNED_ENUM_A16_LE ||
-               _kind == Kind::READ_SIGNED_ENUM_A32_LE ||
-               _kind == Kind::READ_SIGNED_ENUM_A64_LE ||
-               _kind == Kind::READ_SIGNED_ENUM_A16_BE ||
-               _kind == Kind::READ_SIGNED_ENUM_A32_BE ||
-               _kind == Kind::READ_SIGNED_ENUM_A64_BE;
+        return _theKind == Kind::READ_SENUM_LE ||
+               _theKind == Kind::READ_SENUM_BE ||
+               _theKind == Kind::READ_SENUM_A8 ||
+               _theKind == Kind::READ_SENUM_A16_LE ||
+               _theKind == Kind::READ_SENUM_A32_LE ||
+               _theKind == Kind::READ_SENUM_A64_LE ||
+               _theKind == Kind::READ_SENUM_A16_BE ||
+               _theKind == Kind::READ_SENUM_A32_BE ||
+               _theKind == Kind::READ_SENUM_A64_BE;
     }
 
-    bool isReadUnsignedEnum() const noexcept
+    bool isReadUEnum() const noexcept
     {
 
-        return _kind == Kind::READ_UNSIGNED_ENUM_LE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_BE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A8 ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A16_LE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A32_LE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A64_LE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A16_BE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A32_BE ||
-               _kind == Kind::READ_UNSIGNED_ENUM_A64_BE;
+        return _theKind == Kind::READ_UENUM_LE ||
+               _theKind == Kind::READ_UENUM_BE ||
+               _theKind == Kind::READ_UENUM_A8 ||
+               _theKind == Kind::READ_UENUM_A16_LE ||
+               _theKind == Kind::READ_UENUM_A32_LE ||
+               _theKind == Kind::READ_UENUM_A64_LE ||
+               _theKind == Kind::READ_UENUM_A16_BE ||
+               _theKind == Kind::READ_UENUM_A32_BE ||
+               _theKind == Kind::READ_UENUM_A64_BE;
     }
 
-    bool isReadString() const noexcept
+    bool isReadStr() const noexcept
     {
-        return _kind == Kind::READ_STRING;
+        return _theKind == Kind::READ_STR;
     }
 
     bool isBeginReadStaticArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_STATIC_ARRAY ||
-               _kind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
-               _kind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_STATIC_ARRAY ||
+               _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
+               _theKind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
     }
 
     bool isBeginReadStaticTextArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
     }
 
     bool isBeginReadStaticUuidArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_STATIC_UUID_ARRAY;
+        return _theKind == Kind::BEGIN_READ_STATIC_UUID_ARRAY;
     }
 
-    bool isBeginReadDynamicArray() const noexcept
+    bool isBeginReadDynArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_DYNAMIC_ARRAY ||
-               _kind == Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_DYN_ARRAY ||
+               _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
     }
 
-    bool isBeginReadDynamicTextArray() const noexcept
+    bool isBeginReadDynTextArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY;
+        return _theKind == Kind::BEGIN_READ_DYN_TEXT_ARRAY;
     }
 
     bool isBeginReadStruct() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_STRUCT;
+        return _theKind == Kind::BEGIN_READ_STRUCT;
     }
 
-    bool isBeginReadVariant() const noexcept
+    bool isBeginReadVar() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG ||
-               _kind == Kind::BEGIN_READ_VARIANT_SIGNED_TAG ||
-               _kind == Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG;
+        return _theKind == Kind::BEGIN_READ_VAR_SSEL ||
+               _theKind == Kind::BEGIN_READ_VAR_USEL;
     }
 
-    bool isBeginReadVariantSignedTag() const noexcept
+    bool isBeginReadVarSSel() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_VARIANT_SIGNED_TAG;
+        return _theKind == Kind::BEGIN_READ_VAR_SSEL;
     }
 
-    bool isBeginReadVariantUnsignedTag() const noexcept
+    bool isBeginReadVarUSel() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG;
-    }
-
-    bool isBeginReadUnknownVariant() const noexcept
-    {
-        return _kind == Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG;
+        return _theKind == Kind::BEGIN_READ_VAR_USEL;
     }
 
     bool isEndReadCompound() const noexcept
     {
-        return _kind == Kind::END_READ_STRUCT ||
-               _kind == Kind::END_READ_STATIC_ARRAY ||
-               _kind == Kind::END_READ_STATIC_TEXT_ARRAY ||
-               _kind == Kind::END_READ_DYNAMIC_ARRAY ||
-               _kind == Kind::END_READ_DYNAMIC_TEXT_ARRAY ||
-               _kind == Kind::END_READ_VARIANT;
+        return _theKind == Kind::END_READ_STRUCT ||
+               _theKind == Kind::END_READ_STATIC_ARRAY ||
+               _theKind == Kind::END_READ_STATIC_TEXT_ARRAY ||
+               _theKind == Kind::END_READ_DYN_ARRAY ||
+               _theKind == Kind::END_READ_DYN_TEXT_ARRAY ||
+               _theKind == Kind::END_READ_VAR;
     }
 
     bool isEndProc() const noexcept
     {
-        return _kind == Kind::END_PACKET_PREAMBLE_PROC ||
-               _kind == Kind::END_DST_PACKET_PREAMBLE_PROC ||
-               _kind == Kind::END_DST_ERT_PREAMBLE_PROC ||
-               _kind == Kind::END_ERT_PROC;
-    }
-
-protected:
-    void _setKind(const Kind kind) noexcept
-    {
-        _kind = kind;
+        return _theKind == Kind::END_PKT_PREAMBLE_PROC ||
+               _theKind == Kind::END_DS_PKT_PREAMBLE_PROC ||
+               _theKind == Kind::END_DS_ER_PREAMBLE_PROC ||
+               _theKind == Kind::END_ER_PROC;
     }
 
 private:
-    virtual std::string _toString(Size indent = 0) const;
+    virtual std::string _toStr(Size indent = 0) const;
 
 private:
-    Kind _kind;
+    const Kind _theKind = Kind::UNSET;
 };
 
-// "Read (something)" procedure instruction abstract class.
-class InstrReadData :
+/*
+ * "Read data" procedure instruction abstract class.
+ */
+class ReadDataInstr :
     public Instr
 {
+protected:
+    explicit ReadDataInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
+
 public:
     /*
-     * `fieldName`, `fieldDisplayName`, and `type` point to members of
-     * their containing named data type object (part of the trace type
-     * hierarchy). `fieldName` and `fieldDisplayName` can be null if
-     * this is the scope's root read instruction.
+     * `memberType` can be `nullptr` if this is the scope's root read
+     * instruction.
      */
-    explicit InstrReadData(const std::string *fieldName,
-                           const std::string *fieldDisplayName,
-                           const DataType *type);
-    virtual InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
-                                    std::vector<std::string>::const_iterator end);
+    explicit ReadDataInstr(const StructureMemberType *memberType, const DataType& dt);
 
-    const DataType *type() const noexcept
+    const DataType& dt() const noexcept
     {
-        return _type;
+        return *_dt;
     }
 
-    const std::string *fieldName() const noexcept
+    const StructureMemberType *memberType() const noexcept
     {
-        return _fieldName;
+        return _memberType;
     }
 
-    const std::string *fieldDisplayName() const noexcept
+    unsigned int align() const noexcept
     {
-        return _fieldDisplayName;
-    }
-
-    unsigned int alignment() const noexcept
-    {
-        return _alignment;
+        return _align;
     }
 
 protected:
-    std::string _commonToString() const;
+    std::string _commonToStr() const;
 
 private:
-    const std::string * const _fieldName;
-    const std::string * const _fieldDisplayName;
-    const DataType * const _type;
-    const unsigned int _alignment;
+    const StructureMemberType * const _memberType;
+    const DataType * const _dt;
+    const unsigned int _align;
 };
 
 /*
  * "Save value" procedure instruction.
  *
- * This instruction asks the VM to save the last decoded integer value
- * to a given position (index) in its saved value vector so that it can
- * be used later (for the length of a dynamic array or for the tag of a
- * variant).
+ * This instruction requires the VM to save the last decoded integer
+ * value to a position (index) in its saved value vector so that it can
+ * be used later (for the length of a dynamic array or for the selector
+ * of a variant).
  */
-class InstrSaveValue :
+class SaveValInstr :
     public Instr
 {
 public:
-    explicit InstrSaveValue(Index pos);
+    explicit SaveValInstr(Index pos);
 
-    Index pos() const noexcept
+    const Index pos() const noexcept
     {
         return _pos;
     }
 
+    void pos(const Index pos) noexcept
+    {
+        _pos = pos;
+    }
+
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
-    const Index _pos;
+    Index _pos;
 };
 
 /*
- * "Save packet end clock value" procedure instruction.
+ * "Set packet end clock value" procedure instruction.
  *
- * This instruction asks the VM that the last decoded integer value is
- * the packet end clock value. Use `index()` to get the index of the
- * clock type which represents the clock of which the value is saved.
+ * This instruction indicates to the VM that the last decoded integer
+ * value is the packet end clock value.
  */
-class InstrSetPacketEndClockValue :
+class SetPktEndClkValInstr :
     public Instr
 {
 public:
-    explicit InstrSetPacketEndClockValue(const ClockType& clockType,
-                                         Index index);
+    explicit SetPktEndClkValInstr(const ClockType& clkType, Index index);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const ClockType& clockType() const noexcept
+    const ClockType& clkType() const noexcept
     {
-        return *_clockType;
-    }
-
-    Index index() const noexcept
-    {
-        return _index;
+        return *_clkType;
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
-    const ClockType * const _clockType;
+    const ClockType * const _clkType;
     const Index _index;
 };
 
-// "Read bit array" procedure.
-class InstrReadBitArray :
-    public InstrReadData
+/*
+ * "Read bit array" procedure instruction abstract class.
+ */
+class ReadBitArrayInstr :
+    public ReadDataInstr
 {
 protected:
-    explicit InstrReadBitArray(const std::string *fieldName,
-                               const std::string *fieldDisplayName,
-                               const DataType *type);
+    explicit ReadBitArrayInstr(Kind kind, const StructureMemberType *memberType,
+                               const DataType& dt);
 
 public:
-    unsigned int size() const noexcept
+    unsigned int len() const noexcept
     {
-        return _size;
+        return _len;
     }
 
-    ByteOrder byteOrder() const noexcept
+    ByteOrder bo() const noexcept
     {
-        return _byteOrder;
+        return _bo;
     }
 
 protected:
-    std::string _commonToString() const;
+    std::string _commonToStr() const;
 
 private:
-    std::string _toString(const Size indent = 0) const override;
+    std::string _toStr(const Size indent = 0) const override;
 
 private:
-    const unsigned int _size;
-    const ByteOrder _byteOrder;
+    const unsigned int _len;
+    const ByteOrder _bo;
 };
 
-// "Read integer" procedure instruction abstract class.
-class InstrReadIntBase :
-    public InstrReadBitArray
+/*
+ * "Read integer" procedure instruction abstract class.
+ */
+class ReadIntInstr :
+    public ReadBitArrayInstr
 {
-public:
-    explicit InstrReadIntBase(const std::string *fieldName,
-                              const std::string *fieldDisplayName,
-                              const DataType *type);
+protected:
+    explicit ReadIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
 
-    const IntType& intType() const noexcept
+public:
+    explicit ReadIntInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    const IntegerType& intType() const noexcept
     {
-        return static_cast<const IntType&>(*this->type());
+        return static_cast<const IntegerType&>(this->dt());
     }
 };
 
-// "Read signed integer" procedure instruction.
-class InstrReadSignedInt :
-    public InstrReadIntBase
+/*
+ * "Read signed integer" procedure instruction.
+ */
+class ReadSIntInstr :
+    public ReadIntInstr
 {
+protected:
+    explicit ReadSIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
+
 public:
-    explicit InstrReadSignedInt(const std::string *fieldName,
-                                const std::string *fieldDisplayName,
-                                const DataType *type);
+    explicit ReadSIntInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const SignedIntType& signedIntType() const noexcept
+    const SignedIntegerType& sIntType() const noexcept
     {
-        return static_cast<const SignedIntType&>(*this->type());
+        return static_cast<const SignedIntegerType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
-// "Read unsigned integer" procedure instruction.
-class InstrReadUnsignedInt :
-    public InstrReadIntBase
+/*
+ * "Read unsigned integer" procedure instruction.
+ */
+class ReadUIntInstr :
+    public ReadIntInstr
 {
+protected:
+    explicit ReadUIntInstr(Kind kind, const StructureMemberType *memberType, const DataType& dt);
+
 public:
-    explicit InstrReadUnsignedInt(const std::string *fieldName,
-                                  const std::string *fieldDisplayName,
-                                  const DataType *type);
+    explicit ReadUIntInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const UnsignedIntType& unsignedIntType() const noexcept
+    const UnsignedIntegerType& uIntType() const noexcept
     {
-        return static_cast<const UnsignedIntType&>(*this->type());
+        return static_cast<const UnsignedIntegerType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
-// "Read floating point number" procedure instruction.
-class InstrReadFloat :
-    public InstrReadBitArray
+/*
+ * "Read floating point number" procedure instruction.
+ */
+class ReadFloatInstr :
+    public ReadBitArrayInstr
 {
 public:
-    explicit InstrReadFloat(const std::string *fieldName,
-                            const std::string *fieldDisplayName,
-                            const DataType *type);
+    explicit ReadFloatInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const FloatType& floatType() const noexcept
+    const FloatingPointNumberType& floatType() const noexcept
     {
-        return static_cast<const FloatType&>(*this->type());
+        return static_cast<const FloatingPointNumberType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
-// "Read signed enumeration" procedure instruction.
-class InstrReadSignedEnum :
-    public InstrReadSignedInt
+/*
+ * "Read signed enumeration" procedure instruction.
+ */
+class ReadSEnumInstr :
+    public ReadSIntInstr
 {
 public:
-    explicit InstrReadSignedEnum(const std::string *fieldName,
-                                 const std::string *fieldDisplayName,
-                                 const DataType *type);
+    explicit ReadSEnumInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const SignedEnumType& signedEnumType() const noexcept
+    const SignedEnumerationType& sEnumType() const noexcept
     {
-        return static_cast<const SignedEnumType&>(*this->type());
+        return static_cast<const SignedEnumerationType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
-// "Read unsigned enumeration" procedure instruction.
-class InstrReadUnsignedEnum :
-    public InstrReadUnsignedInt
+/*
+ * "Read unsigned enumeration" procedure instruction.
+ */
+class ReadUEnumInstr :
+    public ReadUIntInstr
 {
 public:
-    explicit InstrReadUnsignedEnum(const std::string *fieldName,
-                                   const std::string *fieldDisplayName,
-                                   const DataType *type);
+    explicit ReadUEnumInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const UnsignedEnumType& unsignedEnumType() const noexcept
+    const UnsignedEnumerationType& uEnumType() const noexcept
     {
-        return static_cast<const UnsignedEnumType&>(*this->type());
+        return static_cast<const UnsignedEnumerationType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
-// "Read null-terminated string" procedure instruction.
-class InstrReadString :
-    public InstrReadData
+/*
+ * "Read null-terminated string" procedure instruction.
+ */
+class ReadStrInstr :
+    public ReadDataInstr
 {
 public:
-    explicit InstrReadString(const std::string *fieldName,
-                             const std::string *fieldDisplayName,
-                             const DataType *type);
+    explicit ReadStrInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    unsigned int alignment() const noexcept
+    const StringType& strType() const noexcept
     {
-        return _alignment;
-    }
-
-    const StringType& stringType() const noexcept
-    {
-        return static_cast<const StringType&>(*this->type());
+        return static_cast<const StringType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
-
-private:
-    const unsigned int _alignment;
+    std::string _toStr(Size indent = 0) const override;
 };
 
 /*
@@ -1019,13 +954,12 @@ private:
  *
  * This instruction contains a subprocedure to execute.
  */
-class InstrBeginReadCompound :
-    public InstrReadData
+class BeginReadCompoundInstr :
+    public ReadDataInstr
 {
 protected:
-    explicit InstrBeginReadCompound(const std::string *fieldName,
-                                    const std::string *fieldDisplayName,
-                                    const DataType *type);
+    explicit BeginReadCompoundInstr(Kind kind, const StructureMemberType *memberType,
+                                    const DataType& dt);
 
 public:
     const Proc& proc() const noexcept
@@ -1038,13 +972,12 @@ public:
         return _proc;
     }
 
-    virtual Instr *findInstrByFieldName(const std::string& fieldName);
     void buildRawProcFromShared() override;
 
 protected:
-    std::string _procToString(const Size indent) const
+    std::string _procToStr(const Size indent) const
     {
-        return _proc.toString(indent);
+        return _proc.toStr(indent);
     }
 
 private:
@@ -1054,19 +987,19 @@ private:
 /*
  * "End reading compound data" procedure instruction.
  *
- * If this instruction's kind is END_READ_STRUCT, then the VM must stop
- * executing the current procedure and continue executing the parent
- * procedure. For all kinds, this instruction tells the VM to set a
- * StructEndElement as the current element.
+ * If the kind of this instruction is `END_READ_STRUCT`, then the VM
+ * must stop executing the current procedure and continue executing the
+ * parent procedure.
+ *
+ * For all instruction kinds, this instruction requires the VM to set a
+ * `StructEndElement` as the current element.
  */
-class InstrEndReadCompound :
-    public InstrReadData
+class EndReadCompoundInstr :
+    public ReadDataInstr
 {
 public:
-    explicit InstrEndReadCompound(Kind kind,
-                                  const std::string *fieldName,
-                                  const std::string *fieldDisplayName,
-                                  const DataType *type);
+    explicit EndReadCompoundInstr(Kind kind, const StructureMemberType *memberType,
+                                  const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1074,32 +1007,30 @@ public:
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
-// "Begin reading structure" procedure instruction.
-class InstrBeginReadStruct :
-    public InstrBeginReadCompound
+/*
+ * "Begin reading structure" procedure instruction.
+ */
+class BeginReadStructInstr :
+    public BeginReadCompoundInstr
 {
 public:
-    explicit InstrBeginReadStruct(const std::string *fieldName,
-                                  const std::string *fieldDisplayName,
-                                  const DataType *type);
-    InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
-                            std::vector<std::string>::const_iterator end) override;
+    explicit BeginReadStructInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const StructType& structType() const noexcept
+    const StructureType& structType() const noexcept
     {
-        return static_cast<const StructType&>(*this->type());
+        return static_cast<const StructureType&>(this->dt());
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 };
 
 /*
@@ -1108,13 +1039,12 @@ private:
  * This is the top-level instruction to start reading a whole scope
  * (packet header, packet context, event record payload, etc.).
  */
-class InstrBeginReadScope :
+class BeginReadScopeInstr :
     public Instr
 {
 public:
-    explicit InstrBeginReadScope(Scope scope, unsigned int alignment);
+    explicit BeginReadScopeInstr(Scope scope, unsigned int align);
     void buildRawProcFromShared() override;
-    InstrLocation findInstr(const FieldRef& fieldRef);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1136,31 +1066,31 @@ public:
         return _proc;
     }
 
-    unsigned int alignment() const noexcept
+    unsigned int align() const noexcept
     {
-        return _alignment;
+        return _align;
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
     const Scope _scope;
-    const unsigned int _alignment = 1;
+    const unsigned int _align = 1;
     Proc _proc;
 };
 
 /*
  * "End reading scope" procedure instruction.
  *
- * This asks the VM to stop executing the current procedure and continue
- * executing the parent procedure.
+ * This requires the VM to stop executing the current procedure and
+ * continue executing the parent procedure.
  */
-class InstrEndReadScope :
+class EndReadScopeInstr :
     public Instr
 {
 public:
-    explicit InstrEndReadScope(Scope scope);
+    explicit EndReadScopeInstr(Scope scope);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1173,7 +1103,7 @@ public:
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
     const Scope _scope;
@@ -1182,18 +1112,17 @@ private:
 /*
  * "Begin reading static array" procedure instruction.
  *
- * The VM must execute the subprocedure `length()` times.
+ * The VM must execute the subprocedure `len()` times.
  */
-class InstrBeginReadStaticArray :
-    public InstrBeginReadCompound
+class BeginReadStaticArrayInstr :
+    public BeginReadCompoundInstr
 {
+protected:
+    explicit BeginReadStaticArrayInstr(Kind kind, const StructureMemberType *memberType,
+                                       const DataType& dt);
+
 public:
-    explicit InstrBeginReadStaticArray(const std::string *fieldName,
-                                       const std::string *fieldDisplayName,
-                                       const DataType *type);
-    InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
-                            std::vector<std::string>::const_iterator end) override;
-    Instr *findInstrByFieldName(const std::string& fieldName) override;
+    explicit BeginReadStaticArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1202,32 +1131,33 @@ public:
 
     const StaticArrayType& staticArrayType() const noexcept
     {
-        return static_cast<const StaticArrayType&>(*this->type());
+        return static_cast<const StaticArrayType&>(this->dt());
     }
 
-    Size length() const noexcept
+    Size len() const noexcept
     {
-        return _length;
+        return _len;
     }
 
 protected:
-    std::string _commonToString() const;
+    std::string _commonToStr() const;
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
-    const Size _length;
+    const Size _len;
 };
 
-// "Begin reading static text array" procedure instruction.
-class InstrBeginReadStaticTextArray :
-    public InstrBeginReadStaticArray
+/*
+ * "Begin reading static text array" procedure instruction.
+ */
+class BeginReadStaticTextArrayInstr :
+    public BeginReadStaticArrayInstr
 {
 public:
-    explicit InstrBeginReadStaticTextArray(const std::string *fieldName,
-                                           const std::string *fieldDisplayName,
-                                           const DataType *type);
+    explicit BeginReadStaticTextArrayInstr(const StructureMemberType *memberType,
+                                           const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1236,24 +1166,22 @@ public:
 
     const StaticTextArrayType& staticTextArrayType() const noexcept
     {
-        return static_cast<const StaticTextArrayType&>(*this->type());
+        return static_cast<const StaticTextArrayType&>(this->dt());
     }
 };
 
 /*
  * "Begin reading static UUID array" procedure instruction.
  *
- * This is a specialized instruction to read a packet header's UUID
- * field (16 bytes) and then validate the resulting UUID against the
- * expected one.
+ * This is a specialized instruction to read the UUID field (16 bytes)
+ * of a packet header to emit `TraceTypeUuidElement`.
  */
-class InstrBeginReadStaticUuidArray :
-    public InstrBeginReadStaticArray
+class BeginReadStaticUuidArrayInstr :
+    public BeginReadStaticArrayInstr
 {
 public:
-    explicit InstrBeginReadStaticUuidArray(const std::string *fieldName,
-                                           const std::string *fieldDisplayName,
-                                           const DataType *type);
+    explicit BeginReadStaticUuidArrayInstr(const StructureMemberType *memberType,
+                                           const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1264,160 +1192,90 @@ public:
 /*
  * "Begin reading dynamic array" procedure instruction.
  *
- * The VM must use `lengthPos()` to retrieve the saved value which
- * represents the dynamic array's length, and then execute the
- * subprocedure this number of times.
+ * The VM must use `lenPos()` to retrieve the saved value which contains
+ * the length of the dynamic array, and then execute the subprocedure
+ * this number of times.
  */
-class InstrBeginReadDynamicArray :
-    public InstrBeginReadCompound
+class BeginReadDynArrayInstr :
+    public BeginReadCompoundInstr
 {
+protected:
+    explicit BeginReadDynArrayInstr(Kind kind, const StructureMemberType *memberType,
+                                    const DataType& dt);
+
 public:
-    explicit InstrBeginReadDynamicArray(const std::string *fieldName,
-                                        const std::string *fieldDisplayName,
-                                        const DataType *type);
-    InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
-                            std::vector<std::string>::const_iterator end) override;
-    Instr *findInstrByFieldName(const std::string& fieldName) override;
+    explicit BeginReadDynArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const DynamicArrayType& dynamicArrayType() const noexcept
+    const DynamicArrayType& dynArrayType() const noexcept
     {
-        return static_cast<const DynamicArrayType&>(*this->type());
+        return static_cast<const DynamicArrayType&>(this->dt());
     }
 
-    const Index& lengthPos() const noexcept
+    const Index lenPos() const noexcept
     {
-        return _lengthPos;
+        return _lenPos;
     }
 
-    void lengthPos(const Index lengthPos) noexcept
+    void lenPos(const Index lenPos) noexcept
     {
-        _lengthPos = lengthPos;
+        _lenPos = lenPos;
     }
 
 protected:
-    std::string _commonToString() const;
+    std::string _commonToStr() const;
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
-    Index _lengthPos = -1ULL;
+    Index _lenPos = -1ULL;
 };
 
-// "Begin reading dynamic text array" procedure instruction.
-class InstrBeginReadDynamicTextArray :
-    public InstrBeginReadDynamicArray
+/*
+ * "Begin reading dynamic text array" procedure instruction.
+ */
+class BeginReadDynTextArrayInstr :
+    public BeginReadDynArrayInstr
 {
 public:
-    explicit InstrBeginReadDynamicTextArray(const std::string *fieldName,
-                                            const std::string *fieldDisplayName,
-                                            const DataType *type);
+    explicit BeginReadDynTextArrayInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const DynamicTextArrayType& dynamicTextArrayType() const noexcept
+    const DynamicTextArrayType& dynTextArrayType() const noexcept
     {
-        return static_cast<const DynamicTextArrayType&>(*this->type());
+        return static_cast<const DynamicTextArrayType&>(this->dt());
     }
 };
 
 /*
- * "Begin reading variant with unknown tag" (temporary) procedure
- * instruction.
- *
- * This is a temporary procedure instruction which needs to be replaced
- * with an InstrBeginReadVariantSignedTag or a
- * InstrBeginReadVariantUnsignedTag at procedure build time. In other
- * words, it should never exist once a complete PacketProc is built.
- *
- * It exists because, in the early stage of procedure build time, it's
- * easier to create the procedure for each individual variant type
- * option, and then, in another pass, check if the variant reading
- * instruction should have subprocedures for unsigned or signed ranges.
- * To do this we do not need to create new procedure instructions for
- * the options, we simply reuse the same because they are shared.
+ * Option of a "read variant" procedure instruction.
  */
-class InstrBeginReadVariantUnknownTag :
-    public InstrReadData
+template <typename VarTypeOptT>
+class ReadVarInstrOpt
 {
 public:
-    using Options = std::unordered_map<std::string, Proc>;
+    using Opt = VarTypeOptT;
+    using RangeSet = typename Opt::RangeSet;
+    using Val = typename RangeSet::Value;
 
 public:
-    explicit InstrBeginReadVariantUnknownTag(const std::string *fieldName,
-                                             const std::string *fieldDisplayName,
-                                             const DataType *type);
-    InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
-                            std::vector<std::string>::const_iterator end) override;
+    ReadVarInstrOpt() = default;
+    ReadVarInstrOpt(const ReadVarInstrOpt<VarTypeOptT>& opt) = default;
+    ReadVarInstrOpt(ReadVarInstrOpt<VarTypeOptT>&& opt) = default;
+    ReadVarInstrOpt<VarTypeOptT>& operator=(const ReadVarInstrOpt<VarTypeOptT>& opt) = default;
+    ReadVarInstrOpt<VarTypeOptT>& operator=(ReadVarInstrOpt<VarTypeOptT>&& opt) = default;
 
-    const VariantType& variantType() const noexcept
-    {
-        return static_cast<const VariantType&>(*this->type());
-    }
-
-    const Options& options() const noexcept
-    {
-        return _options;
-    }
-
-    Options& options() noexcept
-    {
-        return _options;
-    }
-
-    const Index& tagPos() const noexcept
-    {
-        return _tagPos;
-    }
-
-    void tagPos(const Index tagPos) noexcept
-    {
-        _tagPos = tagPos;
-    }
-
-    void accept(InstrVisitor& visitor) override
-    {
-        visitor.visit(*this);
-    }
-
-private:
-    std::string _toString(Size indent = 0) const override;
-
-private:
-    Options _options;
-    Index _tagPos = -1ULL;
-};
-
-/*
- * Range of a "read variant" procedure instruction.
- *
- * `ValueT` is the type of the lower and upper values of the range. Such
- * a range contains a subprocedure to execute when a variant's current
- * tag value is within the range.
- */
-template <typename ValueT>
-class InstrReadVariantRange
-{
-public:
-    using Value = ValueT;
-
-public:
-    InstrReadVariantRange() = default;
-    InstrReadVariantRange(const InstrReadVariantRange<ValueT>& range) = default;
-
-    explicit InstrReadVariantRange(const ValueT lower, const ValueT upper,
-                                   const Proc& proc) :
-        _lower {lower},
-        _upper {upper},
-        _proc {proc}
+    explicit ReadVarInstrOpt(const VarTypeOptT& opt) :
+        _opt {&opt}
     {
     }
 
@@ -1426,200 +1284,159 @@ public:
         _proc.buildRawProcFromShared();
     }
 
-    InstrReadVariantRange<ValueT>& operator=(const InstrReadVariantRange<ValueT>& range) = default;
-
-    bool contains(const ValueT value) const noexcept
+    bool contains(const Val val) const noexcept
     {
-        return value >= _lower && value <= _upper;
+        return _opt->ranges().contains(val);
     }
 
-    ValueT lower() const noexcept
+    const Opt& opt() const noexcept
     {
-        return _lower;
+        return *_opt;
     }
 
-    ValueT upper() const noexcept
+    const RangeSet& ranges() const noexcept
     {
-        return _upper;
+        return _opt->ranges();
     }
 
-    const Proc& proc() const
+    const Proc& proc() const noexcept
     {
         return _proc;
     }
 
-    std::string toString(const Size indent = 0) const
+    Proc& proc() noexcept
+    {
+        return _proc;
+    }
+
+    std::string toStr(const Size indent = 0) const
     {
         std::ostringstream ss;
 
-        ss << utils::indent(indent);
+        ss << internal::indent(indent) << "<var opt>";
 
-        if (std::is_signed<ValueT>::value) {
-            ss << "<variant range procedure (signed tag)>";
-        } else {
-            ss << "<variant range procedure (unsigned tag)>";
+        for (const auto& range : _opt->ranges()) {
+            ss << " [" << range.lower() << ", " << range.upper() << "]";
         }
 
-        ss << " " << _strProp("lower") << _lower <<
-              " " << _strProp("upper") << _upper << std::endl;
-        ss << _proc.toString(indent + 1);
+        ss << std::endl << _proc.toStr(indent + 1);
         return ss.str();
     }
 
-    bool operator<(const InstrReadVariantRange<ValueT>& otherRange) const noexcept
-    {
-        if (this->lower() < otherRange.lower()) {
-            return true;
-        }
-
-        if (otherRange.lower() < this->lower()) {
-            return false;
-        }
-
-        if (this->upper() < otherRange.upper()) {
-            return true;
-        }
-
-        if (otherRange.upper() < this->upper()) {
-            return false;
-        }
-
-        return false;
-    }
-
 private:
-    ValueT _lower = 0,
-           _upper = 0;
+    const Opt *_opt;
 
     /*
      * Contained pointers are not owned by this object: they are owned
-     * by the variant instruction object which contains the ranges.
+     * by the variant instruction object which contains the options.
      */
     Proc _proc;
 };
 
-using InstrReadVariantSignedRange = InstrReadVariantRange<long long>;
-using InstrReadVariantUnsignedRange = InstrReadVariantRange<unsigned long long>;
+static inline std::string _strProp(const std::string& prop)
+{
+    std::string rProp;
+
+    rProp = "\033[1m";
+    rProp += prop;
+    rProp += "\033[0m=";
+    return rProp;
+}
 
 /*
  * "Begin reading variant" procedure instruction template.
  *
- * The VM must use `tagPos()` to retrieve the saved value which
- * represents the variant's tag, find the corresponding range for this
- * tag value, and then execute the range's subprocedure.
- *
- * `EnumTypeT` is the enumeration type to use for the instruction's
- * ranges (`UnsignedEnumType` or `SignedEnumType`).
+ * The VM must use `selPos()` to retrieve the saved value which is the
+ * selector of the variant, find the corresponding option for this
+ * selector value, and then execute the subprocedure of the option.
  */
-template <typename EnumTypeT, Instr::Kind SelfKind>
-class InstrBeginReadVariant :
-    public InstrReadData
+template <typename VarTypeT, Instr::Kind SelfKind>
+class BeginReadVarInstr :
+    public ReadDataInstr
 {
 public:
-    using Range = InstrReadVariantRange<typename EnumTypeT::Value>;
-    using Ranges = std::vector<Range>;
-    using Value = typename EnumTypeT::Value;
-    using EnumType = EnumTypeT;
+    using Opt = ReadVarInstrOpt<typename VarTypeT::Option>;
+    using Opts = std::vector<Opt>;
 
-public:
-    explicit InstrBeginReadVariant(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
-                                   const EnumTypeT& tagType) :
-        InstrReadData {
-            instrReadUnkVariant.fieldName(),
-            instrReadUnkVariant.fieldDisplayName(),
-            instrReadUnkVariant.type()
-        },
-        _tagPos {instrReadUnkVariant.tagPos()}
+protected:
+    explicit BeginReadVarInstr(const StructureMemberType * const memberType, const DataType& dt) :
+        ReadDataInstr {SelfKind, memberType, dt}
     {
-        this->_setKind(SelfKind);
-        this->_buildRangesFromOptions(instrReadUnkVariant, tagType);
-    }
+        auto& varType = static_cast<const VarTypeT&>(dt);
 
-    void buildRawProcFromShared() override
-    {
-        for (auto& range : _ranges) {
-            range.buildRawProcFromShared();
+        for (auto& opt : varType.options()) {
+            _opts.emplace_back(*opt);
         }
     }
 
-    const VariantType& variantType() const noexcept
+public:
+    void buildRawProcFromShared() override
     {
-        return static_cast<const VariantType&>(*this->type());
+        for (auto& opt : _opts) {
+            opt.buildRawProcFromShared();
+        }
     }
 
-    const Ranges& ranges() const noexcept
+    const VarTypeT& varType() const noexcept
     {
-        return _ranges;
+        return static_cast<const VarTypeT&>(this->dt());
     }
 
-    const Proc *findProc(const Value tag) const
+    const Opts& opts() const noexcept
     {
-        for (auto& range : _ranges) {
-            if (range.contains(tag)) {
-                return &range.proc();
+        return _opts;
+    }
+
+    Opts& opts() noexcept
+    {
+        return _opts;
+    }
+
+    const Proc *procForSelVal(const typename Opt::Val selVal) const noexcept
+    {
+        for (auto& opt : _opts) {
+            if (opt.contains(selVal)) {
+                return &opt.proc();
             }
         }
 
         return nullptr;
     }
 
-    const Index& tagPos() const noexcept
+    const Index selPos() const noexcept
     {
-        return _tagPos;
+        return _selPos;
+    }
+
+    void selPos(const Index pos) noexcept
+    {
+        _selPos = pos;
     }
 
 private:
-    std::string _toString(const Size indent = 0) const override
+    std::string _toStr(const Size indent = 0) const override
     {
         std::ostringstream ss;
 
-        ss << this->_commonToString() <<
-              " " << _strProp("tag-pos") << _tagPos <<
-              std::endl;
+        ss << this->_commonToStr() << " " << _strProp("sel-pos") << _selPos << std::endl;
 
-        for (const auto& range : _ranges) {
-            ss << range.toString(indent + 1);
+        for (const auto& opt : _opts) {
+            ss << opt.toStr(indent + 1);
         }
 
         return ss.str();
     }
 
 private:
-    void _buildRangesFromOptions(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
-                                 const EnumType& tagType)
-    {
-        for (const auto& memberPair : tagType.members()) {
-            auto& memberName = memberPair.first;
-            auto& member = memberPair.second;
-
-            if (!this->variantType().hasOption(memberName)) {
-                continue;
-            }
-
-            auto& proc = instrReadUnkVariant.options().at(memberName);
-
-            for (const auto& range : member.ranges()) {
-                // copy linked list, but content is shared
-                _ranges.push_back(Range {range.lower(), range.upper(), proc});
-            }
-        }
-
-        std::sort(std::begin(_ranges), std::end(_ranges));
-    }
-
-private:
-    Ranges _ranges;
-    const Index _tagPos;
+    Opts _opts;
+    Index _selPos;
 };
 
-// "Read variant with unsigned tag" procedure instruction.
-class InstrBeginReadVariantUnsignedTag :
-    public InstrBeginReadVariant<UnsignedEnumType,
-                                 Instr::Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG>
+class BeginReadVarUSelInstr :
+    public BeginReadVarInstr<VariantWithUnsignedSelectorType, Instr::Kind::BEGIN_READ_VAR_USEL>
 {
 public:
-    explicit InstrBeginReadVariantUnsignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
-                                              const EnumType& tagType);
+    explicit BeginReadVarUSelInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1627,14 +1444,11 @@ public:
     }
 };
 
-// "Read variant with signed tag" procedure instruction.
-class InstrBeginReadVariantSignedTag :
-    public InstrBeginReadVariant<SignedEnumType,
-                                 Instr::Kind::BEGIN_READ_VARIANT_SIGNED_TAG>
+class BeginReadVarSSelInstr :
+    public BeginReadVarInstr<VariantWithSignedSelectorType, Instr::Kind::BEGIN_READ_VAR_SSEL>
 {
 public:
-    explicit InstrBeginReadVariantSignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
-                                            const EnumType& tagType);
+    explicit BeginReadVarSSelInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1645,15 +1459,15 @@ public:
 /*
  * "Set current ID" procedure instruction.
  *
- * This instruction asks the VM to set the current ID to the last
+ * This instruction requires the VM to set the current ID to the last
  * decoded value. This is either the current data stream type ID or the
  * current event record type ID.
  */
-class InstrSetCurrentId :
+class SetCurIdInstr :
     public Instr
 {
 public:
-    InstrSetCurrentId();
+    SetCurIdInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1666,12 +1480,14 @@ public:
  *
  * This instruction asks the VM to set the current data stream or event
  * record type using the current ID, or using `fixedId()` if it exists.
+ *
+ * TODO: This ☝ doesn't seem like the correct approach.
  */
-class InstrSetType :
+class SetTypeInstr :
     public Instr
 {
 protected:
-    explicit InstrSetType(const boost::optional<TypeId>& fixedId);
+    explicit SetTypeInstr(Kind kind, boost::optional<TypeId> fixedId);
 
 public:
     const boost::optional<TypeId>& fixedId() const noexcept
@@ -1680,31 +1496,20 @@ public:
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
     const boost::optional<TypeId> _fixedId;
 };
 
-// "Set current data stream type" procedure instruction.
-class InstrSetDataStreamType :
-    public InstrSetType
+/*
+ * "Set current data stream type" procedure instruction.
+ */
+class SetDstInstr :
+    public SetTypeInstr
 {
 public:
-    explicit InstrSetDataStreamType(const boost::optional<TypeId>& fixedId);
-
-    void accept(InstrVisitor& visitor) override
-    {
-        visitor.visit(*this);
-    }
-};
-
-// "Set current event record type" procedure instruction.
-class InstrSetEventRecordType :
-    public InstrSetType
-{
-public:
-    explicit InstrSetEventRecordType(const boost::optional<TypeId>& fixedId);
+    explicit SetDstInstr(boost::optional<TypeId> fixedId = boost::none);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1713,16 +1518,31 @@ public:
 };
 
 /*
- * "Set current packet index" procedure instruction.
+ * "Set current event record type" procedure instruction.
+ */
+class SetErtInstr :
+    public SetTypeInstr
+{
+public:
+    explicit SetErtInstr(boost::optional<TypeId> fixedId = boost::none);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+};
+
+/*
+ * "Set packet origin index" procedure instruction.
  *
- * This instruction asks the VM to set the current packet index
+ * This instruction requires the VM to set the packet origin index
  * (sequence number) to the last decoded value.
  */
-class InstrSetPacketOriginIndex :
+class SetPktOriginIndexInstr :
     public Instr
 {
 public:
-    InstrSetPacketOriginIndex();
+    SetPktOriginIndexInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1733,15 +1553,17 @@ public:
 /*
  * "Set data stream ID" procedure instruction.
  *
- * This instruction asks the VM to set the current data stream ID to the
- * last decoded value. This is NOT the current data stream type ID. It
- * is sometimes called the "data stream instance ID".
+ * This instruction requires the VM to set the data stream ID to the
+ * last decoded value.
+ *
+ * This is NOT the current data stream _type_ ID. It's sometimes called
+ * the "data stream instance ID".
  */
-class InstrSetDataStreamId :
+class SetDsIdInstr :
     public Instr
 {
 public:
-    InstrSetDataStreamId();
+    SetDsIdInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1750,16 +1572,17 @@ public:
 };
 
 /*
- * "Set packet's total size" procedure instruction.
+ * "Set expected packet total length" procedure instruction.
  *
- * This instruction asks the VM to set the current packet's total size
- * (bits) to the last decoded value.
+ * This instruction requires the VM to set the expected packet total
+ * length (bits) to the last decoded value.
  */
-class InstrSetPacketTotalSize :
+class SetExpectedPktTotalLenInstr :
     public Instr
 {
 public:
-    InstrSetPacketTotalSize();
+    SetExpectedPktTotalLenInstr();
+
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
@@ -1767,16 +1590,16 @@ public:
 };
 
 /*
- * "Set packet's content size" procedure instruction.
+ * "Set expected packet content length" procedure instruction.
  *
- * This instruction asks the VM to set the current packet's content size
- * (bits) to the last decoded value.
+ * This instruction requires the VM to set the expected packet content
+ * length (bits) to the last decoded value.
  */
-class InstrSetPacketContentSize :
+class SetExpectedPktContentLenInstr :
     public Instr
 {
 public:
-    InstrSetPacketContentSize();
+    SetExpectedPktContentLenInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1787,19 +1610,18 @@ public:
 /*
  * "Update clock value" procedure instruction.
  *
- * This instruction asks the VM to update the current value of the clock
- * of which the type's index is `index()` from the last decoded value.
+ * This instruction requires the VM to update the value of the clock of
+ * which the type index is `index()` from the last decoded value.
  */
-class InstrUpdateClockValue :
+class UpdateClkValInstr :
     public Instr
 {
 public:
-    explicit InstrUpdateClockValue(const ClockType& clockType, Index index,
-                                   Size size);
+    explicit UpdateClkValInstr(const ClockType& clkType, Index index, Size len);
 
-    const ClockType& clockType() const noexcept
+    const ClockType& clkType() const noexcept
     {
-        return *_clockType;
+        return *_clkType;
     }
 
     Index index() const noexcept
@@ -1807,9 +1629,9 @@ public:
         return _index;
     }
 
-    Size size() const noexcept
+    Size len() const noexcept
     {
-        return _size;
+        return _len;
     }
 
     void accept(InstrVisitor& visitor) override
@@ -1818,25 +1640,25 @@ public:
     }
 
 private:
-    std::string _toString(Size indent = 0) const override;
+    std::string _toStr(Size indent = 0) const override;
 
 private:
-    const ClockType * const _clockType;
+    const ClockType * const _clkType;
     const Index _index;
-    const Size _size;
+    const Size _len;
 };
 
 /*
  * "Set packet magic number" procedure instruction.
  *
- * This instruction asks the VM to use the last decoded value as the
- * packet's magic number.
+ * This instruction requires the VM to use the last decoded value as the
+ * packet magic number.
  */
-class InstrSetPacketMagicNumber :
+class SetPktMagicNumberInstr :
     public Instr
 {
 public:
-    InstrSetPacketMagicNumber();
+    SetPktMagicNumberInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1850,11 +1672,11 @@ public:
  * This instruction indicates that the packet preamble procedure
  * containing it has no more instructions.
  */
-class InstrEndPacketPreambleProc :
+class EndPktPreambleProcInstr :
     public Instr
 {
 public:
-    InstrEndPacketPreambleProc();
+    EndPktPreambleProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1863,17 +1685,16 @@ public:
 };
 
 /*
- * "End data stream type packet preamble procedure" procedure
- * instruction.
+ * "End data stream packet preamble procedure" procedure instruction.
  *
- * This instruction indicates that the data stream type packet preamble
+ * This instruction indicates that the data stream packet preamble
  * procedure containing it has no more instructions.
  */
-class InstrEndDstPacketPreambleProc :
+class EndDsPktPreambleProcInstr :
     public Instr
 {
 public:
-    InstrEndDstPacketPreambleProc();
+    EndDsPktPreambleProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1882,17 +1703,17 @@ public:
 };
 
 /*
- * "End data stream type event record type preamble procedure" procedure
+ * "End data stream event record preamble procedure" procedure
  * instruction.
  *
- * This instruction indicates that the data stream type event record
- * type preamble procedure containing it has no more instructions.
+ * This instruction indicates that the data stream event record preamble
+ * procedure containing it has no more instructions.
  */
-class InstrEndDstErtPreambleProc :
+class EndDsErPreambleProcInstr :
     public Instr
 {
 public:
-    InstrEndDstErtPreambleProc();
+    EndDsErPreambleProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1906,11 +1727,11 @@ public:
  * This instruction indicates that the event record type procedure
  * containing it has no more instructions.
  */
-class InstrEndErtProc :
+class EndErProcInstr :
     public Instr
 {
 public:
-    InstrEndErtProc();
+    EndErProcInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1921,18 +1742,19 @@ public:
 /*
  * "Decrement remaining elements" procedure instruction.
  *
- * When reading an array, this instruction asks the VM to decrement the
- * number of remaining elements to read. It is placed just before an
- * "end read compound data" instruction as a trade-off between checking
- * if we're in an array every time we end a compound data, or having
- * this decrementation instruction even for simple arrays of scalar
- * elements.
+ * When reading an array, this instruction requires the VM to decrement
+ * the number of remaining elements to read.
+ *
+ * It's placed just before an "end read compound data" instruction as a
+ * trade-off between checking if we're in an array every time we end a
+ * compound data, or having this decrementation instruction even for
+ * simple arrays of scalar elements.
  */
-class InstrDecrRemainingElements :
+class DecrRemainingElemsInstr :
     public Instr
 {
 public:
-    InstrDecrRemainingElements();
+    DecrRemainingElemsInstr();
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1940,13 +1762,14 @@ public:
     }
 };
 
-// Event record type procedure.
-class EventRecordTypeProc
+/*
+ * Event record procedure.
+ */
+class ErProc
 {
 public:
-    explicit EventRecordTypeProc(const EventRecordType& eventRecordType);
-    std::string toString(Size indent) const;
-    InstrLocation findInstr(const FieldRef& fieldRef);
+    explicit ErProc(const EventRecordType& ert);
+    std::string toStr(Size indent) const;
     void buildRawProcFromShared();
 
     Proc& proc() noexcept
@@ -1959,130 +1782,140 @@ public:
         return _proc;
     }
 
-    const EventRecordType& eventRecordType() const noexcept
+    const EventRecordType& ert() const noexcept
     {
-        return *_eventRecordType;
+        return *_ert;
     }
 
 private:
-    const EventRecordType * const _eventRecordType;
+    const EventRecordType * const _ert;
     Proc _proc;
 };
 
-// Packet procedure for a given data stream type.
-class DataStreamTypePacketProc
+/*
+ * Packet procedure for any data stream of a given type.
+ */
+class DsPktProc
 {
 public:
-    using EventRecordTypeProcsMap = std::unordered_map<TypeId, std::unique_ptr<EventRecordTypeProc>>;
-    using EventRecordTypeProcsVec = std::vector<std::unique_ptr<EventRecordTypeProc>>;
-    using ForEachEventRecordTypeProcFunc = std::function<void (EventRecordTypeProc&)>;
+    using ErProcsMap = std::unordered_map<TypeId, std::unique_ptr<ErProc>>;
+    using ErProcsVec = std::vector<std::unique_ptr<ErProc>>;
+    using ForEachErProcFunc = std::function<void (ErProc&)>;
 
 public:
-    explicit DataStreamTypePacketProc(const DataStreamType& dataStreamType);
-    void forEachEventRecordTypeProc(ForEachEventRecordTypeProcFunc func);
-    const EventRecordTypeProc *operator[](TypeId id) const;
-    const EventRecordTypeProc *singleEventRecordTypeProc() const;
-    void addEventRecordTypeProc(std::unique_ptr<EventRecordTypeProc> ertProc);
-    std::string toString(Size indent) const;
-    InstrLocation findInstr(const FieldRef& fieldRef);
+    explicit DsPktProc(const DataStreamType& dst);
+    const ErProc *operator[](TypeId id) const noexcept;
+    const ErProc *singleErProc() const noexcept;
+    void addErProc(std::unique_ptr<ErProc> erProc);
+    std::string toStr(Size indent) const;
     void buildRawProcFromShared();
-    void setEventRecordAlignment();
+    void setErAlign();
 
-    Proc& packetPreambleProc() noexcept
+    template <typename FuncT>
+    void forEachErProc(FuncT&& func)
     {
-        return _packetPreambleProc;
+        for (auto& erProc : _erProcsVec) {
+            if (erProc) {
+                std::forward<FuncT>(func)(*erProc);
+            }
+        }
+
+        for (auto& idErProcUpPair : _erProcsMap) {
+            std::forward<FuncT>(func)(*idErProcUpPair.second);
+        }
     }
 
-    const Proc& packetPreambleProc() const noexcept
+    Proc& pktPreambleProc() noexcept
     {
-        return _packetPreambleProc;
+        return _pktPreambleProc;
     }
 
-    Proc& eventRecordPreambleProc() noexcept
+    const Proc& pktPreambleProc() const noexcept
     {
-        return _eventRecordPreambleProc;
+        return _pktPreambleProc;
     }
 
-    const Proc& eventRecordPreambleProc() const noexcept
+    Proc& erPreambleProc() noexcept
     {
-        return _eventRecordPreambleProc;
+        return _erPreambleProc;
     }
 
-    EventRecordTypeProcsMap& eventRecordTypeProcsMap()
+    const Proc& erPreambleProc() const noexcept
     {
-        return _eventRecordTypeProcsMap;
+        return _erPreambleProc;
     }
 
-    EventRecordTypeProcsVec& eventRecordTypeProcsVec()
+    ErProcsMap& erProcsMap() noexcept
     {
-        return _eventRecordTypeProcsVec;
+        return _erProcsMap;
     }
 
-    Size eventRecordTypeProcsCount() const noexcept
+    ErProcsVec& erProcsVec() noexcept
     {
-        return _eventRecordTypeProcsMap.size() +
-               _eventRecordTypeProcsVec.size();
+        return _erProcsVec;
     }
 
-    const DataStreamType& dataStreamType() const noexcept
+    Size erProcsCount() const noexcept
     {
-        return *_dataStreamType;
+        return _erProcsMap.size() + _erProcsVec.size();
     }
 
-    unsigned int eventRecordAlignment() const noexcept
+    const DataStreamType& dst() const noexcept
     {
-        return _erAlignment;
+        return *_dst;
+    }
+
+    unsigned int erAlign() const noexcept
+    {
+        return _erAlign;
     }
 
 private:
-    const DataStreamType * const _dataStreamType;
-    Proc _packetPreambleProc;
-    Proc _eventRecordPreambleProc;
-    unsigned int _erAlignment = 1;
+    const DataStreamType * const _dst;
+    Proc _pktPreambleProc;
+    Proc _erPreambleProc;
+    unsigned int _erAlign = 1;
 
     /*
-     * We have both a vector and a map here to store event record type
+     * We have both a vector and a map here to store event record
      * procedures. Typically, event record type IDs are contiguous
      * within a given trace; storing them in the vector makes a more
      * efficient lookup afterwards if this is possible. For outliers, we
      * use the (slower) map.
      *
-     * _eventRecordTypeProcsVec can contain both event record type
-     * procedures and null pointers. _eventRecordTypeProcsMap contains
-     * only event record type procedures.
+     * _erProcsVec can contain both event record procedures and null
+     * pointers. _erProcsMap contains only event record procedures.
      */
-    EventRecordTypeProcsVec _eventRecordTypeProcsVec;
-    EventRecordTypeProcsMap _eventRecordTypeProcsMap;
+    ErProcsVec _erProcsVec;
+    ErProcsMap _erProcsMap;
 };
 
 /*
  * Packet procedure.
  *
- * Such an object is owned by a TraceType object, and it is not public.
+ * Such an object is owned by a `TraceType` object, and it's not public.
  * This means that all the pointers to anything inside the owning
- * TraceType object are always safe to use.
+ * `TraceType` object are always safe to use.
  *
- * Any object which needs to access a PacketProc object must own its
- * owning TraceType object. For example (ownership tree):
+ * Any object which needs to access a `PktProc` object must own its
+ * owning `TraceType` object. For example (ownership tree):
  *
- * User
- *   Element sequence iterator
- *     VM
- *       TraceType
- *         PacketProc
+ *     User
+ *       Element sequence iterator
+ *         VM
+ *           Trace type
+ *             Packet procedure
  */
-class PacketProc
+class PktProc
 {
 public:
-    using DataStreamTypePacketProcs = std::unordered_map<TypeId,
-                                                         std::unique_ptr<DataStreamTypePacketProc>>;
+    using DsPktProcs = std::unordered_map<TypeId, std::unique_ptr<DsPktProc>>;
 
 public:
-    explicit PacketProc(const TraceType &traceType);
-    const DataStreamTypePacketProc *operator[](TypeId id) const;
-    const DataStreamTypePacketProc *singleDataStreamTypePacketProc() const;
-    std::string toString(Size indent) const;
-    InstrLocation findInstr(const FieldRef& fieldRef);
+    explicit PktProc(const TraceType &traceType);
+    const DsPktProc *operator[](TypeId id) const noexcept;
+    const DsPktProc *singleDsPktProc() const noexcept;
+    std::string toStr(Size indent) const;
     void buildRawProcFromShared();
 
     const TraceType& traceType() const noexcept
@@ -2090,14 +1923,14 @@ public:
         return *_traceType;
     }
 
-    DataStreamTypePacketProcs& dataStreamTypePacketProcs()
+    DsPktProcs& dsPktProcs() noexcept
     {
-        return _dataStreamTypePacketProcs;
+        return _dsPktProcs;
     }
 
-    Size dataStreamTypePacketProcsCount() const noexcept
+    Size dsPktProcsCount() const noexcept
     {
-        return _dataStreamTypePacketProcs.size();
+        return _dsPktProcs.size();
     }
 
     Proc& preambleProc() noexcept
@@ -2110,54 +1943,49 @@ public:
         return _preambleProc;
     }
 
-    std::vector<const ClockType *>& indexedClockTypes() noexcept
+    std::vector<const ClockType *>& indexedClkTypes() noexcept
     {
-        return _indexedClockTypes;
+        return _indexedClkTypes;
     }
 
-    const std::vector<const ClockType *>& indexedClockTypes() const noexcept
+    const std::vector<const ClockType *>& indexedClkTypes() const noexcept
     {
-        return _indexedClockTypes;
+        return _indexedClkTypes;
     }
 
-    Index clockTypeIndex(const std::string& clockTypeName);
+    Index clkTypeIndex(const ClockType& clkType);
 
-    Size savedValuesCount() const noexcept
+    Size savedValsCount() const noexcept
     {
-        return _savedValuesCounts;
+        return _savedValsCount;
     }
 
-    void savedValuesCount(const Size savedValuesCount)
+    void savedValsCount(const Size savedValsCount)
     {
-        _savedValuesCounts = savedValuesCount;
+        _savedValsCount = savedValsCount;
     }
 
 private:
     const TraceType * const _traceType;
-    DataStreamTypePacketProcs _dataStreamTypePacketProcs;
-    std::vector<const ClockType *> _indexedClockTypes;
-    Size _savedValuesCounts;
+    DsPktProcs _dsPktProcs;
+    std::vector<const ClockType *> _indexedClkTypes;
+    Size _savedValsCount;
     Proc _preambleProc;
 };
 
-static inline InstrReadData& instrAsReadData(Instr& instr) noexcept
+static inline ReadDataInstr& instrAsReadData(Instr& instr) noexcept
 {
-    return static_cast<InstrReadData&>(instr);
+    return static_cast<ReadDataInstr&>(instr);
 }
 
-static inline InstrBeginReadScope& instrAsBeginReadScope(Instr& instr) noexcept
+static inline BeginReadScopeInstr& instrAsBeginReadScope(Instr& instr) noexcept
 {
-    return static_cast<InstrBeginReadScope&>(instr);
+    return static_cast<BeginReadScopeInstr&>(instr);
 }
 
-static inline InstrBeginReadStruct& instrAsBeginReadStruct(Instr& instr) noexcept
+static inline BeginReadStructInstr& instrAsBeginReadStruct(Instr& instr) noexcept
 {
-    return static_cast<InstrBeginReadStruct&>(instr);
-}
-
-static inline InstrBeginReadVariantUnknownTag& instrAsBeginReadVariantUnknownTag(Instr& instr) noexcept
-{
-    return static_cast<InstrBeginReadVariantUnknownTag&>(instr);
+    return static_cast<BeginReadStructInstr&>(instr);
 }
 
 } // namespace internal

@@ -1,7 +1,5 @@
 /*
- * yactfr virtual machine.
- *
- * Copyright (C) 2017-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -15,14 +13,14 @@
 namespace yactfr {
 namespace internal {
 
-VmPos::VmPos(const PacketProc& packetProc) :
-    packetProc {&packetProc}
+VmPos::VmPos(const PktProc& pktProc) :
+    pktProc {&pktProc}
 {
-    if (packetProc.traceType().uuid()) {
-        elems.packetUuid._expectedUuid = *packetProc.traceType().uuid();
+    if (pktProc.traceType().uuid()) {
+        elems.traceTypeUuid._expectedUuid = *pktProc.traceType().uuid();
     }
 
-    this->_initVectorsFromPacketProc();
+    this->_initVectorsFromPktProc();
 }
 
 VmPos::VmPos(const VmPos& other)
@@ -32,43 +30,43 @@ VmPos::VmPos(const VmPos& other)
 
 VmPos& VmPos::operator=(const VmPos& other)
 {
-    assert(packetProc == other.packetProc);
+    assert(pktProc == other.pktProc);
     this->_setFromOther(other);
     return *this;
 }
 
-void VmPos::_initVectorsFromPacketProc()
+void VmPos::_initVectorsFromPktProc()
 {
-    savedValues.resize(packetProc->savedValuesCount(), SIZE_UNSET);
-    clockValues.resize(packetProc->indexedClockTypes().size());
+    savedVals.resize(pktProc->savedValsCount(), SIZE_UNSET);
+    clkVals.resize(pktProc->indexedClkTypes().size());
 }
 
 void VmPos::_setSimpleFromOther(const VmPos& other)
 {
-    curPacketOffsetInElementSequenceBits = other.curPacketOffsetInElementSequenceBits;
-    cursorOffsetInCurPacketBits = other.cursorOffsetInCurPacketBits;
+    curPktOffsetInElemSeqBits = other.curPktOffsetInElemSeqBits;
+    headOffsetInCurPktBits = other.headOffsetInCurPktBits;
     elems = other.elems;
-    state = other.state;
+    theState = other.theState;
     lastBo = other.lastBo;
     remBitsToSkip = other.remBitsToSkip;
     postSkipBitsState = other.postSkipBitsState;
-    postEndStringState = other.postEndStringState;
+    postEndStrState = other.postEndStrState;
     lastIntVal = other.lastIntVal;
     curId = other.curId;
-    packetProc = other.packetProc;
-    curDstPacketProc = other.curDstPacketProc;
-    curErtProc = other.curErtProc;
+    pktProc = other.pktProc;
+    curDsPktProc = other.curDsPktProc;
+    curErProc = other.curErProc;
     uuid = other.uuid;
-    curPacketTotalSizeBits = other.curPacketTotalSizeBits;
-    curPacketContentSizeBits = other.curPacketContentSizeBits;
+    curExpectedPktTotalLenBits = other.curExpectedPktTotalLenBits;
+    curExpectedPktContentLenBits = other.curExpectedPktContentLenBits;
 }
 
 void VmPos::_setFromOther(const VmPos& other)
 {
     this->_setSimpleFromOther(other);
     stack = other.stack;
-    savedValues = other.savedValues;
-    clockValues = other.clockValues;
+    savedVals = other.savedVals;
+    clkVals = other.clkVals;
 }
 
 } // namespace internal
@@ -79,7 +77,7 @@ ElementSequenceIteratorPosition::~ElementSequenceIteratorPosition()
 
 ElementSequenceIteratorPosition::ElementSequenceIteratorPosition() :
     _vmPos {nullptr},
-    _iterInfos {std::make_unique<internal::IterInfos>()}
+    _itInfos {std::make_unique<internal::ItInfos>()}
 {
 }
 
@@ -94,16 +92,15 @@ ElementSequenceIteratorPosition::ElementSequenceIteratorPosition(const ElementSe
         return;
     }
 
-    _iterInfos->offset = other._iterInfos->offset;
-    _iterInfos->mark = other._iterInfos->mark;
-    assert(other._iterInfos->elem);
-    _iterInfos->setElemFromOther(_vmPos.get(), other._vmPos.get(),
-                                 other._iterInfos->elem);
+    _itInfos->offset = other._itInfos->offset;
+    _itInfos->mark = other._itInfos->mark;
+    assert(other._itInfos->elem);
+    _itInfos->elemFromOther(*_vmPos, *other._vmPos, *other._itInfos->elem);
 }
 
 ElementSequenceIteratorPosition::ElementSequenceIteratorPosition(ElementSequenceIteratorPosition&& other) :
     _vmPos {std::move(other._vmPos)},
-    _iterInfos {std::make_unique<internal::IterInfos>(*other._iterInfos)}
+    _itInfos {std::make_unique<internal::ItInfos>(*other._itInfos)}
 {
 }
 
@@ -117,18 +114,17 @@ ElementSequenceIteratorPosition& ElementSequenceIteratorPosition::operator=(cons
         return *this;
     }
 
-    _iterInfos->offset = other._iterInfos->offset;
-    _iterInfos->mark = other._iterInfos->mark;
-    assert(other._iterInfos->elem);
-    _iterInfos->setElemFromOther(_vmPos.get(), other._vmPos.get(),
-                                 other._iterInfos->elem);
+    _itInfos->offset = other._itInfos->offset;
+    _itInfos->mark = other._itInfos->mark;
+    assert(other._itInfos->elem);
+    _itInfos->elemFromOther(*_vmPos, *other._vmPos, *other._itInfos->elem);
     return *this;
 }
 
 ElementSequenceIteratorPosition& ElementSequenceIteratorPosition::operator=(ElementSequenceIteratorPosition&& other)
 {
     _vmPos = std::move(other._vmPos);
-    *_iterInfos = *other._iterInfos;
+    *_itInfos = *other._itInfos;
     return *this;
 }
 
@@ -139,50 +135,49 @@ ElementSequenceIteratorPosition::operator bool() const noexcept
 
 bool ElementSequenceIteratorPosition::operator==(const ElementSequenceIteratorPosition& other) const noexcept
 {
-    return *_iterInfos == *other._iterInfos;
+    return *_itInfos == *other._itInfos;
 }
 
 bool ElementSequenceIteratorPosition::operator!=(const ElementSequenceIteratorPosition& other) const noexcept
 {
-    return *_iterInfos != *other._iterInfos;
+    return *_itInfos != *other._itInfos;
 }
 
 bool ElementSequenceIteratorPosition::operator<(const ElementSequenceIteratorPosition& other) const noexcept
 {
-    return *_iterInfos < *other._iterInfos;
+    return *_itInfos < *other._itInfos;
 }
 
 bool ElementSequenceIteratorPosition::operator<=(const ElementSequenceIteratorPosition& other) const noexcept
 {
-    return *_iterInfos <= *other._iterInfos;
+    return *_itInfos <= *other._itInfos;
 }
 
 bool ElementSequenceIteratorPosition::operator>(const ElementSequenceIteratorPosition& other) const noexcept
 {
-    return *_iterInfos > *other._iterInfos;
+    return *_itInfos > *other._itInfos;
 }
 
 bool ElementSequenceIteratorPosition::operator>=(const ElementSequenceIteratorPosition& other) const noexcept
 {
-    return *_iterInfos >= *other._iterInfos;
+    return *_itInfos >= *other._itInfos;
 }
 
 namespace internal {
 
-Vm::Vm(DataSourceFactory *dataSrcFactory, const PacketProc& packetProc,
-       ElementSequenceIterator& iter) :
-    _dataSrcFactory {dataSrcFactory},
-    _dataSource {dataSrcFactory->createDataSource()},
-    _iter {&iter},
-    _pos {packetProc}
+Vm::Vm(DataSourceFactory& dataSrcFactory, const PktProc& pktProc, ElementSequenceIterator& it) :
+    _dataSrcFactory {&dataSrcFactory},
+    _dataSrc {dataSrcFactory.createDataSource()},
+    _it {&it},
+    _pos {pktProc}
 {
     this->_initExecFuncs();
 }
 
-Vm::Vm(const Vm& other, ElementSequenceIterator& iter) :
+Vm::Vm(const Vm& other, ElementSequenceIterator& it) :
     _dataSrcFactory {other._dataSrcFactory},
-    _dataSource {_dataSrcFactory->createDataSource()},
-    _iter {&iter},
+    _dataSrc {_dataSrcFactory->createDataSource()},
+    _it {&it},
     _pos {other._pos}
 {
     this->_initExecFuncs();
@@ -192,7 +187,7 @@ Vm::Vm(const Vm& other, ElementSequenceIterator& iter) :
 Vm& Vm::operator=(const Vm& other)
 {
     assert(_dataSrcFactory == other._dataSrcFactory);
-    _iter = nullptr;
+    _it = nullptr;
     _pos = other._pos;
     this->_resetBuffer();
     return *this;
@@ -200,24 +195,24 @@ Vm& Vm::operator=(const Vm& other)
 
 void Vm::_initExecFuncs()
 {
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_LE)] = &Vm::_execReadSignedIntLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_BE)] = &Vm::_execReadSignedIntBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A8)] = &Vm::_execReadSignedIntA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A16_LE)] = &Vm::_execReadSignedIntA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A32_LE)] = &Vm::_execReadSignedIntA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A64_LE)] = &Vm::_execReadSignedIntA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A16_BE)] = &Vm::_execReadSignedIntA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A32_BE)] = &Vm::_execReadSignedIntA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_INT_A64_BE)] = &Vm::_execReadSignedIntA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_LE)] = &Vm::_execReadUnsignedIntLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_BE)] = &Vm::_execReadUnsignedIntBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A8)] = &Vm::_execReadUnsignedIntA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A16_LE)] = &Vm::_execReadUnsignedIntA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A32_LE)] = &Vm::_execReadUnsignedIntA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A64_LE)] = &Vm::_execReadUnsignedIntA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A16_BE)] = &Vm::_execReadUnsignedIntA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A32_BE)] = &Vm::_execReadUnsignedIntA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_INT_A64_BE)] = &Vm::_execReadUnsignedIntA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_LE)] = &Vm::_execReadSIntLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_BE)] = &Vm::_execReadSIntBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A8)] = &Vm::_execReadSIntA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A16_LE)] = &Vm::_execReadSIntA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A32_LE)] = &Vm::_execReadSIntA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A64_LE)] = &Vm::_execReadSIntA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A16_BE)] = &Vm::_execReadSIntA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A32_BE)] = &Vm::_execReadSIntA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SINT_A64_BE)] = &Vm::_execReadSIntA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_LE)] = &Vm::_execReadUIntLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_BE)] = &Vm::_execReadUIntBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A8)] = &Vm::_execReadUIntA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A16_LE)] = &Vm::_execReadUIntA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A32_LE)] = &Vm::_execReadUIntA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A64_LE)] = &Vm::_execReadUIntA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A16_BE)] = &Vm::_execReadUIntA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A32_BE)] = &Vm::_execReadUIntA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UINT_A64_BE)] = &Vm::_execReadUIntA64Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_32_LE)] = &Vm::_execReadFloat32Le;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_32_BE)] = &Vm::_execReadFloat32Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A32_LE)] = &Vm::_execReadFloatA32Le;
@@ -226,25 +221,25 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_64_BE)] = &Vm::_execReadFloat64Be;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A64_LE)] = &Vm::_execReadFloatA64Le;
     _execFuncs[static_cast<int>(Instr::Kind::READ_FLOAT_A64_BE)] = &Vm::_execReadFloatA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_LE)] = &Vm::_execReadSignedEnumLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_BE)] = &Vm::_execReadSignedEnumBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A8)] = &Vm::_execReadSignedEnumA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A16_LE)] = &Vm::_execReadSignedEnumA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A32_LE)] = &Vm::_execReadSignedEnumA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A64_LE)] = &Vm::_execReadSignedEnumA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A16_BE)] = &Vm::_execReadSignedEnumA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A32_BE)] = &Vm::_execReadSignedEnumA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_SIGNED_ENUM_A64_BE)] = &Vm::_execReadSignedEnumA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_LE)] = &Vm::_execReadUnsignedEnumLe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_BE)] = &Vm::_execReadUnsignedEnumBe;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A8)] = &Vm::_execReadUnsignedEnumA8;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A16_LE)] = &Vm::_execReadUnsignedEnumA16Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A32_LE)] = &Vm::_execReadUnsignedEnumA32Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A64_LE)] = &Vm::_execReadUnsignedEnumA64Le;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A16_BE)] = &Vm::_execReadUnsignedEnumA16Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A32_BE)] = &Vm::_execReadUnsignedEnumA32Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_UNSIGNED_ENUM_A64_BE)] = &Vm::_execReadUnsignedEnumA64Be;
-    _execFuncs[static_cast<int>(Instr::Kind::READ_STRING)] = &Vm::_execReadString;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_LE)] = &Vm::_execReadSEnumLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_BE)] = &Vm::_execReadSEnumBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A8)] = &Vm::_execReadSEnumA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A16_LE)] = &Vm::_execReadSEnumA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A32_LE)] = &Vm::_execReadSEnumA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A64_LE)] = &Vm::_execReadSEnumA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A16_BE)] = &Vm::_execReadSEnumA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A32_BE)] = &Vm::_execReadSEnumA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_SENUM_A64_BE)] = &Vm::_execReadSEnumA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_LE)] = &Vm::_execReadUEnumLe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_BE)] = &Vm::_execReadUEnumBe;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A8)] = &Vm::_execReadUEnumA8;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A16_LE)] = &Vm::_execReadUEnumA16Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A32_LE)] = &Vm::_execReadUEnumA32Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A64_LE)] = &Vm::_execReadUEnumA64Le;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A16_BE)] = &Vm::_execReadUEnumA16Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A32_BE)] = &Vm::_execReadUEnumA32Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_UENUM_A64_BE)] = &Vm::_execReadUEnumA64Be;
+    _execFuncs[static_cast<int>(Instr::Kind::READ_STR)] = &Vm::_execReadStr;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SCOPE)] = &Vm::_execBeginReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_SCOPE)] = &Vm::_execEndReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STRUCT)] = &Vm::_execBeginReadStruct;
@@ -254,64 +249,61 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_TEXT_ARRAY)] = &Vm::_execBeginReadStaticTextArray;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_STATIC_TEXT_ARRAY)] = &Vm::_execEndReadStaticTextArray;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_UUID_ARRAY)] = &Vm::_execBeginReadStaticUuidArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYNAMIC_ARRAY)] = &Vm::_execBeginReadDynamicArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYNAMIC_ARRAY)] = &Vm::_execEndReadDynamicArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY)] = &Vm::_execBeginReadDynamicTextArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYNAMIC_TEXT_ARRAY)] = &Vm::_execEndReadDynamicTextArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VARIANT_SIGNED_TAG)] = &Vm::_execBeginReadVariantSignedTag;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG)] = &Vm::_execBeginReadVariantUnsignedTag;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_VARIANT)] = &Vm::_execEndReadVariant;
-    _execFuncs[static_cast<int>(Instr::Kind::SAVE_VALUE)] = &Vm::_execSaveValue;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PACKET_END_CLOCK_VALUE)] = &Vm::_execSetPacketEndClockValue;
-    _execFuncs[static_cast<int>(Instr::Kind::UPDATE_CLOCK_VALUE)] = &Vm::_execUpdateClockValue;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_CURRENT_ID)] = &Vm::_execSetCurrentId;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_DATA_STREAM_TYPE)] = &Vm::_execSetDataStreamType;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_EVENT_RECORD_TYPE)] = &Vm::_execSetEventRecordType;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_DATA_STREAM_ID)] = &Vm::_execSetDataStreamId;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PACKET_ORIGIN_INDEX)] = &Vm::_execSetPacketOriginIndex;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PACKET_TOTAL_SIZE)] = &Vm::_execSetPacketTotalSize;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PACKET_CONTENT_SIZE)] = &Vm::_execSetPacketContentSize;
-    _execFuncs[static_cast<int>(Instr::Kind::SET_PACKET_MAGIC_NUMBER)] = &Vm::_execSetPacketMagicNumber;
-    _execFuncs[static_cast<int>(Instr::Kind::END_PACKET_PREAMBLE_PROC)] = &Vm::_execEndPacketPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_DST_PACKET_PREAMBLE_PROC)] = &Vm::_execEndDstPacketPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_DST_ERT_PREAMBLE_PROC)] = &Vm::_execEndDstErtPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_ERT_PROC)] = &Vm::_execEndErtProc;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYN_ARRAY)] = &Vm::_execBeginReadDynArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYN_ARRAY)] = &Vm::_execEndReadDynArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYN_TEXT_ARRAY)] = &Vm::_execBeginReadDynTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYN_TEXT_ARRAY)] = &Vm::_execEndReadDynTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_SSEL)] = &Vm::_execBeginReadVarSSel;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VAR_USEL)] = &Vm::_execBeginReadVarUSel;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_VAR)] = &Vm::_execEndReadVar;
+    _execFuncs[static_cast<int>(Instr::Kind::SAVE_VAL)] = &Vm::_execSaveVal;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_END_CLK_VAL)] = &Vm::_execSetPktEndClkVal;
+    _execFuncs[static_cast<int>(Instr::Kind::UPDATE_CLK_VAL)] = &Vm::_execUpdateClkVal;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_CUR_ID)] = &Vm::_execSetCurrentId;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_DST)] = &Vm::_execSetDst;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_ERT)] = &Vm::_execSetErt;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_DS_ID)] = &Vm::_execSetDsId;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_ORIGIN_INDEX)] = &Vm::_execSetPktOriginIndex;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_TOTAL_LEN)] = &Vm::_execSetPktTotalLen;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_CONTENT_LEN)] = &Vm::_execSetPktContentLen;
+    _execFuncs[static_cast<int>(Instr::Kind::SET_PKT_MAGIC_NUMBER)] = &Vm::_execSetPktMagicNumber;
+    _execFuncs[static_cast<int>(Instr::Kind::END_PKT_PREAMBLE_PROC)] = &Vm::_execEndPktPreambleProc;
+    _execFuncs[static_cast<int>(Instr::Kind::END_DS_PKT_PREAMBLE_PROC)] = &Vm::_execEndDsPktPreambleProc;
+    _execFuncs[static_cast<int>(Instr::Kind::END_DS_ER_PREAMBLE_PROC)] = &Vm::_execEndDsErPreambleProc;
+    _execFuncs[static_cast<int>(Instr::Kind::END_ER_PROC)] = &Vm::_execEndErProc;
 }
 
-void Vm::seekPacket(const Index offsetBytes)
+void Vm::seekPkt(const Index offsetBytes)
 {
-    _pos.curPacketOffsetInElementSequenceBits = offsetBytes * 8;
-    _pos.resetForNewPacket();
+    _pos.curPktOffsetInElemSeqBits = offsetBytes * 8;
+    _pos.resetForNewPkt();
     this->_resetBuffer();
 
     // will set the packet beginning element, or end of iterator
-    this->nextElement();
+    this->nextElem();
 }
 
-bool Vm::_getNewDataBlock(const Index offsetInElementSequenceBytes,
-                          const Size sizeBytes)
+bool Vm::_newDataBlock(const Index offsetInElemSeqBytes, const Size sizeBytes)
 {
     assert(sizeBytes <= 9);
 
-    const auto dataBlock = _dataSource->data(offsetInElementSequenceBytes,
-                                             sizeBytes);
+    const auto dataBlock = _dataSrc->data(offsetInElemSeqBytes, sizeBytes);
 
     if (!dataBlock) {
         // no data
         return false;
     }
 
-    _bufAddr = static_cast<const std::uint8_t *>(dataBlock->addr());
-    _bufSizeBits = dataBlock->size() * 8;
+    _bufAddr = static_cast<const std::uint8_t *>(dataBlock->address());
+    _bufLenBits = dataBlock->size() * 8;
 
-    const auto offsetInElementSequenceBits = offsetInElementSequenceBytes * 8;
+    const auto offsetInElemSeqBits = offsetInElemSeqBytes * 8;
 
-    _bufOffsetInCurPacketBits = offsetInElementSequenceBits -
-                                _pos.curPacketOffsetInElementSequenceBits;
+    _bufOffsetInCurPktBits = offsetInElemSeqBits - _pos.curPktOffsetInElemSeqBits;
     return true;
 }
 
-void Vm::savePosition(ElementSequenceIteratorPosition& pos) const
+void Vm::savePos(ElementSequenceIteratorPosition& pos) const
 {
     if (!pos) {
         // allocate new position
@@ -320,361 +312,357 @@ void Vm::savePosition(ElementSequenceIteratorPosition& pos) const
         *pos._vmPos = _pos;
     }
 
-    pos._iterInfos->offset = _iter->_offset;
-    pos._iterInfos->mark = _iter->_mark;
-    assert(_iter->_curElement);
-    pos._iterInfos->setElemFromOther(pos._vmPos.get(), &_pos,
-                                     _iter->_curElement);
+    pos._itInfos->offset = _it->_offset;
+    pos._itInfos->mark = _it->_mark;
+    assert(_it->_curElem);
+    pos._itInfos->elemFromOther(*pos._vmPos, _pos, *_it->_curElem);
 }
 
-void Vm::restorePosition(const ElementSequenceIteratorPosition& pos)
+void Vm::restorePos(const ElementSequenceIteratorPosition& pos)
 {
     assert(pos);
     _pos = *pos._vmPos;
-    _iter->_offset = pos._iterInfos->offset;
-    _iter->_mark = pos._iterInfos->mark;
-    this->updateIterElementFromOtherPos(*pos._vmPos,
-                                        pos._iterInfos->elem);
+    _it->_offset = pos._itInfos->offset;
+    _it->_mark = pos._itInfos->mark;
+    this->updateItElemFromOtherPos(*pos._vmPos, pos._itInfos->elem);
 
     /*
      * Reset buffer: the next call to operator++() will require more
      * data and the VM will request a new data block at this moment.
+     *
      * This is important to avoid throwing from this method so that it
      * always succeeds.
      */
     this->_resetBuffer();
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntLe(const Instr& instr)
 {
-    this->_execReadInt<std::int64_t, readIntLeSignedFuncs>(instr);
+    this->_execReadInt<std::int64_t, readSIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntBe(const Instr& instr)
 {
-    this->_execReadInt<std::int64_t, readIntBeSignedFuncs>(instr);
+    this->_execReadInt<std::int64_t, readSIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA8(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 8, readIntSigned8>(instr);
+    this->_execReadStdInt<std::int64_t, 8, readSInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA16Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 16, readIntSignedLe16>(instr);
+    this->_execReadStdInt<std::int64_t, 16, readSIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA32Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 32, readIntSignedLe32>(instr);
+    this->_execReadStdInt<std::int64_t, 32, readSIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA64Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 64, readIntSignedLe64>(instr);
+    this->_execReadStdInt<std::int64_t, 64, readSIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA16Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 16, readIntSignedBe16>(instr);
+    this->_execReadStdInt<std::int64_t, 16, readSIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA32Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 32, readIntSignedBe32>(instr);
+    this->_execReadStdInt<std::int64_t, 32, readSIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedIntA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSIntA64Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::int64_t, 64, readIntSignedBe64>(instr);
+    this->_execReadStdInt<std::int64_t, 64, readSIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntLe(const Instr& instr)
 {
-    this->_execReadInt<std::uint64_t, readIntLeUnsignedFuncs>(instr);
+    this->_execReadInt<std::uint64_t, readUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntBe(const Instr& instr)
 {
-    this->_execReadInt<std::uint64_t, readIntBeUnsignedFuncs>(instr);
+    this->_execReadInt<std::uint64_t, readUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA8(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 8, readIntUnsigned8>(instr);
+    this->_execReadStdInt<std::uint64_t, 8, readUInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA16Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 16, readIntUnsignedLe16>(instr);
+    this->_execReadStdInt<std::uint64_t, 16, readUIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA32Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 32, readIntUnsignedLe32>(instr);
+    this->_execReadStdInt<std::uint64_t, 32, readUIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA64Le(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 64, readIntUnsignedLe64>(instr);
+    this->_execReadStdInt<std::uint64_t, 64, readUIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA16Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 16, readIntUnsignedBe16>(instr);
+    this->_execReadStdInt<std::uint64_t, 16, readUIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA32Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 32, readIntUnsignedBe32>(instr);
+    this->_execReadStdInt<std::uint64_t, 32, readUIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedIntA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUIntA64Be(const Instr& instr)
 {
-    this->_execReadStdInt<std::uint64_t, 64, readIntUnsignedBe64>(instr);
+    this->_execReadStdInt<std::uint64_t, 64, readUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloat32Le(const Instr& instr)
 {
-    this->_execReadFloat<float, readIntLeUnsignedFuncs>(instr);
+    this->_execReadFloat<float, readUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloat32Be(const Instr& instr)
 {
-    this->_execReadFloat<float, readIntBeUnsignedFuncs>(instr);
+    this->_execReadFloat<float, readUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloatA32Le(const Instr& instr)
 {
-    this->_execReadStdFloat<float, readIntUnsignedLe32>(instr);
+    this->_execReadStdFloat<float, readUIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloatA32Be(const Instr& instr)
 {
-    this->_execReadStdFloat<float, readIntUnsignedBe32>(instr);
+    this->_execReadStdFloat<float, readUIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloat64Le(const Instr& instr)
 {
-    this->_execReadFloat<double, readIntLeUnsignedFuncs>(instr);
+    this->_execReadFloat<double, readUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloat64Be(const Instr& instr)
 {
-    this->_execReadFloat<double, readIntBeUnsignedFuncs>(instr);
+    this->_execReadFloat<double, readUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloatA64Le(const Instr& instr)
 {
-    this->_execReadStdFloat<double, readIntUnsignedLe64>(instr);
+    this->_execReadStdFloat<double, readUIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execReadFloatA64Be(const Instr& instr)
 {
-    this->_execReadStdFloat<double, readIntUnsignedBe64>(instr);
+    this->_execReadStdFloat<double, readUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumLe(const Instr& instr)
 {
-    this->_execReadEnum<std::int64_t, readIntLeSignedFuncs>(instr);
+    this->_execReadEnum<std::int64_t, readSIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumBe(const Instr& instr)
 {
-    this->_execReadEnum<std::int64_t, readIntBeSignedFuncs>(instr);
+    this->_execReadEnum<std::int64_t, readSIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA8(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 8, readIntSigned8>(instr);
+    this->_execReadStdEnum<std::int64_t, 8, readSInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA16Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 16, readIntSignedLe16>(instr);
+    this->_execReadStdEnum<std::int64_t, 16, readSIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA32Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 32, readIntSignedLe32>(instr);
+    this->_execReadStdEnum<std::int64_t, 32, readSIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA64Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 64, readIntSignedLe64>(instr);
+    this->_execReadStdEnum<std::int64_t, 64, readSIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA16Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 16, readIntSignedBe16>(instr);
+    this->_execReadStdEnum<std::int64_t, 16, readSIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA32Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 32, readIntSignedBe32>(instr);
+    this->_execReadStdEnum<std::int64_t, 32, readSIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadSignedEnumA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadSEnumA64Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::int64_t, 64, readIntSignedBe64>(instr);
+    this->_execReadStdEnum<std::int64_t, 64, readSIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumLe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumLe(const Instr& instr)
 {
-    this->_execReadEnum<std::uint64_t, readIntLeUnsignedFuncs>(instr);
+    this->_execReadEnum<std::uint64_t, readUIntLeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumBe(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumBe(const Instr& instr)
 {
-    this->_execReadEnum<std::uint64_t, readIntBeUnsignedFuncs>(instr);
+    this->_execReadEnum<std::uint64_t, readUIntBeFuncs>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA8(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA8(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 8, readIntUnsigned8>(instr);
+    this->_execReadStdEnum<std::uint64_t, 8, readUInt8>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA16Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA16Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 16, readIntUnsignedLe16>(instr);
+    this->_execReadStdEnum<std::uint64_t, 16, readUIntLe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA32Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA32Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 32, readIntUnsignedLe32>(instr);
+    this->_execReadStdEnum<std::uint64_t, 32, readUIntLe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA64Le(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA64Le(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 64, readIntUnsignedLe64>(instr);
+    this->_execReadStdEnum<std::uint64_t, 64, readUIntLe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA16Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA16Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 16, readIntUnsignedBe16>(instr);
+    this->_execReadStdEnum<std::uint64_t, 16, readUIntBe16>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA32Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA32Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 32, readIntUnsignedBe32>(instr);
+    this->_execReadStdEnum<std::uint64_t, 32, readUIntBe32>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadUnsignedEnumA64Be(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadUEnumA64Be(const Instr& instr)
 {
-    this->_execReadStdEnum<std::uint64_t, 64, readIntUnsignedBe64>(instr);
+    this->_execReadStdEnum<std::uint64_t, 64, readUIntBe64>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadString(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadStr(const Instr& instr)
 {
-    auto& instrReadString = static_cast<const InstrReadString&>(instr);
+    const auto& readStrInstr = static_cast<const ReadStrInstr&>(instr);
 
-    this->_alignCursor(instr);
-    this->_setNamedDataElementFromInstr(_pos.elems.stringBeginning,
-                                        instrReadString);
-    _pos.elems.stringBeginning._type = &instrReadString.stringType();
-    this->_updateIterCurOffset(_pos.elems.stringBeginning);
-    _pos.postEndStringState = _pos.state;
-    _pos.setState(VmState::READ_SUBSTRING_UNTIL_NULL);
+    this->_alignHead(instr);
+    this->_setDataElemFromInstr(_pos.elems.strBeginning, readStrInstr);
+    _pos.elems.strBeginning._dt = &readStrInstr.strType();
+    this->_updateItCurOffset(_pos.elems.strBeginning);
+    _pos.postEndStrState = _pos.state();
+    _pos.state(VmState::READ_SUBSTR_UNTIL_NULL);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
 {
-    auto& instrBeginReadScope = static_cast<const InstrBeginReadScope&>(instr);
+    const auto& beginReadScopeInstr = static_cast<const BeginReadScopeInstr&>(instr);
 
     // align now so that the iterator's offset is after any padding
-    this->_alignCursor(instrBeginReadScope.alignment());
+    this->_alignHead(beginReadScopeInstr.align());
 
-    _pos.elems.scopeBeginning._scope = instrBeginReadScope.scope();
-    this->_updateIterCurOffset(_pos.elems.scopeBeginning);
+    _pos.elems.scopeBeginning._scope = beginReadScopeInstr.scope();
+    this->_updateItCurOffset(_pos.elems.scopeBeginning);
     _pos.gotoNextInstr();
-    _pos.stackPush(instrBeginReadScope.proc());
+    _pos.stackPush(beginReadScopeInstr.proc());
     return _ExecReaction::STOP;
 }
 
 Vm::_ExecReaction Vm::_execEndReadScope(const Instr& instr)
 {
-    auto& instrEndReadScope = static_cast<const InstrEndReadScope&>(instr);
+    const auto& endReadScopeInstr = static_cast<const EndReadScopeInstr&>(instr);
 
-    _pos.elems.scopeEnd._scope = instrEndReadScope.scope();
-    this->_updateIterCurOffset(_pos.elems.scopeEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     _pos.stackPop();
-    assert(_pos.state == VmState::EXEC_INSTR);
+    assert(_pos.state() == VmState::EXEC_INSTR);
     return _ExecReaction::STOP;
 }
 
 Vm::_ExecReaction Vm::_execBeginReadStruct(const Instr& instr)
 {
-    auto& instrBeginReadStruct = static_cast<const InstrBeginReadStruct&>(instr);
+    const auto& beginReadStructInstr = static_cast<const BeginReadStructInstr&>(instr);
 
-    this->_alignCursor(instr);
-    this->_setNamedDataElementFromInstr(_pos.elems.structBeginning,
-                                        instrBeginReadStruct);
-    _pos.elems.structBeginning._type = &instrBeginReadStruct.structType();
-    this->_updateIterCurOffset(_pos.elems.structBeginning);
+    this->_alignHead(instr);
+    this->_setDataElemFromInstr(_pos.elems.structBeginning, beginReadStructInstr);
+    _pos.elems.structBeginning._dt = &beginReadStructInstr.structType();
+    this->_updateItCurOffset(_pos.elems.structBeginning);
     _pos.gotoNextInstr();
-    _pos.stackPush(instrBeginReadStruct.proc());
-    _pos.setState(VmState::EXEC_INSTR);
+    _pos.stackPush(beginReadStructInstr.proc());
+    _pos.state(VmState::EXEC_INSTR);
     return _ExecReaction::STOP;
 }
 
 Vm::_ExecReaction Vm::_execEndReadStruct(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.structEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
 
 Vm::_ExecReaction Vm::_execBeginReadStaticArray(const Instr& instr)
 {
-    auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticArray&>(instr);
+    const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticArrayInstr&>(instr);
 
-    _pos.elems.staticArrayBeginning._type = &instrBeginReadStaticArray.staticArrayType();
+    _pos.elems.staticArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
     this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticArrayBeginning,
                                           VmState::EXEC_ARRAY_INSTR);
     return _ExecReaction::STOP;
@@ -682,116 +670,113 @@ Vm::_ExecReaction Vm::_execBeginReadStaticArray(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execEndReadStaticArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.staticArrayEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execBeginReadStaticTextArray(const Instr& instr)
 {
-    auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticTextArray&>(instr);
+    const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticTextArrayInstr&>(instr);
 
-    _pos.elems.staticTextArrayBeginning._type = &instrBeginReadStaticArray.staticTextArrayType();
+    _pos.elems.staticTextArrayBeginning._dt = &beginReadStaticArrayInstr.staticTextArrayType();
     this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticTextArrayBeginning,
-                                          VmState::READ_SUBSTRING);
+                                          VmState::READ_SUBSTR);
     return _ExecReaction::STOP;
 }
 
 Vm::_ExecReaction Vm::_execEndReadStaticTextArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.staticTextArrayEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execBeginReadStaticUuidArray(const Instr& instr)
 {
-    auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticUuidArray&>(instr);
+    const auto& beginReadStaticArrayInstr = static_cast<const BeginReadStaticUuidArrayInstr&>(instr);
 
-    _pos.elems.staticArrayBeginning._type = &instrBeginReadStaticArray.staticArrayType();
+    _pos.elems.staticArrayBeginning._dt = &beginReadStaticArrayInstr.staticArrayType();
     this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticArrayBeginning,
                                           VmState::READ_UUID_BYTE);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadDynamicArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadDynArray(const Instr& instr)
 {
-    auto& instrBeginReadDynamicArray = static_cast<const InstrBeginReadDynamicArray&>(instr);
+    const auto& beginReadDynArrayInstr = static_cast<const BeginReadDynArrayInstr&>(instr);
 
-    _pos.elems.dynamicArrayBeginning._type = &instrBeginReadDynamicArray.dynamicArrayType();
-    this->_execBeginReadDynamicArrayCommon(instr, _pos.elems.dynamicArrayBeginning,
-                                           VmState::EXEC_ARRAY_INSTR);
+    _pos.elems.dynArrayBeginning._dt = &beginReadDynArrayInstr.dynArrayType();
+    this->_execBeginReadDynArrayCommon(instr, _pos.elems.dynArrayBeginning,
+                                       VmState::EXEC_ARRAY_INSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDynamicArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDynArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.dynamicArrayEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadDynamicTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadDynTextArray(const Instr& instr)
 {
-    auto& instrBeginReadDynamicArray = static_cast<const InstrBeginReadDynamicArray&>(instr);
+    const auto& beginReadDynArrayInstr = static_cast<const BeginReadDynArrayInstr&>(instr);
 
-    _pos.elems.dynamicTextArrayBeginning._type = &instrBeginReadDynamicArray.dynamicArrayType();
-    this->_execBeginReadDynamicArrayCommon(instr, _pos.elems.dynamicTextArrayBeginning,
-                                           VmState::READ_SUBSTRING);
+    _pos.elems.dynTextArrayBeginning._dt = &beginReadDynArrayInstr.dynArrayType();
+    this->_execBeginReadDynArrayCommon(instr, _pos.elems.dynTextArrayBeginning,
+                                           VmState::READ_SUBSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadDynamicTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDynTextArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.dynamicTextArrayEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadVariantSignedTag(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadVarSSel(const Instr& instr)
 {
-    this->_execBeginReadVariant<InstrBeginReadVariantSignedTag>(instr,
-                                                                _pos.elems.variantBeginningSignedTag);
+    this->_execBeginReadVar<BeginReadVarSSelInstr>(instr, _pos.elems.varSSelBeginning);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadVariantUnsignedTag(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadVarUSel(const Instr& instr)
 {
-    this->_execBeginReadVariant<InstrBeginReadVariantUnsignedTag>(instr,
-                                                                  _pos.elems.variantBeginningUnsignedTag);
+    this->_execBeginReadVar<BeginReadVarUSelInstr>(instr, _pos.elems.varUSelBeginning);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadVariant(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadVar(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.variantEnd);
+    this->_updateItCurOffset(_pos.elems.end);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execSaveValue(const Instr& instr)
+Vm::_ExecReaction Vm::_execSaveVal(const Instr& instr)
 {
-    auto& instrSaveValue = static_cast<const InstrSaveValue&>(instr);
+    const auto& saveValInstr = static_cast<const SaveValInstr&>(instr);
 
-    _pos.saveValue(instrSaveValue.pos());
+    _pos.saveVal(saveValInstr.pos());
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetPacketEndClockValue(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktEndClkVal(const Instr& instr)
 {
-    auto& instrSetPacketEndClockValue = static_cast<const InstrSetPacketEndClockValue&>(instr);
+    const auto& setPktEndClkValInstr = static_cast<const SetPktEndClkValInstr&>(instr);
 
-    _pos.elems.packetEndClockValue._clockType = &instrSetPacketEndClockValue.clockType();
-    _pos.elems.packetEndClockValue._cycles = _pos.lastIntVal.u;
-    this->_updateIterCurOffset(_pos.elems.packetEndClockValue);
+    _pos.elems.pktEndClkVal._clkType = &setPktEndClkValInstr.clkType();
+    _pos.elems.pktEndClkVal._cycles = _pos.lastIntVal.u;
+    this->_updateItCurOffset(_pos.elems.pktEndClkVal);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execUpdateClockValue(const Instr& instr)
+Vm::_ExecReaction Vm::_execUpdateClkVal(const Instr& instr)
 {
-    auto& instrUpdateClockValue = static_cast<const InstrUpdateClockValue&>(instr);
+    const auto& updateClkValInstr = static_cast<const UpdateClkValInstr&>(instr);
+    const auto newVal = _pos.updateClkVal(updateClkValInstr.index(), updateClkValInstr.len());
 
-    const auto newVal = _pos.updateClockValue(instrUpdateClockValue.index(),
-                                              instrUpdateClockValue.size());
-    _pos.elems.clockValue._clockType = &instrUpdateClockValue.clockType();
-    _pos.elems.clockValue._cycles = newVal;
-    this->_updateIterCurOffset(_pos.elems.clockValue);
+    _pos.elems.clkVal._clkType = &updateClkValInstr.clkType();
+    _pos.elems.clkVal._cycles = newVal;
+    this->_updateItCurOffset(_pos.elems.clkVal);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -801,190 +786,177 @@ Vm::_ExecReaction Vm::_execSetCurrentId(const Instr& instr)
     return _ExecReaction::EXEC_NEXT_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execSetDataStreamType(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetDst(const Instr& instr)
 {
-    auto& instrSetDst = static_cast<const InstrSetDataStreamType&>(instr);
-    TypeId id;
-
-    if (instrSetDst.fixedId()) {
-        id = *instrSetDst.fixedId();
-    } else {
-        id = _pos.curId;
-    }
-
-    auto dstPacketProc = (*_pos.packetProc)[id];
+    const auto& setDstInstr = static_cast<const SetDstInstr&>(instr);
+    const auto id = setDstInstr.fixedId() ? *setDstInstr.fixedId() : _pos.curId;
+    const auto dstPacketProc = (*_pos.pktProc)[id];
 
     if (!dstPacketProc) {
         throw UnknownDataStreamTypeDecodingError {
-            _pos.cursorOffsetInElementSequenceBits(), id
+            _pos.headOffsetInElemSeqBits(), id
         };
     }
 
-    _pos.curDstPacketProc = dstPacketProc;
-    _pos.elems.dataStreamType._dataStreamType = &dstPacketProc->dataStreamType();
-    this->_updateIterCurOffset(_pos.elems.dataStreamType);
+    _pos.curDsPktProc = dstPacketProc;
+    _pos.elems.dst._dst = &dstPacketProc->dst();
+    this->_updateItCurOffset(_pos.elems.dst);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetEventRecordType(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetErt(const Instr& instr)
 {
-    assert(_pos.curDstPacketProc);
+    assert(_pos.curDsPktProc);
 
-    auto& instrSetErt = static_cast<const InstrSetEventRecordType&>(instr);
-    TypeId id;
+    const auto& setErtInstr = static_cast<const SetErtInstr&>(instr);
+    const auto id = setErtInstr.fixedId() ? *setErtInstr.fixedId() : _pos.curId;
 
-    if (instrSetErt.fixedId()) {
-        id = *instrSetErt.fixedId();
-    } else {
-        id = _pos.curId;
-    }
+    assert(_pos.curDsPktProc);
 
-    assert(_pos.curDstPacketProc);
+    const auto erProc = (*_pos.curDsPktProc)[id];
 
-    auto ertProc = (*_pos.curDstPacketProc)[id];
-
-    if (!ertProc) {
+    if (!erProc) {
         throw UnknownEventRecordTypeDecodingError {
-            _pos.cursorOffsetInElementSequenceBits(), id
+            _pos.headOffsetInElemSeqBits(), id
         };
     }
 
-    _pos.curErtProc = ertProc;
-    _pos.elems.eventRecordType._eventRecordType = &ertProc->eventRecordType();
-    this->_updateIterCurOffset(_pos.elems.eventRecordType);
+    _pos.curErProc = erProc;
+    _pos.elems.ert._ert = &erProc->ert();
+    this->_updateItCurOffset(_pos.elems.ert);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetDataStreamId(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetDsId(const Instr& instr)
 {
-    _pos.elems.dataStreamId._dataStreamId = _pos.lastIntVal.u;
-    this->_updateIterCurOffset(_pos.elems.dataStreamId);
+    _pos.elems.dsId._id = _pos.lastIntVal.u;
+    this->_updateItCurOffset(_pos.elems.dsId);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetPacketOriginIndex(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktOriginIndex(const Instr& instr)
 {
-    _pos.elems.packetOriginIndex._index = _pos.lastIntVal.u;
-    this->_updateIterCurOffset(_pos.elems.packetOriginIndex);
+    _pos.elems.pktOriginIndex._index = _pos.lastIntVal.u;
+    this->_updateItCurOffset(_pos.elems.pktOriginIndex);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetPacketTotalSize(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr& instr)
 {
-    const auto packetTotalSizeCandidateBits = _pos.lastIntVal.u;
+    const auto pktTotalSizeCandidateBits = _pos.lastIntVal.u;
 
-    if ((packetTotalSizeCandidateBits & 7) != 0) {
-        throw ExpectedPacketTotalSizeNotMultipleOf8DecodingError {
-            _pos.cursorOffsetInElementSequenceBits(),
-            packetTotalSizeCandidateBits
+    if ((pktTotalSizeCandidateBits & 7) != 0) {
+        throw ExpectedPacketTotalLengthNotMultipleOf8DecodingError {
+            _pos.headOffsetInElemSeqBits(),
+            pktTotalSizeCandidateBits
         };
     }
 
-    if (_pos.curPacketContentSizeBits != SIZE_UNSET) {
-        if (packetTotalSizeCandidateBits < _pos.curPacketContentSizeBits) {
-            throw ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError {
-                _pos.cursorOffsetInElementSequenceBits(),
-                packetTotalSizeCandidateBits,
-                _pos.curPacketContentSizeBits
+    if (_pos.curExpectedPktContentLenBits != SIZE_UNSET) {
+        if (pktTotalSizeCandidateBits < _pos.curExpectedPktContentLenBits) {
+            throw ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError {
+                _pos.headOffsetInElemSeqBits(),
+                pktTotalSizeCandidateBits,
+                _pos.curExpectedPktContentLenBits
             };
         }
     }
 
-    if (packetTotalSizeCandidateBits < _pos.cursorOffsetInCurPacketBits) {
-        throw ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError {
-            _pos.cursorOffsetInElementSequenceBits(),
-            packetTotalSizeCandidateBits,
-            _pos.cursorOffsetInCurPacketBits
+    if (pktTotalSizeCandidateBits < _pos.headOffsetInCurPktBits) {
+        throw ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError {
+            _pos.headOffsetInElemSeqBits(),
+            pktTotalSizeCandidateBits,
+            _pos.headOffsetInCurPktBits
         };
     }
 
-    _pos.curPacketTotalSizeBits = packetTotalSizeCandidateBits;
+    _pos.curExpectedPktTotalLenBits = pktTotalSizeCandidateBits;
 
-    if (_pos.curPacketContentSizeBits == SIZE_UNSET) {
-        _pos.curPacketContentSizeBits = _pos.curPacketTotalSizeBits;
+    if (_pos.curExpectedPktContentLenBits == SIZE_UNSET) {
+        _pos.curExpectedPktContentLenBits = _pos.curExpectedPktTotalLenBits;
     }
 
-    _pos.elems.expectedPacketTotalSize._expectedSize = _pos.curPacketTotalSizeBits;
-    this->_updateIterCurOffset(_pos.elems.expectedPacketTotalSize);
+    _pos.elems.expectedPktTotalLen._expectedLen = _pos.curExpectedPktTotalLenBits;
+    this->_updateItCurOffset(_pos.elems.expectedPktTotalLen);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetPacketContentSize(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr& instr)
 {
-    const auto packetContentSizeCandidateBits = _pos.lastIntVal.u;
+    const auto pktContentSizeCandidateBits = _pos.lastIntVal.u;
 
-    if (_pos.curPacketTotalSizeBits != SIZE_UNSET) {
-        if (_pos.curPacketTotalSizeBits < packetContentSizeCandidateBits) {
-            throw ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError {
-                _pos.cursorOffsetInElementSequenceBits(),
-                _pos.curPacketTotalSizeBits,
-                packetContentSizeCandidateBits
+    if (_pos.curExpectedPktTotalLenBits != SIZE_UNSET) {
+        if (_pos.curExpectedPktTotalLenBits < pktContentSizeCandidateBits) {
+            throw ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError {
+                _pos.headOffsetInElemSeqBits(),
+                _pos.curExpectedPktTotalLenBits,
+                pktContentSizeCandidateBits
             };
         }
     }
 
-    if (packetContentSizeCandidateBits < _pos.cursorOffsetInCurPacketBits) {
-        throw ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError {
-            _pos.cursorOffsetInElementSequenceBits(),
-            packetContentSizeCandidateBits,
-            _pos.cursorOffsetInCurPacketBits
+    if (pktContentSizeCandidateBits < _pos.headOffsetInCurPktBits) {
+        throw ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError {
+            _pos.headOffsetInElemSeqBits(),
+            pktContentSizeCandidateBits,
+            _pos.headOffsetInCurPktBits
         };
     }
 
-    _pos.curPacketContentSizeBits = packetContentSizeCandidateBits;
-    _pos.elems.expectedPacketContentSize._expectedSize = _pos.curPacketContentSizeBits;
-    this->_updateIterCurOffset(_pos.elems.expectedPacketContentSize);
+    _pos.curExpectedPktContentLenBits = pktContentSizeCandidateBits;
+    _pos.elems.expectedPktContentLen._expectedLen = _pos.curExpectedPktContentLenBits;
+    this->_updateItCurOffset(_pos.elems.expectedPktContentLen);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execSetPacketMagicNumber(const Instr& instr)
+Vm::_ExecReaction Vm::_execSetPktMagicNumber(const Instr& instr)
 {
-    _pos.elems.packetMagicNumber._value = _pos.lastIntVal.u;
-    this->_updateIterCurOffset(_pos.elems.packetMagicNumber);
+    _pos.elems.pktMagicNumber._val = _pos.lastIntVal.u;
+    this->_updateItCurOffset(_pos.elems.pktMagicNumber);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndPacketPreambleProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndPktPreambleProc(const Instr& instr)
 {
     // after packet header
     _pos.stackPop();
     assert(_pos.stack.empty());
 
-    if (_pos.curDstPacketProc) {
-        _pos.loadNewProc(_pos.curDstPacketProc->packetPreambleProc());
+    if (_pos.curDsPktProc) {
+        _pos.loadNewProc(_pos.curDsPktProc->pktPreambleProc());
         return _ExecReaction::EXEC_CUR_INSTR;
     } else {
-        _pos.setState(VmState::END_PACKET_CONTENT);
+        _pos.state(VmState::END_PKT_CONTENT);
         return _ExecReaction::CHANGE_STATE;
     }
 }
 
-Vm::_ExecReaction Vm::_execEndDstPacketPreambleProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndDsPktPreambleProc(const Instr& instr)
 {
     // after packet context
     _pos.stackPop();
     assert(_pos.stack.empty());
-    assert(_pos.curDstPacketProc);
-    _pos.setState(VmState::BEGIN_EVENT_RECORD);
+    assert(_pos.curDsPktProc);
+    _pos.state(VmState::BEGIN_ER);
     return _ExecReaction::CHANGE_STATE;
 }
 
-Vm::_ExecReaction Vm::_execEndDstErtPreambleProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndDsErPreambleProc(const Instr& instr)
 {
     // after second event record context
     _pos.stackPop();
     assert(_pos.stack.empty());
-    assert(_pos.curErtProc);
-    _pos.loadNewProc(_pos.curErtProc->proc());
+    assert(_pos.curErProc);
+    _pos.loadNewProc(_pos.curErProc->proc());
     return _ExecReaction::EXEC_CUR_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execEndErtProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndErProc(const Instr& instr)
 {
     // after event record payload
     _pos.stackPop();
     assert(_pos.stack.empty());
-    _pos.setState(VmState::END_EVENT_RECORD);
+    _pos.state(VmState::END_ER);
     return _ExecReaction::CHANGE_STATE;
 }
 

@@ -84,19 +84,19 @@ static const std::uint8_t stream[] = {
     // packet context
     0x02, 0x48, 0x02, 0x28, 0x11, 0xd2,
 
-    // event
+    // event record
     0x11, 0xaa, 0xbb, 0xcc, 0xdd, 0xde, 0xad, 0xff,
 
-    // event
+    // event record
     0x11, 0x12, 0x12, 0x23, 0x23, 0x44, 0x55, 0x66,
 
-    // event
+    // event record
     0x22, 3,
     'a', 'l', 'e', 'r', 't', 0,
     'l', 'o', 'o', 'k', 0,
     's', 'o', 'u', 'r', 0,
 
-    // event
+    // event record
     0x11, 0x18, 0x19, 0x11, 0x0e, 0xf2, 0x43, 0x51,
 
     // padding
@@ -111,10 +111,10 @@ static const std::uint8_t stream[] = {
     // packet context
     0x01, 0x60, 0x01, 0x60,
 
-    // event
+    // event record
     's', 'a', 'l', 'u', 't', 0, 0x44, 0x55, 0x66, 0x77,
 
-    // event
+    // event record
     'C', 'o', 'l', 'a', 0, 0x44, 0x55, 0x66, 0x77,
 
     // packet header
@@ -126,12 +126,12 @@ static const std::uint8_t stream[] = {
     // packet context
     0x01, 0x80, 0x01, 0x70, 0xfe, 0xdc,
 
-    // event
+    // event record
     0x22, 2,
     'd', 'r', 'y', 0,
     't', 'h', 'a', 'w', 0,
 
-    // event
+    // event record
     0x11, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 
     // padding

@@ -1,0 +1,33 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        enum : u8 {
+            A,
+            B,
+            C,
+        } tag;
+        variant <tag> {
+            string A;
+            u32 B;
+            u8 C[3];
+        } v;
+    };
+};
+----
+03 "hello" 00
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     ER {
+     0       ERT:0:test
+     0       SC:5 {
+     0         ST {
+     0           UE:tag:3
+     8 Selector value 3 doesn't select a valid variant option.

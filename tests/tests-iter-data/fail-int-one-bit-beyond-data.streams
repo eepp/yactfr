@@ -17,39 +17,39 @@ event {
 "tomatoes" 00 deadc0de ff
 "madly" 00 feedface
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     ERB
+     0     ER {
      0       ERT:0:test
-     0       SCB:5
-     0         STB
-     0           STRB:salut
-     0             SUB:15:salut les mecs
-   120           STRE
-   120           U:meow:3735928559
-   152           U:extra:1
-   153         STE
-   153       SCE
-   153     ERE
-   160     ERB
+     0       SC:5 {
+     0         ST {
+     0           STR:salut {
+     0             SS:15:salut les mecs
+   120           }
+   120           UI:meow:3735928559
+   152           UI:extra:1
+   153         }
+   153       }
+   153     }
+   160     ER {
    160       ERT:0:test
-   160       SCB:5
-   160         STB
-   160           STRB:salut
-   160             SUB:9:tomatoes
-   232           STRE
-   232           U:meow:3735929054
-   264           U:extra:1
-   265         STE
-   265       SCE
-   265     ERE
-   272     ERB
+   160       SC:5 {
+   160         ST {
+   160           STR:salut {
+   160             SS:9:tomatoes
+   232           }
+   232           UI:meow:3735929054
+   264           UI:extra:1
+   265         }
+   265       }
+   265     }
+   272     ER {
    272       ERT:0:test
-   272       SCB:5
-   272         STB
-   272           STRB:salut
-   272             SUB:6:madly
-   320           STRE
-   320           U:meow:4277009102
-   352 Cannot request 1 bit at this point: reaching end of data source.
+   272       SC:5 {
+   272         ST {
+   272           STR:salut {
+   272             SS:6:madly
+   320           }
+   320           UI:meow:4277009102
+   352 Cannot read 1 bit at this point: reaching end of data source.

@@ -1,38 +1,23 @@
 /*
- * Metadata stream.
- *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  Metadata stream and related exception.
-
-@ingroup metadata_stream
-*/
-
 #ifndef _YACTFR_METADATA_METADATA_STREAM_HPP
 #define _YACTFR_METADATA_METADATA_STREAM_HPP
 
-// for std::runtime_error
 #include <stdexcept>
-
-// for std::string
 #include <string>
-
-// for std::istream
 #include <istream>
-
-// for std::unique_ptr
 #include <memory>
 
 namespace yactfr {
 
 /*!
-@brief  Metadata stream.
+@brief
+    Metadata stream.
 
 @ingroup metadata_stream
 */
@@ -59,22 +44,26 @@ private:
 };
 
 /*!
-@brief  Builds a metadata stream object by decoding the whole stream
-        \p stream.
+@brief
+    Builds a metadata stream object by decoding the whole stream
+    \p stream.
 
-@ingroup metadata
+@ingroup metadata_stream
 
-The resulting stream is either a PlainTextMetadataStream or a
-PacketizedMetadataStream.
+The resulting stream is either a
+\link PlainTextMetadataStream plain text metadata stream\endlink or a
+\link PacketizedMetadataStream packetized metadata stream\endlink.
 
-\p stream is only used in this function and does not belong
-to the returned metadata stream. This function does not seek within
-\p stream.
+Only this function uses \p stream: it doesn't belong to the returned
+metadata stream. This function doesn't seek within \p stream.
 
-@param stream   Metadata input stream to read.
+@param[in] stream
+    Metadata input stream to read.
 
-@throws IOError An I/O error occured.
-@throws InvalidMetadataStream The metadata stream's content is invalid.
+@throws IOError
+    An I/O error occurred.
+@throws InvalidMetadataStream
+    The content of the metadata stream is invalid.
 */
 std::unique_ptr<const MetadataStream> createMetadataStream(std::istream& stream);
 

@@ -1,69 +1,56 @@
 /*
- * CTF bit array type.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <cassert>
+
 #include <yactfr/metadata/bit-array-type.hpp>
-#include <yactfr/metadata/invalid-metadata.hpp>
 
 namespace yactfr {
 
-BitArrayType::BitArrayType(const int kind, const unsigned int align,
-                           const unsigned int size,
-                           const ByteOrder byteOrder) :
-    ScalarType {_KIND_BIT_ARRAY | kind, align},
-    _size {size},
-    _byteOrder {byteOrder}
+BitArrayType::BitArrayType(const int kind, const unsigned int align, const unsigned int len,
+                           const ByteOrder bo) :
+    ScalarDataType {_KIND_BIT_ARRAY | kind, align},
+    _len {len},
+    _bo {bo}
 {
-    if (_size == 0) {
-        throw InvalidMetadata {
-            "Bit array type's size is 0."
-        };
-    }
-
-    if (_size > 64) {
-        throw InvalidMetadata {
-            "The maximum supported size for a bit array type is 64 bits."
-        };
-    }
+    assert(_len > 0);
+    assert(_len <= 64);
 }
 
-bool BitArrayType::operator<(const BitArrayType& bitArrayType) const noexcept
+bool BitArrayType::operator<(const BitArrayType& other) const noexcept
 {
-    if (this->alignment() < bitArrayType.alignment()) {
+    if (this->alignment() < other.alignment()) {
         return true;
     }
 
-    if (bitArrayType.alignment() < this->alignment()) {
+    if (other.alignment() < this->alignment()) {
         return false;
     }
 
-    if (this->size() < bitArrayType.size()) {
+    if (_len < other._len) {
         return true;
     }
 
-    if (bitArrayType.size() < this->size()) {
+    if (other._len < _len) {
         return false;
     }
 
-    if (this->byteOrder() < bitArrayType.byteOrder()) {
+    if (_bo < other._bo) {
         return true;
     }
 
     return false;
 }
 
-bool BitArrayType::_compare(const DataType& otherType) const noexcept
+bool BitArrayType::_compare(const DataType& other) const noexcept
 {
-    auto& bitArrayType = static_cast<const BitArrayType&>(otherType);
+    auto& otherBitArrayType = static_cast<const BitArrayType&>(other);
 
-    return bitArrayType.alignment() == this->alignment() &&
-           bitArrayType.size() == this->size() &&
-           bitArrayType.byteOrder() == this->byteOrder();
+    return _len == otherBitArrayType._len && _bo == otherBitArrayType._bo;
 }
 
 } // namespace yactfr

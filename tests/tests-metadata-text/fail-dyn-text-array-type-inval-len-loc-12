@@ -1,0 +1,16 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    integer {size = 8; signed = 1;} len;
+    integer { size = 8; encoding = utf8; } seq[len];
+  };
+};

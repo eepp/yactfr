@@ -1,15 +1,112 @@
 // Render with Asciidoctor
 
-= yactfr: how it works
+= How yactfr works
 Philippe Proulx
-27 September 2018
-:toc:
+15 January 2020
+:toc: left
+:nofooter:
 
-This document shows how the yactfr library works internally. It is
-intended for contributors and, most importantly, future me.
+This document shows how the yactfr library works internally. It's
+intended for contributors and, most importantly, for future me.
 
+== Terminology
 
-== Namespaces
+I try to use abbreviations and acronyms consistently throughout the
+code to reduce identifier lengths with very common terms.
+
+Once you're familiar with the yactfr source code vocabulary below, the
+code becomes much more easy to read. Most of them are obvious.
+
+An abbreviations or acronym can be made plural by adding an "`s`" at the
+end. For example, "`dsts`" means "`data stream types`".
+
+This only applies to internal code. Everything that's public and
+documented uses unabbreviated names.
+
+.Internal yactfr abbreviations and acronyms.
+[%header]
+|===
+|Abbreviation/acronym |Term
+
+|Abs |Absolute
+|Addr |Address
+|Align |Alignment
+|Attr |Attribute
+|BE |Big-endian
+|Blk |Block
+|BO |Byte order
+|Cand |Candidate
+|Clk |Clock
+|Col |Column
+|Conv |Conversion
+|Ctx |Context
+|Cur |Current
+|Decr |Decrement
+|Disp |Display
+|DS |Data stream
+|DST |Data stream type
+|DT |Data type
+|Dup |Duplicate
+|Dyn |Dynamic
+|Elem |Element
+|Enum |Enumeration
+|ER |Event record
+|ERT |Event record type
+|Exc |Exception
+|Float |Floating point number
+|Id |Identifier (numeric)
+|Ident |Identifier (language)
+|Incr |Increment
+|Instr |Instruction
+|Int |Integer
+|It, Iter |Iterator
+|LE |Little-endian
+|Len |Length
+|Lex |Lexical
+|Loc |Location
+|Max |Maximum
+|Min |Minimum
+|Opt |Option
+|Pkt |Packet
+|Pos |Position
+|Pow |Power
+|Proc |Procedure
+|Rec |Recursive
+|Ref |Reference
+|Rej |Rejecter
+|Rel |Relative
+|Sel |Selector
+|SEnum |Signed enumeration
+|Seq |Sequence
+|SInt |Signed integer
+|SP |Shared pointer
+|Spec |Specific
+|Src |Source
+|SS |String stream, string scanner
+|SSel |Signed selector
+|Std |Standard
+|Str |String
+|Struct |Structure
+|Tgt |Target
+|UEnum |Unsigned enumeration
+|UInt |Unsigned integer
+|UP |Unique pointer
+|USel |Unsigned selector
+|Val |Value
+|Var |Variant
+|VM |Virtual machine
+|===
+
+Combination examples:
+
+* `convCtx` means "`conversion context`"
+* `locIt` means "`location iterator`"
+* `pseudoDts` means "`pseudo data types`"
+* `isPseudoVarTypeWithoutSelLocRec` means "`is pseudo variant type
+  without selector location (recursive)`"
+* `uIntVal` means "`unsigned integer value`"
+
+== {cpp} namespaces
 
 The yactfr library lives in two namespaces:
 
@@ -25,30 +122,38 @@ but those headers are placed in subdirectories named `internal`, and
 their content is not publicly documented.
 +
 This namespace is similar to the `details` namespace commonly found in
-the Boost libraries.
-
+the Boost libraries, for example.
 
 == Metadata objects
 
 The metadata objects exist to create a http://diamon.org/ctf/[CTF]
-metadata hierarchy. This hierarchy, once complete, is as follows:
+metadata hierarchy.
+
+This hierarchy, once complete, is as follows:
 
 ----
 Trace type
-  Clock type (0 or more)
-  Data stream type (0 or more)
-    Packet context data type (opt.)
-    Event header data type (opt.)
-    First event context data type (opt.)
-    Event record type (0 or more)
-      Second event context data type (opt.)
-      Payload data type (opt.)
+  Packet header type (optional)
+  Clock types (0 or more)
+  Data stream types (0 or more)
+    Packet context type (optional)
+    Event header type (optional)
+    Event common context type (optional)
+    Event record types (0 or more)
+      Specific context type (optional)
+      Payload type (optional)
 ----
 
 The concept of a _type_ here is that it represents a set of possible
-values. For example, a 4-bit unsigned integer data type is the set of
-the integer values from 0 to 31, a clock type is a set of possible
-clocks, and a data stream type is a set of possible data streams.
+values. For example:
+
+* A 4-bit unsigned integer data type is the set of the integer values
+  from 0 to 31.
+
+* A clock type is a set of possible clocks.
+
+* A data stream type is a set of possible data streams.
+
 Therefore a trace type is a set of possible CTF traces.
 
 All the metadata objects are composed using unique pointers
@@ -60,13 +165,15 @@ properties. In the future, to optimize memory usage, the nodes could be
 unique while their content is shared, keeping the same API for getters.
 
 All the metadata objects are immutable. Once built, you cannot change
-them, and all the accessors are `const`. You always build a metadata
-object by providing everything it needs. On construction, some basic
-parameters are copied, and some, more heavy, are _moved_. For example,
-when you build a data stream type, you move a set of event record types
-to it. It does not matter that you don't have this set anymore as the
-caller because, like any metadata object, event record types are unique
-anyway, so the data stream type becomes the owner at this point.
+them, and all the accessors are `const`.
+
+You always build a metadata object by providing everything it needs. On
+construction, some basic parameters are copied, and some, more heavy,
+are _moved_. For example, when you build a data stream type, you move a
+set of event record types to it. It doesn't matter that you don't have
+this set anymore as the caller because, like any metadata object, event
+record types are unique anyway, so the data stream type becomes the
+owner at this point.
 
 There are a few exceptions to immutability to create weak links to
 parent nodes when you finally build a trace type. This is why, for
@@ -74,39 +181,43 @@ example, an event record type object has this member:
 
 [source,cpp]
 ----
-mutable const DataStreamType *_dataStreamType;
+mutable const DataStreamType *_dst;
 ----
 
-This also exists in `IntType`:
-
-[source,cpp]
-----
-mutable const ClockType *_mappedClkType = nullptr;
-----
-
-
-== TSDL parsing
+== TSDL document parsing
 
 While you can build a trace type object manually, the most interesting
 use case is probably to get one out of a standard TSDL metadata
 document.
 
-The `traceTypeFromMetadataText()` function does exactly that. This is a
-templated function which accepts two character iterators (begin and end)
-to synthesize a trace type out of the parsed text.
+The `traceFromMetadataText()` function does exactly that. This is a
+templated function which accepts two character iterators (beginning and
+end) to synthesize a trace object out of the parsed text.
 
-Note that `traceTypeFromMetadataText()` requires a _textual_
-(non-packetized) version of the document. If the TSDL content is
-packetized, you can use `createMetadataStream()` to get a metadata
-stream object which contains a metadata plain text accessor. A metadata
-stream object decodes all the content on construction and keeps it, so
-it can get heavy with a heavy metadata stream. That being said, note
-that a very large https://lttng.org/[LTTng] kernel trace's metadata
-stream is about 500{nbsp}kib: not the end of the world.
+A trace object has:
+
+* A trace type object.
+* A trace environment object.
+
+Although the environment entries are part of a TSDL document, they
+conceptually belong to a single trace, which is why they're not part of
+a yactfr trace type object. It's just a convenience to have an `env`
+block in the `metadata` file of a CTF trace as each CTF{nbsp}1.8 trace
+has its own `metadata` file.
+
+`traceFromMetadataText()` requires a _textual_ (non-packetized) version
+of the document. If the TSDL content is packetized, you can use
+`createMetadataStream()` to get a metadata stream object which contains
+a metadata plain text accessor.
+
+A metadata stream object decodes all the contents on construction and
+keeps it, so it can get heavy with a heavy metadata stream. That being
+said, note that a very large https://lttng.org/[LTTng] kernel trace
+metadata stream is about 500{nbsp}kib: not the end of the world.
 
 The generic parser is of the non-predictive recursive descent type.
 There is one method for each construct, and the parser can sometimes
-backtrack if it does not reach what it expects. Some parser logic is
+backtrack if it doesn't reach what it expects. Some parser logic is
 exposed (but in the `yactfr::internal` namespace) because of the generic
 character iterators, and some is part of the compiled library. The
 parser gets its tokens from a _string scanner_ which is just a
@@ -116,202 +227,122 @@ This is not the fastest parser in the world, but it's good enough
 considering the application: the main work is decoding data streams when
 reading a CTF trace, not parsing its metadata stream. The fact that it's
 a recursive descent parser (with helpers like an RAII lexical scope
-object) also makes it very straightforward to understand, debug, and
-modify.
+object) also makes it straightforward to understand, debug, and modify.
 
-
-[[packet-proc]]
+[[pkt-proc]]
 == Packet procedure
 
 A trace type gets translated into a _packet procedure_ once you call its
-`internal::TraceTypeImpl::packetProc()` accessor method. It is lazily
+`internal::TraceTypeImpl::packetProc()` accessor method. It's lazily
 built because the user could need a trace type without having to read
 data streams with it, for example to inspect a metadata stream file. The
 trace type implementation itself owns the packet procedure, and the
 packet procedure has a weak pointer to its owner.
 
-
 === Procedure, instructions
 
-A packet procedure is a tree of procedures used to decode specific parts
-of a data packet described by the packet procedure's trace type. A
-procedure is a sequence of instructions, some of which can contain a
+A packet procedure is a tree of _procedures_ used to decode specific
+parts of a data packet described by the trace type of the packet
+procedure.
+
+A procedure is a sequence of instructions, some of which can contain a
 subprocedure themselves. A yactfr <<vm,virtual machine>> (VM) is a
 packet procedure consumer.
 
 All the possible instructions are found in `proc.hpp`. They all inherit
 `internal::Instr`.
 
-There are instructions which "`ask`" the VM to align the current
-decoding cursor and then read data in a specific way. Examples are:
+There are instructions which require the VM to align the current
+decoding head and then read data in a specific way, for example:
 
-* `internal::InstrReadSignedInt`
-* `internal::InstrReadFloat`
-* `internal::InstrReadString`
+* `internal::ReadSIntInstr`
+* `internal::ReadFloatInstr`
+* `internal::ReadStrInstr`
 
-For compound types, a first `internal::InstrBeginRead*` instruction
+For compound types, a first `+internal::BeginRead*Instr+` instruction
 indicates to "`enter`" the compound data. This instruction usually
-contains a subprocedure to read its content. The last element of this
-subprocedure is usually an `internal::InstrEndReadCompound` instruction,
+contains a subprocedure to read its contents. The last element of this
+subprocedure is usually an `internal::EndReadCompoundInstr` instruction,
 which indicates the end of the subprocedure. This avoids a useless
 index-size comparison performed before fetching the next instruction in
 the VM.
 
-Other instructions are related to the last decoded integer, for
-example:
+Other instructions are related to the last decoded integer, for example:
 
-* `internal::InstrSetDataStreamId` follows a "`read integer`" (or "`read
-  enumeration`") instruction and asks the VM to set the set the current
+* `internal::SetDsIdInstr` follows a "`read integer`" (or "`read
+  enumeration`") instruction and indicates to the VM to set the current
   data stream ID to the last decoded integer value.
-* `internal::InstrSetPacketTotalSize` asks the VM to set the set the
-  expected total size of the current packet to the last decoded integer
-  value.
-* `internal::InstrUpdateClockValue` asks the VM to update a specific
-  clock's value with the value (or partial value) of the last decoded
-  integer.
 
-An `internal::PacketProcBuilder` object has the role of translating
-a trace type into a packet procedure.
+* `internal::SetPktTotalLenInstr` indicates to the VM to set the
+  expected total length of the current packet to the last decoded
+  integer value.
 
-An `internal::PacketProc` object contains:
+* `internal::UpdateClkValInstr` indicates to the VM to update the value
+  of a specific data stream clock with the value (or partial value) of
+  the last decoded integer.
+
+An `internal::PktProcBuilder` object translates a trace type to a packet
+procedure.
+
+An `internal::PktProc` object contains:
 
 * A preamble procedure, that is, which procedure to execute initially
   for any packet of the trace.
-* For each contained data stream type: an
-  `internal::DataStreamTypePacketProc` object.
 
-An `internal::DataStreamTypePacketProc` object contains:
+* For each contained data stream type: an `internal::DsPktProc` object.
+
+An `internal::DsPktProc` object contains:
 
 * A preamble procedure, that is, which procedure to execute after the
-  packet procedure's preamble for any packet described by this specific
-  data stream type.
-* An event record preamble procedure, that is, which procedure to
-  execute initially for any event record described by an event record
-  type which is part of this specific data stream type.
-* For each contained event record type: an
-  `internal::EventRecordTypeProc` object.
+  preable of the packet procedure for any packet of such a data stream.
 
-An `internal::EventRecordTypeProc` object contains the specific
-procedure to execute for a given event record type. This procedure is
-executed after executing the data stream type packet procedure's event
-record preamble procedure.
+* An event record preamble procedure, that is, which procedure to
+  execute initially for any event record which is part of such a data
+  stream.
+
+* For each contained event record type: an `internal::ErProc` object.
+
+An `internal::ErProc` object contains the specific procedure to execute
+for any event record of a given type. This procedure is executed after
+executing the event record preamble procedure of the data stream packet
+procedure.
 
 [TIP]
-To view a textual representation of a generated packet procedure tree,
-in a debug build, set the `YACTFR_DEBUG_PRINT_PROC` environment variable
-to `1` and create a trace type.
+To view a textual representation of a generated packet procedure tree in
+a debug build, set the `YACTFR_DEBUG_PRINT_PROC` environment variable to
+`1` and create a trace type.
 
+=== Value saving
 
-=== Value saving for future use
+There's a special instruction, `internal::SaveValInstr`, which requires
+the VM to save the value of the last decoded integer to a specific
+position (index) within an array of saved values.
 
-There's a special instruction named `internal::InstrSaveValue` which
-asks the VM to save the last decoded integer's value to a specific
-position (index) within a saved values array. This is how the VM knows
-where to dynamically find the length of a dynamic array or the tag of a
-variant, as the `internal::InstrBeginReadDynamicArray` and
-`internal::InstrBeginReadVariant` instructions contain a numeric
-position within this saved values array where to find the length or tag
-value.
+This is how the VM knows where to dynamically find the length of a
+dynamic array or the selector of a variant, as the
+`internal::BeginReadDynArrayInstr`, `internal::BeginReadVarUSelInstr`,
+and `internal::BeginReadVarSSelInstr` instructions contain a numeric
+position (index) within this saved value array where to find the length
+or selector value.
 
-`internal::PacketProcBuilder` contains the logic to insert
-`internal::InstrSaveValue` instructions at specific locations within the
-procedures and to assign appropriate positions to link "`read
-dynamic array/variant`" instructions to their length/tag values.
-
-We know that:
-
-. A dynamic array/variant can only have its length/tag value in a
-  _previous_ dynamic scope.
-. Lookups between event records or between packets are not supported by
-  CTF. This means that a dynamic array in event record{nbsp}B cannot
-  have its length in event record{nbsp}A.
-+
-This is one of the constraints which make yactfr possible, otherwise too
-many values would need to be saved, quickly exhausting available memory.
-
-Because of 2., we can reuse positions within the saved values array when
-the length/tag is found within an event record, because once a given
-event record is decoded, we don't care about the saved values that are
-exclusively used by dynamic arrays/variants found in this event record.
-
-Let me illustrate this. Consider the following metadata stream:
-
-----
-/* CTF 1.8 */
-
-typealias integer { size = 32; } := u32;
-
-trace {
-    major = 1;
-    minor = 8;
-    byte_order = le;
-    packet.header := struct {
-        u32 ph_len; // saved to position 0
-    };
-};
-
-stream {
-    packet.context := struct {
-        u32 pc_len; // saved to position 1
-        u32 seq_ph[trace.packet.header.ph_len]; // found at position 0
-    };
-    event.header := struct {
-        u32 eh_len; // saved to position 2
-        u32 seq_ph[trace.packet.header.ph_len]; // found at position 0
-        u32 id;
-    };
-};
-
-event {
-    id = 0;
-    fields := struct {
-        u32 len; // saved to position 3
-        u32 seq[len]; // found at position 3
-        u32 seq_pc[stream.packet.context.pc_len]; // found at position 1
-    };
-};
-
-event {
-    id = 1;
-    fields := struct {
-        u32 len1; // saved to position 4
-        u32 len2; // saved to position 3
-        u32 seq2[len2]; // found at position 3
-        u32 seq1[len1]; // found at position 4
-        u32 seq_eh[stream.event.header.eh_len]; // found at position 2
-    };
-};
-----
-
-A few notes:
-
-* `stream.event.header.eh_len` is saved to position 2 because it _can_
-  be used by at least one event record containing it. Therefore this
-  value is always available, even if it's not needed by some event
-  record types.
-* `stream.event.header.id` is not saved because it's not needed as
-  a dynamic array length.
-* `event.fields.len` (event record type{nbsp}0) and `event.fields.len2`
-  (event record type{nbsp}1) are both saved to position 3 because they
-  are only needed locally by the same event record. It is not possible
-  that an event record dynamic array/variant has its length/tag value in
-  a previous event record.
-* Event record type{nbsp}1: `event.fields.len1` is saved to a position
-  greater than the position where `event.fields.len2` is saved because
-  `event.fields.len2` is needed before `event.fields.len1`.
-
+`internal::PktProcBuilder` contains the logic to insert
+`internal::SaveValInstr` instructions at specific locations within the
+procedures and to assign appropriate positions to link "`read dynamic
+array`" and "`begin read variant`" instructions to their length/selector
+values.
 
 [[data-src-factory]]
 == Data source factory
 
 A _data source factory_ is an object which can build _data sources_.
-The `DataSourceFactory` can be extended by the library user to provide
+
+The library user can extend the `DataSourceFactory` class to provide
 custom data sources to element sequence iterators.
 
-When you build an element sequence, you need to pass a shared trace type
-and a shared data source factory. Each iterator created by the element
-sequence creates its own data source, making all iterators independent
-and usable in different threads without explicit locking.
+When you build an element sequence, you need to pass a trace type and a
+data source factory. Each iterator created by the element sequence
+creates its own data source, making all iterators independent and usable
+in different threads without explicit locking.
 
 The `MemoryMappedFileViewFactory` class ships with the yactfr library.
 When you build it, you pass a path to the data stream file to use. While
@@ -321,147 +352,145 @@ view_) has its own memory map on that shared file descriptor. Thanks to
 appropriate internal shared pointers, the shared file descriptor is
 never closed before all created data sources are destroyed.
 
-
 [[vm]]
 == Virtual machine
 
 The yactfr VM (`internal::Vm`) is the bridge between a
-<<packet-proc,packet procedure>> and a <<data-src-factory,data source>>.
+<<pkt-proc,packet procedure>> and a <<data-src-factory,data source>>.
+
 A VM _executes_ the appropriate instructions of a packet procedure,
 reading its data (when needed) from its own data source.
 
 The VM has an internal position (`internal::VmPos`). This is the whole
-VM's state, including:
+state of the VM, including:
 
 * Current offsets in the element sequence, current packet, and data
-  source's buffer.
+  source buffer.
 * Current state.
 * Last byte order.
 * Last decoded integer value.
-* Current packet procedure, data stream type packet procedure, and
-  event record type packet procedure.
-* Current expected packet total and content sizes.
+* Current packet procedure, data stream packet procedure, and
+  event record procedure.
+* Current expected packet total and content lengths.
 * Stack of frames containing the next instruction to execute and
   the parent procedure.
 * Array of saved values.
-* Array of clock values.
+* Array of data stream clock values.
 * Concrete element objects to set when executing the VM.
 
-The VM position is a different object because this is what is copied to
-a `ElementSequenceIteratorPosition` when calling
-`internal::Vm::savePosition()` (called from
-`ElementSequenceIterator::savePosition()`).
+The VM position is a different object because this is what
+`internal::Vm::savePosition()` (called from the public
+`ElementSequenceIterator::savePosition()`) copies to an
+`ElementSequenceIteratorPosition` object.
 
 On construction, the VM initializes an array of instruction handlers.
-This is a function table which is used to handle specific instructions
-according to their numeric kind. I'm only going to claim without numbers
-here that I tried using virtual calls and this is faster. It's also
-faster than a big `switch` statement. I didn't opt for computed gotos
-only because they are not portable and it would make an eventual
-portability effort more complicated.
+This is a function table which the VM uses to handle specific
+instructions according to their numeric kind. I'm only going to claim
+without numbers here that I tried using virtual calls and this approach
+is faster. It's also faster than a big `switch` statement. I didn't opt
+for computed gotos only because they're not portable and it would make
+an eventual portability effort more complicated.
 
-State handling however is an inline `switch` statement with
-about 15{nbsp}cases. This seems faster than a function table.
+State handling however is an inline `switch` statement with about
+15{nbsp}cases. This seems faster than a function table for some reason.
 
 The reason why there are instructions _and_ VM states is that the yactfr
-instruction set is not so general that it's enough by itself. This would
-result in many useless function calls in some situations. For example,
-the `internal::InstrBeginReadStaticArray` asks the VM to start reading a
+instruction set is not general enough. This would result in many useless
+function calls in some situations. For example, the
+`internal::BeginReadStaticArrayInstr` requires the VM to start reading a
 static array. This instruction object contains the length of the static
 array, that is, the number of items to read next. The static array
 reading instruction contains a subprocedure which only contains which
-instruction to execute to read one array element. It does not contain
-register decrementation, comparison, and jump instructions like you
-would find in a typical assembly loop. Instead, the VM's state is
-changed (to `VmState::EXEC_ARRAY_INSTR`) so that it knows that it's
+instruction to execute to read a single array element. It doesn't
+contain register decrementation, comparison, and jump instructions like
+you would find in a typical assembly loop. Instead, the state of the VM
+is changed (to `VmState::EXEC_ARRAY_INSTR`) so that it knows that it's
 currently decoding an array at this stack level, and the VM position
 contains the number of remaining elements. The decrementation,
 comparison, and stack popping when it's done are implicit. This proves
 faster than executing three instructions for each array item.
 
-
 === Integer decoding
 
 The VM decodes "`standard`" integers, that is, integers which are at
-least aligned on a byte and have sizes of 8, 16, 32, or 64, using the
+least aligned on a byte and have lengths of 8, 16, 32, or 64, using the
 inline functions in `std-int-reader.hpp`. Those use `std::memcpy()` with
-a size known at build time and `Boost.Endian` which generate very
-efficient CPU instructions. Those integers are typically the most
-commonly found in a data stream.
+a length known at build time and `Boost.Endian` which generate efficient
+CPU instructions the last time I checked. Those integers are typically
+the most commonly found in a data stream.
 
 The VM decodes all the other integers with the methods of
 `int-reader.hpp`. This file is generated by `tools/genintreaderfile.py`
 and contains the exact statements needed to decode all the possible
-integers up to a size of 64{nbsp}bits. Function tables are created
+integers up to a length of 64{nbsp}bits. Function tables are created
 to select:
 
-* The integer's size in bits (1 to 64).
+* The length of the integer in bits (1 to 64).
 * The current bit position within the first byte of data (0 to 7).
-* The byte order (little endian, big endian).
+* The byte order (little-endian, big-endian).
 * The signedness (unsigned, signed).
 
 The parameters above yield 2048 permutations. However, my assumption is
 that during the decoding process, only a few of those functions are
-called, so they should stay cached. This is another place where computed
-gotos would probably prove useful.
-
+called, so they should stay in cache. This is another place where
+computed gotos would probably prove useful.
 
 == Element sequence iterator
 
 An element sequence iterator object and its <<vm,VM>> are tightly
-coupled. The VM knows its owning iterator because, when it executes one
-or more instructions and the current element changes, it sets the
-iterator's `_curElement` member to the address of one of its already
-allocated and filled elements (located in the VM position object). It
-also sets the iterator's offset and mark.
+coupled.
 
-The element sequence iterator's _mark_ is the index of the current
+The VM knows its owning iterator because, when it executes one or more
+instructions and the current element changes, it sets the `_curElem`
+member of the iterator to the address of one of its already allocated
+and filled elements (located within the VM position object). It also
+sets the offset and mark of the iterator.
+
+The _mark_ of the element sequence iterator is the index of the current
 element within its packet. In combination with the current offset (bits
 from the beginning of the element sequence), this is enough to compare
 two iterators which were created from the same element sequence without
-relying on the VM. Therefore the iterator's comparison operators are
-inlined, just as `+operator*()+` and `+operator->()+`.
+relying on the VM. Therefore the comparison operators of the iterator
+are inlined, just as `+operator*()+` and `+operator->()+`.
 
 An "`end`" (passed-the-end) element sequence iterator has its offset set
 to `ElementSequenceIterator::_END_OFFSET` which is the maximum value for
-the offset's type, and its mark set to 0. Therefore any iterator which
-is not passed the end is less than a passed-the-end iterator.
+the offset type, and its mark set to{nbsp}0. Therefore, any iterator
+which isn't passed the end is less than a passed-the-end iterator.
 
-It is possible that an "`end`" iterator has no VM because its
-constructor won't allocate one when it's directly built as a
-passed-the-end iterator by `ElementSequence::end()`. However, all
-iterators contain:
+It's possible that an "`end`" iterator has no VM because its constructor
+won't allocate one when it's directly built as a passed-the-end iterator
+by `ElementSequence::end()`. However, all iterators contain:
 
-* The shared trace type of its creating element sequence.
-* The shared data source factory of its creating element sequence.
+* The trace type of its creating element sequence.
+* The data source factory of its creating element sequence.
 
 Those are enough to create a new VM when necessary, for example when
-assigning a non-end iterator to an end iterator:
+assigning a "`non-end`" iterator to an "`end`" iterator:
 
 [source,cpp]
 ----
-auto begin = std::begin(mySeq); // has a VM
-auto end = std::end(mySeq);     // has no VM
+auto beginIter = mySeq.begin(); // has a VM
+auto endIter = mySeq.end();     // has no VM
 
-end = begin;                    // creates a copy of the other VM
+endIter = beginIter;            // creates a copy of the other VM
 ----
 
 An element sequence iterator can seek a packet within the data of its
 data source known to be located at a specific offset in bytes. When you
-call `ElementSequenceIterator::seekPacket()`, the iterator's VM's
-position and buffers are reset. There can't be any validation that this
+call `ElementSequenceIterator::seekPacket()`, it resets the VM position
+of the iterator and the buffers. There can't be any validation that this
 is indeed the beginning of a packet: it's the library user's
 responsibility.
-
 
 == Element sequence iterator position
 
 Some use cases can require that you need a lot of iterators from the
 same element sequence at the same time, but only one at a time is used.
-Remember that the iterator's <<vm,VM>> has its own
+Remember that the <<vm,VM>> of an iterator has its own
 <<data-src-factory,data source>>, and this means active resources. To
-avoid having too much active data sources, yactfr offers the element
-sequence iterator position API. It is pretty simple to use:
+avoid having too many active data sources, yactfr offers the element
+sequence iterator position API. It's pretty simple to use:
 
 [source,cpp]
 ----
@@ -472,11 +501,12 @@ myIter.savePosition(pos);
 myIter.restorePosition(pos);
 ----
 
-An element sequence iterator position does not contain any data source.
+An element sequence iterator position doesn't contain any data source.
 It contains:
 
 * A copy of the VM position when
   `ElementSequenceIterator::savePosition()` was called.
+
 * The offset, mark, and current element of the iterator when
   `ElementSequenceIterator::savePosition()` was called.
 

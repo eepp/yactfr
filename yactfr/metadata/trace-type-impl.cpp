@@ -1,6 +1,4 @@
 /*
- * CTF trace type implementation.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -10,579 +8,289 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
-#include <sstream>
-#include <functional>
+#include <cassert>
 
-#include <yactfr/metadata/enum-type.hpp>
-#include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/static-array-type.hpp>
-#include <yactfr/metadata/dynamic-array-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/trace-type-env.hpp>
-#include <yactfr/metadata/io.hpp>
 #include <yactfr/aliases.hpp>
 
 #include "trace-type-impl.hpp"
-#include "field-resolver.hpp"
 #include "../proc.hpp"
-#include "../packet-proc-builder.hpp"
+#include "../pkt-proc-builder.hpp"
 #include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {
 
-TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion,
-                             const unsigned int minorVersion,
-                             const boost::optional<boost::uuids::uuid>& uuid,
-                             DataType::UP packetHeaderType,
-                             std::unique_ptr<const TraceTypeEnv> env,
-                             ClockTypeSet&& clockTypes,
-                             DataStreamTypeSet&& dataStreamTypes,
-                             const TraceType *traceType) :
+TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int minorVersion,
+                             boost::optional<boost::uuids::uuid> uuid,
+                             StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
+                             DataStreamTypeSet&& dsts, const TraceType& traceType) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
-    _uuid {uuid},
-    _packetHeaderType {std::move(packetHeaderType)},
-    _env {env ? std::move(env) : std::make_unique<const TraceTypeEnv>()},
-    _clockTypes {std::move(clockTypes)},
-    _dataStreamTypes {std::move(dataStreamTypes)},
-    _traceType {traceType}
+    _uuid {std::move(uuid)},
+    _pktHeaderType {std::move(pktHeaderType)},
+    _clkTypes {std::move(clkTypes)},
+    _dsts {std::move(dsts)},
+    _traceType {&traceType}
 {
-    utils::throwIfScopeTypeIsNotStruct(_packetHeaderType.get(),
-                                       "Packet header");
     this->_buildDstMap();
-    this->_validate(traceType);
+    this->_createParentLinks(traceType);
+    this->_setTypeDeps();
 }
 
 void TraceTypeImpl::_buildDstMap()
 {
-    for (auto& dstUp : _dataStreamTypes) {
-        if (_idsToDataStreamTypes.find(dstUp->id()) != std::end(_idsToDataStreamTypes)) {
-            std::ostringstream ss;
-
-            ss << "Invalid trace type: duplicate data stream type with ID " <<
-                  dstUp->id() << ".";
-            throw InvalidMetadata {ss.str()};
-        }
-
-        _idsToDataStreamTypes[dstUp->id()] = dstUp.get();
+    for (auto& dstUp : _dsts) {
+        assert(_idsToDsts.find(dstUp->id()) == _idsToDsts.end());
+        _idsToDsts[dstUp->id()] = dstUp.get();
     }
 }
 
-/*
- * TODO:
- *
- * * Validate that all variant and dynamic array FTs point to something
- *   that COULD exist at read time.
- */
-void TraceTypeImpl::_validate(const TraceType *traceType)
+const DataStreamType *TraceTypeImpl::findDst(const TypeId id) const noexcept
 {
-    this->_validateSpecialFields();
-    this->_validateUniqueClockTypes();
-    this->_validateMappedClockTypeNames();
-    this->_createParentLinks(traceType);
-    this->_resolveDynamicTypes();
-}
+    auto it = _idsToDsts.find(id);
 
-void TraceTypeImpl::_validateSpecialFields()
-{
-    if (_packetHeaderType && _packetHeaderType->isStructType()) {
-        auto pktType = _packetHeaderType->asStructType();
-
-        // validate `magic` field
-        auto magicType = pktType->findTypeByDisplayName("magic");
-
-        if (magicType) {
-            if (!magicType->isUnsignedIntType() || magicType->asIntType()->size() != 32) {
-                throw InvalidMetadata {
-                    "Invalid trace type: expecting 32-bit unsigned integer "
-                    "type as `magic` field of packet header type."
-                };
-            }
-
-            // must be the first field
-            const auto& firstField = (*pktType)[0];
-
-            // use name because integer field type pointer is probably shared
-            if (firstField.displayName() != "magic") {
-                throw InvalidMetadata {
-                    "Invalid trace type: the packet header type's "
-                    "`magic` field, when it exists, must be the first field."
-                };
-            }
-        }
-
-        // validate `stream_id`
-        auto streamIdType = pktType->findTypeByDisplayName("stream_id");
-
-        if (streamIdType && !streamIdType->isUnsignedIntType()) {
-            throw InvalidMetadata {
-                "Invalid trace type: expecting unsigned integer type "
-                "as `stream_id` field of packet header type."
-            };
-        }
-
-        // validate `stream_instance_id`
-        auto streamInstIdType = pktType->findTypeByDisplayName("stream_instance_id");
-
-        if (streamInstIdType && !streamInstIdType->isUnsignedIntType()) {
-            throw InvalidMetadata {
-                "Invalid trace type: expecting unsigned integer type "
-                "as `stream_instance_id` field of "
-                "packet header type."
-            };
-        }
-
-        // validate `uuid`
-        auto uuidType = pktType->findTypeByDisplayName("uuid");
-
-        if (uuidType) {
-            if (!uuidType->isArrayType()) {
-                throw InvalidMetadata {
-                    "Invalid trace type: expecting array "
-                    "type as `uuid` field of packet header type."
-                };
-            }
-
-            auto uuidArrayFt = uuidType->asStaticArrayType();
-
-            if (!uuidArrayFt || uuidArrayFt->length() != 16 ||
-                    !uuidArrayFt->elemType().isUnsignedIntType() ||
-                    uuidArrayFt->elemType().asIntType()->size() != 8 ||
-                    uuidArrayFt->elemType().asIntType()->alignment() != 8) {
-                throw InvalidMetadata {
-                    "Invalid trace type: expecting array "
-                    "type of 16 8-bit aligned, 8-bit unsigned integer "
-                    "types as `uuid` field of packet header type."
-                };
-            }
-
-            if (!_uuid) {
-                throw InvalidMetadata {
-                    "Invalid trace type: packet header type contains a "
-                    "UUID field, but trace type has no UUID."
-                };
-            }
-        }
-    }
-
-    if (_dataStreamTypes.size() > 1) {
-        // check that `stream_id` exists in the packet header type
-        if (!_packetHeaderType) {
-            throw InvalidMetadata {
-                "Invalid trace type: expecting a packet header type "
-                "since this trace type contains more than one data stream type."
-            };
-        }
-
-        if (_packetHeaderType->isStructType()) {
-            auto streamIdType = _packetHeaderType->asStructType()->findTypeByDisplayName("stream_id");
-
-            if (!streamIdType) {
-                throw InvalidMetadata {
-                    "Invalid trace type: expecting `stream_id` field in packet "
-                    "header type since this trace type contains more than "
-                    "one data stream type."
-                };
-            }
-        }
-    }
-}
-
-void TraceTypeImpl::_validateUniqueClockTypes()
-{
-    for (auto& clkTypeUp : _clockTypes) {
-        if (_clockTypes.count(clkTypeUp) != 1) {
-            std::ostringstream ss;
-
-            ss << "Invalid trace type: duplicate clock type with name `" <<
-                  clkTypeUp->name() << "`.";
-            throw InvalidMetadata {ss.str()};
-        }
-    }
-}
-
-void TraceTypeImpl::_stackPush(const _StackFrame& frame)
-{
-    _resolveState.stack.push_back(frame);
-}
-
-void TraceTypeImpl::_stackPop()
-{
-    assert(!_resolveState.stack.empty());
-    _resolveState.stack.pop_back();
-}
-
-TraceTypeImpl::_StackFrame& TraceTypeImpl::_stackTop()
-{
-    assert(!_resolveState.stack.empty());
-    return _resolveState.stack.back();
-}
-
-FieldResolver::Entry TraceTypeImpl::_getEntryAt(const Scope scope,
-                                                const FieldResolver::Position& pos)
-{
-    FieldResolver::Entry entry;
-
-    if (scope == Scope::PACKET_HEADER) {
-        entry.type = _resolveState.packetHeaderType;
-    } else if (scope == Scope::PACKET_CONTEXT) {
-        entry.type = _resolveState.packetContextType;
-    } else if (scope == Scope::EVENT_RECORD_HEADER) {
-        entry.type = _resolveState.eventRecordHeaderType;
-    } else if (scope == Scope::EVENT_RECORD_FIRST_CONTEXT) {
-        entry.type = _resolveState.eventRecordFirstContextType;
-    } else if (scope == Scope::EVENT_RECORD_SECOND_CONTEXT) {
-        entry.type = _resolveState.eventRecordSecondContextType;
-    } else if (scope == Scope::EVENT_RECORD_PAYLOAD) {
-        entry.type = _resolveState.eventRecordPayloadType;
-    }
-
-    if (!entry.type) {
-        return FieldResolver::Entry {};
-    }
-
-    auto indexToCheckIt = std::begin(pos);
-
-    while (indexToCheckIt != std::end(pos)) {
-        if (entry.type->isStructType()) {
-            auto structType = entry.type->asStructType();
-
-            if (!structType->hasField(*indexToCheckIt)) {
-                return FieldResolver::Entry {};
-            }
-
-            auto& field = (*structType)[*indexToCheckIt];
-
-            entry.type = &field.type();
-            entry.name = &field.name();
-        } else if (entry.type->isVariantType()) {
-            auto variantType = entry.type->asVariantType();
-
-            if (!variantType->hasOption(*indexToCheckIt)) {
-                return FieldResolver::Entry {};
-            }
-
-            auto& option = (*variantType)[*indexToCheckIt];
-
-            entry.type = &option.type();
-            entry.name = &option.name();
-        } else if (entry.type->isArrayType()) {
-            auto arrayType = entry.type->asArrayType();
-
-            if (*indexToCheckIt != -1ULL) {
-                return FieldResolver::Entry {};
-            }
-
-            entry.type = &arrayType->elemType();
-            entry.name = nullptr;
-        } else if (entry.type->isDynamicArrayType()) {
-            auto seqType = entry.type->asDynamicArrayType();
-
-            if (*indexToCheckIt != -1ULL) {
-                return FieldResolver::Entry {};
-            }
-
-            entry.type = &seqType->elemType();
-            entry.name = nullptr;
-        } else {
-            return FieldResolver::Entry {};
-        }
-
-        ++indexToCheckIt;
-    }
-
-    return entry;
-}
-
-FieldResolver::Position TraceTypeImpl::_curPos()
-{
-    FieldResolver::Position pos;
-
-    for (const auto& frame : _resolveState.stack) {
-        pos.push_back(frame.curChildIndex);
-    }
-
-    return pos;
-}
-
-const ClockType *TraceTypeImpl::findClockType(const std::string& name) const
-{
-    // decadent linear search
-    for (auto& clockTypeUp : _clockTypes) {
-        if (clockTypeUp->name() == name) {
-            return clockTypeUp.get();
-        }
-    }
-
-    return nullptr;
-}
-
-const DataStreamType *TraceTypeImpl::findDataStreamType(const TypeId id) const
-{
-    auto it = _idsToDataStreamTypes.find(id);
-
-    if (it == std::end(_idsToDataStreamTypes)) {
+    if (it == _idsToDsts.end()) {
         return nullptr;
     }
 
     return it->second;
 }
 
-void TraceTypeImpl::_createParentLinks(const TraceType *traceType)
+void TraceTypeImpl::_createParentLinks(const TraceType& traceType) const
 {
-    for (const auto& dstUp : _dataStreamTypes) {
-        dstUp->_setTraceType(traceType);
+    for (const auto& dst : _dsts) {
+        dst->_setTraceType(traceType);
 
-        for (const auto& ertUp : dstUp->eventRecordTypes()) {
-            ertUp->_setDataStreamType(dstUp.get());
+        for (const auto& ert : dst->eventRecordTypes()) {
+            ert->_setDst(*dst);
         }
     }
 }
 
-void TraceTypeImpl::_validateMappedClockTypeNames()
+class SetTypeDepsDtVisitor :
+    public DataTypeVisitor
 {
-    this->_validateMappedClockTypeName(_packetHeaderType.get());
-
-    for (const auto& dstUp : _dataStreamTypes) {
-        this->_validateMappedClockTypeName(dstUp->packetContextType());
-        this->_validateMappedClockTypeName(dstUp->eventRecordHeaderType());
-        this->_validateMappedClockTypeName(dstUp->eventRecordFirstContextType());
-
-        for (const auto& ertUp : dstUp->eventRecordTypes()) {
-            this->_validateMappedClockTypeName(ertUp->secondContextType());
-            this->_validateMappedClockTypeName(ertUp->payloadType());
-        }
-    }
-}
-
-void TraceTypeImpl::_validateMappedClockTypeName(const DataType *type)
-{
-    if (!type) {
-        return;
+public:
+    explicit SetTypeDepsDtVisitor(const TraceTypeImpl& traceType,
+                                  const DataStreamType * const curDst = nullptr,
+                                  const EventRecordType * const curErt = nullptr) :
+        _traceType {&traceType},
+        _curDst {curDst},
+        _curErt {curErt}
+    {
     }
 
-    if (type->isStructType()) {
-        for (const auto& field : type->asStructType()->fields()) {
-            this->_validateMappedClockTypeName(&field->type());
+    void visit(const StructureType& structType) override
+    {
+        for (const auto& memberType : structType) {
+            memberType->type().accept(*this);
         }
-    } else if (type->isArrayType()) {
-        this->_validateMappedClockTypeName(&type->asArrayType()->elemType());
-    } else if (type->isDynamicArrayType()) {
-        this->_validateMappedClockTypeName(&type->asDynamicArrayType()->elemType());
-    } else if (type->isVariantType()) {
-        for (const auto& option : type->asVariantType()->options()) {
-            this->_validateMappedClockTypeName(&option->type());
+    }
+
+    void visit(const StaticArrayType& dt) override
+    {
+        this->_visitArrayType(dt);
+    }
+
+    void visit(const StaticTextArrayType& dt) override
+    {
+        this->_visitArrayType(dt);
+    }
+
+    void visit(const DynamicArrayType& dt) override
+    {
+        this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dynArrayTypeLenTypes(dt));
+        this->_visitArrayType(dt);
+    }
+
+    void visit(const DynamicTextArrayType& dt) override
+    {
+        this->visit(static_cast<const DynamicArrayType&>(dt));
+    }
+
+    void visit(const VariantWithUnsignedSelectorType& dt) override
+    {
+        this->_visitVarType(dt);
+    }
+
+    void visit(const VariantWithSignedSelectorType& dt) override
+    {
+        this->_visitVarType(dt);
+    }
+
+private:
+    void _visitArrayType(const ArrayType& arrayType)
+    {
+        // currently being visited
+        _current.insert({&arrayType, 0});
+
+        arrayType.elementType().accept(*this);
+
+        // not visited anymore
+        _current.erase(&arrayType);
+    }
+
+    template <typename VarTypeT>
+    void _visitVarType(const VarTypeT& varType)
+    {
+        this->_setTypeDeps(varType.selectorLocation(), TraceTypeImpl::varTypeSelTypes(varType));
+
+        for (auto i = 0U; i < varType.size(); ++i) {
+            // currently being visited
+            _current[&varType] = i;
+
+            varType[i].type().accept(*this);
         }
-    } else if (type->isIntType()) {
-        auto& mappedClockTypeName = type->asIntType()->mappedClockTypeName();
 
-        if (mappedClockTypeName) {
-            auto mappedClockType = this->findClockType(*mappedClockTypeName);
+        // not visited anymore
+        _current.erase(&varType);
+    }
 
-            if (!mappedClockType) {
-                std::ostringstream ss;
+    template <typename VarTypeT>
+    void _setTypeDepsVar(const VarTypeT& dt, const DataLocation& loc,
+                         const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
+    {
+        const auto it = _current.find(&dt);
 
-                ss << "Cannot find mapped clock type named `" <<
-                      *mappedClockTypeName << "`.";
-                throw InvalidMetadata {ss.str()};
+        if (it == _current.end()) {
+            // fan out (consider all options)
+            for (auto& opt : dt.options()) {
+                this->_setTypeDeps(opt->type(), loc, locIt, dts);
+            }
+        } else {
+            // follow current option only
+            this->_setTypeDeps(dt[it->second].type(), loc, locIt, dts);
+        }
+    }
+
+    void _setTypeDeps(const DataType& dt, const DataLocation& loc,
+                      const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
+    {
+        if (dt.isIntegerType()) {
+            assert(locIt == loc.pathElements().end());
+            dts.insert(&dt);
+        } else if (dt.isStructureType()) {
+            const auto memberType = dt.asStructureType()[*locIt];
+
+            assert(memberType);
+            this->_setTypeDeps(memberType->type(), loc, locIt + 1, dts);
+        } else if (dt.isArrayType()) {
+            assert(_current.find(&dt) != _current.end());
+            this->_setTypeDeps(dt.asArrayType().elementType(), loc, locIt, dts);
+        } else if (dt.isVariantWithUnsignedSelectorType()) {
+            this->_setTypeDepsVar(dt.asVariantWithUnsignedSelectorType(), loc, locIt, dts);
+        } else if (dt.isVariantWithSignedSelectorType()) {
+            this->_setTypeDepsVar(dt.asVariantWithSignedSelectorType(), loc, locIt, dts);
+        } else {
+            std::abort();
+        }
+    }
+
+    void _setTypeDeps(const DataLocation& loc, DataTypeSet& dts) const
+    {
+        const DataType *dt = nullptr;
+
+        switch (loc.scope()) {
+        case Scope::PACKET_HEADER:
+            dt = _traceType->pktHeaderType();
+            break;
+
+        case Scope::PACKET_CONTEXT:
+            assert(_curDst);
+            dt = _curDst->packetContextType();
+            break;
+
+        case Scope::EVENT_RECORD_HEADER:
+            assert(_curDst);
+            dt = _curDst->eventRecordHeaderType();
+            break;
+
+        case Scope::EVENT_RECORD_COMMON_CONTEXT:
+            assert(_curDst);
+            dt = _curDst->eventRecordCommonContextType();
+            break;
+
+        case Scope::EVENT_RECORD_SPECIFIC_CONTEXT:
+            assert(_curErt);
+            dt = _curErt->specificContextType();
+            break;
+
+        case Scope::EVENT_RECORD_PAYLOAD:
+            assert(_curErt);
+            dt = _curErt->payloadType();
+            break;
+
+        default:
+            std::abort();
+        }
+
+        assert(dt);
+        this->_setTypeDeps(*dt, loc, loc.begin(), dts);
+    }
+
+private:
+    const TraceTypeImpl * const _traceType;
+    const DataStreamType * const _curDst;
+    const EventRecordType * const _curErt;
+
+    /*
+     * Option/element indexes of currently visited variant and dynamic
+     * array types (always 0 for a dynamic array type).
+     */
+    std::unordered_map<const DataType *, Index> _current;
+};
+
+void TraceTypeImpl::_setTypeDeps() const
+{
+    if (_pktHeaderType) {
+        SetTypeDepsDtVisitor visitor {*this};
+
+        _pktHeaderType->accept(visitor);
+    }
+
+    for (auto& dst : _dsts) {
+        if (dst->packetContextType()) {
+            SetTypeDepsDtVisitor visitor {*this, dst.get()};
+
+            dst->packetContextType()->accept(visitor);
+        }
+
+        if (dst->eventRecordHeaderType()) {
+            SetTypeDepsDtVisitor visitor {*this, dst.get()};
+
+            dst->eventRecordHeaderType()->accept(visitor);
+        }
+
+        if (dst->eventRecordCommonContextType()) {
+            SetTypeDepsDtVisitor visitor {*this, dst.get()};
+
+            dst->eventRecordCommonContextType()->accept(visitor);
+        }
+
+        for (auto& ert : dst->eventRecordTypes()) {
+            if (ert->specificContextType()) {
+                SetTypeDepsDtVisitor visitor {*this, dst.get(), ert.get()};
+
+                ert->specificContextType()->accept(visitor);
             }
 
-            type->asIntType()->_mappedClockType(*mappedClockType);
+            if (ert->payloadType()) {
+                SetTypeDepsDtVisitor visitor {*this, dst.get(), ert.get()};
+
+                ert->payloadType()->accept(visitor);
+            }
         }
     }
 }
 
-void TraceTypeImpl::_validateVariantTypeTagType(const DataType *variantType,
-                                                const DataType *tagType)
+const PktProc& TraceTypeImpl::pktProc() const
 {
-    const VariantType *asVariantType = variantType->asVariantType();
-
-    if (!tagType->isEnumType()) {
-        std::ostringstream ss;
-
-        ss << "Variant type's tag type is not an enumeration type: `" <<
-              asVariantType->tag() << "`.";
-
-        throw InvalidMetadata {ss.str()};
+    if (!_pktProc) {
+        _pktProc = internal::PktProcBuilder {*_traceType}.releasePktProc();
     }
 
-    std::unordered_set<std::string> memberNames;
-
-    // TODO: use template here
-    if (tagType->isSignedEnumType()) {
-        const SignedEnumType *asEnumType = tagType->asSignedEnumType();
-
-        for (const auto& nameMemberPair : asEnumType->members()) {
-            memberNames.insert(nameMemberPair.first);
-        }
-    } else {
-        const UnsignedEnumType *asEnumType = tagType->asUnsignedEnumType();
-
-        for (const auto& nameMemberPair : asEnumType->members()) {
-            memberNames.insert(nameMemberPair.first);
-        }
-    }
-
-    for (const auto& memberName : memberNames) {
-        if (!asVariantType->hasOption(memberName)) {
-            std::ostringstream ss;
-
-            ss << "Variant type's tag type contains a member name which is not a variant type's option: `" <<
-                  memberName << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-    }
-}
-
-void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
-                                               const DataType *type,
-                                               const FieldResolver& fieldResolver)
-{
-    // resolve dynamic array and variant types first
-    if (type->isDynamicArrayType()) {
-        auto dynamicArrayType = type->asDynamicArrayType();
-        const auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                                  dynamicArrayType->length());
-
-        if (!result.type) {
-            std::ostringstream ss;
-
-            ss << "Cannot find the length type of dynamic array type: `" <<
-                  toString(dynamicArrayType->length()) << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-
-        if (!result.type->isUnsignedIntType()) {
-            std::ostringstream ss;
-
-            ss << "Dynamic array type's length type is not an unsigned integer type: `" <<
-                  toString(dynamicArrayType->length()) << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-
-        dynamicArrayType->_lengthType = result.type;
-    } else if (type->isVariantType()) {
-        auto variantType = type->asVariantType();
-        const auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                                  variantType->tag());
-
-        if (!result.type) {
-            std::ostringstream ss;
-
-            ss << "Cannot find the tag type of variant type: `" <<
-                  toString(type->asVariantType()->tag()) << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-
-        this->_validateVariantTypeTagType(type, result.type);
-        variantType->_tagType = result.type;
-    }
-
-    // recurse
-    if (type->isStructType()) {
-        this->_stackPush(_StackFrame {type, 0});
-
-        auto structType = type->asStructType();
-
-        for (Index index = 0; index < structType->fields().size(); ++index) {
-            this->_stackTop().curChildIndex = index;
-
-            auto childType = &(*structType)[index].type();
-
-            this->_resolveDynamicTypeInScope(scope, childType, fieldResolver);
-        }
-
-        this->_stackPop();
-    } else if (type->isArrayType()) {
-        this->_stackPush(_StackFrame {type, -1ULL});
-        this->_resolveDynamicTypeInScope(scope, &type->asArrayType()->elemType(),
-                                         fieldResolver);
-        this->_stackPop();
-    } else if (type->isVariantType()) {
-        auto variantType = type->asVariantType();
-
-        this->_stackPush(_StackFrame {type, 0});
-
-        for (Index index = 0; index < variantType->options().size(); ++index) {
-            this->_stackTop().curChildIndex = index;
-
-            auto childType = &(*variantType)[index].type();
-
-            this->_resolveDynamicTypeInScope(scope, childType, fieldResolver);
-        }
-
-        this->_stackPop();
-    }
-}
-
-void TraceTypeImpl::_resolveDynamicTypesInScope(const Scope scope,
-                                                 const DataType *type,
-                                                 const FieldResolver& fieldResolver)
-{
-    if (!type) {
-        return;
-    }
-
-    this->_resolveDynamicTypeInScope(scope, type, fieldResolver);
-}
-
-void TraceTypeImpl::_resolveDynamicTypes()
-{
-    FieldResolver resolver {
-        std::bind(&TraceTypeImpl::_getEntryAt, this, std::placeholders::_1, std::placeholders::_2)
-    };
-
-    _resolveState.packetHeaderType = _packetHeaderType.get();
-    this->_resolveDynamicTypesInScope(Scope::PACKET_HEADER,
-                                      _resolveState.packetHeaderType,
-                                      resolver);
-
-    for (const auto& dstUp : _dataStreamTypes) {
-        _resolveState.packetContextType = dstUp->packetContextType();
-        _resolveState.eventRecordHeaderType = nullptr;
-        _resolveState.eventRecordFirstContextType = nullptr;
-        _resolveState.eventRecordSecondContextType = nullptr;
-        _resolveState.eventRecordPayloadType = nullptr;
-        this->_resolveDynamicTypesInScope(Scope::PACKET_CONTEXT,
-                                          _resolveState.packetContextType,
-                                          resolver);
-        _resolveState.eventRecordHeaderType = dstUp->eventRecordHeaderType();
-        this->_resolveDynamicTypesInScope(Scope::EVENT_RECORD_HEADER,
-                                          _resolveState.eventRecordHeaderType,
-                                          resolver);
-        _resolveState.eventRecordFirstContextType = dstUp->eventRecordFirstContextType();
-        this->_resolveDynamicTypesInScope(Scope::EVENT_RECORD_FIRST_CONTEXT,
-                                          _resolveState.eventRecordFirstContextType,
-                                          resolver);
-
-        for (const auto& ertUp : dstUp->eventRecordTypes()) {
-            _resolveState.eventRecordSecondContextType = ertUp->secondContextType();
-            _resolveState.eventRecordPayloadType = nullptr;
-            this->_resolveDynamicTypesInScope(Scope::EVENT_RECORD_SECOND_CONTEXT,
-                                              _resolveState.eventRecordSecondContextType,
-                                              resolver);
-            _resolveState.eventRecordPayloadType = ertUp->payloadType();
-            this->_resolveDynamicTypesInScope(Scope::EVENT_RECORD_PAYLOAD,
-                                              _resolveState.eventRecordPayloadType,
-                                              resolver);
-        }
-    }
-}
-
-const PacketProc& TraceTypeImpl::packetProc() const
-{
-    if (!_packetProc) {
-        _packetProc = internal::PacketProcBuilder {*_traceType}.takePacketProc();
-    }
-
-    return *_packetProc;
+    return *_pktProc;
 }
 
 } // namespace internal

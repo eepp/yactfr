@@ -1,38 +1,24 @@
 /*
- * Packetized metadata stream.
- *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  Packetized metadata stream and related exception.
-
-@ingroup metadata_stream
-*/
-
 #ifndef _YACTFR_METADATA_PACKETIZED_METADATA_STREAM_HPP
 #define _YACTFR_METADATA_PACKETIZED_METADATA_STREAM_HPP
 
-// for std::string
 #include <string>
-
-// for boost::uuids::uuid
 #include <boost/uuid/uuid.hpp>
 
-// for Size
 #include "../aliases.hpp"
-
-// for ByteOrder
-#include "byte-order.hpp"
+#include "bo.hpp"
 
 namespace yactfr {
 
 /*!
-@brief  Packetized metadata stream.
+@brief
+    Packetized metadata stream.
 
 @ingroup metadata_stream
 */
@@ -42,19 +28,17 @@ class PacketizedMetadataStream final :
     friend std::unique_ptr<const MetadataStream> createMetadataStream(std::istream&);
 
 private:
-    explicit PacketizedMetadataStream(std::string&& text,
-                                      Size packetCount,
-                                      unsigned int majorVersion,
-                                      unsigned int minorVersion,
-                                      ByteOrder byteOrder,
-                                      const boost::uuids::uuid& uuid);
-    ~PacketizedMetadataStream();
+    explicit PacketizedMetadataStream(std::string&& text, Size pktCount, unsigned int majorVersion,
+                                      unsigned int minorVersion, ByteOrder bo,
+                                      boost::uuids::uuid uuid);
 
 public:
+    ~PacketizedMetadataStream();
+
     /// Number of packets in this metadata stream.
     Size packetCount() const noexcept
     {
-        return _packetCount;
+        return _pktCount;
     }
 
     /// Major version number of this metadata stream.
@@ -72,7 +56,7 @@ public:
     /// Byte order of this metadata stream.
     ByteOrder byteOrder() const noexcept
     {
-        return _byteOrder;
+        return _bo;
     }
 
     /// UUID of this metadata stream.
@@ -82,10 +66,10 @@ public:
     }
 
 private:
-    const Size _packetCount;
+    const Size _pktCount;
     const unsigned int _majorVersion;
     const unsigned int _minorVersion;
-    const ByteOrder _byteOrder;
+    const ByteOrder _bo;
     const boost::uuids::uuid _uuid;
 };
 

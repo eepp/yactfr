@@ -5,58 +5,59 @@
 
 # check for Unix
 if (NOT UNIX)
-    message (FATAL_ERROR "yactfr library needs a Unix environment")
+    message (FATAL_ERROR "The yactfr library needs a Unix environment")
 endif ()
 
-# yactfr library
+# yactfr shared library
 add_library (
     yactfr SHARED
     metadata/array-type.cpp
     metadata/bit-array-type.cpp
-    metadata/clock-type.cpp
-    metadata/compound-type.cpp
-    metadata/data-stream-type.cpp
-    metadata/data-type-visitor.cpp
-    metadata/data-type.cpp
-    metadata/dynamic-array-type.cpp
-    metadata/dynamic-text-array-type.cpp
-    metadata/event-record-type.cpp
-    metadata/field-ref.cpp
-    metadata/field-resolver.cpp
-    metadata/field-resolver.hpp
+    metadata/clk-type.cpp
+    metadata/compound-dt.cpp
+    metadata/data-loc-map.cpp
+    metadata/data-loc.cpp
+    metadata/dst.cpp
+    metadata/dt-from-pseudo-root-dt.cpp
+    metadata/dt.cpp
+    metadata/dyn-array-type.cpp
+    metadata/dyn-text-array-type.cpp
+    metadata/enum-type.cpp
+    metadata/ert.cpp
     metadata/float-type.cpp
     metadata/int-type.cpp
-    metadata/io.cpp
     metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
-    metadata/metadata-text-location.cpp
     metadata/metadata.cpp
-    metadata/named-data-type.cpp
     metadata/packetized-metadata-stream.cpp
     metadata/plain-text-metadata-stream.cpp
-    metadata/scalar-type.cpp
+    metadata/pseudo-types.cpp
+    metadata/scalar-dt.cpp
     metadata/static-array-type.cpp
     metadata/static-text-array-type.cpp
-    metadata/string-type.cpp
-    metadata/struct-type-field.cpp
+    metadata/str-type.cpp
+    metadata/struct-member-type.cpp
     metadata/struct-type.cpp
-    metadata/trace-type-env.cpp
+    metadata/trace-type-from-pseudo-trace-type.cpp
     metadata/trace-type-impl.cpp
     metadata/trace-type.cpp
+    metadata/tsdl-attr.cpp
     metadata/tsdl-parser-base.cpp
-    metadata/variant-type-option.cpp
-    metadata/variant-type.cpp
+    metadata/var-type.cpp
+    text-loc.cpp
+    trace-env.cpp
+    trace.cpp
     logging/zf_log.c
-    data-block.cpp
-    data-source-factory.cpp
-    data-source.cpp
+    data-blk.cpp
+    data-src-factory.cpp
+    data-src.cpp
     decoding-errors.cpp
-    element-visitor.cpp
-    memory-mapped-file-view-factory-impl.cpp
-    memory-mapped-file-view-factory.cpp
-    packet-proc-builder.cpp
-    packet-sequence-iterator.cpp
-    packet-sequence.cpp
+    elem-visitor.cpp
+    mmap-file-view-factory-impl.cpp
+    mmap-file-view-factory.cpp
+    pkt-proc-builder.cpp
+    elem-seq.cpp
+    elem-seq-it.cpp
     proc.cpp
     utils.cpp
     vm.cpp
@@ -97,7 +98,7 @@ else ()
     )
 endif ()
 
-# library install rules
+# library installation rules
 install (
     TARGETS yactfr
     ARCHIVE DESTINATION lib

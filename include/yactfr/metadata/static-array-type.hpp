@@ -1,38 +1,23 @@
 /*
- * CTF static array data type.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  Static array data type.
-
-@ingroup metadata_dt
-*/
-
 #ifndef _YACTFR_METADATA_STATIC_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_STATIC_ARRAY_TYPE_HPP
 
-// for Size
 #include "../aliases.hpp"
-
-// for ArrayType
 #include "array-type.hpp"
-
-// for DataTypeVisitor
-#include "data-type-visitor.hpp"
-
-// for DataType
-#include "data-type.hpp"
+#include "dt-visitor.hpp"
+#include "dt.hpp"
 
 namespace yactfr {
 
 /*!
-@brief  Static array type.
+@brief
+    Static array type.
 
 @ingroup metadata_dt
 
@@ -43,30 +28,34 @@ class StaticArrayType :
 {
 public:
     /*!
-    @brief  Builds a static array data type.
+    @brief
+        Builds a static array data type.
 
-    @param minAlign Minimal alignment of data stream static arrays
-                    described by this static array type (power of two,
-                    greater than 0).
-    @param elemType Element's type.
-    @param length   Length of data stream static arrays described by
-                    this static array type (number of element).
+    @param[in] minimumAlignment
+        Minimum alignment of data stream static arrays described by this
+        type.
+    @param[in] elementType
+        Element type.
+    @param[in] length
+        Length of data stream static arrays described by this type
+        (count of element).
 
-    @throws InvalidMetadata The static array type is invalid.
+    @pre
+        \p minimumAlignment > 0.
+    @pre
+        \p minimumAlignment is a power of two.
     */
-    explicit StaticArrayType(unsigned int minAlign, DataType::UP elemType,
-                             Size length);
+    explicit StaticArrayType(unsigned int minimumAlignment, DataType::UP elementType, Size length);
 
 protected:
-    explicit StaticArrayType(int kind, unsigned int align, DataType::UP elemType,
-                             Size length);
+    explicit StaticArrayType(int kind, unsigned int minAlign, DataType::UP elemType, Size len);
 
 public:
-    /// Length of data stream static arrays described by this static
-    /// array type (number of element).
+    /// Length of data stream static arrays described by this type
+    /// (count of element).
     Size length() const noexcept
     {
-        return _length;
+        return _len;
     }
 
 private:
@@ -77,10 +66,10 @@ private:
         visitor.visit(*this);
     }
 
-    bool _compare(const DataType& otherType) const override;
+    bool _compare(const DataType& other) const noexcept override;
 
 private:
-    const Size _length;
+    const Size _len;
 };
 
 } // namespace yactfr

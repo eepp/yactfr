@@ -1,6 +1,4 @@
 /*
- * Internal utilities.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -13,7 +11,7 @@
 namespace yactfr {
 namespace internal {
 
-static inline bool ispow2(const unsigned long long x)
+static inline bool isPowOfTwo(const unsigned long long x)
 {
         return (x != 0) && ((x & (~x + 1)) == x);
 }

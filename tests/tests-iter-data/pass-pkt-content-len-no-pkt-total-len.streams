@@ -1,0 +1,68 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u32 content_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        string str;
+    };
+};
+----
+00000158
+
+    "salut tout le monde" 00
+
+    "diet cola" 00
+
+    "learning" 00
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     SC:1 {
+     0       ST {
+     0         UI:content_size:344
+    32         EPCL:344
+    32       }
+    32     }
+    32     ER {
+    32       ERT:0:test
+    32       SC:5 {
+    32         ST {
+    32           STR:str {
+    32             SS:20:salut tout le monde
+   192           }
+   192         }
+   192       }
+   192     }
+   192     ER {
+   192       ERT:0:test
+   192       SC:5 {
+   192         ST {
+   192           STR:str {
+   192             SS:10:diet cola
+   272           }
+   272         }
+   272       }
+   272     }
+   272     ER {
+   272       ERT:0:test
+   272       SC:5 {
+   272         ST {
+   272           STR:str {
+   272             SS:9:learning
+   344           }
+   344         }
+   344       }
+   344     }
+   344   }
+   344 }

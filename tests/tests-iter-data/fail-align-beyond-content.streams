@@ -23,22 +23,22 @@ event {
     22 <11 22 33> deadbeef
     33 <aa bb cc> feedface
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     SCB:1
-     0       STB
-     0         U:content_size:80
-     8         EPCS:80
-     8       STE
-     8     SCE
-    32     ERB
+     0     SC:1 {
+     0       ST {
+     0         UI:content_size:80
+     8         EPCL:80
+     8       }
+     8     }
+    32     ER {
     32       ERT:0:test
-    32       SCB:5
-    32         STB
-    32           U:xx:51
-    64           U:yy:239
-    72         STE
-    72       SCE
-    72     ERE
-    72 Cannot read 24 bits at this point: would move beyond the current packet's content (8 bits remaining).
+    32       SC:5 {
+    32         ST {
+    32           UI:xx:51
+    64           UI:yy:239
+    72         }
+    72       }
+    72     }
+    72 Cannot read 24 bits at this point: would move beyond the content of the current packet (8 bits remaining).

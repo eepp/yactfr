@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2018-2022 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,10 +12,10 @@
 
 #include <yactfr/yactfr.hpp>
 
-#include <mem-data-source-factory.hpp>
-#include <element-printer.hpp>
+#include <mem-data-src-factory.hpp>
+#include <elem-printer.hpp>
 
-static const char * const metadata =
+static const auto metadata =
     "/* CTF 1.8 */\n"
     "typealias integer { size = 8; } := u8;"
     "typealias integer { size = 16; } := u16;"
@@ -75,13 +75,13 @@ static const std::uint8_t stream[] = {
     // packet context
     0x01, 0xa0, 0x01, 0x80, 0x11, 0xd2,
 
-    // event
+    // event record
     0xaa, 0xbb, 0xcc, 0xdd, 0xde, 0xad, 0xff,
 
-    // event
+    // event record
     0x12, 0x12, 0x23, 0x23, 0x44, 0x55, 0x66,
 
-    // event
+    // event record
     0x18, 0x19, 0x11, 0x0e, 0xf2, 0x43, 0x51,
 
     // padding
@@ -96,10 +96,10 @@ static const std::uint8_t stream[] = {
     // packet context
     0x01, 0x60, 0x01, 0x60,
 
-    // event
+    // event record
     's', 'a', 'l', 'u', 't', 0, 0x44, 0x55, 0x66, 0x77,
 
-    // event
+    // event record
     'C', 'o', 'l', 'a', 0, 0x44, 0x55, 0x66, 0x77,
 
     // packet header
@@ -111,137 +111,135 @@ static const std::uint8_t stream[] = {
     // packet context
     0x01, 0x20, 0x01, 0x10, 0xfe, 0xdc,
 
-    // event
+    // event record
     0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 
     // padding
     0x11, 0x22,
 };
 
-static const char * const expected =
-    "PB\n"
-    "PCB\n"
-    "SCB:0\n"
-    "STB\n"
-    "U:magic:3254525889\n"
-    "PM:3254525889\n"
-    "SAB:uuid\n"
-    "U:uuid:100\n"
-    "U:uuid:223\n"
-    "U:uuid:96\n"
-    "U:uuid:142\n"
-    "U:uuid:141\n"
-    "U:uuid:185\n"
-    "U:uuid:79\n"
-    "U:uuid:237\n"
-    "U:uuid:156\n"
-    "U:uuid:80\n"
-    "U:uuid:14\n"
-    "U:uuid:185\n"
-    "U:uuid:114\n"
-    "U:uuid:57\n"
-    "U:uuid:44\n"
-    "U:uuid:247\n"
-    "PB\n"
-    "PCB\n"
-    "SCB:0\n"
-    "STB\n"
-    "U:magic:3254525889\n"
-    "PM:3254525889\n"
-    "SAB:uuid\n"
-    "U:uuid:100\n"
-    "U:uuid:223\n"
-    "U:uuid:96\n"
-    "U:uuid:142\n"
-    "U:uuid:141\n"
-    "U:uuid:185\n"
-    "U:uuid:79\n"
-    "U:uuid:237\n"
-    "U:uuid:156\n"
-    "U:uuid:80\n"
-    "U:uuid:14\n"
-    "U:uuid:185\n"
-    "U:uuid:114\n"
-    "U:uuid:57\n"
-    "U:uuid:44\n"
-    "U:uuid:247\n"
-    "PU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
-    "SAE\n"
-    "U:stream_id:221\n"
-    "STE\n"
-    "SCE\n"
+static const auto expected =
+    "P {\n"
+    "PC {\n"
+    "SC:0 {\n"
+    "ST {\n"
+    "UI:magic:3254525889\n"
+    "PMN:3254525889\n"
+    "SA:uuid {\n"
+    "UI:100\n"
+    "UI:223\n"
+    "UI:96\n"
+    "UI:142\n"
+    "UI:141\n"
+    "UI:185\n"
+    "UI:79\n"
+    "UI:237\n"
+    "UI:156\n"
+    "UI:80\n"
+    "UI:14\n"
+    "UI:185\n"
+    "UI:114\n"
+    "UI:57\n"
+    "UI:44\n"
+    "UI:247\n"
+    "P {\n"
+    "PC {\n"
+    "SC:0 {\n"
+    "ST {\n"
+    "UI:magic:3254525889\n"
+    "PMN:3254525889\n"
+    "SA:uuid {\n"
+    "UI:100\n"
+    "UI:223\n"
+    "UI:96\n"
+    "UI:142\n"
+    "UI:141\n"
+    "UI:185\n"
+    "UI:79\n"
+    "UI:237\n"
+    "UI:156\n"
+    "UI:80\n"
+    "UI:14\n"
+    "UI:185\n"
+    "UI:114\n"
+    "UI:57\n"
+    "UI:44\n"
+    "UI:247\n"
+    "TTU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
+    "}\n"
+    "UI:stream_id:221\n"
+    "}\n"
+    "}\n"
     "DST:221\n"
-    "SCB:1\n"
-    "STB\n"
-    "U:packet_size:288\n"
-    "EPTS:288\n"
-    "U:content_size:272\n"
-    "EPCS:272\n"
-    "U:custom:65244\n"
-    "STE\n"
-    "SCE\n"
-    "ERB\n"
+    "SC:1 {\n"
+    "ST {\n"
+    "UI:packet_size:288\n"
+    "EPTL:288\n"
+    "UI:content_size:272\n"
+    "EPCL:272\n"
+    "UI:custom:65244\n"
+    "}\n"
+    "}\n"
+    "ER {\n"
     "ERT:0\n"
-    "SCB:5\n"
-    "STB\n"
-    "STB:s\n"
-    "U:a:16909060\n"
-    "PB\n"
-    "PCB\n"
-    "SCB:0\n"
-    "STB\n"
-    "U:magic:3254525889\n"
-    "PM:3254525889\n"
-    "SAB:uuid\n"
-    "U:uuid:100\n"
-    "U:uuid:223\n"
-    "U:uuid:96\n"
-    "U:uuid:142\n"
-    "U:uuid:141\n"
-    "U:uuid:185\n"
-    "U:uuid:79\n"
-    "U:uuid:237\n"
-    "U:uuid:156\n"
-    "U:uuid:80\n"
-    "U:uuid:14\n"
-    "U:uuid:185\n"
-    "U:uuid:114\n"
-    "U:uuid:57\n"
-    "U:uuid:44\n"
-    "U:uuid:247\n"
-    "PU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
-    "SAE\n"
-    "U:stream_id:35\n"
-    "STE\n"
-    "SCE\n"
+    "SC:5 {\n"
+    "ST {\n"
+    "ST:s {\n"
+    "UI:a:16909060\n"
+    "P {\n"
+    "PC {\n"
+    "SC:0 {\n"
+    "ST {\n"
+    "UI:magic:3254525889\n"
+    "PMN:3254525889\n"
+    "SA:uuid {\n"
+    "UI:100\n"
+    "UI:223\n"
+    "UI:96\n"
+    "UI:142\n"
+    "UI:141\n"
+    "UI:185\n"
+    "UI:79\n"
+    "UI:237\n"
+    "UI:156\n"
+    "UI:80\n"
+    "UI:14\n"
+    "UI:185\n"
+    "UI:114\n"
+    "UI:57\n"
+    "UI:44\n"
+    "UI:247\n"
+    "TTU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
+    "}\n"
+    "UI:stream_id:35\n"
+    "}\n"
+    "}\n"
     "DST:35\n"
-    "SCB:1\n"
-    "STB\n"
-    "U:packet_size:352\n"
-    "EPTS:352\n"
-    "U:content_size:352\n"
-    "EPCS:352\n"
-    "STE\n"
-    "SCE\n"
-    "ERB\n"
+    "SC:1 {\n"
+    "ST {\n"
+    "UI:packet_size:352\n"
+    "EPTL:352\n"
+    "UI:content_size:352\n"
+    "EPCL:352\n"
+    "}\n"
+    "}\n"
+    "ER {\n"
     "ERT:0\n"
-    "SCB:5\n"
-    "STB\n"
-    "STRB:a\n"
-    "SUB:1:s\n"
-    "SUB:3:alu\n"
-    "SUB:2:t\n";
+    "SC:5 {\n"
+    "ST {\n"
+    "STR:a {\n"
+    "SS:1:s\n"
+    "SS:3:alu\n"
+    "SS:2:t\n";
 
 int main()
 {
-    auto traceType = yactfr::traceTypeFromMetadataText(metadata,
-                                                       metadata + std::strlen(metadata));
-    auto factory = std::make_shared<MemDataSourceFactory>(stream,
-                                                          sizeof(stream), 3);
-    yactfr::ElementSequence seq {traceType, factory};
+    const auto trace = yactfr::traceFromMetadataText(metadata, metadata + std::strlen(metadata));
+    MemDataSrcFactory factory {stream, sizeof stream, 3};
+    yactfr::ElementSequence seq {trace->type(), factory};
     std::ostringstream ss;
-    ElementPrinter printer {ss, 0};
-    auto it = std::begin(seq);
+    ElemPrinter printer {ss, 0};
+    auto it = seq.begin();
 
     while (true) {
         if (it.offset() == 160) {
@@ -255,7 +253,6 @@ int main()
         } else {
             it->accept(printer);
             ++it;
-            continue;
         }
     }
 

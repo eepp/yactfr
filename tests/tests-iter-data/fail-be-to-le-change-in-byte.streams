@@ -16,14 +16,14 @@ event {
 ----
 01 12 f8
 ----
-     0 PB
-     0   PCB
+     0 P {
+     0   PC {
      0     DST:0
-     0     ERB
+     0     ER {
      0       ERT:0:test
-     0       SCB:5
-     0         STB
-     0           U:x:1
-     8           U:y:18
-    16           U:ube:7
+     0       SC:5 {
+     0         ST {
+     0           UI:x:1
+     8           UI:y:18
+    16           UI:ube:7
     19 Changing byte order within a byte from big-endian to little-endian.

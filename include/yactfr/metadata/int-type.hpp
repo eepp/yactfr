@@ -1,45 +1,20 @@
 /*
- * CTF integer types.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/*!
-@file
-@brief  Integer types.
-
-@ingroup metadata_dt
-*/
-
 #ifndef _YACTFR_METADATA_INT_TYPE_HPP
 #define _YACTFR_METADATA_INT_TYPE_HPP
 
-// for std::string
 #include <string>
-
-// for boost::optional
 #include <boost/optional.hpp>
 
-// for BitArrayType
 #include "bit-array-type.hpp"
-
-// for DisplayBase
-#include "int-type.hpp"
-
-// for Encoding
-#include "encoding.hpp"
-
-// for ByteOrder
-#include "byte-order.hpp"
-
-// for DataType
-#include "data-type.hpp"
-
-// for DataTypeVisitor
-#include "data-type-visitor.hpp"
+#include "bo.hpp"
+#include "dt.hpp"
+#include "dt-visitor.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -51,7 +26,8 @@ class TraceTypeImpl;
 class ClockType;
 
 /*!
-@brief  Integer type display base.
+@brief
+    \link IntegerType Integer type\endlink display base.
 
 @ingroup metadata_dt
 */
@@ -71,137 +47,115 @@ enum class DisplayBase
 };
 
 /*!
-@brief  Abstract integer type.
+@brief
+    Abstract integer type.
 
 @ingroup metadata_dt
 
-An integer type describes data stream integers. Use the concrete
-SignedIntType and UnsignedIntType depending on the signedness of the
-data stream integers to describe.
+An integer type describes data stream integers.
+
+Use the concrete SignedIntegerType and UnsignedIntegerType depending on
+the signedness of the data stream integers to describe.
 */
-class IntType :
+class IntegerType :
     public BitArrayType
 {
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit IntType(int kind, unsigned int alignment,
-                     unsigned int size, ByteOrder byteOrder,
-                     DisplayBase displayBase, Encoding encoding,
-                     const boost::optional<std::string>& mappedClockTypeName);
+    explicit IntegerType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
+                         DisplayBase dispBase);
 
 public:
-    /// Preferred display base of data stream integers described by this type.
-    DisplayBase displayBase() const noexcept
+    /// Preferred display base of data stream integers described by
+    /// this type.
+    DisplayBase preferredDisplayBase() const noexcept
     {
-        return _displayBase;
-    }
-
-    /// Encoding of data stream integers described by this type.
-    Encoding encoding() const noexcept
-    {
-        return _encoding;
-    }
-
-    /// Name of a clock type, in the same trace type, to which this
-    /// integer type is mapped.
-    const boost::optional<std::string>& mappedClockTypeName() const noexcept
-    {
-        return _mappedClockTypeName;
+        return _prefDispBase;
     }
 
     /*!
-    @brief  Mapped clock type.
+    @brief
+        Less-than operator.
 
-    This is only valid when this integer type is part of a trace type.
+    @param[in] other
+        Other integer type to compare to.
 
-    @returns    Mapped clock type or \c nullptr if this integer
-                type is not mapped to a clock type.
+    @returns
+        \c true if this type is less than \p other (respects total
+        order).
     */
-    const ClockType *mappedClockType() const noexcept
-    {
-        return _mappedClkType;
-    }
-
-private:
-    bool _compare(const DataType& otherType) const noexcept override;
-
-    void _mappedClockType(const ClockType& clockType) const noexcept
-    {
-        _mappedClkType = &clockType;
-    }
+    bool operator<(const IntegerType& other) const noexcept;
 
 protected:
-    bool operator<(const IntType& intType) const noexcept;
+    bool _compare(const DataType& other) const noexcept override;
 
 private:
-    const DisplayBase _displayBase;
-    const Encoding _encoding;
-    const boost::optional<std::string> _mappedClockTypeName;
-    mutable const ClockType *_mappedClkType = nullptr;
+    const DisplayBase _prefDispBase;
 };
 
 /*!
-@brief  Signed integer type.
+@brief
+    Signed integer type.
 
 @ingroup metadata_dt
 
 A signed integer type describes data stream signed integers.
 */
-class SignedIntType :
-    public IntType
+class SignedIntegerType :
+    public IntegerType
 {
 protected:
-    explicit SignedIntType(int kind, unsigned int alignment, unsigned int size,
-                           ByteOrder byteOrder, DisplayBase displayBase,
-                           Encoding encoding,
-                           const boost::optional<std::string>& mappedClockTypeName);
+    explicit SignedIntegerType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
+                               DisplayBase dispBase);
 
 public:
     /*!
-    @brief  Builds a signed integer type.
+    @brief
+        Builds a signed integer type.
 
-    @param alignment            Alignment of data stream signed integers
-                                described by this signed integer type
-                                (power of two, greater than 0).
-    @param size                 Size of data stream signed integers
-                                described by this signed integer type.
-    @param byteOrder            Byte order of data stream signed
-                                integers described by this signed
-                                integer type.
-    @param displayBase          Preferred display base of data stream
-                                signed integers described by this signed
-                                integer type.
-    @param encoding             Encoding of data stream signed integers
-                                described by this signed integer type.
-    @param mappedClockTypeName  Name of a clock type, in the same trace
-                                type, to which this signed integer type
-                                is mapped.
+    @param[in] alignment
+        Alignment of data stream signed integers described by this type.
+    @param[in] length
+        Length of data stream signed integers (bits) described by this
+        type.
+    @param[in] byteOrder
+        Byte order of data stream signed integers described by this
+        type.
+    @param[in] preferredDisplayBase
+        Preferred display base of data stream signed integers
+        described by this type.
 
-    @throws InvalidMetadata The signed integer type is invalid.
+    @pre
+        \p alignment > 0.
+    @pre
+        \p alignment is a power of two.
+    @pre
+        \p length > 0.
     */
-    explicit SignedIntType(unsigned int alignment, unsigned int size,
-                           ByteOrder byteOrder, DisplayBase displayBase,
-                           Encoding encoding,
-                           const boost::optional<std::string>& mappedClockTypeName);
+    explicit SignedIntegerType(unsigned int alignment, unsigned int length, ByteOrder byteOrder,
+                               DisplayBase preferredDisplayBase = DisplayBase::DECIMAL);
 
     /*!
-    @brief  Copy constructor.
+    @brief
+        Less-than operator.
 
-    @param signedIntType    Signed integer type to copy.
+    @param[in] other
+        Other signed integer type to compare to.
+
+    @returns
+        \c true if this type is less than \p other (respects total
+        order).
     */
-    SignedIntType(const SignedIntType& signedIntType);
-
-    /*!
-    @brief  Less-than operator.
-
-    @param signedIntType    Other signed integer type to compare with.
-    @returns                \c true if this signed integer type is
-                            less than \p signedIntType (respects total order).
-    */
-    bool operator<(const SignedIntType& signedIntType) const noexcept
+    bool operator<(const SignedIntegerType& other) const noexcept
     {
-        return IntType::operator<(signedIntType);
+        return IntegerType::operator<(other);
+    }
+
+protected:
+    bool _compare(const DataType& other) const noexcept override
+    {
+        return IntegerType::_compare(other);
     }
 
 private:
@@ -214,70 +168,83 @@ private:
 };
 
 /*!
-@brief  Unsigned integer type.
+@brief
+    Unsigned integer type.
 
 @ingroup metadata_dt
 
 An unsigned integer type describes data stream unsigned integers.
 */
-class UnsignedIntType :
-    public IntType
+class UnsignedIntegerType :
+    public IntegerType
 {
 protected:
-    explicit UnsignedIntType(int kind, unsigned int alignment,
-                             unsigned int size, ByteOrder byteOrder,
-                             DisplayBase displayBase, Encoding encoding,
-                             const boost::optional<std::string>& mappedClockTypeName);
+    explicit UnsignedIntegerType(int kind, unsigned int align, unsigned int len, ByteOrder bo,
+                                 DisplayBase dispBase, const ClockType *mappedClkType);
 
 public:
     /*!
-    @brief  Builds an unsigned integer type.
+    @brief
+        Builds an unsigned integer type.
 
-    @param alignment            Alignment of data stream unsigned
-                                integers described by this unsigned
-                                integer type (power of two, greater than
-                                0).
-    @param size                 Size of data stream unsigned integers
-                                described by this unsigned integer type.
-    @param byteOrder            Byte order of data stream unsigned
-                                integers described by this unsigned
-                                integer type.
-    @param displayBase          Preferred display base of data stream
-                                unsigned integers described by this
-                                unsigned integer type.
-    @param encoding             Encoding of data stream unsigned
-                                integers described by this unsigned
-                                integer type.
-    @param mappedClockTypeName  Name of a clock type, in the same trace
-                                type, to which this unsigned integer
-                                type is mapped.
+    @param[in] alignment
+        Alignment of data stream unsigned integers described by this
+        type.
+    @param[in] length
+        Length of data stream unsigned integers (bits) described by
+        this type.
+    @param[in] byteOrder
+        Byte order of data stream unsigned integers described by this
+        type.
+    @param[in] preferredDisplayBase
+        Preferred display base of data stream unsigned integers
+        described by this type.
+    @param[in] mappedClockType
+        Type of the clocks to which the data stream unsigned integers
+        described by this type are mapped, or \c nullptr if none.
 
-    @throws InvalidMetadata The unsigned integer type is invalid.
+    @pre
+        \p alignment > 0.
+    @pre
+        \p alignment is a power of two.
+    @pre
+        \p length > 0.
     */
-    explicit UnsignedIntType(unsigned int alignment, unsigned int size,
-                             ByteOrder byteOrder, DisplayBase displayBase,
-                             Encoding encoding,
-                             const boost::optional<std::string>& mappedClockTypeName);
+    explicit UnsignedIntegerType(unsigned int alignment, unsigned int length, ByteOrder byteOrder,
+                                 DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                 const ClockType *mappedClockType = nullptr);
 
     /*!
-    @brief  Copy constructor.
+    @brief
+        Copy constructor.
 
-    @param unsignedIntType  Unsigned integer type to copy.
+    @param[in] other
+        Unsigned integer type to copy.
     */
-    UnsignedIntType(const UnsignedIntType& unsignedIntType);
+    UnsignedIntegerType(const UnsignedIntegerType& other);
 
-    /*!
-    @brief  Less-than operator.
-
-    @param unsignedIntType  Other unsigned integer type to compare with.
-    @returns                \c true if this unsigned integer type
-                            is less than \p unsignedIntType (respects
-                            total order).
-    */
-    bool operator<(const UnsignedIntType& unsignedIntType) const noexcept
+    /// Type of the clocks to which data stream integers described by
+    /// this type are mapped, or \c nullptr if none.
+    const ClockType *mappedClockType() const noexcept
     {
-        return IntType::operator<(unsignedIntType);
+        return _mappedClkType;
     }
+
+    /*!
+    @brief
+        Less-than operator.
+
+    @param[in] other
+        Other unsigned integer type to compare to.
+
+    @returns
+        \c true if this type is less than \p other (respects total
+        order).
+    */
+    bool operator<(const UnsignedIntegerType& other) const noexcept;
+
+protected:
+    bool _compare(const DataType& other) const noexcept override;
 
 private:
     DataType::UP _clone() const override;
@@ -286,6 +253,9 @@ private:
     {
         visitor.visit(*this);
     }
+
+private:
+    const ClockType *_mappedClkType = nullptr;
 };
 
 } // namespace yactfr

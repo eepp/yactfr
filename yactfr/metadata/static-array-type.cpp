@@ -1,6 +1,4 @@
 /*
- * CTF static array type.
- *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
@@ -12,32 +10,29 @@
 namespace yactfr {
 
 StaticArrayType::StaticArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                 const Size length) :
-    StaticArrayType {_KIND_STATIC_ARRAY, minAlign, std::move(elemType), length}
+                                 const Size len) :
+    StaticArrayType {_KIND_STATIC_ARRAY, minAlign, std::move(elemType), len}
 {
 }
 
 StaticArrayType::StaticArrayType(const int kind, const unsigned int minAlign,
-                                 DataType::UP elemType, const Size length) :
+                                 DataType::UP elemType, const Size len) :
     ArrayType {_KIND_STATIC_ARRAY | kind, minAlign, std::move(elemType)},
-    _length {length}
+    _len {len}
 {
 }
 
 DataType::UP StaticArrayType::_clone() const
 {
-    return std::make_unique<StaticArrayType>(this->alignment(),
-                                             this->elemType().clone(),
-                                             this->length());
+    return std::make_unique<StaticArrayType>(this->minimumAlignment(), this->elementType().clone(),
+                                             _len);
 }
 
-bool StaticArrayType::_compare(const DataType& otherType) const
+bool StaticArrayType::_compare(const DataType& other) const noexcept
 {
-    auto& arrayType = static_cast<const StaticArrayType&>(otherType);
+    auto& otherStaticArrayType = static_cast<const StaticArrayType&>(other);
 
-    return arrayType.alignment() == this->alignment() &&
-           arrayType.elemType() == this->elemType() &&
-           arrayType.length() == this->length();
+    return ArrayType::_compare(other) && _len == otherStaticArrayType._len;
 }
 
 } // namespace yactfr

@@ -1,0 +1,61 @@
+            trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 len;
+        string salut;
+        integer { size = 8; encoding = UTF8; } meow[len];
+    };
+};
+----
+03 "salut les mecs" 00 "sel"
+06 "tomatoes" 00 "poi" 00 "re"
+04 "madly" 00 "ca"
+----
+     0 P {
+     0   PC {
+     0     DST:0
+     0     ER {
+     0       ERT:0:test
+     0       SC:5 {
+     0         ST {
+     0           UI:len:3
+     8           STR:salut {
+     8             SS:15:salut les mecs
+   128           }
+   128           DTA:meow {
+   128             SS:3:sel
+   152           }
+   152         }
+   152       }
+   152     }
+   152     ER {
+   152       ERT:0:test
+   152       SC:5 {
+   152         ST {
+   152           UI:len:6
+   160           STR:salut {
+   160             SS:9:tomatoes
+   232           }
+   232           DTA:meow {
+   232             SS:6:poi
+   280           }
+   280         }
+   280       }
+   280     }
+   280     ER {
+   280       ERT:0:test
+   280       SC:5 {
+   280         ST {
+   280           UI:len:4
+   288           STR:salut {
+   288             SS:6:madly
+   336           }
+   336           DTA:meow {
+   336             SS:2:ca
+   352 Cannot read 8 bits at this point: reaching end of data source.
