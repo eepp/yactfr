@@ -101,4 +101,14 @@ DataStreamTypeSet::const_iterator TraceType::end() const noexcept
     return _pimpl->dsts().end();
 }
 
+Size TraceType::size() const noexcept
+{
+    return _pimpl->dsts().size();
+}
+
+bool TraceType::isEmpty() const noexcept
+{
+    return _pimpl->dsts().empty();
+}
+
 } // namespace yactfr

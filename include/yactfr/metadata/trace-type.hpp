@@ -245,6 +245,12 @@ public:
     /// stream type of this type.
     DataStreamTypeSet::const_iterator end() const noexcept;
 
+    /// Number of data stream types this type has.
+    Size size() const noexcept;
+
+    /// Whether or not this type is empty (has no data stream types).
+    bool isEmpty() const noexcept;
+
 private:
     const std::unique_ptr<internal::TraceTypeImpl> _pimpl;
 };

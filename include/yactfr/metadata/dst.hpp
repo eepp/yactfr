@@ -211,6 +211,18 @@ public:
         return _erts.end();
     }
 
+    /// Number of event record types this type has.
+    Size size() const noexcept
+    {
+        return _erts.size();
+    }
+
+    /// Whether or not this type is empty (has no event record types).
+    bool isEmpty() const noexcept
+    {
+        return _erts.empty();
+    }
+
     /// Type of the context structure following the header structure of
     /// the packets of the data streams described by this type, or
     /// \c nullptr if there's no packet context type.
