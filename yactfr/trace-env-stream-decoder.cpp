@@ -77,7 +77,7 @@ static bool dsInfoSuggestsTraceEnv(const DataStreamInfoElement& elem, const Inde
             std::ostringstream ss;
 
             ss << "Unexpected data stream type namespace `" << *dst.nameSpace() << "`; " <<
-                  "expecting " << stdNsStr << '.';
+                  "expecting `" << stdNsStr << "`.";
             throw InvalidTraceEnvironmentStream {ss.str(), offset};
         } else {
             return false;
@@ -100,7 +100,7 @@ static bool dsInfoSuggestsTraceEnv(const DataStreamInfoElement& elem, const Inde
             std::ostringstream ss;
 
             ss << "Unexpected data stream type name `" << *dst.name() << "`; " <<
-                  "expecting " << envKeyStr << '.';
+                  "expecting `" << envKeyStr << "`.";
             throw InvalidTraceEnvironmentStream {ss.str(), offset};
         } else {
             return false;
@@ -144,6 +144,16 @@ void TraceEnvironmentStreamDecoder::_validateNoCurVal() const
     if (_curStrVal || _curIntVal) {
         throw InvalidTraceEnvironmentStream {
             "Value is already set for the current environment entry.",
+            _it.offset()
+        };
+    }
+}
+
+void TraceEnvironmentStreamDecoder::_validateNoCurKey() const
+{
+    if (_curKey) {
+        throw InvalidTraceEnvironmentStream {
+            "Key is already set for the current environment entry.",
             _it.offset()
         };
     }

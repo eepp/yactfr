@@ -163,6 +163,12 @@ private:
     void _validateNoCurVal() const;
 
     /*
+     * Validates that there's no current key, throwing
+     * `InvalidTraceEnvironmentStream` otherwise.
+     */
+    void _validateNoCurKey() const;
+
+    /*
      * Returns whether or not the data type `dt` has the standard user
      * attribute flag `flagName` set.
      */
@@ -258,17 +264,21 @@ private:
      * string beginning element of `_it`.
      */
     template <typename ElemT>
-    void _tryInitCurKeyAndStrVal() noexcept
+    void _tryInitCurKeyAndStrVal()
     {
         auto& elem = static_cast<const ElemT&>(*_it);
 
         if (this->_dtIsKey(elem)) {
+            this->_validateNoCurKey();
+
             // initialize current key
             _fillingCurKey = true;
             _curKey = std::string {};
         }
 
         if (this->_dtIsVal(elem)) {
+            this->_validateNoCurVal();
+
             // initialize current string value
             _fillingCurStrVal = true;
             _curStrVal = std::string {};
