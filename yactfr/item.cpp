@@ -12,7 +12,7 @@
 namespace yactfr {
 
 Item::Item(const Kind kind) :
-    _kind {kind}
+    internal::ItemMixin<Kind> {kind}
 {
 }
 
@@ -60,7 +60,7 @@ const MapItem& Item::asMap() const noexcept
 
 bool Item::operator==(const Item& other) const noexcept
 {
-    if (_kind != other._kind) {
+    if (this->kind() != other.kind()) {
         return false;
     }
 
@@ -72,24 +72,9 @@ Item::UP Item::clone() const
     return this->_clone();
 }
 
-StringItem::StringItem(std::string val) :
-    Item {Kind::STRING},
-    _val {std::move(val)}
-{
-}
-
-Item::UP StringItem::_clone() const
-{
-    return std::make_unique<const StringItem>(_val);
-}
-
-bool StringItem::_isEqual(const Item& other) const noexcept
-{
-    return _val == other.asString()._val;
-}
-
 ArrayItem::ArrayItem(Container&& items) :
-    CompoundItem<Container, Item::Kind::ARRAY> {std::move(items)}
+    Item {ItemKind::ARRAY},
+    internal::ArrayItemMixin<Item> {std::move(items)}
 {
 }
 
@@ -97,7 +82,7 @@ Item::UP ArrayItem::_clone() const
 {
     Container items;
 
-    for (const auto& item : _items) {
+    for (const auto& item : this->_theItems) {
         items.push_back(item->clone());
     }
 
@@ -106,55 +91,20 @@ Item::UP ArrayItem::_clone() const
 
 bool ArrayItem::_isEqual(const Item& other) const noexcept
 {
-    auto& otherArrayItem = other.asArray();
-
-    if (_items.size() != otherArrayItem._items.size()) {
-        return false;
-    }
-
-    auto it = _items.begin();
-    auto otherIt = otherArrayItem._items.begin();
-
-    for (; it != _items.end(); ++it, ++otherIt) {
-        if ((!*it && *otherIt) || (*it && !*otherIt)) {
-            return false;
-        }
-
-        if (!*it) {
-            continue;
-        }
-
-        if (*it != *otherIt) {
-            return false;
-        }
-    }
-
-    return true;
+    return internal::ArrayItemMixin<Item>::_isEqual(other.asArray());
 }
 
 MapItem::MapItem(Container&& items) :
-    CompoundItem<Container, Item::Kind::MAP> {std::move(items)}
+    Item {ItemKind::MAP},
+    internal::MapItemMixin<Item> {std::move(items)}
 {
-}
-
-const Item *MapItem::operator[](const std::string& key) const noexcept
-{
-    const auto it = _items.find(key);
-
-    assert(it != _items.end());
-    return it->second.get();
-}
-
-bool MapItem::hasItem(const std::string& key) const noexcept
-{
-    return _items.find(key) != _items.end();
 }
 
 Item::UP MapItem::_clone() const
 {
     Container items;
 
-    for (const auto& keyItemPair : _items) {
+    for (const auto& keyItemPair : this->_theItems) {
         items.insert(std::make_pair(keyItemPair.first, keyItemPair.second->clone()));
     }
 
@@ -163,34 +113,7 @@ Item::UP MapItem::_clone() const
 
 bool MapItem::_isEqual(const Item& other) const noexcept
 {
-    auto& otherMapItem = other.asMap();
-
-    if (_items.size() != otherMapItem._items.size()) {
-        return false;
-    }
-
-    for (const auto& keyItemPair : _items) {
-        if (!otherMapItem.hasItem(keyItemPair.first)) {
-            return false;
-        }
-
-        const auto otherItem = otherMapItem[keyItemPair.first];
-        const auto item = (*this)[keyItemPair.first];
-
-        if ((!item && otherItem) || (item && !otherItem)) {
-            return false;
-        }
-
-        if (!item) {
-            continue;
-        }
-
-        if (*item != *otherItem) {
-            return false;
-        }
-    }
-
-    return true;
+    return internal::MapItemMixin<Item>::_isEqual(other.asMap());
 }
 
 BooleanItem::UP createItem(const bool value)

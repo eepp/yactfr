@@ -10,12 +10,11 @@
 
 #include <cassert>
 #include <string>
-#include <vector>
-#include <unordered_map>
 #include <memory>
 #include <boost/noncopyable.hpp>
 
 #include "aliases.hpp"
+#include "internal/item-mixin.hpp"
 
 namespace yactfr {
 
@@ -25,7 +24,7 @@ namespace yactfr {
 
 @ingroup item
 
-Please use the Item::Kind alias.
+Prefer the Item::Kind alias.
 */
 enum class ItemKind
 {
@@ -86,7 +85,14 @@ using UnsignedIntegerItem = ScalarValueItem<unsigned long long, ItemKind::UNSIGN
 */
 using RealItem = ScalarValueItem<double, ItemKind::REAL>;
 
-class StringItem;
+/*!
+@brief
+    String item.
+
+@ingroup item
+*/
+using StringItem = ScalarValueItem<std::string, ItemKind::STRING>;
+
 class ArrayItem;
 class MapItem;
 
@@ -99,6 +105,7 @@ class MapItem;
 An item holds some raw value or other items.
 */
 class Item :
+    public internal::ItemMixin<ItemKind>,
     boost::noncopyable
 {
 public:
@@ -117,49 +124,49 @@ public:
     /// Kind of this item.
     Kind kind() const noexcept
     {
-        return _kind;
+        return internal::ItemMixin<ItemKind>::_kind();
     }
 
     /// \c true if this item is a boolean item.
     bool isBoolean() const noexcept
     {
-        return _kind == Kind::BOOLEAN;
+        return this->kind() == Kind::BOOLEAN;
     }
 
     /// \c true if this item is a signed integer item.
     bool isSignedInteger() const noexcept
     {
-        return _kind == Kind::SIGNED_INTEGER;
+        return this->kind() == Kind::SIGNED_INTEGER;
     }
 
     /// \c true if this item is an unsigned integer item.
     bool isUnsignedInteger() const noexcept
     {
-        return _kind == Kind::UNSIGNED_INTEGER;
+        return this->kind() == Kind::UNSIGNED_INTEGER;
     }
 
     /// \c true if this item is a real item.
     bool isReal() const noexcept
     {
-        return _kind == Kind::REAL;
+        return this->kind() == Kind::REAL;
     }
 
     /// \c true if this item is a string item.
     bool isString() const noexcept
     {
-        return _kind == Kind::STRING;
+        return this->kind() == Kind::STRING;
     }
 
     /// \c true if this item is an array item.
     bool isArray() const noexcept
     {
-        return _kind == Kind::ARRAY;
+        return this->kind() == Kind::ARRAY;
     }
 
     /// \c true if this item is a map item.
     bool isMap() const noexcept
     {
-        return _kind == Kind::MAP;
+        return this->kind() == Kind::MAP;
     }
 
     /*!
@@ -264,9 +271,6 @@ public:
 private:
     virtual UP _clone() const = 0;
     virtual bool _isEqual(const Item& other) const noexcept = 0;
-
-private:
-    const Kind _kind;
 };
 
 /*!
@@ -281,7 +285,8 @@ directly; use the aforementioned aliases.
 */
 template <typename ValueT, Item::Kind KindV>
 class ScalarValueItem final :
-    public Item
+    public Item,
+    public internal::ScalarValItemMixin<ValueT>
 {
 public:
     /// Raw value type.
@@ -298,112 +303,34 @@ public:
     @param[in] value
         Raw value of this item.
     */
-    explicit ScalarValueItem(const ValueT value) :
+    explicit ScalarValueItem(ValueT value) :
         Item {KindV},
-        _val {value}
+        internal::ScalarValItemMixin<ValueT> {std::move(value)}
     {
     }
 
     /// Raw value of this item.
-    ValueT value() const noexcept
+    const ValueT& value() const noexcept
     {
-        return _val;
+        return this->_val();
+    }
+
+    /// Raw value of this item.
+    const ValueT& operator*() const noexcept
+    {
+        return this->_val();
     }
 
 private:
     Item::UP _clone() const override
     {
-        return std::make_unique<const ScalarValueItem<ValueT, KindV>>(_val);
+        return std::make_unique<const ScalarValueItem<ValueT, KindV>>(this->_val());
     }
 
     bool _isEqual(const Item& other) const noexcept override
     {
-        return _val == static_cast<const ScalarValueItem<ValueT, KindV>&>(other)._val;
+        return internal::ScalarValItemMixin<ValueT>::_isEqual(static_cast<const ScalarValueItem<ValueT, KindV>&>(other));
     }
-
-private:
-    const ValueT _val;
-};
-
-/*!
-@brief
-    String item.
-
-@ingroup item
-*/
-class StringItem final :
-    public Item
-{
-public:
-    /// Unique pointer to constant string item.
-    using UP = std::unique_ptr<const StringItem>;
-
-public:
-    /*!
-    @brief
-        Builds a string item having \p value as its raw value.
-
-    @param[in] value
-        Raw value of this item.
-    */
-    explicit StringItem(std::string value);
-
-    /// Raw value of this item.
-    const std::string& value() const noexcept
-    {
-        return _val;
-    }
-
-private:
-    Item::UP _clone() const override;
-    bool _isEqual(const Item& other) const noexcept override;
-
-private:
-    const std::string _val;
-};
-
-/*!
-@brief
-    Abstract base of ArrayItem and MapItem.
-
-@ingroup item
-*/
-template <typename ContainerT, Item::Kind KindV>
-class CompoundItem :
-    public Item
-{
-public:
-    /// Raw container type.
-    using Container = ContainerT;
-
-protected:
-    explicit CompoundItem(ContainerT&& items) :
-        Item {KindV},
-        _items {std::move(items)}
-    {
-    }
-
-public:
-    /// Beginning iterator of the raw container of this item.
-    typename ContainerT::const_iterator begin() const noexcept
-    {
-        return _items.begin();
-    }
-
-    /// End iterator of the raw container of this item.
-    typename ContainerT::const_iterator end() const noexcept
-    {
-        return _items.end();
-    }
-
-    /// Number of items in this item.
-    Size size() const noexcept
-    {
-        return _items.size();
-    }
-
-protected:
-    const ContainerT _items;
 };
 
 /*!
@@ -413,9 +340,13 @@ protected:
 @ingroup item
 */
 class ArrayItem final :
-    public CompoundItem<std::vector<Item::UP>, Item::Kind::ARRAY>
+    public Item,
+    public internal::ArrayItemMixin<Item>
 {
 public:
+    /// Raw container.
+    using Container = _Container;
+
     /// Unique pointer to constant array item.
     using UP = std::unique_ptr<const ArrayItem>;
 
@@ -428,6 +359,24 @@ public:
         Items of this array item (moved).
     */
     explicit ArrayItem(Container&& items);
+
+    /// Beginning iterator of the raw container of this item.
+    typename Container::const_iterator begin() const noexcept
+    {
+        return this->_begin();
+    }
+
+    /// End iterator of the raw container of this item.
+    typename Container::const_iterator end() const noexcept
+    {
+        return this->_end();
+    }
+
+    /// Number of elements in this item.
+    Size size() const noexcept
+    {
+        return this->_size();
+    }
 
     /*!
     @brief
@@ -444,8 +393,7 @@ public:
     */
     const Item *operator[](const Index index) const noexcept
     {
-        assert(index < _items.size());
-        return _items[index].get();
+        return this->_at(index);
     }
 
 private:
@@ -460,9 +408,13 @@ private:
 @ingroup item
 */
 class MapItem final :
-    public CompoundItem<std::unordered_map<std::string, Item::UP>, Item::Kind::MAP>
+    public Item,
+    public internal::MapItemMixin<Item>
 {
 public:
+    /// Raw container.
+    using Container = _Container;
+
     /// Unique pointer to constant map item.
     using UP = std::unique_ptr<const MapItem>;
 
@@ -475,6 +427,24 @@ public:
         Items of this map item (moved).
     */
     explicit MapItem(Container&& items);
+
+    /// Beginning iterator of the raw container of this item.
+    typename Container::const_iterator begin() const noexcept
+    {
+        return this->_begin();
+    }
+
+    /// End iterator of the raw container of this item.
+    typename Container::const_iterator end() const noexcept
+    {
+        return this->_end();
+    }
+
+    /// Number of entries in this item.
+    Size size() const noexcept
+    {
+        return this->_size();
+    }
 
     /*!
     @brief
@@ -491,7 +461,10 @@ public:
 
     @sa hasItem()
     */
-    const Item *operator[](const std::string& key) const noexcept;
+    const Item *operator[](const std::string& key) const noexcept
+    {
+        return this->_at(key);
+    }
 
     /*!
     @brief
@@ -504,7 +477,10 @@ public:
     @returns
         \c true if this map item has an item having the key \p key.
     */
-    bool hasItem(const std::string& key) const noexcept;
+    bool hasItem(const std::string& key) const noexcept
+    {
+        return this->_hasItem(key);
+    }
 
 private:
     Item::UP _clone() const override;
