@@ -1032,8 +1032,9 @@ public:
 
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
-                             boost::optional<boost::uuids::uuid> uuid,
-                             PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs = nullptr);
+                             boost::optional<boost::uuids::uuid> uuid = boost::none,
+                             PseudoDt::UP pseudoPktHeaderType = nullptr,
+                             MapItem::UP userAttrs = nullptr);
 
     /*
      * Validates this pseudo trace type, throwing `TextParseError`
