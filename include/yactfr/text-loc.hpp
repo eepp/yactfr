@@ -42,9 +42,16 @@ public:
     */
     explicit TextLocation(Index offset, Index lineNumber, Index columnNumber) noexcept;
 
+    /// Default copy constructor.
     TextLocation(const TextLocation&) = default;
+
+    /// Default move constructor.
     TextLocation(TextLocation&&) = default;
+
+    /// Default copy assignment operator.
     TextLocation& operator=(const TextLocation&) = default;
+
+    /// Default move assignment operator.
     TextLocation& operator=(TextLocation&&) = default;
 
     /// Offset (bytes).
