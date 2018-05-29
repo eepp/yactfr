@@ -1,0 +1,23 @@
+/* CTF 1.8 */
+
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+
+/* FAIL: structure 'dummy2' is not yet defined */
+struct dummy1 {
+	uint32_t field1;
+	struct dummy2 field2;
+};
+
+struct dummy2 {
+	uint32_t field3;
+};
+
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+	};
+};

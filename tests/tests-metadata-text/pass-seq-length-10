@@ -1,0 +1,114 @@
+/* CTF 1.8 */
+
+typealias integer {size = 8;} := int;
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+
+  packet.header := struct {
+    struct {
+      int len;
+
+      struct {
+        string a;
+        string tph[trace.packet.header.x.len];
+      } y;
+    } x;
+  };
+};
+
+stream {
+  packet.context := struct {
+    int len;
+
+    struct {
+      int len;
+
+      struct {
+        string tph[trace.packet.header.x.len];
+        string spc[stream.packet.context.x.len];
+      } y;
+    } x;
+  };
+
+  event.header := struct {
+    struct {
+      struct {
+        string tph[trace.packet.header.x.len];
+        string spc[stream.packet.context.x.len];
+        int len;
+        string seh[stream.event.header.x.y.len];
+      } y;
+      string spc[stream.packet.context.x.len];
+    } x;
+  };
+
+  event.context := struct {
+    struct {
+      string tph[trace.packet.header.x.len];
+      int lan;
+
+      struct {
+        string spc[stream.packet.context.x.len];
+        string a;
+        string seh[stream.event.header.x.y.len];
+        string c;
+        int sec[stream . event . context . MmE . lan];
+      } y;
+
+      string spc[stream.packet.context.x.len];
+    } MmE;
+  };
+};
+
+event {
+  name = event;
+
+  context := struct {
+    string seh[stream.event.header.x.y.len];
+
+    struct {
+      int sec[stream . event . context . MmE . lan];
+
+      struct {
+        string a;
+        int b;
+        int ec[event.context .x. y.b];
+        string spc[stream.packet.context.x.len];
+        string c;
+      } y;
+      string tph[trace.packet.header.x.len];
+      string spc[stream.packet.context.x.len];
+    } x;
+  };
+
+  fields := struct {
+    string b;
+    int sec[stream . event . context . MmE . lan];
+    int c;
+    int ec[event.context .x. y.b];
+    int d;
+    struct {
+      int sec[stream . event . context . MmE . lan];
+
+      enum { a } tag;
+      variant <tag> {
+        struct {
+          int ec[event.context .x. y.b];
+          int a;
+          string tph[trace.packet.header.x.len];
+          string spc[stream.packet.context.x.len];
+          int sec[event.context.x.y.b];
+          int seh[stream.event.header.x.y.len];
+          int ep[event.fields.ee.tag];
+        } a[d];
+
+        int kk[event.context .x. y.b];
+      } var;
+      int zz;
+    } ee;
+    int f;
+  };
+};

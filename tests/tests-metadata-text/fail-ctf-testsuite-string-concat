@@ -1,0 +1,5 @@
+/* CTF 1.8 */
+
+trace {
+	test = "abc" "def";
+};

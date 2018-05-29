@@ -1,0 +1,24 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+clock {
+  name = salut;
+  uuid = "d58f53f8-1ea8-4b9e-ab2b2c9f699ce47a";
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};

@@ -1,0 +1,39 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    uuid = "870dabb6-72ad-4c1c-9952-fd98f4da5f56";
+    packet.header := struct {
+        u8 uuid[16];
+    };
+};
+----
+cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
+----
+     0 PB
+     0   PCB
+     0     SCB:0
+     0       STB
+     0         AB:uuid
+     0           U:uuid:204
+     8           U:uuid:28
+    16           U:uuid:188
+    24           U:uuid:228
+    32           U:uuid:119
+    40           U:uuid:24
+    48           U:uuid:67
+    56           U:uuid:177
+    64           U:uuid:160
+    72           U:uuid:22
+    80           U:uuid:108
+    88           U:uuid:184
+    96           U:uuid:204
+   104           U:uuid:60
+   112           U:uuid:43
+   120           U:uuid:74
+   128           PU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
+   128         AE
+   128       STE
+   128     SCE
+   128   PCE
+   128 PE

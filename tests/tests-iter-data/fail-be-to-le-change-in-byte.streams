@@ -1,0 +1,29 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8le x;
+        u8be y;
+        integer { size = 3; byte_order = be; } ube;
+        integer { size = 5; byte_order = le; } ule;
+    };
+};
+----
+01 12 f8
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     ERB
+     0       ERT:0:test
+     0       SCB:5
+     0         STB
+     0           U:x:1
+     8           U:y:18
+    16           U:ube:7
+    19 Changing byte order within a byte from big-endian to little-endian.

@@ -1,0 +1,642 @@
+= yactfr
+Philippe Proulx
+29 May 2018
+
+_**yactfr**_ (yac·tif·er) is _yet another CTF reader_.
+
+The yactfr library is written in $$C++14$$ and offers a (drum rolls...)
+$$C++14$$ API.
+
+While the CTF reading libraries that I know about focus on decoding and
+providing you with complete, ordered event record objects, the yactfr
+API offers a lower level of CTF processing: you iterate individual
+packet sequences to get _elements_: beginning/end of packet,
+beginning/end of event record, beggining/end of structure, individual
+data stream scalar values like integers, floating point numbers, and
+strings, specific clock value update, known data stream ID, and the
+rest. This means the sizes of event records and packets do not influence
+the performance or memory usage of yactfr.
+
+Some use cases where this library can prove useful:
+
+* Trace inspection programs, for example when you need to debug a
+  custom CTF producer.
+* Foundation of an API with a higher level of abstraction.
+* Targeted offline analyses with low memory usage.
+
+The name _yactfr_ takes its inspiration from
+https://lloyd.github.io/yajl/[yajl], a JSON parser with a similar
+approach.
+
+WARNING: yactfr is not mature yet! Its API is still experimental:
+the interface could change at any time.
+
+
+== Notable features
+
+* Only depends on http://www.boost.org/[Boost] at _build time_, and
+  nothing at run time (except for your $$C++$$ runtime library).
+* Simple, documented $$C++14$$ API with a focus on immutability.
+* Efficient data stream decoding: zero memory allocation, zero smart
+  pointer reference count change, zero virtual method call, and zero
+  copy during a packet sequence iteration.
+** A data stream integer is decoded in-place and is available as an
+   element member.
+** A data stream string is available as one or more substrings in
+   consecutive elements. The actual substring is a pointer to the data
+   source's current data block (for example, from a memory mapped
+   region), which means zero string copy.
++
+This is possible because, as per CTF{nbsp}1.8.2, data stream strings
+must have an 8-bit alignment.
+
+* Decodes CTF packets of any size and event records of any size with
+  steady memory usage and performance.
+* Offers a memory mapped file view data source, but you can also
+  implement your own data source.
+* It is safe to use two different iterators on the same packet sequence
+  in two different threads.
+* Full CTF metadata text inspection and validation: a parsing error
+  exception contains a list of locations (line number, column number)
+  with associated context messages.
+* Full data stream packet decoding information with the
+  http://en.cppreference.com/w/cpp/concept/InputIterator[input iterator]
+  interface, for example:
+** The decoded packet magic number.
+** The decoded packet UUID.
+** The current packet's expected total size.
+** The current packet's expected content size.
+** A specific clock is updated.
+** The next data stream type to use.
+** The next event record type to use.
+** The data stream (instance) ID.
+* ``Seek packet'' iterator method to seek the beginning of a packet
+  known to be located at a specific offset, in bytes, within the same
+  packet sequence.
++
+You can use this method with non-CTF packet index information, for
+example http://lttng.org/[LTTng]'s packet index files (not directly
+supported by yactfr).
+
+* Decoding error reporting with precise message and offset (bits) where
+  this message applies within the packet sequence.
+
+
+== Limitations
+
+Note that after a few years of working with all sorts of real life CTF
+traces, I never caught one which yactfr would refuse to decode, but
+I'm still honest:
+
+* Only builds on a Linux/Unix platform.
++
+The non-portable part is the memory mapped file source which uses system
+functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
+`madvise()`.
+
+* Decodes up to, and including, 64-bit signed/unsigned CTF integers and
+  enumerations (no ``big integers'').
+* Only decodes 32-bit and 64-bit CTF floating point numbers.
+* Packet sizes must be multiples of 8 bits (I'm still not sure, but this
+  could be enforced by the specification anyway), and be at least
+  8{nbsp}bits.
+* TSDL: Does not handle single-line comment continuation when the line
+  ends with `\`:
++
+--
+----
+event {
+    name = "hello"; // this is a comment \
+    id = 23; we're still in the comment started above here
+    id = 42;
+    ...
+};
+----
+--
+
+* TSDL: Does not support something else than structure types in the path
+  from the lowest common ancestor of a variant type and its tag type, or
+  of a sequence type and its length type, to the tag or length type.
++
+Those two examples are not supported (TSDL):
++
+--
+----
+fields := struct {
+    variant <...> {
+        struct {
+            int z;
+        } a;
+        int b;
+    } cpx;
+    int sequence[event.fields.cpx.a.z];
+};
+----
+--
++
+--
+----
+fields := struct {
+    variant <...> {
+        struct {
+            int z;
+        } a;
+        int b;
+    } cpx;
+    int sequence[event.fields.cpx.z];
+};
+----
+--
++
+In both cases, there's a variant type in the path from the lowest
+common ancestor (the event record type's payload type itself) and the
+tag type.
++
+This is supported however:
++
+--
+----
+fields := struct {
+    variant <...> {
+        int a;
+        struct {
+            int len;
+            int seq[len];
+        } b;
+        string c;
+    } var;
+    int my_int;
+};
+----
+--
++
+The CTF specification is not explicit about what to do in those
+situations so I prefer not to implement an unspecified procedure until
+it is standardized.
+
+* TSDL: A variant type's tag type must be an enumeration type, and a
+  sequence type's length type must be an integer or enumeration type.
++
+For example, this is not supported (TSDL):
++
+--
+----
+fields := struct {
+    variant <...> {
+        int a;
+        int b;
+    } len;
+    int sequence[len];
+};
+----
+--
++
+The CTF specification is not explicit about what to do in those
+situations so I prefer not to implement an unspecified procedure until
+it is standardized.
+
+* TSDL: Does not support relative sequence type lengths and variant type
+  tags in type aliases (or named structure/variant type) which target
+  fields outside this type alias.
++
+For example, this is not supported (TSDL):
++
+--
+----
+fields := struct {
+    int len;
+
+    typealias struct {
+        int sequence[len];
+    } := my_struct;
+
+    struct {
+        int len;
+        my_struct a_struct;
+    } field;
+};
+----
+--
++
+This is also not supported (TSDL):
++
+--
+----
+fields := struct {
+    enum {
+        ...
+    } tag;
+
+    variant my_variant <tag> {
+        ...
+    } a_variant;
+
+    my_variant the_variant;
+};
+----
+--
++
+The example above would work, however, if the named variant type's
+tag would be absolute:
++
+--
+----
+fields := struct {
+    enum {
+        ...
+    } tag;
+
+    variant my_variant <event.fields.tag> {
+        ...
+    } a_variant;
+
+    my_variant the_variant;
+};
+----
+--
+
+* Although I'm willing to keep the yactfr API stable, I won't make any
+  effort to ensure ABI backward compatibility. There are too many
+  aspects involved to achieve this, and it can seriously affect the
+  API's quality. Please rebuild your project if you change the yactfr
+  version.
+
+
+[[build]]
+== Build and install yactfr
+
+Make sure you have the build time requirements:
+
+* Linux/Unix platform
+* https://cmake.org/[CMake] ≥ 3.1.0
+* $$C++14$$ compiler
+* http://www.boost.org/[Boost] ≥ 1.58
+* **If you build the API documentation**: http://www.stack.nl/~dimitri/doxygen/[Doxygen]
+
+.Build and install yactfr from source
+----
+git clone https://github.com/eepp/yactfr
+cd yactfr
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=release ..
+make
+make install
+----
+
+You can specify your favorite C and $$C++$$ compilers with the usual
+`CC` and `CXX` environment variables when you run `cmake`, and
+additional options with `CFLAGS` and `CXXFLAGS`.
+
+Specify `-DOPT_BUILD_DOC=YES` to `cmake` to enable the HTML API
+documentation build (requires Doxygen). The documentation is available
+in +__BUILD__/doc/api/output/html+, where +__BUILD__+ is your build
+directory.
+
+Specify `-DCMAKE_INSTALL_PREFIX=PREFIX` to `cmake` to install yactfr to
+the `PREFIX` directory instead of the default `/usr/local` directory.
+
+For example, this is how I run `cmake` for development:
+
+----
+CC=clang CXX=clang++ CXXFLAGS='-Wextra -Wall' cmake .. -DCMAKE_BUILD_TYPE=debug -DOPT_BUILD_DOC=ON
+----
+
+For production, you should make a release build:
+
+----
+CC=clang CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=release -DOPT_BUILD_DOC=ON
+----
+
+
+== Run the tests
+
+Once you have built the project in the `build` directory, you can
+run the tests. You need Bash and Python{nbsp}3.
+
+.Run the yactfr tests
+----
+cd build
+make check
+----
+
+
+== Usage examples
+
+In the examples below, the program accepts two arguments:
+
+. The path to the trace's metadata stream file (required).
+. The path to a trace's data stream file (required by some example).
+
+<<build,Build>> the API documentation for a thorough reference.
+
+NOTE: The examples are not necessarily optimal: their purpose is to show
+what the yactfr API looks like.
+
+.Print all the data stream's event record names
+====
+[source,cpp]
+----
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <yactfr/yactfr.hpp>
+
+int main(int argc, char *argv[])
+{
+    assert(argc == 3);
+
+    // open metadata stream file
+    std::ifstream metadataFile {argv[1], std::ios::binary};
+
+    // create metadata stream object
+    auto metadataStream = yactfr::createMetadataStream(metadataFile);
+
+    // we have the metadata text at this point: safe to close the file
+    metadataFile.close();
+
+    // get a trace type from the metadata text
+    auto traceType = yactfr::traceTypeFromMetadataText(metadataStream->text().begin(),
+                                                       metadataStream->text().end());
+
+    // create a memory mapped file view factory to read the data stream file
+    auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
+
+    // create a packet sequence from the trace type and data source factory
+    yactfr::PacketSequence seq {traceType, factory};
+
+    // print all the event record names
+    const auto endIt = seq.end();
+
+    for (auto it = seq.begin(); it != endIt; ++it) {
+        if (it->kind() == yactfr::Element::Kind::EVENT_RECORD_TYPE) {
+            auto& elem = static_cast<const yactfr::EventRecordTypeElement&>(*it);
+
+            // get the event record type (metadata object) from the element
+            auto& eventRecordType = elem.eventRecordType();
+
+            // the name of an event record type is an optional property
+            if (eventRecordType.name()) {
+                std::cout << *eventRecordType.name() << std::endl;
+            }
+        }
+    }
+}
+----
+====
+
+.Print all the signed integers of the `sched_switch` event records and their offset
+====
+[source,cpp]
+----
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <yactfr/yactfr.hpp>
+
+int main(int argc, char *argv[])
+{
+    assert(argc == 3);
+
+    // open metadata stream file
+    std::ifstream metadataFile {argv[1], std::ios::binary};
+
+    // create metadata stream object
+    auto metadataStream = yactfr::createMetadataStream(metadataFile);
+
+    // we have the metadata text at this point: safe to close the file
+    metadataFile.close();
+
+    // get a trace type from the metadata text
+    auto traceType = yactfr::traceTypeFromMetadataText(metadataStream->text().begin(),
+                                                       metadataStream->text().end());
+
+    // create a memory mapped file view factory to read the data stream file
+    auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
+
+    // create a packet sequence from the trace type and data source factory
+    yactfr::PacketSequence seq {traceType, factory};
+
+    // print all the signed integers of the `sched_switch` event records
+    const auto endIt = seq.end();
+    bool inSchedSwitchEventRecord = false;
+
+    for (auto it = seq.begin(); it != endIt; ++it) {
+        if (it->kind() == yactfr::Element::Kind::EVENT_RECORD_TYPE) {
+            auto& elem = static_cast<const yactfr::EventRecordTypeElement&>(*it);
+
+            // get the event record type (metadata object) from the element
+            auto& eventRecordType = elem.eventRecordType();
+
+            // the name of an event record type is an optional property
+            if (eventRecordType.name() &&
+                    *eventRecordType.name() == "sched_switch") {
+                std::cout << "---" << std::endl;
+                inSchedSwitchEventRecord = true;
+            } else {
+                inSchedSwitchEventRecord = false;
+            }
+
+            continue;
+        }
+
+        if (inSchedSwitchEventRecord &&
+                it->kind() == yactfr::Element::Kind::SIGNED_INT) {
+            auto& elem = static_cast<const yactfr::SignedIntElement&>(*it);
+
+            std::cout << it.offset() << ": ";
+
+            if (elem.displayName()) {
+                std::cout << *elem.displayName() << ": ";
+            }
+
+            std::cout << elem.value() << std::endl;
+        }
+    }
+}
+----
+====
+
+.Print all the packet offsets and sizes (both in bits), slow version
+====
+In this example, we iterate _all_ the elements of the data stream.
+The next example shows how to do the same faster.
+
+[source,cpp]
+----
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <yactfr/yactfr.hpp>
+
+int main(int argc, char *argv[])
+{
+    assert(argc == 3);
+
+    // open metadata stream file
+    std::ifstream metadataFile {argv[1], std::ios::binary};
+
+    // create metadata stream object
+    auto metadataStream = yactfr::createMetadataStream(metadataFile);
+
+    // we have the metadata text at this point: safe to close the file
+    metadataFile.close();
+
+    // get a trace type from the metadata text
+    auto traceType = yactfr::traceTypeFromMetadataText(metadataStream->text().begin(),
+                                                       metadataStream->text().end());
+
+    // create a memory mapped file view factory to read the data stream file
+    auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
+
+    // create a packet sequence from the trace type and data source factory
+    yactfr::PacketSequence seq {traceType, factory};
+
+    // print all the packet offsets and sizes (both in bits)
+    const auto endIt = seq.end();
+    yactfr::Index curPacketOffset = 0;
+    unsigned long curPacketNumber = 0;
+
+    for (auto it = seq.begin(); it != endIt; ++it) {
+        if (it->kind() == yactfr::Element::Kind::PACKET_BEGINNING) {
+            curPacketOffset = it.offset();
+        } else if (it->kind() == yactfr::Element::Kind::PACKET_END) {
+            const auto packetSize = it.offset() - curPacketOffset;
+
+            std::cout << "Packet #" << curPacketNumber <<
+                         ":    Offset: " << std::setw(10) << curPacketOffset <<
+                         "    Size: " << std::setw(10) << packetSize <<
+                         std::endl;
+            ++curPacketNumber;
+        }
+    }
+}
+----
+====
+
+.Print all the packet offsets and sizes (both in bits), fast version
+====
+This is a faster version of the previous example. Instead of decoding
+the whole packet to know its size, we use the ``expected packet total
+size'' element. This element is available after the decoder reads the
+packet size from the packet context. Then, we make the iterator seek the
+next packet directly.
+
+Note that this example does not work if the packet context type does not
+contain a packet size field, in which case the data stream must contain
+a single packet. This could be detected by inspecting the metadata and
+using the whole data stream file's size as the unique packet's size.
+
+[source,cpp]
+----
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <yactfr/yactfr.hpp>
+
+int main(int argc, char *argv[])
+{
+    assert(argc == 3);
+
+    // open metadata stream file
+    std::ifstream metadataFile {argv[1], std::ios::binary};
+
+    // create metadata stream object
+    auto metadataStream = yactfr::createMetadataStream(metadataFile);
+
+    // we have the metadata text at this point: safe to close the file
+    metadataFile.close();
+
+    // get a trace type from the metadata text
+    auto traceType = yactfr::traceTypeFromMetadataText(metadataStream->text().begin(),
+                                                       metadataStream->text().end());
+
+    // create a memory mapped file view factory to read the data stream file
+    auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
+
+    // create a packet sequence from the trace type and data source factory
+    yactfr::PacketSequence seq {traceType, factory};
+
+    // print all the packet offsets and sizes (both in bits)
+    const auto endIt = seq.end();
+    auto it = seq.begin();
+    yactfr::Index curPacketOffset = 0;
+    unsigned long curPacketNumber = 0;
+
+    while (it != endIt) {
+        if (it->kind() == yactfr::Element::Kind::PACKET_BEGINNING) {
+            curPacketOffset = it.offset();
+        } else if (it->kind() == yactfr::Element::Kind::EXPECTED_PACKET_TOTAL_SIZE) {
+            // this element indicates the expected size of the current packet
+            auto& elem = static_cast<const yactfr::ExpectedPacketTotalSizeElement&>(*it);
+
+            std::cout << "Packet #" << curPacketNumber <<
+                         ":    Offset: " << std::setw(10) << curPacketOffset <<
+                         "    Size: " << std::setw(10) << elem.expectedSize() <<
+                         std::endl;
+            ++curPacketNumber;
+
+            /*
+             * Seek the next packet without iterating the intermediate
+             * elements. The expected offset is in bytes, so we need to
+             * divide what we have by 8.
+             */
+            it.seekPacket((curPacketOffset + elem.expectedSize()) / 8);
+            continue;
+        }
+
+        ++it;
+    }
+}
+----
+====
+
+.Print a textual representation of a trace type
+====
+The printed text is not TSDL: it's a custom, human-readable format only
+used for debugging.
+
+[source,cpp]
+----
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <yactfr/yactfr.hpp>
+
+int main(int argc, char *argv[])
+{
+    assert(argc == 2);
+
+    // open metadata stream file
+    std::ifstream metadataFile {argv[1], std::ios::binary};
+
+    // create metadata stream object
+    auto metadataStream = yactfr::createMetadataStream(metadataFile);
+
+    // we have the metadata text at this point: safe to close the file
+    metadataFile.close();
+
+    // get a trace type from the metadata text
+    auto traceType = yactfr::traceTypeFromMetadataText(metadataStream->text().begin(),
+                                                       metadataStream->text().end());
+
+    // print a textual representation of the trace type
+    std::cout << *traceType << std::endl;
+}
+----
+====
+
+== Contribute and report bugs
+
+Please contribute with GitHub pull requests and report bugs as GitHub
+issues.
+
+
+== Community
+
+See http://eepp.ca/[eepp.ca].
+
+I am `eepp` on link:irc://irc.freenode.net[Freenode] and
+link:irc://irc.oftc.net[OFTC].

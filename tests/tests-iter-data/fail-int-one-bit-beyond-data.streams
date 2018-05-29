@@ -1,0 +1,55 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        string salut;
+        integer { size = 32; } meow;
+        integer { size = 1; } extra;
+    } align(8);
+};
+----
+"salut les mecs" 00 deadbeef ff
+"tomatoes" 00 deadc0de ff
+"madly" 00 feedface
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     ERB
+     0       ERT:0:test
+     0       SCB:5
+     0         STB
+     0           STRB:salut
+     0             SUB:15:salut les mecs
+   120           STRE
+   120           U:meow:3735928559
+   152           U:extra:1
+   153         STE
+   153       SCE
+   153     ERE
+   153     ERB
+   153       ERT:0:test
+   153       SCB:5
+   160         STB
+   160           STRB:salut
+   160             SUB:9:tomatoes
+   232           STRE
+   232           U:meow:3735929054
+   264           U:extra:1
+   265         STE
+   265       SCE
+   265     ERE
+   265     ERB
+   265       ERT:0:test
+   265       SCB:5
+   272         STB
+   272           STRB:salut
+   272             SUB:6:madly
+   320           STRE
+   320           U:meow:4277009102
+   352 Cannot request 1 bits at this point: reaching end of data source.

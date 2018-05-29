@@ -1,0 +1,29 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string {
+      encoding = ASCII;
+    } string_ascii;
+
+    string {
+      encoding = none;
+    } string_none;
+
+    string {
+      encoding = UTF8;
+    } string_utf8;
+  };
+};

@@ -1,0 +1,25 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  struct bonjour {
+    string a;
+    string b;
+    string c;
+  };
+
+  fields := struct {
+    struct bonjour salut;
+  };
+};

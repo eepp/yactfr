@@ -1,0 +1,16 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+  model.emf.uri = "http://superbad.com/";
+
+  fields := struct {
+    string allo;
+  };
+};

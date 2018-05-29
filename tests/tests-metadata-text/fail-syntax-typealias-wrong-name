@@ -1,0 +1,18 @@
+/* CTF 1.8 */
+
+typealias string := 23;
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+};
+
+event {
+  fields := struct {
+  	string a;
+  };
+};

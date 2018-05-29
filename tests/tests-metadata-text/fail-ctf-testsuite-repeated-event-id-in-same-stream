@@ -1,0 +1,34 @@
+/* CTF 1.8 */
+
+typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+		uint8_t  uuid[16];
+		uint32_t stream_id;
+	};
+};
+
+stream {
+	id = 0;
+};
+
+/*
+ * Both events have same id, but belong to same stream.
+ */
+event {
+	name = "test1";
+	id = 42;
+	stream_id = 0;
+};
+
+event {
+	name = "test2";
+	id = 42;
+	stream_id = 0;
+};

@@ -1,0 +1,93 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u8 packet_size;
+        u8 packet_seq_num;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        string str;
+    };
+};
+----
+48 02 "coucou" 00
+40 b4 "salut" 00
+58 17 "meow mix" 00
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     SCB:1
+     0       STB
+     0         U:packet_size:72
+     8         EPTS:72
+     8         U:packet_seq_num:2
+    16         POI:2
+    16       STE
+    16     SCE
+    16     ERB
+    16       ERT:0:test
+    16       SCB:5
+    16         STB
+    16           STRB:str
+    16             SUB:7:coucou
+    72           STRE
+    72         STE
+    72       SCE
+    72     ERE
+    72   PCE
+    72 PE
+    72 PB
+    72   PCB
+    72     DST:0
+    72     SCB:1
+    72       STB
+    72         U:packet_size:64
+    80         EPTS:64
+    80         U:packet_seq_num:180
+    88         POI:180
+    88       STE
+    88     SCE
+    88     ERB
+    88       ERT:0:test
+    88       SCB:5
+    88         STB
+    88           STRB:str
+    88             SUB:6:salut
+   136           STRE
+   136         STE
+   136       SCE
+   136     ERE
+   136   PCE
+   136 PE
+   136 PB
+   136   PCB
+   136     DST:0
+   136     SCB:1
+   136       STB
+   136         U:packet_size:88
+   144         EPTS:88
+   144         U:packet_seq_num:23
+   152         POI:23
+   152       STE
+   152     SCE
+   152     ERB
+   152       ERT:0:test
+   152       SCB:5
+   152         STB
+   152           STRB:str
+   152             SUB:9:meow mix
+   224           STRE
+   224         STE
+   224       SCE
+   224     ERE
+   224   PCE
+   224 PE

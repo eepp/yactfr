@@ -1,0 +1,41 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  variant bonjour {
+    string X;
+    string Y;
+    string Z;
+  };
+
+  enum Tag : integer {size = 8;} {
+    X, Y, Z,
+  };
+
+  variant hello <event.fields.tag2> {
+    string A;
+    string B;
+    string C;
+  };
+
+  fields := struct {
+    enum Tag tag;
+    variant bonjour <tag> var1;
+
+    enum : integer {size = 4;} {
+      A, B, C,
+    } tag2;
+    variant hello lol;
+  };
+};

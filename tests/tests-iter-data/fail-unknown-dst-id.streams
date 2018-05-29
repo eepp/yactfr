@@ -1,0 +1,31 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    packet.header := struct {
+        u8 stream_id;
+    };
+};
+
+stream {
+    id = 0x23;
+};
+
+event {
+    stream_id = 0x23;
+    name = test;
+    fields := struct {
+        u8 lel;
+    };
+};
+----
+24 01 02 03
+----
+     0 PB
+     0   PCB
+     0     SCB:0
+     0       STB
+     0         U:stream_id:36
+     8       STE
+     8     SCE
+     8 Data stream type ID 36 does not select a valid data stream type.

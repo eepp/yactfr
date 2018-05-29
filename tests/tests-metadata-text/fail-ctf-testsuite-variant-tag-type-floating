@@ -1,0 +1,27 @@
+/* CTF 1.8 */
+typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
+typealias integer { size = 16; align = 8; signed = false; base = 10; } := uint16_t;
+typealias integer { size = 32; align = 32; signed = false; base = hex; } := uint32_t;
+typealias floating_point { exp_dig = 8; mant_dig = 24; } := FLOAT;
+
+struct Mystruct {
+
+FLOAT tag;
+
+variant <tag> {
+	string a;
+} field;
+
+};
+
+trace {
+	major = 1;
+	minor = 8;
+	uuid = "2a6422d0-6cee-11e0-8c08-cb07d7b3a564";
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+		uint8_t  uuid[0x10];
+		struct Mystruct ms;
+	};
+};

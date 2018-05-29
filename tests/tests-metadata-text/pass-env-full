@@ -1,0 +1,26 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+env {
+  signed_int_neg = -9223372036854775808;
+  signed_int_pos = 9223372036854775807;
+  zero = 0;
+  string = "a string";
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};

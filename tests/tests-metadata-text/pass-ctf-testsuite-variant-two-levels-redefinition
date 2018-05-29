@@ -1,0 +1,50 @@
+/* CTF 1.8 */
+typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
+typealias integer { size = 16; align = 8; signed = false; base = 10; } := uint16_t;
+typealias integer { size = 32; align = 32; signed = false; base = hex; } := uint32_t;
+
+
+struct Mystruct {
+enum : uint32_t { sel1, sel2, sel3 } tag;
+
+variant<tag> {
+  struct {
+  enum : uint32_t { s1, s2, s3 } tag;
+    variant<tag> {
+      uint8_t s1;
+      uint8_t s2;
+      uint8_t s3;
+  } _;
+  } sel1;
+  struct {
+  enum : uint32_t { s1, s2, s3 } tag;
+    variant<tag> {
+      uint16_t s1;
+      uint16_t s2;
+      uint16_t s3;
+  } _;
+  } sel2;
+  struct {
+  enum : uint32_t { s1, s2, s3 } tag;
+    variant<tag> {
+      uint32_t s1;
+      uint32_t s2;
+      uint32_t s3;
+  } _;
+  } sel3;
+} field;
+
+};
+
+trace {
+	major = 1;
+	minor = 8;
+	uuid = "2a6422d0-6cee-11e0-8c08-cb07d7b3a564";
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+		uint8_t  uuid[0x10];
+    struct Mystruct z;
+	};
+};
+

@@ -1,0 +1,30 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+clock {
+  name = salut;
+  freq = 101014124;
+  precision = 0x134;
+  description = "je suis une \n description";
+  offset = 0b101;
+  offset_s = 02333;
+  uuid = "f4edba67-6e57-4a34-a1e3-8be1f282f684";
+  absolute = true;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};

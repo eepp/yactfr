@@ -1,0 +1,23 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+env {
+  allo = -9223372036854775809;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};

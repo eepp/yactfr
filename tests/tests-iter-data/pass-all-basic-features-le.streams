@@ -1,0 +1,474 @@
+trace {
+    major = 1;
+    minor = 8;
+    uuid = "4d86e02c-f527-4971-b960-971d26074bd4";
+    byte_order = le;
+    packet.header := struct {
+        u32 magic;
+        u8 uuid[16];
+        u8 stream_id;
+    };
+};
+
+clock {
+    name = "def";
+};
+
+typealias integer { size = 16; map = clock.def.value; } := clk16;
+typealias integer { size = 8; map = clock.def.value; } := clk8;
+
+stream {
+    id = 0x23;
+    packet.context := struct {
+        u16 packet_size;
+        u16 content_size;
+        clk16 timestamp_begin;
+        clk16 timestamp_end;
+    };
+    event.header := struct {
+        u8 id;
+        clk8 ts;
+    };
+    event.context := struct {
+        enum : u32 {
+            BON = 0x44556677,
+            JOVI,
+        } ctx1;
+        string ctx2;
+    };
+};
+
+event {
+    id = 0x1d;
+    stream_id = 0x23;
+    name = "coronin";
+    context := struct {
+        u32 a;
+    } align(64);
+    fields := struct {
+        string z;
+    };
+};
+
+event {
+    id = 0x77;
+    stream_id = 0x23;
+    name = "keratin";
+    fields := struct {
+        floating_point { exp_dig = 8; mant_dig = 24; byte_order = be; } fff;
+    };
+};
+
+event {
+    stream_id = 0x23;
+    id = 5;
+    name = "the variant event";
+    fields := struct {
+        enum : u8 {
+            ZIG = 0x45,
+            ZAG = 0xc0
+        } tag;
+        variant <stream.event.context.ctx1> {
+            string BON;
+            u32 JOVI[stream.event.header.id];
+        } vvv;
+        variant <event.fields.tag> {
+            i16 ZIG;
+            floating_point { exp_dig = 11; mant_dig = 53; } ZAG;
+        } zigzag;
+    };
+};
+
+stream {
+    id = 0xff;
+    packet.context := struct {
+        u32 packet_size;
+        u16 len;
+    };
+};
+
+event {
+    stream_id = 0xff;
+    name = "coucou les coucous";
+    fields := struct {
+        u32 len;
+        u8 seq1[stream.packet.context.len];
+        string seq2[len];
+    };
+};
+----
+c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
+6003 5803 004d 0090
+
+    1d 00
+    abcdef23 "hello hello" 00 <19>
+    89674523
+    "meow mix" 00
+
+    77 05
+    01000000 "submarine" 00
+    402df84d
+
+    1d 04
+    00996644 "lel" 00 <00 11 22 33 44>
+    deadbeef
+    "KANADA" 00
+
+    <99>
+
+c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 ff
+98020000 0700
+
+    03000000
+    (01 02 03 04 05 06 07)
+    "yes" 00 "sir" 00 "miller" 00
+
+    04000000
+    (aa bb cc dd ee ff 00)
+    "a" 00 "whole" 00 "lotta" 00 "love" 00
+
+c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
+6003 5003 002f 0090
+
+    05 03
+    77665544 "mystery" 00
+    c0 "it's my life" 00 2a806ffc:8c78e23f
+
+    05 09
+    78665544 "parenthesis" 00
+    45 (00000000 11111111 22222222 33333333 44444444) fe ff
+
+    <ff 02>
+----
+     0 PB
+     0   PCB
+     0     SCB:0
+     0       STB
+     0         U:magic:3254525889
+    32         PM:3254525889
+    32         AB:uuid
+    32           U:uuid:77
+    40           U:uuid:134
+    48           U:uuid:224
+    56           U:uuid:44
+    64           U:uuid:245
+    72           U:uuid:39
+    80           U:uuid:73
+    88           U:uuid:113
+    96           U:uuid:185
+   104           U:uuid:96
+   112           U:uuid:151
+   120           U:uuid:29
+   128           U:uuid:38
+   136           U:uuid:7
+   144           U:uuid:75
+   152           U:uuid:212
+   160           PU:4d86e02c-f527-4971-b960-971d26074bd4
+   160         AE
+   160         U:stream_id:35
+   168       STE
+   168     SCE
+   168     DST:35
+   168     SCB:1
+   168       STB
+   168         U:packet_size:864
+   184         EPTS:864
+   184         U:content_size:856
+   200         EPCS:856
+   200         U:timestamp_begin:19712
+   216         CV:def:19712
+   216         U:timestamp_end:36864
+   232         PECV:def:36864
+   232       STE
+   232     SCE
+   232     ERB
+   232       SCB:2
+   232         STB
+   232           U:id:29
+   240           U:ts:0
+   248           CV:def:19712
+   248         STE
+   248       SCE
+   248       ERT:29:coronin
+   248       SCB:3
+   248         STB
+   248           UE:ctx1:602918315
+   280           STRB:ctx2
+   280             SUB:12:hello hello
+   376           STRE
+   376         STE
+   376       SCE
+   376       SCB:4
+   384         STB
+   384           U:a:591751049
+   416         STE
+   416       SCE
+   416       SCB:5
+   416         STB
+   416           STRB:z
+   416             SUB:9:meow mix
+   488           STRE
+   488         STE
+   488       SCE
+   488     ERE
+   488     ERB
+   488       SCB:2
+   488         STB
+   488           U:id:119
+   496           U:ts:5
+   504           CV:def:19717
+   504         STE
+   504       SCE
+   504       ERT:119:keratin
+   504       SCB:3
+   504         STB
+   504           UE:ctx1:1
+   536           STRB:ctx2
+   536             SUB:10:submarine
+   616           STRE
+   616         STE
+   616       SCE
+   616       SCB:5
+   616         STB
+   616           F:fff:2.71828
+   648         STE
+   648       SCE
+   648     ERE
+   648     ERB
+   648       SCB:2
+   648         STB
+   648           U:id:29
+   656           U:ts:4
+   664           CV:def:19972
+   664         STE
+   664       SCE
+   664       ERT:29:coronin
+   664       SCB:3
+   664         STB
+   664           UE:ctx1:1147574528
+   696           STRB:ctx2
+   696             SUB:4:lel
+   728           STRE
+   728         STE
+   728       SCE
+   728       SCB:4
+   768         STB
+   768           U:a:4022250974
+   800         STE
+   800       SCE
+   800       SCB:5
+   800         STB
+   800           STRB:z
+   800             SUB:7:KANADA
+   856           STRE
+   856         STE
+   856       SCE
+   856     ERE
+   856   PCE
+   864 PE
+   864 PB
+   864   PCB
+   864     SCB:0
+   864       STB
+   864         U:magic:3254525889
+   896         PM:3254525889
+   896         AB:uuid
+   896           U:uuid:77
+   904           U:uuid:134
+   912           U:uuid:224
+   920           U:uuid:44
+   928           U:uuid:245
+   936           U:uuid:39
+   944           U:uuid:73
+   952           U:uuid:113
+   960           U:uuid:185
+   968           U:uuid:96
+   976           U:uuid:151
+   984           U:uuid:29
+   992           U:uuid:38
+  1000           U:uuid:7
+  1008           U:uuid:75
+  1016           U:uuid:212
+  1024           PU:4d86e02c-f527-4971-b960-971d26074bd4
+  1024         AE
+  1024         U:stream_id:255
+  1032       STE
+  1032     SCE
+  1032     DST:255
+  1032     SCB:1
+  1032       STB
+  1032         U:packet_size:664
+  1064         EPTS:664
+  1064         U:len:7
+  1080       STE
+  1080     SCE
+  1080     ERB
+  1080       ERT:0:coucou les coucous
+  1080       SCB:5
+  1080         STB
+  1080           U:len:3
+  1112           SQB:seq1
+  1112             U:seq1:1
+  1120             U:seq1:2
+  1128             U:seq1:3
+  1136             U:seq1:4
+  1144             U:seq1:5
+  1152             U:seq1:6
+  1160             U:seq1:7
+  1168           SQE
+  1168           SQB:seq2
+  1168             STRB:seq2
+  1168               SUB:4:yes
+  1200             STRE
+  1200             STRB:seq2
+  1200               SUB:4:sir
+  1232             STRE
+  1232             STRB:seq2
+  1232               SUB:7:miller
+  1288             STRE
+  1288           SQE
+  1288         STE
+  1288       SCE
+  1288     ERE
+  1288     ERB
+  1288       ERT:0:coucou les coucous
+  1288       SCB:5
+  1288         STB
+  1288           U:len:4
+  1320           SQB:seq1
+  1320             U:seq1:170
+  1328             U:seq1:187
+  1336             U:seq1:204
+  1344             U:seq1:221
+  1352             U:seq1:238
+  1360             U:seq1:255
+  1368             U:seq1:0
+  1376           SQE
+  1376           SQB:seq2
+  1376             STRB:seq2
+  1376               SUB:2:a
+  1392             STRE
+  1392             STRB:seq2
+  1392               SUB:6:whole
+  1440             STRE
+  1440             STRB:seq2
+  1440               SUB:6:lotta
+  1488             STRE
+  1488             STRB:seq2
+  1488               SUB:5:love
+  1528             STRE
+  1528           SQE
+  1528         STE
+  1528       SCE
+  1528     ERE
+  1528   PCE
+  1528 PE
+  1528 PB
+  1528   PCB
+  1528     SCB:0
+  1528       STB
+  1528         U:magic:3254525889
+  1560         PM:3254525889
+  1560         AB:uuid
+  1560           U:uuid:77
+  1568           U:uuid:134
+  1576           U:uuid:224
+  1584           U:uuid:44
+  1592           U:uuid:245
+  1600           U:uuid:39
+  1608           U:uuid:73
+  1616           U:uuid:113
+  1624           U:uuid:185
+  1632           U:uuid:96
+  1640           U:uuid:151
+  1648           U:uuid:29
+  1656           U:uuid:38
+  1664           U:uuid:7
+  1672           U:uuid:75
+  1680           U:uuid:212
+  1688           PU:4d86e02c-f527-4971-b960-971d26074bd4
+  1688         AE
+  1688         U:stream_id:35
+  1696       STE
+  1696     SCE
+  1696     DST:35
+  1696     SCB:1
+  1696       STB
+  1696         U:packet_size:864
+  1712         EPTS:864
+  1712         U:content_size:848
+  1728         EPCS:848
+  1728         U:timestamp_begin:12032
+  1744         CV:def:12032
+  1744         U:timestamp_end:36864
+  1760         PECV:def:36864
+  1760       STE
+  1760     SCE
+  1760     ERB
+  1760       SCB:2
+  1760         STB
+  1760           U:id:5
+  1768           U:ts:3
+  1776           CV:def:12035
+  1776         STE
+  1776       SCE
+  1776       ERT:5:the variant event
+  1776       SCB:3
+  1776         STB
+  1776           UE:ctx1:1146447479
+  1808           STRB:ctx2
+  1808             SUB:8:mystery
+  1872           STRE
+  1872         STE
+  1872       SCE
+  1872       SCB:5
+  1872         STB
+  1872           UE:tag:192
+  1880           VUB:vvv:1146447479
+  1880             STRB:BON
+  1880               SUB:13:it's my life
+  1984             STRE
+  1984           VE
+  1984           VUB:zigzag:192
+  1984             F:ZAG:0.577216
+  2048           VE
+  2048         STE
+  2048       SCE
+  2048     ERE
+  2048     ERB
+  2048       SCB:2
+  2048         STB
+  2048           U:id:5
+  2056           U:ts:9
+  2064           CV:def:12041
+  2064         STE
+  2064       SCE
+  2064       ERT:5:the variant event
+  2064       SCB:3
+  2064         STB
+  2064           UE:ctx1:1146447480
+  2096           STRB:ctx2
+  2096             SUB:12:parenthesis
+  2192           STRE
+  2192         STE
+  2192       SCE
+  2192       SCB:5
+  2192         STB
+  2192           UE:tag:69
+  2200           VUB:vvv:1146447480
+  2200             SQB:JOVI
+  2200               U:JOVI:0
+  2232               U:JOVI:286331153
+  2264               U:JOVI:572662306
+  2296               U:JOVI:858993459
+  2328               U:JOVI:1145324612
+  2360             SQE
+  2360           VE
+  2360           VUB:zigzag:69
+  2360             I:ZIG:-2
+  2376           VE
+  2376         STE
+  2376       SCE
+  2376     ERE
+  2376   PCE
+  2392 PE

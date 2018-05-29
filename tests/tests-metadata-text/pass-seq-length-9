@@ -1,0 +1,55 @@
+/* CTF 1.8 */
+
+typealias integer {size = 8;} := int;
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+  event.header := struct {
+    struct {
+      struct {
+        string a;
+        string c;
+        int len;
+      } y;
+    } x;
+  };
+};
+
+event {
+  name = event;
+
+  context := struct {
+    struct {
+      struct {
+        string a;
+        int b;
+        string c;
+      } y;
+      int seq[event.context.x.y.b];
+    } x;
+  };
+
+  fields := struct {
+    string b;
+    int c;
+    int d;
+    struct {
+      enum { a } tag;
+      variant <tag> {
+        struct {
+          int a;
+          int seq1[event.fields.ee.tag];
+          int seq2[event.context.x.y.b];
+          int seq3[stream.event.header.x.y.len];
+        } a[d];
+      } var;
+      int zz;
+    } ee;
+    int f;
+  };
+};

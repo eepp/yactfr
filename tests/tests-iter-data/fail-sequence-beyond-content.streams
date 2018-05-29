@@ -1,0 +1,54 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u8 content_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 len;
+        u32 yy[len];
+    };
+};
+----
+88
+
+    03 deadbeef feedface baaaaaad
+    02 fadedead cdcdcdcd
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     SCB:1
+     0       STB
+     0         U:content_size:136
+     8         EPCS:136
+     8       STE
+     8     SCE
+     8     ERB
+     8       ERT:0:test
+     8       SCB:5
+     8         STB
+     8           U:len:3
+    16           SQB:yy
+    16             U:yy:3735928559
+    48             U:yy:4277009102
+    80             U:yy:3131746989
+   112           SQE
+   112         STE
+   112       SCE
+   112     ERE
+   112     ERB
+   112       ERT:0:test
+   112       SCB:5
+   112         STB
+   112           U:len:2
+   120           SQB:yy
+   120 Cannot request 32 bits at this point: would move beyond the current packet's content (16 bits remaining).

@@ -1,0 +1,50 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        string salut;
+        u32 meow;
+    };
+};
+----
+"salut les mecs" 00 deadbeef
+"tomatoes" 00 deadc0de
+"madly"
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     ERB
+     0       ERT:0:test
+     0       SCB:5
+     0         STB
+     0           STRB:salut
+     0             SUB:15:salut les mecs
+   120           STRE
+   120           U:meow:3735928559
+   152         STE
+   152       SCE
+   152     ERE
+   152     ERB
+   152       ERT:0:test
+   152       SCB:5
+   152         STB
+   152           STRB:salut
+   152             SUB:9:tomatoes
+   224           STRE
+   224           U:meow:3735929054
+   256         STE
+   256       SCE
+   256     ERE
+   256     ERB
+   256       ERT:0:test
+   256       SCB:5
+   256         STB
+   256           STRB:salut
+   256             SUB:5:madly
+   296 Cannot request 8 bits at this point: reaching end of data source.

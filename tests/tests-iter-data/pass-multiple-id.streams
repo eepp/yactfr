@@ -1,0 +1,83 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = le;
+};
+
+stream {
+    event.header := struct {
+        u8 id;
+        struct {
+            string aaa;
+            u8 _id;
+        } s;
+    };
+};
+
+event {
+    name = test1;
+    id = 0x42;
+    fields := struct {
+        string salut;
+    };
+};
+
+event {
+    name = test1;
+    id = 0x43;
+    fields := struct {
+        u32 salut;
+    };
+};
+----
+43 "paste" 00 42
+"la lampe" 00
+
+42 "paste" 00 43
+deadbeef
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     ERB
+     0       SCB:2
+     0         STB
+     0           U:id:67
+     8           STB:s
+     8             STRB:aaa
+     8               SUB:6:paste
+    56             STRE
+    56             U:id:66
+    64           STE
+    64         STE
+    64       SCE
+    64       ERT:66:test1
+    64       SCB:5
+    64         STB
+    64           STRB:salut
+    64             SUB:9:la lampe
+   136           STRE
+   136         STE
+   136       SCE
+   136     ERE
+   136     ERB
+   136       SCB:2
+   136         STB
+   136           U:id:66
+   144           STB:s
+   144             STRB:aaa
+   144               SUB:6:paste
+   192             STRE
+   192             U:id:67
+   200           STE
+   200         STE
+   200       SCE
+   200       ERT:67:test1
+   200       SCB:5
+   200         STB
+   200           U:salut:4022250974
+   232         STE
+   232       SCE
+   232     ERE
+   232   PCE
+   232 PE

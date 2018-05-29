@@ -1,0 +1,46 @@
+/*!
+@mainpage yactfr C++ API
+
+Welcome to the API documentation of the
+<a href="https://github.com/eepp/yactfr"><strong>yactfr</strong></a>
+project!
+
+yactfr is a <a href="http://diamon.org/ctf/">CTF</a> reading library
+with a C++ API. The yactfr API focuses on simplicity, object
+immutability, as well as automatic ownership management, while the
+library's implementation focuses on performance, CTF decoding
+completeness, and flexibility of data input.
+
+<hr>
+
+The yactfr API is divided into two parts: \ref metadata and
+\ref packet_seq.
+
+The \ref metadata API deals with everything related to CTF metadata
+streams. This API makes it possible to:
+
+- Create your own \link metadata_dt data types\endlink,
+  \link yactfr::ClockType clock types\endlink,
+  \link yactfr::EventRecordType event record types\endlink,
+  \link yactfr::DataStreamType data stream types\endlink, and
+  \link yactfr::TraceType trace types\endlink to represent
+  binary data streams. See \ref metadata_dt.
+- Get the metadata (TSDL) text and other properties from the content
+  of a metadata stream. See \ref metadata_stream.
+- Get a trace type from a metadata text. See
+  yactfr::traceTypeFromMetadataText().
+
+The \ref metadata API is completely independent from the \ref packet_seq
+API.
+
+The \ref packet_seq API deals with CTF binary data stream decoding. This
+API makes it possible to \link yactfr::PacketSequenceIterator
+iterate\endlink the
+\link yactfr::Element elements\endlink of a \link yactfr::PacketSequence
+packet sequence\endlink represented by a given \link yactfr::TraceType
+trace type\endlink (programmatically built or obtained with the \ref
+metadata API). The \ref packet_seq API supports custom
+\link yactfr::DataSource data sources\endlink, but a convenient
+\link yactfr::MemoryMappedFileViewFactory memory-mapped file view\endlink
+data source is provided by the project.
+*/

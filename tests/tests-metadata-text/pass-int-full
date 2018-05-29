@@ -1,0 +1,214 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+clock {
+  name = the_clock;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 10;
+      byte_order = be;
+      map = clock.the_clock.value;
+    } int_clock;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 10;
+      byte_order = be;
+    } int_bo_0;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 10;
+      byte_order = le;
+    } int_bo_1;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 10;
+      byte_order = native;
+    } int_bo_2;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = decimal;
+      byte_order = le;
+    } int_base_0;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = dec;
+      byte_order = le;
+    } int_base_1;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = d;
+      byte_order = le;
+    } int_base_2;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = i;
+      byte_order = le;
+    } int_base_3;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = u;
+      byte_order = le;
+    } int_base_4;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = hexadecimal;
+      byte_order = le;
+    } int_base_5;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = hex;
+      byte_order = le;
+    } int_base_6;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = x;
+      byte_order = le;
+    } int_base_7;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = X;
+      byte_order = le;
+    } int_base_8;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = p;
+      byte_order = le;
+    } int_base_9;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = octal;
+      byte_order = le;
+    } int_base_10;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = oct;
+      byte_order = le;
+    } int_base_11;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = o;
+      byte_order = le;
+    } int_base_12;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = binary;
+      byte_order = le;
+    } int_base_13;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = bin;
+      byte_order = le;
+    } int_base_14;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = b;
+      byte_order = le;
+    } int_base_15;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 10;
+      byte_order = le;
+    } int_base_16;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 8;
+      byte_order = le;
+    } int_base_17;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 16;
+      byte_order = le;
+    } int_base_18;
+
+    integer {
+      size = 18;
+      align = 32;
+      encoding = UTF8;
+      base = 2;
+      byte_order = le;
+    } int_base_19;
+  };
+};

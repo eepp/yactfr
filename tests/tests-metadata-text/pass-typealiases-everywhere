@@ -1,0 +1,88 @@
+/* CTF 1.8 */
+
+typealias string := A;
+
+trace {
+  major = 1;
+  minor = 8;
+  typealias string := B;
+  byte_order = le;
+  packet.header := struct {
+    typealias string := C;
+
+    A a;
+    B b;
+    C c;
+
+    enum : integer {size = 8;} {
+      A, B, C, D,
+    } tag;
+
+    variant <tag> {
+      typealias string := D;
+
+      A a;
+      B b;
+      C c;
+      D d;
+    };
+  };
+};
+
+typealias string := E;
+
+stream {
+  typealias string := F;
+
+  packet.context := struct {
+    typealias string := G;
+
+    A a;
+    E e;
+    F f;
+    G g;
+  };
+  event.header := struct {
+    typealias string := H;
+
+    A a;
+    E e;
+    F f;
+    H h;
+  };
+  event.context := struct {
+    typealias string := I;
+
+    A a;
+    E e;
+    F f;
+    I i;
+  };
+};
+
+typealias string := J;
+
+event {
+  name = event;
+  typealias string := K;
+
+  context := struct {
+    typealias string := L;
+
+    A a;
+    E e;
+    K k;
+    L l;
+  };
+
+  fields := struct {
+    typealias string := M;
+
+    A a;
+    E e;
+    K k;
+    M m;
+  };
+};
+
+typealias string := N;

@@ -1,0 +1,24 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+  id = 2;
+};
+
+stream {
+  id = 2;
+};
+
+event {
+  stream_id = 2;
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};

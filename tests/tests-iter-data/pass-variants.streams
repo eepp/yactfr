@@ -1,0 +1,219 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    packet.header := struct {
+        enum : u8 {
+            A = 1 ... 5,
+            A = 9 ... 17,
+            B = 18,
+            C = 7,
+        } tag;
+        variant <tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v;
+        enum : i8 {
+            A, B, C,
+        } ph_tag;
+        variant <ph_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_rel;
+    };
+};
+
+stream {
+    packet.context := struct {
+        enum : u8 {
+            A, B, C,
+        } pc_tag;
+        variant <pc_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_rel;
+        variant <trace.packet.header.ph_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_abs;
+    };
+    event.header := struct {
+        enum : u8 {
+            A, B, C,
+        } eh_tag;
+        variant <eh_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_rel;
+        variant <stream.packet.context.pc_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_abs;
+    };
+    event.context := struct {
+        enum : u8 {
+            A, B, C,
+        } e1c_tag;
+        variant <e1c_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_rel;
+        variant <stream.event.header.eh_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_abs;
+    };
+};
+
+event {
+    name = test;
+    context := struct {
+        enum : u8 {
+            A, B, C,
+        } e2c_tag;
+        variant <e2c_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_rel;
+        variant <stream.event.context.e1c_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_abs;
+    };
+    fields := struct {
+        enum : u8 {
+            A, B, C,
+        } ep_tag;
+        variant <ep_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_rel;
+        variant <event.context.e2c_tag> {
+            string A;
+            u32 B;
+            u8 C;
+        } v_abs;
+    };
+};
+----
+TAG       0b
+V         "ethereal" 00
+PH_TAG    02
+V_REL     fe
+
+PC_TAG    00
+V_REL     "faded" 00
+V_ABS     88
+
+EH_TAG    01
+V_REL     12345678
+V_ABS     "wing" 00
+
+EC_TAG    00
+V_REL     "cultured" 00
+V_ABS     deadbeef
+
+EC_TAG    02
+V_REL     17
+V_ABS     "nest" 00
+
+EP_TAG    01
+V_REL     baaaaaad
+V_ABS     cd
+----
+     0 PB
+     0   PCB
+     0     SCB:0
+     0       STB
+     0         UE:tag:11
+     8         VUB:v:11
+     8           STRB:A
+     8             SUB:9:ethereal
+    80           STRE
+    80         VE
+    80         SE:ph_tag:2
+    88         VSB:v_rel:2
+    88           U:C:254
+    96         VE
+    96       STE
+    96     SCE
+    96     DST:0
+    96     SCB:1
+    96       STB
+    96         UE:pc_tag:0
+   104         VUB:v_rel:0
+   104           STRB:A
+   104             SUB:6:faded
+   152           STRE
+   152         VE
+   152         VSB:v_abs:2
+   152           U:C:136
+   160         VE
+   160       STE
+   160     SCE
+   160     ERB
+   160       SCB:2
+   160         STB
+   160           UE:eh_tag:1
+   168           VUB:v_rel:1
+   168             U:B:305419896
+   200           VE
+   200           VUB:v_abs:0
+   200             STRB:A
+   200               SUB:5:wing
+   240             STRE
+   240           VE
+   240         STE
+   240       SCE
+   240       ERT:0:test
+   240       SCB:3
+   240         STB
+   240           UE:e1c_tag:0
+   248           VUB:v_rel:0
+   248             STRB:A
+   248               SUB:9:cultured
+   320             STRE
+   320           VE
+   320           VUB:v_abs:1
+   320             U:B:3735928559
+   352           VE
+   352         STE
+   352       SCE
+   352       SCB:4
+   352         STB
+   352           UE:e2c_tag:2
+   360           VUB:v_rel:2
+   360             U:C:23
+   368           VE
+   368           VUB:v_abs:0
+   368             STRB:A
+   368               SUB:5:nest
+   408             STRE
+   408           VE
+   408         STE
+   408       SCE
+   408       SCB:5
+   408         STB
+   408           UE:ep_tag:1
+   416           VUB:v_rel:1
+   416             U:B:3131746989
+   448           VE
+   448           VUB:v_abs:2
+   448             U:C:205
+   456           VE
+   456         STE
+   456       SCE
+   456     ERE
+   456   PCE
+   456 PE

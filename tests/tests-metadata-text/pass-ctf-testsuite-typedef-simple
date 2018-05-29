@@ -1,0 +1,15 @@
+/* CTF 1.8 */
+
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+
+/* PASS: straight typedef */
+typedef uint32_t myint;
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+	};
+};

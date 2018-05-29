@@ -1,0 +1,19 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+env {
+  salut = "backslash \\ quote \" tab \t newline \n carriage return \r vertical tab \v unknown \u yeah";
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string allo;
+  };
+};

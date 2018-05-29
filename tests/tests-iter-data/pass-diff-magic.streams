@@ -1,0 +1,21 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    packet.header := struct {
+        u32 magic;
+    };
+};
+----
+c1fc1fc1
+----
+     0 PB
+     0   PCB
+     0     SCB:0
+     0       STB
+     0         U:magic:3254525889
+    32         PM:3254525889
+    32       STE
+    32     SCE
+    32   PCE
+    32 PE

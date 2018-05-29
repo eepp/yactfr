@@ -1,0 +1,22 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    enum : integer {size = 64; signed = true;} {
+      A = -0x8000000000000000,
+      B = 0x7fffffffffffffff,
+    } en;
+  };
+};

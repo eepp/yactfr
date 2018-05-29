@@ -1,0 +1,163 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+    packet.header := struct {
+        u8 stream_id;
+    };
+};
+
+clock {
+    name = grandiose;
+};
+
+clock {
+    name = snails;
+};
+
+clock {
+    name = salut;
+};
+
+typealias integer { size = 32; map = clock.grandiose.value; } := clk32_grandiose;
+typealias integer { size = 16; map = clock.grandiose.value; } := clk16_grandiose;
+typealias integer { size = 8; map = clock.grandiose.value; } := clk8_grandiose;
+typealias integer { size = 16; map = clock.snails.value; } := clk16_snails;
+typealias integer { size = 64; map = clock.salut.value; } := clk64_salut;
+
+stream {
+    id = 2;
+    packet.context := struct {
+        u32 packet_size;
+        clk32_grandiose timestamp_begin;
+        clk32_grandiose timestamp_end;
+    };
+};
+
+event {
+    name = test;
+    stream_id = 2;
+    fields := struct {
+        clk16_grandiose a;
+        clk16_snails b;
+        clk8_grandiose c;
+    };
+};
+
+stream {
+    id = 5;
+    packet.context := struct {
+        clk64_salut clk1;
+        clk64_salut clk2;
+    };
+};
+----
+02 000000b8 00142513 0fabcdef
+
+    3517 cdef ff
+
+    2222 ff00 21
+
+02 00000090 00abcdef ffabcdef
+
+    cdef 0000 ff
+
+05 7850cdeb9284a0da 304c7cf61933dec6
+----
+     0 PB
+     0   PCB
+     0     SCB:0
+     0       STB
+     0         U:stream_id:2
+     8       STE
+     8     SCE
+     8     DST:2
+     8     SCB:1
+     8       STB
+     8         U:packet_size:184
+    40         EPTS:184
+    40         U:timestamp_begin:1320211
+    72         CV:grandiose:1320211
+    72         U:timestamp_end:262917615
+   104         PECV:grandiose:262917615
+   104       STE
+   104     SCE
+   104     ERB
+   104       ERT:0:test
+   104       SCB:5
+   104         STB
+   104           U:a:13591
+   120           CV:grandiose:1324311
+   120           U:b:52719
+   136           CV:snails:52719
+   136           U:c:255
+   144           CV:grandiose:1324543
+   144         STE
+   144       SCE
+   144     ERE
+   144     ERB
+   144       ERT:0:test
+   144       SCB:5
+   144         STB
+   144           U:a:8738
+   160           CV:grandiose:1384994
+   160           U:b:65280
+   176           CV:snails:65280
+   176           U:c:33
+   184           CV:grandiose:1385249
+   184         STE
+   184       SCE
+   184     ERE
+   184   PCE
+   184 PE
+   184 PB
+   184   PCB
+   184     SCB:0
+   184       STB
+   184         U:stream_id:2
+   192       STE
+   192     SCE
+   192     DST:2
+   192     SCB:1
+   192       STB
+   192         U:packet_size:144
+   224         EPTS:144
+   224         U:timestamp_begin:11259375
+   256         CV:grandiose:11259375
+   256         U:timestamp_end:4289449455
+   288         PECV:grandiose:4289449455
+   288       STE
+   288     SCE
+   288     ERB
+   288       ERT:0:test
+   288       SCB:5
+   288         STB
+   288           U:a:52719
+   304           CV:grandiose:11259375
+   304           U:b:0
+   320           CV:snails:0
+   320           U:c:255
+   328           CV:grandiose:11259391
+   328         STE
+   328       SCE
+   328     ERE
+   328   PCE
+   328 PE
+   328 PB
+   328   PCB
+   328     SCB:0
+   328       STB
+   328         U:stream_id:5
+   336       STE
+   336     SCE
+   336     DST:5
+   336     SCB:1
+   336       STB
+   336         U:clk1:8669655694347378906
+   400         CV:salut:8669655694347378906
+   400         U:clk2:3480294008477179590
+   464         CV:salut:3480294008477179590
+   464       STE
+   464     SCE
+   464   PCE
+   464 PE

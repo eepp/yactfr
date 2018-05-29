@@ -1,0 +1,265 @@
+namespace yactfr {
+
+/*!
+@defgroup metadata Metadata
+@brief  Metadata API.
+
+The metadata API includes all the classes, functions, and types related
+to <a href="http://diamon.org/ctf/">CTF</a> metadata.
+
+You can use the public constructors of the various classes to build
+types and eventually get a complete \link TraceType trace
+type\endlink which you can then use to build a
+\link PacketSequence packet sequence\endlink. However, it should
+be much more convenient to use traceTypeFromMetadataText() to
+build a trace type from a TSDL document.
+
+You can use createMetadataStream() to create a metadata stream from
+an <a href="http://en.cppreference.com/w/cpp/io/basic_istream">input
+stream</a>. This function takes care of decoding a potentially packetized
+metadata stream so that you can \link MetadataStream::text() get its
+plain text\endlink.
+
+
+@defgroup metadata_stream Metadata stream
+@brief  Metadata stream classes.
+
+@ingroup metadata
+
+A metadata stream object contains the plain TSDL text. When the stream
+is packetized, the object also contains other properties like the native
+byte order, the version, the number of packets, and the rest.
+
+You can use createMetadataStream() to create a metadata stream from
+an <a href="http://en.cppreference.com/w/cpp/io/basic_istream">input
+stream</a>. This function takes care of decoding a potentially packetized
+metadata stream so that you can \link MetadataStream::text() get its
+plain text\endlink.
+
+The result of createMetadataStream() is a MetadataStream
+object. Concretely, this object is either a
+PlainTextMetadatStream object or a
+PacketizedMetadataStream object. As there are only two types of
+metadata stream objects, you can use <code>dynamic_cast&lt;&gt;()</code>
+to know which type is returned.
+
+
+@defgroup metadata_dt Metadata data types
+@brief  Metadata data type classes and types.
+
+@ingroup metadata
+
+A data type represents a set of possible values found in a data
+stream. A data type contains the properties required to decode the
+data bits it represents.
+
+In yactfr, all data type objects are unique (wrapped in unique
+pointers). This makes it possible to identify any specific data type
+within a \link TraceType trace type\endlink hierarchy by its
+memory address.
+
+You can build any data type directly
+with <code>std::make_unique<>()</code>. Make sure to use the \c const
+type, as compound data types only accept this:
+
+@code
+auto myIntType = std::make_unique<const SignedIntType>(
+    8, 32, ByteOrder::LITTLE, DisplayBase::HEXADECIMAL,
+    Encoding::NONE, boost::none
+);
+@endcode
+
+
+@defgroup packet_seq Packet sequence
+@brief	Packet sequence API.
+
+A \link PacketSequence packet sequence\endlink represents a
+sequence of zero or more <a href="http://diamon.org/ctf/">CTF</a> binary
+packets. You can iterate the individual elements of a packet sequence
+thanks to a \link PacketSequenceIterator packet sequence
+iterator\endlink, created from a packet sequence.
+
+A packet sequence needs two things on \link
+PacketSequence::PacketSequence() %construction\endlink:
+a \link TraceType trace type\endlink and a
+\link DataSourceFactory data source factory\endlink.
+
+You can use traceTypeFromMetadataText() to build a trace type
+from a TSDL document.
+
+A data source factory is a factory of \link DataSource data
+sources\endlink. Each \link PacketSequenceIterator packet
+sequence iterator\endlink creates its own data source from this shared
+factory. For example, the project provides the
+MemoryMappedFileViewFactory data source factory. This one opens
+a file and keeps its file descriptor while its created data sources,
+memory-mapped file views, create their own memory maps on this shared
+file descriptor. This allows a packet sequence iterator to be copied and
+moved naturally (using constructors and assignment operators) without
+using more file descriptors and without having to provide a new data
+source manually.
+
+A packet sequence iterator is an <a
+href="http://en.cppreference.com/w/cpp/concept/InputIterator">input
+iterator</a> with Element as its value type. It is safe to keep
+a \em copy of an element, but \em not a reference, when you increment
+the iterator.
+
+Each packet sequence iterator element is a piece of information located
+at the iterator's \link PacketSequenceIterator::offset()
+current offset\endlink within the packet sequence.
+
+<h3>Expected packet sequence element types</h3>
+
+Here's what you can expect when \link PacketSequenceIterator
+iterating\endlink a
+\link PacketSequence packet sequence\endlink.
+
+In the following descriptions, consider this language:
+
+<dl>
+<dt><code>A B</code></dt>
+<dd>
+  Element of type <code>A</code> followed by element of type <code>B</code>
+  (two iterations).
+</dd>
+
+<dt><code>A | B</code></dt>
+<dd>
+  Element of type <code>A</code> <em>or</em> element of type <code>B</code>
+  (single iteration).
+</dd>
+
+<dt><code>A *</code></dt>
+<dd>
+  Element of type <code>A</code> occuring zero or more times
+  (zero or more iterations).
+</dd>
+
+<dt><code>A{n}</code></dt>
+<dd>
+  Element of type <code>A</code> occuring <code>n</code> times
+  (<code>n</code> iterations).
+</dd>
+
+<dt><code>ScopeBeginningElement&lt;SCOPE&gt;</code></dt>
+<dd>
+  Element of type <code>ScopeBeginningElement</code> with specific
+  scope <code>SCOPE</code>.
+</dd>
+
+<dt><code>( ... )</code></dt>
+<dd>Group of elements of the given types or other groups.</dd>
+
+<dt><code>[ ... ]</code></dt>
+<dd>Group of optional elements of the given types or other groups.</dd>
+</dl>
+
+When a name is written in <code>UPPERCASE</code>, then it's a named
+group of elements having specific types. This is used to make the
+descriptions easier to read and to allow recursion.
+
+<h4><code>DATA</code> group</h4>
+
+<pre>
+(
+  SignedIntElement |
+  SignedEnumElement |
+  (
+    (UnsignedIntElement | UnsignedEnumElement)
+    [ClockValueElement]
+  ) |
+  FloatElement |
+  (StringBeginningElement SubstringElement * StringEndElement) |
+  (ArrayBeginningElement DATA * ArrayEndElement) |
+  (TextArrayBeginningElement SubstringElement * TextArrayEndElement) |
+  (SequenceBeginningElement DATA * SequenceEndElement) |
+  (TextSequenceBeginningElement SubstringElement * TextSequenceEndElement) |
+  (StructBeginningElement DATA * StructEndElement) |
+  (
+    (VariantBeginningSignedTagElement | VariantBeginningUnsignedTagElement)
+    DATA *
+    VariantEndElement
+  )
+)
+</pre>
+
+<h4><code>EVENT-RECORD</code> group</h4>
+
+<pre>
+(
+  EventRecordBeginningElement
+  [ScopeBeginningElement&lt;EVENT_RECORD_HEADER&gt; DATA ScopeEndElement]
+  EventRecordTypeElement
+  [ScopeBeginningElement&lt;EVENT_RECORD_FIRST_CONTEXT&gt; DATA ScopeEndElement]
+  [ScopeBeginningElement&lt;EVENT_RECORD_SECOND_CONTEXT&gt; DATA ScopeEndElement]
+  [ScopeBeginningElement&lt;EVENT_RECORD_PAYLOAD&gt; DATA ScopeEndElement]
+  EventRecordEndElement
+)
+</pre>
+
+<h4><code>PACKET</code> group</h4>
+
+<pre>
+(
+  PacketBeginningElement
+  PacketContentBeginningElement
+  [
+    ScopeBeginningElement&lt;PACKET_HEADER&gt;
+    StructBeginningElement
+    (
+      (
+        (UnsignedIntElement | UnsignedEnumElement)
+        [ClockValueElement]
+        (PacketMagicNumberElement | DataStreamIdElement)
+      ) |
+      (
+        ArrayBeginningElement
+        (UnsignedIntElement [ClockValueElement]){16}
+        PacketUuidElement
+        ArrayEndElement
+      ) |
+      DATA
+    ) *
+    StructEndElement
+    ScopeEndElement
+  ]
+  DataStreamTypeElement
+  [
+    ScopeBeginningElement&lt;PACKET_CONTEXT&gt;
+    StructBeginningElement
+    (
+      (
+        (UnsignedIntElement | UnsignedEnumElement)
+        PacketEndClockValueElement
+      ) |
+      (
+        (UnsignedIntElement | UnsignedEnumElement)
+        [ClockValueElement]
+        (
+          PacketOriginIndexElement |
+          ExpectedPacketTotalSizeElement |
+          ExpectedPacketContentSizeElement |
+        )
+      ) |
+      DATA
+    ) *
+    StructEndElement
+    ScopeEndElement
+  ]
+  EVENT-RECORD *
+  PacketContentEndElement
+  PacketEndElement
+)
+</pre>
+
+<h4>Packet sequence</h4>
+
+The whole packet sequence is just a sequence of zero or more packets:
+
+<pre>
+PACKET *
+</pre>
+*/
+
+} // namespace yactfr

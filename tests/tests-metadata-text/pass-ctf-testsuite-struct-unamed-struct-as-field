@@ -1,0 +1,22 @@
+/* CTF 1.8 */
+
+typealias integer { size = 32; align = 8; signed = false; } := int;
+
+/* PASS: unnamed struct type used as field */
+struct dummy {
+	int normal_field;
+	struct {
+		int sub_field1;
+		int sub_field2;
+	} x;
+};
+
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		int magic;
+	};
+};

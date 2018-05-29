@@ -1,0 +1,16 @@
+/* CTF 1.8 */
+
+typealias integer {size = 32;} := uint32;
+typealias uint32 := allo;
+typealias allo := salut[23];
+typealias salut := meowmix[2][17];
+
+trace {
+  major = 1;
+  minor = 8;
+  typealias string := B;
+  byte_order = le;
+  packet.header := struct {
+    meowmix s;
+  };
+};

@@ -1,0 +1,15 @@
+/* CTF 1.8 */
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+};
+
+event {
+	name = "test";
+	id = 0;
+	fields := struct {
+		string s;
+	};
+};

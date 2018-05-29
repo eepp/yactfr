@@ -1,0 +1,44 @@
+/* CTF 1.8 */
+
+;
+
+trace {
+  major = 1;
+  ;;
+  minor = 8;
+  byte_order = le;
+  ;
+};
+
+;;
+
+/* hello */
+
+;
+
+stream {
+;
+};
+
+event {
+  name = event;;;
+
+  fields := struct {
+    string {encoding = ASCII;;} string_ascii;;
+    enum : integer {size = 8;;} {
+      a, b, c
+    } tag;
+    ;
+    variant <tag> {
+      string a;;
+      string b;
+      string c;
+      ;;
+    } the_var;;
+  };
+  ;
+};
+
+;;
+//;
+;

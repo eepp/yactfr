@@ -1,0 +1,20 @@
+/* CTF 1.8 */
+
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+
+/* FAIL: duplicate name */
+struct dummy {
+  uint32_t xxx;
+  uint32_t xxx;
+};
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+	};
+};
+
+

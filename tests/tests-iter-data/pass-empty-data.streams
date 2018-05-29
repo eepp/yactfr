@@ -1,0 +1,15 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        string lel;
+    };
+};
+----
+
+----

@@ -1,0 +1,19 @@
+/* CTF 1.8 */
+
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+typealias integer { size = 64; align = 8; signed = false; } := uint64_t;
+
+typedef uint32_t array_type[10];
+
+/* FAIL: type 'array_type' is already defined */
+typedef uint64_t array_type[10];
+
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+	};
+};

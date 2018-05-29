@@ -1,0 +1,20 @@
+/* CTF 1.8 */
+
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+
+/* PASS: It's possible to typedef reserved keywords */
+typealias uint32_t := int;
+
+struct mystruct {
+	uint32_t field1;
+	int field2;
+};
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+	};
+};

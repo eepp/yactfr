@@ -1,0 +1,35 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 xx;
+        integer { size = 8; align = 32; } yy;
+    };
+};
+----
+22 <11 22 33> deadbeef
+33 <11 22>
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     ERB
+     0       ERT:0:test
+     0       SCB:5
+     0         STB
+     0           U:xx:34
+    32           U:yy:222
+    40         STE
+    40       SCE
+    40     ERE
+    40     ERB
+    40       ERT:0:test
+    40       SCB:5
+    64         STB
+    64           U:xx:51
+    88 Cannot request 1 bits at this point: reaching end of data source.

@@ -1,0 +1,47 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u8 content_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        enum : u8 {
+            A,
+            B,
+            C,
+        } tag;
+        variant <tag> {
+            u32 A;
+            string B;
+            u8 C[3];
+        } v;
+    };
+};
+----
+28 01 "blabli"
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     SCB:1
+     0       STB
+     0         U:content_size:40
+     8         EPCS:40
+     8       STE
+     8     SCE
+     8     ERB
+     8       ERT:0:test
+     8       SCB:5
+     8         STB
+     8           UE:tag:1
+    16           VUB:v:1
+    16             STRB:B
+    16 Cannot read 48 bits at this point: would move beyond the current packet's content (24 bits remaining).

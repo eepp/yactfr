@@ -1,0 +1,88 @@
+/* CTF 1.8 */
+
+typedef string A;
+
+trace {
+  major = 1;
+  minor = 8;
+  typedef string B;
+  byte_order = le;
+  packet.header := struct {
+    typedef string C;
+
+    A a;
+    B b;
+    C c;
+
+    enum : integer {size = 8;} {
+      A, B, C, D,
+    } tag;
+
+    variant <tag> {
+      typedef string D;
+
+      A a;
+      B b;
+      C c;
+      D d;
+    };
+  };
+};
+
+typedef string E;
+
+stream {
+  typedef string F;
+
+  packet.context := struct {
+    typedef string G;
+
+    A a;
+    E e;
+    F f;
+    G g;
+  };
+  event.header := struct {
+    typedef string H;
+
+    A a;
+    E e;
+    F f;
+    H h;
+  };
+  event.context := struct {
+    typedef string I;
+
+    A a;
+    E e;
+    F f;
+    I i;
+  };
+};
+
+typedef string J;
+
+event {
+  name = event;
+  typedef string K;
+
+  context := struct {
+    typedef string L;
+
+    A a;
+    E e;
+    K k;
+    L l;
+  };
+
+  fields := struct {
+    typedef string M;
+
+    A a;
+    E e;
+    K k;
+    M m;
+  };
+};
+
+typedef string N;

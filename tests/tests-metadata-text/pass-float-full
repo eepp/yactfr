@@ -1,0 +1,38 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    floating_point {
+      exp_dig = 8;
+      mant_dig = 24;
+      align = 16;
+      byte_order = le;
+    } my_float;
+
+    floating_point {
+      exp_dig = 8;
+      mant_dig = 24;
+      align = 16;
+      byte_order = be;
+    } my_float2;
+
+    floating_point {
+      exp_dig = 8;
+      mant_dig = 24;
+      align = 16;
+      byte_order = native;
+    } my_float3;
+  };
+};

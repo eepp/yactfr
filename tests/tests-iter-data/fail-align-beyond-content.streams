@@ -1,0 +1,47 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u8 content_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 xx;
+        integer { size = 8; align = 32; } yy;
+    };
+};
+----
+50
+
+    22 <11 22 33> deadbeef
+    33 <aa bb cc> feedface
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     SCB:1
+     0       STB
+     0         U:content_size:80
+     8         EPCS:80
+     8       STE
+     8     SCE
+     8     ERB
+     8       ERT:0:test
+     8       SCB:5
+    32         STB
+    32           U:xx:51
+    64           U:yy:239
+    72         STE
+    72       SCE
+    72     ERE
+    72     ERB
+    72       ERT:0:test
+    72       SCB:5
+    72 Cannot align current position: skipping 24 bits would move beyond the current packet's content (8 bits remaining).

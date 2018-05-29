@@ -1,0 +1,31 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+stream {
+    packet.context := struct {
+        u16 content_size;
+        u16 packet_size;
+    };
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 lel;
+    };
+};
+----
+f219 f218 01 02 03
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     SCB:1
+     0       STB
+     0         U:content_size:61977
+    16         EPCS:61977
+    16         U:packet_size:61976
+    32 Expected packet total size (61976) is less than expected packet content size (61977).

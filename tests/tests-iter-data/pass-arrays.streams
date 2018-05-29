@@ -1,0 +1,118 @@
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        struct {
+            string arr[3];
+        } arr[4];
+        u8 arr3[1][2][3];
+        u8 arr0[0];
+    };
+};
+----
+"copper" 00 "explain" 00 "truck" 00
+"neat" 00 00 "decisive" 00
+"notice" 00 "hum" 00 "nerve" 00
+"" 00 "blood" 00 "calm" 00
+
+11 22 33 44 55 66
+----
+     0 PB
+     0   PCB
+     0     DST:0
+     0     ERB
+     0       ERT:0:test
+     0       SCB:5
+     0         STB
+     0           AB:arr
+     0             STB:arr
+     0               AB:arr
+     0                 STRB:arr
+     0                   SUB:7:copper
+    56                 STRE
+    56                 STRB:arr
+    56                   SUB:8:explain
+   120                 STRE
+   120                 STRB:arr
+   120                   SUB:6:truck
+   168                 STRE
+   168               AE
+   168             STE
+   168             STB:arr
+   168               AB:arr
+   168                 STRB:arr
+   168                   SUB:5:neat
+   208                 STRE
+   208                 STRB:arr
+   208                   SUB:1:
+   216                 STRE
+   216                 STRB:arr
+   216                   SUB:9:decisive
+   288                 STRE
+   288               AE
+   288             STE
+   288             STB:arr
+   288               AB:arr
+   288                 STRB:arr
+   288                   SUB:7:notice
+   344                 STRE
+   344                 STRB:arr
+   344                   SUB:4:hum
+   376                 STRE
+   376                 STRB:arr
+   376                   SUB:6:nerve
+   424                 STRE
+   424               AE
+   424             STE
+   424             STB:arr
+   424               AB:arr
+   424                 STRB:arr
+   424                   SUB:1:
+   432                 STRE
+   432                 STRB:arr
+   432                   SUB:6:blood
+   480                 STRE
+   480                 STRB:arr
+   480                   SUB:5:calm
+   520                 STRE
+   520               AE
+   520             STE
+   520           AE
+   520           AB:arr3
+   520             AB:arr3
+   520               AB:arr3
+   520                 U:arr3:17
+   528               AE
+   528               AB:arr3
+   528                 U:arr3:34
+   536               AE
+   536             AE
+   536             AB:arr3
+   536               AB:arr3
+   536                 U:arr3:51
+   544               AE
+   544               AB:arr3
+   544                 U:arr3:68
+   552               AE
+   552             AE
+   552             AB:arr3
+   552               AB:arr3
+   552                 U:arr3:85
+   560               AE
+   560               AB:arr3
+   560                 U:arr3:102
+   568               AE
+   568             AE
+   568           AE
+   568           AB:arr0
+   568           AE
+   568         STE
+   568       SCE
+   568     ERE
+   568   PCE
+   568 PE
