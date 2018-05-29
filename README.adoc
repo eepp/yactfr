@@ -95,7 +95,7 @@ functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 `madvise()`.
 
 * Decodes up to, and including, 64-bit signed/unsigned CTF integers and
-  enumerations (no ``big integers'').
+  enumerations (no ``big integers``).
 * Only decodes 32-bit and 64-bit CTF floating point numbers.
 * Packet sizes must be multiples of 8 bits (I'm still not sure, but this
   could be enforced by the specification anyway), and be at least
