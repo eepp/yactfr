@@ -76,7 +76,7 @@ public:
                                         to this data stream type).
     @param packetContextType            Packet context type.
     @param eventRecordHeaderType        Event record header type.
-    @param eventFirstRecordContextType  Event record first context type.
+    @param eventRecordFirstContextType  Event record first context type.
 
     @throws InvalidMetadata The data stream type is invalid.
     */
@@ -84,7 +84,7 @@ public:
                             EventRecordTypeSet&& eventRecordTypes,
                             DataType::UP packetContextType,
                             DataType::UP eventRecordHeaderType,
-                            DataType::UP eventFirstRecordContextType);
+                            DataType::UP eventRecordFirstContextType);
 
     /// ID of this data stream type.
     TypeId id() const noexcept
