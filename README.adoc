@@ -1,6 +1,8 @@
 = yactfr
 Philippe Proulx
-29 May 2018
+30 May 2018
+
+image:https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
 
 _**yactfr**_ (yac·tif·er) is _yet another CTF reader_.
 
