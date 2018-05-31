@@ -70,6 +70,7 @@ A subclass instance can be passed to Element::accept(ElementVisitor&) const.
 class ElementVisitor
 {
 public:
+    virtual ~ElementVisitor();
     virtual void visit(const BeginningElement& elem);
     virtual void visit(const EndElement& elem);
     virtual void visit(const PacketBeginningElement& elem);
