@@ -17,10 +17,6 @@
 #include <mem-data-source-factory.hpp>
 #include <common-trace.hpp>
 
-static const char * const expected =
-    "U:uuid:142\n"
-    "PM:3254525889\n";
-
 int main()
 {
     auto traceType = yactfr::traceTypeFromMetadataText(metadata,
