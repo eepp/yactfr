@@ -275,7 +275,7 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::END_PACKET_PREAMBLE_PROC)] = &Vm::_execEndPacketPreambleProc;
     _execFuncs[static_cast<int>(Instr::Kind::END_DST_PACKET_PREAMBLE_PROC)] = &Vm::_execEndDstPacketPreambleProc;
     _execFuncs[static_cast<int>(Instr::Kind::END_DST_ERT_PREAMBLE_PROC)] = &Vm::_execEndDstErtPreambleProc;
-    _execFuncs[static_cast<int>(Instr::Kind::END_ERT_PROC)] = &Vm::_execErtProc;
+    _execFuncs[static_cast<int>(Instr::Kind::END_ERT_PROC)] = &Vm::_execEndErtProc;
 }
 
 void Vm::seekPacket(const Index offsetBytes)
@@ -983,7 +983,7 @@ Vm::_ExecReaction Vm::_execEndDstErtPreambleProc(const Instr& instr)
     return _ExecReaction::EXEC_CUR_INSTR;
 }
 
-Vm::_ExecReaction Vm::_execErtProc(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndErtProc(const Instr& instr)
 {
     // after event record payload
     _pos.stackPop();

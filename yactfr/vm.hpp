@@ -1068,7 +1068,7 @@ private:
     _ExecReaction _execEndPacketPreambleProc(const Instr& instr);
     _ExecReaction _execEndDstPacketPreambleProc(const Instr& instr);
     _ExecReaction _execEndDstErtPreambleProc(const Instr& instr);
-    _ExecReaction _execErtProc(const Instr& instr);
+    _ExecReaction _execEndErtProc(const Instr& instr);
 
     void _setNamedDataElementFromInstr(NamedDataElement& elem,
                                        const InstrReadData& instrReadData) noexcept
