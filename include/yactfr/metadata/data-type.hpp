@@ -119,7 +119,7 @@ public:
     /// \c true if this data type is an unsigned enumeration type.
     bool isUnsignedEnumType() const noexcept
     {
-        return this->_isKind(_KIND_UNSIGNED_INT);
+        return this->_isKind(_KIND_UNSIGNED_ENUM);
     }
 
     /// \c true if this data type is a string type.
