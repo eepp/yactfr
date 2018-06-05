@@ -82,6 +82,12 @@ supported by yactfr).
 
 * Decoding error reporting with precise message and offset (bits) where
   this message applies within the packet sequence.
+* Performance (`nop` iteration loop) is similar to
+  https://diamon.org/babeltrace/[Babeltrace]{nbsp}1.5.3's (`-o dummy`)
+  with a release <<build,build>>.
++
+I don't publish numbers: experiment by yourself to confirm or deny this
+claim.
 
 
 == Limitations
