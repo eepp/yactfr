@@ -27,9 +27,9 @@ namespace internal {
 
 MemoryMappedFileViewFactoryImpl::MemoryMappedFileViewFactoryImpl(const std::string& path,
                                                                  const Size preferredMmapSize,
-                                                                 const bool expectSequentialAccesses) :
+                                                                 const MemoryMappedFileViewFactory::AccessPattern accessPattern) :
     _path {path},
-    _expectSequentialAccesses {expectSequentialAccesses}
+    _accessPattern {accessPattern}
 {
     _fd = open(path.c_str(), O_RDONLY);
 

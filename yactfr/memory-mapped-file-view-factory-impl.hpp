@@ -12,6 +12,7 @@
 
 #include <string>
 #include <yactfr/aliases.hpp>
+#include <yactfr/memory-mapped-file-view-factory.hpp>
 
 namespace yactfr {
 namespace internal {
@@ -33,7 +34,7 @@ class MemoryMappedFileViewFactoryImpl
 public:
     explicit MemoryMappedFileViewFactoryImpl(const std::string& path,
                                              Size preferredMmapSize,
-                                             bool expectSequentialAccesses);
+                                             MemoryMappedFileViewFactory::AccessPattern accessPattern);
     ~MemoryMappedFileViewFactoryImpl();
 
     int fd() const noexcept
@@ -61,9 +62,14 @@ public:
         return _mmapSize;
     }
 
-    bool expectSequentialAccesses() const noexcept
+    MemoryMappedFileViewFactory::AccessPattern accessPattern() const noexcept
     {
-        return _expectSequentialAccesses;
+        return _accessPattern;
+    }
+
+    void accessPattern(const MemoryMappedFileViewFactory::AccessPattern accessPattern) noexcept
+    {
+        _accessPattern = accessPattern;
     }
 
 private:
@@ -72,7 +78,7 @@ private:
 private:
     const std::string _path;
     Size _mmapSize;
-    const bool _expectSequentialAccesses;
+    MemoryMappedFileViewFactory::AccessPattern _accessPattern;
     int _fd = -1;
     Size _fileSize;
     Size _mmapOffsetGranularity;

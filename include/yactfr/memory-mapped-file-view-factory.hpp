@@ -41,6 +41,21 @@ class MemoryMappedFileViewFactory final :
 {
 public:
     /*!
+    @brief  Memory map access pattern.
+    */
+    enum class AccessPattern {
+        /// No special treatment.
+        NORMAL,
+
+        /// Expect page references in sequential order (more read ahead).
+        SEQUENTIAL,
+
+        /// Expect page references in random order (less read ahead).
+        RANDOM,
+    };
+
+public:
+    /*!
     @brief  Creates a memory mapped file view factory which can create
             memory mapped file views on the file located at \p path.
 
@@ -51,9 +66,11 @@ public:
     size. The actual memory map size can also be smaller than \p
     preferredMmapSize.
 
-    If \p expectSequentialAccesses is \c true, the memory map file views
-    which this factory creates are optimized for a sequential traversal
-    if possible. What this does exactly depends on the platform.
+    The \p expectedAccessPattern parameter controls how the memory maps
+    performed by this factory's data sources are optimized. Prefer
+    AccessPattern::SEQUENTIAL if you're going to iterate whole packets
+    in order. Prefer AccessPattern::RANDOM if you're going to skip many
+    elements and seek packets.
 
     This factory can throw IOError on construction and when creating a
     data source. Its created data source can throw IOError when getting
@@ -64,17 +81,34 @@ public:
     @param preferredMmapSize        Preferred maximum size (bytes) of
                                     each memory map operation, or 0 to
                                     let the implementation decide.
-    @param expectSequentialAccesses \c true to optimize for sequential
-                                    traversals of the memory mapped file
-                                    views created by this factory.
+    @param expectedAccessPattern    Expected access pattern of the
+                                    memory mapped file views created by
+                                    this factory.
 
     @throws IOError An I/O error occured (file not found, permission
                     denied, etc.).
     */
     MemoryMappedFileViewFactory(const std::string& path,
                                 Size preferredMmapSize = 0,
-                                bool expectSequentialAccesses = true);
+                                AccessPattern expectedAccessPattern = AccessPattern::NORMAL);
     ~MemoryMappedFileViewFactory();
+
+    /// Current expected access pattern for future memory maps.
+    AccessPattern expectedAccessPattern() const noexcept;
+
+    /*!
+    @brief  Sets the current expected access pattern for future
+            memory maps.
+
+    Note that this setting only applies to memory map operations
+    performed \em after this call, by any data source created by
+    this factory.
+
+    @param expectedAccessPattern    Expected access pattern of the
+                                    memory mapped file views created
+                                    by this factory.
+    */
+    void expectedAccessPattern(AccessPattern expectedAccessPattern) noexcept;
 
 private:
     DataSource::UP _createDataSource() override;

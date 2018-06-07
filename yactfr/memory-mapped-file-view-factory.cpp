@@ -122,10 +122,19 @@ void MemoryMappedFileView::_doMmap(const Index offset)
         throw IOError {ss.str()};
     }
 
-    if (_mmapFileViewFactoryImpl->expectSequentialAccesses()) {
-        // not the end of the world if this fails
+    switch (_mmapFileViewFactoryImpl->accessPattern()) {
+    case MemoryMappedFileViewFactory::AccessPattern::NORMAL:
+        (void) madvise(_mmapAddr, static_cast<size_t>(_mmapLength),
+                       MADV_NORMAL);
+        break;
+    case MemoryMappedFileViewFactory::AccessPattern::SEQUENTIAL:
         (void) madvise(_mmapAddr, static_cast<size_t>(_mmapLength),
                        MADV_SEQUENTIAL);
+        break;
+    case MemoryMappedFileViewFactory::AccessPattern::RANDOM:
+        (void) madvise(_mmapAddr, static_cast<size_t>(_mmapLength),
+                       MADV_RANDOM);
+        break;
     }
 }
 
@@ -133,15 +142,25 @@ void MemoryMappedFileView::_doMmap(const Index offset)
 
 MemoryMappedFileViewFactory::MemoryMappedFileViewFactory(const std::string& path,
                                                          const Size preferredMmapSize,
-                                                         const bool expectSequentialAccesses) :
+                                                         const MemoryMappedFileViewFactory::AccessPattern accessPattern) :
     _pimpl {std::make_shared<internal::MemoryMappedFileViewFactoryImpl>(path,
                                                                         preferredMmapSize,
-                                                                        expectSequentialAccesses)}
+                                                                        accessPattern)}
 {
 }
 
 MemoryMappedFileViewFactory::~MemoryMappedFileViewFactory()
 {
+}
+
+MemoryMappedFileViewFactory::AccessPattern MemoryMappedFileViewFactory::expectedAccessPattern() const noexcept
+{
+    return _pimpl->accessPattern();
+}
+
+void MemoryMappedFileViewFactory::expectedAccessPattern(const AccessPattern expectedAccessPattern) noexcept
+{
+    _pimpl->accessPattern(expectedAccessPattern);
 }
 
 DataSource::UP MemoryMappedFileViewFactory::_createDataSource()
