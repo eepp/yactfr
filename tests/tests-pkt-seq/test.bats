@@ -8,16 +8,16 @@
 tests_pkt_seq_path="$build_tests_path/tests-pkt-seq"
 
 @test 'begin' {
-  run "$tests_pkt_seq_path/test-begin"
+  run "$tests_pkt_seq_path/test-pkt-seq-begin"
   [ $status -eq 0 ]
 }
 
 @test 'end' {
-  run "$tests_pkt_seq_path/test-end"
+  run "$tests_pkt_seq_path/test-pkt-seq-end"
   [ $status -eq 0 ]
 }
 
 @test 'at' {
-  run "$tests_pkt_seq_path/test-at"
+  run "$tests_pkt_seq_path/test-pkt-seq-at"
   [ $status -eq 0 ]
 }

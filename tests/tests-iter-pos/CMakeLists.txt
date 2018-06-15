@@ -28,3 +28,15 @@ include_directories (
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../common"
 )
+
+add_custom_target (
+    tests-iter-pos
+    DEPENDS
+        test-iter-pos-copy-ctor
+        test-iter-pos-copy-assign
+        test-iter-pos-move-ctor
+        test-iter-pos-move-assign
+        test-iter-pos-cmp
+        test-iter-pos-restore
+        test-iter-pos-bool
+)

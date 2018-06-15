@@ -15,6 +15,7 @@ add_custom_target (
         testers
         tests-iter-data-traces
         tests-iter
+        tests-iter-pos
         tests-pkt-seq
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Running tests"

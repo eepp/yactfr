@@ -25,3 +25,14 @@ include_directories (
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../common"
 )
+
+add_custom_target (
+    tests-iter
+    DEPENDS
+        test-iter-seek-packet
+        test-iter-copy-ctor
+        test-iter-copy-assign
+        test-iter-move-ctor
+        test-iter-move-assign
+        test-iter-cmp
+)
