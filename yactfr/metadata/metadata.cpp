@@ -9,13 +9,17 @@
 
 #include <istream>
 #include <memory>
+#include <sstream>
+#include <vector>
 #include <boost/endian/conversion.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <yactfr/io-error.hpp>
-#include <yactfr/metadata/metadata.hpp>
 #include <yactfr/metadata/metadata-stream.hpp>
 #include <yactfr/metadata/plain-text-metadata-stream.hpp>
 #include <yactfr/metadata/packetized-metadata-stream.hpp>
+#include <yactfr/metadata/invalid-metadata-stream.hpp>
 
 namespace yactfr {
 

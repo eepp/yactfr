@@ -17,15 +17,42 @@
 #ifndef _YACTFR_METADATA_STRUCT_VARIANT_TYPE_BASE_HPP
 #define _YACTFR_METADATA_STRUCT_VARIANT_TYPE_BASE_HPP
 
+// for std::unordered_map
 #include <unordered_map>
-#include <memory>
+
+// for std::string
+#include <string>
+
+// for std::vector
+#include <vector>
+
+// for std::move
+#include <utility>
+
+// for std::begin, std::end
+#include <iterator>
+
+// for std::ostringstream
 #include <sstream>
 
-#include "exceptions.hpp"
+// for InvalidMetadata
+#include "invalid-metadata.hpp"
+
+// for CompoundType
 #include "compound-type.hpp"
-#include "fwd.hpp"
+
+// for NoSuchIndex
+#include "no-such-index.hpp"
+
+// for NoSuchName
+#include "no-such-name.hpp"
+
+// for Index
+#include "../aliases.hpp"
 
 namespace yactfr {
+
+class DataType;
 
 /*!
 @brief  Abstract base of StructType and VariantType.
@@ -103,7 +130,7 @@ protected:
 
     const DataType *_findEntryTypeByDisplayName(const std::string& dispName) const
     {
-        auto pairIt = _displayNamesToEntries.find(dispName);
+        const auto pairIt = _displayNamesToEntries.find(dispName);
 
         if (pairIt == std::end(_displayNamesToEntries)) {
             return nullptr;
@@ -126,8 +153,8 @@ protected:
             return false;
         }
 
-        auto thisIt = std::begin(_entriesVec);
-        auto otherIt = std::begin(structVariantTypeBase._entries());
+        const auto thisIt = std::begin(_entriesVec);
+        const auto otherIt = std::begin(structVariantTypeBase._entries());
 
         while (thisIt != std::end(_entriesVec)) {
             const auto& thisUp = *thisIt;

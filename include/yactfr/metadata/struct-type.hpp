@@ -17,14 +17,23 @@
 #ifndef _YACTFR_METADATA_STRUCT_TYPE_HPP
 #define _YACTFR_METADATA_STRUCT_TYPE_HPP
 
-#include <memory>
-#include <algorithm>
+// for std::string
+#include <string>
 
-#include <yactfr/aliases.hpp>
-
+// for StructVariantTypeBase
 #include "struct-variant-type-base.hpp"
+
+// for StructTypeField
 #include "struct-type-field.hpp"
+
+// for DataType
+#include "data-type.hpp"
+
+// for DataTypeVisitor
 #include "data-type-visitor.hpp"
+
+// for Index
+#include "../aliases.hpp"
 
 namespace yactfr {
 

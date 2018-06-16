@@ -17,12 +17,17 @@
 #ifndef _YACTFR_METADATA_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_ARRAY_TYPE_HPP
 
-#include <memory>
+// for Size
+#include "../aliases.hpp"
 
-#include <yactfr/aliases.hpp>
-
+// for ArraySequenceTypeBase
 #include "array-sequence-type-base.hpp"
+
+// for DataTypeVisitor
 #include "data-type-visitor.hpp"
+
+// for DataType
+#include "data-type.hpp"
 
 namespace yactfr {
 
@@ -41,7 +46,7 @@ public:
     @brief  Builds an array data type.
 
     @param minAlign Minimal alignment of data stream arrays
-                    described by this structure type (power of two,
+                    described by this array type (power of two,
                     greater than 0).
     @param elemType Element's type.
     @param length   Length of data stream arrays described by this array

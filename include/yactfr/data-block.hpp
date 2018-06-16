@@ -17,8 +17,7 @@
 #ifndef _YACTFR_DATA_BLOCK_HPP
 #define _YACTFR_DATA_BLOCK_HPP
 
-#include <cassert>
-
+// for Size
 #include "aliases.hpp"
 
 namespace yactfr {
@@ -31,7 +30,8 @@ A data block is a simple pair of an address from which to read data
 to the user function which returns this data block (in other words,
 <strong>the caller never frees this memory</strong>).
 */
-class DataBlock {
+class DataBlock
+{
 public:
     /*!
     @brief  Builds a data block where the starting address is \p addr

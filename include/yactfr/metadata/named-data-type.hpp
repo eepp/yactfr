@@ -17,11 +17,10 @@
 #ifndef _YACTFR_METADATA_NAMED_DATA_TYPE_HPP
 #define _YACTFR_METADATA_NAMED_DATA_TYPE_HPP
 
-#include <memory>
+// for std::string
 #include <string>
 
-#include "metadata-base.hpp"
-#include "fwd.hpp"
+// for DataType
 #include "data-type.hpp"
 
 namespace yactfr {
@@ -31,8 +30,7 @@ namespace yactfr {
 
 @ingroup metadata_dt
 */
-class NamedDataType :
-    public MetadataBase
+class NamedDataType
 {
 protected:
     explicit NamedDataType(const std::string& name, DataType::UP type);

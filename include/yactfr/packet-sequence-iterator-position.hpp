@@ -17,14 +17,17 @@
 #ifndef _YACTFR_PACKET_SEQUENCE_ITERATOR_POSITION_HPP
 #define _YACTFR_PACKET_SEQUENCE_ITERATOR_POSITION_HPP
 
+// for std::unique_ptr
 #include <memory>
 
 namespace yactfr {
 namespace internal {
+
     class Vm;
     class VmPos;
     class IterInfos;
-}
+
+} // namespace internal
 
 /*!
 @brief  Packet sequence iterator position.

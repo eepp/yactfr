@@ -17,9 +17,8 @@
 #ifndef _YACTFR_METADATA_METADATA_TEXT_LOCATION_HPP
 #define _YACTFR_METADATA_METADATA_TEXT_LOCATION_HPP
 
-#include <yactfr/aliases.hpp>
-
-#include "metadata-base.hpp"
+// for Index
+#include "../aliases.hpp"
 
 namespace yactfr {
 
@@ -28,8 +27,7 @@ namespace yactfr {
 
 @ingroup metadata
 */
-class MetadataTextLocation final :
-    public MetadataBase
+class MetadataTextLocation final
 {
 public:
     explicit MetadataTextLocation(Index lineNumber,

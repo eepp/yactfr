@@ -17,16 +17,27 @@
 #ifndef _YACTFR_MEMORY_MAPPED_FILE_VIEW_FACTORY_HPP
 #define _YACTFR_MEMORY_MAPPED_FILE_VIEW_FACTORY_HPP
 
+// for std::shared_ptr
 #include <memory>
+
+// for boost::noncopyable
 #include <boost/noncopyable.hpp>
 
+// for std::string
+#include <string>
+
+// for DataSourceFactory
 #include "data-source-factory.hpp"
 
-namespace yactfr {
+// for Size
+#include "aliases.hpp"
 
+namespace yactfr {
 namespace internal {
+
     class MemoryMappedFileViewFactoryImpl;
-}
+
+} // namespace internal
 
 /*!
 @brief  Memory mapped file view factory.

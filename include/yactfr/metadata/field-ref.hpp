@@ -17,12 +17,13 @@
 #ifndef _YACTFR_METADATA_FIELD_REF_HPP
 #define _YACTFR_METADATA_FIELD_REF_HPP
 
+// for std::vector
 #include <vector>
-#include <memory>
+
+// for std::string
 #include <string>
 
-#include "metadata-base.hpp"
-#include "aliases.hpp"
+// for Scope
 #include "scope.hpp"
 
 namespace yactfr {
@@ -39,8 +40,7 @@ SequenceType) and variants (described by VariantType), and also for
 general searching with TraceType::findDataType(),
 DataStreamType::findDataType(), and EventRecordType::findDataType().
 */
-class FieldRef final :
-    public MetadataBase
+class FieldRef final
 {
 public:
     /*!

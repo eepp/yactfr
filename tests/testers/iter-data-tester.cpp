@@ -14,7 +14,7 @@
 
 #include <yactfr/yactfr.hpp>
 #include <yactfr/memory-mapped-file-view-factory.hpp>
-#include <yactfr/metadata/metadata.hpp>
+#include <yactfr/metadata/trace-type-from-metadata-text.hpp>
 #include <yactfr/packet-sequence.hpp>
 #include <yactfr/packet-sequence-iterator.hpp>
 #include <yactfr/element.hpp>

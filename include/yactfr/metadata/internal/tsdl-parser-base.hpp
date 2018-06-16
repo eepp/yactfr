@@ -24,11 +24,11 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/trace-type-env.hpp>
 #include <yactfr/metadata/data-stream-type.hpp>
 #include <yactfr/metadata/event-record-type.hpp>
 #include <yactfr/metadata/enum-type.hpp>
 #include <yactfr/metadata/aliases.hpp>
-#include <yactfr/metadata/exceptions.hpp>
 
 #include "string-scanner.hpp"
 

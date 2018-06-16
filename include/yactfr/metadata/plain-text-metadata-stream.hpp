@@ -17,20 +17,24 @@
 #ifndef _YACTFR_METADATA_PLAIN_TEXT_METADATA_STREAM_HPP
 #define _YACTFR_METADATA_PLAIN_TEXT_METADATA_STREAM_HPP
 
-#include <string>
-#include <cstdlib>
+// for std::istream
+#include <istream>
+
+// for std::unique_ptr
 #include <memory>
-#include <boost/uuid/uuid.hpp>
 
-#include <yactfr/aliases.hpp>
+// for std::string
+#include <string>
 
+// for MetadataStream
 #include "metadata-stream.hpp"
 
 namespace yactfr {
-
 namespace internal {
+
 struct PlainTextMetadataStreamImpl;
-}
+
+} // namespace internal
 
 /*!
 @brief  Plain text metadata stream.

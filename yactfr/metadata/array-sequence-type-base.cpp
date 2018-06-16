@@ -8,7 +8,7 @@
  */
 
 #include <algorithm>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 #include <yactfr/metadata/array-sequence-type-base.hpp>
 
 namespace yactfr {

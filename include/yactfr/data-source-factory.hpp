@@ -17,9 +17,7 @@
 #ifndef _YACTFR_DATA_SOURCE_FACTORY_HPP
 #define _YACTFR_DATA_SOURCE_FACTORY_HPP
 
-#include <memory>
-#include <cstddef>
-
+// for DataSource
 #include "data-source.hpp"
 
 namespace yactfr {

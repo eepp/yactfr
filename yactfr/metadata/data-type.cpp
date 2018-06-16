@@ -27,6 +27,10 @@
 
 namespace yactfr {
 
+DataType::~DataType()
+{
+}
+
 DataType::DataType(const int kind, const unsigned int alignment) :
     DataType {static_cast<_Kind>(kind), alignment}
 {

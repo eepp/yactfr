@@ -17,12 +17,19 @@
 #ifndef _YACTFR_DATA_SOURCE_HPP
 #define _YACTFR_DATA_SOURCE_HPP
 
+// for std::unique_ptr
 #include <memory>
-#include <cstddef>
+
+// for std::exception
 #include <stdexcept>
+
+// for boost::optional
 #include <boost/optional.hpp>
 
+// for DataBlock
 #include "data-block.hpp"
+
+// for Index, Size
 #include "aliases.hpp"
 
 namespace yactfr {

@@ -17,42 +17,19 @@
 #ifndef _YACTFR_METADATA_METADATA_STREAM_HPP
 #define _YACTFR_METADATA_METADATA_STREAM_HPP
 
-#include <cstdlib>
-#include <string>
+// for std::runtime_error
 #include <stdexcept>
-#include <memory>
-#include <istream>
-#include <boost/uuid/uuid.hpp>
 
-#include <yactfr/aliases.hpp>
+// for std::string
+#include <string>
+
+// for std::istream
+#include <istream>
+
+// for std::unique_ptr
+#include <memory>
 
 namespace yactfr {
-
-/*!
-@brief  Invalid metadata stream error.
-
-@ingroup metadata
-
-This is thrown when there is an error while reading a metadata stream
-(when you call createMetadataStream()) which is not an I/O error
-(IOError is thrown in this case). In other words, the stream is
-successfully read, but the binary content of the file is invalid.
-*/
-class InvalidMetadataStream final :
-    public std::runtime_error
-{
-public:
-    explicit InvalidMetadataStream(const std::string& msg, Index offset);
-
-    /// Offset (bytes) in metadata stream at which the error occured.
-    Index offset() const noexcept
-    {
-        return _offset;
-    }
-
-private:
-    Index _offset;
-};
 
 /*!
 @brief  Metadata stream.

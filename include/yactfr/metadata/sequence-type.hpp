@@ -17,8 +17,13 @@
 #ifndef _YACTFR_METADATA_SEQUENCE_TYPE_HPP
 #define _YACTFR_METADATA_SEQUENCE_TYPE_HPP
 
+// for ArraySequenceTypeBase
 #include "array-sequence-type-base.hpp"
+
+// for FieldRef
 #include "field-ref.hpp"
+
+// for DataTypeVisitor
 #include "data-type-visitor.hpp"
 
 namespace yactfr {

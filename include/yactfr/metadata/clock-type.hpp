@@ -17,13 +17,19 @@
 #ifndef _YACTFR_METADATA_CLOCK_TYPE_HPP
 #define _YACTFR_METADATA_CLOCK_TYPE_HPP
 
+// for std::string
 #include <string>
-#include <utility>
-#include <boost/uuid/uuid.hpp>
-#include <boost/noncopyable.hpp>
+
+// for boost::noncopyable
+#include <boost/core/noncopyable.hpp>
+
+// for boost::optional
 #include <boost/optional.hpp>
 
-#include "metadata-base.hpp"
+// for boost::uuids::uuid
+#include <boost/uuid/uuid.hpp>
+
+// for Cycles
 #include "aliases.hpp"
 
 namespace yactfr {
@@ -69,7 +75,6 @@ private:
 A clock type describes clocks which are instantiated per data stream.
 */
 class ClockType final :
-    public MetadataBase,
     boost::noncopyable
 {
 public:

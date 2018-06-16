@@ -8,7 +8,7 @@
  */
 
 #include <yactfr/metadata/aliases.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/no-such-name.hpp>
 #include <yactfr/metadata/trace-type-env.hpp>
 
 namespace yactfr {

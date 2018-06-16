@@ -17,14 +17,16 @@
 #ifndef _YACTFR_PACKET_SEQUENCE_HPP
 #define _YACTFR_PACKET_SEQUENCE_HPP
 
+// for std::shared_ptr
 #include <memory>
 
-#include <yactfr/metadata/trace-type.hpp>
-
-#include "data-source-factory.hpp"
+// for PacketSequenceIterator
 #include "packet-sequence-iterator.hpp"
 
 namespace yactfr {
+
+class DataSourceFactory;
+class TraceType;
 
 /*!
 @brief  Packet sequence.
@@ -58,7 +60,7 @@ public:
                                 iterators which this packet sequence
                                 creates.
     */
-    explicit PacketSequence(TraceType::SP traceType,
+    explicit PacketSequence(std::shared_ptr<const TraceType> traceType,
                             std::shared_ptr<DataSourceFactory> dataSourceFactory);
 
     /*!
@@ -123,7 +125,7 @@ public:
     Iterator at(Index offset);
 
 private:
-    TraceType::SP _traceType;
+    std::shared_ptr<const TraceType> _traceType;
     std::shared_ptr<DataSourceFactory> _dataSourceFactory;
 };
 

@@ -19,6 +19,8 @@
 
 #include "aliases.hpp"
 #include "scope.hpp"
+#include "byte-order.hpp"
+#include "encoding.hpp"
 
 namespace yactfr {
 

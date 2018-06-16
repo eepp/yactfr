@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
-#include <yactfr/metadata/metadata.hpp>
+#include <yactfr/metadata/trace-type-from-metadata-text.hpp>
 #include <yactfr/metadata/metadata-stream.hpp>
 #include <yactfr/metadata/io.hpp>
 

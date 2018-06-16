@@ -17,22 +17,31 @@
 #ifndef _YACTFR_METADATA_EVENT_RECORD_TYPE_HPP
 #define _YACTFR_METADATA_EVENT_RECORD_TYPE_HPP
 
+// for std::string
+#include <string>
+
+// for std::unique_ptr
 #include <memory>
+
+// for boost::noncopyable
 #include <boost/noncopyable.hpp>
+
+// for boost::optional
 #include <boost/optional.hpp>
 
-#include "metadata-base.hpp"
-#include "fwd.hpp"
+// for TypeId, LogLevel
+#include "aliases.hpp"
 
 namespace yactfr {
-
 namespace internal {
 
 class TraceTypeImpl;
 
-}
+} // namespace internal
 
 class DataStreamType;
+class DataType;
+class FieldRef;
 
 /*!
 @brief  Event record type.
@@ -42,7 +51,6 @@ class DataStreamType;
 An event record type describes data stream event records.
 */
 class EventRecordType final :
-    public MetadataBase,
     boost::noncopyable
 {
     friend class internal::TraceTypeImpl;

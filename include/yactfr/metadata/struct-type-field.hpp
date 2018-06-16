@@ -17,11 +17,20 @@
 #ifndef _YACTFR_METADATA_STRUCT_TYPE_FIELD_HPP
 #define _YACTFR_METADATA_STRUCT_TYPE_FIELD_HPP
 
+// for std::string
 #include <string>
+
+// for std::unique_ptr
+#include <memory>
+
+// for std::vector
 #include <vector>
 
+// for DataType
+#include "data-type.hpp"
+
+// for NamedDataType
 #include "named-data-type.hpp"
-#include "fwd.hpp"
 
 namespace yactfr {
 

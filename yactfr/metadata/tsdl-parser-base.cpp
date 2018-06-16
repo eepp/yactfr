@@ -11,7 +11,6 @@
 #include <set>
 
 #include <yactfr/metadata/internal/tsdl-parser-base.hpp>
-#include <yactfr/metadata/exceptions.hpp>
 #include <yactfr/metadata/metadata-text-location.hpp>
 #include <yactfr/metadata/array-type.hpp>
 #include <yactfr/metadata/text-array-type.hpp>
@@ -19,6 +18,7 @@
 #include <yactfr/metadata/text-sequence-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
+#include <yactfr/metadata/metadata-parse-error.hpp>
 #include <yactfr/internal/utils.hpp>
 
 namespace yactfr {

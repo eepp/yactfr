@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/metadata-parse-error.hpp>
 
 namespace yactfr {
 

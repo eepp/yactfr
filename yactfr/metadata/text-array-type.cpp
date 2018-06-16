@@ -8,7 +8,8 @@
  */
 
 #include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
+#include <yactfr/metadata/int-type.hpp>
 
 namespace yactfr {
 

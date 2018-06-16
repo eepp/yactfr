@@ -17,10 +17,11 @@
 #ifndef _YACTFR_METADATA_DATA_TYPE_VISITOR_HPP
 #define _YACTFR_METADATA_DATA_TYPE_VISITOR_HPP
 
+// for boost::noncopyable
 #include <boost/noncopyable.hpp>
 
+// for data type classes
 #include "fwd.hpp"
-#include "metadata-base.hpp"
 
 namespace yactfr {
 
@@ -32,7 +33,6 @@ namespace yactfr {
 A subclass instance can be passed to DataType::accept(DataTypeVisitor&) const.
 */
 class DataTypeVisitor :
-    public MetadataBase,
     boost::noncopyable
 {
 public:

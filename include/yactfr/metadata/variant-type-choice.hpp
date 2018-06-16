@@ -17,12 +17,20 @@
 #ifndef _YACTFR_METADATA_VARIANT_TYPE_CHOICE_HPP
 #define _YACTFR_METADATA_VARIANT_TYPE_CHOICE_HPP
 
-#include <memory>
+// for std::string
 #include <string>
+
+// for std::vector
 #include <vector>
 
+// for std::unique_ptr
+#include <memory>
+
+// for NamedDataType
 #include "named-data-type.hpp"
-#include "fwd.hpp"
+
+// for DataType
+#include "data-type.hpp"
 
 namespace yactfr {
 

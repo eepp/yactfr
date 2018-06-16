@@ -15,7 +15,10 @@
 #ifndef _YACTFR_IO_ERROR_HPP
 #define _YACTFR_IO_ERROR_HPP
 
-#include <exception>
+// for std::runtime_error
+#include <stdexcept>
+
+// for std::string
 #include <string>
 
 namespace yactfr {

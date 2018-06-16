@@ -41,7 +41,7 @@
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/variant-type-choice.hpp>
 #include <yactfr/metadata/field-ref.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/metadata-parse-error.hpp>
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/internal/utils.hpp>
 

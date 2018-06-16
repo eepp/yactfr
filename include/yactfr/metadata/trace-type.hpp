@@ -17,21 +17,23 @@
 #ifndef _YACTFR_METADATA_TRACE_TYPE_HPP
 #define _YACTFR_METADATA_TRACE_TYPE_HPP
 
-#include <string>
-#include <set>
-#include <utility>
+// for std::unique_ptr, std::shared_ptr
 #include <memory>
-#include <unordered_map>
+
+// for boost::uuids::uuid
 #include <boost/uuid/uuid.hpp>
-#include <boost/noncopyable.hpp>
+
+// for boost::optional
 #include <boost/optional.hpp>
 
-#include "metadata-base.hpp"
+// for ClockType
 #include "clock-type.hpp"
-#include "trace-type-env.hpp"
+
+// for DataStreamType
 #include "data-stream-type.hpp"
+
+// for DataType
 #include "data-type.hpp"
-#include "aliases.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -56,7 +58,9 @@ struct DataStreamTypeIdCompare
     }
 };
 
-}
+} // namespace internal
+
+class TraceTypeEnv;
 
 /*!
 @brief  Set of clock types with unique names.
@@ -82,7 +86,6 @@ using DataStreamTypeSet = std::set<std::unique_ptr<const DataStreamType>,
 A trace type describes traces.
 */
 class TraceType final :
-    public MetadataBase,
     boost::noncopyable
 {
     friend class internal::TraceTypeImpl;

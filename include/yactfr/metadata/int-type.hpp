@@ -17,22 +17,38 @@
 #ifndef _YACTFR_METADATA_INT_TYPE_HPP
 #define _YACTFR_METADATA_INT_TYPE_HPP
 
-#include <memory>
+// for std::string
+#include <string>
+
+// for boost::optional
 #include <boost/optional.hpp>
 
+// for BitArrayType
 #include "bit-array-type.hpp"
-#include "aliases.hpp"
+
+// for DisplayBase
+#include "int-type.hpp"
+
+// for Encoding
 #include "encoding.hpp"
+
+// for ByteOrder
 #include "byte-order.hpp"
-#include "fwd.hpp"
+
+// for DataType
+#include "data-type.hpp"
+
+// for DataTypeVisitor
+#include "data-type-visitor.hpp"
 
 namespace yactfr {
-
 namespace internal {
 
 class TraceTypeImpl;
 
-}
+} // namespace internal
+
+class ClockType;
 
 /*!
 @brief  Integer type display base.

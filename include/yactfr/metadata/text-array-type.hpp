@@ -17,8 +17,17 @@
 #ifndef _YACTFR_METADATA_TEXT_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_TEXT_ARRAY_TYPE_HPP
 
+// for ArrayType
 #include "array-type.hpp"
-#include "int-type.hpp"
+
+// for Encoding
+#include "encoding.hpp"
+
+// for DataTypeVisitor
+#include "data-type-visitor.hpp"
+
+// for Size
+#include "../aliases.hpp"
 
 namespace yactfr {
 

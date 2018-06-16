@@ -10,7 +10,7 @@
 #include <boost/optional.hpp>
 
 #include <yactfr/metadata/clock-type.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 
 namespace yactfr {
 

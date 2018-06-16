@@ -17,54 +17,34 @@
 #ifndef _YACTFR_PACKET_SEQUENCE_ITERATOR_HPP
 #define _YACTFR_PACKET_SEQUENCE_ITERATOR_HPP
 
-#include <memory>
-#include <stdexcept>
-#include <cstddef>
+// for assert
 #include <cassert>
 
-#include <yactfr/metadata/trace-type.hpp>
+// for std::ptrdiff_t
+#include <cstddef>
 
-#include "aliases.hpp"
-#include "element.hpp"
-#include "data-source-factory.hpp"
+// for std::input_iterator_tag
+#include <iterator>
+
+// for std::shared_ptr, std::unique_ptr
+#include <memory>
+
+// for PacketSequenceIteratorPosition
 #include "packet-sequence-iterator-position.hpp"
+
+// for Index
+#include "aliases.hpp"
 
 namespace yactfr {
 namespace internal {
+
     class Vm;
-}
 
-/*!
-@brief  Decoding error.
+} // namespace internal
 
-This is thrown when there's an error in the decoding process of a packet
-sequence (PacketSequenceIterator::operator++()).
-*/
-class DecodingError final :
-    public std::runtime_error
-{
-public:
-    explicit DecodingError(const std::string& reason, Index offset);
-
-    /// Reason of the error.
-    const std::string& reason() const noexcept
-    {
-        return _reason;
-    }
-
-    /*!
-    @brief  Offset (bits) from the beginning of the packet sequence
-            which created this iterator.
-    */
-    Index offset() const noexcept
-    {
-        return _offset;
-    }
-
-private:
-    std::string _reason;
-    Index _offset;
-};
+class Element;
+class DataSourceFactory;
+class TraceType;
 
 /*!
 @brief  Packet sequence iterator.
@@ -87,7 +67,8 @@ public:
 
 private:
     explicit PacketSequenceIterator(std::shared_ptr<DataSourceFactory> dataSourceFactory,
-                                    TraceType::SP traceType, bool end);
+                                    std::shared_ptr<const TraceType> traceType,
+                                    bool end);
 
 private:
     static constexpr Index _END_OFFSET = static_cast<Index>(~0ULL);
@@ -409,7 +390,7 @@ private:
 private:
     std::shared_ptr<DataSourceFactory> _dataSourceFactory;
     std::unique_ptr<internal::Vm> _vm;
-    TraceType::SP _traceType;
+    std::shared_ptr<const TraceType> _traceType;
 
     // current element
     const Element *_curElement = nullptr;

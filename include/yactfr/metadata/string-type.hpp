@@ -17,8 +17,13 @@
 #ifndef _YACTFR_METADATA_STRING_TYPE_HPP
 #define _YACTFR_METADATA_STRING_TYPE_HPP
 
+// for DataType
 #include "data-type.hpp"
+
+// for ScalarType
 #include "scalar-type.hpp"
+
+// for DataTypeVisitor
 #include "data-type-visitor.hpp"
 
 namespace yactfr {

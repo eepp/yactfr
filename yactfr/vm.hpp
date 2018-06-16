@@ -24,6 +24,7 @@
 #include <yactfr/data-source-factory.hpp>
 #include <yactfr/element.hpp>
 #include <yactfr/packet-sequence-iterator.hpp>
+#include <yactfr/decoding-error.hpp>
 
 #include "proc.hpp"
 #include "std-int-reader.hpp"

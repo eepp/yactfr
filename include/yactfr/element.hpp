@@ -17,33 +17,40 @@
 #ifndef _YACTFR_ELEMENT_HPP
 #define _YACTFR_ELEMENT_HPP
 
+// for std::int64_t, std::uint64_t
 #include <cstdint>
-#include <cstdlib>
+
+// for std::string
 #include <string>
-#include <cstring>
+
+// for boost::uuids::uuid
 #include <boost/uuid/uuid.hpp>
 
-#include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/enum-type.hpp>
-#include <yactfr/metadata/float-type.hpp>
-#include <yactfr/metadata/string-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/variant-type.hpp>
+// for data type classes
+#include "metadata/fwd.hpp"
 
+// for SignedEnumType, UnsignedEnumType
+#include "metadata/enum-type.hpp"
+
+// for TextArrayType
+#include "metadata/text-array-type.hpp"
+
+// for TextSequenceType
+#include "metadata/text-sequence-type.hpp"
+
+// for ElementVisitor
 #include "element-visitor.hpp"
 
+// for Index, Size
+#include "aliases.hpp"
+
 namespace yactfr {
-
-class PacketSequence;
-
 namespace internal {
+
     class Vm;
     class VmPos;
-}
+
+} // namespace internal
 
 /*!
 @brief  Value of a

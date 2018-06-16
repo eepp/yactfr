@@ -17,28 +17,61 @@
 #ifndef _YACTFR_METADATA_ENUM_TYPE_HPP
 #define _YACTFR_METADATA_ENUM_TYPE_HPP
 
-#include <type_traits>
-#include <limits>
-#include <stdexcept>
-#include <climits>
-#include <memory>
-#include <string>
-#include <unordered_map>
+// for std::set
 #include <set>
-#include <cassert>
-#include <cstdint>
+
+// for std::move
+#include <utility>
+
+// for std::make_unsigned, std::is_integral
+#include <type_traits>
+
+// for std::begin, std::end
+#include <iterator>
+
+// for std::string
+#include <string>
+
+// for std::unordered_map
+#include <unordered_map>
+
+// for std::numeric_limits
+#include <limits>
+
+// for std::ostringstream
 #include <sstream>
 
-#include "metadata-base.hpp"
-#include "exceptions.hpp"
+// for std::make_unique
+#include <memory>
+
+// for boost::optional
+#include <boost/optional.hpp>
+
+// for InvalidMetadata
+#include "invalid-metadata.hpp"
+
+// for ByteOrder
+#include "byte-order.hpp"
+
+// for Encoding
+#include "encoding.hpp"
+
+// for DisplayBase
 #include "int-type.hpp"
 
-namespace yactfr {
+// for DataType
+#include "data-type.hpp"
 
+// for DataTypeVisitor
+#include "data-type-visitor.hpp"
+
+namespace yactfr {
 namespace internal {
+
 using SignedEnumTypeValue = long long;
 using UnsignedEnumTypeValue = std::make_unsigned<SignedEnumTypeValue>::type;
-}
+
+} // namespace internal
 
 /*!
 @brief  Enumeration type member range.
@@ -49,8 +82,7 @@ An enumeration type member range is a simple pair of lower and upper
 values, both included in the range.
 */
 template <typename ValueT>
-class EnumTypeMemberRange :
-    public MetadataBase
+class EnumTypeMemberRange
 {
 public:
     using Value = ValueT;
@@ -172,8 +204,7 @@ An enumeration type member is a set of
 \link EnumTypeMemberRange enumeration type member ranges\endlink.
 */
 template <typename RangeT>
-class EnumTypeMember :
-    public MetadataBase
+class EnumTypeMember
 {
 public:
     using Value = typename RangeT::Value;
@@ -259,8 +290,8 @@ public:
             return false;
         }
 
-        auto it1 = std::begin(_ranges);
-        auto it2 = std::begin(otherMember.ranges());
+        const auto it1 = std::begin(_ranges);
+        const auto it2 = std::begin(otherMember.ranges());
 
         while (it1 != std::end(_ranges)) {
             if (*it1 != *it2) {
@@ -367,8 +398,8 @@ public:
     */
     bool hasValue(const ValueT value) const
     {
-        for (auto it = std::begin(_members); it != std::end(_members); ++it) {
-            const auto& member = it->second;
+        for (const auto& nameMemberPair : _members) {
+            const auto& member = nameMemberPair.second;
 
             if (member.contains(value)) {
                 return true;
@@ -402,17 +433,15 @@ private:
             };
         }
 
-        for (auto it = std::begin(_members); it != std::end(_members); ++it) {
-            this->_validateMember(it->first, it->second);
+        for (const auto& nameMemberPair : _members) {
+            this->_validateMember(nameMemberPair.first, nameMemberPair.second);
         }
     }
 
     void _validateMember(const std::string& name,
                          const Member& member) const
     {
-        for (auto it = std::begin(member.ranges()); it != std::end(member.ranges()); ++it) {
-            const auto& range = *it;
-
+        for (const auto& range : member.ranges()) {
             // validate range storage size
             ValueT minLower, maxUpper;
 
@@ -447,7 +476,6 @@ private:
             }
         }
     }
-
 
 protected:
     const Members _members;

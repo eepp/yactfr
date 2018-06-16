@@ -10,7 +10,7 @@
 #include <boost/optional/optional.hpp>
 
 #include <yactfr/metadata/text-sequence-type.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 #include <yactfr/metadata/byte-order.hpp>
 #include <yactfr/metadata/int-type.hpp>
 

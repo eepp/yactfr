@@ -1,5 +1,5 @@
 /*
- * Metadata functions.
+ * Trace type from metadata text function.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
@@ -9,17 +9,22 @@
 
 /*!
 @file
-@brief  Common metadata functions, types, and enumerations.
+@brief  Trace type from metadata text function.
 
 @ingroup metadata
 */
 
-#ifndef _YACTFR_METADATA_METADATA_HPP
-#define _YACTFR_METADATA_METADATA_HPP
+#ifndef _YACTFR_METADATA_TRACE_TYPE_FROM_METADATA_TEXT_HPP
+#define _YACTFR_METADATA_TRACE_TYPE_FROM_METADATA_TEXT_HPP
 
+// for internal::TsdlParser
 #include <yactfr/metadata/internal/tsdl-parser.hpp>
+
+// for boost::optional
 #include <boost/optional.hpp>
-#include <memory>
+
+// for TraceType
+#include "trace-type.hpp"
 
 namespace yactfr {
 
@@ -63,4 +68,4 @@ TraceType::SP traceTypeFromMetadataText(CharIt begin, CharIt end,
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_METADATA_HPP
+#endif // _YACTFR_METADATA_TRACE_TYPE_FROM_METADATA_TEXT_HPP

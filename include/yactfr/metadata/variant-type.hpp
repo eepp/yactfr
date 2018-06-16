@@ -17,14 +17,26 @@
 #ifndef _YACTFR_METADATA_VARIANT_TYPE_HPP
 #define _YACTFR_METADATA_VARIANT_TYPE_HPP
 
-#include <memory>
+// for std::string
+#include <string>
 
-#include <yactfr/aliases.hpp>
-
+// for StructVariantTypeBase
 #include "struct-variant-type-base.hpp"
+
+// for FieldRef
 #include "field-ref.hpp"
+
+// for VariantTypeChoice
 #include "variant-type-choice.hpp"
+
+// for DataType
+#include "data-type.hpp"
+
+// for DataTypeVisitor
 #include "data-type-visitor.hpp"
+
+// for Index
+#include "../aliases.hpp"
 
 namespace yactfr {
 

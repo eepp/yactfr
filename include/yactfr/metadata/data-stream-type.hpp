@@ -17,21 +17,30 @@
 #ifndef _YACTFR_METADATA_DATA_STREAM_TYPE_HPP
 #define _YACTFR_METADATA_DATA_STREAM_TYPE_HPP
 
+// for std::unique_ptr
 #include <memory>
+
+// for std::unordered_map
 #include <unordered_map>
+
+// for std::set
 #include <set>
-#include <sstream>
+
+// for boost::noncopyable
 #include <boost/noncopyable.hpp>
 
-#include "metadata-base.hpp"
+// for DataType
 #include "data-type.hpp"
+
+// for TypeId
 #include "aliases.hpp"
+
+// for EventRecordType
 #include "event-record-type.hpp"
-#include "struct-type.hpp"
 
 namespace yactfr {
-
 namespace internal {
+
 class TraceTypeImpl;
 
 struct EventRecordTypeIdCompare
@@ -42,9 +51,11 @@ struct EventRecordTypeIdCompare
         return a->id() < b->id();
     }
 };
-}
+
+} // namespace internal
 
 class TraceType;
+class FieldRef;
 
 /*!
 @brief  Set of event record types with unique IDs.
@@ -62,7 +73,6 @@ using EventRecordTypeSet = std::set<std::unique_ptr<const EventRecordType>,
 A data stream type describes data streams.
 */
 class DataStreamType final :
-    public MetadataBase,
     boost::noncopyable
 {
     friend class internal::TraceTypeImpl;

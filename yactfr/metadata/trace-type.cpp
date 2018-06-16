@@ -25,6 +25,7 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/trace-type-env.hpp>
 #include <yactfr/aliases.hpp>
 
 #include "trace-type-impl.hpp"

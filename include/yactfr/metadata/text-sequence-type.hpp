@@ -17,11 +17,18 @@
 #ifndef _YACTFR_METADATA_TEXT_SEQUENCE_TYPE_HPP
 #define _YACTFR_METADATA_TEXT_SEQUENCE_TYPE_HPP
 
-#include "field-ref.hpp"
-#include "encoding.hpp"
+// for SequenceType
 #include "sequence-type.hpp"
 
+// for Encoding
+#include "encoding.hpp"
+
+// for DataTypeVisitor
+#include "data-type-visitor.hpp"
+
 namespace yactfr {
+
+class FieldRef;
 
 /*!
 @brief  Text sequence type.

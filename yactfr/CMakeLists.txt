@@ -46,14 +46,13 @@ add_library (
     metadata/data-type-visitor.cpp
     metadata/data-type.cpp
     metadata/event-record-type.cpp
-    metadata/exceptions.cpp
     metadata/field-ref.cpp
     metadata/field-resolver.cpp
     metadata/field-resolver.hpp
     metadata/float-type.cpp
     metadata/int-type.cpp
     metadata/io.cpp
-    metadata/metadata-base.cpp
+    metadata/metadata-parse-error.cpp
     metadata/metadata-stream.cpp
     metadata/metadata-text-location.cpp
     metadata/metadata.cpp

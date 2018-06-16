@@ -17,10 +17,14 @@
 #ifndef _YACTFR_METADATA_TRACE_TYPE_ENV_HPP
 #define _YACTFR_METADATA_TRACE_TYPE_ENV_HPP
 
+// for std::unordered_map
 #include <unordered_map>
-#include <boost/variant.hpp>
 
-#include "metadata-base.hpp"
+// for std::string
+#include <string>
+
+// for boost::variant
+#include <boost/variant.hpp>
 
 namespace yactfr {
 
@@ -29,8 +33,7 @@ namespace yactfr {
 
 @ingroup metadata
 */
-class TraceTypeEnv final :
-    public MetadataBase
+class TraceTypeEnv final
 {
 public:
     /// A trace type environment entry.

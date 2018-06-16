@@ -17,7 +17,7 @@
 #include <yactfr/metadata/sequence-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/field-ref.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 
 #include "utils.hpp"
 

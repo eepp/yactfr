@@ -8,6 +8,7 @@
  */
 
 #include <yactfr/packet-sequence.hpp>
+#include <yactfr/metadata/trace-type.hpp>
 
 namespace yactfr {
 

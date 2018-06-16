@@ -17,7 +17,11 @@
 #ifndef _YACTFR_METADATA_ARRAY_SEQUENCE_TYPE_BASE_HPP
 #define _YACTFR_METADATA_ARRAY_SEQUENCE_TYPE_BASE_HPP
 
+// for CompoundType
 #include "compound-type.hpp"
+
+// for DataType
+#include "data-type.hpp"
 
 namespace yactfr {
 
@@ -34,8 +38,8 @@ protected:
                                    DataType::UP elemType);
 
 public:
-    /// Type of elements fields contained in data stream arrays
-    /// described by this compound type.
+    /// Type of element fields contained in data stream arrays
+    /// or sequences described by this array or sequence type.
     const DataType& elemType() const
     {
         return *_elemType;

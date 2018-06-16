@@ -24,9 +24,10 @@ language): it is a custom representation to be used for debugging only.
 #include <string>
 #include <ostream>
 
+// for Size
 #include "../aliases.hpp"
-#include "byte-order.hpp"
-#include "encoding.hpp"
+
+// for other types
 #include "fwd.hpp"
 
 namespace yactfr {

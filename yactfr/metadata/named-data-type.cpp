@@ -7,7 +7,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 #include <yactfr/metadata/named-data-type.hpp>
 
 namespace yactfr {

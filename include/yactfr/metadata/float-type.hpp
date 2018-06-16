@@ -17,10 +17,21 @@
 #ifndef _YACTFR_METADATA_FLOAT_TYPE_HPP
 #define _YACTFR_METADATA_FLOAT_TYPE_HPP
 
+// for BitArrayType
 #include "bit-array-type.hpp"
-#include "aliases.hpp"
+
+// for ByteOrder
+#include "byte-order.hpp"
+
+// for DataType
+#include "data-type.hpp"
+
+// for DataTypeVisitor
+#include "data-type-visitor.hpp"
 
 namespace yactfr {
+
+class DataTypeVisitor;
 
 /*!
 @brief  Floating point number type.

@@ -35,6 +35,7 @@
 #include <yactfr/metadata/event-record-type.hpp>
 #include <yactfr/metadata/data-stream-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/trace-type-env.hpp>
 
 #include "../utils.hpp"
 

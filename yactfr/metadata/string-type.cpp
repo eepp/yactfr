@@ -8,7 +8,7 @@
  */
 
 #include <yactfr/metadata/string-type.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 
 namespace yactfr {
 

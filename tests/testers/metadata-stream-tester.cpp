@@ -11,7 +11,8 @@
 #include <fstream>
 #include <stdexcept>
 #include <yactfr/io-error.hpp>
-#include <yactfr/metadata/metadata.hpp>
+#include <yactfr/metadata/trace-type-from-metadata-text.hpp>
+#include <yactfr/metadata/invalid-metadata-stream.hpp>
 #include <yactfr/metadata/metadata-stream.hpp>
 #include <yactfr/metadata/plain-text-metadata-stream.hpp>
 #include <yactfr/metadata/packetized-metadata-stream.hpp>

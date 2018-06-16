@@ -17,6 +17,7 @@
 #ifndef _YACTFR_METADATA_SCALAR_TYPE_HPP
 #define _YACTFR_METADATA_SCALAR_TYPE_HPP
 
+// for DataType
 #include "data-type.hpp"
 
 namespace yactfr {

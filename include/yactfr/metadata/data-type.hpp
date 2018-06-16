@@ -17,15 +17,18 @@
 #ifndef _YACTFR_METADATA_DATA_TYPE_HPP
 #define _YACTFR_METADATA_DATA_TYPE_HPP
 
-#include <stdexcept>
+// for std::unique_ptr
 #include <memory>
+
+// for boost::noncopyable
 #include <boost/noncopyable.hpp>
 
-#include "metadata-base.hpp"
-#include "scope.hpp"
+// for data type classes
 #include "fwd.hpp"
 
 namespace yactfr {
+
+class DataTypeVisitor;
 
 /*!
 @brief  Data type.
@@ -33,7 +36,6 @@ namespace yactfr {
 @ingroup metadata_dt
 */
 class DataType :
-    public MetadataBase,
     boost::noncopyable
 {
 public:
@@ -68,6 +70,8 @@ protected:
     explicit DataType(_Kind kind, unsigned int alignment);
 
 public:
+    virtual ~DataType();
+
     /// Alignment of data stream bits described by this data type.
     unsigned int alignment() const noexcept
     {

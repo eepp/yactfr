@@ -8,7 +8,7 @@
  */
 
 #include <yactfr/metadata/bit-array-type.hpp>
-#include <yactfr/metadata/exceptions.hpp>
+#include <yactfr/metadata/invalid-metadata.hpp>
 
 namespace yactfr {
 

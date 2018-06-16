@@ -17,11 +17,14 @@
 #ifndef _YACTFR_METADATA_BITARRAY_TYPE_HPP
 #define _YACTFR_METADATA_BITARRAY_TYPE_HPP
 
-#include "data-type.hpp"
-#include "scalar-type.hpp"
-#include "aliases.hpp"
+// for ByteOrder
 #include "byte-order.hpp"
-#include "data-type-visitor.hpp"
+
+// for ScalarType
+#include "scalar-type.hpp"
+
+// for DataType
+#include "data-type.hpp"
 
 namespace yactfr {
 

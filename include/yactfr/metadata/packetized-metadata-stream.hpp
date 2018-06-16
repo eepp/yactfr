@@ -17,17 +17,17 @@
 #ifndef _YACTFR_METADATA_PACKETIZED_METADATA_STREAM_HPP
 #define _YACTFR_METADATA_PACKETIZED_METADATA_STREAM_HPP
 
-#include <cstdlib>
+// for std::string
 #include <string>
-#include <memory>
+
+// for boost::uuids::uuid
 #include <boost/uuid/uuid.hpp>
 
-#include <yactfr/aliases.hpp>
+// for Size
+#include "../aliases.hpp"
 
-#include "data-type.hpp"
-#include "aliases.hpp"
+// for ByteOrder
 #include "byte-order.hpp"
-#include "metadata-stream.hpp"
 
 namespace yactfr {
 
