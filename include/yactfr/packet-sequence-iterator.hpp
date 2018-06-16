@@ -85,11 +85,13 @@ public:
     restorePosition() for a mechanism which can save and restore packet
     sequence iterator positions without creating new data sources.
 
+    This method can throw any exception that the data source can throw
+    on construction.
+
     @param other    Packet sequence iterator to copy.
 
     @throws DataNotAvailable    Data is not available now from the
                                 data source: try again later.
-    @throws Any exception that the data source can throw on construction.
     */
     PacketSequenceIterator(const PacketSequenceIterator& other);
 
@@ -121,12 +123,14 @@ public:
     restorePosition() for a mechanism which can save and restore packet
     sequence iterator positions without creating new data sources.
 
+    This method can throw any exception that the data source can throw
+    on construction.
+
     @param other    Other packet sequence iterator to copy.
     @returns        This packet sequence iterator.
 
     @throws DataNotAvailable    Data is not available now from the data
                                 source: try again later.
-    @throws Any exception that the data source can throw on construction.
     */
     PacketSequenceIterator& operator=(const PacketSequenceIterator& other);
 
@@ -151,13 +155,16 @@ public:
 
     This method invalidates this iterator's current element.
 
+    This method can throw any exception that the data source can throw
+    when getting a new data block.
+
     @returns    This packet sequence iterator.
 
-    @throws DecodingError   Advancing led to a decoding error.
+    @throws DecodingError       Any derived decoding error
+                                (see decoding-errors.hpp): advancing
+                                led to a decoding error.
     @throws DataNotAvailable    Data is not available now from the data
                                 source: try again later.
-    @throws Any exception that the data source can throw when getting
-            a new data block.
     */
     PacketSequenceIterator& operator++();
 
@@ -224,13 +231,14 @@ public:
 
     This method invalidates this iterator's current element.
 
+    This method can throw any exception that the data source can throw
+    when getting a new data block.
+
     @param offset   Offset, in bytes, of the first byte of a packet
                     within the same packet sequence.
 
     @throws DataNotAvailable    Data is not available now from the data
                                 source: try again later.
-    @throws Any exception that the data source can throw when getting
-            a new data block.
     */
     void seekPacket(Index offset);
 

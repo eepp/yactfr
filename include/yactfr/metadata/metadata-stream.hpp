@@ -71,7 +71,7 @@ PacketizedMetadataStream.
 to the returned metadata stream. This function does not seek within
 \p stream.
 
-@param stream   Metadata stream to read.
+@param stream   Metadata input stream to read.
 
 @throws IOError An I/O error occured.
 @throws InvalidMetadataStream The metadata stream's content is invalid.

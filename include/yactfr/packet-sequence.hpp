@@ -73,12 +73,13 @@ public:
     The created packet sequence iterator creates a new data source from
     this packet sequence's data source factory.
 
+    This method can throw any exception that the iterator's data source
+    can throw on construction.
+
     @returns    Packet sequence iterator at the beginning of this
                 packet sequence.
 
     @throws DataNotAvailable Data is not available now, try again later.
-    @throws Any exception that the iterator's data source can throw
-            on construction.
     */
     Iterator begin();
 
@@ -113,14 +114,15 @@ public:
     The created packet sequence iterator creates a new data source from
     this packet sequence's data source factory.
 
+    This method can throw any exception that the iterator's data source
+    can throw on construction.
+
     @param offset   Offset (bytes) of the beginning of a packet within
                     this packet sequence.
     @returns        Packet sequence iterator at the beginning of the
                     packet at offset \p offset.
 
     @throws DataNotAvailable Data is not available now, try again later.
-    @throws Any exception that the iterator's data source can throw
-            on construction.
     */
     Iterator at(Index offset);
 
