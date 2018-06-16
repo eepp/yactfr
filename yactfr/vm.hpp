@@ -24,7 +24,7 @@
 #include <yactfr/data-source-factory.hpp>
 #include <yactfr/element.hpp>
 #include <yactfr/packet-sequence-iterator.hpp>
-#include <yactfr/decoding-error.hpp>
+#include <yactfr/decoding-errors.hpp>
 
 #include "proc.hpp"
 #include "std-int-reader.hpp"
@@ -391,11 +391,6 @@ public:
     const Element *elem = nullptr;
 };
 
-static inline const char *byteOrderString(const ByteOrder bo)
-{
-    return bo == ByteOrder::BIG ? "big" : "little";
-}
-
 class Vm final
 {
 public:
@@ -759,12 +754,10 @@ private:
         const auto substringSizeBits = substringSizeBytes * 8;
 
         if (substringSizeBits > _pos.remainingContentBitsInPacket()) {
-            std::ostringstream ss;
-
-            ss << "Cannot read " << substringSizeBits << " bits at this point: would " <<
-                  "move beyond the current packet's content (" <<
-                  _pos.remainingContentBitsInPacket() << " bits remaining).";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw CannotDecodeDataBeyondPacketContentDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(),
+                substringSizeBits, _pos.remainingContentBitsInPacket()
+            };
         }
 
         _pos.elems.substring._begin = reinterpret_cast<const char *>(buf);
@@ -803,12 +796,10 @@ private:
         const Size substringSizeBits = (end - begin) * 8;
 
         if (substringSizeBits > _pos.remainingContentBitsInPacket()) {
-            std::ostringstream ss;
-
-            ss << "Cannot read " << substringSizeBits << " bits at this point: would " <<
-                  "move beyond the current packet's content (" <<
-                  _pos.remainingContentBitsInPacket() << " bits remaining).";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw CannotDecodeDataBeyondPacketContentDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(),
+                substringSizeBits, _pos.remainingContentBitsInPacket()
+            };
         }
 
         _pos.elems.substring._begin = begin;
@@ -880,12 +871,10 @@ private:
         }
 
         if (YACTFR_UNLIKELY(bitsToSkip > _pos.remainingContentBitsInPacket())) {
-            std::ostringstream ss;
-
-            ss << "Cannot align current position: skipping " << bitsToSkip <<
-                  " bits would move beyond the current packet's content (" <<
-                  _pos.remainingContentBitsInPacket() << " bits remaining).";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw CannotDecodeDataBeyondPacketContentDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(),
+                bitsToSkip, _pos.remainingContentBitsInPacket()
+            };
         }
 
         _pos.remBitsToSkip = bitsToSkip;
@@ -943,11 +932,9 @@ private:
     void _requireBits(const Size bits)
     {
         if (YACTFR_UNLIKELY(!this->_tryHaveBits(bits))) {
-            std::ostringstream ss;
-
-            ss << "Cannot request " << bits << " bits at this point: "
-                  "reaching end of data source.";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw PrematureEndOfDataDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(), bits
+            };
         }
     }
 
@@ -955,12 +942,10 @@ private:
     {
         if (YACTFR_UNLIKELY(bits > _pos.remainingContentBitsInPacket())) {
             // going past the packet's content
-            std::ostringstream ss;
-
-            ss << "Cannot request " << bits << " bits at this point: would " <<
-                  "move beyond the current packet's content (" <<
-                  _pos.remainingContentBitsInPacket() << " bits remaining).";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw CannotDecodeDataBeyondPacketContentDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(),
+                bits, _pos.remainingContentBitsInPacket()
+            };
         }
 
         this->_requireBits(bits);
@@ -1178,12 +1163,11 @@ private:
                  * array.
                  */
                 if (YACTFR_UNLIKELY(instrReadBitArray.byteOrder() != *_pos.lastBo)) {
-                    std::ostringstream ss;
-
-                    ss << "Changing byte order within a byte from " <<
-                          byteOrderString(*_pos.lastBo) << "-endian to " <<
-                          byteOrderString(instrReadBitArray.byteOrder()) << "-endian.";
-                    throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+                    throw ByteOrderChangeWithinByteDecodingError {
+                        _pos.cursorOffsetInPacketSequenceBits(),
+                        *_pos.lastBo,
+                        instrReadBitArray.byteOrder()
+                    };
                 }
             }
         }
@@ -1263,10 +1247,17 @@ private:
         auto proc = instrBeginReadVariant.findProc(tag);
 
         if (YACTFR_UNLIKELY(!proc)) {
-            std::ostringstream ss;
-
-            ss << "Tag value " << tag << " does not select a valid variant choice.";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            if (std::is_signed<typename InstrReadVariantT::Value>::value) {
+                throw UnknownVariantSignedTagValueDecodingError {
+                    _pos.cursorOffsetInPacketSequenceBits(),
+                    static_cast<std::int64_t>(tag)
+                };
+            } else {
+                throw UnknownVariantUnsignedTagValueDecodingError {
+                    _pos.cursorOffsetInPacketSequenceBits(),
+                    static_cast<std::uint64_t>(tag)
+                };
+            }
         }
 
         this->_setNamedDataElementFromInstr(elem, instrBeginReadVariant);
@@ -1303,10 +1294,9 @@ private:
         const auto length = _pos.savedValue(instrBeginReadSeq.lengthPos());
 
         if (YACTFR_UNLIKELY(length == SAVED_VALUE_UNSET)) {
-            std::ostringstream ss;
-
-            ss << "Sequence length is not set." << std::endl;
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw SequenceLengthNotSetDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits()
+            };
         }
 
         this->_alignCursor(instr);

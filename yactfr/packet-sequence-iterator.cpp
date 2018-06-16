@@ -24,13 +24,6 @@
 
 namespace yactfr {
 
-DecodingError::DecodingError(const std::string& reason, const Index offset) :
-    std::runtime_error {reason},
-    _reason {reason},
-    _offset {offset}
-{
-}
-
 PacketSequenceIterator::PacketSequenceIterator(std::shared_ptr<DataSourceFactory> dataSourceFactory,
                                                TraceType::SP traceType,
                                                const bool end) :

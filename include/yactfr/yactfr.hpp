@@ -19,7 +19,7 @@
 #include "data-block.hpp"
 #include "data-source-factory.hpp"
 #include "data-source.hpp"
-#include "decoding-error.hpp"
+#include "decoding-errors.hpp"
 #include "element-visitor.hpp"
 #include "element.hpp"
 #include "io-error.hpp"

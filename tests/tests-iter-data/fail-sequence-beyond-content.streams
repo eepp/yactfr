@@ -51,4 +51,4 @@ event {
    112         STB
    112           U:len:2
    120           SQB:yy
-   120 Cannot request 32 bits at this point: would move beyond the current packet's content (16 bits remaining).
+   120 Cannot read 32 bits at this point: would move beyond the current packet's content (16 bits remaining).

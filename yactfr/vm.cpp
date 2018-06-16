@@ -812,10 +812,9 @@ Vm::_ExecReaction Vm::_execSetDataStreamType(const Instr& instr)
     auto dstPacketProc = (*_pos.packetProc)[id];
 
     if (!dstPacketProc) {
-        std::ostringstream ss;
-
-        ss << "Data stream type ID " << id << " does not select a valid data stream type.";
-        throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+        throw UnknownDataStreamTypeDecodingError {
+            _pos.cursorOffsetInPacketSequenceBits(), id
+        };
     }
 
     _pos.curDstPacketProc = dstPacketProc;
@@ -842,10 +841,9 @@ Vm::_ExecReaction Vm::_execSetEventRecordType(const Instr& instr)
     auto ertProc = (*_pos.curDstPacketProc)[id];
 
     if (!ertProc) {
-        std::ostringstream ss;
-
-        ss << "Event record type ID " << id << " does not select a valid event record type.";
-        throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+        throw UnknownEventRecordTypeDecodingError {
+            _pos.cursorOffsetInPacketSequenceBits(), id
+        };
     }
 
     _pos.curErtProc = ertProc;
@@ -873,31 +871,28 @@ Vm::_ExecReaction Vm::_execSetPacketTotalSize(const Instr& instr)
     const auto packetTotalSizeCandidateBits = _pos.lastIntVal.u;
 
     if ((packetTotalSizeCandidateBits & 7) != 0) {
-        std::ostringstream ss;
-
-        ss << "Expected packet total size (" << packetTotalSizeCandidateBits <<
-              ") is not a multiple of 8.";
-        throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+        throw ExpectedPacketTotalSizeNotMultipleOf8DecodingError {
+            _pos.cursorOffsetInPacketSequenceBits(),
+            packetTotalSizeCandidateBits
+        };
     }
 
     if (_pos.curPacketContentSizeBits != SIZE_UNSET) {
         if (packetTotalSizeCandidateBits < _pos.curPacketContentSizeBits) {
-            std::ostringstream ss;
-
-            ss << "Expected packet total size (" << packetTotalSizeCandidateBits <<
-                  ") is less than expected packet content size (" <<
-                  _pos.curPacketContentSizeBits << ").";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(),
+                packetTotalSizeCandidateBits,
+                _pos.curPacketContentSizeBits
+            };
         }
     }
 
     if (packetTotalSizeCandidateBits < _pos.cursorOffsetInCurPacketBits) {
-        std::ostringstream ss;
-
-        ss << "Expected packet total size (" << packetTotalSizeCandidateBits <<
-              ") is less then current position in packet (" <<
-              _pos.cursorOffsetInCurPacketBits << ").";
-        throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+        throw ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError {
+            _pos.cursorOffsetInPacketSequenceBits(),
+            packetTotalSizeCandidateBits,
+            _pos.cursorOffsetInCurPacketBits
+        };
     }
 
     _pos.curPacketTotalSizeBits = packetTotalSizeCandidateBits;
@@ -917,22 +912,20 @@ Vm::_ExecReaction Vm::_execSetPacketContentSize(const Instr& instr)
 
     if (_pos.curPacketTotalSizeBits != SIZE_UNSET) {
         if (_pos.curPacketTotalSizeBits < packetContentSizeCandidateBits) {
-            std::ostringstream ss;
-
-            ss << "Expected packet total size (" << _pos.curPacketTotalSizeBits <<
-                  ") is less than expected packet content size (" <<
-                  packetContentSizeCandidateBits << ").";
-            throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+            throw ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError {
+                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.curPacketTotalSizeBits,
+                packetContentSizeCandidateBits
+            };
         }
     }
 
     if (packetContentSizeCandidateBits < _pos.cursorOffsetInCurPacketBits) {
-        std::ostringstream ss;
-
-        ss << "Expected packet content size (" << packetContentSizeCandidateBits <<
-              ") is less then current position in packet (" <<
-              _pos.cursorOffsetInCurPacketBits << ").";
-        throw DecodingError {ss.str(), _pos.cursorOffsetInPacketSequenceBits()};
+        throw ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError {
+            _pos.cursorOffsetInPacketSequenceBits(),
+            packetContentSizeCandidateBits,
+            _pos.cursorOffsetInCurPacketBits
+        };
     }
 
     _pos.curPacketContentSizeBits = packetContentSizeCandidateBits;

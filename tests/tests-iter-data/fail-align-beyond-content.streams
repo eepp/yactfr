@@ -44,4 +44,4 @@ event {
     72     ERB
     72       ERT:0:test
     72       SCB:5
-    72 Cannot align current position: skipping 24 bits would move beyond the current packet's content (8 bits remaining).
+    72 Cannot read 24 bits at this point: would move beyond the current packet's content (8 bits remaining).

@@ -76,6 +76,7 @@ add_library (
     data-block.cpp
     data-source-factory.cpp
     data-source.cpp
+    decoding-errors.cpp
     element-visitor.cpp
     memory-mapped-file-view-factory-impl.cpp
     memory-mapped-file-view-factory.cpp
