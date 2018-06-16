@@ -80,8 +80,9 @@ You can use this method with non-CTF packet index information, for
 example http://lttng.org/[LTTng]'s packet index files (not directly
 supported by yactfr).
 
-* Decoding error reporting with precise message and offset (bits) where
-  this message applies within the packet sequence.
+* Decoding error reporting with precise message, offset in
+  packet sequence (bits) where this message applies within the packet
+  sequence, and other relevant properties.
 * Performance (`nop` iteration loop) is similar to
   https://diamon.org/babeltrace/[Babeltrace]{nbsp}1.5.3's (`-o dummy`)
   with a release <<build,build>>.
