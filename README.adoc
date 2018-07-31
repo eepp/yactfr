@@ -1,3 +1,5 @@
+// Render with Asciidoctor
+
 = yactfr
 Philippe Proulx
 30 May 2018
@@ -37,7 +39,7 @@ the interface could change at any time.
 == Notable features
 
 * Only depends on http://www.boost.org/[Boost] at _build time_, and
-  nothing at run time (except for your $$C++$$ runtime library).
+  nothing at run time (except for your pass:[C++] runtime library).
 * Simple, documented $$C++14$$ API with a focus on immutability.
 * Efficient data stream decoding: zero memory allocation, zero smart
   pointer reference count change, zero virtual method call, and zero
@@ -72,7 +74,7 @@ must have an 8-bit alignment.
 ** The next data stream type to use.
 ** The next event record type to use.
 ** The data stream (instance) ID.
-* ``Seek packet'' iterator method to seek the beginning of a packet
+* "`Seek packet`" iterator method to seek the beginning of a packet
   known to be located at a specific offset, in bytes, within the same
   packet sequence.
 +
@@ -104,7 +106,7 @@ functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 `madvise()`.
 
 * Decodes up to, and including, 64-bit signed/unsigned CTF integers and
-  enumerations (no ``big integers'').
+  enumerations (no "`big integers`").
 * Only decodes 32-bit and 64-bit CTF floating point numbers.
 * Packet sizes must be multiples of 8 bits (I'm still not sure, but this
   could be enforced by the specification anyway), and be at least
@@ -293,13 +295,13 @@ make
 make install
 ----
 
-You can specify your favorite C and $$C++$$ compilers with the usual
+You can specify your favorite C and pass:[C++] compilers with the usual
 `CC` and `CXX` environment variables when you run `cmake`, and
 additional options with `CFLAGS` and `CXXFLAGS`.
 
 Specify `-DOPT_BUILD_DOC=YES` to `cmake` to enable the HTML API
 documentation build (requires Doxygen). The documentation is available
-in +__BUILD__/doc/api/output/html+, where +__BUILD__+ is your build
+in `_BUILD_/doc/api/output/html`, where `_BUILD_` is your build
 directory.
 
 Specify `-DCMAKE_INSTALL_PREFIX=PREFIX` to `cmake` to install yactfr to
@@ -527,8 +529,8 @@ int main(int argc, char *argv[])
 .Print all the packet offsets and sizes (both in bits), fast version
 ====
 This is a faster version of the previous example. Instead of decoding
-the whole packet to know its size, we use the ``expected packet total
-size'' element. This element is available after the decoder reads the
+the whole packet to know its size, we use the "`expected packet total
+size`" element. This element is available after the decoder reads the
 packet size from the packet context. Then, we make the iterator seek the
 next packet directly.
 

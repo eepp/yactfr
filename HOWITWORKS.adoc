@@ -1,6 +1,8 @@
+// Render with Asciidoctor
+
 = yactfr: how it works
 Philippe Proulx
-29 May 2018
+31 July 2018
 :toc:
 
 This document shows how the yactfr library works internally. It is
@@ -140,7 +142,7 @@ packet procedure consumer.
 All the possible instructions are found in `proc.hpp`. They all inherit
 `internal::Instr`.
 
-There are instructions which ``ask'' the VM to align the current
+There are instructions which "`ask`" the VM to align the current
 decoding cursor and then read data in a specific way. Examples are:
 
 * `internal::InstrReadSignedInt`
@@ -148,7 +150,7 @@ decoding cursor and then read data in a specific way. Examples are:
 * `internal::InstrReadString`
 
 For compound types, a first `internal::InstrBeginRead*` instruction
-indicates to ``enter'' the compound data. This instruction usually
+indicates to "`enter`" the compound data. This instruction usually
 contains a subprocedure to read its content. The last element of this
 subprocedure is usually an `internal::InstrEndReadCompound` instruction,
 which indicates the end of the subprocedure. This avoids a useless
@@ -158,8 +160,8 @@ the VM.
 Other instructions are related to the last decoded integer, for
 example:
 
-* `internal::InstrSetDataStreamId` follows a ``read integer'' (or ``read
-  enumeration'') instruction and asks the VM to set the set the current
+* `internal::InstrSetDataStreamId` follows a "`read integer`" (or "`read
+  enumeration`") instruction and asks the VM to set the set the current
   data stream ID to the last decoded integer value.
 * `internal::InstrSetPacketTotalSize` asks the VM to set the set the
   expected total size of the current packet to the last decoded integer
@@ -213,8 +215,8 @@ value.
 
 `internal::PacketProcBuilder` contains the logic to insert
 `internal::InstrSaveValue` instructions at specific locations within the
-procedures and to assign appropriate positions to link ``read
-sequence/variant'' instructions to their length/tag values.
+procedures and to assign appropriate positions to link "`read
+sequence/variant`" instructions to their length/tag values.
 
 We know that:
 
@@ -380,7 +382,7 @@ array item.
 
 === Integer decoding
 
-The VM decodes ``standard'' integers, that is, integers which are at
+The VM decodes "`standard`" integers, that is, integers which are at
 least aligned on a byte and have sizes of 8, 16, 32, or 64, using the
 inline functions in `std-int-reader.hpp`. Those use `std::memcpy()` with
 a size known at build time and `Boost.Endian` which generate very
@@ -418,14 +420,14 @@ element within its packet. In combination with the current offset (bits
 from the beginning of the packet sequence), this is enough to compare
 two iterators which were created from the same packet sequence without
 relying on the VM. Therefore the iterator's comparison operators are
-inlined, just as `operator*()` and `operator->()`.
+inlined, just as `+operator*()+` and `+operator->()+`.
 
-An ``end'' packet sequence iterator has its offset set to
-`PacketSequenceIterator::_END_OFFSET` which is the maximum value for the
-offset's type, and its mark set to 0. Therefore any iterator which is
-not passed the end is less than a passed-the-end iterator.
+An "`end`" (passed-the-end) packet sequence iterator has its offset set
+to `PacketSequenceIterator::_END_OFFSET` which is the maximum value for
+the offset's type, and its mark set to 0. Therefore any iterator which
+is not passed the end is less than a passed-the-end iterator.
 
-It is possible that an ``end'' iterator has no VM because its
+It is possible that an "`end`" iterator has no VM because its
 constructor won't allocate one when it's directly built as a
 passed-the-end iterator by `PacketSequence::end()`. However, all
 iterators contain:
