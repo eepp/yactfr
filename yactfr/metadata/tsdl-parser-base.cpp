@@ -103,8 +103,9 @@ private:
             auto clockType = std::make_unique<const ClockType>("default",
                                                                1000000000,
                                                                boost::none,
-                                                               boost::none,
-                                                               0, 0, 0, false);
+                                                               boost::none, 0,
+                                                               ClockTypeOffset {0, 0},
+                                                               true);
 
             _pseudoTraceType->clockTypes.insert(std::move(clockType));
         }

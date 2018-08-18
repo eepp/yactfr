@@ -1932,8 +1932,7 @@ bool TsdlParser<CharIt>::_tryParseClockBlock()
 
     auto clockType = std::make_unique<const ClockType>(name, freq, description,
                                                        uuid, precision,
-                                                       offsetSeconds,
-                                                       offsetCycles,
+                                                       ClockTypeOffset {offsetSeconds, offsetCycles},
                                                        isAbsolute);
 
     _pseudoTraceType.clockTypes.insert(std::move(clockType));

@@ -35,36 +35,71 @@
 namespace yactfr {
 
 /*!
-@brief  Clock uncertainty.
+@brief  Clock value interval.
 
 @ingroup metadata
 */
-class ClockUncertainty final
+class ClockValueInterval final
 {
 public:
     /*!
-    Builds a clock uncertainty.
+    Builds a clock value interval.
 
-    @param lower    Lower bound of the uncertainty (cycles, included).
-    @param upper    Upper bound of the uncertainty (cycles, included).
+    @param lower    Lower bound of the interval (cycles, included).
+    @param upper    Upper bound of the interval (cycles, included).
     */
-    explicit ClockUncertainty(Cycles lower, Cycles upper) noexcept;
+    explicit ClockValueInterval(Cycles lower, Cycles upper) noexcept;
 
-    /// Uncertainty's lower bound.
+    /// Interval's lower bound (included).
     Cycles lower() const noexcept
     {
         return _lower;
     }
 
-    /// Uncertainty's upper bound.
+    /// Interval's upper bound (included).
     Cycles upper() const noexcept
     {
         return _upper;
     }
 
 private:
-    const Cycles _lower;
-    const Cycles _upper;
+    Cycles _lower;
+    Cycles _upper;
+};
+
+/*!
+@brief  Clock type offset.
+
+@ingroup metadata
+
+Object holding the offset property of a clock type.
+*/
+class ClockTypeOffset final
+{
+public:
+    /*!
+    @brief  Builds a clock type offset object.
+
+    @param seconds  Seconds since origin (can be negative).
+    @param cycles   Clock cycles since the origin plus \p seconds.
+    */
+    explicit ClockTypeOffset(long long seconds, Cycles cycles) noexcept;
+
+    /// Seconds since origin.
+    long long seconds() const noexcept
+    {
+        return _seconds;
+    }
+
+    /// Clock cycles since origin plus seconds().
+    Cycles cycles() const noexcept
+    {
+        return _cycles;
+    }
+
+private:
+    long long _seconds;
+    Cycles _cycles;
 };
 
 /*!
@@ -85,11 +120,11 @@ public:
     @param freq             Frequency (Hz).
     @param description      Description.
     @param uuid             UUID.
-    @param errorCycles      Clock error (cycles).
-    @param offsetSeconds    Offset (seconds).
-    @param offsetCycles     Offset (cycles).
+    @param error            Error (cycles).
+    @param offset           Offset from origin.
     @param isAbsolute       \c true if this clock type describes
-                            clocks that are absolute references of time.
+                            clocks of which the origin is
+                            1970-01-01T00:00:00Z.
 
     @throws InvalidMetadata The clock type is invalid.
     */
@@ -97,8 +132,8 @@ public:
                        unsigned long long freq,
                        const boost::optional<std::string>& description,
                        const boost::optional<boost::uuids::uuid>& uuid,
-                       Cycles errorCycles, long long offsetSeconds,
-                       Cycles offsetCycles, bool isAbsolute);
+                       Cycles error, const ClockTypeOffset& offset,
+                       bool isAbsolute);
 
     /// Name.
     const std::string& name() const noexcept
@@ -124,32 +159,26 @@ public:
         return _description;
     }
 
-    /// Clock error (cycles).
-    Cycles errorCycles() const noexcept
+    /// Error (cycles).
+    Cycles error() const noexcept
     {
-        return _errorCycles;
+        return _error;
     }
 
-    /// Offset (cycles).
-    Cycles offsetCycles() const noexcept
+    /// Offset from origin.
+    const ClockTypeOffset& offset() const noexcept
     {
-        return _offsetCycles;
-    }
-
-    /// Offset (seconds).
-    long long offsetSeconds() const noexcept
-    {
-        return _offsetSeconds;
+        return _offset;
     }
 
     /*!
-    @returns    Uncertainty bounds of a given timestamp
-                \p cycles in cycles.
+    @returns    Possible interval of clock values for a given
+                value \p cycles considering this clock type's error.
     */
-    ClockUncertainty uncertainty(Cycles cycles) const noexcept;
+    ClockValueInterval clockValueInterval(Cycles cycles) const noexcept;
 
-    /// \c true if this clock type describes clocks that are considered
-    /// absolute references of time.
+    /// \c true if this clock type describes clocks of which the origin
+    /// is 1970-01-01T00:00:00Z.
     bool isAbsolute() const noexcept
     {
         return _isAbsolute;
@@ -160,9 +189,8 @@ private:
     const unsigned long long _freq;
     const boost::optional<std::string> _description;
     const boost::optional<boost::uuids::uuid> _uuid;
-    const Cycles _errorCycles;
-    const long long _offsetSeconds;
-    const Cycles _offsetCycles;
+    const Cycles _error;
+    const ClockTypeOffset _offset;
     const bool _isAbsolute;
 };
 

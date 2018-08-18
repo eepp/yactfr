@@ -14,9 +14,15 @@
 
 namespace yactfr {
 
-ClockUncertainty::ClockUncertainty(const Cycles lower, const Cycles upper) noexcept :
+ClockValueInterval::ClockValueInterval(const Cycles lower, const Cycles upper) noexcept :
     _lower {lower},
     _upper {upper}
+{
+}
+
+ClockTypeOffset::ClockTypeOffset(const long long seconds, const Cycles cycles) noexcept :
+    _seconds {seconds},
+    _cycles {cycles}
 {
 }
 
@@ -24,17 +30,14 @@ ClockType::ClockType(const std::string& name,
                      const unsigned long long freq,
                      const boost::optional<std::string>& description,
                      const boost::optional<boost::uuids::uuid>& uuid,
-                     const Cycles errorCycles,
-                     const long long offsetSeconds,
-                     const Cycles offsetCycles,
+                     const Cycles error, const ClockTypeOffset& offset,
                      const bool isAbsolute) :
     _name {name},
     _freq {freq},
     _description {description},
     _uuid {uuid},
-    _errorCycles {errorCycles},
-    _offsetSeconds {offsetSeconds},
-    _offsetCycles {offsetCycles},
+    _error {error},
+    _offset {offset},
     _isAbsolute {isAbsolute}
 {
     if (name.empty()) {
@@ -50,9 +53,9 @@ ClockType::ClockType(const std::string& name,
     }
 }
 
-ClockUncertainty ClockType::uncertainty(const Cycles cycles) const noexcept
+ClockValueInterval ClockType::clockValueInterval(const Cycles cycles) const noexcept
 {
-    return ClockUncertainty {cycles - _errorCycles, cycles + _errorCycles};
+    return ClockValueInterval {cycles - _error, cycles + _error};
 }
 
 } // namespace yactfr

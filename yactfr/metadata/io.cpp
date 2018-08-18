@@ -330,10 +330,10 @@ std::string toString(const ClockType& clockType, const Size indent)
     }
 
     ss << ", frequency: " << clockType.freq() <<
-          ", error (cycles): " << clockType.errorCycles() <<
-          ", offset (s): " << clockType.offsetSeconds() <<
-          ", offset (cycles): " << clockType.offsetCycles() <<
-          ", absolute: " << clockType.isAbsolute() << ")" << std::endl;
+          ", error (cycles): " << clockType.error() <<
+          ", offset: " << clockType.offset().seconds() << " s + " <<
+          clockType.offset().cycles() << " cycles" <<
+          ", is absolute: " << clockType.isAbsolute() << ")" << std::endl;
     return ss.str();
 }
 
