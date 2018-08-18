@@ -197,13 +197,13 @@ std::string toString(const StructTypeField& structTypeField,
                      const Size indent = 0);
 
 /*!
-@brief  Returns a string representation of \p variantTypeChoice.
+@brief  Returns a string representation of \p variantTypeOption.
 
-@param variantTypeChoice    Variant type's choice.
+@param variantTypeOption    Variant type's option.
 @param indent               Indentation.
-@returns                    String representation of \p variantTypeChoice.
+@returns                    String representation of \p variantTypeOption.
 */
-std::string toString(const VariantTypeChoice& variantTypeChoice,
+std::string toString(const VariantTypeOption& variantTypeOption,
                      const Size indent = 0);
 
 /*!
@@ -297,12 +297,12 @@ static inline std::ostream& operator<<(std::ostream& os,
 }
 
 /*!
-@brief  Writes \p variantTypeChoice to the output stream \p os.
+@brief  Writes \p variantTypeOption to the output stream \p os.
 */
 static inline std::ostream& operator<<(std::ostream& os,
-                                       const VariantTypeChoice& variantTypeChoice)
+                                       const VariantTypeOption& variantTypeOption)
 {
-       os << toString(variantTypeChoice);
+       os << toString(variantTypeOption);
        return os;
 }
 

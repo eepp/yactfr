@@ -65,7 +65,7 @@ class TraceTypeEnv;
 class UnsignedEnumType;
 class UnsignedIntType;
 class VariantType;
-class VariantTypeChoice;
+class VariantTypeOption;
 
 } // namespace yactfr
 

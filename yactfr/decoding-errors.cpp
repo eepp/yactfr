@@ -185,7 +185,7 @@ static const auto formatUnknownVariantTagValueReason = [](const auto tagValue) {
     std::ostringstream ss;
 
     ss << "Tag value " << tagValue <<
-          " does not select a valid variant choice.";
+          " does not select a valid variant option.";
     return ss.str();
 };
 

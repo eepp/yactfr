@@ -1,5 +1,5 @@
 /*
- * Choice of a CTF variant type.
+ * Option of a CTF variant type.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
@@ -7,18 +7,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <yactfr/metadata/variant-type-choice.hpp>
+#include <yactfr/metadata/variant-type-option.hpp>
 
 namespace yactfr {
 
-VariantTypeChoice::VariantTypeChoice(const std::string& name, DataType::UP type) :
+VariantTypeOption::VariantTypeOption(const std::string& name, DataType::UP type) :
     NamedDataType {name, std::move(type)}
 {
 }
 
-std::unique_ptr<const VariantTypeChoice> VariantTypeChoice::clone() const
+std::unique_ptr<const VariantTypeOption> VariantTypeOption::clone() const
 {
-    return std::make_unique<VariantTypeChoice>(this->name(),
+    return std::make_unique<VariantTypeOption>(this->name(),
                                                this->type().clone());
 }
 

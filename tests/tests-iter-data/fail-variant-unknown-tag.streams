@@ -30,4 +30,4 @@ event {
      0       SCB:5
      0         STB
      0           UE:tag:3
-     8 Tag value 3 does not select a valid variant choice.
+     8 Tag value 3 does not select a valid variant option.

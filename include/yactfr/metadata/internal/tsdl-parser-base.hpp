@@ -245,14 +245,14 @@ struct PseudoStructType : public PseudoDataType {
 
 /*
  * Pseudo variant type. `tagFieldRef` can be a relative field
- * reference. `choices` can contain (eventually) sequence or variant
+ * reference. `options` can contain (eventually) sequence or variant
  * types with relative field references.
  */
 struct PseudoVariantType : public PseudoDataType {
     explicit PseudoVariantType(const PseudoFieldRef& tagFieldRef,
-                               PseudoNamedDataTypes&& choices) :
+                               PseudoNamedDataTypes&& options) :
         tagFieldRef {tagFieldRef},
-        choices {std::move(choices)}
+        options {std::move(options)}
     {
     }
 
@@ -263,19 +263,19 @@ struct PseudoVariantType : public PseudoDataType {
 
     PseudoDataType::UP clone() const override
     {
-        PseudoNamedDataTypes newChoices;
+        PseudoNamedDataTypes newOptions;
 
-        for (const auto& choice : choices) {
-            auto newChoice = std::make_unique<PseudoNamedDataType>(choice->name, choice->type->clone());
-            newChoices.push_back(std::move(newChoice));
+        for (const auto& option : options) {
+            auto newOption = std::make_unique<PseudoNamedDataType>(option->name, option->type->clone());
+            newOptions.push_back(std::move(newOption));
         }
 
         return std::make_unique<PseudoVariantType>(tagFieldRef,
-                                                   std::move(newChoices));
+                                                   std::move(newOptions));
     }
 
     PseudoFieldRef tagFieldRef;
-    PseudoNamedDataTypes choices;
+    PseudoNamedDataTypes options;
 };
 
 // a pseudo data stream type: a mutable event record type

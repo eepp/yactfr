@@ -70,7 +70,7 @@ add_library (
     metadata/trace-type-impl.cpp
     metadata/trace-type.cpp
     metadata/tsdl-parser-base.cpp
-    metadata/variant-type-choice.cpp
+    metadata/variant-type-option.cpp
     metadata/variant-type.cpp
     logging/zf_log.c
     data-block.cpp

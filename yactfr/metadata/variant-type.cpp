@@ -11,28 +11,28 @@
 
 namespace yactfr {
 
-VariantType::VariantType(const unsigned int align, VariantTypeChoices&& choices,
+VariantType::VariantType(const unsigned int align, VariantTypeOptions&& options,
                          const FieldRef& tag) :
-    StructVariantTypeBase<VariantTypeChoice> {
-        _KIND_VARIANT, align, std::move(choices)
+    StructVariantTypeBase<VariantTypeOption> {
+        _KIND_VARIANT, align, std::move(options)
     },
     _tag {tag}
 {
     if (this->_entries().empty()) {
         throw InvalidMetadata {
-            "Variant type needs at least one choice."
+            "Variant type needs at least one option."
         };
     }
 }
 
 DataType::UP VariantType::_clone() const
 {
-    VariantTypeChoices choices;
+    VariantTypeOptions options;
 
-    this->_cloneEntries(choices);
+    this->_cloneEntries(options);
 
     return std::make_unique<VariantType>(this->alignment(),
-                                         std::move(choices), _tag);
+                                         std::move(options), _tag);
 }
 
 bool VariantType::_compare(const DataType& otherType) const

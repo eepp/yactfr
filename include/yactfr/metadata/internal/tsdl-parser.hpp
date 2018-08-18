@@ -39,7 +39,7 @@
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/struct-type-field.hpp>
 #include <yactfr/metadata/variant-type.hpp>
-#include <yactfr/metadata/variant-type-choice.hpp>
+#include <yactfr/metadata/variant-type-option.hpp>
 #include <yactfr/metadata/field-ref.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>
 #include <yactfr/metadata/aliases.hpp>
@@ -332,7 +332,7 @@ private:
     void _expectToken(const char *token);
 
     /*
-     * Tries to parse a field/choice or a type alias, with a terminating
+     * Tries to parse a field/option or a type alias, with a terminating
      * `;`, adding the field to `entries` if found, and adding any
      * parsed type alias to the current frame's map of aliased types on
      * success.
@@ -786,7 +786,7 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVariantTypeAlias()
     }
 
     if (type) {
-        // parse `;` to make sure it's not a field/choice
+        // parse `;` to make sure it's not a field/option
         if (_ss.scanToken(";")) {
             // we have a winner
             _ss.accept();
@@ -814,7 +814,7 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVariantTypeAlias()
     }
 
     if (type) {
-        // parse `;` to make sure it's not a field/choice
+        // parse `;` to make sure it's not a field/option
         if (_ss.scanToken(";")) {
             // we have a winner
             _ss.accept();
@@ -842,7 +842,7 @@ bool TsdlParser<CharIt>::_tryParseEnumStructVariantTypeAlias()
     }
 
     if (type) {
-        // parse `;` to make sure it's not a field/choice
+        // parse `;` to make sure it's not a field/option
         if (_ss.scanToken(";")) {
             // we have a winner
             _ss.accept();
@@ -1625,8 +1625,8 @@ PseudoDataType::UP TsdlParser<CharIt>::_tryParseVariantType(const bool addAlias,
         return nullptr;
     }
 
-    // parse type aliases and choices
-    PseudoNamedDataTypes choices;
+    // parse type aliases and options
+    PseudoNamedDataTypes options;
 
     while (true) {
         this->_skipCommentsAndWhitespacesAndSemicolons();
@@ -1639,7 +1639,7 @@ PseudoDataType::UP TsdlParser<CharIt>::_tryParseVariantType(const bool addAlias,
         bool success;
 
         try {
-            success = this->_tryParseNamedDataTypeOrTypeAlias(choices);
+            success = this->_tryParseNamedDataTypeOrTypeAlias(options);
         } catch (MetadataParseError& error) {
             error._appendErrorMessage("While parsing `variant` block's body:",
                                       location);
@@ -1648,25 +1648,25 @@ PseudoDataType::UP TsdlParser<CharIt>::_tryParseVariantType(const bool addAlias,
 
         if (!success) {
             throw MetadataParseError {
-                "Expecting choice or type alias.", this->_curLocation()
+                "Expecting option or type alias.", this->_curLocation()
             };
         }
     }
 
     ssRejecter.accept();
 
-    if (choices.empty()) {
+    if (options.empty()) {
         throw MetadataParseError {
-            "Variant type must contain at least one choice.",
+            "Variant type must contain at least one option.",
             beginLocation
         };
     }
 
-    // check for duplicate choice
-    TsdlParser::_checkDupNamedDataType(choices, beginLocation);
+    // check for duplicate option
+    TsdlParser::_checkDupNamedDataType(options, beginLocation);
 
     auto varType = std::make_unique<PseudoVariantType>(pseudoFieldRef,
-                                                       std::move(choices));
+                                                       std::move(options));
 
     variantTypeLexScope.exit();
     typeAliasLexScope.exit();
@@ -3130,11 +3130,11 @@ bool TsdlParser<CharIt>::_tryParseNamedDataTypeOrTypeAlias(PseudoNamedDataTypes&
      *
      * 4. Variant type alias:
      *
-     *        variant option {
+     *        variant my_var {
      *            ...
      *        };
      *
-     *        variant <event.fields.my.tag> option {
+     *        variant <event.fields.my.tag> my_var {
      *            ...
      *        };
      *
@@ -3150,8 +3150,8 @@ bool TsdlParser<CharIt>::_tryParseNamedDataTypeOrTypeAlias(PseudoNamedDataTypes&
      *
      * 7. Field using a variant type alias with an explicit tag:
      *
-     *        variant option <my.tag> my_variant;
-     *        variant option <my.tag> my_variant[2][lol];
+     *        variant my_var <my.tag> my_variant;
+     *        variant my_var <my.tag> my_variant[2][lol];
      *
      * 8. Field using explicit type:
      *
@@ -3258,7 +3258,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDataTypeOrTypeAlias(PseudoNamedDataTypes&
              */
             _ss.skipCommentsAndWhitespaces();
             throw MetadataParseError {
-                "Expecting field or choice name.",
+                "Expecting field or option name.",
                 this->_curLocation()
             };
         }

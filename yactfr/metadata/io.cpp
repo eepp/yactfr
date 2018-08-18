@@ -30,7 +30,7 @@
 #include <yactfr/metadata/sequence-type.hpp>
 #include <yactfr/metadata/text-sequence-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
-#include <yactfr/metadata/variant-type-choice.hpp>
+#include <yactfr/metadata/variant-type-option.hpp>
 #include <yactfr/metadata/clock-type.hpp>
 #include <yactfr/metadata/event-record-type.hpp>
 #include <yactfr/metadata/data-stream-type.hpp>
@@ -230,8 +230,8 @@ public:
                "> (align: " << type.alignment() <<
                ", tag: `" << toString(type.tag()) << "`)" << std::endl;
 
-        for (const auto& choice : type.choices()) {
-            _ss << toString(*choice, _indent + 1);
+        for (const auto& option : type.options()) {
+            _ss << toString(*option, _indent + 1);
         }
     }
 
@@ -305,12 +305,12 @@ std::string toString(const StructTypeField& field, const Size indent)
     return ss.str();
 }
 
-std::string toString(const VariantTypeChoice& choice, const Size indent)
+std::string toString(const VariantTypeOption& option, const Size indent)
 {
     std::ostringstream ss;
 
-    ss << u::indent(indent) << "Choice `" << choice.name() << "`:" <<
-          std::endl << toString(choice.type(), indent + 1);
+    ss << u::indent(indent) << "Option `" << option.name() << "`:" <<
+          std::endl << toString(option.type(), indent + 1);
     return ss.str();
 }
 

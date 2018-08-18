@@ -1334,16 +1334,16 @@ public:
  *
  * It exists because, in the early stage of procedure build time, it's
  * easier to create the procedure for each individual variant type
- * choice, and then, in another pass, check if the variant reading
+ * option, and then, in another pass, check if the variant reading
  * instruction should have subprocedures for unsigned or signed ranges.
  * To do this we do not need to create new procedure instructions for
- * the choices, we simply reuse the same because they are shared.
+ * the options, we simply reuse the same because they are shared.
  */
 class InstrBeginReadUnknownVariant :
     public InstrReadData
 {
 public:
-    using Choices = std::unordered_map<std::string, Proc>;
+    using Options = std::unordered_map<std::string, Proc>;
 
 public:
     explicit InstrBeginReadUnknownVariant(const std::string *fieldName,
@@ -1357,14 +1357,14 @@ public:
         return static_cast<const VariantType&>(*this->type());
     }
 
-    const Choices& choices() const noexcept
+    const Options& options() const noexcept
     {
-        return _choices;
+        return _options;
     }
 
-    Choices& choices() noexcept
+    Options& options() noexcept
     {
-        return _choices;
+        return _options;
     }
 
     const Index& tagPos() const noexcept
@@ -1386,7 +1386,7 @@ private:
     std::string _toString(Size indent = 0) const override;
 
 private:
-    Choices _choices;
+    Options _options;
     Index _tagPos = Index {-1ULL};
 };
 
@@ -1542,7 +1542,7 @@ public:
         _tagPos {instrReadUnkVariant.tagPos()}
     {
         this->_setKind(SelfKind);
-        this->_buildRangesFromChoices(instrReadUnkVariant, tagType);
+        this->_buildRangesFromOptions(instrReadUnkVariant, tagType);
     }
 
     void buildRawProcFromShared() override
@@ -1595,18 +1595,18 @@ private:
     }
 
 private:
-    void _buildRangesFromChoices(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+    void _buildRangesFromOptions(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
                                  const EnumType& tagType)
     {
         for (const auto& memberPair : tagType.members()) {
             auto& memberName = memberPair.first;
             auto& member = memberPair.second;
 
-            if (!this->variantType().hasChoice(memberName)) {
+            if (!this->variantType().hasOption(memberName)) {
                 continue;
             }
 
-            auto& proc = instrReadUnkVariant.choices().at(memberName);
+            auto& proc = instrReadUnkVariant.options().at(memberName);
 
             for (const auto& range : member.ranges()) {
                 // copy linked list, but content is shared

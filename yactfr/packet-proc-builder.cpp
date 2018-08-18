@@ -267,8 +267,8 @@ public:
 
     void visit(InstrBeginReadUnknownVariant& instr) override
     {
-        for (auto& choicePair : instr.choices()) {
-            this->_visitProc(choicePair.second);
+        for (auto& optionPair : instr.options()) {
+            this->_visitProc(optionPair.second);
         }
     }
 
@@ -375,8 +375,8 @@ public:
 
     void visit(InstrBeginReadUnknownVariant& instr) override
     {
-        for (auto& choicePair : instr.choices()) {
-            this->_visitProc(choicePair.second);
+        for (auto& optionPair : instr.options()) {
+            this->_visitProc(optionPair.second);
         }
     }
 
@@ -463,8 +463,8 @@ public:
             instr.tagPos(*pos);
         }
 
-        for (auto& choicePair : instr.choices()) {
-            this->_visitProc(choicePair.second);
+        for (auto& optionPair : instr.options()) {
+            this->_visitProc(optionPair.second);
         }
     }
 
@@ -545,15 +545,15 @@ public:
 
     void visit(InstrBeginReadUnknownVariant& instr) override
     {
-        for (auto& choicePair : instr.choices()) {
+        for (auto& optionPair : instr.options()) {
             /*
-             * If this choice's procedure contains a "read unknown
+             * If this option's procedure contains a "read unknown
              * variant" instruction itself, it is replaced during this
              * visit so that, after this loop, we are sure that the
-             * choice procedures do not contain any "read unknown
+             * option procedures do not contain any "read unknown
              * variant" instruction.
              */
-            this->_visitProc(choicePair.second);
+            this->_visitProc(optionPair.second);
         }
 
         // replace this instruction
@@ -1445,13 +1445,13 @@ void PacketProcBuilder::_buildInstrReadUnknownVariant(const std::string *fieldNa
                                                                 fieldDisplayName,
                                                                 type);
 
-    for (const auto& choice : type->asVariantType()->choices()) {
-        auto& choiceProc = instr->choices()[choice->name()];
-        this->_buildInstrRead(&choice->name(), &choice->displayName(),
-                              &choice->type(), choiceProc);
+    for (const auto& option : type->asVariantType()->options()) {
+        auto& optionProc = instr->options()[option->name()];
+        this->_buildInstrRead(&option->name(), &option->displayName(),
+                              &option->type(), optionProc);
 
         /*
-         * Each choice's procedure can be pushed by the VM as the
+         * Each option's procedure can be pushed by the VM as the
          * current one, so each one ends with an "end read variant"
          * instruction to be consistent with other begin/end instruction
          * pairs.
@@ -1460,7 +1460,7 @@ void PacketProcBuilder::_buildInstrReadUnknownVariant(const std::string *fieldNa
                                                                fieldName,
                                                                fieldDisplayName,
                                                                type);
-        choiceProc.pushBack(std::move(endInstr));
+        optionProc.pushBack(std::move(endInstr));
     }
 
     baseProc.pushBack(std::move(instr));

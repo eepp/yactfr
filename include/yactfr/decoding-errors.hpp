@@ -388,8 +388,8 @@ private:
 @brief  "Unknown variant's signed tag value" decoding error.
 
 This is thrown when a PacketSequenceIterator needs to select a variant
-type's choice, but the previously decoded signed tag value does not
-select a choice.
+type's option, but the previously decoded signed tag value does not
+select a option.
 */
 class UnknownVariantSignedTagValueDecodingError :
     public DecodingError
@@ -418,8 +418,8 @@ private:
 @brief  "Unknown variant's unsigned tag value" decoding error.
 
 This is thrown when a PacketSequenceIterator needs to select a variant
-type's choice, but the previously decoded unsigned tag value does not
-select a choice.
+type's option, but the previously decoded unsigned tag value does not
+select a option.
 */
 class UnknownVariantUnsignedTagValueDecodingError :
     public DecodingError

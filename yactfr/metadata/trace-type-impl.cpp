@@ -261,14 +261,14 @@ FieldResolver::Entry TraceTypeImpl::_getEntryAt(const Scope scope,
         } else if (entry.type->isVariantType()) {
             auto variantType = entry.type->asVariantType();
 
-            if (!variantType->hasChoice(*indexToCheckIt)) {
+            if (!variantType->hasOption(*indexToCheckIt)) {
                 return FieldResolver::Entry {};
             }
 
-            auto& choice = (*variantType)[*indexToCheckIt];
+            auto& option = (*variantType)[*indexToCheckIt];
 
-            entry.type = &choice.type();
-            entry.name = &choice.name();
+            entry.type = &option.type();
+            entry.name = &option.name();
         } else if (entry.type->isArrayType()) {
             auto arrayType = entry.type->asArrayType();
 
@@ -373,8 +373,8 @@ void TraceTypeImpl::_validateMappedClockTypeName(const DataType *type)
     } else if (type->isSequenceType()) {
         this->_validateMappedClockTypeName(&type->asSequenceType()->elemType());
     } else if (type->isVariantType()) {
-        for (const auto& choice : type->asVariantType()->choices()) {
-            this->_validateMappedClockTypeName(&choice->type());
+        for (const auto& option : type->asVariantType()->options()) {
+            this->_validateMappedClockTypeName(&option->type());
         }
     } else if (type->isIntType()) {
         auto& mappedClockTypeName = type->asIntType()->mappedClockTypeName();
@@ -427,10 +427,10 @@ void TraceTypeImpl::_validateVariantTypeTagType(const DataType *variantType,
     }
 
     for (const auto& memberName : memberNames) {
-        if (!asVariantType->hasChoice(memberName)) {
+        if (!asVariantType->hasOption(memberName)) {
             std::ostringstream ss;
 
-            ss << "Variant type's tag type contains a member name which is not a variant type's choice: `" <<
+            ss << "Variant type's tag type contains a member name which is not a variant type's option: `" <<
                   memberName << "`.";
 
             throw InvalidMetadata {ss.str()};
@@ -504,7 +504,7 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
         this->_validateVariantTypeTagType(type, result.type);
         this->_stackPush(_StackFrame {type, 0});
 
-        for (Index index = 0; index < variantType->choices().size(); ++index) {
+        for (Index index = 0; index < variantType->options().size(); ++index) {
             this->_stackTop().curChildIndex = index;
 
             auto childType = &(*variantType)[index].type();

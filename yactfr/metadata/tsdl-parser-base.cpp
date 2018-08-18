@@ -142,9 +142,9 @@ private:
     }
 
     void _process(PseudoVariantType& dataType) {
-        for (auto& choice : dataType.choices) {
-            _curFieldName = &choice->name;
-            this->_process(*choice->type);
+        for (auto& option : dataType.options) {
+            _curFieldName = &option->name;
+            this->_process(*option->type);
         }
     }
 
@@ -234,7 +234,7 @@ void TsdlParserBase::_checkDupNamedDataType(const PseudoNamedDataTypes& entries,
         if (entryNames.find(entry->name) != std::end(entryNames)) {
             std::ostringstream ss;
 
-            ss << "Duplicate field/choice `" << entry->name << "`.";
+            ss << "Duplicate field/option `" << entry->name << "`.";
             throw MetadataParseError {ss.str(), location};
         }
 
@@ -947,18 +947,18 @@ DataType::UP TsdlParserBase::_dataTypeFromPseudoVariantType(const PseudoDataType
 
     stack.push_back({name});
 
-    VariantTypeChoices choices;
+    VariantTypeOptions options;
 
-    for (const auto& namedDataType : pseudoVariantType.choices) {
-        auto choiceType = TsdlParserBase::_dataTypeFromPseudoDataType(*namedDataType->type,
+    for (const auto& namedDataType : pseudoVariantType.options) {
+        auto optionType = TsdlParserBase::_dataTypeFromPseudoDataType(*namedDataType->type,
                                                                       scope, namedDataType->name,
                                                                       stack);
-        choices.push_back(std::make_unique<const VariantTypeChoice>(namedDataType->name,
-                                                                    std::move(choiceType)));
+        options.push_back(std::make_unique<const VariantTypeOption>(namedDataType->name,
+                                                                    std::move(optionType)));
         stack.back().fieldNames.push_back(namedDataType->name);
     }
 
-    auto varType = std::make_unique<const VariantType>(1, std::move(choices),
+    auto varType = std::make_unique<const VariantType>(1, std::move(options),
                                                        tagFieldRef);
 
     stack.pop_back();

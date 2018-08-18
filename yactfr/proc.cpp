@@ -1220,10 +1220,10 @@ std::string InstrBeginReadUnknownVariant::_toString(const Size indent) const
           " " << _strProp("tag-pos") << _tagPos <<
           std::endl;
 
-    for (const auto& choice : _choices) {
-        ss << utils::indent(indent + 1) << "<procedure for choice `" <<
-              choice.first << "`>" << std::endl;
-        ss << choice.second.toString(indent + 2);
+    for (const auto& option : _options) {
+        ss << utils::indent(indent + 1) << "<procedure for option `" <<
+              option.first << "`>" << std::endl;
+        ss << option.second.toString(indent + 2);
     }
 
     return ss.str();
@@ -1236,10 +1236,10 @@ InstrLocation InstrBeginReadUnknownVariant::findInstr(std::vector<std::string>::
         return {};
     }
 
-    for (auto& choice : _choices) {
-        const auto& choiceName = choice.first;
+    for (auto& option : _options) {
+        const auto& optionName = option.first;
 
-        if (choiceName != *begin) {
+        if (optionName != *begin) {
             continue;
         }
 
@@ -1247,7 +1247,7 @@ InstrLocation InstrBeginReadUnknownVariant::findInstr(std::vector<std::string>::
          * Name matches: "read data" instruction is the procedure's
          * first instruction.
          */
-        auto& proc = choice.second;
+        auto& proc = option.second;
 
         assert(!proc.sharedProc().empty());
         assert(proc.sharedProc().front()->isReadData());

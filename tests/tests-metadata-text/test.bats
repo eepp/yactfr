@@ -461,8 +461,8 @@ test_metadata_pass() {
   test_metadata_fail syntax-struct-field
 }
 
-@test 'invalid syntax: expecting choice or type alias (in variant) -> fail' {
-  test_metadata_fail syntax-variant-choice
+@test 'invalid syntax: expecting option or type alias (in variant) -> fail' {
+  test_metadata_fail syntax-variant-option
 }
 
 @test 'invalid syntax: reserved word in typealias name (1) -> fail' {
@@ -721,7 +721,7 @@ test_metadata_pass() {
   test_metadata_fail enum-wrong-int
 }
 
-@test 'variant: empty body (no choices) -> fail' {
+@test 'variant: empty body (no options) -> fail' {
   test_metadata_fail variant-empty
 }
 
@@ -737,8 +737,8 @@ test_metadata_pass() {
   test_metadata_fail variant-tag-not-enum
 }
 
-@test 'variant: tag member is not a choice -> fail' {
-  test_metadata_fail variant-unhandled-tag-choice
+@test 'variant: tag member is not a option -> fail' {
+  test_metadata_fail variant-unhandled-tag-option
 }
 
 @test 'variant: unknown tag (1) -> fail' {

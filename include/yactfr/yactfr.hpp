@@ -65,7 +65,7 @@
 #include "metadata/trace-type-env.hpp"
 #include "metadata/trace-type-from-metadata-text.hpp"
 #include "metadata/trace-type.hpp"
-#include "metadata/variant-type-choice.hpp"
+#include "metadata/variant-type-option.hpp"
 #include "metadata/variant-type.hpp"
 #include "packet-sequence-iterator-position.hpp"
 #include "packet-sequence-iterator.hpp"
