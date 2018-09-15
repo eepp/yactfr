@@ -191,6 +191,14 @@ const DataType *DataStreamType::findDataType(const FieldRef& ref) const
 {
     const DataType *scopeType = nullptr;
 
+    if (_traceType) {
+        const auto ft = _traceType->findDataType(ref);
+
+        if (ft) {
+            return ft;
+        }
+    }
+
     switch (ref.scope()) {
     case Scope::PACKET_CONTEXT:
         scopeType = this->packetContextType();

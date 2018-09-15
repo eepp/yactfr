@@ -42,6 +42,14 @@ const DataType *EventRecordType::findDataType(const FieldRef& ref) const
 {
     const DataType *scopeType = nullptr;
 
+    if (_dataStreamType) {
+        const auto ft = _dataStreamType->findDataType(ref);
+
+        if (ft) {
+            return ft;
+        }
+    }
+
     switch (ref.scope()) {
     case Scope::EVENT_RECORD_SECOND_CONTEXT:
         scopeType = this->secondContextType();
