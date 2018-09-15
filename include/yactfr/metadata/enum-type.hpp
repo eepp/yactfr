@@ -286,20 +286,7 @@ public:
     */
     bool operator==(const EnumTypeMember<RangeT>& otherMember) const
     {
-        if (otherMember.ranges().size() != _ranges.size()) {
-            return false;
-        }
-
-        const auto it1 = std::begin(_ranges);
-        const auto it2 = std::begin(otherMember.ranges());
-
-        while (it1 != std::end(_ranges)) {
-            if (*it1 != *it2) {
-                return false;
-            }
-        }
-
-        return true;
+        return otherMember.ranges() == _ranges;
     }
 
     /*!

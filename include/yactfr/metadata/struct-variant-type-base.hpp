@@ -153,8 +153,8 @@ protected:
             return false;
         }
 
-        const auto thisIt = std::begin(_entriesVec);
-        const auto otherIt = std::begin(structVariantTypeBase._entries());
+        auto thisIt = std::begin(_entriesVec);
+        auto otherIt = std::begin(structVariantTypeBase._entries());
 
         while (thisIt != std::end(_entriesVec)) {
             const auto& thisUp = *thisIt;
@@ -163,6 +163,9 @@ protected:
             if (*thisUp != *otherUp) {
                 return false;
             }
+
+            ++thisIt;
+            ++otherIt;
         }
 
         return true;
