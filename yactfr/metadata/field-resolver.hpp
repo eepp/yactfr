@@ -28,6 +28,7 @@
 #include <yactfr/metadata/named-data-type.hpp>
 
 namespace yactfr {
+namespace internal {
 
 /*
  * Field resolver.
@@ -133,6 +134,7 @@ private:
     const GetEntryAtFn _getEntryAtFn;
 };
 
+} // namespace internal
 } // namespace yactfr
 
 #endif // _YACTFR_METADATA_FIELD_RESOLVER_HPP

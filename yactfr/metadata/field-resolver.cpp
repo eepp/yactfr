@@ -16,6 +16,7 @@
 #include "../logging/zf_log.h"
 
 namespace yactfr {
+namespace internal {
 
 FieldResolver::FieldResolver(const GetEntryAtFn& getEntryAtFn) noexcept :
     _getEntryAtFn {getEntryAtFn}
@@ -275,4 +276,5 @@ bool FieldResolver::_forwardSearchRec(const Scope scope,
     }
 }
 
+} // namespace internal
 } // namespace yactfr
