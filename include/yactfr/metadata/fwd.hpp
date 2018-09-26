@@ -40,7 +40,6 @@ class FloatType;
 class IntType;
 class InvalidMetadata;
 class InvalidMetadataStream;
-class MetadataBase;
 class MetadataParseError;
 class MetadataParseErrorMessage;
 class MetadataStream;
