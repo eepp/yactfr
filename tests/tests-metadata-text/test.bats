@@ -833,275 +833,275 @@ test_metadata_pass() {
   test_metadata_fail seq-unknown-length
 }
 
-@test 'CTF test suite: ctf-testsuite-array-redefinition -> fail' {
+@test 'CTF test suite: array-redefinition -> fail' {
   test_metadata_fail ctf-testsuite-array-redefinition
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-identifier -> fail' {
+@test 'CTF test suite: array-size-identifier -> fail' {
   test_metadata_fail ctf-testsuite-array-size-identifier
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-keyword -> fail' {
+@test 'CTF test suite: array-size-keyword -> fail' {
   test_metadata_fail ctf-testsuite-array-size-keyword
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-negative -> fail' {
+@test 'CTF test suite: array-size-negative -> fail' {
   test_metadata_fail ctf-testsuite-array-size-negative
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-not-present -> fail' {
+@test 'CTF test suite: array-size-not-present -> fail' {
   test_metadata_fail ctf-testsuite-array-size-not-present
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-string -> fail' {
+@test 'CTF test suite: array-size-string -> fail' {
   test_metadata_fail ctf-testsuite-array-size-string
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-type -> fail' {
+@test 'CTF test suite: array-size-type -> fail' {
   test_metadata_fail ctf-testsuite-array-size-type
 }
 
-@test 'CTF test suite: ctf-testsuite-array-size-type-field -> fail' {
+@test 'CTF test suite: array-size-type-field -> fail' {
   test_metadata_fail ctf-testsuite-array-size-type-field
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-empty -> fail' {
+@test 'CTF test suite: enum-empty -> fail' {
   test_metadata_fail ctf-testsuite-enum-empty
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-field-value-out-of-range -> fail' {
+@test 'CTF test suite: enum-field-value-out-of-range -> fail' {
   test_metadata_fail ctf-testsuite-enum-field-value-out-of-range
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-type-implicit-but-undefined-int-type -> fail' {
+@test 'CTF test suite: enum-type-implicit-but-undefined-int-type -> fail' {
   test_metadata_fail ctf-testsuite-enum-type-implicit-but-undefined-int-type
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-type-negative-out-of-range -> fail' {
+@test 'CTF test suite: enum-type-negative-out-of-range -> fail' {
   test_metadata_fail ctf-testsuite-enum-type-negative-out-of-range
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-type-value-out-of-range -> fail' {
+@test 'CTF test suite: enum-type-value-out-of-range -> fail' {
   test_metadata_fail ctf-testsuite-enum-type-value-out-of-range
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-untyped-missing-int -> fail' {
+@test 'CTF test suite: enum-untyped-missing-int -> fail' {
   test_metadata_fail ctf-testsuite-enum-untyped-missing-int
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-untyped-string -> fail' {
+@test 'CTF test suite: enum-untyped-string -> fail' {
   test_metadata_fail ctf-testsuite-enum-untyped-string
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-floating -> fail' {
+@test 'CTF test suite: enum-values-floating -> fail' {
   test_metadata_fail ctf-testsuite-enum-values-floating
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-token -> fail' {
+@test 'CTF test suite: enum-values-token -> fail' {
   test_metadata_fail ctf-testsuite-enum-values-token
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-too-small -> fail' {
+@test 'CTF test suite: enum-values-too-small -> fail' {
   test_metadata_fail ctf-testsuite-enum-values-too-small
 }
 
-@test 'CTF test suite: ctf-testsuite-event-id-string -> fail' {
+@test 'CTF test suite: event-id-string -> fail' {
   test_metadata_fail ctf-testsuite-event-id-string
 }
 
-@test 'CTF test suite: ctf-testsuite-event-id-struct -> fail' {
+@test 'CTF test suite: event-id-struct -> fail' {
   test_metadata_fail ctf-testsuite-event-id-struct
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-0-bit-size -> fail' {
+@test 'CTF test suite: integer-0-bit-size -> fail' {
   test_metadata_fail ctf-testsuite-integer-0-bit-size
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-align-as-string -> fail' {
+@test 'CTF test suite: integer-align-as-string -> fail' {
   test_metadata_fail ctf-testsuite-integer-align-as-string
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-align-negative -> fail' {
+@test 'CTF test suite: integer-align-negative -> fail' {
   test_metadata_fail ctf-testsuite-integer-align-negative
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-align-non-power-2 -> fail' {
+@test 'CTF test suite: integer-align-non-power-2 -> fail' {
   test_metadata_fail ctf-testsuite-integer-align-non-power-2
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-base-as-string -> fail' {
+@test 'CTF test suite: integer-base-as-string -> fail' {
   test_metadata_fail ctf-testsuite-integer-base-as-string
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-base-invalid -> fail' {
+@test 'CTF test suite: integer-base-invalid -> fail' {
   test_metadata_fail ctf-testsuite-integer-base-invalid
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-byte-order-invalid -> fail' {
+@test 'CTF test suite: integer-byte-order-invalid -> fail' {
   test_metadata_fail ctf-testsuite-integer-byte-order-invalid
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-encoding-as-string -> fail' {
+@test 'CTF test suite: integer-encoding-as-string -> fail' {
   test_metadata_fail ctf-testsuite-integer-encoding-as-string
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-encoding-invalid -> fail' {
+@test 'CTF test suite: integer-encoding-invalid -> fail' {
   test_metadata_fail ctf-testsuite-integer-encoding-invalid
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-negative-bit-size -> fail' {
+@test 'CTF test suite: integer-negative-bit-size -> fail' {
   test_metadata_fail ctf-testsuite-integer-negative-bit-size
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-range -> fail' {
+@test 'CTF test suite: integer-range -> fail' {
   test_metadata_fail ctf-testsuite-integer-range
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-signed-as-string -> fail' {
+@test 'CTF test suite: integer-signed-as-string -> fail' {
   test_metadata_fail ctf-testsuite-integer-signed-as-string
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-signed-invalid -> fail' {
+@test 'CTF test suite: integer-signed-invalid -> fail' {
   test_metadata_fail ctf-testsuite-integer-signed-invalid
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-size-as-string -> fail' {
+@test 'CTF test suite: integer-size-as-string -> fail' {
   test_metadata_fail ctf-testsuite-integer-size-as-string
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-size-missing -> fail' {
+@test 'CTF test suite: integer-size-missing -> fail' {
   test_metadata_fail ctf-testsuite-integer-size-missing
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-size-negative -> fail' {
+@test 'CTF test suite: integer-size-negative -> fail' {
   test_metadata_fail ctf-testsuite-integer-size-negative
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-literal-guid-corrupted -> fail' {
+@test 'CTF test suite: lexer-literal-guid-corrupted -> fail' {
   test_metadata_fail ctf-testsuite-lexer-literal-guid-corrupted
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-literal-guid-too-big -> fail' {
+@test 'CTF test suite: lexer-literal-guid-too-big -> fail' {
   test_metadata_fail ctf-testsuite-lexer-literal-guid-too-big
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-literal-guid-too-small -> fail' {
+@test 'CTF test suite: lexer-literal-guid-too-small -> fail' {
   test_metadata_fail ctf-testsuite-lexer-literal-guid-too-small
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-literal-int-incomplete -> fail' {
+@test 'CTF test suite: lexer-literal-int-incomplete -> fail' {
   test_metadata_fail ctf-testsuite-lexer-literal-int-incomplete
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-unterminated-bracket -> fail' {
+@test 'CTF test suite: lexer-unterminated-bracket -> fail' {
   test_metadata_fail ctf-testsuite-lexer-unterminated-bracket
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-unterminated-declaration -> fail' {
+@test 'CTF test suite: lexer-unterminated-declaration -> fail' {
   test_metadata_fail ctf-testsuite-lexer-unterminated-declaration
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-unterminated-expression -> fail' {
+@test 'CTF test suite: lexer-unterminated-expression -> fail' {
   test_metadata_fail ctf-testsuite-lexer-unterminated-expression
 }
 
-@test 'CTF test suite: ctf-testsuite-lexer-unterminated-string -> fail' {
+@test 'CTF test suite: lexer-unterminated-string -> fail' {
   test_metadata_fail ctf-testsuite-lexer-unterminated-string
 }
 
-@test 'CTF test suite: ctf-testsuite-metadata-empty-after-header -> fail' {
+@test 'CTF test suite: metadata-empty-after-header -> fail' {
   test_metadata_fail ctf-testsuite-metadata-empty-after-header
 }
 
-@test 'CTF test suite: ctf-testsuite-metadata-with-null-char -> fail' {
+@test 'CTF test suite: metadata-with-null-char -> fail' {
   test_metadata_fail ctf-testsuite-metadata-with-null-char
 }
 
-@test 'CTF test suite: ctf-testsuite-repeated-event-id-in-same-stream -> fail' {
+@test 'CTF test suite: repeated-event-id-in-same-stream -> fail' {
   test_metadata_fail ctf-testsuite-repeated-event-id-in-same-stream
 }
 
-@test 'CTF test suite: ctf-testsuite-string-concat -> fail' {
+@test 'CTF test suite: string-concat -> fail' {
   test_metadata_fail ctf-testsuite-string-concat
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-enum -> fail' {
+@test 'CTF test suite: struct-align-enum -> fail' {
   test_metadata_fail ctf-testsuite-struct-align-enum
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-huge -> fail' {
+@test 'CTF test suite: struct-align-huge -> fail' {
   test_metadata_fail ctf-testsuite-struct-align-huge
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-negative -> fail' {
+@test 'CTF test suite: struct-align-negative -> fail' {
   test_metadata_fail ctf-testsuite-struct-align-negative
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-string -> fail' {
+@test 'CTF test suite: struct-align-string -> fail' {
   test_metadata_fail ctf-testsuite-struct-align-string
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-zero -> fail' {
+@test 'CTF test suite: struct-align-zero -> fail' {
   test_metadata_fail ctf-testsuite-struct-align-zero
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-duplicate-field-name -> fail' {
+@test 'CTF test suite: struct-duplicate-field-name -> fail' {
   test_metadata_fail ctf-testsuite-struct-duplicate-field-name
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-duplicate-struct-name -> fail' {
+@test 'CTF test suite: struct-duplicate-struct-name -> fail' {
   test_metadata_fail ctf-testsuite-struct-duplicate-struct-name
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-inner-struct-undefined -> fail' {
+@test 'CTF test suite: struct-inner-struct-undefined -> fail' {
   test_metadata_fail ctf-testsuite-struct-inner-struct-undefined
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-int-type-undefined -> fail' {
+@test 'CTF test suite: struct-int-type-undefined -> fail' {
   test_metadata_fail ctf-testsuite-struct-int-type-undefined
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-recursive -> fail' {
+@test 'CTF test suite: struct-recursive -> fail' {
   test_metadata_fail ctf-testsuite-struct-recursive
 }
 
-@test 'CTF test suite: ctf-testsuite-typealias-duplicate-name -> fail' {
+@test 'CTF test suite: typealias-duplicate-name -> fail' {
   test_metadata_fail ctf-testsuite-typealias-duplicate-name
 }
 
-@test 'CTF test suite: ctf-testsuite-typealias-invalid-type-kind -> fail' {
+@test 'CTF test suite: typealias-invalid-type-kind -> fail' {
   test_metadata_fail ctf-testsuite-typealias-invalid-type-kind
 }
 
-@test 'CTF test suite: ctf-testsuite-typealias-reserved-keyword -> fail' {
+@test 'CTF test suite: typealias-reserved-keyword -> fail' {
   test_metadata_fail ctf-testsuite-typealias-reserved-keyword
 }
 
-@test 'CTF test suite: ctf-testsuite-typedef-redefinition -> fail' {
+@test 'CTF test suite: typedef-redefinition -> fail' {
   test_metadata_fail ctf-testsuite-typedef-redefinition
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-missing-tag -> fail' {
+@test 'CTF test suite: variant-missing-tag -> fail' {
   test_metadata_fail ctf-testsuite-variant-missing-tag
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-string-fields -> fail' {
+@test 'CTF test suite: variant-string-fields -> fail' {
   test_metadata_fail ctf-testsuite-variant-string-fields
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-tag-integer -> fail' {
+@test 'CTF test suite: variant-tag-integer -> fail' {
   test_metadata_fail ctf-testsuite-variant-tag-integer
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-tag-string -> fail' {
+@test 'CTF test suite: variant-tag-string -> fail' {
   test_metadata_fail ctf-testsuite-variant-tag-string
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-tag-type-floating -> fail' {
+@test 'CTF test suite: variant-tag-type-floating -> fail' {
   test_metadata_fail ctf-testsuite-variant-tag-type-floating
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-tag-type-string -> fail' {
+@test 'CTF test suite: variant-tag-type-string -> fail' {
   test_metadata_fail ctf-testsuite-variant-tag-type-string
 }
 
@@ -1254,170 +1254,170 @@ test_metadata_pass() {
   test_metadata_pass typedefs-everywhere
 }
 
-@test 'CTF test suite: ctf-testsuite-array-basic-1dim -> pass' {
+@test 'CTF test suite: array-basic-1dim -> pass' {
   test_metadata_pass ctf-testsuite-array-basic-1dim
 }
 
-@test 'CTF test suite: ctf-testsuite-array-basic-2dim -> pass' {
+@test 'CTF test suite: array-basic-2dim -> pass' {
   test_metadata_pass ctf-testsuite-array-basic-2dim
 }
 
-@test 'CTF test suite: ctf-testsuite-array-basic-2dim-2typedef -> pass' {
+@test 'CTF test suite: array-basic-2dim-2typedef -> pass' {
   test_metadata_pass ctf-testsuite-array-basic-2dim-2typedef
 }
 
-@test 'CTF test suite: ctf-testsuite-array-basic-2dim-typedef -> pass' {
+@test 'CTF test suite: array-basic-2dim-typedef -> pass' {
   test_metadata_pass ctf-testsuite-array-basic-2dim-typedef
 }
 
-@test 'CTF test suite: ctf-testsuite-array-of-enum -> pass' {
+@test 'CTF test suite: array-of-enum -> pass' {
   test_metadata_pass ctf-testsuite-array-of-enum
 }
 
-@test 'CTF test suite: ctf-testsuite-array-of-struct -> pass' {
+@test 'CTF test suite: array-of-struct -> pass' {
   test_metadata_pass ctf-testsuite-array-of-struct
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-nameless -> pass' {
+@test 'CTF test suite: enum-nameless -> pass' {
   test_metadata_pass ctf-testsuite-enum-nameless
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-token-kind -> pass' {
+@test 'CTF test suite: enum-token-kind -> pass' {
   test_metadata_pass ctf-testsuite-enum-token-kind
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-untyped-int -> pass' {
+@test 'CTF test suite: enum-untyped-int -> pass' {
   test_metadata_pass ctf-testsuite-enum-untyped-int
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-signed-big -> pass' {
+@test 'CTF test suite: enum-values-signed-big -> pass' {
   test_metadata_pass ctf-testsuite-enum-values-signed-big
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-signed-small -> pass' {
+@test 'CTF test suite: enum-values-signed-small -> pass' {
   test_metadata_pass ctf-testsuite-enum-values-signed-small
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-signed-value -> pass' {
+@test 'CTF test suite: enum-values-signed-value -> pass' {
   test_metadata_pass ctf-testsuite-enum-values-signed-value
 }
 
-@test 'CTF test suite: ctf-testsuite-enum-values-unsigned-big -> pass' {
+@test 'CTF test suite: enum-values-unsigned-big -> pass' {
   test_metadata_pass ctf-testsuite-enum-values-unsigned-big
 }
 
-@test 'CTF test suite: ctf-testsuite-event-id-integer -> pass' {
+@test 'CTF test suite: event-id-integer -> pass' {
   test_metadata_pass ctf-testsuite-event-id-integer
 }
 
-@test 'CTF test suite: ctf-testsuite-integer-1-bit-size -> pass' {
+@test 'CTF test suite: integer-1-bit-size -> pass' {
   test_metadata_pass ctf-testsuite-integer-1-bit-size
 }
 
-@test 'CTF test suite: ctf-testsuite-literal-integers -> pass' {
+@test 'CTF test suite: literal-integers -> pass' {
   test_metadata_pass ctf-testsuite-literal-integers
 }
 
-@test 'CTF test suite: ctf-testsuite-metadata-big-endian -> pass' {
+@test 'CTF test suite: metadata-big-endian -> pass' {
   test_metadata_pass ctf-testsuite-metadata-big-endian
 }
 
-@test 'CTF test suite: ctf-testsuite-metadata-minimal-accepted -> pass' {
+@test 'CTF test suite: metadata-minimal-accepted -> pass' {
   test_metadata_pass ctf-testsuite-metadata-minimal-accepted
 }
 
-@test 'CTF test suite: ctf-testsuite-name-escaping-clashes -> pass' {
+@test 'CTF test suite: name-escaping-clashes -> pass' {
   test_metadata_pass ctf-testsuite-name-escaping-clashes
 }
 
-@test 'CTF test suite: ctf-testsuite-name-escaping-empty -> pass' {
+@test 'CTF test suite: name-escaping-empty -> pass' {
   test_metadata_pass ctf-testsuite-name-escaping-empty
 }
 
-@test 'CTF test suite: ctf-testsuite-repeated-event-id-in-2-streams -> pass' {
+@test 'CTF test suite: repeated-event-id-in-2-streams -> pass' {
   test_metadata_pass ctf-testsuite-repeated-event-id-in-2-streams
 }
 
-@test 'CTF test suite: ctf-testsuite-sequence-basic-1dim -> pass' {
+@test 'CTF test suite: sequence-basic-1dim -> pass' {
   test_metadata_pass ctf-testsuite-sequence-basic-1dim
 }
 
-@test 'CTF test suite: ctf-testsuite-sequence-basic-2dim -> pass' {
+@test 'CTF test suite: sequence-basic-2dim -> pass' {
   test_metadata_pass ctf-testsuite-sequence-basic-2dim
 }
 
-@test 'CTF test suite: ctf-testsuite-sequence-scoped-length -> pass' {
+@test 'CTF test suite: sequence-scoped-length -> pass' {
   test_metadata_pass ctf-testsuite-sequence-scoped-length
 }
 
-@test 'CTF test suite: ctf-testsuite-stream-undefined-id -> pass' {
+@test 'CTF test suite: stream-undefined-id -> pass' {
   test_metadata_pass ctf-testsuite-stream-undefined-id
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-larger -> pass' {
+@test 'CTF test suite: struct-align-larger -> pass' {
   test_metadata_pass ctf-testsuite-struct-align-larger
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-smaller -> pass' {
+@test 'CTF test suite: struct-align-smaller -> pass' {
   test_metadata_pass ctf-testsuite-struct-align-smaller
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-align-valid -> pass' {
+@test 'CTF test suite: struct-align-valid -> pass' {
   test_metadata_pass ctf-testsuite-struct-align-valid
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-inner-struct -> pass' {
+@test 'CTF test suite: struct-inner-struct -> pass' {
   test_metadata_pass ctf-testsuite-struct-inner-struct
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-unamed-struct-as-field -> pass' {
+@test 'CTF test suite: struct-unamed-struct-as-field -> pass' {
   test_metadata_pass ctf-testsuite-struct-unamed-struct-as-field
 }
 
-@test 'CTF test suite: ctf-testsuite-struct-underscores-in-fields -> pass' {
+@test 'CTF test suite: struct-underscores-in-fields -> pass' {
   test_metadata_pass ctf-testsuite-struct-underscores-in-fields
 }
 
-@test 'CTF test suite: ctf-testsuite-typealias-reserved-keyword -> pass' {
+@test 'CTF test suite: typealias-reserved-keyword -> pass' {
   test_metadata_pass ctf-testsuite-typealias-reserved-keyword
 }
 
-@test 'CTF test suite: ctf-testsuite-typealias-simple -> pass' {
+@test 'CTF test suite: typealias-simple -> pass' {
   test_metadata_pass ctf-testsuite-typealias-simple
 }
 
-@test 'CTF test suite: ctf-testsuite-typedef-simple -> pass' {
+@test 'CTF test suite: typedef-simple -> pass' {
   test_metadata_pass ctf-testsuite-typedef-simple
 }
 
-@test 'CTF test suite: ctf-testsuite-unknown-env -> pass' {
+@test 'CTF test suite: unknown-env -> pass' {
   test_metadata_pass ctf-testsuite-unknown-env
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-integers -> pass' {
+@test 'CTF test suite: variant-integers -> pass' {
   test_metadata_pass ctf-testsuite-variant-integers
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-integers-unnamed -> pass' {
+@test 'CTF test suite: variant-integers-unnamed -> pass' {
   test_metadata_pass ctf-testsuite-variant-integers-unnamed
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-missing-selector -> pass' {
+@test 'CTF test suite: variant-missing-selector -> pass' {
   test_metadata_pass ctf-testsuite-variant-missing-selector
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-scope-tag -> pass' {
+@test 'CTF test suite: variant-scope-tag -> pass' {
   test_metadata_pass ctf-testsuite-variant-scope-tag
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-structs -> pass' {
+@test 'CTF test suite: variant-structs -> pass' {
   test_metadata_pass ctf-testsuite-variant-structs
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-two-levels -> pass' {
+@test 'CTF test suite: variant-two-levels -> pass' {
   test_metadata_pass ctf-testsuite-variant-two-levels
 }
 
-@test 'CTF test suite: ctf-testsuite-variant-two-levels-redefinition -> pass' {
+@test 'CTF test suite: variant-two-levels-redefinition -> pass' {
   test_metadata_pass ctf-testsuite-variant-two-levels-redefinition
 }
