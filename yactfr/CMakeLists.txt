@@ -11,30 +11,7 @@ endif ()
 # check for Boost
 find_package (Boost 1.58 REQUIRED)
 
-# configure logging
-option (
-    OPT_ENABLE_LOGGING
-    "Enable logging (when in debug mode)"
-    OFF
-)
-
-add_definitions (-DZF_LOG_DEF_SRCLOC=ZF_LOG_SRCLOC_NONE)
-
-if (OPT_ENABLE_LOGGING)
-    message (STATUS "Enabling logging")
-    add_definitions (
-        -DZF_LOG_LEVEL=ZF_LOG_DEBUG
-    )
-else ()
-    add_definitions (
-        -DZF_LOG_LEVEL=ZF_LOG_NONE
-    )
-endif ()
-
 # yactfr library
-set (
-    SOURCES
-)
 add_library (
     yactfr SHARED
     metadata/array-sequence-type-base.cpp
@@ -94,7 +71,31 @@ set_target_properties (
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
-include_directories ("${CMAKE_SOURCE_DIR}/include")
+target_include_directories (yactfr PRIVATE "${CMAKE_SOURCE_DIR}/include")
+
+# configure logging
+option (
+    OPT_ENABLE_LOGGING
+    "Enable logging (when in debug mode)"
+    OFF
+)
+target_compile_definitions (
+    yactfr PRIVATE
+    -DZF_LOG_DEF_SRCLOC=ZF_LOG_SRCLOC_NONE
+)
+
+if (OPT_ENABLE_LOGGING)
+    message (STATUS "Enabling logging")
+    target_compile_definitions (
+        yactfr PRIVATE
+        -DZF_LOG_LEVEL=ZF_LOG_DEBUG
+    )
+else ()
+    target_compile_definitions (
+        yactfr PRIVATE
+        -DZF_LOG_LEVEL=ZF_LOG_NONE
+    )
+endif ()
 
 # library install rules
 install (
