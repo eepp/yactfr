@@ -1,5 +1,5 @@
 /*
- * Decoding error.
+ * Decoding errors.
  *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
@@ -9,13 +9,13 @@
 
 /*!
 @file
-@brief  Packet sequence iterator.
+@brief  Decoding errors.
 
 @ingroup packet_seq
 */
 
-#ifndef _YACTFR_DECODING_ERROR_HPP
-#define _YACTFR_DECODING_ERROR_HPP
+#ifndef _YACTFR_DECODING_ERRORS_HPP
+#define _YACTFR_DECODING_ERRORS_HPP
 
 // for std::runtime_error
 #include <stdexcept>
@@ -43,7 +43,7 @@ namespace internal {
 @brief  %Base decoding error.
 
 This is thrown when there's an error in the decoding process of a packet
-sequence (PacketSequenceIterator::operator++()).
+sequence (PacketSequenceIterator::operator++(), for example).
 */
 class DecodingError :
     public std::runtime_error
@@ -465,4 +465,4 @@ public:
 
 } // namespace yactfr
 
-#endif // _YACTFR_DECODING_ERROR_HPP
+#endif // _YACTFR_DECODING_ERRORS_HPP
