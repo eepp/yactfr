@@ -17,11 +17,11 @@
 #ifndef _YACTFR_METADATA_TRACE_TYPE_FROM_METADATA_TEXT_HPP
 #define _YACTFR_METADATA_TRACE_TYPE_FROM_METADATA_TEXT_HPP
 
-// for internal::TsdlParser
-#include <yactfr/metadata/internal/tsdl-parser.hpp>
-
 // for boost::optional
 #include <boost/optional.hpp>
+
+// for internal::TsdlParser
+#include "internal/tsdl-parser.hpp"
 
 // for TraceType
 #include "trace-type.hpp"

@@ -22,14 +22,13 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include <yactfr/aliases.hpp>
-#include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/trace-type-env.hpp>
-#include <yactfr/metadata/data-stream-type.hpp>
-#include <yactfr/metadata/event-record-type.hpp>
-#include <yactfr/metadata/enum-type.hpp>
-#include <yactfr/metadata/aliases.hpp>
-
+#include "../../aliases.hpp"
+#include "../trace-type.hpp"
+#include "../trace-type-env.hpp"
+#include "../data-stream-type.hpp"
+#include "../event-record-type.hpp"
+#include "../enum-type.hpp"
+#include "../aliases.hpp"
 #include "string-scanner.hpp"
 
 namespace yactfr {

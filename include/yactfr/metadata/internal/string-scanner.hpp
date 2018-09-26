@@ -17,8 +17,8 @@
 #include <limits>
 #include <boost/utility.hpp>
 
-#include <yactfr/aliases.hpp>
-#include <yactfr/metadata/metadata-text-location.hpp>
+#include "../../aliases.hpp"
+#include "../../metadata/metadata-text-location.hpp"
 
 namespace yactfr {
 namespace internal {

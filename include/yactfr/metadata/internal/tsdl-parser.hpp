@@ -26,25 +26,24 @@
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 
-#include <yactfr/aliases.hpp>
-#include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/float-type.hpp>
-#include <yactfr/metadata/enum-type.hpp>
-#include <yactfr/metadata/string-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/struct-type-field.hpp>
-#include <yactfr/metadata/variant-type.hpp>
-#include <yactfr/metadata/variant-type-option.hpp>
-#include <yactfr/metadata/field-ref.hpp>
-#include <yactfr/metadata/metadata-parse-error.hpp>
-#include <yactfr/metadata/aliases.hpp>
-#include <yactfr/internal/utils.hpp>
-
+#include "../../aliases.hpp"
+#include "../metadata/trace-type.hpp"
+#include "../metadata/int-type.hpp"
+#include "../metadata/float-type.hpp"
+#include "../metadata/enum-type.hpp"
+#include "../metadata/string-type.hpp"
+#include "../metadata/array-type.hpp"
+#include "../metadata/text-array-type.hpp"
+#include "../metadata/sequence-type.hpp"
+#include "../metadata/text-sequence-type.hpp"
+#include "../metadata/struct-type.hpp"
+#include "../metadata/struct-type-field.hpp"
+#include "../metadata/variant-type.hpp"
+#include "../metadata/variant-type-option.hpp"
+#include "../metadata/field-ref.hpp"
+#include "../metadata/metadata-parse-error.hpp"
+#include "../metadata/aliases.hpp"
+#include "../../internal/utils.hpp"
 #include "tsdl-parser-base.hpp"
 #include "string-scanner.hpp"
 
