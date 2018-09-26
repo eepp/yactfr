@@ -27,6 +27,11 @@
 #include "data-type-visitor.hpp"
 
 namespace yactfr {
+namespace internal {
+
+class TraceTypeImpl;
+
+} // namespace internal
 
 class DataType;
 
@@ -40,6 +45,8 @@ A sequence type describes data stream sequences.
 class SequenceType :
     public ArraySequenceTypeBase
 {
+    friend class internal::TraceTypeImpl;
+
 public:
     /*!
     @brief  Builds a sequence type.
@@ -71,6 +78,17 @@ public:
         return _length;
     }
 
+    /*!
+    @brief  Length's field type.
+
+    \c nullptr if this sequence type is not part of a trace type's
+    hierarchy yet.
+    */
+    const DataType *lengthType() const noexcept
+    {
+        return this->_lengthType;
+    }
+
 private:
     DataType::UP _clone() const override;
 
@@ -83,6 +101,7 @@ private:
 
 private:
     const FieldRef _length;
+    mutable const DataType *_lengthType = nullptr;
 };
 
 } // namespace yactfr

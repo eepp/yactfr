@@ -396,7 +396,7 @@ void TraceTypeImpl::_validateMappedClockTypeName(const DataType *type)
 }
 
 void TraceTypeImpl::_validateVariantTypeTagType(const DataType *variantType,
-                                                 const DataType *tagType)
+                                                const DataType *tagType)
 {
     const VariantType *asVariantType = variantType->asVariantType();
 
@@ -439,8 +439,8 @@ void TraceTypeImpl::_validateVariantTypeTagType(const DataType *variantType,
 }
 
 void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
-                                                const DataType *type,
-                                                const FieldResolver& fieldResolver)
+                                               const DataType *type,
+                                               const FieldResolver& fieldResolver)
 {
     if (type->isStructType()) {
         this->_stackPush(_StackFrame {type, 0});
@@ -462,8 +462,8 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
                                          fieldResolver);
         this->_stackPop();
     } else if (type->isSequenceType()) {
-        auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                            type->asSequenceType()->length());
+        const auto result = fieldResolver.resolve(scope, this->_curPos(),
+                                                  type->asSequenceType()->length());
 
         if (!result.type) {
             std::ostringstream ss;
@@ -483,14 +483,15 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
             throw InvalidMetadata {ss.str()};
         }
 
+        type->asSequenceType()->_lengthType = result.type;
         this->_stackPush(_StackFrame {type, -1ULL});
         this->_resolveDynamicTypeInScope(scope, &type->asSequenceType()->elemType(),
                                          fieldResolver);
         this->_stackPop();
     } else if (type->isVariantType()) {
         auto variantType = type->asVariantType();
-        auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                            variantType->tag());
+        const auto result = fieldResolver.resolve(scope, this->_curPos(),
+                                                  variantType->tag());
 
         if (!result.type) {
             std::ostringstream ss;
@@ -502,6 +503,7 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
         }
 
         this->_validateVariantTypeTagType(type, result.type);
+        variantType->_tagType = result.type;
         this->_stackPush(_StackFrame {type, 0});
 
         for (Index index = 0; index < variantType->options().size(); ++index) {

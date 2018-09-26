@@ -39,6 +39,11 @@
 #include "../aliases.hpp"
 
 namespace yactfr {
+namespace internal {
+
+class TraceTypeImpl;
+
+} // namespace internal
 
 /*!
 @brief  Variant type.
@@ -50,12 +55,25 @@ A structure type describes data stream variants.
 class VariantType final :
     public StructVariantTypeBase<VariantTypeOption>
 {
+    friend class internal::TraceTypeImpl;
+
 public:
     /// Field reference of the tag of data stream variants described
     /// by this variant type.
     const FieldRef& tag() const noexcept
     {
         return _tag;
+    }
+
+    /*!
+    @brief  Tag's field type.
+
+    \c nullptr if this variant type is not part of a trace type's
+    hierarchy yet.
+    */
+    const DataType *tagType() const noexcept
+    {
+        return this->_tagType;
     }
 
     /// Options offered by this variant type.
@@ -187,6 +205,7 @@ private:
 
 private:
     const FieldRef _tag;
+    mutable const DataType *_tagType = nullptr;
 };
 
 } // namespace yactfr
