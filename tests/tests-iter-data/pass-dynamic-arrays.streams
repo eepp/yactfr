@@ -45,10 +45,10 @@ event {
      0       SCB:5
      0         STB
      0           U:len:7
-    32           SQB:seq
+    32           DAB:seq
     32             STB:seq
     32               U:len2:3
-    48               SQB:seq
+    48               DAB:seq
     48                 STRB:seq
     48                   SUB:7:copper
    104                 STRE
@@ -58,95 +58,95 @@ event {
    168                 STRB:seq
    168                   SUB:6:truck
    216                 STRE
-   216               SQE
+   216               DAE
    216             STE
    216             STB:seq
    216               U:len2:2
-   232               SQB:seq
+   232               DAB:seq
    232                 STRB:seq
    232                   SUB:5:neat
    272                 STRE
    272                 STRB:seq
    272                   SUB:8:tenuous
    336                 STRE
-   336               SQE
+   336               DAE
    336             STE
    336             STB:seq
    336               U:len2:0
-   352               SQB:seq
-   352               SQE
+   352               DAB:seq
+   352               DAE
    352             STE
    352             STB:seq
    352               U:len2:2
-   368               SQB:seq
+   368               DAB:seq
    368                 STRB:seq
    368                   SUB:9:decisive
    440                 STRE
    440                 STRB:seq
    440                   SUB:7:notice
    496                 STRE
-   496               SQE
+   496               DAE
    496             STE
    496             STB:seq
    496               U:len2:1
-   512               SQB:seq
+   512               DAB:seq
    512                 STRB:seq
    512                   SUB:4:hum
    544                 STRE
-   544               SQE
+   544               DAE
    544             STE
    544             STB:seq
    544               U:len2:1
-   560               SQB:seq
+   560               DAB:seq
    560                 STRB:seq
    560                   SUB:1:
    568                 STRE
-   568               SQE
+   568               DAE
    568             STE
    568             STB:seq
    568               U:len2:2
-   584               SQB:seq
+   584               DAB:seq
    584                 STRB:seq
    584                   SUB:6:nerve
    632                 STRE
    632                 STRB:seq
    632                   SUB:7:locket
    688                 STRE
-   688               SQE
+   688               DAE
    688             STE
-   688           SQE
+   688           DAE
    688           U:zz:0
    696           U:a:1
    704           U:b:2
    712           U:c:3
-   720           SQB:seq3
-   720             SQB:seq3
-   720               SQB:seq3
+   720           DAB:seq3
+   720             DAB:seq3
+   720               DAB:seq3
    720                 U:seq3:17
-   728               SQE
-   728               SQB:seq3
+   728               DAE
+   728               DAB:seq3
    728                 U:seq3:34
-   736               SQE
-   736             SQE
-   736             SQB:seq3
-   736               SQB:seq3
+   736               DAE
+   736             DAE
+   736             DAB:seq3
+   736               DAB:seq3
    736                 U:seq3:51
-   744               SQE
-   744               SQB:seq3
+   744               DAE
+   744               DAB:seq3
    744                 U:seq3:68
-   752               SQE
-   752             SQE
-   752             SQB:seq3
-   752               SQB:seq3
+   752               DAE
+   752             DAE
+   752             DAB:seq3
+   752               DAB:seq3
    752                 U:seq3:85
-   760               SQE
-   760               SQB:seq3
+   760               DAE
+   760               DAB:seq3
    760                 U:seq3:102
-   768               SQE
-   768             SQE
-   768           SQE
-   768           AB:seq0
-   768           AE
+   768               DAE
+   768             DAE
+   768           DAE
+   768           SAB:seq0
+   768           SAE
    768         STE
    768       SCE
    768     ERE

@@ -25,10 +25,10 @@
 #include <yactfr/metadata/struct-type-field.hpp>
 #include <yactfr/metadata/field-ref.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
+#include <yactfr/metadata/dynamic-text-array-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/variant-type-option.hpp>
 #include <yactfr/metadata/clock-type.hpp>
@@ -189,39 +189,39 @@ public:
         }
     }
 
-    void visit(const ArrayType& type) override
+    void visit(const StaticArrayType& type) override
     {
-        static const std::string nameArrayType = "Array type";
-        static const std::string nameTextArrayType = "Text array type";
+        static const std::string nameStaticArrayType = "Static array type";
+        static const std::string nameStaticTextArrayType = "Static text array type";
 
         _ss << this->_getIndentStr() <<
-               (type.isTextArrayType() ? nameTextArrayType : nameArrayType) <<
+               (type.isTextArrayType() ? nameStaticTextArrayType : nameStaticArrayType) <<
                " <" << &type <<
                "> (align: " << type.alignment() <<
                ", length: " << type.length() << ")" << std::endl <<
                toString(type.elemType(), _indent + 1);
     }
 
-    void visit(const TextArrayType& type) override
+    void visit(const StaticTextArrayType& type) override
     {
-        this->visit(static_cast<const ArrayType&>(type));
+        this->visit(static_cast<const StaticArrayType&>(type));
     }
 
-    void visit(const SequenceType& type) override
+    void visit(const DynamicArrayType& type) override
     {
-        static const std::string nameSeqType = "Sequence type";
-        static const std::string nameTextSeqType = "Text sequence type";
+        static const std::string nameDynArrayType = "Dynamic array type";
+        static const std::string nameDynTextArrayType = "Dynamic text array type";
 
         _ss << this->_getIndentStr() <<
-               (type.isTextSequenceType() ? nameTextSeqType : nameSeqType) <<
+               (type.isDynamicTextArrayType() ? nameDynTextArrayType : nameDynArrayType) <<
                " <" << &type << "> (align: " << type.alignment() <<
                ", length: `" << toString(type.length()) << "`)" << std::endl <<
                toString(type.elemType(), _indent + 1);
     }
 
-    void visit(const TextSequenceType& type) override
+    void visit(const DynamicTextArrayType& type) override
     {
-        this->visit(static_cast<const SequenceType&>(type));
+        this->visit(static_cast<const DynamicArrayType&>(type));
     }
 
     void visit(const VariantType& type) override

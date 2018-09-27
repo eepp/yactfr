@@ -70,10 +70,10 @@
 #include <yactfr/metadata/enum-type.hpp>
 #include <yactfr/metadata/string-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
+#include <yactfr/metadata/dynamic-text-array-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/clock-type.hpp>
 #include <yactfr/metadata/event-record-type.hpp>
@@ -97,12 +97,12 @@ class InstrReadString;
 class InstrBeginReadScope;
 class InstrEndReadScope;
 class InstrBeginReadStruct;
-class InstrBeginReadArray;
-class InstrBeginReadTextArray;
-class InstrBeginReadUuidArray;
-class InstrBeginReadSequence;
-class InstrBeginReadTextSequence;
-class InstrBeginReadUnknownVariant;
+class InstrBeginReadStaticArray;
+class InstrBeginReadStaticTextArray;
+class InstrBeginReadStaticUuidArray;
+class InstrBeginReadDynamicArray;
+class InstrBeginReadDynamicTextArray;
+class InstrBeginReadVariantUnknownTag;
 class InstrBeginReadVariantSignedTag;
 class InstrBeginReadVariantUnsignedTag;
 class InstrEndReadCompound;
@@ -172,27 +172,27 @@ public:
     {
     }
 
-    virtual void visit(InstrBeginReadArray& instr)
+    virtual void visit(InstrBeginReadStaticArray& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadUuidArray& instr)
+    virtual void visit(InstrBeginReadStaticUuidArray& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadTextArray& instr)
+    virtual void visit(InstrBeginReadStaticTextArray& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadSequence& instr)
+    virtual void visit(InstrBeginReadDynamicArray& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadTextSequence& instr)
+    virtual void visit(InstrBeginReadDynamicTextArray& instr)
     {
     }
 
-    virtual void visit(InstrBeginReadUnknownVariant& instr)
+    virtual void visit(InstrBeginReadVariantUnknownTag& instr)
     {
     }
 
@@ -460,18 +460,18 @@ public:
         END_READ_SCOPE,
         BEGIN_READ_STRUCT,
         END_READ_STRUCT,
-        BEGIN_READ_ARRAY,
-        END_READ_ARRAY,
-        BEGIN_READ_TEXT_ARRAY,
-        END_READ_TEXT_ARRAY,
-        BEGIN_READ_UUID_ARRAY,
-        BEGIN_READ_SEQUENCE,
-        END_READ_SEQUENCE,
-        BEGIN_READ_TEXT_SEQUENCE,
-        END_READ_TEXT_SEQUENCE,
+        BEGIN_READ_STATIC_ARRAY,
+        END_READ_STATIC_ARRAY,
+        BEGIN_READ_STATIC_TEXT_ARRAY,
+        END_READ_STATIC_TEXT_ARRAY,
+        BEGIN_READ_STATIC_UUID_ARRAY,
+        BEGIN_READ_DYNAMIC_ARRAY,
+        END_READ_DYNAMIC_ARRAY,
+        BEGIN_READ_DYNAMIC_TEXT_ARRAY,
+        END_READ_DYNAMIC_TEXT_ARRAY,
         BEGIN_READ_VARIANT_SIGNED_TAG,
         BEGIN_READ_VARIANT_UNSIGNED_TAG,
-        BEGIN_READ_UNKNOWN_VARIANT,
+        BEGIN_READ_VARIANT_UNKNOWN_TAG,
         END_READ_VARIANT,
         SAVE_VALUE,
         SET_PACKET_END_CLOCK_VALUE,
@@ -533,11 +533,11 @@ public:
     bool isBeginReadCompound() const noexcept
     {
         return _kind == Kind::BEGIN_READ_STRUCT ||
-               _kind == Kind::BEGIN_READ_ARRAY ||
-               _kind == Kind::BEGIN_READ_UUID_ARRAY ||
-               _kind == Kind::BEGIN_READ_TEXT_ARRAY ||
-               _kind == Kind::BEGIN_READ_SEQUENCE ||
-               _kind == Kind::BEGIN_READ_TEXT_SEQUENCE;
+               _kind == Kind::BEGIN_READ_STATIC_ARRAY ||
+               _kind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
+               _kind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY ||
+               _kind == Kind::BEGIN_READ_DYNAMIC_ARRAY ||
+               _kind == Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY;
     }
 
     bool isReadInt() const noexcept
@@ -622,32 +622,32 @@ public:
         return _kind == Kind::READ_STRING;
     }
 
-    bool isBeginReadArray() const noexcept
+    bool isBeginReadStaticArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_ARRAY ||
-               _kind == Kind::BEGIN_READ_UUID_ARRAY ||
-               _kind == Kind::BEGIN_READ_TEXT_ARRAY;
+        return _kind == Kind::BEGIN_READ_STATIC_ARRAY ||
+               _kind == Kind::BEGIN_READ_STATIC_UUID_ARRAY ||
+               _kind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
     }
 
-    bool isBeginReadTextArray() const noexcept
+    bool isBeginReadStaticTextArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_TEXT_ARRAY;
+        return _kind == Kind::BEGIN_READ_STATIC_TEXT_ARRAY;
     }
 
-    bool isBeginReadUuidArray() const noexcept
+    bool isBeginReadStaticUuidArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_UUID_ARRAY;
+        return _kind == Kind::BEGIN_READ_STATIC_UUID_ARRAY;
     }
 
-    bool isBeginReadSequence() const noexcept
+    bool isBeginReadDynamicArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_SEQUENCE ||
-               _kind == Kind::BEGIN_READ_TEXT_SEQUENCE;
+        return _kind == Kind::BEGIN_READ_DYNAMIC_ARRAY ||
+               _kind == Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY;
     }
 
-    bool isBeginReadTextSequence() const noexcept
+    bool isBeginReadDynamicTextArray() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_TEXT_SEQUENCE;
+        return _kind == Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY;
     }
 
     bool isBeginReadStruct() const noexcept
@@ -657,7 +657,7 @@ public:
 
     bool isBeginReadVariant() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_UNKNOWN_VARIANT ||
+        return _kind == Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG ||
                _kind == Kind::BEGIN_READ_VARIANT_SIGNED_TAG ||
                _kind == Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG;
     }
@@ -674,16 +674,16 @@ public:
 
     bool isBeginReadUnknownVariant() const noexcept
     {
-        return _kind == Kind::BEGIN_READ_UNKNOWN_VARIANT;
+        return _kind == Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG;
     }
 
     bool isEndReadCompound() const noexcept
     {
         return _kind == Kind::END_READ_STRUCT ||
-               _kind == Kind::END_READ_ARRAY ||
-               _kind == Kind::END_READ_TEXT_ARRAY ||
-               _kind == Kind::END_READ_SEQUENCE ||
-               _kind == Kind::END_READ_TEXT_SEQUENCE ||
+               _kind == Kind::END_READ_STATIC_ARRAY ||
+               _kind == Kind::END_READ_STATIC_TEXT_ARRAY ||
+               _kind == Kind::END_READ_DYNAMIC_ARRAY ||
+               _kind == Kind::END_READ_DYNAMIC_TEXT_ARRAY ||
                _kind == Kind::END_READ_VARIANT;
     }
 
@@ -760,7 +760,7 @@ private:
  *
  * This instruction asks the VM to save the last decoded integer value
  * to a given position (index) in its saved value vector so that it can
- * be used later (for the length of a sequence or for the tag of a
+ * be used later (for the length of a dynamic array or for the tag of a
  * variant).
  */
 class InstrSaveValue :
@@ -1175,17 +1175,17 @@ private:
 };
 
 /*
- * "Begin reading array" procedure instruction.
+ * "Begin reading static array" procedure instruction.
  *
  * The VM must execute the subprocedure `length()` times.
  */
-class InstrBeginReadArray :
+class InstrBeginReadStaticArray :
     public InstrBeginReadCompound
 {
 public:
-    explicit InstrBeginReadArray(const std::string *fieldName,
-                                 const std::string *fieldDisplayName,
-                                 const DataType *type);
+    explicit InstrBeginReadStaticArray(const std::string *fieldName,
+                                       const std::string *fieldDisplayName,
+                                       const DataType *type);
     InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
                             std::vector<std::string>::const_iterator end) override;
     Instr *findInstrByFieldName(const std::string& fieldName) override;
@@ -1195,9 +1195,9 @@ public:
         visitor.visit(*this);
     }
 
-    const ArrayType& arrayType() const noexcept
+    const StaticArrayType& staticArrayType() const noexcept
     {
-        return static_cast<const ArrayType&>(*this->type());
+        return static_cast<const StaticArrayType&>(*this->type());
     }
 
     Size length() const noexcept
@@ -1215,40 +1215,40 @@ private:
     const Size _length;
 };
 
-// "Begin reading text array" procedure instruction.
-class InstrBeginReadTextArray :
-    public InstrBeginReadArray
+// "Begin reading static text array" procedure instruction.
+class InstrBeginReadStaticTextArray :
+    public InstrBeginReadStaticArray
 {
 public:
-    explicit InstrBeginReadTextArray(const std::string *fieldName,
-                                     const std::string *fieldDisplayName,
-                                     const DataType *type);
+    explicit InstrBeginReadStaticTextArray(const std::string *fieldName,
+                                           const std::string *fieldDisplayName,
+                                           const DataType *type);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const TextArrayType& textArrayType() const noexcept
+    const StaticTextArrayType& staticTextArrayType() const noexcept
     {
-        return static_cast<const TextArrayType&>(*this->type());
+        return static_cast<const StaticTextArrayType&>(*this->type());
     }
 };
 
 /*
- * "Begin reading UUID array" procedure instruction.
+ * "Begin reading static UUID array" procedure instruction.
  *
  * This is a specialized instruction to read a packet header's UUID
  * field (16 bytes) and then validate the resulting UUID against the
  * expected one.
  */
-class InstrBeginReadUuidArray :
-    public InstrBeginReadArray
+class InstrBeginReadStaticUuidArray :
+    public InstrBeginReadStaticArray
 {
 public:
-    explicit InstrBeginReadUuidArray(const std::string *fieldName,
-                                     const std::string *fieldDisplayName,
-                                     const DataType *type);
+    explicit InstrBeginReadStaticUuidArray(const std::string *fieldName,
+                                           const std::string *fieldDisplayName,
+                                           const DataType *type);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1257,19 +1257,19 @@ public:
 };
 
 /*
- * "Begin reading sequence" procedure instruction.
+ * "Begin reading dynamic array" procedure instruction.
  *
  * The VM must use `lengthPos()` to retrieve the saved value which
- * represents the sequence's length, and then execute the subprocedure
- * this number of times.
+ * represents the dynamic array's length, and then execute the
+ * subprocedure this number of times.
  */
-class InstrBeginReadSequence :
+class InstrBeginReadDynamicArray :
     public InstrBeginReadCompound
 {
 public:
-    explicit InstrBeginReadSequence(const std::string *fieldName,
-                                    const std::string *fieldDisplayName,
-                                    const DataType *type);
+    explicit InstrBeginReadDynamicArray(const std::string *fieldName,
+                                        const std::string *fieldDisplayName,
+                                        const DataType *type);
     InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
                             std::vector<std::string>::const_iterator end) override;
     Instr *findInstrByFieldName(const std::string& fieldName) override;
@@ -1279,9 +1279,9 @@ public:
         visitor.visit(*this);
     }
 
-    const SequenceType& sequenceType() const noexcept
+    const DynamicArrayType& dynamicArrayType() const noexcept
     {
-        return static_cast<const SequenceType&>(*this->type());
+        return static_cast<const DynamicArrayType&>(*this->type());
     }
 
     const Index& lengthPos() const noexcept
@@ -1304,28 +1304,29 @@ private:
     Index _lengthPos = Index {-1ULL};
 };
 
-// "Begin reading text sequence" procedure instruction.
-class InstrBeginReadTextSequence :
-    public InstrBeginReadSequence
+// "Begin reading dynamic text array" procedure instruction.
+class InstrBeginReadDynamicTextArray :
+    public InstrBeginReadDynamicArray
 {
 public:
-    explicit InstrBeginReadTextSequence(const std::string *fieldName,
-                                        const std::string *fieldDisplayName,
-                                        const DataType *type);
+    explicit InstrBeginReadDynamicTextArray(const std::string *fieldName,
+                                            const std::string *fieldDisplayName,
+                                            const DataType *type);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const TextSequenceType& textSequenceType() const noexcept
+    const DynamicTextArrayType& dynamicTextArrayType() const noexcept
     {
-        return static_cast<const TextSequenceType&>(*this->type());
+        return static_cast<const DynamicTextArrayType&>(*this->type());
     }
 };
 
 /*
- * "Begin reading unknown variant" (temporary) procedure instruction.
+ * "Begin reading variant with unknown tag" (temporary) procedure
+ * instruction.
  *
  * This is a temporary procedure instruction which needs to be replaced
  * with an InstrBeginReadVariantSignedTag or a
@@ -1339,16 +1340,16 @@ public:
  * To do this we do not need to create new procedure instructions for
  * the options, we simply reuse the same because they are shared.
  */
-class InstrBeginReadUnknownVariant :
+class InstrBeginReadVariantUnknownTag :
     public InstrReadData
 {
 public:
     using Options = std::unordered_map<std::string, Proc>;
 
 public:
-    explicit InstrBeginReadUnknownVariant(const std::string *fieldName,
-                                          const std::string *fieldDisplayName,
-                                          const DataType *type);
+    explicit InstrBeginReadVariantUnknownTag(const std::string *fieldName,
+                                             const std::string *fieldDisplayName,
+                                             const DataType *type);
     InstrLocation findInstr(std::vector<std::string>::const_iterator begin,
                             std::vector<std::string>::const_iterator end) override;
 
@@ -1532,7 +1533,7 @@ public:
     using EnumType = EnumTypeT;
 
 public:
-    explicit InstrBeginReadVariant(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+    explicit InstrBeginReadVariant(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
                                    const EnumTypeT& tagType) :
         InstrReadData {
             instrReadUnkVariant.fieldName(),
@@ -1595,7 +1596,7 @@ private:
     }
 
 private:
-    void _buildRangesFromOptions(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+    void _buildRangesFromOptions(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
                                  const EnumType& tagType)
     {
         for (const auto& memberPair : tagType.members()) {
@@ -1628,7 +1629,7 @@ class InstrBeginReadVariantUnsignedTag :
                                  Instr::Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG>
 {
 public:
-    explicit InstrBeginReadVariantUnsignedTag(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+    explicit InstrBeginReadVariantUnsignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
                                               const EnumType& tagType);
 
     void accept(InstrVisitor& visitor) override
@@ -1643,7 +1644,7 @@ class InstrBeginReadVariantSignedTag :
                                  Instr::Kind::BEGIN_READ_VARIANT_SIGNED_TAG>
 {
 public:
-    explicit InstrBeginReadVariantSignedTag(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+    explicit InstrBeginReadVariantSignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
                                             const EnumType& tagType);
 
     void accept(InstrVisitor& visitor) override
@@ -1931,12 +1932,12 @@ public:
 /*
  * "Decrement remaining elements" procedure instruction.
  *
- * When reading an array or a sequence, this instruction asks the VM to
- * decrement the number of remaining elements to read. It is placed just
- * before an "end read compound data" instruction as a trade-off between
- * checking if we're in an array/sequence every time we end a compound
- * data, or having this decrementation instruction even for simple
- * arrays/sequences of scalar types.
+ * When reading an array, this instruction asks the VM to decrement the
+ * number of remaining elements to read. It is placed just before an
+ * "end read compound data" instruction as a trade-off between checking
+ * if we're in an array every time we end a compound data, or having
+ * this decrementation instruction even for simple arrays of scalar
+ * elements.
  */
 class InstrDecrRemainingElements :
     public Instr
@@ -2159,9 +2160,9 @@ static inline InstrBeginReadStruct& instrAsBeginReadStruct(Instr& instr) noexcep
     return static_cast<InstrBeginReadStruct&>(instr);
 }
 
-static inline InstrBeginReadUnknownVariant& instrAsBeginReadUnknownVariant(Instr& instr) noexcept
+static inline InstrBeginReadVariantUnknownTag& instrAsBeginReadVariantUnknownTag(Instr& instr) noexcept
 {
-    return static_cast<InstrBeginReadUnknownVariant&>(instr);
+    return static_cast<InstrBeginReadVariantUnknownTag&>(instr);
 }
 
 } // namespace internal

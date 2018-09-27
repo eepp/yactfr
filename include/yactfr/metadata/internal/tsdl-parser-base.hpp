@@ -55,9 +55,9 @@ using VofS = std::vector<std::string>;
  * reference.
  *
  * If `isEnv`, then the parsed field reference was `env.SOMETHING`,
- * where `SOMETHING` should be an existing environment key (for
- * array types). The first element of `pathElements` is `SOMETHING`
- * in this case.
+ * where `SOMETHING` should be an existing environment key (for static
+ * array types). The first element of `pathElements` is `SOMETHING` in
+ * this case.
  *
  * If `isAbsolute` is false, then do not consider `scope`. If
  * `isAbsolute` is true, then `scope` indicates the root scope,
@@ -79,8 +79,8 @@ struct PseudoDataType {
 
     enum class Kind {
         SCALAR_WRAPPER,
-        ARRAY,
-        SEQUENCE,
+        STATIC_ARRAY,
+        DYNAMIC_ARRAY,
         STRUCT,
         VARIANT,
     };
@@ -130,12 +130,12 @@ struct PseudoScalarTypeWrapper : public PseudoDataType {
 };
 
 /*
- * Pseudo array type. Its element type can contain (eventually)
- * sequence or variant types with relative field references.
+ * Pseudo static array type. Its element type can contain (eventually)
+ * dynamic array or variant types with relative field references.
  */
-struct PseudoArrayType : public PseudoDataType {
-    explicit PseudoArrayType(const Size length,
-                             PseudoDataType::UP elementType) :
+struct PseudoStaticArrayType : public PseudoDataType {
+    explicit PseudoStaticArrayType(const Size length,
+                                   PseudoDataType::UP elementType) :
         length {length},
         elementType {std::move(elementType)}
     {
@@ -143,13 +143,13 @@ struct PseudoArrayType : public PseudoDataType {
 
     PseudoDataType::Kind kind() const override
     {
-        return PseudoDataType::Kind::ARRAY;
+        return PseudoDataType::Kind::STATIC_ARRAY;
     }
 
     PseudoDataType::UP clone() const override
     {
-        return std::make_unique<PseudoArrayType>(length,
-                                                 elementType->clone());
+        return std::make_unique<PseudoStaticArrayType>(length,
+                                                       elementType->clone());
     }
 
     Size length;
@@ -157,13 +157,13 @@ struct PseudoArrayType : public PseudoDataType {
 };
 
 /*
- * Pseudo sequence type. `lengthFieldRef` can be a relative field
- * reference. Its element type can contain (eventually) sequence or
+ * Pseudo dynamic array type. `lengthFieldRef` can be a relative field
+ * reference. Its element type can contain (eventually) dynamic array or
  * variant types with relative field references.
  */
-struct PseudoSequenceType : public PseudoDataType {
-    explicit PseudoSequenceType(const PseudoFieldRef& lengthFieldRef,
-                                PseudoDataType::UP elementType) :
+struct PseudoDynamicArrayType : public PseudoDataType {
+    explicit PseudoDynamicArrayType(const PseudoFieldRef& lengthFieldRef,
+                                    PseudoDataType::UP elementType) :
         lengthFieldRef {lengthFieldRef},
         elementType {std::move(elementType)}
     {
@@ -171,13 +171,13 @@ struct PseudoSequenceType : public PseudoDataType {
 
     PseudoDataType::Kind kind() const override
     {
-        return PseudoDataType::Kind::SEQUENCE;
+        return PseudoDataType::Kind::DYNAMIC_ARRAY;
     }
 
     PseudoDataType::UP clone() const override
     {
-        return std::make_unique<PseudoSequenceType>(lengthFieldRef,
-                                                   elementType->clone());
+        return std::make_unique<PseudoDynamicArrayType>(lengthFieldRef,
+                                                        elementType->clone());
     }
 
     PseudoFieldRef lengthFieldRef;
@@ -185,8 +185,8 @@ struct PseudoSequenceType : public PseudoDataType {
 };
 
 /*
- * Pseudo named data type. `type` can contain (eventually)
- * sequence or variant types with relative field references.
+ * Pseudo named data type. `type` can contain (eventually) dynamic array
+ * or variant types with relative field references.
  */
 struct PseudoNamedDataType {
     using UP = std::unique_ptr<PseudoNamedDataType>;
@@ -209,8 +209,8 @@ struct PseudoNamedDataType {
 using PseudoNamedDataTypes = std::vector<PseudoNamedDataType::UP>;
 
 /*
- * Pseudo structure type. `fields` can contain (eventually)
- * sequence or variant types with relative field references.
+ * Pseudo structure type. `fields` can contain (eventually) dynamic
+ * array or variant types with relative field references.
  */
 struct PseudoStructType : public PseudoDataType {
     explicit PseudoStructType(const unsigned long long minAlignment,
@@ -243,9 +243,9 @@ struct PseudoStructType : public PseudoDataType {
 };
 
 /*
- * Pseudo variant type. `tagFieldRef` can be a relative field
- * reference. `options` can contain (eventually) sequence or variant
- * types with relative field references.
+ * Pseudo variant type. `tagFieldRef` can be a relative field reference.
+ * `options` can contain (eventually) dynamic array or variant types
+ * with relative field references.
  */
 struct PseudoVariantType : public PseudoDataType {
     explicit PseudoVariantType(const PseudoFieldRef& tagFieldRef,
@@ -672,7 +672,7 @@ protected:
 
     /*
      * Returns whether or not `type` is recursively a variant type
-     * (passing through array and sequence types).
+     * (passing through array types).
      */
     static bool _isVariantTypeUntaggedRec(const PseudoDataType& type);
 
@@ -710,8 +710,8 @@ protected:
     /*
      * Converts a pseudo data type to a concrete data type, recursively
      * resolving all the relative pseudo field references to concrete
-     * absolute field references for sequence and variant types, and
-     * throwing if any error occurs.
+     * absolute field references for dynamic array and variant types,
+     * and throwing if any error occurs.
      *
      * `scope` is the scope of which `pseudoDataType` is the root type.
      */
@@ -728,14 +728,14 @@ protected:
     static DataType::UP _dataTypeFromPseudoScalarTypeWrapper(const PseudoDataType& pseudoDataType,
                                                              Scope scope,
                                                              _ResolvingStack& stack);
-    static DataType::UP _dataTypeFromPseudoArrayType(const PseudoDataType& pseudoDataType,
-                                                     Scope scope,
-                                                     const std::string &name,
-                                                     _ResolvingStack& stack);
-    static DataType::UP _dataTypeFromPseudoSequenceType(const PseudoDataType& pseudoDataType,
-                                                        Scope scope,
-                                                        const std::string &name,
-                                                        _ResolvingStack& stack);
+    static DataType::UP _dataTypeFromPseudoStaticArrayType(const PseudoDataType& pseudoDataType,
+                                                           Scope scope,
+                                                           const std::string &name,
+                                                           _ResolvingStack& stack);
+    static DataType::UP _dataTypeFromPseudoDynamicArrayType(const PseudoDataType& pseudoDataType,
+                                                            Scope scope,
+                                                            const std::string &name,
+                                                            _ResolvingStack& stack);
     static DataType::UP _dataTypeFromPseudoStructType(const PseudoDataType& pseudoDataType,
                                                       Scope scope,
                                                       const std::string &name,

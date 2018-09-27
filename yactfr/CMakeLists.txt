@@ -14,7 +14,6 @@ find_package (Boost 1.58 REQUIRED)
 # yactfr library
 add_library (
     yactfr SHARED
-    metadata/array-sequence-type-base.cpp
     metadata/array-type.cpp
     metadata/bit-array-type.cpp
     metadata/clock-type.cpp
@@ -22,6 +21,8 @@ add_library (
     metadata/data-stream-type.cpp
     metadata/data-type-visitor.cpp
     metadata/data-type.cpp
+    metadata/dynamic-array-type.cpp
+    metadata/dynamic-text-array-type.cpp
     metadata/event-record-type.cpp
     metadata/field-ref.cpp
     metadata/field-resolver.cpp
@@ -37,12 +38,11 @@ add_library (
     metadata/packetized-metadata-stream.cpp
     metadata/plain-text-metadata-stream.cpp
     metadata/scalar-type.cpp
-    metadata/sequence-type.cpp
+    metadata/static-array-type.cpp
+    metadata/static-text-array-type.cpp
     metadata/string-type.cpp
     metadata/struct-type-field.cpp
     metadata/struct-type.cpp
-    metadata/text-array-type.cpp
-    metadata/text-sequence-type.cpp
     metadata/trace-type-env.cpp
     metadata/trace-type-impl.cpp
     metadata/trace-type.cpp

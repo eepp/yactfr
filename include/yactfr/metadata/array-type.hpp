@@ -1,5 +1,5 @@
 /*
- * CTF array data type.
+ * CTF array type base.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
@@ -9,7 +9,7 @@
 
 /*!
 @file
-@brief  Array data type.
+@brief  Array type base.
 
 @ingroup metadata_dt
 */
@@ -17,14 +17,8 @@
 #ifndef _YACTFR_METADATA_ARRAY_TYPE_HPP
 #define _YACTFR_METADATA_ARRAY_TYPE_HPP
 
-// for Size
-#include "../aliases.hpp"
-
-// for ArraySequenceTypeBase
-#include "array-sequence-type-base.hpp"
-
-// for DataTypeVisitor
-#include "data-type-visitor.hpp"
+// for CompoundType
+#include "compound-type.hpp"
 
 // for DataType
 #include "data-type.hpp"
@@ -32,55 +26,26 @@
 namespace yactfr {
 
 /*!
-@brief  Array type.
+@brief  %Base class of static/dynamic array types.
 
 @ingroup metadata_dt
-
-An array type describes data stream arrays.
 */
 class ArrayType :
-    public ArraySequenceTypeBase
+    public CompoundType
 {
-public:
-    /*!
-    @brief  Builds an array data type.
-
-    @param minAlign Minimal alignment of data stream arrays
-                    described by this array type (power of two,
-                    greater than 0).
-    @param elemType Element's type.
-    @param length   Length of data stream arrays described by this array
-                    type (number of element).
-
-    @throws InvalidMetadata The array type is invalid.
-    */
-    explicit ArrayType(unsigned int minAlign, DataType::UP elemType,
-                       Size length);
-
 protected:
-    explicit ArrayType(int kind, unsigned int align, DataType::UP elemType,
-                       Size length);
+    explicit ArrayType(int kind, unsigned int minAlign, DataType::UP elemType);
 
 public:
-    /// Length of data stream arrays described by this array type
-    /// (number of element).
-    Size length() const noexcept
+    /// Type of element fields contained in data stream arrays
+    /// described by this array type.
+    const DataType& elemType() const
     {
-        return _length;
+        return *_elemType;
     }
 
 private:
-    DataType::UP _clone() const override;
-
-    void _accept(DataTypeVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-
-    bool _compare(const DataType& otherType) const override;
-
-private:
-    const Size _length;
+    const DataType::UP _elemType;
 };
 
 } // namespace yactfr

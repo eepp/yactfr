@@ -44,7 +44,7 @@ enum class VmState {
     BEGIN_EVENT_RECORD,
     END_EVENT_RECORD,
     EXEC_INSTR,
-    EXEC_ARRAY_SEQ_INSTR,
+    EXEC_ARRAY_INSTR,
     READ_UUID_BYTE,
     READ_SUBSTRING_UNTIL_NULL,
     READ_SUBSTRING,
@@ -74,8 +74,8 @@ struct VmStackFrame final
     VmState parentState;
 
     /*
-     * Array/sequence elements left to read (`*proc` is the procedure of
-     * this array/sequence read instruction in this case).
+     * Array elements left to read (`*proc` is the procedure of this
+     * array read instruction in this case).
      */
     Size remElems;
 };
@@ -126,7 +126,7 @@ public:
         ++this->stackTop().it;
     }
 
-    void gotoNextArraySeqElemInstr()
+    void gotoNextArrayElemInstr()
     {
         auto& stackTop = this->stackTop();
 
@@ -265,14 +265,14 @@ public:
         StringBeginningElement stringBeginning;
         StringEndElement stringEnd;
         SubstringElement substring;
-        ArrayBeginningElement arrayBeginning;
-        ArrayEndElement arrayEnd;
-        TextArrayBeginningElement textArrayBeginning;
-        TextArrayEndElement textArrayEnd;
-        SequenceBeginningElement sequenceBeginning;
-        SequenceEndElement sequenceEnd;
-        TextSequenceBeginningElement textSequenceBeginning;
-        TextSequenceEndElement textSequenceEnd;
+        StaticArrayBeginningElement staticArrayBeginning;
+        StaticArrayEndElement staticArrayEnd;
+        StaticTextArrayBeginningElement staticTextArrayBeginning;
+        StaticTextArrayEndElement staticTextArrayEnd;
+        DynamicArrayBeginningElement dynamicArrayBeginning;
+        DynamicArrayEndElement dynamicArrayEnd;
+        DynamicTextArrayBeginningElement dynamicTextArrayBeginning;
+        DynamicTextArrayEndElement dynamicTextArrayEnd;
         StructBeginningElement structBeginning;
         StructEndElement structEnd;
         VariantBeginningSignedTagElement variantBeginningSignedTag;
@@ -457,8 +457,8 @@ private:
         case VmState::EXEC_INSTR:
             return this->_stateExecInstr();
 
-        case VmState::EXEC_ARRAY_SEQ_INSTR:
-            return this->_stateExecArraySeqInstr();
+        case VmState::EXEC_ARRAY_INSTR:
+            return this->_stateExecArrayInstr();
 
         case VmState::BEGIN_EVENT_RECORD:
             return this->_stateBeginEventRecord();
@@ -537,7 +537,7 @@ private:
         return true;
     }
 
-    bool _stateExecArraySeqInstr()
+    bool _stateExecArrayInstr()
     {
         if (_pos.stackTop().remElems == 0) {
             _pos.setParentStateAndStackPop();
@@ -821,13 +821,13 @@ private:
         this->_updateIterCurOffset(_pos.elems.stringEnd);
         _pos.setState(_pos.postEndStringState);
         assert(_pos.state == VmState::EXEC_INSTR ||
-               _pos.state == VmState::EXEC_ARRAY_SEQ_INSTR);
+               _pos.state == VmState::EXEC_ARRAY_INSTR);
         return true;
     }
 
     _ExecReaction _exec(const Instr& instr)
     {
-        assert(instr.kind() != Instr::Kind::BEGIN_READ_UNKNOWN_VARIANT);
+        assert(instr.kind() != Instr::Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG);
         return (this->*_execFuncs[static_cast<int>(instr.kind())])(instr);
     }
 
@@ -1028,15 +1028,15 @@ private:
     _ExecReaction _execEndReadScope(const Instr& instr);
     _ExecReaction _execBeginReadStruct(const Instr& instr);
     _ExecReaction _execEndReadStruct(const Instr& instr);
-    _ExecReaction _execBeginReadArray(const Instr& instr);
-    _ExecReaction _execEndReadArray(const Instr& instr);
-    _ExecReaction _execBeginReadTextArray(const Instr& instr);
-    _ExecReaction _execEndReadTextArray(const Instr& instr);
-    _ExecReaction _execBeginReadUuidArray(const Instr& instr);
-    _ExecReaction _execBeginReadSequence(const Instr& instr);
-    _ExecReaction _execEndReadSequence(const Instr& instr);
-    _ExecReaction _execBeginReadTextSequence(const Instr& instr);
-    _ExecReaction _execEndReadTextSequence(const Instr& instr);
+    _ExecReaction _execBeginReadStaticArray(const Instr& instr);
+    _ExecReaction _execEndReadStaticArray(const Instr& instr);
+    _ExecReaction _execBeginReadStaticTextArray(const Instr& instr);
+    _ExecReaction _execEndReadStaticTextArray(const Instr& instr);
+    _ExecReaction _execBeginReadStaticUuidArray(const Instr& instr);
+    _ExecReaction _execBeginReadDynamicArray(const Instr& instr);
+    _ExecReaction _execEndReadDynamicArray(const Instr& instr);
+    _ExecReaction _execBeginReadDynamicTextArray(const Instr& instr);
+    _ExecReaction _execEndReadDynamicTextArray(const Instr& instr);
     _ExecReaction _execBeginReadVariantSignedTag(const Instr& instr);
     _ExecReaction _execBeginReadVariantUnsignedTag(const Instr& instr);
     _ExecReaction _execEndReadVariant(const Instr& instr);
@@ -1269,42 +1269,42 @@ private:
         _pos.setState(VmState::EXEC_INSTR);
     }
 
-    void _execBeginReadArrayCommon(const Instr& instr,
-                                   ArrayBeginningElement& elem,
-                                   const VmState nextState)
+    void _execBeginReadStaticArrayCommon(const Instr& instr,
+                                         StaticArrayBeginningElement& elem,
+                                         const VmState nextState)
     {
-        auto& instrBeginReadArray = static_cast<const InstrBeginReadArray&>(instr);
-        auto& arrayBeginningElem = static_cast<ArrayBeginningElement&>(elem);
-        auto& namedDataElem = static_cast<NamedDataElement&>(arrayBeginningElem);
+        auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticArray&>(instr);
+        auto& staticArrayBeginningElem = static_cast<StaticArrayBeginningElement&>(elem);
+        auto& namedDataElem = static_cast<NamedDataElement&>(staticArrayBeginningElem);
 
         this->_alignCursor(instr);
-        this->_setNamedDataElementFromInstr(namedDataElem, instrBeginReadArray);
-        this->_updateIterCurOffset(arrayBeginningElem);
+        this->_setNamedDataElementFromInstr(namedDataElem, instrBeginReadStaticArray);
+        this->_updateIterCurOffset(staticArrayBeginningElem);
         _pos.gotoNextInstr();
-        _pos.stackPush(instrBeginReadArray.proc());
-        _pos.stackTop().remElems = instrBeginReadArray.length();
+        _pos.stackPush(instrBeginReadStaticArray.proc());
+        _pos.stackTop().remElems = instrBeginReadStaticArray.length();
         _pos.setState(nextState);
     }
 
-    void _execBeginReadSequenceCommon(const Instr& instr,
-                                      SequenceBeginningElement& elem,
-                                      const VmState nextState)
+    void _execBeginReadDynamicArrayCommon(const Instr& instr,
+                                          DynamicArrayBeginningElement& elem,
+                                          const VmState nextState)
     {
-        auto& instrBeginReadSeq = static_cast<const InstrBeginReadSequence&>(instr);
-        const auto length = _pos.savedValue(instrBeginReadSeq.lengthPos());
+        auto& instrBeginReadDynArray = static_cast<const InstrBeginReadDynamicArray&>(instr);
+        const auto length = _pos.savedValue(instrBeginReadDynArray.lengthPos());
 
         if (YACTFR_UNLIKELY(length == SAVED_VALUE_UNSET)) {
-            throw SequenceLengthNotSetDecodingError {
+            throw DynamicArrayLengthNotSetDecodingError {
                 _pos.cursorOffsetInPacketSequenceBits()
             };
         }
 
         this->_alignCursor(instr);
-        this->_setNamedDataElementFromInstr(elem, instrBeginReadSeq);
+        this->_setNamedDataElementFromInstr(elem, instrBeginReadDynArray);
         elem._length = length;
         this->_updateIterCurOffset(elem);
         _pos.gotoNextInstr();
-        _pos.stackPush(instrBeginReadSeq.proc());
+        _pos.stackPush(instrBeginReadDynArray.proc());
         _pos.stackTop().remElems = length;
         _pos.setState(nextState);
     }

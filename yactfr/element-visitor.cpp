@@ -140,42 +140,42 @@ void ElementVisitor::visit(const SubstringElement& elem)
 {
 }
 
-void ElementVisitor::visit(const ArrayBeginningElement& elem)
+void ElementVisitor::visit(const StaticArrayBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const ArrayEndElement& elem)
+void ElementVisitor::visit(const StaticArrayEndElement& elem)
 {
     this->visit(static_cast<const EndElement&>(elem));
 }
 
-void ElementVisitor::visit(const TextArrayBeginningElement& elem)
+void ElementVisitor::visit(const StaticTextArrayBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const TextArrayEndElement& elem)
+void ElementVisitor::visit(const StaticTextArrayEndElement& elem)
 {
     this->visit(static_cast<const EndElement&>(elem));
 }
 
-void ElementVisitor::visit(const SequenceBeginningElement& elem)
+void ElementVisitor::visit(const DynamicArrayBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const SequenceEndElement& elem)
+void ElementVisitor::visit(const DynamicArrayEndElement& elem)
 {
     this->visit(static_cast<const EndElement&>(elem));
 }
 
-void ElementVisitor::visit(const TextSequenceBeginningElement& elem)
+void ElementVisitor::visit(const DynamicTextArrayBeginningElement& elem)
 {
     this->visit(static_cast<const BeginningElement&>(elem));
 }
 
-void ElementVisitor::visit(const TextSequenceEndElement& elem)
+void ElementVisitor::visit(const DynamicTextArrayEndElement& elem)
 {
     this->visit(static_cast<const EndElement&>(elem));
 }

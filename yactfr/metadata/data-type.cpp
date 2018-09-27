@@ -18,10 +18,10 @@
 #include <yactfr/metadata/enum-type.hpp>
 #include <yactfr/metadata/string-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
+#include <yactfr/metadata/dynamic-text-array-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/internal/utils.hpp>
 
@@ -128,22 +128,28 @@ const ArrayType *DataType::asArrayType() const
     return static_cast<const ArrayType *>(this);
 }
 
-const ArrayType *DataType::asTextArrayType() const
+const StaticArrayType *DataType::asStaticArrayType() const
 {
-    assert(this->isTextArrayType());
-    return static_cast<const TextArrayType *>(this);
+    assert(this->isStaticArrayType());
+    return static_cast<const StaticArrayType *>(this);
 }
 
-const SequenceType *DataType::asSequenceType() const
+const StaticTextArrayType *DataType::asStaticTextArrayType() const
 {
-    assert(this->isSequenceType());
-    return static_cast<const SequenceType *>(this);
+    assert(this->isStaticTextArrayType());
+    return static_cast<const StaticTextArrayType *>(this);
 }
 
-const TextSequenceType *DataType::asTextSequenceType() const
+const DynamicArrayType *DataType::asDynamicArrayType() const
 {
-    assert(this->isTextSequenceType());
-    return static_cast<const TextSequenceType *>(this);
+    assert(this->isDynamicArrayType());
+    return static_cast<const DynamicArrayType *>(this);
+}
+
+const DynamicTextArrayType *DataType::asDynamicTextArrayType() const
+{
+    assert(this->isDynamicTextArrayType());
+    return static_cast<const DynamicTextArrayType *>(this);
 }
 
 const StructType *DataType::asStructType() const

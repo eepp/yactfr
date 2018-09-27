@@ -249,15 +249,15 @@ void Vm::_initExecFuncs()
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_SCOPE)] = &Vm::_execEndReadScope;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STRUCT)] = &Vm::_execBeginReadStruct;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_STRUCT)] = &Vm::_execEndReadStruct;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_ARRAY)] = &Vm::_execBeginReadArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_ARRAY)] = &Vm::_execEndReadArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_TEXT_ARRAY)] = &Vm::_execBeginReadTextArray;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_TEXT_ARRAY)] = &Vm::_execEndReadTextArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_UUID_ARRAY)] = &Vm::_execBeginReadUuidArray;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_SEQUENCE)] = &Vm::_execBeginReadSequence;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_SEQUENCE)] = &Vm::_execEndReadSequence;
-    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_TEXT_SEQUENCE)] = &Vm::_execBeginReadTextSequence;
-    _execFuncs[static_cast<int>(Instr::Kind::END_READ_TEXT_SEQUENCE)] = &Vm::_execEndReadTextSequence;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_ARRAY)] = &Vm::_execBeginReadStaticArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_STATIC_ARRAY)] = &Vm::_execEndReadStaticArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_TEXT_ARRAY)] = &Vm::_execBeginReadStaticTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_STATIC_TEXT_ARRAY)] = &Vm::_execEndReadStaticTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_STATIC_UUID_ARRAY)] = &Vm::_execBeginReadStaticUuidArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYNAMIC_ARRAY)] = &Vm::_execBeginReadDynamicArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYNAMIC_ARRAY)] = &Vm::_execEndReadDynamicArray;
+    _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY)] = &Vm::_execBeginReadDynamicTextArray;
+    _execFuncs[static_cast<int>(Instr::Kind::END_READ_DYNAMIC_TEXT_ARRAY)] = &Vm::_execEndReadDynamicTextArray;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VARIANT_SIGNED_TAG)] = &Vm::_execBeginReadVariantSignedTag;
     _execFuncs[static_cast<int>(Instr::Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG)] = &Vm::_execBeginReadVariantUnsignedTag;
     _execFuncs[static_cast<int>(Instr::Kind::END_READ_VARIANT)] = &Vm::_execEndReadVariant;
@@ -667,77 +667,77 @@ Vm::_ExecReaction Vm::_execEndReadStruct(const Instr& instr)
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadStaticArray(const Instr& instr)
 {
-    auto& instrBeginReadArray = static_cast<const InstrBeginReadArray&>(instr);
+    auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticArray&>(instr);
 
-    _pos.elems.arrayBeginning._type = &instrBeginReadArray.arrayType();
-    this->_execBeginReadArrayCommon(instr, _pos.elems.arrayBeginning,
-                                    VmState::EXEC_ARRAY_SEQ_INSTR);
+    _pos.elems.staticArrayBeginning._type = &instrBeginReadStaticArray.staticArrayType();
+    this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticArrayBeginning,
+                                          VmState::EXEC_ARRAY_INSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadStaticArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.arrayEnd);
+    this->_updateIterCurOffset(_pos.elems.staticArrayEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadStaticTextArray(const Instr& instr)
 {
-    auto& instrBeginReadArray = static_cast<const InstrBeginReadTextArray&>(instr);
+    auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticTextArray&>(instr);
 
-    _pos.elems.textArrayBeginning._type = &instrBeginReadArray.textArrayType();
-    this->_execBeginReadArrayCommon(instr, _pos.elems.textArrayBeginning,
-                                    VmState::READ_SUBSTRING);
+    _pos.elems.staticTextArrayBeginning._type = &instrBeginReadStaticArray.staticTextArrayType();
+    this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticTextArrayBeginning,
+                                          VmState::READ_SUBSTRING);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadTextArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadStaticTextArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.textArrayEnd);
+    this->_updateIterCurOffset(_pos.elems.staticTextArrayEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadUuidArray(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadStaticUuidArray(const Instr& instr)
 {
-    auto& instrBeginReadArray = static_cast<const InstrBeginReadUuidArray&>(instr);
+    auto& instrBeginReadStaticArray = static_cast<const InstrBeginReadStaticUuidArray&>(instr);
 
-    _pos.elems.arrayBeginning._type = &instrBeginReadArray.arrayType();
-    this->_execBeginReadArrayCommon(instr, _pos.elems.arrayBeginning,
-                                    VmState::READ_UUID_BYTE);
+    _pos.elems.staticArrayBeginning._type = &instrBeginReadStaticArray.staticArrayType();
+    this->_execBeginReadStaticArrayCommon(instr, _pos.elems.staticArrayBeginning,
+                                          VmState::READ_UUID_BYTE);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadSequence(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadDynamicArray(const Instr& instr)
 {
-    auto& instrBeginReadSequence = static_cast<const InstrBeginReadSequence&>(instr);
+    auto& instrBeginReadDynamicArray = static_cast<const InstrBeginReadDynamicArray&>(instr);
 
-    _pos.elems.sequenceBeginning._type = &instrBeginReadSequence.sequenceType();
-    this->_execBeginReadSequenceCommon(instr, _pos.elems.sequenceBeginning,
-                                       VmState::EXEC_ARRAY_SEQ_INSTR);
+    _pos.elems.dynamicArrayBeginning._type = &instrBeginReadDynamicArray.dynamicArrayType();
+    this->_execBeginReadDynamicArrayCommon(instr, _pos.elems.dynamicArrayBeginning,
+                                           VmState::EXEC_ARRAY_INSTR);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadSequence(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDynamicArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.sequenceEnd);
+    this->_updateIterCurOffset(_pos.elems.dynamicArrayEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execBeginReadTextSequence(const Instr& instr)
+Vm::_ExecReaction Vm::_execBeginReadDynamicTextArray(const Instr& instr)
 {
-    auto& instrBeginReadSequence = static_cast<const InstrBeginReadTextSequence&>(instr);
+    auto& instrBeginReadDynamicArray = static_cast<const InstrBeginReadDynamicArray&>(instr);
 
-    _pos.elems.textSequenceBeginning._type = &instrBeginReadSequence.textSequenceType();
-    this->_execBeginReadSequenceCommon(instr, _pos.elems.textSequenceBeginning,
-                                       VmState::READ_SUBSTRING);
+    _pos.elems.dynamicTextArrayBeginning._type = &instrBeginReadDynamicArray.dynamicArrayType();
+    this->_execBeginReadDynamicArrayCommon(instr, _pos.elems.dynamicTextArrayBeginning,
+                                           VmState::READ_SUBSTRING);
     return _ExecReaction::STOP;
 }
 
-Vm::_ExecReaction Vm::_execEndReadTextSequence(const Instr& instr)
+Vm::_ExecReaction Vm::_execEndReadDynamicTextArray(const Instr& instr)
 {
-    this->_updateIterCurOffset(_pos.elems.textSequenceEnd);
+    this->_updateIterCurOffset(_pos.elems.dynamicTextArrayEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

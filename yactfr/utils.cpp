@@ -13,8 +13,8 @@
 
 #include <yactfr/metadata/data-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/field-ref.hpp>
 #include <yactfr/metadata/invalid-metadata.hpp>
@@ -59,8 +59,8 @@ const DataType *findType(const DataType *type,
         return findType(fieldType, refAt + 1, refEnd);
     } else if (type->isArrayType()) {
         return findType(&type->asArrayType()->elemType(), refAt, refEnd);
-    } else if (type->isSequenceType()) {
-        return findType(&type->asSequenceType()->elemType(), refAt, refEnd);
+    } else if (type->isDynamicArrayType()) {
+        return findType(&type->asDynamicArrayType()->elemType(), refAt, refEnd);
     } else if (type->isVariantType()) {
         auto fieldType = type->asVariantType()->findType(*refAt);
 

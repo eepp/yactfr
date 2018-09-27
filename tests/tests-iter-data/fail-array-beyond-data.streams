@@ -26,12 +26,12 @@ event {
      0           STRB:salut
      0             SUB:15:salut les mecs
    120           STRE
-   120           AB:meow
+   120           SAB:meow
    120             U:meow:17
    128             U:meow:34
    136             U:meow:51
    144             U:meow:68
-   152           AE
+   152           SAE
    152         STE
    152       SCE
    152     ERE
@@ -42,12 +42,12 @@ event {
    152           STRB:salut
    152             SUB:9:tomatoes
    224           STRE
-   224           AB:meow
+   224           SAB:meow
    224             U:meow:170
    232             U:meow:187
    240             U:meow:204
    248             U:meow:221
-   256           AE
+   256           SAE
    256         STE
    256       SCE
    256     ERE
@@ -58,7 +58,7 @@ event {
    256           STRB:salut
    256             SUB:6:madly
    304           STRE
-   304           AB:meow
+   304           SAB:meow
    304             U:meow:1
    312             U:meow:2
    320             U:meow:3

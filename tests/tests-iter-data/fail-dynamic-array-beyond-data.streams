@@ -28,11 +28,11 @@ event {
      8           STRB:salut
      8             SUB:15:salut les mecs
    128           STRE
-   128           SQB:meow
+   128           DAB:meow
    128             U:meow:17
    136             U:meow:34
    144             U:meow:51
-   152           SQE
+   152           DAE
    152         STE
    152       SCE
    152     ERE
@@ -44,10 +44,10 @@ event {
    160           STRB:salut
    160             SUB:9:tomatoes
    232           STRE
-   232           SQB:meow
+   232           DAB:meow
    232             U:meow:170
    240             U:meow:187
-   248           SQE
+   248           DAE
    248         STE
    248       SCE
    248     ERE
@@ -59,7 +59,7 @@ event {
    256           STRB:salut
    256             SUB:6:madly
    304           STRE
-   304           SQB:meow
+   304           DAB:meow
    304             U:meow:1
    312             U:meow:2
    320             U:meow:3

@@ -1,5 +1,5 @@
 /*
- * CTF text array type.
+ * CTF static text array type.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
@@ -7,17 +7,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <yactfr/metadata/text-array-type.hpp>
+#include <yactfr/metadata/static-text-array-type.hpp>
 #include <yactfr/metadata/invalid-metadata.hpp>
 #include <yactfr/metadata/int-type.hpp>
 
 namespace yactfr {
 
-TextArrayType::TextArrayType(const unsigned int align, const Encoding encoding,
-                             const Size length) :
-    ArrayType {
-        _KIND_TEXT_ARRAY,
-        align,
+StaticTextArrayType::StaticTextArrayType(const unsigned int align,
+                                         const Encoding encoding,
+                                         const Size length) :
+    StaticArrayType {
+        _KIND_STATIC_TEXT_ARRAY, align,
         std::make_unique<UnsignedIntType>(8, 8, ByteOrder::LITTLE,
                                           DisplayBase::HEXADECIMAL,
                                           encoding, boost::none),
@@ -26,13 +26,13 @@ TextArrayType::TextArrayType(const unsigned int align, const Encoding encoding,
 {
     if (align < 8) {
         throw InvalidMetadata {
-            "Text array type's alignment must be greater than or equal to 8."
+            "Static text array type's alignment must be greater than or equal to 8."
         };
     }
 
     if (encoding == Encoding::NONE) {
         throw InvalidMetadata {
-            "Text array type must have an encoding."
+            "Static text array type must have an encoding."
         };
     }
 }

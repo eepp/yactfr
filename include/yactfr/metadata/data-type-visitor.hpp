@@ -104,38 +104,38 @@ public:
     }
 
     /*!
-    @brief  Visits the array type \p type.
+    @brief  Visits the static array type \p type.
 
     @param type   Data type to visit.
     */
-    virtual void visit(const ArrayType& type)
+    virtual void visit(const StaticArrayType& type)
     {
     }
 
     /*!
-    @brief  Visits the text array type \p type.
+    @brief  Visits the static text array type \p type.
 
     @param type   Data type to visit.
     */
-    virtual void visit(const TextArrayType& type)
+    virtual void visit(const StaticTextArrayType& type)
     {
     }
 
     /*!
-    @brief  Visits the sequence type \p type.
+    @brief  Visits the dynamic array type \p type.
 
     @param type   Data type to visit.
     */
-    virtual void visit(const SequenceType& type)
+    virtual void visit(const DynamicArrayType& type)
     {
     }
 
     /*!
-    @brief  Visits the text sequence type \p type.
+    @brief  Visits the dynamic text array type \p type.
 
     @param type   Data type to visit.
     */
-    virtual void visit(const TextSequenceType& type)
+    virtual void visit(const DynamicTextArrayType& type)
     {
     }
 

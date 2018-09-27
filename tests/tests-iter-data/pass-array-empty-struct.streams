@@ -25,7 +25,7 @@ event {
      0           STRB:salut
      0             SUB:13:heille salut
    104           STRE
-   104           AB:yes
+   104           SAB:yes
    104             STB:yes
    104             STE
    104             STB:yes
@@ -126,7 +126,7 @@ event {
    104             STE
    104             STB:yes
    104             STE
-   104           AE
+   104           SAE
    104         STE
    104       SCE
    104     ERE
@@ -137,7 +137,7 @@ event {
    104           STRB:salut
    104             SUB:12:autre event
    200           STRE
-   200           AB:yes
+   200           SAB:yes
    200             STB:yes
    200             STE
    200             STB:yes
@@ -238,7 +238,7 @@ event {
    200             STE
    200             STB:yes
    200             STE
-   200           AE
+   200           SAE
    200         STE
    200       SCE
    200     ERE

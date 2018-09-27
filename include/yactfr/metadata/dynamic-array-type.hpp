@@ -1,5 +1,5 @@
 /*
- * CTF sequence type.
+ * CTF dynamic array type.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
@@ -9,16 +9,16 @@
 
 /*!
 @file
-@brief  Sequence type.
+@brief  Dynamic array type.
 
 @ingroup metadata_dt
 */
 
-#ifndef _YACTFR_METADATA_SEQUENCE_TYPE_HPP
-#define _YACTFR_METADATA_SEQUENCE_TYPE_HPP
+#ifndef _YACTFR_METADATA_DYNAMIC_ARRAY_TYPE_HPP
+#define _YACTFR_METADATA_DYNAMIC_ARRAY_TYPE_HPP
 
-// for ArraySequenceTypeBase
-#include "array-sequence-type-base.hpp"
+// for ArrayType
+#include "array-type.hpp"
 
 // for FieldRef
 #include "field-ref.hpp"
@@ -36,42 +36,42 @@ class TraceTypeImpl;
 class DataType;
 
 /*!
-@brief  Sequence type.
+@brief  Dynamic array type.
 
 @ingroup metadata_dt
 
-A sequence type describes data stream sequences.
+A dynamic array type describes data stream dynamic arrays.
 */
-class SequenceType :
-    public ArraySequenceTypeBase
+class DynamicArrayType :
+    public ArrayType
 {
     friend class internal::TraceTypeImpl;
 
 public:
     /*!
-    @brief  Builds a sequence type.
+    @brief  Builds a dynamic array type.
 
-    @param minAlign Minimal alignment of data stream sequences
-                    described by this structure type (power of two,
+    @param minAlign Minimal alignment of data stream dynamic arrays
+                    described by this dynamic array type (power of two,
                     greater than 0).
     @param elemType Element's type.
     @param length   Field reference of the length of data stream
-                    sequences described by this sequence type (number of
-                    elements).
+                    dynamic arrays described by this dynamic array type
+                    (number of elements).
 
-    @throws InvalidMetadata The sequence type is invalid.
+    @throws InvalidMetadata The dynamic array type is invalid.
     */
-    explicit SequenceType(unsigned int minAlign, DataType::UP elemType,
-                          const FieldRef& length);
+    explicit DynamicArrayType(unsigned int minAlign, DataType::UP elemType,
+                              const FieldRef& length);
 
 protected:
-    explicit SequenceType(int kind, unsigned int minAlign,
-                          DataType::UP elemType, const FieldRef& length);
+    explicit DynamicArrayType(int kind, unsigned int minAlign,
+                              DataType::UP elemType, const FieldRef& length);
 
 public:
     /*!
-    @brief  Field reference of the length of data stream sequences
-            described by this sequence type (number of elements).
+    @brief  Field reference of the length of data stream dynamic arrays
+            described by this dynamic array type (number of elements).
     */
     const FieldRef& length() const noexcept
     {
@@ -81,7 +81,7 @@ public:
     /*!
     @brief  Length's field type.
 
-    \c nullptr if this sequence type is not part of a trace type's
+    \c nullptr if this dynamic array type is not part of a trace type's
     hierarchy yet.
     */
     const DataType *lengthType() const noexcept
@@ -106,4 +106,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_SEQUENCE_TYPE_HPP
+#endif // _YACTFR_METADATA_DYNAMIC_ARRAY_TYPE_HPP

@@ -26,9 +26,9 @@ event {
      0           STRB:salut
      0             SUB:15:salut les mecs
    120           STRE
-   120           TAB:meow
+   120           STAB:meow
    120             SUB:4:boat
-   152           TAE
+   152           STAE
    152         STE
    152       SCE
    152     ERE
@@ -39,9 +39,9 @@ event {
    152           STRB:salut
    152             SUB:9:tomatoes
    224           STRE
-   224           TAB:meow
+   224           STAB:meow
    224             SUB:4:ming
-   256           TAE
+   256           STAE
    256         STE
    256       SCE
    256     ERE
@@ -52,6 +52,6 @@ event {
    256           STRB:salut
    256             SUB:6:madly
    304           STRE
-   304           TAB:meow
+   304           STAB:meow
    304             SUB:3:zoo
    328 Cannot request 8 bits at this point: reaching end of data source.

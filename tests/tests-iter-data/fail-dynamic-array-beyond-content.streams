@@ -37,11 +37,11 @@ event {
      8       SCB:5
      8         STB
      8           U:len:3
-    16           SQB:yy
+    16           DAB:yy
     16             U:yy:3735928559
     48             U:yy:4277009102
     80             U:yy:3131746989
-   112           SQE
+   112           DAE
    112         STE
    112       SCE
    112     ERE
@@ -50,5 +50,5 @@ event {
    112       SCB:5
    112         STB
    112           U:len:2
-   120           SQB:yy
+   120           DAB:yy
    120 Cannot read 32 bits at this point: would move beyond the current packet's content (16 bits remaining).

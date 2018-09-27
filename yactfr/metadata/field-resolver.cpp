@@ -202,8 +202,7 @@ bool FieldResolver::_validateAbsolutePos(const Scope sourceScope,
             }
         }
     } else {
-        // rule 6: from the scope's root field to the target,
-        // there's no array or sequence
+        // rule 6: from the scope's root field to the target, there's no array
         for (auto it = std::begin(tgtPos); it != std::end(tgtPos); ++it) {
             if (*it == -1ULL) {
                 return false;
@@ -238,7 +237,7 @@ bool FieldResolver::_forwardSearchRec(const Scope scope,
     }
 
     if (parentEntry.type->isArrayType() ||
-            parentEntry.type->isSequenceType()) {
+            parentEntry.type->isDynamicArrayType()) {
         Position pos = parentPos;
 
         pos.push_back(-1ULL);

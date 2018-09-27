@@ -63,7 +63,7 @@ private:
     void _insertSpecialInstrsDstPacketProc(DataStreamTypePacketProc& dstPacketProc);
     void _insertInstrUpdateClockValue();
     void _setSavedValuePos();
-    void _subInstrBeginReadUnknownVariant();
+    void _subInstrBeginReadVariantUnknownTag();
     void _insertEndInstrs();
     std::unique_ptr<DataStreamTypePacketProc> _buildDataStreamTypePacketProc(const DataStreamType& dst);
     std::unique_ptr<EventRecordTypeProc> _buildEventRecordTypeProc(const EventRecordType& ert);
@@ -101,18 +101,18 @@ private:
                                const std::string *fieldDisplayName,
                                const DataType *type,
                                Proc& baseProc);
-    void _buildInstrReadArray(const std::string *fieldName,
-                              const std::string *fieldDisplayName,
-                              const DataType *type,
-                              Proc& baseProc);
-    void _buildInstrReadSequence(const std::string *fieldName,
-                                 const std::string *fieldDisplayName,
-                                 const DataType *type,
-                                 Proc& baseProc);
-    void _buildInstrReadUnknownVariant(const std::string *fieldName,
-                                       const std::string *fieldDisplayName,
-                                       const DataType *type,
-                                       Proc& baseProc);
+    void _buildInstrReadStaticArray(const std::string *fieldName,
+                                    const std::string *fieldDisplayName,
+                                    const DataType *type,
+                                    Proc& baseProc);
+    void _buildInstrReadDynamicArray(const std::string *fieldName,
+                                     const std::string *fieldDisplayName,
+                                     const DataType *type,
+                                     Proc& baseProc);
+    void _buildInstrReadVariantUnknownTag(const std::string *fieldName,
+                                          const std::string *fieldDisplayName,
+                                          const DataType *type,
+                                          Proc& baseProc);
 
 private:
     const TraceType *_traceType = nullptr;

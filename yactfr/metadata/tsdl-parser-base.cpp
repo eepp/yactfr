@@ -12,10 +12,10 @@
 
 #include <yactfr/metadata/internal/tsdl-parser-base.hpp>
 #include <yactfr/metadata/metadata-text-location.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
+#include <yactfr/metadata/dynamic-text-array-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/metadata-parse-error.hpp>
@@ -44,11 +44,11 @@ private:
         case PseudoDataType::Kind::SCALAR_WRAPPER:
             return this->_process(static_cast<PseudoScalarTypeWrapper&>(dataType));
 
-        case PseudoDataType::Kind::ARRAY:
-            return this->_process(static_cast<PseudoArrayType&>(dataType));
+        case PseudoDataType::Kind::STATIC_ARRAY:
+            return this->_process(static_cast<PseudoStaticArrayType&>(dataType));
 
-        case PseudoDataType::Kind::SEQUENCE:
-            return this->_process(static_cast<PseudoSequenceType&>(dataType));
+        case PseudoDataType::Kind::DYNAMIC_ARRAY:
+            return this->_process(static_cast<PseudoDynamicArrayType&>(dataType));
 
         case PseudoDataType::Kind::STRUCT:
             return this->_process(static_cast<PseudoStructType&>(dataType));
@@ -127,11 +127,11 @@ private:
         dataType.type = std::move(uintType);
     }
 
-    void _process(PseudoArrayType& dataType) {
+    void _process(PseudoStaticArrayType& dataType) {
         this->_process(*dataType.elementType);
     }
 
-    void _process(PseudoSequenceType& dataType) {
+    void _process(PseudoDynamicArrayType& dataType) {
         this->_process(*dataType.elementType);
     }
 
@@ -245,14 +245,14 @@ void TsdlParserBase::_checkDupNamedDataType(const PseudoNamedDataTypes& entries,
 
 bool TsdlParserBase::_isVariantTypeUntaggedRec(const PseudoDataType& type)
 {
-    if (type.kind() == PseudoDataType::Kind::ARRAY) {
-        auto& arrayType = static_cast<const PseudoArrayType&>(type);
+    if (type.kind() == PseudoDataType::Kind::STATIC_ARRAY) {
+        auto& arrayType = static_cast<const PseudoStaticArrayType&>(type);
         return TsdlParserBase::_isVariantTypeUntaggedRec(*arrayType.elementType);
     }
 
-    if (type.kind() == PseudoDataType::Kind::SEQUENCE) {
-        auto& sequenceType = static_cast<const PseudoSequenceType&>(type);
-        return TsdlParserBase::_isVariantTypeUntaggedRec(*sequenceType.elementType);
+    if (type.kind() == PseudoDataType::Kind::DYNAMIC_ARRAY) {
+        auto& dynArrayType = static_cast<const PseudoDynamicArrayType&>(type);
+        return TsdlParserBase::_isVariantTypeUntaggedRec(*dynArrayType.elementType);
     }
 
     if (type.kind() != PseudoDataType::Kind::VARIANT) {
@@ -624,11 +624,11 @@ bool TsdlParserBase::_pseudoFieldRefFromRelativeAllPathElements(const VofS& allP
      *         };
      *     } := some_name;
      *
-     * In this last example, the length type's position for the sequence
-     * type `seq[a]` contained in `my_struct b` is NOT `int a`
+     * In this last example, the length type's position for the dynamic
+     * array type `seq[a]` contained in `my_struct b` is NOT `int a`
      * immediately before, but rather `my_int a`. In practice, this
      * trick of using a field type which is external to a type alias for
-     * sequence length or variant tag is rarely, if ever used.
+     * dynamic array length or variant tag is rarely, if ever used.
      *
      * So this is easy to detect, because each time this parser "enters"
      * a type alias (with the `typealias` keyword or with a named
@@ -791,11 +791,11 @@ DataType::UP TsdlParserBase::_dataTypeFromPseudoDataType(const PseudoDataType& p
     case PseudoDataType::Kind::SCALAR_WRAPPER:
         return TsdlParserBase::_dataTypeFromPseudoScalarTypeWrapper(pseudoDataType, scope, stack);
 
-    case PseudoDataType::Kind::ARRAY:
-        return TsdlParserBase::_dataTypeFromPseudoArrayType(pseudoDataType, scope, name, stack);
+    case PseudoDataType::Kind::STATIC_ARRAY:
+        return TsdlParserBase::_dataTypeFromPseudoStaticArrayType(pseudoDataType, scope, name, stack);
 
-    case PseudoDataType::Kind::SEQUENCE:
-        return TsdlParserBase::_dataTypeFromPseudoSequenceType(pseudoDataType, scope, name, stack);
+    case PseudoDataType::Kind::DYNAMIC_ARRAY:
+        return TsdlParserBase::_dataTypeFromPseudoDynamicArrayType(pseudoDataType, scope, name, stack);
 
     case PseudoDataType::Kind::STRUCT:
         return TsdlParserBase::_dataTypeFromPseudoStructType(pseudoDataType, scope, name, stack);
@@ -873,8 +873,8 @@ DataType::UP TsdlParserBase::_dataTypeFromPseudoScalarTypeWrapper(const PseudoDa
 
 
 template <typename StdTypeT, typename TextTypeT, typename LengthT>
-static DataType::UP dataTypeFromPseudoArrayOrSequenceType(DataType::UP elemType,
-                                                          const LengthT& length)
+static DataType::UP dataTypeFromPseudoArrayType(DataType::UP elemType,
+                                                const LengthT& length)
 {
     if (elemType->isIntType()) {
         auto intType = elemType->asIntType();
@@ -888,28 +888,30 @@ static DataType::UP dataTypeFromPseudoArrayOrSequenceType(DataType::UP elemType,
     return std::make_unique<const StdTypeT>(1, std::move(elemType), length);
 }
 
-DataType::UP TsdlParserBase::_dataTypeFromPseudoArrayType(const PseudoDataType& pseudoDataType,
+DataType::UP TsdlParserBase::_dataTypeFromPseudoStaticArrayType(const PseudoDataType& pseudoDataType,
                                                           const Scope scope,
                                                           const std::string &name,
                                                           _ResolvingStack& stack)
 {
-    auto& arrayType = static_cast<const PseudoArrayType&>(pseudoDataType);
+    auto& arrayType = static_cast<const PseudoStaticArrayType&>(pseudoDataType);
     auto elemType = TsdlParserBase::_dataTypeFromPseudoDataType(*arrayType.elementType,
                                                                 scope, name, stack);
-    return dataTypeFromPseudoArrayOrSequenceType<ArrayType, TextArrayType>(std::move(elemType), arrayType.length);
+    return dataTypeFromPseudoArrayType<StaticArrayType, StaticTextArrayType>(std::move(elemType),
+                                                                             arrayType.length);
 }
 
-DataType::UP TsdlParserBase::_dataTypeFromPseudoSequenceType(const PseudoDataType& pseudoDataType,
+DataType::UP TsdlParserBase::_dataTypeFromPseudoDynamicArrayType(const PseudoDataType& pseudoDataType,
                                                              const Scope scope,
                                                              const std::string &name,
                                                              _ResolvingStack& stack)
 {
-    auto& seqType = static_cast<const PseudoSequenceType&>(pseudoDataType);
+    auto& seqType = static_cast<const PseudoDynamicArrayType&>(pseudoDataType);
     auto elemType = TsdlParserBase::_dataTypeFromPseudoDataType(*seqType.elementType,
                                                                 scope, name, stack);
     auto fieldRef = TsdlParserBase::_fieldRefFromPseudoFieldRef(seqType.lengthFieldRef,
                                                                 scope, stack);
-    return dataTypeFromPseudoArrayOrSequenceType<SequenceType, TextSequenceType>(std::move(elemType), fieldRef);
+    return dataTypeFromPseudoArrayType<DynamicArrayType, DynamicTextArrayType>(std::move(elemType),
+                                                                               fieldRef);
 }
 
 DataType::UP TsdlParserBase::_dataTypeFromPseudoStructType(const PseudoDataType& pseudoDataType,

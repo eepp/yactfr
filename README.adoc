@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-26 September 2018
+27 September 2018
 
 image:https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
 
@@ -138,7 +138,8 @@ event {
 
 * TSDL: Does not support something else than structure types in the path
   from the lowest common ancestor of a variant type and its tag type, or
-  of a sequence type and its length type, to the tag or length type.
+  of a dynamic array type and its length type, to the tag or length
+  type.
 +
 Those two examples are not supported (TSDL):
 +
@@ -197,7 +198,8 @@ situations so I prefer not to implement an unspecified procedure until
 it is standardized.
 
 * TSDL: A variant type's tag type must be an enumeration type, and a
-  sequence type's length type must be an integer or enumeration type.
+  dynamic array type's length type must be an integer or enumeration
+  type.
 +
 For example, this is not supported (TSDL):
 +
@@ -217,9 +219,9 @@ The CTF specification is not explicit about what to do in those
 situations so I prefer not to implement an unspecified procedure until
 it is standardized.
 
-* TSDL: Does not support relative sequence type lengths and variant type
-  tags in type aliases (or named structure/variant type) which target
-  fields outside this type alias.
+* TSDL: Does not support relative dynamic array type lengths and variant
+  type tags in type aliases (or named structure/variant type) which
+  target fields outside this type alias.
 +
 For example, this is not supported (TSDL):
 +

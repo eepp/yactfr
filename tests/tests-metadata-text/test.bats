@@ -385,8 +385,8 @@ test_metadata_pass() {
   test_metadata_fail typealias-dup
 }
 
-@test 'type alias: sequence type length outside type alias -> fail' {
-  test_metadata_fail typealias-seq-len-outside
+@test 'type alias: dynamic array type length outside type alias -> fail' {
+  test_metadata_fail typealias-dynamic-array-len-outside
 }
 
 @test 'invalid syntax: no `;` after trace block -> fail' {
@@ -829,8 +829,8 @@ test_metadata_pass() {
   test_metadata_fail array-env-string-key
 }
 
-@test 'sequence: unknown length -> fail' {
-  test_metadata_fail seq-unknown-length
+@test 'dynamic array: unknown length -> fail' {
+  test_metadata_fail dynamic-array-unknown-length
 }
 
 @test 'CTF test suite: array-redefinition -> fail' {
@@ -1162,44 +1162,44 @@ test_metadata_pass() {
   test_metadata_pass enum-alias
 }
 
-@test 'sequence: valid length (1) -> pass' {
-  test_metadata_pass seq-length-1
+@test 'dynamic array: valid length (1) -> pass' {
+  test_metadata_pass dynamic-array-length-1
 }
 
-@test 'sequence: valid length (2) -> pass' {
-  test_metadata_pass seq-length-2
+@test 'dynamic array: valid length (2) -> pass' {
+  test_metadata_pass dynamic-array-length-2
 }
 
-@test 'sequence: valid length (3) -> pass' {
-  test_metadata_pass seq-length-3
+@test 'dynamic array: valid length (3) -> pass' {
+  test_metadata_pass dynamic-array-length-3
 }
 
-@test 'sequence: valid length (4) -> pass' {
-  test_metadata_pass seq-length-4
+@test 'dynamic array: valid length (4) -> pass' {
+  test_metadata_pass dynamic-array-length-4
 }
 
-@test 'sequence: valid length (5) -> pass' {
-  test_metadata_pass seq-length-5
+@test 'dynamic array: valid length (5) -> pass' {
+  test_metadata_pass dynamic-array-length-5
 }
 
-@test 'sequence: valid length (6) -> pass' {
-  test_metadata_pass seq-length-6
+@test 'dynamic array: valid length (6) -> pass' {
+  test_metadata_pass dynamic-array-length-6
 }
 
-@test 'sequence: valid length (7) -> pass' {
-  test_metadata_pass seq-length-7
+@test 'dynamic array: valid length (7) -> pass' {
+  test_metadata_pass dynamic-array-length-7
 }
 
-@test 'sequence: valid length (8) -> pass' {
-  test_metadata_pass seq-length-8
+@test 'dynamic array: valid length (8) -> pass' {
+  test_metadata_pass dynamic-array-length-8
 }
 
-@test 'sequence: valid length (9) -> pass' {
-  test_metadata_pass seq-length-9
+@test 'dynamic array: valid length (9) -> pass' {
+  test_metadata_pass dynamic-array-length-9
 }
 
-@test 'sequence: valid length (10) -> pass' {
-  test_metadata_pass seq-length-10
+@test 'dynamic array: valid length (10) -> pass' {
+  test_metadata_pass dynamic-array-length-10
 }
 
 @test 'array: environment reference for length -> pass' {
@@ -1234,7 +1234,7 @@ test_metadata_pass() {
   test_metadata_pass callsite-full
 }
 
-@test 'syntax: escape sequences in literal string -> pass' {
+@test 'syntax: escape dynamic arrays in literal string -> pass' {
   test_metadata_pass syntax-literal-string-escape-chars
 }
 
@@ -1338,16 +1338,16 @@ test_metadata_pass() {
   test_metadata_pass ctf-testsuite-repeated-event-id-in-2-streams
 }
 
-@test 'CTF test suite: sequence-basic-1dim -> pass' {
-  test_metadata_pass ctf-testsuite-sequence-basic-1dim
+@test 'CTF test suite: dynamic-array-basic-1dim -> pass' {
+  test_metadata_pass ctf-testsuite-dynamic-array-basic-1dim
 }
 
-@test 'CTF test suite: sequence-basic-2dim -> pass' {
-  test_metadata_pass ctf-testsuite-sequence-basic-2dim
+@test 'CTF test suite: dynamic-array-basic-2dim -> pass' {
+  test_metadata_pass ctf-testsuite-dynamic-array-basic-2dim
 }
 
-@test 'CTF test suite: sequence-scoped-length -> pass' {
-  test_metadata_pass ctf-testsuite-sequence-scoped-length
+@test 'CTF test suite: dynamic-array-scoped-length -> pass' {
+  test_metadata_pass ctf-testsuite-dynamic-array-scoped-length
 }
 
 @test 'CTF test suite: stream-undefined-id -> pass' {

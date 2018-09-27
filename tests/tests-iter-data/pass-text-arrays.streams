@@ -25,14 +25,14 @@ event {
      0       ERT:0:test
      0       SCB:5
      0         STB
-     0           TAB:text1
+     0           STAB:text1
      0             SUB:42:I've tasted both the fantasy
-   336           TAE
-   336           TAB:text2
-   336           TAE
-   336           TAB:text3
+   336           STAE
+   336           STAB:text2
+   336           STAE
+   336           STAB:text3
    336             SUB:11:dan boucher
-   424           TAE
+   424           STAE
    424         STE
    424       SCE
    424     ERE

@@ -47,13 +47,13 @@ deadbeef
      8             STRB:aaa
      8               SUB:6:paste
     56             STRE
-    56             AB:id
+    56             SAB:id
     56               U:id:66
     64               U:id:5
     72               U:id:67
     80               U:id:7
     88               U:id:66
-    96             AE
+    96             SAE
     96           STE
     96         STE
     96       SCE
@@ -74,13 +74,13 @@ deadbeef
    176             STRB:aaa
    176               SUB:6:paste
    224             STRE
-   224             AB:id
+   224             SAB:id
    224               U:id:5
    232               U:id:136
    240               U:id:255
    248               U:id:23
    256               U:id:67
-   264             AE
+   264             SAE
    264           STE
    264         STE
    264       SCE

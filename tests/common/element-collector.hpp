@@ -150,42 +150,42 @@ private:
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::ArrayBeginningElement& elem)
+    void visit(const yactfr::StaticArrayBeginningElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::ArrayEndElement& elem)
+    void visit(const yactfr::StaticArrayEndElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::TextArrayBeginningElement& elem)
+    void visit(const yactfr::StaticTextArrayBeginningElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::TextArrayEndElement& elem)
+    void visit(const yactfr::StaticTextArrayEndElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::SequenceBeginningElement& elem)
+    void visit(const yactfr::DynamicArrayBeginningElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::SequenceEndElement& elem)
+    void visit(const yactfr::DynamicArrayEndElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::TextSequenceBeginningElement& elem)
+    void visit(const yactfr::DynamicTextArrayBeginningElement& elem)
     {
         this->_appendElement(elem);
     }
 
-    void visit(const yactfr::TextSequenceEndElement& elem)
+    void visit(const yactfr::DynamicTextArrayEndElement& elem)
     {
         this->_appendElement(elem);
     }

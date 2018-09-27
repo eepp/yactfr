@@ -1,5 +1,5 @@
 /*
- * CTF text sequence type.
+ * CTF dynamic text array type.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
@@ -9,18 +9,18 @@
 
 #include <boost/optional/optional.hpp>
 
-#include <yactfr/metadata/text-sequence-type.hpp>
+#include <yactfr/metadata/dynamic-text-array-type.hpp>
 #include <yactfr/metadata/invalid-metadata.hpp>
 #include <yactfr/metadata/byte-order.hpp>
 #include <yactfr/metadata/int-type.hpp>
 
 namespace yactfr {
 
-TextSequenceType::TextSequenceType(const unsigned int align, const Encoding encoding,
-                                   const FieldRef& length) :
-    SequenceType {
-        _KIND_TEXT_SEQUENCE,
-        align,
+DynamicTextArrayType::DynamicTextArrayType(const unsigned int align,
+                                           const Encoding encoding,
+                                           const FieldRef& length) :
+    DynamicArrayType {
+        _KIND_DYNAMIC_TEXT_ARRAY, align,
         std::make_unique<UnsignedIntType>(8, 8, ByteOrder::LITTLE,
                                           DisplayBase::HEXADECIMAL,
                                           encoding, boost::none),
@@ -29,13 +29,13 @@ TextSequenceType::TextSequenceType(const unsigned int align, const Encoding enco
 {
     if (align < 8) {
         throw InvalidMetadata {
-            "Text sequence type's alignment must be greater than or equal to 8."
+            "Dynamic text array type's alignment must be greater than or equal to 8."
         };
     }
 
     if (encoding == Encoding::NONE) {
         throw InvalidMetadata {
-            "Text sequence type must have an encoding."
+            "Dynamic text array type must have an encoding."
         };
     }
 }

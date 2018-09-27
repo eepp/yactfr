@@ -34,5 +34,5 @@ event {
      8       ERT:0:test
      8       SCB:5
      8         STB
-     8           TAB:text
+     8           STAB:text
      8 Cannot read 72 bits at this point: would move beyond the current packet's content (29 bits remaining).

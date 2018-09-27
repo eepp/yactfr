@@ -277,40 +277,40 @@ std::string Instr::toString(const Size indent) const
         kindStr = "END_READ_STRUCT";
         break;
 
-    case Kind::BEGIN_READ_ARRAY:
-        kindStr = "BEGIN_READ_ARRAY";
+    case Kind::BEGIN_READ_STATIC_ARRAY:
+        kindStr = "BEGIN_READ_STATIC_ARRAY";
         break;
 
-    case Kind::END_READ_ARRAY:
-        kindStr = "END_READ_ARRAY";
+    case Kind::END_READ_STATIC_ARRAY:
+        kindStr = "END_READ_STATIC_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_TEXT_ARRAY:
-        kindStr = "BEGIN_READ_TEXT_ARRAY";
+    case Kind::BEGIN_READ_STATIC_TEXT_ARRAY:
+        kindStr = "BEGIN_READ_STATIC_TEXT_ARRAY";
         break;
 
-    case Kind::END_READ_TEXT_ARRAY:
-        kindStr = "END_READ_TEXT_ARRAY";
+    case Kind::END_READ_STATIC_TEXT_ARRAY:
+        kindStr = "END_READ_STATIC_TEXT_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_UUID_ARRAY:
-        kindStr = "BEGIN_READ_UUID_ARRAY";
+    case Kind::BEGIN_READ_STATIC_UUID_ARRAY:
+        kindStr = "BEGIN_READ_STATIC_UUID_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_SEQUENCE:
-        kindStr = "BEGIN_READ_SEQUENCE";
+    case Kind::BEGIN_READ_DYNAMIC_ARRAY:
+        kindStr = "BEGIN_READ_DYNAMIC_ARRAY";
         break;
 
-    case Kind::END_READ_SEQUENCE:
-        kindStr = "END_READ_SEQUENCE";
+    case Kind::END_READ_DYNAMIC_ARRAY:
+        kindStr = "END_READ_DYNAMIC_ARRAY";
         break;
 
-    case Kind::BEGIN_READ_TEXT_SEQUENCE:
-        kindStr = "BEGIN_READ_TEXT_SEQUENCE";
+    case Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY:
+        kindStr = "BEGIN_READ_DYNAMIC_TEXT_ARRAY";
         break;
 
-    case Kind::END_READ_TEXT_SEQUENCE:
-        kindStr = "END_READ_TEXT_SEQUENCE";
+    case Kind::END_READ_DYNAMIC_TEXT_ARRAY:
+        kindStr = "END_READ_DYNAMIC_TEXT_ARRAY";
         break;
 
     case Kind::BEGIN_READ_VARIANT_SIGNED_TAG:
@@ -321,8 +321,8 @@ std::string Instr::toString(const Size indent) const
         kindStr = "BEGIN_READ_VARIANT_UNSIGNED_TAG";
         break;
 
-    case Kind::BEGIN_READ_UNKNOWN_VARIANT:
-        kindStr = "BEGIN_READ_UNKNOWN_VARIANT";
+    case Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG:
+        kindStr = "BEGIN_READ_VARIANT_UNKNOWN_TAG";
         break;
 
     case Kind::END_READ_VARIANT:
@@ -920,10 +920,10 @@ InstrEndReadCompound::InstrEndReadCompound(const Kind kind,
     InstrReadData {fieldName, fieldDisplayName, type}
 {
     assert(kind == Kind::END_READ_STRUCT ||
-           kind == Kind::END_READ_ARRAY ||
-           kind == Kind::END_READ_TEXT_ARRAY ||
-           kind == Kind::END_READ_SEQUENCE ||
-           kind == Kind::END_READ_TEXT_SEQUENCE ||
+           kind == Kind::END_READ_STATIC_ARRAY ||
+           kind == Kind::END_READ_STATIC_TEXT_ARRAY ||
+           kind == Kind::END_READ_DYNAMIC_ARRAY ||
+           kind == Kind::END_READ_DYNAMIC_TEXT_ARRAY ||
            kind == Kind::END_READ_VARIANT);
     this->_setKind(kind);
 }
@@ -1069,17 +1069,17 @@ InstrLocation InstrBeginReadScope::findInstr(const FieldRef& fieldRef)
     return {};
 }
 
-InstrBeginReadArray::InstrBeginReadArray(const std::string *fieldName,
-                                         const std::string *fieldDisplayName,
-                                         const DataType *type) :
+InstrBeginReadStaticArray::InstrBeginReadStaticArray(const std::string *fieldName,
+                                                     const std::string *fieldDisplayName,
+                                                     const DataType *type) :
     InstrBeginReadCompound {fieldName, fieldDisplayName, type},
-    _length {type->asArrayType()->length()}
+    _length {type->asStaticArrayType()->length()}
 {
-    assert(type->isArrayType());
-    this->_setKind(Kind::BEGIN_READ_ARRAY);
+    assert(type->isStaticArrayType());
+    this->_setKind(Kind::BEGIN_READ_STATIC_ARRAY);
 }
 
-Instr *InstrBeginReadArray::findInstrByFieldName(const std::string& fieldName)
+Instr *InstrBeginReadStaticArray::findInstrByFieldName(const std::string& fieldName)
 {
     for (auto& instrUp : this->proc()) {
         if (instrUp->isReadData()) {
@@ -1090,7 +1090,7 @@ Instr *InstrBeginReadArray::findInstrByFieldName(const std::string& fieldName)
     return nullptr;
 }
 
-std::string InstrBeginReadArray::_commonToString() const
+std::string InstrBeginReadStaticArray::_commonToString() const
 {
     std::ostringstream ss;
 
@@ -1100,7 +1100,7 @@ std::string InstrBeginReadArray::_commonToString() const
     return ss.str();
 }
 
-std::string InstrBeginReadArray::_toString(const Size indent) const
+std::string InstrBeginReadStaticArray::_toString(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -1109,8 +1109,8 @@ std::string InstrBeginReadArray::_toString(const Size indent) const
     return ss.str();
 }
 
-InstrLocation InstrBeginReadArray::findInstr(std::vector<std::string>::const_iterator begin,
-                                                         std::vector<std::string>::const_iterator end)
+InstrLocation InstrBeginReadStaticArray::findInstr(std::vector<std::string>::const_iterator begin,
+                                                   std::vector<std::string>::const_iterator end)
 {
     for (auto& instr : this->proc()) {
         if (!instr->isReadData()) {
@@ -1125,32 +1125,32 @@ InstrLocation InstrBeginReadArray::findInstr(std::vector<std::string>::const_ite
     return {};
 }
 
-InstrBeginReadTextArray::InstrBeginReadTextArray(const std::string *fieldName,
-                                                 const std::string *fieldDisplayName,
-                                                 const DataType *type) :
-    InstrBeginReadArray {fieldName, fieldDisplayName, type}
+InstrBeginReadStaticTextArray::InstrBeginReadStaticTextArray(const std::string *fieldName,
+                                                             const std::string *fieldDisplayName,
+                                                             const DataType *type) :
+    InstrBeginReadStaticArray {fieldName, fieldDisplayName, type}
 {
-    this->_setKind(Kind::BEGIN_READ_TEXT_ARRAY);
+    this->_setKind(Kind::BEGIN_READ_STATIC_TEXT_ARRAY);
 }
 
-InstrBeginReadUuidArray::InstrBeginReadUuidArray(const std::string *fieldName,
-                                                 const std::string *fieldDisplayName,
-                                                 const DataType *type) :
-    InstrBeginReadArray {fieldName, fieldDisplayName, type}
+InstrBeginReadStaticUuidArray::InstrBeginReadStaticUuidArray(const std::string *fieldName,
+                                                             const std::string *fieldDisplayName,
+                                                             const DataType *type) :
+    InstrBeginReadStaticArray {fieldName, fieldDisplayName, type}
 {
-    this->_setKind(Kind::BEGIN_READ_UUID_ARRAY);
+    this->_setKind(Kind::BEGIN_READ_STATIC_UUID_ARRAY);
 }
 
-InstrBeginReadSequence::InstrBeginReadSequence(const std::string *fieldName,
-                                               const std::string *fieldDisplayName,
-                                               const DataType *type) :
+InstrBeginReadDynamicArray::InstrBeginReadDynamicArray(const std::string *fieldName,
+                                                       const std::string *fieldDisplayName,
+                                                       const DataType *type) :
     InstrBeginReadCompound {fieldName, fieldDisplayName, type}
 {
-    assert(type->isSequenceType());
-    this->_setKind(Kind::BEGIN_READ_SEQUENCE);
+    assert(type->isDynamicArrayType());
+    this->_setKind(Kind::BEGIN_READ_DYNAMIC_ARRAY);
 }
 
-Instr *InstrBeginReadSequence::findInstrByFieldName(const std::string& fieldName)
+Instr *InstrBeginReadDynamicArray::findInstrByFieldName(const std::string& fieldName)
 {
     for (auto& instrUp : this->proc()) {
         if (instrUp->isReadData()) {
@@ -1161,7 +1161,7 @@ Instr *InstrBeginReadSequence::findInstrByFieldName(const std::string& fieldName
     return nullptr;
 }
 
-std::string InstrBeginReadSequence::_toString(const Size indent) const
+std::string InstrBeginReadDynamicArray::_toString(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -1170,7 +1170,7 @@ std::string InstrBeginReadSequence::_toString(const Size indent) const
     return ss.str();
 }
 
-std::string InstrBeginReadSequence::_commonToString() const
+std::string InstrBeginReadDynamicArray::_commonToString() const
 {
     std::ostringstream ss;
 
@@ -1179,8 +1179,8 @@ std::string InstrBeginReadSequence::_commonToString() const
     return ss.str();
 }
 
-InstrLocation InstrBeginReadSequence::findInstr(std::vector<std::string>::const_iterator begin,
-                                                std::vector<std::string>::const_iterator end)
+InstrLocation InstrBeginReadDynamicArray::findInstr(std::vector<std::string>::const_iterator begin,
+                                                    std::vector<std::string>::const_iterator end)
 {
     for (auto& instr : this->proc()) {
         if (!instr->isReadData()) {
@@ -1195,24 +1195,24 @@ InstrLocation InstrBeginReadSequence::findInstr(std::vector<std::string>::const_
     return {};
 }
 
-InstrBeginReadTextSequence::InstrBeginReadTextSequence(const std::string *fieldName,
-                                                       const std::string *fieldDisplayName,
-                                                       const DataType *type) :
-    InstrBeginReadSequence {fieldName, fieldDisplayName, type}
+InstrBeginReadDynamicTextArray::InstrBeginReadDynamicTextArray(const std::string *fieldName,
+                                                               const std::string *fieldDisplayName,
+                                                               const DataType *type) :
+    InstrBeginReadDynamicArray {fieldName, fieldDisplayName, type}
 {
-    this->_setKind(Kind::BEGIN_READ_TEXT_SEQUENCE);
+    this->_setKind(Kind::BEGIN_READ_DYNAMIC_TEXT_ARRAY);
 }
 
-InstrBeginReadUnknownVariant::InstrBeginReadUnknownVariant(const std::string *fieldName,
-                                                           const std::string *fieldDisplayName,
-                                                           const DataType *type) :
+InstrBeginReadVariantUnknownTag::InstrBeginReadVariantUnknownTag(const std::string *fieldName,
+                                                                 const std::string *fieldDisplayName,
+                                                                 const DataType *type) :
     InstrReadData {fieldName, fieldDisplayName, type}
 {
     assert(type->isVariantType());
-    this->_setKind(Kind::BEGIN_READ_UNKNOWN_VARIANT);
+    this->_setKind(Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG);
 }
 
-std::string InstrBeginReadUnknownVariant::_toString(const Size indent) const
+std::string InstrBeginReadVariantUnknownTag::_toString(const Size indent) const
 {
     std::ostringstream ss;
 
@@ -1229,8 +1229,8 @@ std::string InstrBeginReadUnknownVariant::_toString(const Size indent) const
     return ss.str();
 }
 
-InstrLocation InstrBeginReadUnknownVariant::findInstr(std::vector<std::string>::const_iterator begin,
-                                                      std::vector<std::string>::const_iterator end)
+InstrLocation InstrBeginReadVariantUnknownTag::findInstr(std::vector<std::string>::const_iterator begin,
+                                                         std::vector<std::string>::const_iterator end)
 {
     if (begin == end) {
         return {};
@@ -1267,7 +1267,7 @@ InstrLocation InstrBeginReadUnknownVariant::findInstr(std::vector<std::string>::
     return {};
 }
 
-InstrBeginReadVariantUnsignedTag::InstrBeginReadVariantUnsignedTag(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+InstrBeginReadVariantUnsignedTag::InstrBeginReadVariantUnsignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
                                                                    const EnumType& tagType) :
     InstrBeginReadVariant<UnsignedEnumType, Kind::BEGIN_READ_VARIANT_UNSIGNED_TAG> {
         instrReadUnkVariant, tagType
@@ -1275,7 +1275,7 @@ InstrBeginReadVariantUnsignedTag::InstrBeginReadVariantUnsignedTag(const InstrBe
 {
 }
 
-InstrBeginReadVariantSignedTag::InstrBeginReadVariantSignedTag(const InstrBeginReadUnknownVariant& instrReadUnkVariant,
+InstrBeginReadVariantSignedTag::InstrBeginReadVariantSignedTag(const InstrBeginReadVariantUnknownTag& instrReadUnkVariant,
                                                                const EnumType& tagType) :
     InstrBeginReadVariant<SignedEnumType, Kind::BEGIN_READ_VARIANT_SIGNED_TAG> {
         instrReadUnkVariant, tagType
@@ -1432,7 +1432,7 @@ InstrLocation EventRecordTypeProc::findInstr(const FieldRef& fieldRef)
             continue;
         }
 
-        auto loc = instrReadScope.findInstr(fieldRef);
+        const auto loc = instrReadScope.findInstr(fieldRef);
 
         if (loc.proc) {
             return loc;

@@ -127,43 +127,43 @@ std::string toString(const StringType& stringType,
                      const Size indent = 0);
 
 /*!
-@brief  Returns a string representation of \p arrayType.
+@brief  Returns a string representation of \p staticArrayType.
 
-@param arrayType    Array type.
-@param indent       Indentation.
-@returns            String representation of \p arrayType.
-*/
-std::string toString(const ArrayType& arrayType,
-                     const Size indent = 0);
-
-/*!
-@brief  Returns a string representation of \p textArrayType.
-
-@param textArrayType    Text array type.
+@param staticArrayType  Static array type.
 @param indent           Indentation.
-@returns                String representation of \p textArrayType.
+@returns                String representation of \p staticArrayType.
 */
-std::string toString(const TextArrayType& textArrayType,
+std::string toString(const StaticArrayType& staticArrayType,
                      const Size indent = 0);
 
 /*!
-@brief  Returns a string representation of \p seqType.
+@brief  Returns a string representation of \p staticTextArrayType.
 
-@param seqType  Sequence type.
-@param indent   Indentation.
-@returns        String representation of \p seqType.
+@param staticTextArrayType  Static text array type.
+@param indent               Indentation.
+@returns                    String representation of \p staticTextArrayType.
 */
-std::string toString(const SequenceType& seqType,
+std::string toString(const StaticTextArrayType& staticTextArrayType,
                      const Size indent = 0);
 
 /*!
-@brief  Returns a string representation of \p textSeqType.
+@brief  Returns a string representation of \p dynamicArrayType.
 
-@param textSeqType  Text sequence type.
-@param indent       Indentation.
-@returns            String representation of \p textSeqType.
+@param dynamicArrayType     Dynamic array type.
+@param indent               Indentation.
+@returns                    String representation of \p dynamicArrayType.
 */
-std::string toString(const TextSequenceType& textSeqType,
+std::string toString(const DynamicArrayType& dynamicArrayType,
+                     const Size indent = 0);
+
+/*!
+@brief  Returns a string representation of \p dynamicTextArrayType.
+
+@param dynamicTextArrayType Dynamic text array type.
+@param indent               Indentation.
+@returns                    String representation of \p dynamicTextArrayType.
+*/
+std::string toString(const DynamicTextArrayType& dynamicTextArrayType,
                      const Size indent = 0);
 
 /*!

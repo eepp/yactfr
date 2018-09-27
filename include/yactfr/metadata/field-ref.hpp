@@ -35,9 +35,9 @@ namespace yactfr {
 
 A field reference is a scope and a sequence of field names to follow to
 reach a specific field within this scope. It is used to find which field
-in the metadata tree indicates the length of sequences (described by
-SequenceType) and variants (described by VariantType), and also for
-general searching with TraceType::findDataType(),
+in the metadata tree indicates the length of dynamic arrays (described
+by DynamicArrayType) and variants (described by VariantType), and also
+for general searching with TraceType::findDataType(),
 DataStreamType::findDataType(), and EventRecordType::findDataType().
 */
 class FieldRef final

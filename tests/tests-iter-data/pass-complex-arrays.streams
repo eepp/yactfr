@@ -37,64 +37,64 @@ event {
      0       ERT:0:test
      0       SCB:5
      0         STB
-     0           AB:hope
+     0           SAB:hope
      0             STB:hope
      0               UE:tag:67
-     8               AB:point
+     8               SAB:point
      8                 STB:point
-     8                   AB:v
+     8                   SAB:v
      8                     VUB:v:67
-     8                       AB:I
+     8                       SAB:I
      8                         U:I:1
     16                         U:I:2
     24                         U:I:3
-    32                       AE
+    32                       SAE
     32                     VE
     32                     VUB:v:67
-    32                       AB:I
+    32                       SAB:I
     32                         U:I:4
     40                         U:I:5
     48                         U:I:6
-    56                       AE
+    56                       SAE
     56                     VE
-    56                   AE
-    56                   AB:zz
-    56                   AE
+    56                   SAE
+    56                   SAB:zz
+    56                   SAE
     56                 STE
-    56               AE
+    56               SAE
     56             STE
     56             STB:hope
     56               UE:tag:66
-    64               AB:point
+    64               SAB:point
     64                 STB:point
-    64                   AB:v
+    64                   SAB:v
     64                     VUB:v:66
-    64                       AB:K
+    64                       SAB:K
     64                         STRB:K
     64                           SUB:7:purple
    120                         STRE
    120                         STRB:K
    120                           SUB:5:unit
    160                         STRE
-   160                       AE
+   160                       SAE
    160                     VE
    160                     VUB:v:66
-   160                       AB:K
+   160                       SAB:K
    160                         STRB:K
    160                           SUB:7:planes
    216                         STRE
    216                         STRB:K
    216                           SUB:5:hate
    256                         STRE
-   256                       AE
+   256                       SAE
    256                     VE
-   256                   AE
-   256                   AB:zz
-   256                   AE
+   256                   SAE
+   256                   SAB:zz
+   256                   SAE
    256                 STE
-   256               AE
+   256               SAE
    256             STE
-   256           AE
+   256           SAE
    256         STE
    256       SCE
    256     ERE

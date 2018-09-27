@@ -37,14 +37,14 @@ yactfr_create_all_streams (
     fail-packet-content-size-too-small
     fail-packet-total-size-not-multiple-eight
     fail-packet-total-size-too-small
-    fail-sequence-beyond-content
-    fail-sequence-beyond-data
+    fail-dynamic-array-beyond-content
+    fail-dynamic-array-beyond-data
     fail-string-beyond-content
     fail-string-beyond-data
     fail-text-array-beyond-content
     fail-text-array-beyond-data
-    fail-text-sequence-beyond-content
-    fail-text-sequence-beyond-data
+    fail-text-dynamic-array-beyond-content
+    fail-text-dynamic-array-beyond-data
     fail-unknown-dst-id
     fail-unknown-ert-id
     fail-variant-beyond-content
@@ -71,13 +71,13 @@ yactfr_create_all_streams (
     pass-packet-content-size-no-packet-total-size
     pass-packet-origin-index
     pass-packet-total-size-no-packet-content-size
-    pass-sequence-empty-struct
-    pass-sequences
+    pass-dynamic-array-empty-struct
+    pass-dynamic-arrays
     pass-std-enums
     pass-std-ints
     pass-string-alignment
     pass-text-arrays
-    pass-text-sequences
+    pass-text-dynamic-arrays
     pass-variants
 )
 
@@ -100,14 +100,14 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-content-size-too-small/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-total-size-not-multiple-eight/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-packet-total-size-too-small/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-sequence-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-sequence-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dynamic-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-dynamic-array-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-string-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-string-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-text-array-beyond-content/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-text-array-beyond-data/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-sequence-beyond-content/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-sequence-beyond-data/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-dynamic-array-beyond-content/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/fail-text-dynamic-array-beyond-data/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-dst-id/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-unknown-ert-id/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/fail-variant-beyond-content/metadata"
@@ -134,13 +134,13 @@ add_custom_target (
         "${CMAKE_CURRENT_BINARY_DIR}/pass-packet-content-size-no-packet-total-size/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-packet-origin-index/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-packet-total-size-no-packet-content-size/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-sequence-empty-struct/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-sequences/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dynamic-array-empty-struct/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-dynamic-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-enums/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-std-ints/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-string-alignment/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-text-arrays/metadata"
-        "${CMAKE_CURRENT_BINARY_DIR}/pass-text-sequences/metadata"
+        "${CMAKE_CURRENT_BINARY_DIR}/pass-text-dynamic-arrays/metadata"
         "${CMAKE_CURRENT_BINARY_DIR}/pass-variants/metadata"
     VERBATIM
 )

@@ -213,60 +213,60 @@ public:
         *_os << '\n';
     }
 
-    void visit(const yactfr::ArrayBeginningElement& elem)
+    void visit(const yactfr::StaticArrayBeginningElement& elem)
     {
         this->_indent();
-        *_os << "AB:" << *elem.displayName() << '\n';
+        *_os << "SAB:" << *elem.displayName() << '\n';
         ++_indentLevel;
     }
 
-    void visit(const yactfr::ArrayEndElement& elem)
+    void visit(const yactfr::StaticArrayEndElement& elem)
     {
         --_indentLevel;
         this->_indent();
-        *_os << "AE\n";
+        *_os << "SAE\n";
     }
 
-    void visit(const yactfr::TextArrayBeginningElement& elem)
+    void visit(const yactfr::StaticTextArrayBeginningElement& elem)
     {
         this->_indent();
-        *_os << "TAB:" << *elem.displayName() << '\n';
+        *_os << "STAB:" << *elem.displayName() << '\n';
         ++_indentLevel;
     }
 
-    void visit(const yactfr::TextArrayEndElement& elem)
+    void visit(const yactfr::StaticTextArrayEndElement& elem)
     {
         --_indentLevel;
         this->_indent();
-        *_os << "TAE\n";
+        *_os << "STAE\n";
     }
 
-    void visit(const yactfr::SequenceBeginningElement& elem)
+    void visit(const yactfr::DynamicArrayBeginningElement& elem)
     {
         this->_indent();
-        *_os << "SQB:" << *elem.displayName() << '\n';
+        *_os << "DAB:" << *elem.displayName() << '\n';
         ++_indentLevel;
     }
 
-    void visit(const yactfr::SequenceEndElement& elem)
+    void visit(const yactfr::DynamicArrayEndElement& elem)
     {
         --_indentLevel;
         this->_indent();
-        *_os << "SQE\n";
+        *_os << "DAE\n";
     }
 
-    void visit(const yactfr::TextSequenceBeginningElement& elem)
+    void visit(const yactfr::DynamicTextArrayBeginningElement& elem)
     {
         this->_indent();
-        *_os << "TSQB:" << *elem.displayName() << '\n';
+        *_os << "DTAB:" << *elem.displayName() << '\n';
         ++_indentLevel;
     }
 
-    void visit(const yactfr::TextSequenceEndElement& elem)
+    void visit(const yactfr::DynamicTextArrayEndElement& elem)
     {
         --_indentLevel;
         this->_indent();
-        *_os << "TSQE\n";
+        *_os << "DTAE\n";
     }
 
     void visit(const yactfr::StructBeginningElement& elem)

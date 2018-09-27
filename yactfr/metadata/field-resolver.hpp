@@ -73,29 +73,29 @@ public:
      * The `getEntryAtFn` function must return a field resolver entry
      * (field type and name) when called with a specific scope and
      * position. If the position parameter is empty, the entry to return
-     * is the scope itself. The "current element" of arrays and
-     * sequences is considered at index -1 of its container.
+     * is the scope itself. The "current element" of arrays is
+     * considered at index -1 of its container.
      */
     explicit FieldResolver(const GetEntryAtFn& getEntryAtFn) noexcept;
 
     /*
      * Resolves a field.
      *
-     * `sourceScope` is the scope of the source, typically the sequence
-     * or variant type which needs to find its length/tag position
+     * `sourceScope` is the scope of the source, typically the dynamic
+     * array or variant type which needs to find its length/tag position
      * (called the target).
      *
      * `sourcePos` is the exact, absolute position of the source from
      * the root of the source scope. If `sourcePos` is empty, the source
-     * is the scope itself. The "current element" of arrays and
-     * sequences is considered at index -1 of its container.
+     * is the scope itself. The "current element" of arrays is
+     * considered at index -1 of its container.
      *
      * `tgtFieldRef` is the field reference of the target to resolve.
      *
      * Returns a validated field reference and (target) data type. The
      * data type is \c nullptr if the field cannot be resolved for any
-     * reason. In the returned field reference, arrays and sequences
-     * must be skipped (their element is not named).
+     * reason. In the returned field reference, arrays must be skipped
+     * (their element is not named).
      *
      * It is guaranteed that the target can, at least in one specific
      * configuration, be reached from its source during the decoding

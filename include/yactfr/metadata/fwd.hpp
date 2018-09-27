@@ -24,7 +24,6 @@
 
 namespace yactfr {
 
-class ArraySequenceTypeBase;
 class ArrayType;
 class BitArrayType;
 class ClockType;
@@ -34,6 +33,8 @@ class CompoundType;
 class DataStreamType;
 class DataType;
 class DataTypeVisitor;
+class DynamicArrayType;
+class DynamicTextArrayType;
 class EventRecordType;
 class FieldRef;
 class FloatType;
@@ -52,14 +53,13 @@ class PacketizedMetadataStream;
 class ParseError;
 class PlainTextMetadataStream;
 class ScalarType;
-class SequenceType;
 class SignedEnumType;
 class SignedIntType;
+class StaticArrayType;
+class StaticTextArrayType;
 class StringType;
 class StructType;
 class StructTypeField;
-class TextArrayType;
-class TextSequenceType;
 class TraceType;
 class TraceTypeEnv;
 class UnsignedEnumType;

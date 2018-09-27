@@ -35,11 +35,11 @@ a8
      8       ERT:0:test
      8       SCB:5
      8         STB
-     8           AB:yy
+     8           SAB:yy
      8             U:yy:3735928559
     40             U:yy:4277009102
     72             U:yy:3131746989
-   104           AE
+   104           SAE
    104         STE
    104       SCE
    104     ERE
@@ -47,7 +47,7 @@ a8
    104       ERT:0:test
    104       SCB:5
    104         STB
-   104           AB:yy
+   104           SAB:yy
    104             U:yy:4208909997
    136             U:yy:3452816845
    168 Cannot request 32 bits at this point: would move beyond the current packet's content (0 bits remaining).

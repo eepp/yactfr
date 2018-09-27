@@ -32,15 +32,15 @@ event {
      0         STB
      0           U:len2:11
      8           U:len1:42
-    16           TSQB:text1
+    16           DTAB:text1
     16             SUB:42:I've tasted both the fantasy
-   352           TSQE
+   352           DTAE
    352           U:zlen:0
-   360           TSQB:text2
-   360           TSQE
-   360           TSQB:text3
+   360           DTAB:text2
+   360           DTAE
+   360           DTAB:text3
    360             SUB:11:dan boucher
-   448           TSQE
+   448           DTAE
    448         STE
    448       SCE
    448     ERE

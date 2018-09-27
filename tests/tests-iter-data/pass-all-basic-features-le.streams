@@ -146,7 +146,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
      0       STB
      0         U:magic:3254525889
     32         PM:3254525889
-    32         AB:uuid
+    32         SAB:uuid
     32           U:uuid:77
     40           U:uuid:134
     48           U:uuid:224
@@ -164,7 +164,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    144           U:uuid:75
    152           U:uuid:212
    160           PU:4d86e02c-f527-4971-b960-971d26074bd4
-   160         AE
+   160         SAE
    160         U:stream_id:35
    168       STE
    168     SCE
@@ -272,7 +272,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    864       STB
    864         U:magic:3254525889
    896         PM:3254525889
-   896         AB:uuid
+   896         SAB:uuid
    896           U:uuid:77
    904           U:uuid:134
    912           U:uuid:224
@@ -290,7 +290,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1008           U:uuid:75
   1016           U:uuid:212
   1024           PU:4d86e02c-f527-4971-b960-971d26074bd4
-  1024         AE
+  1024         SAE
   1024         U:stream_id:255
   1032       STE
   1032     SCE
@@ -307,7 +307,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1080       SCB:5
   1080         STB
   1080           U:len:3
-  1112           SQB:seq1
+  1112           DAB:seq1
   1112             U:seq1:1
   1120             U:seq1:2
   1128             U:seq1:3
@@ -315,8 +315,8 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1144             U:seq1:5
   1152             U:seq1:6
   1160             U:seq1:7
-  1168           SQE
-  1168           SQB:seq2
+  1168           DAE
+  1168           DAB:seq2
   1168             STRB:seq2
   1168               SUB:4:yes
   1200             STRE
@@ -326,7 +326,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1232             STRB:seq2
   1232               SUB:7:miller
   1288             STRE
-  1288           SQE
+  1288           DAE
   1288         STE
   1288       SCE
   1288     ERE
@@ -335,7 +335,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1288       SCB:5
   1288         STB
   1288           U:len:4
-  1320           SQB:seq1
+  1320           DAB:seq1
   1320             U:seq1:170
   1328             U:seq1:187
   1336             U:seq1:204
@@ -343,8 +343,8 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1352             U:seq1:238
   1360             U:seq1:255
   1368             U:seq1:0
-  1376           SQE
-  1376           SQB:seq2
+  1376           DAE
+  1376           DAB:seq2
   1376             STRB:seq2
   1376               SUB:2:a
   1392             STRE
@@ -357,7 +357,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1488             STRB:seq2
   1488               SUB:5:love
   1528             STRE
-  1528           SQE
+  1528           DAE
   1528         STE
   1528       SCE
   1528     ERE
@@ -369,7 +369,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1528       STB
   1528         U:magic:3254525889
   1560         PM:3254525889
-  1560         AB:uuid
+  1560         SAB:uuid
   1560           U:uuid:77
   1568           U:uuid:134
   1576           U:uuid:224
@@ -387,7 +387,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1672           U:uuid:75
   1680           U:uuid:212
   1688           PU:4d86e02c-f527-4971-b960-971d26074bd4
-  1688         AE
+  1688         SAE
   1688         U:stream_id:35
   1696       STE
   1696     SCE
@@ -456,13 +456,13 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2192         STB
   2192           UE:tag:69
   2200           VUB:vvv:1146447480
-  2200             SQB:JOVI
+  2200             DAB:JOVI
   2200               U:JOVI:0
   2232               U:JOVI:286331153
   2264               U:JOVI:572662306
   2296               U:JOVI:858993459
   2328               U:JOVI:1145324612
-  2360             SQE
+  2360             DAE
   2360           VE
   2360           VUB:zigzag:69
   2360             I:ZIG:-2

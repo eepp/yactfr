@@ -210,8 +210,8 @@ UnknownVariantUnsignedTagValueDecodingError::UnknownVariantUnsignedTagValueDecod
 {
 }
 
-SequenceLengthNotSetDecodingError::SequenceLengthNotSetDecodingError(const Index offset) :
-    DecodingError {"Sequence length is not set.", offset}
+DynamicArrayLengthNotSetDecodingError::DynamicArrayLengthNotSetDecodingError(const Index offset) :
+    DecodingError {"Dynamic array length is not set.", offset}
 {
 }
 

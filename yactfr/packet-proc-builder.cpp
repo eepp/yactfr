@@ -15,10 +15,10 @@
 #include <algorithm>
 #include <boost/optional/optional.hpp>
 
-#include <yactfr/metadata/text-array-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/text-sequence-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
+#include <yactfr/metadata/static-text-array-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/dynamic-text-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
 
 #include "packet-proc-builder.hpp"
 
@@ -101,38 +101,38 @@ public:
                                                   *_baseProc);
     }
 
-    void visit(const ArrayType& type) override
+    void visit(const StaticArrayType& type) override
     {
-        _packetProcBuilder->_buildInstrReadArray(_fieldName,
-                                                 _fieldDisplayName,
-                                                 &type,
-                                                 *_baseProc);
+        _packetProcBuilder->_buildInstrReadStaticArray(_fieldName,
+                                                       _fieldDisplayName,
+                                                       &type,
+                                                       *_baseProc);
     }
 
-    void visit(const TextArrayType& type) override
+    void visit(const StaticTextArrayType& type) override
     {
-        this->visit(static_cast<const ArrayType&>(type));
+        this->visit(static_cast<const StaticArrayType&>(type));
     }
 
-    void visit(const SequenceType& type) override
+    void visit(const DynamicArrayType& type) override
     {
-        _packetProcBuilder->_buildInstrReadSequence(_fieldName,
-                                                    _fieldDisplayName,
-                                                    &type,
-                                                    *_baseProc);
+        _packetProcBuilder->_buildInstrReadDynamicArray(_fieldName,
+                                                        _fieldDisplayName,
+                                                        &type,
+                                                        *_baseProc);
     }
 
-    void visit(const TextSequenceType& type) override
+    void visit(const DynamicTextArrayType& type) override
     {
-        this->visit(static_cast<const SequenceType&>(type));
+        this->visit(static_cast<const DynamicArrayType&>(type));
     }
 
     void visit(const VariantType& type) override
     {
-        _packetProcBuilder->_buildInstrReadUnknownVariant(_fieldName,
-                                                          _fieldDisplayName,
-                                                          &type,
-                                                          *_baseProc);
+        _packetProcBuilder->_buildInstrReadVariantUnknownTag(_fieldName,
+                                                             _fieldDisplayName,
+                                                             &type,
+                                                             *_baseProc);
     }
 
 private:
@@ -240,32 +240,32 @@ public:
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadArray& instr) override
+    void visit(InstrBeginReadStaticArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextArray& instr) override
+    void visit(InstrBeginReadStaticTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUuidArray& instr) override
+    void visit(InstrBeginReadStaticUuidArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadSequence& instr) override
+    void visit(InstrBeginReadDynamicArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextSequence& instr) override
+    void visit(InstrBeginReadDynamicTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUnknownVariant& instr) override
+    void visit(InstrBeginReadVariantUnknownTag& instr) override
     {
         for (auto& optionPair : instr.options()) {
             this->_visitProc(optionPair.second);
@@ -348,32 +348,32 @@ public:
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadArray& instr) override
+    void visit(InstrBeginReadStaticArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextArray& instr) override
+    void visit(InstrBeginReadStaticTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUuidArray& instr) override
+    void visit(InstrBeginReadStaticUuidArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadSequence& instr) override
+    void visit(InstrBeginReadDynamicArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextSequence& instr) override
+    void visit(InstrBeginReadDynamicTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUnknownVariant& instr) override
+    void visit(InstrBeginReadVariantUnknownTag& instr) override
     {
         for (auto& optionPair : instr.options()) {
             this->_visitProc(optionPair.second);
@@ -424,24 +424,24 @@ public:
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadArray& instr) override
+    void visit(InstrBeginReadStaticArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextArray& instr) override
+    void visit(InstrBeginReadStaticTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUuidArray& instr) override
+    void visit(InstrBeginReadStaticUuidArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadSequence& instr) override
+    void visit(InstrBeginReadDynamicArray& instr) override
     {
-        auto pos = this->_getPos(instr.sequenceType().length());
+        auto pos = this->_getPos(instr.dynamicArrayType().length());
 
         if (pos) {
             instr.lengthPos(*pos);
@@ -450,12 +450,12 @@ public:
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextSequence& instr) override
+    void visit(InstrBeginReadDynamicTextArray& instr) override
     {
-        this->visit(static_cast<InstrBeginReadSequence&>(instr));
+        this->visit(static_cast<InstrBeginReadDynamicArray&>(instr));
     }
 
-    void visit(InstrBeginReadUnknownVariant& instr) override
+    void visit(InstrBeginReadVariantUnknownTag& instr) override
     {
         auto pos = this->_getPos(instr.variantType().tag());
 
@@ -499,15 +499,15 @@ private:
  * instruction ("read unknown variant" instructions which contain "read
  * unknown variant" instructions).
  */
-class InstrUnknownVariantReplacerVisitor :
+class InstrVariantUnknownTagReplacerVisitor :
     public InstrCallerVisitor
 {
 public:
     using Callback = std::function<void (Proc::SharedIterator)>;
 
 public:
-    explicit InstrUnknownVariantReplacerVisitor(Proc& proc,
-                                                Callback callback) :
+    explicit InstrVariantUnknownTagReplacerVisitor(Proc& proc,
+                                                   Callback callback) :
         _callback {callback}
     {
         this->_visitProc(proc);
@@ -518,32 +518,32 @@ public:
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadArray& instr) override
+    void visit(InstrBeginReadStaticArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextArray& instr) override
+    void visit(InstrBeginReadStaticTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUuidArray& instr) override
+    void visit(InstrBeginReadStaticUuidArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadSequence& instr) override
+    void visit(InstrBeginReadDynamicArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadTextSequence& instr) override
+    void visit(InstrBeginReadDynamicTextArray& instr) override
     {
         this->_visit(instr);
     }
 
-    void visit(InstrBeginReadUnknownVariant& instr) override
+    void visit(InstrBeginReadVariantUnknownTag& instr) override
     {
         for (auto& optionPair : instr.options()) {
             /*
@@ -589,11 +589,11 @@ void PacketProcBuilder::_buildPacketProc()
      *
      * 1. Translate from metadata objects to procedure objects without
      *    any special rule. After this phase, the "read variant"
-     *    instructions are only InstrBeginReadUnknownVariant objects.
+     *    instructions are only InstrBeginReadVariantUnknownTag objects.
      *
      * 2. In the trace's preamble procedure's InstrBeginReadScope object,
      *    find a first-level `uuid` "read array" instruction and replace
-     *    it with a InstrBeginReadUuidArray object.
+     *    it with a InstrBeginReadStaticUuidArray object.
      *
      * 3. Insert InstrSetCurrentId, InstrSetDataStreamType,
      *    InstrSetEventRecordType, InstrSetDataStreamId,
@@ -605,9 +605,9 @@ void PacketProcBuilder::_buildPacketProc()
      *    locations.
      *
      * 5. Insert InstrSaveValue objects where needed to accomodate
-     *    following "read sequence/variant" instructions.
+     *    following "read dynamic array/variant" instructions.
      *
-     * 6. Replace InstrBeginReadUnknownVariant objects with
+     * 6. Replace InstrBeginReadVariantUnknownTag objects with
      *    InstrBeginReadVariantSignedTag or
      *    InstrBeginReadVariantUnsignedTag objects depending on the
      *    tag's signedness.
@@ -620,7 +620,7 @@ void PacketProcBuilder::_buildPacketProc()
     this->_insertSpecialInstrs();
     this->_insertInstrUpdateClockValue();
     this->_setSavedValuePos();
-    this->_subInstrBeginReadUnknownVariant();
+    this->_subInstrBeginReadVariantUnknownTag();
     this->_insertEndInstrs();
 }
 
@@ -680,15 +680,15 @@ void PacketProcBuilder::_subUuidInstr()
         };
 
         if (instrReadArray) {
-            *instrReadArrayIt = std::make_shared<InstrBeginReadUuidArray>(instrReadArray->fieldName(),
-                                                                          instrReadArray->fieldDisplayName(),
-                                                                          instrReadArray->type());
+            *instrReadArrayIt = std::make_shared<InstrBeginReadStaticUuidArray>(instrReadArray->fieldName(),
+                                                                                instrReadArray->fieldDisplayName(),
+                                                                                instrReadArray->type());
 
-            auto& instrReadUuidArray = static_cast<InstrBeginReadArray&>(**instrReadArrayIt);
+            auto& instrReadUuidArray = static_cast<InstrBeginReadStaticArray&>(**instrReadArrayIt);
 
             this->_buildInstrRead(instrReadUuidArray.fieldName(),
                                   instrReadUuidArray.fieldDisplayName(),
-                                  &instrReadUuidArray.arrayType().elemType(),
+                                  &instrReadUuidArray.staticArrayType().elemType(),
                                   instrReadUuidArray.proc());
         }
     }
@@ -918,11 +918,12 @@ void PacketProcBuilder::_setSavedValuePos()
 {
     /*
      * Here's the idea. We swipe the whole packet procedure tree to find
-     * the "read sequence/variant" instructions which have a data type
-     * which refers to a specific scope for the length/tag. We insert
-     * "save value" instructions at the appropriate locations in the
-     * scope's associated procedure and return the saved value position
-     * to the visitor so that it changes the requesting instruction.
+     * the "read dynamic array/variant" instructions which have a data
+     * type which refers to a specific scope for the length/tag. We
+     * insert "save value" instructions at the appropriate locations in
+     * the scope's associated procedure and return the saved value
+     * position to the visitor so that it changes the requesting
+     * instruction.
      *
      * After each swipe, we keep the current "next" position so as to
      * restart at that location for the swipes targeting the same
@@ -1101,7 +1102,7 @@ void PacketProcBuilder::_setSavedValuePos()
     _packetProc->savedValuesCount(maxPos);
 }
 
-void PacketProcBuilder::_subInstrBeginReadUnknownVariant()
+void PacketProcBuilder::_subInstrBeginReadVariantUnknownTag()
 {
     DataStreamTypePacketProc *curDstPacketProc = nullptr;
     EventRecordTypeProc *curErtProc = nullptr;
@@ -1113,9 +1114,9 @@ void PacketProcBuilder::_subInstrBeginReadUnknownVariant()
          * InstrReadVariantXTag and to populate its range
          * procedures. `curScope` indicates where to search.
          */
-        assert((*it)->kind() == Instr::Kind::BEGIN_READ_UNKNOWN_VARIANT);
+        assert((*it)->kind() == Instr::Kind::BEGIN_READ_VARIANT_UNKNOWN_TAG);
 
-        auto& instrReadUnkVariant = static_cast<InstrBeginReadUnknownVariant&>(**it);
+        auto& instrReadUnkVariant = static_cast<InstrBeginReadVariantUnknownTag&>(**it);
         const DataType *tagType = nullptr;
         auto& tag = instrReadUnkVariant.variantType().tag();
 
@@ -1157,7 +1158,7 @@ void PacketProcBuilder::_subInstrBeginReadUnknownVariant()
         *it = std::move(instrReadVariant);
     };
 
-    InstrUnknownVariantReplacerVisitor {
+    InstrVariantUnknownTagReplacerVisitor {
         _packetProc->preambleProc(), callback
     };
 
@@ -1166,17 +1167,17 @@ void PacketProcBuilder::_subInstrBeginReadUnknownVariant()
 
         curDstPacketProc = dstPacketProc.get();
 
-        InstrUnknownVariantReplacerVisitor {
+        InstrVariantUnknownTagReplacerVisitor {
             dstPacketProc->packetPreambleProc(), callback
         };
-        InstrUnknownVariantReplacerVisitor {
+        InstrVariantUnknownTagReplacerVisitor {
             dstPacketProc->eventRecordPreambleProc(), callback
         };
 
         dstPacketProc->forEachEventRecordTypeProc([&callback, &curErtProc](EventRecordTypeProc& ertProc) {
             curErtProc = &ertProc;
 
-            InstrUnknownVariantReplacerVisitor {ertProc.proc(), callback};
+            InstrVariantUnknownTagReplacerVisitor {ertProc.proc(), callback};
         });
     }
 }
@@ -1367,26 +1368,26 @@ void PacketProcBuilder::_buildInstrReadStruct(const std::string *fieldName,
     baseProc.pushBack(std::move(instr));
 }
 
-void PacketProcBuilder::_buildInstrReadArray(const std::string *fieldName,
-                                             const std::string *fieldDisplayName,
-                                             const DataType *type,
-                                             Proc& baseProc)
+void PacketProcBuilder::_buildInstrReadStaticArray(const std::string *fieldName,
+                                                   const std::string *fieldDisplayName,
+                                                   const DataType *type,
+                                                   Proc& baseProc)
 {
     assert(type->isArrayType());
 
-    std::shared_ptr<InstrBeginReadArray> instr;
+    std::shared_ptr<InstrBeginReadStaticArray> instr;
     Instr::Kind endKind;
 
-    if (type->isTextArrayType()) {
-        instr = std::make_shared<InstrBeginReadTextArray>(fieldName, fieldDisplayName, type);
-        endKind = Instr::Kind::END_READ_TEXT_ARRAY;
+    if (type->isStaticTextArrayType()) {
+        instr = std::make_shared<InstrBeginReadStaticTextArray>(fieldName, fieldDisplayName, type);
+        endKind = Instr::Kind::END_READ_STATIC_TEXT_ARRAY;
     } else {
-        instr = std::make_shared<InstrBeginReadArray>(fieldName,
+        instr = std::make_shared<InstrBeginReadStaticArray>(fieldName,
                                                       fieldDisplayName, type);
         this->_buildInstrRead(fieldName, fieldDisplayName,
                               &type->asArrayType()->elemType(),
                               instr->proc());
-        endKind = Instr::Kind::END_READ_ARRAY;
+        endKind = Instr::Kind::END_READ_STATIC_ARRAY;
     }
 
     baseProc.pushBack(std::move(instr));
@@ -1399,28 +1400,28 @@ void PacketProcBuilder::_buildInstrReadArray(const std::string *fieldName,
     baseProc.pushBack(std::move(endInstr));
 }
 
-void PacketProcBuilder::_buildInstrReadSequence(const std::string *fieldName,
-                                                const std::string *fieldDisplayName,
-                                                const DataType *type,
-                                                Proc& baseProc)
+void PacketProcBuilder::_buildInstrReadDynamicArray(const std::string *fieldName,
+                                                    const std::string *fieldDisplayName,
+                                                    const DataType *type,
+                                                    Proc& baseProc)
 {
-    assert(type->isSequenceType());
+    assert(type->isDynamicArrayType());
 
-    std::shared_ptr<InstrBeginReadSequence> instr;
+    std::shared_ptr<InstrBeginReadDynamicArray> instr;
     Instr::Kind endKind;
 
-    if (type->isTextSequenceType()) {
-        instr = std::make_shared<InstrBeginReadTextSequence>(fieldName,
+    if (type->isDynamicTextArrayType()) {
+        instr = std::make_shared<InstrBeginReadDynamicTextArray>(fieldName,
                                                              fieldDisplayName,
                                                              type);
-        endKind = Instr::Kind::END_READ_TEXT_SEQUENCE;
+        endKind = Instr::Kind::END_READ_DYNAMIC_TEXT_ARRAY;
     } else {
-        instr = std::make_shared<InstrBeginReadSequence>(fieldName,
+        instr = std::make_shared<InstrBeginReadDynamicArray>(fieldName,
                                                          fieldDisplayName,
                                                          type);
-        endKind = Instr::Kind::END_READ_SEQUENCE;
+        endKind = Instr::Kind::END_READ_DYNAMIC_ARRAY;
         this->_buildInstrRead(fieldName, fieldDisplayName,
-                              &type->asSequenceType()->elemType(),
+                              &type->asDynamicArrayType()->elemType(),
                               instr->proc());
     }
 
@@ -1434,16 +1435,16 @@ void PacketProcBuilder::_buildInstrReadSequence(const std::string *fieldName,
     baseProc.pushBack(std::move(endInstr));
 }
 
-void PacketProcBuilder::_buildInstrReadUnknownVariant(const std::string *fieldName,
-                                                      const std::string *fieldDisplayName,
-                                                      const DataType *type,
-                                                      Proc& baseProc)
+void PacketProcBuilder::_buildInstrReadVariantUnknownTag(const std::string *fieldName,
+                                                         const std::string *fieldDisplayName,
+                                                         const DataType *type,
+                                                         Proc& baseProc)
 {
     assert(type->isVariantType());
 
-    auto instr = std::make_shared<InstrBeginReadUnknownVariant>(fieldName,
-                                                                fieldDisplayName,
-                                                                type);
+    auto instr = std::make_shared<InstrBeginReadVariantUnknownTag>(fieldName,
+                                                                   fieldDisplayName,
+                                                                   type);
 
     for (const auto& option : type->asVariantType()->options()) {
         auto& optionProc = instr->options()[option->name()];

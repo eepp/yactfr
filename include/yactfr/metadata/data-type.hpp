@@ -46,23 +46,24 @@ protected:
     // data type's kind
     enum _Kind
     {
-        _KIND_SIGNED_ENUM =       1 << 0,
-        _KIND_UNSIGNED_ENUM =     1 << 1,
-        _KIND_SIGNED_INT =        1 << 2,
-        _KIND_UNSIGNED_INT =      1 << 3,
-        _KIND_INT =               1 << 4,
-        _KIND_ENUM =              1 << 5,
-        _KIND_BIT_ARRAY =         1 << 6,
-        _KIND_FLOAT =             1 << 7,
-        _KIND_STRING =            1 << 8,
-        _KIND_SCALAR =            1 << 9,
-        _KIND_STRUCT =            1 << 10,
-        _KIND_TEXT_ARRAY =        1 << 11,
-        _KIND_ARRAY =             1 << 12,
-        _KIND_TEXT_SEQUENCE =     1 << 13,
-        _KIND_SEQUENCE =          1 << 14,
-        _KIND_VARIANT =           1 << 15,
-        _KIND_COMPOUND =          1 << 16,
+        _KIND_SIGNED_ENUM =             1 << 0,
+        _KIND_UNSIGNED_ENUM =           1 << 1,
+        _KIND_SIGNED_INT =              1 << 2,
+        _KIND_UNSIGNED_INT =            1 << 3,
+        _KIND_INT =                     1 << 4,
+        _KIND_ENUM =                    1 << 5,
+        _KIND_BIT_ARRAY =               1 << 6,
+        _KIND_FLOAT =                   1 << 7,
+        _KIND_STRING =                  1 << 8,
+        _KIND_SCALAR =                  1 << 9,
+        _KIND_STRUCT =                  1 << 10,
+        _KIND_ARRAY =                   1 << 11,
+        _KIND_STATIC_ARRAY =            1 << 12,
+        _KIND_DYNAMIC_ARRAY =           1 << 13,
+        _KIND_STATIC_TEXT_ARRAY =       1 << 14,
+        _KIND_DYNAMIC_TEXT_ARRAY =      1 << 15,
+        _KIND_VARIANT =                 1 << 16,
+        _KIND_COMPOUND =                1 << 17,
     };
 
 protected:
@@ -138,22 +139,34 @@ public:
         return this->_isKind(_KIND_ARRAY);
     }
 
+    /// \c true if this data type is a static array type.
+    bool isStaticArrayType() const noexcept
+    {
+        return this->_isKind(_KIND_STATIC_ARRAY);
+    }
+
+    /// \c true if this data type is a dynamic array type.
+    bool isDynamicArrayType() const noexcept
+    {
+        return this->_isKind(_KIND_DYNAMIC_ARRAY);
+    }
+
     /// \c true if this data type is a text array type.
     bool isTextArrayType() const noexcept
     {
-        return this->_isKind(_KIND_TEXT_ARRAY);
+        return this->_isKind(_KIND_STATIC_TEXT_ARRAY);
     }
 
-    /// \c true if this data type is a sequence type.
-    bool isSequenceType() const noexcept
+    /// \c true if this data type is a static text array type.
+    bool isStaticTextArrayType() const noexcept
     {
-        return this->_isKind(_KIND_SEQUENCE);
+        return this->_isKind(_KIND_STATIC_TEXT_ARRAY);
     }
 
-    /// \c true if this data type is a text sequence type.
-    bool isTextSequenceType() const noexcept
+    /// \c true if this data type is a dynamic text array type.
+    bool isDynamicTextArrayType() const noexcept
     {
-        return this->_isKind(_KIND_TEXT_SEQUENCE);
+        return this->_isKind(_KIND_DYNAMIC_TEXT_ARRAY);
     }
 
     /// \c true if this data type is a structure type.
@@ -247,34 +260,44 @@ public:
     /*!
     @brief  This data type as a array type.
 
-    @warning    You must make sure that this data type is indeed a
+    @warning    You must make sure that this data type is indeed an
                 array type before using the returned pointer.
     */
     const ArrayType *asArrayType() const;
 
     /*!
-    @brief  This data type as a text array type.
+    @brief  This data type as a static array type.
 
     @warning    You must make sure that this data type is indeed a
-                text array type before using the returned pointer.
+                static array type before using the returned pointer.
     */
-    const ArrayType *asTextArrayType() const;
+    const StaticArrayType *asStaticArrayType() const;
 
     /*!
-    @brief  This data type as a sequence type.
+    @brief  This data type as a static text array type.
 
     @warning    You must make sure that this data type is indeed a
-                sequence type before using the returned pointer.
+                static text array type before using the returned
+                pointer.
     */
-    const SequenceType *asSequenceType() const;
+    const StaticTextArrayType *asStaticTextArrayType() const;
 
     /*!
-    @brief  This data type as a text sequence type.
+    @brief  This data type as a dynamic array type.
 
     @warning    You must make sure that this data type is indeed a
-                text sequence type before using the returned pointer.
+                dynamic array type before using the returned pointer.
     */
-    const TextSequenceType *asTextSequenceType() const;
+    const DynamicArrayType *asDynamicArrayType() const;
+
+    /*!
+    @brief  This data type as a dynamic text array type.
+
+    @warning    You must make sure that this data type is indeed a
+                dynamic text array type before using the returned
+                pointer.
+    */
+    const DynamicTextArrayType *asDynamicTextArrayType() const;
 
     /*!
     @brief  This data type as a struct type.

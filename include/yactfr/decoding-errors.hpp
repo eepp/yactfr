@@ -445,22 +445,22 @@ private:
 };
 
 /*!
-@brief  "Sequence length is not set" decoding error.
+@brief  "Dynamic array length is not set" decoding error.
 
 This is thrown when a PacketSequenceIterator needs to decode a data
-stream sequence, but its length was not previously decoded.
+stream dynamic array, but its length was not previously decoded.
 */
-class SequenceLengthNotSetDecodingError :
+class DynamicArrayLengthNotSetDecodingError :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit SequenceLengthNotSetDecodingError(Index offset);
+    explicit DynamicArrayLengthNotSetDecodingError(Index offset);
 
 public:
-    SequenceLengthNotSetDecodingError(const SequenceLengthNotSetDecodingError&) = default;
-    SequenceLengthNotSetDecodingError& operator=(const SequenceLengthNotSetDecodingError&) = default;
+    DynamicArrayLengthNotSetDecodingError(const DynamicArrayLengthNotSetDecodingError&) = default;
+    DynamicArrayLengthNotSetDecodingError& operator=(const DynamicArrayLengthNotSetDecodingError&) = default;
 };
 
 } // namespace yactfr

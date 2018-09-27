@@ -22,7 +22,7 @@ event {
      0       SCB:5
      0         STB
      0           U:len:50
-     8           SQB:yes
+     8           DAB:yes
      8             STB:yes
      8             STE
      8             STB:yes
@@ -123,7 +123,7 @@ event {
      8             STE
      8             STB:yes
      8             STE
-     8           SQE
+     8           DAE
      8         STE
      8       SCE
      8     ERE
@@ -132,7 +132,7 @@ event {
      8       SCB:5
      8         STB
      8           U:len:20
-    16           SQB:yes
+    16           DAB:yes
     16             STB:yes
     16             STE
     16             STB:yes
@@ -173,7 +173,7 @@ event {
     16             STE
     16             STB:yes
     16             STE
-    16           SQE
+    16           DAE
     16         STE
     16       SCE
     16     ERE

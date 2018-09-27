@@ -98,12 +98,12 @@ test_iter_data() {
   test_iter_data fail-packet-total-size-too-small
 }
 
-@test 'sequence beyond content -> fail' {
-  test_iter_data fail-sequence-beyond-content
+@test 'dynamic array beyond content -> fail' {
+  test_iter_data fail-dynamic-array-beyond-content
 }
 
-@test 'sequence beyond data -> fail' {
-  test_iter_data fail-sequence-beyond-data
+@test 'dynamic array beyond data -> fail' {
+  test_iter_data fail-dynamic-array-beyond-data
 }
 
 @test 'string beyond content -> fail' {
@@ -122,12 +122,12 @@ test_iter_data() {
   test_iter_data fail-text-array-beyond-data
 }
 
-@test 'text sequence beyond content -> fail' {
-  test_iter_data fail-text-sequence-beyond-content
+@test 'text dynamic array beyond content -> fail' {
+  test_iter_data fail-text-dynamic-array-beyond-content
 }
 
-@test 'text sequence beyond data -> fail' {
-  test_iter_data fail-text-sequence-beyond-data
+@test 'text dynamic array beyond data -> fail' {
+  test_iter_data fail-text-dynamic-array-beyond-data
 }
 
 @test 'unknown data stream type ID -> fail' {
@@ -242,12 +242,12 @@ test_iter_data() {
   test_iter_data pass-packet-total-size-no-packet-content-size
 }
 
-@test 'sequence of empty structures -> pass' {
-  test_iter_data pass-sequence-empty-struct
+@test 'dynamic array of empty structures -> pass' {
+  test_iter_data pass-dynamic-array-empty-struct
 }
 
-@test 'various sequences -> pass' {
-  test_iter_data pass-sequences
+@test 'various dynamic arrays -> pass' {
+  test_iter_data pass-dynamic-arrays
 }
 
 @test 'string alignment -> pass' {
@@ -258,8 +258,8 @@ test_iter_data() {
   test_iter_data pass-text-arrays
 }
 
-@test 'various text sequences -> pass' {
-  test_iter_data pass-text-sequences
+@test 'various text dynamic arrays -> pass' {
+  test_iter_data pass-text-dynamic-arrays
 }
 
 @test 'various variants -> pass' {

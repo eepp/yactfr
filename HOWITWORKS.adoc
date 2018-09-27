@@ -2,7 +2,7 @@
 
 = yactfr: how it works
 Philippe Proulx
-31 July 2018
+27 September 2018
 :toc:
 
 This document shows how the yactfr library works internally. It is
@@ -135,7 +135,7 @@ packet procedure has a weak pointer to its owner.
 
 A packet procedure is a tree of procedures used to decode specific parts
 of a data packet described by the packet procedure's trace type. A
-procedure is an array of instructions, some of which can contain a
+procedure is a sequence of instructions, some of which can contain a
 subprocedure themselves. A yactfr <<vm,virtual machine>> (VM) is a
 packet procedure consumer.
 
@@ -207,8 +207,8 @@ to `1` and create a trace type.
 There's a special instruction named `internal::InstrSaveValue` which
 asks the VM to save the last decoded integer's value to a specific
 position (index) within a saved values array. This is how the VM knows
-where to dynamically find the length of a sequence or the tag of a
-variant, as the `internal::InstrBeginReadSequence` and
+where to dynamically find the length of a dynamic array or the tag of a
+variant, as the `internal::InstrBeginReadDynamicArray` and
 `internal::InstrBeginReadVariant` instructions contain a numeric
 position within this saved values array where to find the length or tag
 value.
@@ -216,15 +216,15 @@ value.
 `internal::PacketProcBuilder` contains the logic to insert
 `internal::InstrSaveValue` instructions at specific locations within the
 procedures and to assign appropriate positions to link "`read
-sequence/variant`" instructions to their length/tag values.
+dynamic array/variant`" instructions to their length/tag values.
 
 We know that:
 
-. A sequence/variant can only have its length/tag value in a
+. A dynamic array/variant can only have its length/tag value in a
   _previous_ dynamic scope.
 . Lookups between event records or between packets are not supported by
-  CTF. This means that a sequence in event record{nbsp}B cannot have its
-  length in event record{nbsp}A.
+  CTF. This means that a dynamic array in event record{nbsp}B cannot
+  have its length in event record{nbsp}A.
 +
 This is one of the constraints which make yactfr possible, otherwise too
 many values would need to be saved, quickly exhausting available memory.
@@ -232,7 +232,7 @@ many values would need to be saved, quickly exhausting available memory.
 Because of 2., we can reuse positions within the saved values array when
 the length/tag is found within an event record, because once a given
 event record is decoded, we don't care about the saved values that are
-exclusively used by sequences/variants found in this event record.
+exclusively used by dynamic arrays/variants found in this event record.
 
 Let me illustrate this. Consider the following metadata stream:
 
@@ -290,12 +290,12 @@ A few notes:
   value is always available, even if it's not needed by some event
   record types.
 * `stream.event.header.id` is not saved because it's not needed as
-  a sequence length.
+  a dynamic array length.
 * `event.fields.len` (event record type{nbsp}0) and `event.fields.len2`
   (event record type{nbsp}1) are both saved to position 3 because they
   are only needed locally by the same event record. It is not possible
-  that an event record sequence/variant has its length/tag value in a
-  previous event record.
+  that an event record dynamic array/variant has its length/tag value in
+  a previous event record.
 * Event record type{nbsp}1: `event.fields.len1` is saved to a position
   greater than the position where `event.fields.len2` is saved because
   `event.fields.len2` is needed before `event.fields.len1`.
@@ -366,18 +366,18 @@ about 15{nbsp}cases. This seems faster than a function table.
 The reason why there are instructions _and_ VM states is that the yactfr
 instruction set is not so general that it's enough by itself. This would
 result in many useless function calls in some situations. For example,
-the `internal::InstrBeginReadArray` asks the VM to start reading an
-array. This instruction object contains the length of the array, that
-is, the number of items to read next. The array contains a subprocedure
-which only contains which instruction to execute to read one array item.
-It does not contain register decrementation, comparison, and jump
-instructions like you would find in a typical assembly loop. Instead,
-the VM's state is changed (to `VmState::EXEC_ARRAY_SEQ_INSTR`) so that
-it knows that it's currently decoding an array at this stack level, and
-the VM position contains the number of remaining elements. The
-decrementation, comparison, and stack popping when it's done are
-implicit. This proves faster than executing three instructions for each
-array item.
+the `internal::InstrBeginReadStaticArray` asks the VM to start reading a
+static array. This instruction object contains the length of the static
+array, that is, the number of items to read next. The static array
+reading instruction contains a subprocedure which only contains which
+instruction to execute to read one array element. It does not contain
+register decrementation, comparison, and jump instructions like you
+would find in a typical assembly loop. Instead, the VM's state is
+changed (to `VmState::EXEC_ARRAY_INSTR`) so that it knows that it's
+currently decoding an array at this stack level, and the VM position
+contains the number of remaining elements. The decrementation,
+comparison, and stack popping when it's done are implicit. This proves
+faster than executing three instructions for each array item.
 
 
 === Integer decoding

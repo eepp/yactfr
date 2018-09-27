@@ -13,8 +13,8 @@
 #include <yactfr/metadata/data-type.hpp>
 #include <yactfr/metadata/data-stream-type.hpp>
 #include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 
@@ -168,8 +168,8 @@ bool DataStreamType::_isTypeEmpty(const DataType* type) const
         }
     }
 
-    if (type->isArrayType()) {
-        if (type->asArrayType()->length() == 0) {
+    if (type->isStaticArrayType()) {
+        if (type->asStaticArrayType()->length() == 0) {
             return true;
         }
 
@@ -178,8 +178,8 @@ bool DataStreamType::_isTypeEmpty(const DataType* type) const
         }
     }
 
-    if (type->isSequenceType()) {
-        if (this->_isTypeEmpty(&type->asSequenceType()->elemType())) {
+    if (type->isDynamicArrayType()) {
+        if (this->_isTypeEmpty(&type->asArrayType()->elemType())) {
             return true;
         }
     }

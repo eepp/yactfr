@@ -14,7 +14,7 @@ cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
      0   PCB
      0     SCB:0
      0       STB
-     0         AB:uuid
+     0         SAB:uuid
      0           U:uuid:204
      8           U:uuid:28
     16           U:uuid:188
@@ -32,7 +32,7 @@ cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
    112           U:uuid:43
    120           U:uuid:74
    128           PU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
-   128         AE
+   128         SAE
    128       STE
    128     SCE
    128   PCE

@@ -20,8 +20,8 @@
 
 #include <yactfr/metadata/enum-type.hpp>
 #include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>

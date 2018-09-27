@@ -15,8 +15,8 @@
 
 #include <yactfr/metadata/enum-type.hpp>
 #include <yactfr/metadata/int-type.hpp>
-#include <yactfr/metadata/array-type.hpp>
-#include <yactfr/metadata/sequence-type.hpp>
+#include <yactfr/metadata/static-array-type.hpp>
+#include <yactfr/metadata/dynamic-array-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/variant-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
@@ -74,7 +74,7 @@ void TraceTypeImpl::_buildDstMap()
 /*
  * TODO:
  *
- * * Validate that all variant and sequence FTs point to something
+ * * Validate that all variant and dynamic array FTs point to something
  *   that COULD exist at read time.
  */
 void TraceTypeImpl::_validate(const TraceType *traceType)
@@ -146,7 +146,7 @@ void TraceTypeImpl::_validateSpecialFields()
                 };
             }
 
-            auto uuidArrayFt = uuidType->asArrayType();
+            auto uuidArrayFt = uuidType->asStaticArrayType();
 
             if (!uuidArrayFt || uuidArrayFt->length() != 16 ||
                     !uuidArrayFt->elemType().isUnsignedIntType() ||
@@ -278,8 +278,8 @@ FieldResolver::Entry TraceTypeImpl::_getEntryAt(const Scope scope,
 
             entry.type = &arrayType->elemType();
             entry.name = nullptr;
-        } else if (entry.type->isSequenceType()) {
-            auto seqType = entry.type->asSequenceType();
+        } else if (entry.type->isDynamicArrayType()) {
+            auto seqType = entry.type->asDynamicArrayType();
 
             if (*indexToCheckIt != -1ULL) {
                 return FieldResolver::Entry {};
@@ -370,8 +370,8 @@ void TraceTypeImpl::_validateMappedClockTypeName(const DataType *type)
         }
     } else if (type->isArrayType()) {
         this->_validateMappedClockTypeName(&type->asArrayType()->elemType());
-    } else if (type->isSequenceType()) {
-        this->_validateMappedClockTypeName(&type->asSequenceType()->elemType());
+    } else if (type->isDynamicArrayType()) {
+        this->_validateMappedClockTypeName(&type->asDynamicArrayType()->elemType());
     } else if (type->isVariantType()) {
         for (const auto& option : type->asVariantType()->options()) {
             this->_validateMappedClockTypeName(&option->type());
@@ -461,15 +461,15 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
         this->_resolveDynamicTypeInScope(scope, &type->asArrayType()->elemType(),
                                          fieldResolver);
         this->_stackPop();
-    } else if (type->isSequenceType()) {
+    } else if (type->isDynamicArrayType()) {
         const auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                                  type->asSequenceType()->length());
+                                                  type->asDynamicArrayType()->length());
 
         if (!result.type) {
             std::ostringstream ss;
 
-            ss << "Cannot find the length type of sequence type: `" <<
-                  toString(type->asSequenceType()->length()) << "`.";
+            ss << "Cannot find the length type of dynamic array type: `" <<
+                  toString(type->asDynamicArrayType()->length()) << "`.";
 
             throw InvalidMetadata {ss.str()};
         }
@@ -477,15 +477,15 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
         if (!result.type->isUnsignedIntType()) {
             std::ostringstream ss;
 
-            ss << "Sequence type's length type is not an unsigned integer type: `" <<
-                  toString(type->asSequenceType()->length()) << "`.";
+            ss << "Dynamic array type's length type is not an unsigned integer type: `" <<
+                  toString(type->asDynamicArrayType()->length()) << "`.";
 
             throw InvalidMetadata {ss.str()};
         }
 
-        type->asSequenceType()->_lengthType = result.type;
+        type->asDynamicArrayType()->_lengthType = result.type;
         this->_stackPush(_StackFrame {type, -1ULL});
-        this->_resolveDynamicTypeInScope(scope, &type->asSequenceType()->elemType(),
+        this->_resolveDynamicTypeInScope(scope, &type->asDynamicArrayType()->elemType(),
                                          fieldResolver);
         this->_stackPop();
     } else if (type->isVariantType()) {

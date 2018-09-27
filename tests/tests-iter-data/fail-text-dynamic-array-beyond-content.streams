@@ -36,5 +36,5 @@ event {
      8       SCB:5
      8         STB
      8           U:len:14
-    16           TSQB:text
+    16           DTAB:text
     16 Cannot read 112 bits at this point: would move beyond the current packet's content (39 bits remaining).

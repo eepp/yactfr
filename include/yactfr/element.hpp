@@ -32,11 +32,11 @@
 // for SignedEnumType, UnsignedEnumType
 #include "metadata/enum-type.hpp"
 
-// for TextArrayType
-#include "metadata/text-array-type.hpp"
+// for StaticTextArrayType
+#include "metadata/static-text-array-type.hpp"
 
-// for TextSequenceType
-#include "metadata/text-sequence-type.hpp"
+// for DynamicTextArrayType
+#include "metadata/dynamic-text-array-type.hpp"
 
 // for ElementVisitor
 #include "element-visitor.hpp"
@@ -146,29 +146,29 @@ public:
         /// StructEndElement
         STRUCT_END,
 
-        /// ArrayBeginningElement
-        ARRAY_BEGINNING,
+        /// StaticArrayBeginningElement
+        STATIC_ARRAY_BEGINNING,
 
-        /// ArrayEndElement
-        ARRAY_END,
+        /// StaticArrayEndElement
+        STATIC_ARRAY_END,
 
-        /// TextArrayBeginningElement
-        TEXT_ARRAY_BEGINNING,
+        /// StaticTextArrayBeginningElement
+        STATIC_TEXT_ARRAY_BEGINNING,
 
-        /// TextArrayEndElement
-        TEXT_ARRAY_END,
+        /// StaticTextArrayEndElement
+        STATIC_TEXT_ARRAY_END,
 
-        /// SequenceBeginningElement
-        SEQUENCE_BEGINNING,
+        /// DynamicArrayBeginningElement
+        DYNAMIC_ARRAY_BEGINNING,
 
-        /// SequenceEndElement
-        SEQUENCE_END,
+        /// DynamicArrayEndElement
+        DYNAMIC_ARRAY_END,
 
-        /// TextSequenceBeginningElement
-        TEXT_SEQUENCE_BEGINNING,
+        /// DynamicTextArrayBeginningElement
+        DYNAMIC_TEXT_ARRAY_BEGINNING,
 
-        /// TextSequenceEndElement
-        TEXT_SEQUENCE_END,
+        /// DynamicTextArrayEndElement
+        DYNAMIC_TEXT_ARRAY_END,
 
         /// VariantBeginningSignedTagElement
         VARIANT_BEGINNING_SIGNED_TAG,
@@ -1111,9 +1111,10 @@ public:
 
 This element can occur between StringBeginningElement and
 StringEndElement elements for a data stream null-terminated string,
-between TextArrayBeginningElement and TextArrayEndElement for a data
-stream text array, or between TextSequenceBeginningElement and
-TextSequenceEndElement for a data stream text sequence.
+between StaticTextArrayBeginningElement and StaticTextArrayEndElement
+for a data stream static text array, or between
+DynamicTextArrayBeginningElement and DynamicTextArrayEndElement for a
+data stream dynamic text array.
 
 begin() points to the first character of the substring and end() points
 to the character \em after the last character of the substring. Use
@@ -1121,8 +1122,8 @@ size() to compute the substring's length.
 
 Note that the substring can contain <em>zero or more</em> null bytes. If
 there's a null byte between begin() and end(), the string finishes at
-this point, but for a text array/sequence, there can be other non-null
-bytes before end() which are still part of the data stream data.
+this point, but for a text array, there can be other non-null bytes
+before end() which are still part of the data stream.
 */
 class SubstringElement final :
     public Element
@@ -1169,13 +1170,13 @@ private:
 };
 
 /*!
-@brief  Array data beginning element.
+@brief  Static array data beginning element.
 
-This element indicates the beginning of a data stream's array. The next
-elements until the next ArrayEndElement at the same level are all part
-of this array.
+This element indicates the beginning of a data stream's static array.
+The next elements until the next StaticArrayEndElement at the same level
+are all part of this static array.
 */
-class ArrayBeginningElement :
+class StaticArrayBeginningElement :
     public BeginningElement,
     public NamedDataElement
 {
@@ -1183,20 +1184,20 @@ class ArrayBeginningElement :
     friend class internal::VmPos;
 
 protected:
-    ArrayBeginningElement(const Kind kind) :
+    StaticArrayBeginningElement(const Kind kind) :
         BeginningElement {kind}
     {
     }
 
 private:
-    ArrayBeginningElement() :
-        ArrayBeginningElement {Kind::ARRAY_BEGINNING}
+    StaticArrayBeginningElement() :
+        StaticArrayBeginningElement {Kind::STATIC_ARRAY_BEGINNING}
     {
     }
 
 public:
-    /// Array data type.
-    const ArrayType& type() const noexcept
+    /// Static array data type.
+    const StaticArrayType& type() const noexcept
     {
         return *_type;
     }
@@ -1207,33 +1208,30 @@ public:
     }
 
 protected:
-    const ArrayType *_type;
+    const StaticArrayType *_type;
 };
 
 /*!
-@brief  Array data end element.
+@brief  Static array data end element.
 
-This element indicates the end of a data stream's array started with
-the last ArrayBeginningElement element at the same level.
-
-size() returns the size of the whole array data, excluding any preceding
-and following padding bits caused by alignment.
+This element indicates the end of a data stream's static array started with
+the last StaticArrayBeginningElement element at the same level.
 */
-class ArrayEndElement :
+class StaticArrayEndElement :
     public EndElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
-    ArrayEndElement(const Kind kind) :
+    StaticArrayEndElement(const Kind kind) :
         EndElement {kind}
     {
     }
 
 private:
-    ArrayEndElement() :
-        ArrayEndElement {Kind::ARRAY_END}
+    StaticArrayEndElement() :
+        StaticArrayEndElement {Kind::STATIC_ARRAY_END}
     {
     }
 
@@ -1245,29 +1243,30 @@ public:
 };
 
 /*!
-@brief  Text array data beginning element.
+@brief  Static text array data beginning element.
 
-This element indicates the beginning of a data stream's text array. The
-next SubstringElement elements before the next TextArrayEndElement are
-consecutive substrings of this beginning text array.
+This element indicates the beginning of a data stream's static text
+array. The next SubstringElement elements before the next
+StaticTextArrayEndElement are consecutive substrings of this beginning
+static text array.
 */
-class TextArrayBeginningElement final :
-    public ArrayBeginningElement
+class StaticTextArrayBeginningElement final :
+    public StaticArrayBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    TextArrayBeginningElement() :
-        ArrayBeginningElement {Kind::TEXT_ARRAY_BEGINNING}
+    StaticTextArrayBeginningElement() :
+        StaticArrayBeginningElement {Kind::STATIC_TEXT_ARRAY_BEGINNING}
     {
     }
 
 public:
-    /// Text array data type.
-    const TextArrayType& type() const noexcept
+    /// Static text array data type.
+    const StaticTextArrayType& type() const noexcept
     {
-        return *static_cast<const TextArrayType *>(_type);
+        return *static_cast<const StaticTextArrayType *>(_type);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1277,20 +1276,21 @@ public:
 };
 
 /*!
-@brief  Text array data end element.
+@brief  Static text array data end element.
 
-This element indicates the end of a data stream's text array started
-with the last TextArrayBeginningElement element at the same level.
+This element indicates the end of a data stream's static text array
+started with the last StaticTextArrayBeginningElement element at the
+same level.
 */
-class TextArrayEndElement final :
-    public ArrayEndElement
+class StaticTextArrayEndElement final :
+    public StaticArrayEndElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    TextArrayEndElement() :
-        ArrayEndElement {Kind::TEXT_ARRAY_END}
+    StaticTextArrayEndElement() :
+        StaticArrayEndElement {Kind::STATIC_TEXT_ARRAY_END}
     {
     }
 
@@ -1302,13 +1302,13 @@ public:
 };
 
 /*!
-@brief  Sequence data beginning element.
+@brief  Dynamic array data beginning element.
 
-This element indicates the beginning of a data stream's sequence. The
-next elements until the next SequenceEndElement at the same level are
-all part of this sequence.
+This element indicates the beginning of a data stream's dynamic array.
+The next elements until the next DynamicArrayEndElement at the same
+level are all part of this dynamic array.
 */
-class SequenceBeginningElement :
+class DynamicArrayBeginningElement :
     public BeginningElement,
     public NamedDataElement
 {
@@ -1316,25 +1316,25 @@ class SequenceBeginningElement :
     friend class internal::VmPos;
 
 protected:
-    SequenceBeginningElement(const Kind kind) :
+    DynamicArrayBeginningElement(const Kind kind) :
         BeginningElement {kind}
     {
     }
 
 private:
-    SequenceBeginningElement() :
-        SequenceBeginningElement {Kind::SEQUENCE_BEGINNING}
+    DynamicArrayBeginningElement() :
+        DynamicArrayBeginningElement {Kind::DYNAMIC_ARRAY_BEGINNING}
     {
     }
 
 public:
-    /// Sequence data type.
-    const SequenceType& type() const noexcept
+    /// Dynamic array data type.
+    const DynamicArrayType& type() const noexcept
     {
         return *_type;
     }
 
-    /// Sequence length.
+    /// Dynamic array length.
     Size length() const noexcept
     {
         return _length;
@@ -1346,34 +1346,31 @@ public:
     }
 
 protected:
-    const SequenceType *_type;
+    const DynamicArrayType *_type;
     Size _length;
 };
 
 /*!
-@brief  Sequence data end element.
+@brief  Dynamic array data end element.
 
-This element indicates the end of a data stream's sequence started with
-the last SequenceBeginningElement element at the same level.
-
-size() returns the size of the whole sequence data, excluding any preceding
-and following padding bits caused by alignment.
+This element indicates the end of a data stream's dynamic array started
+with the last DynamicArrayBeginningElement element at the same level.
 */
-class SequenceEndElement :
+class DynamicArrayEndElement :
     public EndElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 protected:
-    SequenceEndElement(const Kind kind) :
+    DynamicArrayEndElement(const Kind kind) :
         EndElement {kind}
     {
     }
 
 private:
-    SequenceEndElement() :
-        SequenceEndElement {Kind::SEQUENCE_END}
+    DynamicArrayEndElement() :
+        DynamicArrayEndElement {Kind::DYNAMIC_ARRAY_END}
     {
     }
 
@@ -1385,30 +1382,30 @@ public:
 };
 
 /*!
-@brief  Text sequence data beginning element.
+@brief  Dynamic text array data beginning element.
 
-This element indicates the beginning of a data stream's text sequence.
-The next SubstringElement elements before the next
-TextSequenceEndElement are consecutive substrings of this beginning text
-sequence.
+This element indicates the beginning of a data stream's dynamic text
+array. The next SubstringElement elements before the next
+DynamicTextArrayEndElement are consecutive substrings of this beginning
+dynamic text array.
 */
-class TextSequenceBeginningElement final :
-    public SequenceBeginningElement
+class DynamicTextArrayBeginningElement final :
+    public DynamicArrayBeginningElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    TextSequenceBeginningElement() :
-        SequenceBeginningElement {Kind::TEXT_SEQUENCE_BEGINNING}
+    DynamicTextArrayBeginningElement() :
+        DynamicArrayBeginningElement {Kind::DYNAMIC_TEXT_ARRAY_BEGINNING}
     {
     }
 
 public:
-    /// Text sequence data type.
-    const TextSequenceType& type() const noexcept
+    /// Dynamic text array data type.
+    const DynamicTextArrayType& type() const noexcept
     {
-        return *static_cast<const TextSequenceType *>(_type);
+        return *static_cast<const DynamicTextArrayType *>(_type);
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -1418,20 +1415,21 @@ public:
 };
 
 /*!
-@brief  Text sequence data end element.
+@brief  Dynamic text array data end element.
 
-This element indicates the end of a data stream's text sequence started
-with the last TextSequenceBeginningElement element at the same level.
+This element indicates the end of a data stream's dynamic text array
+started with the last DynamicTextArrayBeginningElement element at the
+same level.
 */
-class TextSequenceEndElement final :
-    public SequenceEndElement
+class DynamicTextArrayEndElement final :
+    public DynamicArrayEndElement
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    TextSequenceEndElement() :
-        SequenceEndElement {Kind::TEXT_SEQUENCE_END}
+    DynamicTextArrayEndElement() :
+        DynamicArrayEndElement {Kind::DYNAMIC_TEXT_ARRAY_END}
     {
     }
 
@@ -1483,9 +1481,6 @@ private:
 
 This element indicates the end of a data stream's structure started with
 the last StructBeginningElement element at the same level.
-
-size() returns the size of the whole structure data, excluding any
-preceding and following padding bits caused by alignment.
 */
 class StructEndElement final :
     public EndElement
@@ -1622,9 +1617,6 @@ private:
 
 This element indicates the end of a data stream's variant started with
 the last VariantBeginningElement element at the same level.
-
-size() returns the size of the whole variant data, excluding any
-preceding and following padding bits caused by alignment.
 */
 class VariantEndElement :
     public EndElement

@@ -32,10 +32,10 @@
 #include "../float-type.hpp"
 #include "../enum-type.hpp"
 #include "../string-type.hpp"
-#include "../array-type.hpp"
-#include "../text-array-type.hpp"
-#include "../sequence-type.hpp"
-#include "../text-sequence-type.hpp"
+#include "../static-array-type.hpp"
+#include "../static-text-array-type.hpp"
+#include "../dynamic-array-type.hpp"
+#include "../dynamic-text-array-type.hpp"
 #include "../struct-type.hpp"
 #include "../struct-type-field.hpp"
 #include "../variant-type.hpp"
@@ -234,11 +234,11 @@ private:
                                          bool expect = true);
 
     /*
-     * Tries to parse a field name followed by zero or more
-     * array/sequence lengths. `fieldName` is set to the parsed field
-     * name. `innerType` is the most nested pseudo data type to wrap. It
-     * is returned as is if there's only a field name not followed by an
-     * opening square bracket.
+     * Tries to parse a field name followed by zero or more array
+     * lengths. `fieldName` is set to the parsed field name. `innerType`
+     * is the most nested pseudo data type to wrap. It is returned as is
+     * if there's only a field name not followed by an opening square
+     * bracket.
      *
      * Examples:
      *
@@ -248,11 +248,11 @@ private:
      *
      *     my_field[event.context.some.location][23][len]
      */
-    PseudoDataType::UP _tryParseFieldNameArraysSequences(std::string& fieldName,
-                                                         PseudoDataType::UP innerType);
+    PseudoDataType::UP _tryParseFieldNameArrays(std::string& fieldName,
+                                                PseudoDataType::UP innerType);
 
     /*
-     * Like _tryParseFieldNameArraysSequences(), but without the field
+     * Like _tryParseFieldNameArrays(), but without the field
      * name part.
      *
      * Examples:
@@ -2823,8 +2823,8 @@ bool TsdlParser<CharIt>::_parseFieldRef(PseudoFieldRef& pseudoFieldRef,
 }
 
 template <typename CharIt>
-PseudoDataType::UP TsdlParser<CharIt>::_tryParseFieldNameArraysSequences(std::string& fieldName,
-                                                                         PseudoDataType::UP innerType)
+PseudoDataType::UP TsdlParser<CharIt>::_tryParseFieldNameArrays(std::string& fieldName,
+                                                                PseudoDataType::UP innerType)
 {
     // parse name
     CharIt begin, end;
@@ -2841,17 +2841,17 @@ template <typename CharIt>
 PseudoDataType::UP TsdlParser<CharIt>::_parseArraySeqLengths(PseudoDataType::UP innerType)
 {
     /*
-     * A temporary array or sequence type length. If `isArrayType` is
-     * true, then use `arrayLength` to build an array type. Otherwise
-     * use `seqLengthFieldRef`.
+     * A temporary array type length. If `isStaticArrayType` is true,
+     * then use `arrayLength` to build a static array type. Otherwise
+     * use `dynArrayLengthFieldRef`.
      */
-    struct PseudoArrayTypeOrSequenceTypeLength {
-        PseudoFieldRef seqLengthFieldRef;
+    struct PseudoArrayTypeLength {
+        PseudoFieldRef dynArrayLengthFieldRef;
         Size arrayLength;
-        bool isArrayType;
+        bool isStaticArrayType;
     };
 
-    std::vector<PseudoArrayTypeOrSequenceTypeLength> lengths;
+    std::vector<PseudoArrayTypeLength> lengths;
 
     while (true) {
         if (!_ss.scanToken("[")) {
@@ -2878,7 +2878,7 @@ PseudoDataType::UP TsdlParser<CharIt>::_parseArraySeqLengths(PseudoDataType::UP 
             try {
                 this->_parseFieldRef(pseudoFieldRef, true);
             } catch (MetadataParseError& error) {
-                error._appendErrorMessage("Expecting valid constant integer (array type) or valid field reference (sequence type):", lengthLocation);
+                error._appendErrorMessage("Expecting valid constant integer (static array type) or valid field reference (dynamic array type):", lengthLocation);
                 throw;
             }
 
@@ -2942,12 +2942,12 @@ PseudoDataType::UP TsdlParser<CharIt>::_parseArraySeqLengths(PseudoDataType::UP 
     }
 
     for (const auto& length : lengths) {
-        if (length.isArrayType) {
-            innerType = std::make_unique<PseudoArrayType>(length.arrayLength,
-                                                          std::move(innerType));
+        if (length.isStaticArrayType) {
+            innerType = std::make_unique<PseudoStaticArrayType>(length.arrayLength,
+                                                                std::move(innerType));
         } else {
-            innerType = std::make_unique<PseudoSequenceType>(length.seqLengthFieldRef,
-                                                             std::move(innerType));
+            innerType = std::make_unique<PseudoDynamicArrayType>(length.dynArrayLengthFieldRef,
+                                                                 std::move(innerType));
         }
     }
 
@@ -3189,7 +3189,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDataTypeOrTypeAlias(PseudoNamedDataTypes&
     if (type) {
         // let's try parsing a field name
         std::string fieldName;
-        auto realType = this->_tryParseFieldNameArraysSequences(fieldName, std::move(type));
+        auto realType = this->_tryParseFieldNameArrays(fieldName, std::move(type));
 
         if (realType) {
             // we have a winner: variant must have a tag by now
@@ -3230,7 +3230,7 @@ bool TsdlParser<CharIt>::_tryParseNamedDataTypeOrTypeAlias(PseudoNamedDataTypes&
     if (type) {
         // let's try parsing a field name
         std::string fieldName;
-        auto realType = this->_tryParseFieldNameArraysSequences(fieldName, std::move(type));
+        auto realType = this->_tryParseFieldNameArrays(fieldName, std::move(type));
 
         if (realType) {
             // we have a winner: variant must have a tag by now
