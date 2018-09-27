@@ -168,7 +168,7 @@ protected:
         }
 
         // restore stuff
-        _curLevel--;
+        --_curLevel;
         _curProc = oldProc;
         _curIter = oldIter;
     }

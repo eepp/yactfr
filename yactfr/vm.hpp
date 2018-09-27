@@ -134,7 +134,7 @@ public:
 
         if (stackTop.it == std::end(*stackTop.proc)) {
             assert(stackTop.remElems > 0);
-            stackTop.remElems--;
+            --stackTop.remElems;
             stackTop.it = std::begin(*stackTop.proc);
         }
     }
@@ -549,7 +549,7 @@ private:
 
             if (stackTop.it == std::end(*stackTop.proc)) {
                 assert(stackTop.remElems > 0);
-                stackTop.remElems--;
+                --stackTop.remElems;
 
                 if (_pos.stackTop().remElems == 0) {
                     _pos.setParentStateAndStackPop();
@@ -720,7 +720,7 @@ private:
 
         this->_execReadStdInt<std::uint64_t, 8, readIntUnsigned8>(instr);
         _pos.uuid.data[16 - _pos.stackTop().remElems] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
-        _pos.stackTop().remElems--;
+        --_pos.stackTop().remElems;
         return true;
     }
 
