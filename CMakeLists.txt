@@ -12,7 +12,16 @@ project (yactfr VERSION 0.1.0)
 set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set (CPACK_SOURCE_GENERATOR TBZ2)
 set (CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${PROJECT_VERSION}")
-set (CPACK_SOURCE_IGNORE_FILES "/build/;/.git/;.gitignore;~$;${CPACK_SOURCE_IGNORE_FILES}")
+set (
+	CPACK_SOURCE_IGNORE_FILES
+	"/build/"
+	"/\\\\.git/"
+	"\\\\.gitignore"
+	"\\\\.travis.yml"
+	".*\\\\.sublime.*"
+	"/.*\\\\.html"
+	"${CPACK_SOURCE_IGNORE_FILES}"
+)
 include (CPack)
 add_custom_target (dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
