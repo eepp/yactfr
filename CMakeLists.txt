@@ -25,6 +25,13 @@ set (
 include (CPack)
 add_custom_target (dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
+# add target for root documents
+add_custom_target (
+	rootdocs COMMAND
+	asciidoctor ${CMAKE_SOURCE_DIR}/README.adoc ${CMAKE_SOURCE_DIR}/HOWITWORKS.adoc
+        -a source-highlighter=coderay -D ${CMAKE_BINARY_DIR}
+)
+
 # configure compiler globally for C++14
 set (CMAKE_CXX_EXTENSIONS OFF)
 set (CMAKE_CXX_STANDARD 14)
