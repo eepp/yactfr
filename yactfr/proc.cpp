@@ -596,7 +596,7 @@ std::string InstrReadSignedInt::_toString(const Size indent) const
 
     ss << this->_commonToString() << std::endl;
     return ss.str();
-};
+}
 
 InstrReadUnsignedInt::InstrReadUnsignedInt(const std::string *fieldName,
                                            const std::string *fieldDisplayName,

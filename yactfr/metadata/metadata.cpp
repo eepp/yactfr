@@ -420,7 +420,7 @@ void MetadataStreamDecoder::_readPacketized()
 
             _stream->ignore(paddingSizeBytes);
 
-            if (static_cast<decltype(paddingSizeBytes)>(_stream->gcount()) != paddingSizeBytes) {
+            if (static_cast<Size>(_stream->gcount()) != paddingSizeBytes) {
                 this->_throwEndsPrematurely(paddingSizeBytes);
             }
 
