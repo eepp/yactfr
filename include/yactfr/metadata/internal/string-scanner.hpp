@@ -586,10 +586,12 @@ bool StringScanner<CharIt>::scanConstInt(ValueT& value)
             if (std::is_signed<ValueT>::value) {
                 if (negate) {
                     if (tmpValue > llMaxAsUll + 1) {
+                        _at = at;
                         return false;
                     }
                 } else {
                     if (tmpValue > llMaxAsUll) {
+                        _at = at;
                         return false;
                     }
                 }
@@ -617,10 +619,12 @@ bool StringScanner<CharIt>::scanConstInt(ValueT& value)
     if (std::is_signed<ValueT>::value) {
         if (negate) {
             if (tmpValue > llMaxAsUll + 1) {
+                _at = at;
                 return false;
             }
         } else {
             if (tmpValue > llMaxAsUll) {
+                _at = at;
                 return false;
             }
         }
