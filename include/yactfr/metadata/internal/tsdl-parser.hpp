@@ -69,7 +69,8 @@ class TsdlParser :
     public TsdlParserBase
 {
     template <typename ParserCharIt>
-    friend TraceType::SP yactfr::traceTypeFromMetadataText(ParserCharIt, ParserCharIt,
+    friend TraceType::SP yactfr::traceTypeFromMetadataText(ParserCharIt,
+                                                           ParserCharIt,
                                                            const boost::optional<boost::uuids::uuid>&);
 
 private:
@@ -113,7 +114,7 @@ private:
 private:
     /*
      * Parses the whole metadata string, creating the resulting trace
-     * type on success.
+     * type on success, throwing an exception otherwise.
      */
     void _parseMetadata();
 

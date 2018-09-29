@@ -1,5 +1,5 @@
 /*
- * CTF data type base.
+ * Internal utilities.
  *
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
