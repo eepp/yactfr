@@ -511,6 +511,9 @@ template <typename CharIt>
 template <typename ValueT>
 bool StringScanner<CharIt>::scanConstInt(ValueT& value)
 {
+    static_assert(std::is_same<ValueT, long long>::value ||
+                  std::is_same<ValueT, unsigned long long>::value,
+                  "`ValueT` is `long long` or `unsigned long long`.");
     this->skipCommentsAndWhitespaces();
 
     const auto at = _at;
