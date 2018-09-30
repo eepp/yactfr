@@ -171,10 +171,10 @@ descriptions easier to read and to allow recursion.
   ) |
   FloatElement |
   (StringBeginningElement SubstringElement * StringEndElement) |
-  (ArrayBeginningElement DATA * ArrayEndElement) |
-  (TextArrayBeginningElement SubstringElement * TextArrayEndElement) |
-  (SequenceBeginningElement DATA * SequenceEndElement) |
-  (TextSequenceBeginningElement SubstringElement * TextSequenceEndElement) |
+  (StaticArrayBeginningElement DATA * StaticArrayEndElement) |
+  (StaticTextArrayBeginningElement SubstringElement * StaticTextArrayEndElement) |
+  (DynamicArrayBeginningElement DATA * DynamicArrayEndElement) |
+  (DynamicTextArrayBeginningElement SubstringElement * DynamicTextArrayEndElement) |
   (StructBeginningElement DATA * StructEndElement) |
   (
     (VariantBeginningSignedTagElement | VariantBeginningUnsignedTagElement)
@@ -214,10 +214,10 @@ descriptions easier to read and to allow recursion.
         (PacketMagicNumberElement | DataStreamIdElement)
       ) |
       (
-        ArrayBeginningElement
+        StaticArrayBeginningElement
         (UnsignedIntElement [ClockValueElement]){16}
         PacketUuidElement
-        ArrayEndElement
+        StaticArrayEndElement
       ) |
       DATA
     ) *
