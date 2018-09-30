@@ -151,12 +151,6 @@ public:
         return this->_isKind(_KIND_DYNAMIC_ARRAY);
     }
 
-    /// \c true if this data type is a text array type.
-    bool isTextArrayType() const noexcept
-    {
-        return this->_isKind(_KIND_STATIC_TEXT_ARRAY);
-    }
-
     /// \c true if this data type is a static text array type.
     bool isStaticTextArrayType() const noexcept
     {

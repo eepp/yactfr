@@ -195,7 +195,8 @@ public:
         static const std::string nameStaticTextArrayType = "Static text array type";
 
         _ss << this->_getIndentStr() <<
-               (type.isTextArrayType() ? nameStaticTextArrayType : nameStaticArrayType) <<
+               (type.isStaticTextArrayType() ? nameStaticTextArrayType :
+                nameStaticArrayType) <<
                " <" << &type <<
                "> (align: " << type.alignment() <<
                ", length: " << type.length() << ")" << std::endl <<
