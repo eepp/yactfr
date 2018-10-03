@@ -442,6 +442,50 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
                                                const DataType *type,
                                                const FieldResolver& fieldResolver)
 {
+    // resolve dynamic array and variant types first
+    if (type->isDynamicArrayType()) {
+        auto dynamicArrayType = type->asDynamicArrayType();
+        const auto result = fieldResolver.resolve(scope, this->_curPos(),
+                                                  dynamicArrayType->length());
+
+        if (!result.type) {
+            std::ostringstream ss;
+
+            ss << "Cannot find the length type of dynamic array type: `" <<
+                  toString(dynamicArrayType->length()) << "`.";
+
+            throw InvalidMetadata {ss.str()};
+        }
+
+        if (!result.type->isUnsignedIntType()) {
+            std::ostringstream ss;
+
+            ss << "Dynamic array type's length type is not an unsigned integer type: `" <<
+                  toString(dynamicArrayType->length()) << "`.";
+
+            throw InvalidMetadata {ss.str()};
+        }
+
+        dynamicArrayType->_lengthType = result.type;
+    } else if (type->isVariantType()) {
+        auto variantType = type->asVariantType();
+        const auto result = fieldResolver.resolve(scope, this->_curPos(),
+                                                  variantType->tag());
+
+        if (!result.type) {
+            std::ostringstream ss;
+
+            ss << "Cannot find the tag type of variant type: `" <<
+                  toString(type->asVariantType()->tag()) << "`.";
+
+            throw InvalidMetadata {ss.str()};
+        }
+
+        this->_validateVariantTypeTagType(type, result.type);
+        variantType->_tagType = result.type;
+    }
+
+    // recurse
     if (type->isStructType()) {
         this->_stackPush(_StackFrame {type, 0});
 
@@ -461,49 +505,9 @@ void TraceTypeImpl::_resolveDynamicTypeInScope(const Scope scope,
         this->_resolveDynamicTypeInScope(scope, &type->asArrayType()->elemType(),
                                          fieldResolver);
         this->_stackPop();
-    } else if (type->isDynamicArrayType()) {
-        const auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                                  type->asDynamicArrayType()->length());
-
-        if (!result.type) {
-            std::ostringstream ss;
-
-            ss << "Cannot find the length type of dynamic array type: `" <<
-                  toString(type->asDynamicArrayType()->length()) << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-
-        if (!result.type->isUnsignedIntType()) {
-            std::ostringstream ss;
-
-            ss << "Dynamic array type's length type is not an unsigned integer type: `" <<
-                  toString(type->asDynamicArrayType()->length()) << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-
-        type->asDynamicArrayType()->_lengthType = result.type;
-        this->_stackPush(_StackFrame {type, -1ULL});
-        this->_resolveDynamicTypeInScope(scope, &type->asDynamicArrayType()->elemType(),
-                                         fieldResolver);
-        this->_stackPop();
     } else if (type->isVariantType()) {
         auto variantType = type->asVariantType();
-        const auto result = fieldResolver.resolve(scope, this->_curPos(),
-                                                  variantType->tag());
 
-        if (!result.type) {
-            std::ostringstream ss;
-
-            ss << "Cannot find the tag type of variant type: `" <<
-                  toString(type->asVariantType()->tag()) << "`.";
-
-            throw InvalidMetadata {ss.str()};
-        }
-
-        this->_validateVariantTypeTagType(type, result.type);
-        variantType->_tagType = result.type;
         this->_stackPush(_StackFrame {type, 0});
 
         for (Index index = 0; index < variantType->options().size(); ++index) {
