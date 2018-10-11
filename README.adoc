@@ -335,12 +335,11 @@ CC=clang CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=release -DOPT_BUILD_DOC=ON
 
 == Run the tests
 
-Once you have built the project in the `build` directory, you can
-run the tests. You need Bash and Python{nbsp}3.
+Once you have <<build,built>> the project in the build directory, you
+can run the tests. You need Bash and Python{nbsp}3.
 
-.Run the yactfr tests
+.Run the yactfr tests (from the build directory):
 ----
-cd build
 make check
 ----
 

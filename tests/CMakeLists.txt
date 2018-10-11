@@ -10,7 +10,7 @@ add_subdirectory (tests-iter-pos)
 add_subdirectory (tests-pkt-seq)
 add_custom_target (
     check
-    COMMAND ./test.bash
+    COMMAND ./test.bash "${CMAKE_BINARY_DIR}"
     DEPENDS
         testers
         tests-iter-data-traces
