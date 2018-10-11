@@ -2244,6 +2244,7 @@ bool TsdlParser<CharIt>::_tryParseStreamBlock()
     pseudoDataStreamType->eventHeaderType = std::move(eventHeaderType);
     pseudoDataStreamType->eventContextType = std::move(eventContextType);
     _pseudoTraceType.dataStreamTypes[id] = std::move(pseudoDataStreamType);
+    _pseudoTraceType.orphanEventRecordTypes[id];
     return true;
 }
 
@@ -2326,7 +2327,7 @@ bool TsdlParser<CharIt>::_tryParseEventBlock()
 
     // default event and stream IDs are 0
     TypeId id = 0;
-    TypeId dataStreamTypeId = 0;
+    boost::optional<TypeId> dataStreamTypeId;
     boost::optional<LogLevel> logLevel = boost::none;
     boost::optional<std::string> modelEmfUri;
     boost::optional<std::string> name;
@@ -2382,51 +2383,39 @@ bool TsdlParser<CharIt>::_tryParseEventBlock()
         }
     }
 
-    // check if the data stream type exists
-    if (!this->_pseudoDataStreamTypeExists(dataStreamTypeId)) {
-        if (_pseudoTraceType.dataStreamTypes.empty() && dataStreamTypeId == 0) {
-            /*
-             * If there are no data stream typees yet and the data stream type
-             * ID is 0, create a data stream type now. This is needed
-             * because an event record type without an explicit
-             * data stream type ID is an implicit 0, and there can
-             * be one nonwritten data stream type which has the ID 0.
-             */
-            _pseudoTraceType.dataStreamTypes[0] = std::make_unique<PseudoDataStreamType>();
-        } else {
-            std::ostringstream ss;
+    // create default data stream type if there's none
+    if (!dataStreamTypeId) {
+        const auto it = _pseudoTraceType.dataStreamTypes.find(0);
 
-            ss << "Event record type refers to a data stream type ID (" <<
-                  dataStreamTypeId << ") that does not exist.";
-            throw MetadataParseError {ss.str(), beginLocation};
+        if (it == std::end(_pseudoTraceType.dataStreamTypes)) {
+            _pseudoTraceType.dataStreamTypes[0] = std::make_unique<PseudoDataStreamType>();
         }
+
+        dataStreamTypeId = 0;
     }
 
-    // get this pseudo data stream type
-    auto& pseudoDataStreamType = _pseudoTraceType.dataStreamTypes[dataStreamTypeId];
+    // get or create pseudo data stream type for orphans
+    auto& dst = _pseudoTraceType.orphanEventRecordTypes[*dataStreamTypeId];
 
     // check if the event record type exists
-    if (pseudoDataStreamType->eventRecordTypes.find(id) !=
-            std::end(pseudoDataStreamType->eventRecordTypes)) {
+    if (dst.find(id) != std::end(dst)) {
         std::ostringstream ss;
 
         ss << "Duplicate `event` block with ID " << id <<
-              " and data stream type ID " << dataStreamTypeId << ".";
+              " and data stream type ID " << *dataStreamTypeId << ".";
         throw MetadataParseError {ss.str(), beginLocation};
     }
 
     // build event record type object
-    auto eventRecordType = std::make_unique<PseudoEventRecordType>();
+    auto& eventRecordType = dst[id].ert;
 
-    eventRecordType->id = id;
-    eventRecordType->name = std::move(name);
-    eventRecordType->logLevel = logLevel;
-    eventRecordType->modelEmfUri = std::move(modelEmfUri);
-    eventRecordType->contextType = std::move(eventContextType);
-    eventRecordType->payloadType = std::move(eventPayloadType);
-
-    // add to pseudo data stream type
-    pseudoDataStreamType->eventRecordTypes[id] = std::move(eventRecordType);
+    eventRecordType.id = id;
+    eventRecordType.name = std::move(name);
+    eventRecordType.logLevel = logLevel;
+    eventRecordType.modelEmfUri = std::move(modelEmfUri);
+    eventRecordType.contextType = std::move(eventContextType);
+    eventRecordType.payloadType = std::move(eventPayloadType);
+    dst[id].location = beginLocation;
     return true;
 }
 

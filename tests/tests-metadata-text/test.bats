@@ -349,6 +349,10 @@ test_metadata_pass() {
   test_metadata_fail event-dup
 }
 
+@test 'event: duplicate with same ID attribute, one after stream block -> fail' {
+  test_metadata_fail event-dup-after-stream
+}
+
 @test 'event: empty (1) -> fail' {
   test_metadata_fail event-empty-1
 }
@@ -1105,13 +1109,16 @@ test_metadata_pass() {
   test_metadata_fail ctf-testsuite-variant-tag-type-string
 }
 
-
 @test 'LTTng-modules 2.7.0 (1300+ event record classes) -> pass' {
   test_metadata_pass lttng-modules-2.7.0
 }
 
 @test 'LTTng-modules 2.9.2 (1300+ event record classes) -> pass' {
   test_metadata_pass lttng-modules-2.9.2
+}
+
+@test 'LTTng-UST 2.11.0-rc1-40-gf82f93a1 (with stream blocks after event blocks) -> pass' {
+  test_metadata_pass lttng-ust-2.11.0-rc1-40-gf82f93a1-stream-after-event
 }
 
 @test 'int: full type -> pass' {
@@ -1228,6 +1235,10 @@ test_metadata_pass() {
 
 @test 'event: model.emf.uri -> pass' {
   test_metadata_pass event-with-model-emf-uri
+}
+
+@test 'stream: stream block after event block -> pass' {
+  test_metadata_pass stream-with-id-after-event
 }
 
 @test 'callsite: full block -> pass' {

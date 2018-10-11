@@ -7,6 +7,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <cassert>
 #include <tuple>
 #include <set>
 
@@ -193,10 +194,36 @@ void TsdlParserBase::_createTraceType()
         throw MetadataParseError {"Missing `trace` block."};
     }
 
+    // validate that all orphan DSTs match the real DSTs
+    for (const auto& idOrphanDstPair : _pseudoTraceType.orphanEventRecordTypes) {
+        if (_pseudoTraceType.dataStreamTypes.find(idOrphanDstPair.first) ==
+                std::end(_pseudoTraceType.dataStreamTypes)) {
+            std::ostringstream ss;
+
+            ss << "Event record type needs a data stream type " <<
+                  "(with ID " << idOrphanDstPair.first << ") which does not "
+                  "exist.";
+
+            assert(!idOrphanDstPair.second.empty());
+
+            const auto& firstErt = std::begin(idOrphanDstPair.second)->second;
+
+            throw MetadataParseError {ss.str(), firstErt.location};
+        }
+    }
+
     DataStreamTypeSet dstSet;
 
     for (auto& idPseudoDstPair : _pseudoTraceType.dataStreamTypes) {
-        auto dst = TsdlParserBase::_dataStreamTypeFromPseudoDataStreamType(*idPseudoDstPair.second);
+        const auto it = _pseudoTraceType.orphanEventRecordTypes.find(idPseudoDstPair.first);
+        const std::unordered_map<TypeId, PseudoOrphanEventRecordType> *erts = nullptr;
+
+        if (it != std::end(_pseudoTraceType.orphanEventRecordTypes)) {
+            erts = &it->second;
+        }
+
+        auto dst = TsdlParserBase::_dataStreamTypeFromPseudoDataStreamType(*idPseudoDstPair.second,
+                                                                           erts);
 
         dstSet.insert(std::move(dst));
     }
@@ -968,14 +995,17 @@ DataType::UP TsdlParserBase::_dataTypeFromPseudoVariantType(const PseudoDataType
     return varType;
 }
 
-std::unique_ptr<const DataStreamType> TsdlParserBase::_dataStreamTypeFromPseudoDataStreamType(const PseudoDataStreamType& pseudoDst)
+std::unique_ptr<const DataStreamType> TsdlParserBase::_dataStreamTypeFromPseudoDataStreamType(const PseudoDataStreamType& pseudoDst,
+                                                                                              const std::unordered_map<TypeId, PseudoOrphanEventRecordType> *erts)
 {
     EventRecordTypeSet ertSet;
 
-    for (const auto& idPseudoErtPair : pseudoDst.eventRecordTypes) {
-        auto ert = TsdlParserBase::_eventRecordTypeFromPseudoEventRecordType(*idPseudoErtPair.second);
+    if (erts) {
+        for (const auto& idPseudoOrphanErtPair : *erts) {
+            auto ert = TsdlParserBase::_eventRecordTypeFromPseudoEventRecordType(idPseudoOrphanErtPair.second.ert);
 
-        ertSet.insert(std::move(ert));
+            ertSet.insert(std::move(ert));
+        }
     }
 
     DataType::UP packetContextType;
@@ -1062,6 +1092,7 @@ void PseudoTraceType::clear()
     env = nullptr;
     clockTypes.clear();
     dataStreamTypes.clear();
+    orphanEventRecordTypes.clear();
 }
 
 } // namespace internal

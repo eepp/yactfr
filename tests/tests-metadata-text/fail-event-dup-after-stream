@@ -6,7 +6,18 @@ trace {
   byte_order = le;
 };
 
+event {
+  id = 24;
+  stream_id = 11;
+
+  fields := struct {
+    string a;
+  };
+};
+
 stream {
+  id = 11;
+
   event.header := struct {
     integer {size = 8;} id;
   };
@@ -14,14 +25,7 @@ stream {
 
 event {
   id = 24;
-
-  fields := struct {
-    string a;
-  };
-};
-
-event {
-  id = 24;
+  stream_id = 11;
 
   fields := struct {
     string a;

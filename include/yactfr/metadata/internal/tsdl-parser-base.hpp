@@ -296,6 +296,12 @@ struct PseudoDataStreamType {
     PseudoDataType::UP eventContextType;
 };
 
+// an orphan pseudo event record type entry
+struct PseudoOrphanEventRecordType {
+    PseudoEventRecordType ert;
+    MetadataTextLocation location;
+};
+
 // a pseudo trace type: a mutable trace type
 struct PseudoTraceType {
     unsigned int majorVersion = 0;
@@ -306,6 +312,9 @@ struct PseudoTraceType {
     std::unique_ptr<const TraceTypeEnv> env;
     ClockTypeSet clockTypes;
     std::unordered_map<TypeId, std::unique_ptr<PseudoDataStreamType>> dataStreamTypes;
+    std::unordered_map<TypeId,
+                       std::unordered_map<TypeId,
+                                          PseudoOrphanEventRecordType>> orphanEventRecordTypes;
 
     void clear();
 };
@@ -699,7 +708,8 @@ protected:
      * Converts a pseudo event record type to a concrete event record
      * type.
      */
-    static std::unique_ptr<const DataStreamType> _dataStreamTypeFromPseudoDataStreamType(const PseudoDataStreamType& pseudoDataStreamType);
+    static std::unique_ptr<const DataStreamType> _dataStreamTypeFromPseudoDataStreamType(const PseudoDataStreamType& pseudoDataStreamType,
+                                                                                         const std::unordered_map<TypeId, PseudoOrphanEventRecordType> *erts);
 
     /*
      * Converts a pseudo event record type to a concrete event record

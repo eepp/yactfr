@@ -30,6 +30,7 @@ namespace yactfr {
 class MetadataTextLocation final
 {
 public:
+    MetadataTextLocation() = default;
     explicit MetadataTextLocation(Index lineNumber,
                                   Index colNumber) noexcept;
 
@@ -60,7 +61,7 @@ public:
     }
 
 private:
-    Index _lineNumber, _colNumber;
+    Index _lineNumber = 0, _colNumber = 0;
 };
 
 } // namespace yactfr
