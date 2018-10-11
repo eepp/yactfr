@@ -21,17 +21,4 @@ test_dirs=(
   tests-pkt-seq
 )
 
-for d in ${test_dirs[@]}; do
-  pushd $d > /dev/null
-  "$bats_bin" $@ .
-  bats_rc=$?
-
-  if [ $bats_rc -ne 0 ]; then
-    # latch error, but continue other tests
-    rc=1
-  fi
-
-  popd > /dev/null
-done
-
-exit $rc
+"$bats_bin" ${test_dirs[*]}

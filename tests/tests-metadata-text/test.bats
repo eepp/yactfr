@@ -10,7 +10,7 @@ metadata_text_tester_bin="$testers_path/metadata-text-tester"
 assert_file_exists() {
   local file="$1"
 
-  if [ ! -f "$file" ]; then
+  if [ ! -f "$BATS_TEST_DIRNAME/$file" ]; then
     echo "FATAL: file \`$1\` does not exist" 1>&2
     false
     return
@@ -21,7 +21,7 @@ test_metadata_fail() {
   local file="fail-$1"
 
   assert_file_exists "$file"
-  run "$metadata_text_tester_bin" "$file"
+  run "$metadata_text_tester_bin" "$BATS_TEST_DIRNAME/$file"
   [ $status -eq 2 ]
 }
 
@@ -29,7 +29,7 @@ test_metadata_pass() {
   local file="pass-$1"
 
   assert_file_exists "$file"
-  run "$metadata_text_tester_bin" "$file"
+  run "$metadata_text_tester_bin" "$BATS_TEST_DIRNAME/$file"
   [ $status -eq 0 ]
 }
 

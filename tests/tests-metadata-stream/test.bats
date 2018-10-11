@@ -8,7 +8,7 @@
 assert_file_exists() {
   local file="$1"
 
-  if [ ! -f "$file" ]; then
+  if [ ! -f "$BATS_TEST_DIRNAME/$file" ]; then
     echo "FATAL: file \`$1\` does not exist" 1>&2
     false
     return
@@ -19,24 +19,26 @@ metadata_stream_tester_bin="$testers_path/metadata-stream-tester"
 
 test_metadata_fail() {
   local file="fail-$1"
+  local abs_file="$BATS_TEST_DIRNAME/$file"
   local offset="$2"
 
   assert_file_exists "$file"
-  run "$metadata_stream_tester_bin" 0 "$file" "$offset"
+  run "$metadata_stream_tester_bin" 0 "$abs_file" "$offset"
   [ $status -eq 2 ]
-  run bash -c "$metadata_stream_tester_bin 1 '' "$offset" < $file"
+  run bash -c "$metadata_stream_tester_bin 1 '' "$offset" < $abs_file"
   [ $status -eq 2 ]
 }
 
 test_metadata_pass() {
   local file="pass-$1"
+  local abs_file="$BATS_TEST_DIRNAME/$file"
   local expected="$2"
 
   assert_file_exists "$file"
-  run "$metadata_stream_tester_bin" 0 "$file"
+  run "$metadata_stream_tester_bin" 0 "$abs_file"
   [ $status -eq 0 ]
   [ "${lines[0]}" = "$expected" ]
-  run bash -c "$metadata_stream_tester_bin 1 '' < $file"
+  run bash -c "$metadata_stream_tester_bin 1 '' < $abs_file"
   [ $status -eq 0 ]
   [ "${lines[0]}" = "$expected" ]
 }
