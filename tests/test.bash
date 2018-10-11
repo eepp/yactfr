@@ -11,7 +11,6 @@ export bats_bin="$(pwd)/bats/bin/bats"
 export build_tests_path="$build_dir/tests"
 export testers_path="$build_tests_path/testers"
 
-rc=0
 test_dirs=(
   tests-metadata-text
   tests-metadata-stream
