@@ -2,14 +2,14 @@
 
 = yactfr
 Philippe Proulx
-27 September 2018
+11 October 2018
 
-image:https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
+image::https://travis-ci.org/eepp/yactfr.svg?branch=master["Build Status", link="https://travis-ci.org/eepp/yactfr"]
 
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
 
-The yactfr library is written in $$C++14$$ and offers a (drum rolls...)
-$$C++14$$ API.
+The yactfr library is written in pass:[C++14] and offers a (drum rolls...)
+pass:[C++14] API.
 
 While the CTF reading libraries that I know about focus on decoding and
 providing you with complete, ordered event record objects, the yactfr
@@ -51,7 +51,7 @@ $ ldd libyactfr.so
         /usr/lib64/ld-linux-x86-64.so.2 (0x00007fb833e51000)
 ----
 
-* Simple, documented $$C++14$$ API with a focus on immutability.
+* Simple, documented pass:[C++14] API with a focus on immutability.
 * Efficient data stream decoding: zero memory allocation, zero smart
   pointer reference count change, zero virtual method call, and zero
   copy during a packet sequence iteration.
@@ -293,7 +293,7 @@ Make sure you have the build time requirements:
 
 * Linux/Unix platform
 * https://cmake.org/[CMake] ≥ 3.1.0
-* $$C++14$$ compiler
+* pass:[C++14] compiler
 * http://www.boost.org/[Boost] ≥ 1.58
 * **If you build the API documentation**: http://www.stack.nl/~dimitri/doxygen/[Doxygen]
 
