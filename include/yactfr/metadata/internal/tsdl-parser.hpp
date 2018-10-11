@@ -1930,6 +1930,14 @@ bool TsdlParser<CharIt>::_tryParseClockBlock()
         throw MetadataParseError {ss.str(), beginLocation};
     }
 
+    // adjust offset (make sure `offsetCycles` is less than `freq`)
+    const auto completeSecondsInOffsetCycles = offsetCycles / freq;
+
+    offsetCycles -= completeSecondsInOffsetCycles * freq;
+
+    // TODO: throw if this would cause a `long long` overflow
+    offsetSeconds += completeSecondsInOffsetCycles;
+
     auto clockType = std::make_unique<const ClockType>(name, freq, description,
                                                        uuid, precision,
                                                        ClockTypeOffset {offsetSeconds, offsetCycles},

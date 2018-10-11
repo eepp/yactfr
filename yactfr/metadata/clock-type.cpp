@@ -41,14 +41,17 @@ ClockType::ClockType(const std::string& name,
     _isAbsolute {isAbsolute}
 {
     if (name.empty()) {
-        throw InvalidMetadata {
-            "Clock type's name is empty."
-        };
+        throw InvalidMetadata {"Clock type's name is empty."};
     }
 
     if (freq == 0) {
+        throw InvalidMetadata {"Clock type's frequency is 0 Hz."};
+    }
+
+    if (offset.cycles() >= freq) {
         throw InvalidMetadata {
-            "Clock type's frequency is 0 Hz."
+            "Clock type's offset's cycle part is greater than or equal to "
+            "clock type's frequency."
         };
     }
 }

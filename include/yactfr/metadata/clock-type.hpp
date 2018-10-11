@@ -126,6 +126,8 @@ public:
                             clocks of which the origin is
                             1970-01-01T00:00:00Z.
 
+    \p offset.cycles() must be less than \p frequency.
+
     @throws InvalidMetadata The clock type is invalid.
     */
     explicit ClockType(const std::string& name,
