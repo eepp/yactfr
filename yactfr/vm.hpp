@@ -693,6 +693,9 @@ private:
             }
         }
 
+        // align now so that the iterator's offset is after any padding
+        this->_alignCursor(_pos.curDstPacketProc->eventRecordAlignment());
+
         this->_updateIterCurOffset(_pos.elems.eventRecordBeginning);
         _pos.loadNewProc(_pos.curDstPacketProc->eventRecordPreambleProc());
         _pos.setState(VmState::EXEC_INSTR);

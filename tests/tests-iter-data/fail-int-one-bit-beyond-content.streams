@@ -41,8 +41,8 @@ event {
     41         STE
     41       SCE
     41     ERE
-    41     ERB
-    41       ERT:0:test
+    48     ERB
+    48       ERT:0:test
     48       SCB:5
     48         STB
     48           U:yy:4277009102

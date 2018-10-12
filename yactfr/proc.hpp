@@ -1987,6 +1987,7 @@ public:
     std::string toString(Size indent) const;
     InstrLocation findInstr(const FieldRef& fieldRef);
     void buildRawProcFromShared();
+    void setEventRecordAlignment();
 
     Proc& packetPreambleProc() noexcept
     {
@@ -2029,10 +2030,16 @@ public:
         return *_dataStreamType;
     }
 
+    unsigned int eventRecordAlignment() const noexcept
+    {
+        return _erAlignment;
+    }
+
 private:
     const DataStreamType * const _dataStreamType;
     Proc _packetPreambleProc;
     Proc _eventRecordPreambleProc;
+    unsigned int _erAlignment = 1;
 
     /*
      * We have both a vector and a map here to store event record type
@@ -2088,7 +2095,6 @@ public:
     {
         return _dataStreamTypePacketProcs;
     }
-
 
     Size dataStreamTypePacketProcsCount() const noexcept
     {

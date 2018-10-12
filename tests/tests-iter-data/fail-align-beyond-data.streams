@@ -27,8 +27,8 @@ event {
     40         STE
     40       SCE
     40     ERE
-    40     ERB
-    40       ERT:0:test
+    64     ERB
+    64       ERT:0:test
     64       SCB:5
     64         STB
     64           U:xx:51

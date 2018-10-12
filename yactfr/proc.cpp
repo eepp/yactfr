@@ -1405,8 +1405,8 @@ std::string EventRecordTypeProc::toString(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << utils::indent(indent) << _strTopName("event record type proc") << " " <<
-          _strProp("event-record-type-id") << _eventRecordType->id();
+    ss << utils::indent(indent) << _strTopName("event record type proc") <<
+          " " << _strProp("event-record-type-id") << _eventRecordType->id();
 
     if (_eventRecordType->name()) {
           ss << " " << _strProp("event-record-type-name") << "`" <<
@@ -1532,9 +1532,9 @@ std::string DataStreamTypePacketProc::toString(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << utils::indent(indent) << _strTopName("data stream type packet proc") << " " <<
-          _strProp("data-stream-type-id") <<
-          _dataStreamType->id() << std::endl;
+    ss << utils::indent(indent) << _strTopName("data stream type packet proc") <<
+          " " << _strProp("data-stream-type-id") << _dataStreamType->id() << std::endl <<
+          " " << _strProp("er-alignment") << _erAlignment;
     ss << utils::indent(indent + 1) << "<packet preamble procedure>" << std::endl;
     ss << _packetPreambleProc.toString(indent + 2);
     ss << utils::indent(indent + 1) << "<event record preamble procedure>" << std::endl;
@@ -1634,6 +1634,29 @@ const DataStreamTypePacketProc *PacketProc::singleDataStreamTypePacketProc() con
     }
 
     return dataStreamTypePacketProcIt->second.get();
+}
+
+void DataStreamTypePacketProc::setEventRecordAlignment()
+{
+    assert(_dataStreamType);
+
+    if (_dataStreamType->eventRecordHeaderType()) {
+        _erAlignment = _dataStreamType->eventRecordHeaderType()->alignment();
+    } else if (_dataStreamType->eventRecordFirstContextType()) {
+        _erAlignment = _dataStreamType->eventRecordFirstContextType()->alignment();
+    } else {
+        assert(_dataStreamType->eventRecordTypes().size() <= 1);
+
+        if (!_dataStreamType->eventRecordTypes().empty()) {
+            auto& ert = **std::begin(_dataStreamType->eventRecordTypes());
+
+            if (ert.secondContextType()) {
+                _erAlignment = ert.secondContextType()->alignment();
+            } else if (ert.payloadType()) {
+                _erAlignment = ert.payloadType()->alignment();
+            }
+        }
+    }
 }
 
 std::string PacketProc::toString(const Size indent) const

@@ -32,8 +32,8 @@ event {
    153         STE
    153       SCE
    153     ERE
-   153     ERB
-   153       ERT:0:test
+   160     ERB
+   160       ERT:0:test
    160       SCB:5
    160         STB
    160           STRB:salut
@@ -44,8 +44,8 @@ event {
    265         STE
    265       SCE
    265     ERE
-   265     ERB
-   265       ERT:0:test
+   272     ERB
+   272       ERT:0:test
    272       SCB:5
    272         STB
    272           STRB:salut

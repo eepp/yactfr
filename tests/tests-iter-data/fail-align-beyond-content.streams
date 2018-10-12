@@ -32,8 +32,8 @@ event {
      8         EPCS:80
      8       STE
      8     SCE
-     8     ERB
-     8       ERT:0:test
+    32     ERB
+    32       ERT:0:test
     32       SCB:5
     32         STB
     32           U:xx:51
@@ -41,6 +41,4 @@ event {
     72         STE
     72       SCE
     72     ERE
-    72     ERB
-    72       ERT:0:test
     72 Cannot read 24 bits at this point: would move beyond the current packet's content (8 bits remaining).

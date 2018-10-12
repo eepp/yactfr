@@ -580,6 +580,10 @@ PacketProcBuilder::PacketProcBuilder(const TraceType& traceType) :
 {
     this->_buildPacketProc();
     _packetProc->buildRawProcFromShared();
+
+    for (auto& idDstPacketProcPair : _packetProc->dataStreamTypePacketProcs()) {
+        idDstPacketProcPair.second->setEventRecordAlignment();
+    }
 }
 
 void PacketProcBuilder::_buildPacketProc()
