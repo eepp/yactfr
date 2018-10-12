@@ -1,6 +1,6 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "@PROJECT_NAME@"
-PROJECT_NUMBER         = @PROJECT_VERSION@
+PROJECT_NUMBER         = "@DOC_VERSION@"
 PROJECT_BRIEF          = "yet another CTF reader"
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = output

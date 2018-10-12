@@ -37,6 +37,16 @@ set (CMAKE_CXX_EXTENSIONS OFF)
 set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# current Git hash
+if (EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    execute_process (
+        COMMAND git log -1 --format=%h
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endif()
+
 # yacftr library
 add_subdirectory (include)
 add_subdirectory (yactfr)

@@ -12,6 +12,13 @@ endif ()
 
 message (STATUS "API documentation will be built")
 file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/doc/api)
+
+if (GIT_COMMIT_HASH)
+    set (DOC_VERSION "${PROJECT_VERSION} (${GIT_COMMIT_HASH})")
+else ()
+    set (DOC_VERSION "${PROJECT_VERSION}")
+endif ()
+
 configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/api/Doxyfile.in
     ${CMAKE_BINARY_DIR}/doc/api/Doxyfile
