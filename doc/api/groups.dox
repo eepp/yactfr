@@ -260,6 +260,99 @@ The whole packet sequence is just a sequence of zero or more packets:
 <pre>
 PACKET *
 </pre>
+
+<h3>Padding exclusion</h3>
+
+yactfr's purpose is to extract \em data from data stream files.
+Considering this, a packet sequence iterator does not provide padding
+data. In other words, padding is always skipped so that the following
+element is aligned according to its metadata.
+
+The guarantees of PacketSequenceIterator::offset() are as follows,
+when the iterator's current element is:
+
+<dl>
+  <dt>PacketBeginningElement</dt>
+  <dd>
+    Offset is the beginning of a packet, excluding any preceding padding
+    after the preceding packet's content.
+  </dd>
+
+  <dt>PacketEndElement</dt>
+  <dd>
+    Offset is the end of the packet, that is, after any padding after
+    its content (the difference between this element's offset and the
+    offset at the preceding PacketContentEndElement). It's the same as
+    it will be at the next PacketBeginningElement.
+  </dd>
+
+  <dt>PacketContentBeginningElement</dt>
+  <dd>
+    Offset is the same as it was at the last PacketBeginningElement.
+  </dd>
+
+  <dt>PacketContentEndElement</dt>
+  <dd>
+    Offset is the same as it was at the last ScopeEndElement.
+  </dd>
+
+  <dt>EventRecordBeginningElement</dt>
+  <dd>
+    Offset is the same as it will be at the next ScopeBeginningElement.
+  </dd>
+
+  <dt>EventRecordEndElement</dt>
+  <dd>
+    Offset is the same as it was at the last ScopeEndElement.
+  </dd>
+
+  <dt>ScopeBeginningElement</dt>
+  <dd>
+    Offset is the same as it will be at the next StructBeginningElement.
+  </dd>
+
+  <dt>ScopeEndElement</dt>
+  <dd>
+    Offset is the same as it was at the last StructEndElement.
+  </dd>
+
+  <dt>StringBeginningElement</dt>
+  <dt>StructBeginningElement</dt>
+  <dt>StaticArrayBeginningElement</dt>
+  <dt>StaticTextArrayBeginningElement</dt>
+  <dt>DynamicArrayBeginningElement</dt>
+  <dt>DynamicTextArrayBeginningElement</dt>
+  <dt>VariantBeginningSignedTagElement</dt>
+  <dt>VariantBeginningUnsignedTagElement</dt>
+  <dd>
+    Offset is the beginning of the container, that is, it is aligned
+    according to the container type's alignment (with relation to the
+    beginning of the packet).
+  </dd>
+
+  <dt>StringEndElement</dt>
+  <dt>StructEndElement</dt>
+  <dt>StaticArrayEndElement</dt>
+  <dt>StaticTextArrayEndElement</dt>
+  <dt>DynamicArrayEndElement</dt>
+  <dt>DynamicTextArrayEndElement</dt>
+  <dt>VariantEndElement</dt>
+  <dd>
+    If the last element was a bit array (SignedIntElement,
+    UnsignedIntElement, FloatElement, SignedEnumElement,
+    UnsignedEnumElement) or a SubstringElement, offset is the last
+    element's offset plus its size. If it was a container end element,
+    offset is the same as it was at the last element.
+  </dd>
+</dl>
+
+You can obtain the offset and size of a padding region by considering
+the previous element's kind, offset, and size. For example, if a given
+FloatElement is at offset 64 and its size is 32&nbsp;bits, and the next
+element's offset is 128, then there are 64&nbsp;bits of padding between
+offsets 64 and 128. As such, if the offset of a PacketContentEndElement
+is 8387154 and the offset of the following PacketEndElement is 8388608,
+then there's padding between those two offsets.
 */
 
 } // namespace yactfr
