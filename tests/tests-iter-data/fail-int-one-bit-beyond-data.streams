@@ -34,7 +34,7 @@ event {
    153     ERE
    153     ERB
    153       ERT:0:test
-   153       SCB:5
+   160       SCB:5
    160         STB
    160           STRB:salut
    160             SUB:9:tomatoes
@@ -46,7 +46,7 @@ event {
    265     ERE
    265     ERB
    265       ERT:0:test
-   265       SCB:5
+   272       SCB:5
    272         STB
    272           STRB:salut
    272             SUB:6:madly

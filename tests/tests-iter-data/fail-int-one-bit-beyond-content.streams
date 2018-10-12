@@ -43,7 +43,7 @@ event {
     41     ERE
     41     ERB
     41       ERT:0:test
-    41       SCB:5
+    48       SCB:5
     48         STB
     48           U:yy:4277009102
-    80 Cannot request 1 bits at this point: would move beyond the current packet's content (0 bits remaining).
+    80 Cannot read 1 bits at this point: would move beyond the current packet's content (0 bits remaining).

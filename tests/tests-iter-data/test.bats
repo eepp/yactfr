@@ -70,7 +70,7 @@ test_iter_data() {
   test_iter_data fail-int-one-bit-beyond-content
 }
 
-@test '1-bit integer beyond content -> fail' {
+@test '1-bit integer beyond data -> fail' {
   test_iter_data fail-int-one-bit-beyond-data
 }
 

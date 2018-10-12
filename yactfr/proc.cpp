@@ -1014,8 +1014,10 @@ static const char *scopeToString(const Scope scope)
     }
 }
 
-InstrBeginReadScope::InstrBeginReadScope(const Scope scope) :
-    _scope {scope}
+InstrBeginReadScope::InstrBeginReadScope(const Scope scope,
+                                         const unsigned int alignment) :
+    _scope {scope},
+    _alignment {alignment}
 {
     this->_setKind(Kind::BEGIN_READ_SCOPE);
 }
@@ -1024,7 +1026,8 @@ std::string InstrBeginReadScope::_toString(const Size indent) const
 {
     std::ostringstream ss;
 
-    ss << " " << _strProp("scope") << scopeToString(_scope) << std::endl;
+    ss << " " << _strProp("scope") << scopeToString(_scope) <<
+          " " << _strProp("alignment") << _alignment << std::endl;
     ss << _proc.toString(indent + 1);
     return ss.str();
 }

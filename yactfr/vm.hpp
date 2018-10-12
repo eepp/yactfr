@@ -856,12 +856,10 @@ private:
         _iter->_mark = 0;
     }
 
-    void _alignCursor(const Instr& instr)
+    void _alignCursor(const Size alignment)
     {
-        auto& instrReadData = static_cast<const InstrReadData&>(instr);
         const auto newCursorOffsetBits = (_pos.cursorOffsetInCurPacketBits +
-                                          instrReadData.alignment() - 1) &
-                                         -instrReadData.alignment();
+                                          alignment - 1) & -alignment;
         const auto bitsToSkip = newCursorOffsetBits -
                                 _pos.cursorOffsetInCurPacketBits;
 
@@ -881,6 +879,11 @@ private:
         _pos.postSkipBitsState = _pos.state;
         _pos.state = VmState::CONTINUE_SKIP_CONTENT_PADDING_BITS;
         this->_continueSkipPaddingBits(true);
+    }
+
+    void _alignCursor(const Instr& instr)
+    {
+        this->_alignCursor(static_cast<const InstrReadData&>(instr).alignment());
     }
 
     void _continueSkipPaddingBits(const bool contentBits)

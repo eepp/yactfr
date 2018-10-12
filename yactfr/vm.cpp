@@ -627,6 +627,9 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
 {
     auto& instrBeginReadScope = static_cast<const InstrBeginReadScope&>(instr);
 
+    // align now so that the iterator's offset is after any padding
+    this->_alignCursor(instrBeginReadScope.alignment());
+
     _pos.elems.scopeBeginning._scope = instrBeginReadScope.scope();
     this->_updateIterCurOffset(_pos.elems.scopeBeginning);
     _pos.gotoNextInstr();

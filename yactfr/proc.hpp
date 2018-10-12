@@ -1113,7 +1113,7 @@ class InstrBeginReadScope :
     public Instr
 {
 public:
-    explicit InstrBeginReadScope(Scope scope);
+    explicit InstrBeginReadScope(Scope scope, unsigned int alignment);
     void buildRawProcFromShared() override;
     InstrLocation findInstr(const FieldRef& fieldRef);
 
@@ -1137,11 +1137,17 @@ public:
         return _proc;
     }
 
+    unsigned int alignment() const noexcept
+    {
+        return _alignment;
+    }
+
 private:
     std::string _toString(Size indent = 0) const override;
 
 private:
     const Scope _scope;
+    const unsigned int _alignment = 1;
     Proc _proc;
 };
 

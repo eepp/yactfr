@@ -1261,7 +1261,8 @@ void PacketProcBuilder::_buildInstrReadScope(const Scope scope,
         return;
     }
 
-    auto instrReadScope = std::make_shared<InstrBeginReadScope>(scope);
+    auto instrReadScope = std::make_shared<InstrBeginReadScope>(scope,
+                                                                ft->alignment());
 
     this->_buildInstrRead(nullptr, nullptr, ft, instrReadScope->proc());
     instrReadScope->proc().pushBack(std::make_shared<InstrEndReadScope>(scope));
