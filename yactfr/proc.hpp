@@ -749,9 +749,9 @@ protected:
     std::string _commonToString() const;
 
 private:
-    const std::string *_fieldName;
-    const std::string *_fieldDisplayName;
-    const DataType *_type;
+    const std::string * const _fieldName;
+    const std::string * const _fieldDisplayName;
+    const DataType * const _type;
     const unsigned int _alignment;
 };
 
@@ -819,7 +819,7 @@ private:
     std::string _toString(Size indent = 0) const override;
 
 private:
-    const ClockType *_clockType;
+    const ClockType * const _clockType;
     const Index _index;
 };
 
@@ -1307,7 +1307,7 @@ private:
     std::string _toString(Size indent = 0) const override;
 
 private:
-    Index _lengthPos = Index {-1ULL};
+    Index _lengthPos = -1ULL;
 };
 
 // "Begin reading dynamic text array" procedure instruction.
@@ -1394,7 +1394,7 @@ private:
 
 private:
     Options _options;
-    Index _tagPos = Index {-1ULL};
+    Index _tagPos = -1ULL;
 };
 
 /*
@@ -1411,11 +1411,8 @@ public:
     using Value = ValueT;
 
 public:
-    explicit InstrReadVariantRange() :
-        _lower {0},
-        _upper {0}
-    {
-    }
+    InstrReadVariantRange() = default;
+    InstrReadVariantRange(const InstrReadVariantRange<ValueT>& range) = default;
 
     explicit InstrReadVariantRange(const ValueT lower, const ValueT upper,
                                    const Proc& proc) :
@@ -1430,20 +1427,7 @@ public:
         _proc.buildRawProcFromShared();
     }
 
-    InstrReadVariantRange(const InstrReadVariantRange<ValueT>& range) noexcept :
-        _lower {range._lower},
-        _upper {range._upper},
-        _proc {range._proc}
-    {
-    }
-
-    InstrReadVariantRange<ValueT>& operator=(const InstrReadVariantRange<ValueT>& range) noexcept
-    {
-        _lower = range._lower;
-        _upper = range._upper;
-        _proc = range._proc;
-        return *this;
-    }
+    InstrReadVariantRange<ValueT>& operator=(const InstrReadVariantRange<ValueT>& range) = default;
 
     bool contains(const ValueT value) const noexcept
     {
@@ -1505,8 +1489,8 @@ public:
     }
 
 private:
-    ValueT _lower,
-           _upper;
+    ValueT _lower = 0,
+           _upper = 0;
 
     /*
      * Contained pointers are not owned by this object: they are owned
@@ -1838,7 +1822,7 @@ private:
     std::string _toString(Size indent = 0) const override;
 
 private:
-    const ClockType *_clockType;
+    const ClockType * const _clockType;
     const Index _index;
     const Size _size;
 };
@@ -1982,7 +1966,7 @@ public:
     }
 
 private:
-    const EventRecordType *_eventRecordType;
+    const EventRecordType * const _eventRecordType;
     Proc _proc;
 };
 
@@ -2046,7 +2030,7 @@ public:
     }
 
 private:
-    const DataStreamType *_dataStreamType;
+    const DataStreamType * const _dataStreamType;
     Proc _packetPreambleProc;
     Proc _eventRecordPreambleProc;
 
@@ -2144,7 +2128,7 @@ public:
     }
 
 private:
-    const TraceType *_traceType;
+    const TraceType * const _traceType;
     DataStreamTypePacketProcs _dataStreamTypePacketProcs;
     std::vector<const ClockType *> _indexedClockTypes;
     Size _savedValuesCounts;
