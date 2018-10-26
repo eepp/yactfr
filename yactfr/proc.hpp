@@ -408,6 +408,7 @@ struct InstrLocation
 class Instr
 {
 public:
+    // Kind of instruction (opcode).
     enum class Kind
     {
         UNSET,
