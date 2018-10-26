@@ -296,10 +296,10 @@ public:
 class Proc final
 {
 public:
-    using RawProc = std::vector<const Instr*>;
-    using SharedProc = std::list<std::shared_ptr<Instr>>;
-    using RawIterator = RawProc::const_iterator;
-    using SharedIterator = SharedProc::iterator;
+    using Raw = std::vector<const Instr *>;
+    using Shared = std::list<std::shared_ptr<Instr>>;
+    using RawIterator = Raw::const_iterator;
+    using SharedIterator = Shared::iterator;
 
 public:
     void buildRawProcFromShared();
@@ -317,7 +317,7 @@ public:
         return _sharedProc;
     }
 
-    const std::vector<const Instr*>& rawProc() const noexcept
+    const std::vector<const Instr *>& rawProc() const noexcept
     {
         return _rawProc;
     }
@@ -333,8 +333,8 @@ public:
     }
 
 private:
-    std::vector<const Instr*> _rawProc;
-    std::list<std::shared_ptr<Instr>> _sharedProc;
+    Raw _rawProc;
+    Shared _sharedProc;
 };
 
 static inline std::string _strName(const char *name)
@@ -400,8 +400,8 @@ static inline std::string _strScopeName(const char *name)
 // A pair of procedure and instruction iterator.
 struct InstrLocation
 {
-    Proc::SharedProc *proc = nullptr;
-    Proc::SharedProc::iterator it;
+    Proc::Shared *proc = nullptr;
+    Proc::Shared::iterator it;
 };
 
 // Procedure instruction abstract class.

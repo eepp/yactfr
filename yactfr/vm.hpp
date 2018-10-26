@@ -65,7 +65,7 @@ struct VmStackFrame final
     }
 
     // base procedure (container of `it` below)
-    const Proc::RawProc *proc;
+    const Proc::Raw *proc;
 
     // _next_ instruction to execute (part of `*proc` above)
     Proc::RawIterator it;
