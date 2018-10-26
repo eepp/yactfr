@@ -715,7 +715,7 @@ class InstrReadData :
 {
 public:
     /*
-     * `fieldName`, `fieldDispName`, and `type` point to members of
+     * `fieldName`, `fieldDisplayName`, and `type` point to members of
      * their containing named data type object (part of the trace type
      * hierarchy). `fieldName` and `fieldDisplayName` can be null if
      * this is the scope's root read instruction.
