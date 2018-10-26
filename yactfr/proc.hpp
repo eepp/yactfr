@@ -1,11 +1,9 @@
 /*
  * Procedure and instructions.
  *
- * Here are the possible instructions for the yactfr abstract VM. It's a
- * very specialized, not-general-purpose-at-all VM, but it's still a VM.
- * No bytecode is involved here: the VM deals with a sequence of
- * procedure instruction objects, some of them also containing a
- * subprocedure, and so on.
+ * Here are the possible instructions for the yactfr VM. No bytecode is
+ * involved here: the VM deals with a sequence of procedure instruction
+ * objects, some of them also containing a subprocedure, and so on.
  *
  * Some definitions:
  *
