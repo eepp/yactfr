@@ -317,8 +317,9 @@ documentation build (requires Doxygen). The documentation is available
 in `_BUILD_/doc/api/output/html`, where `_BUILD_` is your build
 directory.
 
-Specify `-DCMAKE_INSTALL_PREFIX=PREFIX` to `cmake` to install yactfr to
-the `PREFIX` directory instead of the default `/usr/local` directory.
+Specify `-DCMAKE_INSTALL_PREFIX=_PREFIX_` to `cmake` to install yactfr
+to the `_PREFIX_` directory instead of the default `/usr/local`
+directory.
 
 For example, this is how I run `cmake` for development:
 
