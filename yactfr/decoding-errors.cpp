@@ -132,9 +132,10 @@ CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketCo
         [](const auto size, const auto remainingSize) {
             std::ostringstream ss;
 
-            ss << "Cannot read " << size << " bits at this point: would " <<
-                  "move beyond the current packet's content (" <<
-                  remainingSize << " bits remaining).";
+            ss << "Cannot read " << size << " bit" << (size == 1 ? "" : "s") <<
+                  " at this point: would move beyond the current packet's "
+                  "content (" << remainingSize <<
+                  " bit" << (remainingSize == 1 ? "" : "s") << " remaining).";
             return ss.str();
         }(size, remainingSize),
         offset
@@ -148,7 +149,8 @@ PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index off
         [](const auto size) {
             std::ostringstream ss;
 
-            ss << "Cannot request " << size << " bits at this point: "
+            ss << "Cannot request " << size <<
+                  " bit" << (size == 1 ? "" : "s") << " at this point: "
                   "reaching end of data source.";
             return ss.str();
         }(size),
