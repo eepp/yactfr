@@ -52,4 +52,4 @@ event {
    272             SUB:6:madly
    320           STRE
    320           U:meow:4277009102
-   352 Cannot request 1 bits at this point: reaching end of data source.
+   352 Cannot request 1 bit at this point: reaching end of data source.

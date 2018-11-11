@@ -46,4 +46,4 @@ event {
     48       SCB:5
     48         STB
     48           U:yy:4277009102
-    80 Cannot read 1 bits at this point: would move beyond the current packet's content (0 bits remaining).
+    80 Cannot read 1 bit at this point: would move beyond the current packet's content (0 bits remaining).

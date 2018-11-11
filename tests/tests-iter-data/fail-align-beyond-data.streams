@@ -32,4 +32,4 @@ event {
     64       SCB:5
     64         STB
     64           U:xx:51
-    88 Cannot request 1 bits at this point: reaching end of data source.
+    88 Cannot request 1 bit at this point: reaching end of data source.
