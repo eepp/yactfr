@@ -64,14 +64,17 @@ add_library (
     utils.cpp
     vm.cpp
 )
-target_link_libraries (yactfr Boost::boost)
 set_target_properties (
     yactfr
     PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
-target_include_directories (yactfr PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories (
+    yactfr PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${Boost_INCLUDE_DIRS}
+)
 
 # configure logging
 option (
