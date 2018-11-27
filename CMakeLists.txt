@@ -47,6 +47,9 @@ if (EXISTS "${CMAKE_SOURCE_DIR}/.git")
     )
 endif()
 
+# check for Boost (common to the library and to tests)
+find_package (Boost 1.58 REQUIRED)
+
 # yacftr library
 add_subdirectory (include)
 add_subdirectory (yactfr)

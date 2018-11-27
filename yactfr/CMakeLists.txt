@@ -8,9 +8,6 @@ if (NOT UNIX)
     message (FATAL_ERROR "yactfr library needs a Unix environment")
 endif ()
 
-# check for Boost
-find_package (Boost 1.58 REQUIRED)
-
 # yactfr library
 add_library (
     yactfr SHARED
