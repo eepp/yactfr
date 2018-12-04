@@ -17,7 +17,7 @@ test_dirs=(
   tests-iter-data
   tests-iter
   tests-iter-pos
-  tests-pkt-seq
+  tests-elem-seq
 )
 
 "$bats_bin" ${test_dirs[*]}

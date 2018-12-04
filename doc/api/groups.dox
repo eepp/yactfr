@@ -9,8 +9,8 @@ to <a href="http://diamon.org/ctf/">CTF</a> metadata.
 
 You can use the public constructors of the various classes to build
 types and eventually get a complete \link TraceType trace
-type\endlink which you can then use to build a
-\link PacketSequence packet sequence\endlink. However, it should
+type\endlink which you can then use to build an
+\link ElementSequence element sequence\endlink. However, it should
 be much more convenient to use traceTypeFromMetadataText() to
 build a trace type from a TSDL document.
 
@@ -70,17 +70,17 @@ auto myIntType = std::make_unique<const SignedIntType>(
 @endcode
 
 
-@defgroup packet_seq Packet sequence
-@brief	Packet sequence API.
+@defgroup element_seq Element sequence
+@brief	Element sequence API.
 
-A \link PacketSequence packet sequence\endlink represents a
+An \link ElementSequence element sequence\endlink represents a
 sequence of zero or more <a href="http://diamon.org/ctf/">CTF</a> binary
-packets. You can iterate the individual elements of a packet sequence
-thanks to a \link PacketSequenceIterator packet sequence
-iterator\endlink, created from a packet sequence.
+packets. You can iterate the individual elements of an element sequence
+thanks to an \link ElementSequenceIterator element sequence
+iterator\endlink, created from an element sequence.
 
-A packet sequence needs two things on \link
-PacketSequence::PacketSequence() %construction\endlink:
+An element sequence needs two things on \link
+ElementSequence::ElementSequence() %construction\endlink:
 a \link TraceType trace type\endlink and a
 \link DataSourceFactory data source factory\endlink.
 
@@ -88,32 +88,32 @@ You can use traceTypeFromMetadataText() to build a trace type
 from a TSDL document.
 
 A data source factory is a factory of \link DataSource data
-sources\endlink. Each \link PacketSequenceIterator packet
+sources\endlink. Each \link ElementSequenceIterator element
 sequence iterator\endlink creates its own data source from this shared
 factory. For example, the project provides the
 MemoryMappedFileViewFactory data source factory. This one opens
 a file and keeps its file descriptor while its created data sources,
 memory-mapped file views, create their own memory maps on this shared
-file descriptor. This allows a packet sequence iterator to be copied and
+file descriptor. This allows an element sequence iterator to be copied and
 moved naturally (using constructors and assignment operators) without
 using more file descriptors and without having to provide a new data
 source manually.
 
-A packet sequence iterator is an <a
+An element sequence iterator is an <a
 href="http://en.cppreference.com/w/cpp/concept/InputIterator">input
 iterator</a> with Element as its value type. It is safe to keep
 a \em copy of an element, but \em not a reference, when you increment
 the iterator.
 
-Each packet sequence iterator element is a piece of information located
-at the iterator's \link PacketSequenceIterator::offset()
-current offset\endlink within the packet sequence.
+Each element sequence iterator element is a piece of information located
+at the iterator's \link ElementSequenceIterator::offset()
+current offset\endlink within the element sequence.
 
-<h3>Expected packet sequence element types</h3>
+<h3>Expected element sequence element types</h3>
 
-Here's what you can expect when \link PacketSequenceIterator
-iterating\endlink a
-\link PacketSequence packet sequence\endlink.
+Here's what you can expect when \link ElementSequenceIterator
+iterating\endlink an
+\link ElementSequence element sequence\endlink.
 
 In the following descriptions, consider this language:
 
@@ -253,9 +253,9 @@ descriptions easier to read and to allow recursion.
 )
 </pre>
 
-<h4>Packet sequence</h4>
+<h4>Element sequence</h4>
 
-The whole packet sequence is just a sequence of zero or more packets:
+The whole element sequence is just a sequence of zero or more packets:
 
 <pre>
 PACKET *
@@ -264,11 +264,11 @@ PACKET *
 <h3>Padding exclusion</h3>
 
 yactfr's purpose is to extract \em data from data stream files.
-Considering this, a packet sequence iterator does not provide padding
+Considering this, an element sequence iterator does not provide padding
 data. In other words, padding is always skipped so that the following
 element is aligned according to its metadata.
 
-The guarantees of PacketSequenceIterator::offset() are as follows,
+The guarantees of ElementSequenceIterator::offset() are as follows,
 when the iterator's current element is:
 
 <dl>

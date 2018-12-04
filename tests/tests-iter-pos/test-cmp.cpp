@@ -16,8 +16,8 @@
 #include <mem-data-source-factory.hpp>
 #include <common-trace.hpp>
 
-static bool testOpsEq(const yactfr::PacketSequenceIteratorPosition& pos1,
-                      const yactfr::PacketSequenceIteratorPosition& pos2)
+static bool testOpsEq(const yactfr::ElementSequenceIteratorPosition& pos1,
+                      const yactfr::ElementSequenceIteratorPosition& pos2)
 {
     if (pos1 != pos2) {
         return false;
@@ -46,8 +46,8 @@ static bool testOpsEq(const yactfr::PacketSequenceIteratorPosition& pos1,
     return true;
 }
 
-static bool testOpsGt(const yactfr::PacketSequenceIteratorPosition& pos1,
-                      const yactfr::PacketSequenceIteratorPosition& pos2)
+static bool testOpsGt(const yactfr::ElementSequenceIteratorPosition& pos1,
+                      const yactfr::ElementSequenceIteratorPosition& pos2)
 {
     if (pos1 == pos2) {
         return false;
@@ -82,11 +82,11 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     auto it1 = std::begin(seq);
     auto it2 = std::begin(seq);
-    yactfr::PacketSequenceIteratorPosition pos1;
-    yactfr::PacketSequenceIteratorPosition pos2;
+    yactfr::ElementSequenceIteratorPosition pos1;
+    yactfr::ElementSequenceIteratorPosition pos2;
 
     it1.savePosition(pos1);
     it2.savePosition(pos2);

@@ -46,7 +46,7 @@ private:
     {
         const std::string *setCurrentId = nullptr;
         const std::string *setDataStreamId = nullptr;
-        const std::string *setPacketSequenceNumber = nullptr;
+        const std::string *setElementSequenceNumber = nullptr;
         const std::string *setPacketTotalSize = nullptr;
         const std::string *setPacketContentSize = nullptr;
         const std::string *validateMagic = nullptr;

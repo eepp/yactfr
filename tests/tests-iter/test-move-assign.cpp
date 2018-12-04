@@ -287,7 +287,7 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     std::ostringstream ss;
     ElementPrinter printer {ss, 0};
     auto it = std::begin(seq);
@@ -300,7 +300,7 @@ int main()
         newIt = std::move(it);
 
         if (it != std::end(seq)) {
-            std::cerr << "Source packet sequence iterator is not set to end of packet sequence.\n";
+            std::cerr << "Source element sequence iterator is not set to end of element sequence.\n";
             return 1;
         }
 
@@ -308,7 +308,7 @@ int main()
         ++it;
 
         if (newIt != std::end(seq)) {
-            std::cerr << "Source packet sequence iterator is not set to end of packet sequence.\n";
+            std::cerr << "Source element sequence iterator is not set to end of element sequence.\n";
             return 1;
         }
     }
@@ -326,12 +326,12 @@ int main()
     it2 = std::move(endIt);
 
     if (it2 != std::end(seq)) {
-        std::cerr << "Destination packet sequence iterator is not set to end of packet sequence\n";
+        std::cerr << "Destination element sequence iterator is not set to end of element sequence\n";
         return 1;
     }
 
     if (endIt != std::end(seq)) {
-        std::cerr << "Source packet sequence iterator is not set to end of packet sequence\n";
+        std::cerr << "Source element sequence iterator is not set to end of element sequence\n";
         return 1;
     }
 

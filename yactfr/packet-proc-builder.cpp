@@ -601,7 +601,7 @@ void PacketProcBuilder::_buildPacketProc()
      *
      * 3. Insert InstrSetCurrentId, InstrSetDataStreamType,
      *    InstrSetEventRecordType, InstrSetDataStreamId,
-     *    InstrSetPacketSequenceNumber, InstrSetPacketTotalSize,
+     *    InstrSetElementSequenceNumber, InstrSetPacketTotalSize,
      *    InstrSetPacketContentSize, and InstrValidateMagic
      *    objects at the appropriate locations in the packet procedure.
      *

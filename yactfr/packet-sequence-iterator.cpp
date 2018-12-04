@@ -1,5 +1,5 @@
 /*
- * Packet sequence iterator.
+ * Element sequence iterator.
  *
  * Copyright (C) 2017-2018 Philippe Proulx <eepp.ca>
  *
@@ -7,15 +7,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <yactfr/packet-sequence-iterator.hpp>
+#include <yactfr/element-sequence-iterator.hpp>
 
 #include "vm.hpp"
 #include "metadata/trace-type-impl.hpp"
 
 /*
- * It is possible that a packet sequence iterator has no VM instance,
+ * It is possible that an element sequence iterator has no VM instance,
  * but it must be able to create a new VM at any time because of
- * PacketSequenceIterator::restorePosition(), so even an "end" packet
+ * ElementSequenceIterator::restorePosition(), so even an "end" packet
  * sequence iterator must keep:
  *
  * * Its data source factory.
@@ -24,7 +24,7 @@
 
 namespace yactfr {
 
-PacketSequenceIterator::PacketSequenceIterator(std::shared_ptr<DataSourceFactory> dataSourceFactory,
+ElementSequenceIterator::ElementSequenceIterator(std::shared_ptr<DataSourceFactory> dataSourceFactory,
                                                TraceType::SP traceType,
                                                const bool end) :
     _dataSourceFactory {dataSourceFactory},
@@ -40,14 +40,14 @@ PacketSequenceIterator::PacketSequenceIterator(std::shared_ptr<DataSourceFactory
     }
 }
 
-void PacketSequenceIterator::_resetOther(PacketSequenceIterator& other)
+void ElementSequenceIterator::_resetOther(ElementSequenceIterator& other)
 {
     other._mark = 0;
     other._offset = _END_OFFSET;
     other._curElement = nullptr;
 }
 
-PacketSequenceIterator::PacketSequenceIterator(const PacketSequenceIterator& other) :
+ElementSequenceIterator::ElementSequenceIterator(const ElementSequenceIterator& other) :
     _dataSourceFactory {other._dataSourceFactory},
     _traceType {other._traceType},
     _offset {other._offset},
@@ -70,9 +70,9 @@ PacketSequenceIterator::PacketSequenceIterator(const PacketSequenceIterator& oth
 /*
  * Copy (do not move) data source factory and trace types so that the
  * source iterator can still create a new VM in the future if needed (in
- * PacketSequenceIterator::restorePosition()).
+ * ElementSequenceIterator::restorePosition()).
  */
-PacketSequenceIterator::PacketSequenceIterator(PacketSequenceIterator&& other) :
+ElementSequenceIterator::ElementSequenceIterator(ElementSequenceIterator&& other) :
     _dataSourceFactory {other._dataSourceFactory},
     _traceType {other._traceType},
     _offset {other._offset},
@@ -91,15 +91,15 @@ PacketSequenceIterator::PacketSequenceIterator(PacketSequenceIterator&& other) :
     this->_resetOther(other);
 }
 
-PacketSequenceIterator::~PacketSequenceIterator()
+ElementSequenceIterator::~ElementSequenceIterator()
 {
 }
 
-PacketSequenceIterator& PacketSequenceIterator::operator=(const PacketSequenceIterator& other)
+ElementSequenceIterator& ElementSequenceIterator::operator=(const ElementSequenceIterator& other)
 {
     /*
      * Data source factory and trace type should already be the same
-     * because we're in the same packet sequence.
+     * because we're in the same element sequence.
      */
     assert(_dataSourceFactory == other._dataSourceFactory);
     assert(_traceType == other._traceType);
@@ -122,11 +122,11 @@ PacketSequenceIterator& PacketSequenceIterator::operator=(const PacketSequenceIt
     return *this;
 }
 
-PacketSequenceIterator& PacketSequenceIterator::operator=(PacketSequenceIterator&& other)
+ElementSequenceIterator& ElementSequenceIterator::operator=(ElementSequenceIterator&& other)
 {
     /*
      * Data source factory and trace type should already be the same
-     * because we're in the same packet sequence.
+     * because we're in the same element sequence.
      */
     assert(_dataSourceFactory == other._dataSourceFactory);
     assert(_traceType == other._traceType);
@@ -148,7 +148,7 @@ PacketSequenceIterator& PacketSequenceIterator::operator=(PacketSequenceIterator
     return *this;
 }
 
-PacketSequenceIterator& PacketSequenceIterator::operator++()
+ElementSequenceIterator& ElementSequenceIterator::operator++()
 {
     assert(_offset != _END_OFFSET);
     assert(_vm);
@@ -156,23 +156,23 @@ PacketSequenceIterator& PacketSequenceIterator::operator++()
     return *this;
 }
 
-void PacketSequenceIterator::seekPacket(const Index offset)
+void ElementSequenceIterator::seekPacket(const Index offset)
 {
     assert(_vm);
     _vm->seekPacket(offset);
 }
 
-void PacketSequenceIterator::savePosition(PacketSequenceIteratorPosition& pos) const
+void ElementSequenceIterator::savePosition(ElementSequenceIteratorPosition& pos) const
 {
     assert(_vm);
     _vm->savePosition(pos);
 }
 
-void PacketSequenceIterator::restorePosition(const PacketSequenceIteratorPosition& pos)
+void ElementSequenceIterator::restorePosition(const ElementSequenceIteratorPosition& pos)
 {
     if (!_vm) {
         /*
-         * This iterator is at the end of the packet sequence and has
+         * This iterator is at the end of the element sequence and has
          * no VM. Create a new VM before restoring the VM's position.
          */
         _vm = std::make_unique<internal::Vm>(_dataSourceFactory.get(),

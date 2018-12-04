@@ -23,20 +23,20 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     std::vector<std::unique_ptr<std::ostringstream>> stringStreams;
     std::vector<std::unique_ptr<ElementPrinter>> printers;
 
     stringStreams.push_back(std::make_unique<std::ostringstream>());
     printers.push_back(std::make_unique<ElementPrinter>(*stringStreams.back(), 0));
 
-    std::vector<yactfr::PacketSequenceIterator> psIts {std::begin(seq)};
+    std::vector<yactfr::ElementSequenceIterator> psIts {std::begin(seq)};
 
     while (true) {
         auto printersIt = std::begin(printers);
         auto psItsIt = std::begin(psIts);
 
-        // print packet sequence iterator elements
+        // print element sequence iterator elements
         while (psItsIt != std::end(psIts)) {
             auto& psIt = *psItsIt;
             auto& printerUp = *printersIt;
@@ -46,7 +46,7 @@ int main()
             ++printersIt;
         }
 
-        // advance packet sequence iterators
+        // advance element sequence iterators
         for (auto& psIt : psIts) {
             ++psIt;
         }
@@ -55,7 +55,7 @@ int main()
             break;
         }
 
-        // copy last packet sequence iterator
+        // copy last element sequence iterator
         psIts.push_back(std::begin(seq));
         psIts.back() = *(std::end(psIts) - 2);
 
@@ -90,12 +90,12 @@ int main()
 
     // copy end iterator
     auto end = std::end(seq);
-    yactfr::PacketSequenceIterator itCopy {std::begin(seq)};
+    yactfr::ElementSequenceIterator itCopy {std::begin(seq)};
 
     itCopy = end;
 
     if (itCopy != std::end(seq)) {
-        std::cerr << "Invalid copy of end packet sequence iterator.\n";
+        std::cerr << "Invalid copy of end element sequence iterator.\n";
         return 1;
     }
 
@@ -104,12 +104,12 @@ int main()
     itCopy = begin;
 
     if (itCopy != std::begin(seq)) {
-        std::cerr << "Invalid copy of beginning packet sequence iterator.\n";
+        std::cerr << "Invalid copy of beginning element sequence iterator.\n";
         return 1;
     }
 
     if (itCopy->kind() != yactfr::Element::Kind::PACKET_BEGINNING) {
-        std::cerr << "Invalid current element in copy of beginning packet sequence iterator.\n";
+        std::cerr << "Invalid current element in copy of beginning element sequence iterator.\n";
         return 1;
     }
 

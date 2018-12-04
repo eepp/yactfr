@@ -23,7 +23,7 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     std::ostringstream ss;
     auto it = std::end(seq);
 

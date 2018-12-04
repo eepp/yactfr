@@ -28,20 +28,20 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     std::ostringstream ss;
     ElementPrinter printer {ss, 0};
     auto it = std::begin(seq);
 
     std::advance(it, 5);
 
-    yactfr::PacketSequenceIteratorPosition pos;
+    yactfr::ElementSequenceIteratorPosition pos;
 
     it.savePosition(pos);
     std::advance(it, 5);
     it->accept(printer);
 
-    yactfr::PacketSequenceIteratorPosition pos2 {pos};
+    yactfr::ElementSequenceIteratorPosition pos2 {pos};
 
     it.restorePosition(pos2);
     it->accept(printer);
@@ -53,8 +53,8 @@ int main()
     }
 
     // copy-construct from uninitialized position
-    yactfr::PacketSequenceIteratorPosition pos3;
-    yactfr::PacketSequenceIteratorPosition pos4 {pos3};
+    yactfr::ElementSequenceIteratorPosition pos3;
+    yactfr::ElementSequenceIteratorPosition pos4 {pos3};
 
     if (pos4) {
         std::cerr << "Position is true.\n";

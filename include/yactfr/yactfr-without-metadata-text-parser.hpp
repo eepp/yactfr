@@ -66,8 +66,8 @@
 #include "metadata/trace-type.hpp"
 #include "metadata/variant-type-option.hpp"
 #include "metadata/variant-type.hpp"
-#include "packet-sequence-iterator-position.hpp"
-#include "packet-sequence-iterator.hpp"
-#include "packet-sequence.hpp"
+#include "element-sequence-iterator-position.hpp"
+#include "element-sequence-iterator.hpp"
+#include "element-sequence.hpp"
 
 #endif // _YACTFR_YACTFR_WITHOUT_METADATA_TEXT_PARSER_HPP

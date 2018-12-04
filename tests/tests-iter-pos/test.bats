@@ -7,37 +7,37 @@
 
 tests_iter_pos_path="$build_tests_path/tests-iter-pos"
 
-@test 'restore packet sequence iterator position' {
+@test 'restore element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-restore"
   [ $status -eq 0 ]
 }
 
-@test 'copy-construct packet sequence iterator position' {
+@test 'copy-construct element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-copy-ctor"
   [ $status -eq 0 ]
 }
 
-@test 'copy-assign packet sequence iterator position' {
+@test 'copy-assign element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-copy-assign"
   [ $status -eq 0 ]
 }
 
-@test 'move-construct packet sequence iterator position' {
+@test 'move-construct element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-move-ctor"
   [ $status -eq 0 ]
 }
 
-@test 'move-assign packet sequence iterator position' {
+@test 'move-assign element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-move-assign"
   [ $status -eq 0 ]
 }
 
-@test 'compare packet sequence iterator position' {
+@test 'compare element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-cmp"
   [ $status -eq 0 ]
 }
 
-@test 'boolean-cast packet sequence iterator position' {
+@test 'boolean-cast element sequence iterator position' {
   run "$tests_iter_pos_path/test-iter-pos-bool"
   [ $status -eq 0 ]
 }

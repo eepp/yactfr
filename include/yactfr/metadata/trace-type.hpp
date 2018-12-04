@@ -89,7 +89,7 @@ class TraceType final :
     boost::noncopyable
 {
     friend class internal::TraceTypeImpl;
-    friend class PacketSequenceIterator;
+    friend class ElementSequenceIterator;
 
 public:
     /// Shared pointer to trace type.

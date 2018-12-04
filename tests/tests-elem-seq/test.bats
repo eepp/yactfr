@@ -5,19 +5,19 @@
 # This software may be modified and distributed under the terms
 # of the MIT license. See the LICENSE file for details.
 
-tests_pkt_seq_path="$build_tests_path/tests-pkt-seq"
+tests_elem_seq_path="$build_tests_path/tests-elem-seq"
 
 @test 'begin' {
-  run "$tests_pkt_seq_path/test-pkt-seq-begin"
+  run "$tests_elem_seq_path/test-elem-seq-begin"
   [ $status -eq 0 ]
 }
 
 @test 'end' {
-  run "$tests_pkt_seq_path/test-pkt-seq-end"
+  run "$tests_elem_seq_path/test-elem-seq-end"
   [ $status -eq 0 ]
 }
 
 @test 'at' {
-  run "$tests_pkt_seq_path/test-pkt-seq-at"
+  run "$tests_elem_seq_path/test-elem-seq-at"
   [ $status -eq 0 ]
 }

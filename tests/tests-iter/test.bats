@@ -7,32 +7,32 @@
 
 tests_iter_path="$build_tests_path/tests-iter"
 
-@test 'packet sequence iterator: seek packet' {
+@test 'element sequence iterator: seek packet' {
   run "$tests_iter_path/test-iter-seek-packet"
   [ $status -eq 0 ]
 }
 
-@test 'copy-construct packet sequence iterator' {
+@test 'copy-construct element sequence iterator' {
   run "$tests_iter_path/test-iter-copy-ctor"
   [ $status -eq 0 ]
 }
 
-@test 'copy-assign packet sequence iterator' {
+@test 'copy-assign element sequence iterator' {
   run "$tests_iter_path/test-iter-copy-assign"
   [ $status -eq 0 ]
 }
 
-@test 'move-construct packet sequence iterator' {
+@test 'move-construct element sequence iterator' {
   run "$tests_iter_path/test-iter-move-ctor"
   [ $status -eq 0 ]
 }
 
-@test 'move-assign packet sequence iterator' {
+@test 'move-assign element sequence iterator' {
   run "$tests_iter_path/test-iter-move-assign"
   [ $status -eq 0 ]
 }
 
-@test 'compare packet sequence iterator' {
+@test 'compare element sequence iterator' {
   run "$tests_iter_path/test-iter-cmp"
   [ $status -eq 0 ]
 }

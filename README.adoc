@@ -14,7 +14,7 @@ pass:[C++14] API.
 While the CTF reading libraries that I know about focus on decoding and
 providing you with complete, ordered event record objects, the yactfr
 API offers a lower level of CTF processing: you iterate individual
-packet sequences to get _elements_: beginning/end of packet,
+element sequences to get _elements_: beginning/end of packet,
 beginning/end of event record, beggining/end of structure, individual
 data stream scalar values like integers, floating point numbers, and
 strings, specific clock value update, known data stream ID, and the
@@ -54,7 +54,7 @@ $ ldd libyactfr.so
 * Simple, documented pass:[C++14] API with a focus on immutability.
 * Efficient data stream decoding: zero memory allocation, zero smart
   pointer reference count change, zero virtual method call, and zero
-  copy during a packet sequence iteration.
+  copy during an element sequence iteration.
 ** A data stream integer is decoded in-place and is available as an
    element member.
 ** A data stream string is available as one or more substrings in
@@ -69,7 +69,7 @@ must have an 8-bit alignment.
   steady memory usage and performance.
 * Offers a memory mapped file view data source, but you can also
   implement your own data source.
-* It is safe to use two different iterators on the same packet sequence
+* It is safe to use two different iterators on the same element sequence
   in two different threads.
 * Full CTF metadata text inspection and validation: a parsing error
   exception contains a list of locations (line number, column number)
@@ -85,16 +85,16 @@ must have an 8-bit alignment.
 ** The next data stream type to use.
 ** The next event record type to use.
 ** The data stream (instance) ID.
-* "`Seek packet`" iterator method to seek the beginning of a packet
+* "`Seek packet`" iterator method to seek the beginning of an element
   known to be located at a specific offset, in bytes, within the same
-  packet sequence.
+  element sequence.
 +
 You can use this method with non-CTF packet index information, for
 example http://lttng.org/[LTTng]'s packet index files (not directly
 supported by yactfr).
 
 * Decoding error reporting with precise message, offset in
-  packet sequence (bits) where this message applies within the packet
+  element sequence (bits) where this message applies within the element
   sequence, and other relevant properties.
 * Performance (`nop` iteration loop) is similar to
   https://diamon.org/babeltrace/[Babeltrace]{nbsp}1.5.3's (`-o dummy`)
@@ -386,8 +386,8 @@ int main(int argc, char *argv[])
     // create a memory mapped file view factory to read the data stream file
     auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
 
-    // create a packet sequence from the trace type and data source factory
-    yactfr::PacketSequence seq {traceType, factory};
+    // create an element sequence from the trace type and data source factory
+    yactfr::ElementSequence seq {traceType, factory};
 
     // print all the event record names
     const auto endIt = seq.end();
@@ -438,8 +438,8 @@ int main(int argc, char *argv[])
     // create a memory mapped file view factory to read the data stream file
     auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
 
-    // create a packet sequence from the trace type and data source factory
-    yactfr::PacketSequence seq {traceType, factory};
+    // create an element sequence from the trace type and data source factory
+    yactfr::ElementSequence seq {traceType, factory};
 
     // print all the signed integers of the `sched_switch` event records
     const auto endIt = seq.end();
@@ -514,8 +514,8 @@ int main(int argc, char *argv[])
     // create a memory mapped file view factory to read the data stream file
     auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
 
-    // create a packet sequence from the trace type and data source factory
-    yactfr::PacketSequence seq {traceType, factory};
+    // create an element sequence from the trace type and data source factory
+    yactfr::ElementSequence seq {traceType, factory};
 
     // print all the packet offsets and sizes (both in bits)
     const auto endIt = seq.end();
@@ -580,8 +580,8 @@ int main(int argc, char *argv[])
     // create a memory mapped file view factory to read the data stream file
     auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(argv[2]);
 
-    // create a packet sequence from the trace type and data source factory
-    yactfr::PacketSequence seq {traceType, factory};
+    // create an element sequence from the trace type and data source factory
+    yactfr::ElementSequence seq {traceType, factory};
 
     // print all the packet offsets and sizes (both in bits)
     const auto endIt = seq.end();

@@ -11,7 +11,7 @@
 @file
 @brief  Data source factory.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_DATA_SOURCE_FACTORY_HPP

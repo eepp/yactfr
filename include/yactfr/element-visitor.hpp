@@ -1,5 +1,5 @@
 /*
- * Packet sequence iterator element visitor.
+ * Element sequence iterator element visitor.
  *
  * Copyright (C) 2017-2018 Philippe Proulx <eepp.ca>
  *
@@ -11,7 +11,7 @@
 @file
 @brief  yactfr element visitor.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_ELEMENT_VISITOR_HPP

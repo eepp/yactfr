@@ -11,7 +11,7 @@
 @file
 @brief  Data block.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_DATA_BLOCK_HPP

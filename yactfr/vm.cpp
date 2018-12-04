@@ -45,7 +45,7 @@ void VmPos::_initVectorsFromPacketProc()
 
 void VmPos::_setSimpleFromOther(const VmPos& other)
 {
-    curPacketOffsetInPacketSequenceBits = other.curPacketOffsetInPacketSequenceBits;
+    curPacketOffsetInElementSequenceBits = other.curPacketOffsetInElementSequenceBits;
     cursorOffsetInCurPacketBits = other.cursorOffsetInCurPacketBits;
     elems = other.elems;
     state = other.state;
@@ -73,18 +73,18 @@ void VmPos::_setFromOther(const VmPos& other)
 
 } // namespace internal
 
-PacketSequenceIteratorPosition::~PacketSequenceIteratorPosition()
+ElementSequenceIteratorPosition::~ElementSequenceIteratorPosition()
 {
 }
 
-PacketSequenceIteratorPosition::PacketSequenceIteratorPosition() :
+ElementSequenceIteratorPosition::ElementSequenceIteratorPosition() :
     _vmPos {nullptr},
     _iterInfos {std::make_unique<internal::IterInfos>()}
 {
 }
 
-PacketSequenceIteratorPosition::PacketSequenceIteratorPosition(const PacketSequenceIteratorPosition& other) :
-    PacketSequenceIteratorPosition {}
+ElementSequenceIteratorPosition::ElementSequenceIteratorPosition(const ElementSequenceIteratorPosition& other) :
+    ElementSequenceIteratorPosition {}
 {
     if (other._vmPos) {
         // use copy constructor
@@ -101,13 +101,13 @@ PacketSequenceIteratorPosition::PacketSequenceIteratorPosition(const PacketSeque
                                  other._iterInfos->elem);
 }
 
-PacketSequenceIteratorPosition::PacketSequenceIteratorPosition(PacketSequenceIteratorPosition&& other) :
+ElementSequenceIteratorPosition::ElementSequenceIteratorPosition(ElementSequenceIteratorPosition&& other) :
     _vmPos {std::move(other._vmPos)},
     _iterInfos {std::make_unique<internal::IterInfos>(*other._iterInfos)}
 {
 }
 
-PacketSequenceIteratorPosition& PacketSequenceIteratorPosition::operator=(const PacketSequenceIteratorPosition& other)
+ElementSequenceIteratorPosition& ElementSequenceIteratorPosition::operator=(const ElementSequenceIteratorPosition& other)
 {
     if (other._vmPos) {
         // use copy constructor
@@ -125,44 +125,44 @@ PacketSequenceIteratorPosition& PacketSequenceIteratorPosition::operator=(const 
     return *this;
 }
 
-PacketSequenceIteratorPosition& PacketSequenceIteratorPosition::operator=(PacketSequenceIteratorPosition&& other)
+ElementSequenceIteratorPosition& ElementSequenceIteratorPosition::operator=(ElementSequenceIteratorPosition&& other)
 {
     _vmPos = std::move(other._vmPos);
     *_iterInfos = *other._iterInfos;
     return *this;
 }
 
-PacketSequenceIteratorPosition::operator bool() const noexcept
+ElementSequenceIteratorPosition::operator bool() const noexcept
 {
     return static_cast<bool>(_vmPos);
 }
 
-bool PacketSequenceIteratorPosition::operator==(const PacketSequenceIteratorPosition& other) const noexcept
+bool ElementSequenceIteratorPosition::operator==(const ElementSequenceIteratorPosition& other) const noexcept
 {
     return *_iterInfos == *other._iterInfos;
 }
 
-bool PacketSequenceIteratorPosition::operator!=(const PacketSequenceIteratorPosition& other) const noexcept
+bool ElementSequenceIteratorPosition::operator!=(const ElementSequenceIteratorPosition& other) const noexcept
 {
     return *_iterInfos != *other._iterInfos;
 }
 
-bool PacketSequenceIteratorPosition::operator<(const PacketSequenceIteratorPosition& other) const noexcept
+bool ElementSequenceIteratorPosition::operator<(const ElementSequenceIteratorPosition& other) const noexcept
 {
     return *_iterInfos < *other._iterInfos;
 }
 
-bool PacketSequenceIteratorPosition::operator<=(const PacketSequenceIteratorPosition& other) const noexcept
+bool ElementSequenceIteratorPosition::operator<=(const ElementSequenceIteratorPosition& other) const noexcept
 {
     return *_iterInfos <= *other._iterInfos;
 }
 
-bool PacketSequenceIteratorPosition::operator>(const PacketSequenceIteratorPosition& other) const noexcept
+bool ElementSequenceIteratorPosition::operator>(const ElementSequenceIteratorPosition& other) const noexcept
 {
     return *_iterInfos > *other._iterInfos;
 }
 
-bool PacketSequenceIteratorPosition::operator>=(const PacketSequenceIteratorPosition& other) const noexcept
+bool ElementSequenceIteratorPosition::operator>=(const ElementSequenceIteratorPosition& other) const noexcept
 {
     return *_iterInfos >= *other._iterInfos;
 }
@@ -170,7 +170,7 @@ bool PacketSequenceIteratorPosition::operator>=(const PacketSequenceIteratorPosi
 namespace internal {
 
 Vm::Vm(DataSourceFactory *dataSrcFactory, const PacketProc& packetProc,
-       PacketSequenceIterator& iter) :
+       ElementSequenceIterator& iter) :
     _dataSrcFactory {dataSrcFactory},
     _dataSource {dataSrcFactory->createDataSource()},
     _iter {&iter},
@@ -179,7 +179,7 @@ Vm::Vm(DataSourceFactory *dataSrcFactory, const PacketProc& packetProc,
     this->_initExecFuncs();
 }
 
-Vm::Vm(const Vm& other, PacketSequenceIterator& iter) :
+Vm::Vm(const Vm& other, ElementSequenceIterator& iter) :
     _dataSrcFactory {other._dataSrcFactory},
     _dataSource {_dataSrcFactory->createDataSource()},
     _iter {&iter},
@@ -280,7 +280,7 @@ void Vm::_initExecFuncs()
 
 void Vm::seekPacket(const Index offsetBytes)
 {
-    _pos.curPacketOffsetInPacketSequenceBits = offsetBytes * 8;
+    _pos.curPacketOffsetInElementSequenceBits = offsetBytes * 8;
     _pos.resetForNewPacket();
     this->_resetBuffer();
 
@@ -288,12 +288,12 @@ void Vm::seekPacket(const Index offsetBytes)
     this->nextElement();
 }
 
-bool Vm::_getNewDataBlock(const Index offsetInPacketSequenceBytes,
+bool Vm::_getNewDataBlock(const Index offsetInElementSequenceBytes,
                           const Size sizeBytes)
 {
     assert(sizeBytes <= 9);
 
-    const auto dataBlock = _dataSource->data(offsetInPacketSequenceBytes,
+    const auto dataBlock = _dataSource->data(offsetInElementSequenceBytes,
                                              sizeBytes);
 
     if (!dataBlock) {
@@ -304,14 +304,14 @@ bool Vm::_getNewDataBlock(const Index offsetInPacketSequenceBytes,
     _bufAddr = static_cast<const std::uint8_t *>(dataBlock->addr());
     _bufSizeBits = dataBlock->size() * 8;
 
-    const auto offsetInPacketSequenceBits = offsetInPacketSequenceBytes * 8;
+    const auto offsetInElementSequenceBits = offsetInElementSequenceBytes * 8;
 
-    _bufOffsetInCurPacketBits = offsetInPacketSequenceBits -
-                                _pos.curPacketOffsetInPacketSequenceBits;
+    _bufOffsetInCurPacketBits = offsetInElementSequenceBits -
+                                _pos.curPacketOffsetInElementSequenceBits;
     return true;
 }
 
-void Vm::savePosition(PacketSequenceIteratorPosition& pos) const
+void Vm::savePosition(ElementSequenceIteratorPosition& pos) const
 {
     if (!pos) {
         // allocate new position
@@ -327,7 +327,7 @@ void Vm::savePosition(PacketSequenceIteratorPosition& pos) const
                                      _iter->_curElement);
 }
 
-void Vm::restorePosition(const PacketSequenceIteratorPosition& pos)
+void Vm::restorePosition(const ElementSequenceIteratorPosition& pos)
 {
     assert(pos);
     _pos = *pos._vmPos;
@@ -816,7 +816,7 @@ Vm::_ExecReaction Vm::_execSetDataStreamType(const Instr& instr)
 
     if (!dstPacketProc) {
         throw UnknownDataStreamTypeDecodingError {
-            _pos.cursorOffsetInPacketSequenceBits(), id
+            _pos.cursorOffsetInElementSequenceBits(), id
         };
     }
 
@@ -845,7 +845,7 @@ Vm::_ExecReaction Vm::_execSetEventRecordType(const Instr& instr)
 
     if (!ertProc) {
         throw UnknownEventRecordTypeDecodingError {
-            _pos.cursorOffsetInPacketSequenceBits(), id
+            _pos.cursorOffsetInElementSequenceBits(), id
         };
     }
 
@@ -875,7 +875,7 @@ Vm::_ExecReaction Vm::_execSetPacketTotalSize(const Instr& instr)
 
     if ((packetTotalSizeCandidateBits & 7) != 0) {
         throw ExpectedPacketTotalSizeNotMultipleOf8DecodingError {
-            _pos.cursorOffsetInPacketSequenceBits(),
+            _pos.cursorOffsetInElementSequenceBits(),
             packetTotalSizeCandidateBits
         };
     }
@@ -883,7 +883,7 @@ Vm::_ExecReaction Vm::_execSetPacketTotalSize(const Instr& instr)
     if (_pos.curPacketContentSizeBits != SIZE_UNSET) {
         if (packetTotalSizeCandidateBits < _pos.curPacketContentSizeBits) {
             throw ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.cursorOffsetInElementSequenceBits(),
                 packetTotalSizeCandidateBits,
                 _pos.curPacketContentSizeBits
             };
@@ -892,7 +892,7 @@ Vm::_ExecReaction Vm::_execSetPacketTotalSize(const Instr& instr)
 
     if (packetTotalSizeCandidateBits < _pos.cursorOffsetInCurPacketBits) {
         throw ExpectedPacketTotalSizeLessThanOffsetInPacketDecodingError {
-            _pos.cursorOffsetInPacketSequenceBits(),
+            _pos.cursorOffsetInElementSequenceBits(),
             packetTotalSizeCandidateBits,
             _pos.cursorOffsetInCurPacketBits
         };
@@ -916,7 +916,7 @@ Vm::_ExecReaction Vm::_execSetPacketContentSize(const Instr& instr)
     if (_pos.curPacketTotalSizeBits != SIZE_UNSET) {
         if (_pos.curPacketTotalSizeBits < packetContentSizeCandidateBits) {
             throw ExpectedPacketTotalSizeLessThanExpectedPacketContentSizeDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.cursorOffsetInElementSequenceBits(),
                 _pos.curPacketTotalSizeBits,
                 packetContentSizeCandidateBits
             };
@@ -925,7 +925,7 @@ Vm::_ExecReaction Vm::_execSetPacketContentSize(const Instr& instr)
 
     if (packetContentSizeCandidateBits < _pos.cursorOffsetInCurPacketBits) {
         throw ExpectedPacketContentSizeLessThanOffsetInPacketDecodingError {
-            _pos.cursorOffsetInPacketSequenceBits(),
+            _pos.cursorOffsetInElementSequenceBits(),
             packetContentSizeCandidateBits,
             _pos.cursorOffsetInCurPacketBits
         };

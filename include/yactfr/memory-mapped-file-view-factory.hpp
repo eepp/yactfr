@@ -11,7 +11,7 @@
 @file
 @brief  Memory mapped file view factory.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_MEMORY_MAPPED_FILE_VIEW_FACTORY_HPP
@@ -43,7 +43,7 @@ namespace internal {
 @brief  Memory mapped file view factory.
 
 This is a factory of memory mapped file views, which are valid data
-sources for packet sequences. All the memory mapped file views that such
+sources for element sequences. All the memory mapped file views that such
 a factory creates operate on the same file handle/descriptor.
 */
 class MemoryMappedFileViewFactory final :

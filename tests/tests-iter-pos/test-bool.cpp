@@ -23,10 +23,10 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     auto it = std::begin(seq);
 
-    yactfr::PacketSequenceIteratorPosition pos;
+    yactfr::ElementSequenceIteratorPosition pos;
 
     if (pos) {
         std::cerr << "Position is true.\n";

@@ -23,7 +23,7 @@
 #include <yactfr/element.hpp>
 #include <yactfr/data-source-factory.hpp>
 #include <yactfr/element.hpp>
-#include <yactfr/packet-sequence-iterator.hpp>
+#include <yactfr/element-sequence-iterator.hpp>
 #include <yactfr/decoding-errors.hpp>
 
 #include "proc.hpp"
@@ -205,9 +205,9 @@ public:
         return curPacketContentSizeBits - cursorOffsetInCurPacketBits;
     }
 
-    Index cursorOffsetInPacketSequenceBits() const noexcept
+    Index cursorOffsetInElementSequenceBits() const noexcept
     {
-        return curPacketOffsetInPacketSequenceBits +
+        return curPacketOffsetInElementSequenceBits +
                cursorOffsetInCurPacketBits;
     }
 
@@ -231,8 +231,8 @@ private:
     void _setFromOther(const VmPos& other);
 
 public:
-    // offset of current packet beginning within its packet sequence (bits)
-    Index curPacketOffsetInPacketSequenceBits = 0;
+    // offset of current packet beginning within its element sequence (bits)
+    Index curPacketOffsetInElementSequenceBits = 0;
 
     // cursor offset within current packet (bits)
     Index cursorOffsetInCurPacketBits = 0;
@@ -386,7 +386,7 @@ public:
 
     /*
      * Points to one of the elements in the `elems` field of the
-     * VmPos in the same PacketSequenceIteratorPosition.
+     * VmPos in the same ElementSequenceIteratorPosition.
      */
     const Element *elem = nullptr;
 };
@@ -395,12 +395,12 @@ class Vm final
 {
 public:
     explicit Vm(DataSourceFactory *dataSrcFactory,
-                const PacketProc& packetProc, PacketSequenceIterator& iter);
-    Vm(const Vm& vm, PacketSequenceIterator& iter);
+                const PacketProc& packetProc, ElementSequenceIterator& iter);
+    Vm(const Vm& vm, ElementSequenceIterator& iter);
     Vm& operator=(const Vm& vm);
     void seekPacket(Index offset);
-    void savePosition(PacketSequenceIteratorPosition& pos) const;
-    void restorePosition(const PacketSequenceIteratorPosition& pos);
+    void savePosition(ElementSequenceIteratorPosition& pos) const;
+    void restorePosition(const ElementSequenceIteratorPosition& pos);
 
     const VmPos& pos() const
     {
@@ -427,12 +427,12 @@ public:
         }
     }
 
-    void iter(PacketSequenceIterator& iter)
+    void iter(ElementSequenceIterator& iter)
     {
         _iter = &iter;
     }
 
-    PacketSequenceIterator& iter()
+    ElementSequenceIterator& iter()
     {
         return *_iter;
     }
@@ -449,7 +449,7 @@ private:
 
 private:
     void _initExecFuncs();
-    bool _getNewDataBlock(Index offsetInPacketSequenceBytes, Size sizeBytes);
+    bool _getNewDataBlock(Index offsetInElementSequenceBytes, Size sizeBytes);
 
     bool _handleState()
     {
@@ -598,7 +598,7 @@ private:
         _pos.resetForNewPacket();
 
         if (this->_remainingBitsInBuf() == 0) {
-            // try getting 1 bit to see if we're at the end of the packet sequence
+            // try getting 1 bit to see if we're at the end of the element sequence
             if (!this->_tryHaveBits(1)) {
                 this->_setIterEnd();
                 return true;
@@ -625,7 +625,7 @@ private:
         /*
          * Next time, skip the padding bits after the packet content before
          * setting the state to END_PACKET. If we have no packet size, then
-         * the packet sequence contains only one packet and there's no
+         * the element sequence contains only one packet and there's no
          * padding after the packet content.
          */
         Size bitsToSkip = 0;
@@ -650,15 +650,15 @@ private:
 
     bool _stateEndPacket()
     {
-        const auto offset = _pos.cursorOffsetInPacketSequenceBits();
+        const auto offset = _pos.cursorOffsetInElementSequenceBits();
 
         // readjust buffer address and offsets
-        _pos.curPacketOffsetInPacketSequenceBits = _pos.cursorOffsetInPacketSequenceBits();
+        _pos.curPacketOffsetInElementSequenceBits = _pos.cursorOffsetInElementSequenceBits();
         _pos.cursorOffsetInCurPacketBits = 0;
-        assert((_pos.curPacketOffsetInPacketSequenceBits & 7) == 0);
+        assert((_pos.curPacketOffsetInElementSequenceBits & 7) == 0);
 
         if (_pos.curPacketTotalSizeBits == SIZE_UNSET) {
-            // packet sequence contains a single packet
+            // element sequence contains a single packet
             this->_resetBuffer();
         } else {
             const auto oldBufAddr = _bufAddr;
@@ -758,7 +758,7 @@ private:
 
         if (substringSizeBits > _pos.remainingContentBitsInPacket()) {
             throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.cursorOffsetInElementSequenceBits(),
                 substringSizeBits, _pos.remainingContentBitsInPacket()
             };
         }
@@ -800,7 +800,7 @@ private:
 
         if (substringSizeBits > _pos.remainingContentBitsInPacket()) {
             throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.cursorOffsetInElementSequenceBits(),
                 substringSizeBits, _pos.remainingContentBitsInPacket()
             };
         }
@@ -844,14 +844,14 @@ private:
     void _updateIterCurOffset(const Element& elem)
     {
         _iter->_curElement = &elem;
-        _iter->_offset = _pos.cursorOffsetInPacketSequenceBits();
+        _iter->_offset = _pos.cursorOffsetInElementSequenceBits();
         ++_iter->_mark;
     }
 
     void _setIterEnd() const noexcept
     {
         _iter->_mark = 0;
-        _iter->_offset = PacketSequenceIterator::_END_OFFSET;
+        _iter->_offset = ElementSequenceIterator::_END_OFFSET;
     }
 
     void _resetIterMark() const noexcept
@@ -873,7 +873,7 @@ private:
 
         if (YACTFR_UNLIKELY(bitsToSkip > _pos.remainingContentBitsInPacket())) {
             throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.cursorOffsetInElementSequenceBits(),
                 bitsToSkip, _pos.remainingContentBitsInPacket()
             };
         }
@@ -920,18 +920,18 @@ private:
 
         /*
          * Align the current cursor to its current byte and compute the
-         * offset, from the beginning of the packet sequence, to
+         * offset, from the beginning of the element sequence, to
          * request in bytes at this point.
          */
         const auto flooredCursorOffsetInCurPacketBits = _pos.cursorOffsetInCurPacketBits & ~7ULL;
         const auto flooredCursorOffsetInCurPacketBytes = flooredCursorOffsetInCurPacketBits / 8;
-        const auto curPacketOffsetInPacketSequenceBytes = _pos.curPacketOffsetInPacketSequenceBits / 8;
-        const auto requestOffsetInPacketSequenceBytes = curPacketOffsetInPacketSequenceBytes +
+        const auto curPacketOffsetInElementSequenceBytes = _pos.curPacketOffsetInElementSequenceBits / 8;
+        const auto requestOffsetInElementSequenceBytes = curPacketOffsetInElementSequenceBytes +
                                                         flooredCursorOffsetInCurPacketBytes;
         const auto bitInByte = _pos.cursorOffsetInCurPacketBits & 7;
         const auto sizeBytes = (bits + 7 + bitInByte) / 8;
 
-        return this->_getNewDataBlock(requestOffsetInPacketSequenceBytes,
+        return this->_getNewDataBlock(requestOffsetInElementSequenceBytes,
                                       sizeBytes);
     }
 
@@ -939,7 +939,7 @@ private:
     {
         if (YACTFR_UNLIKELY(!this->_tryHaveBits(bits))) {
             throw PrematureEndOfDataDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(), bits
+                _pos.cursorOffsetInElementSequenceBits(), bits
             };
         }
     }
@@ -949,7 +949,7 @@ private:
         if (YACTFR_UNLIKELY(bits > _pos.remainingContentBitsInPacket())) {
             // going past the packet's content
             throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits(),
+                _pos.cursorOffsetInElementSequenceBits(),
                 bits, _pos.remainingContentBitsInPacket()
             };
         }
@@ -1170,7 +1170,7 @@ private:
                  */
                 if (YACTFR_UNLIKELY(instrReadBitArray.byteOrder() != *_pos.lastBo)) {
                     throw ByteOrderChangeWithinByteDecodingError {
-                        _pos.cursorOffsetInPacketSequenceBits(),
+                        _pos.cursorOffsetInElementSequenceBits(),
                         *_pos.lastBo,
                         instrReadBitArray.byteOrder()
                     };
@@ -1255,12 +1255,12 @@ private:
         if (YACTFR_UNLIKELY(!proc)) {
             if (std::is_signed<typename InstrReadVariantT::Value>::value) {
                 throw UnknownVariantSignedTagValueDecodingError {
-                    _pos.cursorOffsetInPacketSequenceBits(),
+                    _pos.cursorOffsetInElementSequenceBits(),
                     static_cast<std::int64_t>(tag)
                 };
             } else {
                 throw UnknownVariantUnsignedTagValueDecodingError {
-                    _pos.cursorOffsetInPacketSequenceBits(),
+                    _pos.cursorOffsetInElementSequenceBits(),
                     static_cast<std::uint64_t>(tag)
                 };
             }
@@ -1301,7 +1301,7 @@ private:
 
         if (YACTFR_UNLIKELY(length == SAVED_VALUE_UNSET)) {
             throw DynamicArrayLengthNotSetDecodingError {
-                _pos.cursorOffsetInPacketSequenceBits()
+                _pos.cursorOffsetInElementSequenceBits()
             };
         }
 
@@ -1328,8 +1328,8 @@ private:
     // offset of buffer within current packet (bits)
     Index _bufOffsetInCurPacketBits = 0;
 
-    // owning packet sequence iterator
-    PacketSequenceIterator *_iter;
+    // owning element sequence iterator
+    ElementSequenceIterator *_iter;
 
     // array of instruction handler functions
     std::array<_ExecReaction (Vm::*)(const Instr&), 80> _execFuncs;

@@ -306,10 +306,10 @@ A few notes:
 
 A _data source factory_ is an object which can build _data sources_.
 The `DataSourceFactory` can be extended by the library user to provide
-custom data sources to packet sequence iterators.
+custom data sources to element sequence iterators.
 
-When you build a packet sequence, you need to pass a shared trace type
-and a shared data source factory. Each iterator created by the packet
+When you build an element sequence, you need to pass a shared trace type
+and a shared data source factory. Each iterator created by the element
 sequence creates its own data source, making all iterators independent
 and usable in different threads without explicit locking.
 
@@ -333,7 +333,7 @@ reading its data (when needed) from its own data source.
 The VM has an internal position (`internal::VmPos`). This is the whole
 VM's state, including:
 
-* Current offsets in the packet sequence, current packet, and data
+* Current offsets in the element sequence, current packet, and data
   source's buffer.
 * Current state.
 * Last byte order.
@@ -348,9 +348,9 @@ VM's state, including:
 * Concrete element objects to set when executing the VM.
 
 The VM position is a different object because this is what is copied to
-a `PacketSequenceIteratorPosition` when calling
+a `ElementSequenceIteratorPosition` when calling
 `internal::Vm::savePosition()` (called from
-`PacketSequenceIterator::savePosition()`).
+`ElementSequenceIterator::savePosition()`).
 
 On construction, the VM initializes an array of instruction handlers.
 This is a function table which is used to handle specific instructions
@@ -406,34 +406,34 @@ called, so they should stay cached. This is another place where computed
 gotos would probably prove useful.
 
 
-== Packet sequence iterator
+== Element sequence iterator
 
-A packet sequence iterator object and its <<vm,VM>> are tightly coupled.
-The VM knows its owning iterator because, when it executes one or more
-instructions and the current element changes, it sets the iterator's
-`_curElement` member to the address of one of its already allocated and
-filled elements (located in the VM position object). It also sets the
-iterator's offset and mark.
+An element sequence iterator object and its <<vm,VM>> are tightly
+coupled. The VM knows its owning iterator because, when it executes one
+or more instructions and the current element changes, it sets the
+iterator's `_curElement` member to the address of one of its already
+allocated and filled elements (located in the VM position object). It
+also sets the iterator's offset and mark.
 
-The packet sequence iterator's _mark_ is the index of the current
+The element sequence iterator's _mark_ is the index of the current
 element within its packet. In combination with the current offset (bits
-from the beginning of the packet sequence), this is enough to compare
-two iterators which were created from the same packet sequence without
+from the beginning of the element sequence), this is enough to compare
+two iterators which were created from the same element sequence without
 relying on the VM. Therefore the iterator's comparison operators are
 inlined, just as `+operator*()+` and `+operator->()+`.
 
-An "`end`" (passed-the-end) packet sequence iterator has its offset set
-to `PacketSequenceIterator::_END_OFFSET` which is the maximum value for
+An "`end`" (passed-the-end) element sequence iterator has its offset set
+to `ElementSequenceIterator::_END_OFFSET` which is the maximum value for
 the offset's type, and its mark set to 0. Therefore any iterator which
 is not passed the end is less than a passed-the-end iterator.
 
 It is possible that an "`end`" iterator has no VM because its
 constructor won't allocate one when it's directly built as a
-passed-the-end iterator by `PacketSequence::end()`. However, all
+passed-the-end iterator by `ElementSequence::end()`. However, all
 iterators contain:
 
-* The shared trace type of its creating packet sequence.
-* The shared data source factory of its creating packet sequence.
+* The shared trace type of its creating element sequence.
+* The shared data source factory of its creating element sequence.
 
 Those are enough to create a new VM when necessary, for example when
 assigning a non-end iterator to an end iterator:
@@ -446,38 +446,39 @@ auto end = std::end(mySeq);     // has no VM
 end = begin;                    // creates a copy of the other VM
 ----
 
-A packet sequence iterator can seek a packet within the data of its data
-source known to be located at a specific offset in bytes. When you call
-`PacketSequenceIterator::seekPacket()`, the iterator's VM's position and
-buffers are reset. There can't be any validation that this is indeed the
-beginning of a packet: it's the library user's responsibility.
+An element sequence iterator can seek a packet within the data of its
+data source known to be located at a specific offset in bytes. When you
+call `ElementSequenceIterator::seekPacket()`, the iterator's VM's
+position and buffers are reset. There can't be any validation that this
+is indeed the beginning of a packet: it's the library user's
+responsibility.
 
 
-== Packet sequence iterator position
+== Element sequence iterator position
 
 Some use cases can require that you need a lot of iterators from the
-same packet sequence at the same time, but only one at a time is used.
+same element sequence at the same time, but only one at a time is used.
 Remember that the iterator's <<vm,VM>> has its own
 <<data-src-factory,data source>>, and this means active resources. To
-avoid having too much active data sources, yactfr offers the packet
+avoid having too much active data sources, yactfr offers the element
 sequence iterator position API. It is pretty simple to use:
 
 [source,cpp]
 ----
-PacketSequenceIteratorPosition pos;
+ElementSequenceIteratorPosition pos;
 
 myIter.savePosition(pos);
 // ...
 myIter.restorePosition(pos);
 ----
 
-A packet sequence iterator position does not contain any data source.
+An element sequence iterator position does not contain any data source.
 It contains:
 
 * A copy of the VM position when
-  `PacketSequenceIterator::savePosition()` was called.
+  `ElementSequenceIterator::savePosition()` was called.
 * The offset, mark, and current element of the iterator when
-  `PacketSequenceIterator::savePosition()` was called.
+  `ElementSequenceIterator::savePosition()` was called.
 
-This is enough to reset any iterator (created from the same packet
+This is enough to reset any iterator (created from the same element
 sequence) to an exact position later.

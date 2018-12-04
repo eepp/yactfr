@@ -14,7 +14,7 @@ completeness, and flexibility of data input.
 <hr>
 
 The yactfr API is divided into two parts: \ref metadata and
-\ref packet_seq.
+\ref element_seq.
 
 The \ref metadata API deals with everything related to CTF metadata
 streams. This API makes it possible to:
@@ -30,16 +30,16 @@ streams. This API makes it possible to:
 - Get a trace type from a metadata text. See
   yactfr::traceTypeFromMetadataText().
 
-The \ref metadata API is completely independent from the \ref packet_seq
+The \ref metadata API is completely independent from the \ref element_seq
 API.
 
-The \ref packet_seq API deals with CTF binary data stream decoding. This
-API makes it possible to \link yactfr::PacketSequenceIterator
+The \ref element_seq API deals with CTF binary data stream decoding. This
+API makes it possible to \link yactfr::ElementSequenceIterator
 iterate\endlink the
-\link yactfr::Element elements\endlink of a \link yactfr::PacketSequence
-packet sequence\endlink represented by a given \link yactfr::TraceType
+\link yactfr::Element elements\endlink of a \link yactfr::ElementSequence
+element sequence\endlink represented by a given \link yactfr::TraceType
 trace type\endlink (programmatically built or obtained with the \ref
-metadata API). The \ref packet_seq API supports custom
+metadata API). The \ref element_seq API supports custom
 \link yactfr::DataSource data sources\endlink, but a convenient
 \link yactfr::MemoryMappedFileViewFactory memory-mapped file view\endlink
 data source is provided by the project.

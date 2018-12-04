@@ -2066,7 +2066,7 @@ private:
  * owning TraceType object. For example (ownership tree):
  *
  * User
- *   Packet sequence iterator
+ *   Element sequence iterator
  *     VM
  *       TraceType
  *         PacketProc

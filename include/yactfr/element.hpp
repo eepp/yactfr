@@ -1,5 +1,5 @@
 /*
- * Packet sequence iterator element.
+ * Element sequence iterator element.
  *
  * Copyright (C) 2016-2018 Philippe Proulx <eepp.ca>
  *
@@ -9,9 +9,9 @@
 
 /*!
 @file
-@brief  yactfr element: value type of a PacketSequenceIterator.
+@brief  yactfr element: value type of an ElementSequenceIterator.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_ELEMENT_HPP
@@ -54,7 +54,7 @@ namespace internal {
 
 /*!
 @brief  Value of a
-        \link PacketSequenceIterator packet sequence iterator\endlink.
+        \link ElementSequenceIterator element sequence iterator\endlink.
 */
 class Element
 {
@@ -480,13 +480,13 @@ private:
 @brief  Packet's origin index element.
 
 This element contains the numeric origin index of the current packet
-within its <em>data stream</em> (\em NOT within its packet sequence)
+within its <em>data stream</em> (\em NOT within its element sequence)
 which is known at this point.
 
 This is sometimes called <em>packet sequence number</em> in the
 specification's terminology, although this term would be confusing in
-yactfr's scope since a PacketSequence object can "contain" packets from
-different data streams.
+yactfr's scope since an ElementSequence object can "contain" packets
+from different data streams.
 */
 class PacketOriginIndexElement final :
     public Element

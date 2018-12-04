@@ -15,8 +15,8 @@
 #include <yactfr/yactfr.hpp>
 #include <yactfr/memory-mapped-file-view-factory.hpp>
 #include <yactfr/metadata/trace-type-from-metadata-text.hpp>
-#include <yactfr/packet-sequence.hpp>
-#include <yactfr/packet-sequence-iterator.hpp>
+#include <yactfr/element-sequence.hpp>
+#include <yactfr/element-sequence-iterator.hpp>
 #include <yactfr/element.hpp>
 #include <yactfr/element-visitor.hpp>
 
@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
                                                        std::end(metadataStream->text()));
     auto factory = std::make_shared<yactfr::MemoryMappedFileViewFactory>(streamPath, 4096);
 
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     ElementPrinter printer {std::cout};
 
     try {

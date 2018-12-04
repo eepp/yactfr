@@ -16,8 +16,8 @@
 #include <mem-data-source-factory.hpp>
 #include <common-trace.hpp>
 
-static bool testOpsEq(const yactfr::PacketSequenceIterator& it1,
-                      const yactfr::PacketSequenceIterator& it2)
+static bool testOpsEq(const yactfr::ElementSequenceIterator& it1,
+                      const yactfr::ElementSequenceIterator& it2)
 {
     if (it1 != it2) {
         return false;
@@ -46,8 +46,8 @@ static bool testOpsEq(const yactfr::PacketSequenceIterator& it1,
     return true;
 }
 
-static bool testOpsGt(const yactfr::PacketSequenceIterator& it1,
-                      const yactfr::PacketSequenceIterator& it2)
+static bool testOpsGt(const yactfr::ElementSequenceIterator& it1,
+                      const yactfr::ElementSequenceIterator& it2)
 {
     if (it1 == it2) {
         return false;
@@ -82,7 +82,7 @@ int main()
                                                        metadata + std::strlen(metadata));
     auto factory = std::make_shared<MemDataSourceFactory>(stream,
                                                           sizeof(stream));
-    yactfr::PacketSequence seq {traceType, factory};
+    yactfr::ElementSequence seq {traceType, factory};
     auto it1 = std::begin(seq);
     auto it2 = std::begin(seq);
 

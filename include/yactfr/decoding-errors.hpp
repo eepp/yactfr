@@ -11,7 +11,7 @@
 @file
 @brief  Decoding errors.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_DECODING_ERRORS_HPP
@@ -42,8 +42,8 @@ namespace internal {
 /*!
 @brief  %Base decoding error.
 
-This is thrown when there's an error in the decoding process of a packet
-sequence (PacketSequenceIterator::operator++(), for example).
+This is thrown when there's an error in the decoding process of an
+element sequence (ElementSequenceIterator::operator++(), for example).
 */
 class DecodingError :
     public std::runtime_error
@@ -64,7 +64,7 @@ public:
     }
 
     /*!
-    @brief  Offset (bits) from the beginning of the packet sequence
+    @brief  Offset (bits) from the beginning of the element sequence
             which created this iterator.
     */
     Index offset() const noexcept
@@ -80,7 +80,7 @@ private:
 /*!
 @brief  "Unknown data stream type" decoding error.
 
-This is thrown when a PacketSequenceIterator cannot find a data stream
+This is thrown when an ElementSequenceIterator cannot find a data stream
 type by ID during the decoding process.
 */
 class UnknownDataStreamTypeDecodingError :
@@ -108,7 +108,7 @@ private:
 /*!
 @brief  "Unknown event record type" decoding error.
 
-This is thrown when a PacketSequenceIterator cannot find an event record
+This is thrown when an ElementSequenceIterator cannot find an event record
 type by ID during the decoding process.
 */
 class UnknownEventRecordTypeDecodingError :
@@ -137,7 +137,7 @@ private:
 @brief  "Expected packet's total size is not a multiple of 8" decoding
         error.
 
-This is thrown when a PacketSequenceIterator has decoded an
+This is thrown when an ElementSequenceIterator has decoded an
 expected packet's total size and it's not a multiple of 8.
 */
 class ExpectedPacketTotalSizeNotMultipleOf8DecodingError :
@@ -167,7 +167,7 @@ private:
 @brief  "Expected packet's total size is less than expected packet's
         content size" decoding error.
 
-This is thrown when a PacketSequenceIterator has decoded both an
+This is thrown when an ElementSequenceIterator has decoded both an
 expected packet's total size and an expected packet's content size, and
 the total size is less than the content size.
 */
@@ -206,7 +206,7 @@ private:
 @brief  "Expected packet's total size is less than current offset within
         packet" decoding error.
 
-This is thrown when a PacketSequenceIterator has decoded an expected
+This is thrown when an ElementSequenceIterator has decoded an expected
 packet's total size and it's is less than the current decoding offset
 within this packet.
 */
@@ -245,7 +245,7 @@ private:
 @brief  "Expected packet's content size is less than current offset
         within packet" decoding error.
 
-This is thrown when a PacketSequenceIterator has decoded an expected
+This is thrown when an ElementSequenceIterator has decoded an expected
 packet's content size and it's is less than the current decoding offset
 within this packet.
 */
@@ -283,7 +283,7 @@ private:
 /*!
 @brief  "Cannot decode data beyond packet's content" decoding error.
 
-This is thrown when a PacketSequenceIterator would need data passed the
+This is thrown when an ElementSequenceIterator would need data passed the
 current packet's content to continue decoding.
 */
 class CannotDecodeDataBeyondPacketContentDecodingError :
@@ -320,7 +320,7 @@ private:
 /*!
 @brief  "Premature end of data" decoding error.
 
-This is thrown when a PacketSequenceIterator needs data to continue
+This is thrown when an ElementSequenceIterator needs data to continue
 decoding the current packet, but its data source indicates that there's
 no more data at the requested offset.
 */
@@ -349,7 +349,7 @@ private:
 /*!
 @brief  "Byte order change within byte" decoding error.
 
-This is thrown when a PacketSequenceIterator previously decoded a data
+This is thrown when an ElementSequenceIterator previously decoded a data
 stream datum with a given byte order and the following one has a
 different byte order when the current offset is not a multiple of 8.
 */
@@ -387,7 +387,7 @@ private:
 /*!
 @brief  "Unknown variant's signed tag value" decoding error.
 
-This is thrown when a PacketSequenceIterator needs to select a variant
+This is thrown when an ElementSequenceIterator needs to select a variant
 type's option, but the previously decoded signed tag value does not
 select a option.
 */
@@ -417,7 +417,7 @@ private:
 /*!
 @brief  "Unknown variant's unsigned tag value" decoding error.
 
-This is thrown when a PacketSequenceIterator needs to select a variant
+This is thrown when an ElementSequenceIterator needs to select a variant
 type's option, but the previously decoded unsigned tag value does not
 select a option.
 */
@@ -447,7 +447,7 @@ private:
 /*!
 @brief  "Dynamic array length is not set" decoding error.
 
-This is thrown when a PacketSequenceIterator needs to decode a data
+This is thrown when an ElementSequenceIterator needs to decode a data
 stream dynamic array, but its length was not previously decoded.
 */
 class DynamicArrayLengthNotSetDecodingError :

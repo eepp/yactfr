@@ -11,7 +11,7 @@
 @file
 @brief  Data source and related exceptions.
 
-@ingroup packet_seq
+@ingroup element_seq
 */
 
 #ifndef _YACTFR_DATA_SOURCE_HPP
@@ -107,8 +107,8 @@ private:
     The returned data block's size can be arbitrarily large, as long as
     it contains at least \p minSize bytes.
 
-    When you iterate a packet sequence with
-    PacketSequenceIterator::operator++(), it is \em guaranteed that the
+    When you iterate an element sequence with
+    ElementSequenceIterator::operator++(), it is \em guaranteed that the
     requested offsets increase in a monotonic fashion. However, it is
     possible that two consecutive returned data blocks contain
     overlapping data:
