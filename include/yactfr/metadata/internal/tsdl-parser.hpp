@@ -655,7 +655,6 @@ TsdlParser<CharIt>::TsdlParser(CharIt begin, CharIt end,
     _expectedUuid {expectedUuid}
 {
     assert(end >= begin);
-    _pseudoTraceType.uuid = boost::uuids::nil_generator {}();
     this->_parseMetadata();
 }
 
@@ -2065,7 +2064,7 @@ bool TsdlParser<CharIt>::_tryParseTraceBlock()
 
             _pseudoTraceType.uuid = TsdlParser::_uuidFromString(attr.strValue);
 
-            if (_pseudoTraceType.uuid.is_nil()) {
+            if (_pseudoTraceType.uuid->is_nil()) {
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" <<
@@ -2074,7 +2073,7 @@ bool TsdlParser<CharIt>::_tryParseTraceBlock()
             }
 
             if (_expectedUuid) {
-                if (_pseudoTraceType.uuid != *_expectedUuid) {
+                if (*_pseudoTraceType.uuid != *_expectedUuid) {
                     std::ostringstream ss;
 
                     ss << "Invalid `uuid` attribute (`" <<

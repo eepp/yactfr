@@ -307,7 +307,7 @@ struct PseudoTraceType {
     unsigned int majorVersion = 0;
     unsigned int minorVersion = 0;
     int defaultByteOrder = -1;
-    boost::uuids::uuid uuid;
+    boost::optional<boost::uuids::uuid> uuid;
     PseudoDataType::UP packetHeaderType;
     std::unique_ptr<const TraceTypeEnv> env;
     ClockTypeSet clockTypes;

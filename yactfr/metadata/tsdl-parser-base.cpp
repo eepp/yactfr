@@ -1087,7 +1087,7 @@ void PseudoTraceType::clear()
     majorVersion = 0;
     minorVersion = 0;
     defaultByteOrder = -1;
-    uuid = boost::uuids::nil_generator {}();
+    uuid = boost::none;
     packetHeaderType = nullptr;
     env = nullptr;
     clockTypes.clear();
