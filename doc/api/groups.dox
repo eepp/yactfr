@@ -84,20 +84,19 @@ ElementSequence::ElementSequence() %construction\endlink:
 a \link TraceType trace type\endlink and a
 \link DataSourceFactory data source factory\endlink.
 
-You can use traceTypeFromMetadataText() to build a trace type
-from a TSDL document.
+You can use traceTypeFromMetadataText() to build a trace type from a
+TSDL document.
 
 A data source factory is a factory of \link DataSource data
-sources\endlink. Each \link ElementSequenceIterator element
-sequence iterator\endlink creates its own data source from this shared
-factory. For example, the project provides the
-MemoryMappedFileViewFactory data source factory. This one opens
-a file and keeps its file descriptor while its created data sources,
-memory-mapped file views, create their own memory maps on this shared
-file descriptor. This allows an element sequence iterator to be copied and
-moved naturally (using constructors and assignment operators) without
-using more file descriptors and without having to provide a new data
-source manually.
+sources\endlink. Each \link ElementSequenceIterator element sequence
+iterator\endlink creates its own data source from this shared factory.
+For example, the project provides the MemoryMappedFileViewFactory data
+source factory. This one opens a file and keeps its file descriptor
+while its created data sources, memory-mapped file views, create their
+own memory maps on this shared file descriptor. This allows an element
+sequence iterator to be copied and moved naturally (using constructors
+and assignment operators) without using more file descriptors and
+without having to provide a new data source manually.
 
 An element sequence iterator is an <a
 href="http://en.cppreference.com/w/cpp/concept/InputIterator">input
@@ -138,8 +137,8 @@ In the following descriptions, consider this language:
 
 <dt><code>A{n}</code></dt>
 <dd>
-  Element of type <code>A</code> occuring <code>n</code> times
-  (<code>n</code> iterations).
+  Element of type <code>A</code> occuring \em n times
+  (\em n iterations).
 </dd>
 
 <dt><code>ScopeBeginningElement&lt;SCOPE&gt;</code></dt>
@@ -157,7 +156,7 @@ In the following descriptions, consider this language:
 
 When a name is written in <code>UPPERCASE</code>, then it's a named
 group of elements having specific types. This is used to make the
-descriptions easier to read and to allow recursion.
+descriptions below easier to read and to allow recursion.
 
 <h4><code>DATA</code> group</h4>
 
@@ -253,6 +252,28 @@ descriptions easier to read and to allow recursion.
 )
 </pre>
 
+As per the CTF rules, at the ScopeEndElement for the scope
+Scope::PACKET_CONTEXT:
+
+<ul>
+<li>
+  <strong>If you didn't get both an ExpectedPacketTotalSizeElement and
+  an ExpectedPacketContentSizeElement</strong>: this packet's total
+  and content sizes are this data stream's size (this packet is the
+  only one within its data stream).
+</li>
+<li>
+  <strong>If you got an ExpectedPacketTotalSizeElement without an
+  ExpectedPacketContentSizeElement</strong>: this packet's expected
+  content size is this packet's expected total size.
+</li>
+<li>
+  <strong>If you got an ExpectedPacketContentSizeElement without an
+  ExpectedPacketTotalSizeElement</strong>: this packet's expected
+  content size is this packet's expected total size.
+</li>
+</ul>
+
 <h4>Element sequence</h4>
 
 The whole element sequence is just a sequence of zero or more packets:
@@ -275,15 +296,15 @@ when the iterator's current element is:
   <dt>PacketBeginningElement</dt>
   <dd>
     Offset is the beginning of a packet, excluding any preceding padding
-    after the preceding packet's content.
+    following the preceding packet's content.
   </dd>
 
   <dt>PacketEndElement</dt>
   <dd>
-    Offset is the end of the packet, that is, after any padding after
-    its content (the difference between this element's offset and the
-    offset at the preceding PacketContentEndElement). It's the same as
-    it will be at the next PacketBeginningElement.
+    Offset is the end of the packet, that is, following any padding
+    following its content (the difference between this element's offset
+    and the offset at the preceding PacketContentEndElement). It's the
+    same as it will be at the next PacketBeginningElement.
   </dd>
 
   <dt>PacketContentBeginningElement</dt>
@@ -351,8 +372,7 @@ the previous element's kind, offset, and size. For example, if a given
 FloatElement is at offset 64 and its size is 32&nbsp;bits, and the next
 element's offset is 128, then there are 64&nbsp;bits of padding between
 offsets 64 and 128. As such, if the offset of a PacketContentEndElement
-is 8387154 and the offset of the following PacketEndElement is 8388608,
-then there's padding between those two offsets.
-*/
+is 8,387,154 and the offset of the following PacketEndElement is
+8,388,608, then there's 1454 padding bits between those two offsets. */
 
 } // namespace yactfr
