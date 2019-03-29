@@ -281,6 +281,9 @@ private:
     }
 };
 
+/*!
+@brief  Scope base element.
+*/
 class ScopeElement
 {
     friend class internal::Vm;
