@@ -25,6 +25,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
+#include <boost/range/adaptor/reversed.hpp>
 
 #include "../../aliases.hpp"
 #include "../trace-type.hpp"
@@ -2938,7 +2939,17 @@ PseudoDataType::UP TsdlParser<CharIt>::_parseArraySeqLengths(PseudoDataType::UP 
         this->_expectToken("]");
     }
 
-    for (const auto& length : lengths) {
+    /*
+     * We reverse the order here, so that, for example:
+     *
+     *     string s[2][len][4];
+     *
+     * becomes an array of two sequences of `len` arrays of four
+     * strings.
+     *
+     * At this point, `innerType` is the string type in this example.
+     */
+    for (const auto& length : boost::adaptors::reverse(lengths)) {
         if (length.isStaticArrayType) {
             innerType = std::make_unique<PseudoStaticArrayType>(length.arrayLength,
                                                                 std::move(innerType));

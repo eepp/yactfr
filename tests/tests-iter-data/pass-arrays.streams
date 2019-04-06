@@ -87,24 +87,12 @@ event {
    520             SAB:arr3
    520               SAB:arr3
    520                 U:arr3:17
-   528               SAE
-   528               SAB:arr3
    528                 U:arr3:34
-   536               SAE
-   536             SAE
-   536             SAB:arr3
-   536               SAB:arr3
    536                 U:arr3:51
    544               SAE
    544               SAB:arr3
    544                 U:arr3:68
-   552               SAE
-   552             SAE
-   552             SAB:arr3
-   552               SAB:arr3
    552                 U:arr3:85
-   560               SAE
-   560               SAB:arr3
    560                 U:arr3:102
    568               SAE
    568             SAE

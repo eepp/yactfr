@@ -123,24 +123,12 @@ event {
    720             DAB:seq3
    720               DAB:seq3
    720                 U:seq3:17
-   728               DAE
-   728               DAB:seq3
    728                 U:seq3:34
-   736               DAE
-   736             DAE
-   736             DAB:seq3
-   736               DAB:seq3
    736                 U:seq3:51
    744               DAE
    744               DAB:seq3
    744                 U:seq3:68
-   752               DAE
-   752             DAE
-   752             DAB:seq3
-   752               DAB:seq3
    752                 U:seq3:85
-   760               DAE
-   760               DAB:seq3
    760                 U:seq3:102
    768               DAE
    768             DAE
