@@ -1851,9 +1851,10 @@ bool TsdlParser<CharIt>::_tryParseClockBlock()
             description = attr.strValue;
         } else if (attr.name == "uuid") {
             attr.checkKind(_Attribute::Kind::STRING);
-            auto tmpUuid = TsdlParser::_uuidFromString(attr.strValue);
 
-            if (tmpUuid.is_nil()) {
+            const auto tmpUuid = TsdlParser::_uuidFromString(attr.strValue);
+
+            if (!tmpUuid) {
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" <<
@@ -2065,7 +2066,7 @@ bool TsdlParser<CharIt>::_tryParseTraceBlock()
 
             _pseudoTraceType.uuid = TsdlParser::_uuidFromString(attr.strValue);
 
-            if (_pseudoTraceType.uuid->is_nil()) {
+            if (!_pseudoTraceType.uuid) {
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" <<

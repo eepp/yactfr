@@ -497,14 +497,12 @@ void TsdlParserBase::_throwMissingAttribute(const std::string& name,
     throw MetadataParseError {ss.str(), location};
 }
 
-boost::uuids::uuid TsdlParserBase::_uuidFromString(const std::string& str)
+boost::optional<boost::uuids::uuid> TsdlParserBase::_uuidFromString(const std::string& str)
 {
-    const boost::uuids::nil_generator nilGen;
-
     try {
         return boost::uuids::string_generator {}(str);
     } catch (...) {
-        return nilGen();
+        return boost::none;
     }
 }
 

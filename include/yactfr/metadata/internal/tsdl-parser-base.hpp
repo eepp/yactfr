@@ -16,6 +16,7 @@
 #include <cstring>
 #include <cassert>
 #include <unordered_map>
+#include <boost/optional.hpp>
 #include <boost/utility.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -700,9 +701,10 @@ protected:
 
     /*
      * Returns a UUID object from the canonical textual representation
-     * `str`. Returns a nil UUID if the conversion fails.
+     * `str`. Returns `boost::none` if the conversion fails for any
+     * reason.
      */
-    static boost::uuids::uuid _uuidFromString(const std::string& str);
+    static boost::optional<boost::uuids::uuid> _uuidFromString(const std::string& str);
 
     /*
      * Converts a pseudo event record type to a concrete event record
