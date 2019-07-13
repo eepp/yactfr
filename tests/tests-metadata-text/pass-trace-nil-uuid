@@ -1,0 +1,16 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+  uuid = "00000000-0000-0000-0000-000000000000";
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};

@@ -1265,6 +1265,14 @@ test_metadata_pass() {
   test_metadata_pass typedefs-everywhere
 }
 
+@test 'clock with nil UUID -> pass' {
+  test_metadata_pass clock-nil-uuid
+}
+
+@test 'trace with nil UUID -> pass' {
+  test_metadata_pass trace-nil-uuid
+}
+
 @test 'CTF test suite: array-basic-1dim -> pass' {
   test_metadata_pass ctf-testsuite-array-basic-1dim
 }
