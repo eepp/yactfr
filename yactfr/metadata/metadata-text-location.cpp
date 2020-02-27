@@ -18,10 +18,4 @@ MetadataTextLocation::MetadataTextLocation(const Index lineNumber,
 {
 }
 
-MetadataTextLocation::MetadataTextLocation(const MetadataTextLocation& other) noexcept :
-    _lineNumber {other._lineNumber},
-    _colNumber {other._colNumber}
-{
-}
-
 } // namespace yactfr

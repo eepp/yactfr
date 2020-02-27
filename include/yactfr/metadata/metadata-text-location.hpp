@@ -33,8 +33,8 @@ public:
     MetadataTextLocation() = default;
     explicit MetadataTextLocation(Index lineNumber,
                                   Index colNumber) noexcept;
-
-    MetadataTextLocation(const MetadataTextLocation& other) noexcept;
+    MetadataTextLocation(const MetadataTextLocation&) = default;
+    MetadataTextLocation& operator=(const MetadataTextLocation&) = default;
 
     /// Line number (zero-based).
     Index lineNumber() const noexcept
