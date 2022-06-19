@@ -374,8 +374,7 @@ descriptions below easier to read and to allow recursion.
 
 <pre>
 (
-  PacketBeginningElement
-  PacketContentBeginningElement
+  PacketBeginningElement PacketContentBeginningElement
   [
     ScopeBeginningElement&lt;PACKET_HEADER&gt;
     StructureBeginningElement
@@ -399,18 +398,15 @@ descriptions below easier to read and to allow recursion.
       DATA
     ) *
     StructureEndElement
-    ScopeBeginningElement&lt;PACKET_HEADER&gt;
+    ScopeEndElement&lt;PACKET_HEADER&gt;
   ]
   DataStreamInfoElement
   [
     ScopeBeginningElement&lt;PACKET_CONTEXT&gt;
     DATA
-    ScopeBeginningElement&lt;PACKET_CONTEXT&gt;
+    ScopeEndElement&lt;PACKET_CONTEXT&gt;
   ]
-  PacketInfoElement
-  EVENT-RECORD *
-  PacketContentEndElement
-  PacketEndElement
+  PacketInfoElement EVENT-RECORD * PacketContentEndElement PacketEndElement
 )
 </pre>
 
