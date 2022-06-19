@@ -50,25 +50,12 @@ public:
     /*!
     @brief
         Builds an integer range set containing the integer ranges
-        \p ranges (copied).
+        \p ranges.
 
     @param[in] ranges
-        Integer ranges of this integer range set (copied).
+        Integer ranges of this integer range set.
     */
-    explicit IntegerRangeSet(const std::set<Range>& ranges) :
-        _ranges {ranges}
-    {
-    }
-
-    /*!
-    @brief
-        Builds an integer range set containing the integer ranges
-        \p ranges (moved).
-
-    @param[in] ranges
-        Integer ranges of this integer range set (moved).
-    */
-    explicit IntegerRangeSet(std::set<Range>&& ranges) :
+    explicit IntegerRangeSet(const std::set<Range> ranges) :
         _ranges {std::move(ranges)}
     {
     }
