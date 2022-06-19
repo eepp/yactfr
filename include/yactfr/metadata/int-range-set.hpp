@@ -115,7 +115,7 @@ public:
         \c true if this integer range set contains \p value in at least
         one of its ranges.
     */
-    bool contains(const Value value) const
+    bool contains(const Value value) const noexcept
     {
         // check all contained ranges
         for (const auto& range : _ranges) {
@@ -140,7 +140,7 @@ public:
         \c true if at least one range contained in \p other intersects
         with at least one range contained in this integer range set.
     */
-    bool intersects(const IntegerRangeSet<ValueT>& other) const
+    bool intersects(const IntegerRangeSet<ValueT>& other) const noexcept
     {
         for (const auto& range : _ranges) {
             for (const auto& otherRange : other.ranges()) {
@@ -163,7 +163,7 @@ public:
     @returns
         \c true if \p other is equal to this integer range set.
     */
-    bool operator==(const IntegerRangeSet<ValueT>& other) const
+    bool operator==(const IntegerRangeSet<ValueT>& other) const noexcept
     {
         return other.ranges() == _ranges;
     }
@@ -179,7 +179,7 @@ public:
         \c true if \p other is not equal to
         this integer range set.
     */
-    bool operator!=(const IntegerRangeSet<ValueT>& other) const
+    bool operator!=(const IntegerRangeSet<ValueT>& other) const noexcept
     {
         return !(*this == other);
     }
