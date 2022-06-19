@@ -54,10 +54,10 @@ public:
     }
 
     /// Default copy constructor.
-    IntegerRange(const IntegerRange<ValueT>&) = default;
+    IntegerRange(const IntegerRange<ValueT>&) noexcept = default;
 
     /// Default copy assignment operator.
-    IntegerRange<ValueT>& operator=(const IntegerRange<ValueT>&) = default;
+    IntegerRange<ValueT>& operator=(const IntegerRange<ValueT>&) noexcept = default;
 
     /// Lower bound of this integer range.
     ValueT lower() const noexcept
