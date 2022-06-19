@@ -372,7 +372,7 @@ public:
     // current event record type procedure
     const ErProc *curErProc = nullptr;
 
-    // packet UUID
+    // trace type UUID
     boost::uuids::uuid uuid;
 
     // current packet expected total length (bits)
@@ -682,7 +682,10 @@ private:
     {
         this->_updateItForUser(_pos.elems.pktContentBeginning);
 
-        // the packet's preamble procedure is already loaded at this point
+        /*
+         * The preamble procedure of the packet is already loaded at
+         * this point.
+         */
         _pos.state(VmState::EXEC_INSTR);
         return true;
     }
@@ -764,7 +767,10 @@ private:
             }
         }
 
-        // align now so that the iterator's offset is after any padding
+        /*
+         * Align now so that the offset of the iterator is _after_ any
+         * padding.
+         */
         this->_alignHead(_pos.curDsPktProc->erAlign());
 
         this->_updateItForUser(_pos.elems.erBeginning);
@@ -1148,7 +1154,7 @@ private:
     void _requireContentBits(const Size bits)
     {
         if (bits > _pos.remContentBitsInPkt()) {
-            // going past the packet's content
+            // going past the packet content
             throw CannotDecodeDataBeyondPacketContentDecodingError {
                 _pos.headOffsetInElemSeqBits(),
                 bits, _pos.remContentBitsInPkt()
@@ -1688,7 +1694,7 @@ private:
     // array of instruction handler functions
     std::array<ExecFunc, 128> _execFuncs;
 
-    // position (whole VM's state)
+    // position (whole state of the VM)
     VmPos _pos;
 };
 

@@ -792,7 +792,7 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
 {
     const auto& beginReadScopeInstr = static_cast<const BeginReadScopeInstr&>(instr);
 
-    // align now so that the iterator's offset is after any padding
+    // align now so that the offset of the iterator is _after_ any padding
     this->_alignHead(beginReadScopeInstr.align());
 
     _pos.elems.scopeBeginning._scope = beginReadScopeInstr.scope();
