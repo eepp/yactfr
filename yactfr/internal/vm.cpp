@@ -782,7 +782,7 @@ Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)
     this->_alignHead(instr);
     this->_setDataElemFromInstr(_pos.elems.ntStrBeginning, instr);
     this->_setDataElemFromInstr(_pos.elems.ntStrEnd, instr);
-    this->_updateItCurOffset(_pos.elems.ntStrBeginning);
+    this->_updateItForUser(_pos.elems.ntStrBeginning);
     _pos.nextState = _pos.state();
     _pos.state(VmState::READ_SUBSTR_UNTIL_NULL);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
@@ -796,7 +796,7 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
     this->_alignHead(beginReadScopeInstr.align());
 
     _pos.elems.scopeBeginning._scope = beginReadScopeInstr.scope();
-    this->_updateItCurOffset(_pos.elems.scopeBeginning);
+    this->_updateItForUser(_pos.elems.scopeBeginning);
     _pos.gotoNextInstr();
     _pos.stackPush(&beginReadScopeInstr.proc());
     return _ExecReaction::STOP;
@@ -805,7 +805,7 @@ Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadScope(const Instr& instr)
 {
     _pos.elems.scopeEnd._scope = static_cast<const EndReadScopeInstr&>(instr).scope();
-    this->_updateItCurOffset(_pos.elems.scopeEnd);
+    this->_updateItForUser(_pos.elems.scopeEnd);
     _pos.stackPop();
     assert(_pos.state() == VmState::EXEC_INSTR);
     return _ExecReaction::STOP;
@@ -817,7 +817,7 @@ Vm::_ExecReaction Vm::_execBeginReadStruct(const Instr& instr)
 
     this->_alignHead(instr);
     this->_setDataElemFromInstr(_pos.elems.structBeginning, instr);
-    this->_updateItCurOffset(_pos.elems.structBeginning);
+    this->_updateItForUser(_pos.elems.structBeginning);
     _pos.gotoNextInstr();
     _pos.stackPush(&beginReadStructInstr.proc());
     _pos.state(VmState::EXEC_INSTR);
@@ -827,7 +827,7 @@ Vm::_ExecReaction Vm::_execBeginReadStruct(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadStruct(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.structEnd, instr);
-    this->_updateItCurOffset(_pos.elems.structEnd);
+    this->_updateItForUser(_pos.elems.structEnd);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
@@ -840,7 +840,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlArray(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadSlArray(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.slArrayEnd, instr);
-    this->_updateItCurOffset(_pos.elems.slArrayEnd);
+    this->_updateItForUser(_pos.elems.slArrayEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -857,7 +857,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlStr(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadSlStr(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.slStrEnd, instr);
-    this->_updateItCurOffset(_pos.elems.slStrEnd);
+    this->_updateItForUser(_pos.elems.slStrEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -879,7 +879,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlArray(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadDlArray(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.dlArrayEnd, instr);
-    this->_updateItCurOffset(_pos.elems.dlArrayEnd);
+    this->_updateItForUser(_pos.elems.dlArrayEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -896,7 +896,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlStr(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.dlStrEnd, instr);
-    this->_updateItCurOffset(_pos.elems.dlStrEnd);
+    this->_updateItForUser(_pos.elems.dlStrEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -913,7 +913,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlUuidBlob(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadSlBlob(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.slBlobEnd, instr);
-    this->_updateItCurOffset(_pos.elems.slBlobEnd);
+    this->_updateItForUser(_pos.elems.slBlobEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -930,7 +930,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlBlob(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadDlBlob(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.dlBlobEnd, instr);
-    this->_updateItCurOffset(_pos.elems.dlBlobEnd);
+    this->_updateItForUser(_pos.elems.dlBlobEnd);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -974,7 +974,7 @@ Vm::_ExecReaction Vm::_execBeginReadOptUIntSel(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadVarUIntSel(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.varUIntSelEnd, instr);
-    this->_updateItCurOffset(_pos.elems.varUIntSelEnd);
+    this->_updateItForUser(_pos.elems.varUIntSelEnd);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
@@ -982,7 +982,7 @@ Vm::_ExecReaction Vm::_execEndReadVarUIntSel(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadVarSIntSel(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.varSIntSelEnd, instr);
-    this->_updateItCurOffset(_pos.elems.varSIntSelEnd);
+    this->_updateItForUser(_pos.elems.varSIntSelEnd);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
@@ -990,7 +990,7 @@ Vm::_ExecReaction Vm::_execEndReadVarSIntSel(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadOptBoolSel(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.optBoolSelEnd, instr);
-    this->_updateItCurOffset(_pos.elems.optBoolSelEnd);
+    this->_updateItForUser(_pos.elems.optBoolSelEnd);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
@@ -998,7 +998,7 @@ Vm::_ExecReaction Vm::_execEndReadOptBoolSel(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadOptUIntSel(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.optUIntSelEnd, instr);
-    this->_updateItCurOffset(_pos.elems.optUIntSelEnd);
+    this->_updateItForUser(_pos.elems.optUIntSelEnd);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
@@ -1006,7 +1006,7 @@ Vm::_ExecReaction Vm::_execEndReadOptUIntSel(const Instr& instr)
 Vm::_ExecReaction Vm::_execEndReadOptSIntSel(const Instr& instr)
 {
     this->_setDataElemFromInstr(_pos.elems.optSIntSelEnd, instr);
-    this->_updateItCurOffset(_pos.elems.optSIntSelEnd);
+    this->_updateItForUser(_pos.elems.optSIntSelEnd);
     _pos.setParentStateAndStackPop();
     return _ExecReaction::STOP;
 }
@@ -1166,7 +1166,7 @@ Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr&)
 
 Vm::_ExecReaction Vm::_execSetDsInfo(const Instr&)
 {
-    this->_updateItCurOffset(_pos.elems.dsInfo);
+    this->_updateItForUser(_pos.elems.dsInfo);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -1182,20 +1182,20 @@ Vm::_ExecReaction Vm::_execSetPktInfo(const Instr&)
     if (_pos.curExpectedPktContentLenBits != SIZE_MAX) {
         _pos.elems.pktInfo._expectedContentLen = _pos.curExpectedPktContentLenBits;
     }
-    this->_updateItCurOffset(_pos.elems.pktInfo);
+    this->_updateItForUser(_pos.elems.pktInfo);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execSetErInfo(const Instr&)
 {
-    this->_updateItCurOffset(_pos.elems.erInfo);
+    this->_updateItForUser(_pos.elems.erInfo);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
 Vm::_ExecReaction Vm::_execSetPktMagicNumber(const Instr&)
 {
     _pos.elems.pktMagicNumber._val = _pos.lastIntVal.u;
-    this->_updateItCurOffset(_pos.elems.pktMagicNumber);
+    this->_updateItForUser(_pos.elems.pktMagicNumber);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

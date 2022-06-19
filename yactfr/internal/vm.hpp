@@ -672,7 +672,7 @@ private:
             }
         }
 
-        this->_updateItCurOffset(_pos.elems.pktBeginning);
+        this->_updateItForUser(_pos.elems.pktBeginning);
         _pos.loadNewProc(_pos.pktProc->preambleProc());
         _pos.state(VmState::BEGIN_PKT_CONTENT);
         return true;
@@ -680,7 +680,7 @@ private:
 
     bool _stateBeginPktContent()
     {
-        this->_updateItCurOffset(_pos.elems.pktContentBeginning);
+        this->_updateItForUser(_pos.elems.pktContentBeginning);
 
         // the packet's preamble procedure is already loaded at this point
         _pos.state(VmState::EXEC_INSTR);
@@ -712,7 +712,7 @@ private:
             _pos.state(VmState::END_PKT);
         }
 
-        this->_updateItCurOffset(_pos.elems.pktContentEnd);
+        this->_updateItForUser(_pos.elems.pktContentEnd);
         return true;
     }
 
@@ -737,7 +737,7 @@ private:
             _bufLenBits -= (_bufAddr - oldBufAddr) * 8;
         }
 
-        this->_updateIt(_pos.elems.pktEnd, offset);
+        this->_updateItForUser(_pos.elems.pktEnd, offset);
         _pos.state(VmState::BEGIN_PKT);
         return true;
     }
@@ -767,7 +767,7 @@ private:
         // align now so that the iterator's offset is after any padding
         this->_alignHead(_pos.curDsPktProc->erAlign());
 
-        this->_updateItCurOffset(_pos.elems.erBeginning);
+        this->_updateItForUser(_pos.elems.erBeginning);
         _pos.loadNewProc(_pos.curDsPktProc->erPreambleProc());
         _pos.state(VmState::EXEC_INSTR);
         return true;
@@ -777,7 +777,7 @@ private:
     {
         assert(_pos.curErProc);
         _pos.curErProc = nullptr;
-        this->_updateItCurOffset(_pos.elems.erEnd);
+        this->_updateItForUser(_pos.elems.erEnd);
         _pos.state(VmState::BEGIN_ER);
         return true;
     }
@@ -804,7 +804,7 @@ private:
 
         // `_pos.elems.traceTypeUuid._expectedUuid` is already set once
         _pos.elems.traceTypeUuid._uuid = _pos.uuid;
-        this->_updateItCurOffset(_pos.elems.traceTypeUuid);
+        this->_updateItForUser(_pos.elems.traceTypeUuid);
         _pos.setParentStateAndStackPop();
         return true;
     }
@@ -836,7 +836,7 @@ private:
         elem._begin = reinterpret_cast<const ByteT *>(buf);
         elem._end = reinterpret_cast<const ByteT *>(buf + sectionSizeBytes);
         assert(elem.size() > 0);
-        this->_updateItCurOffset(elem);
+        this->_updateItForUser(elem);
         this->_consumeExistingBits(sectionSizeBytes * 8);
         _pos.stackTop().rem -= sectionSizeBytes;
         return true;
@@ -1019,7 +1019,7 @@ private:
         }
 
         assert(_pos.elems.substr.size() > 0);
-        this->_updateItCurOffset(_pos.elems.substr);
+        this->_updateItForUser(_pos.elems.substr);
         this->_consumeExistingBits(_pos.elems.substr.size() * 8);
         return true;
     }
@@ -1030,7 +1030,7 @@ private:
          * NOTE: _setDataElemFromInstr() was already called from
          * _execReadNtStr() for `_pos.elems.ntStrEnd`.
          */
-        this->_updateItCurOffset(_pos.elems.ntStrEnd);
+        this->_updateItForUser(_pos.elems.ntStrEnd);
         _pos.state(_pos.nextState);
         assert(_pos.state() == VmState::EXEC_INSTR || _pos.state() == VmState::EXEC_ARRAY_INSTR);
         return true;
@@ -1041,23 +1041,16 @@ private:
         return (this->*_execFuncs[static_cast<Index>(instr.kind())])(instr);
     }
 
-    void _updateIt(const Element& elem, const Index offset)
+    void _updateItForUser(const Element& elem, const Index offset) noexcept
     {
         _it->_curElem = &elem;
         _it->_offset = offset;
         ++_it->_mark;
     }
 
-    void _updateItCurOffset(const Element& elem, const Index offset)
+    void _updateItForUser(const Element& elem) noexcept
     {
-        _it->_curElem = &elem;
-        _it->_offset = offset;
-        ++_it->_mark;
-    }
-
-    void _updateItCurOffset(const Element& elem)
-    {
-        this->_updateItCurOffset(elem, _pos.headOffsetInElemSeqBits());
+        this->_updateItForUser(elem, _pos.headOffsetInElemSeqBits());
     }
 
     void _setItEnd() const noexcept
@@ -1335,7 +1328,7 @@ private:
         Vm::_setDataElemFromInstr(elem, instr);
         this->_setLastIntVal(val);
         elem._val(val);
-        this->_updateItCurOffset(elem, offset);
+        this->_updateItForUser(elem, offset);
     }
 
     template <typename ValT, typename ElemT>
@@ -1368,7 +1361,7 @@ private:
     {
         Vm::_setDataElemFromInstr(_pos.elems.flFloat, instr);
         _pos.elems.flFloat._val(val);
-        this->_updateItCurOffset(_pos.elems.flFloat);
+        this->_updateItForUser(_pos.elems.flFloat);
     }
 
     void _execReadFlBitArrayPreamble(const Instr& instr, const Size len)
@@ -1569,7 +1562,7 @@ private:
 
         Vm::_setDataElemFromInstr(elem, instr);
         elem._selVal = selVal;
-        this->_updateItCurOffset(elem);
+        this->_updateItForUser(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(proc);
         _pos.state(VmState::EXEC_INSTR);
@@ -1592,7 +1585,7 @@ private:
         const auto isEnabled = beginReadOptInstr.isEnabled(selVal);
 
         Vm::_setDataElemFromInstr(elem, instr);
-        this->_updateItCurOffset(elem);
+        this->_updateItForUser(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(&beginReadOptInstr.proc());
 
@@ -1621,7 +1614,7 @@ private:
     {
         this->_alignHead(instr);
         Vm::_setDataElemFromInstr(elem, instr);
-        this->_updateItCurOffset(elem);
+        this->_updateItForUser(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(proc);
         _pos.stackTop().rem = len;
@@ -1657,7 +1650,7 @@ private:
         assert(len != SAVED_VAL_UNSET);
         this->_alignHead(instr);
         Vm::_setDataElemFromInstr(elem, instr);
-        this->_updateItCurOffset(elem);
+        this->_updateItForUser(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(proc);
         _pos.stackTop().rem = len;
@@ -1669,7 +1662,7 @@ private:
         const auto newVal = _pos.updateDefClkVal(len);
 
         _pos.elems.defClkVal._cycles = newVal;
-        this->_updateItCurOffset(_pos.elems.defClkVal);
+        this->_updateItForUser(_pos.elems.defClkVal);
         return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
     }
 
