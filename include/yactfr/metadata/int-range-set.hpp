@@ -105,7 +105,7 @@ public:
     bool contains(const Value value) const noexcept
     {
         // check all contained ranges
-        for (const auto& range : _ranges) {
+        for (auto& range : _ranges) {
             if (range.contains(value)) {
                 return true;
             }
@@ -129,8 +129,8 @@ public:
     */
     bool intersects(const IntegerRangeSet<ValueT>& other) const noexcept
     {
-        for (const auto& range : _ranges) {
-            for (const auto& otherRange : other.ranges()) {
+        for (auto& range : _ranges) {
+            for (auto& otherRange : other.ranges()) {
                 if (range.intersects(otherRange)) {
                     return true;
                 }
