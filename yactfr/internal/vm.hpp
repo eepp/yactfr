@@ -245,11 +245,12 @@ public:
         std::fill(savedVals.begin(), savedVals.end(), SAVED_VAL_UNSET);
 
         /*
-         * Reset all information elements as a given element sequence
+         * Reset all informative elements as a given element sequence
          * may contain packets from data streams having different types,
          * therefore having different packet context and event record
          * header types.
          */
+        elems.dsInfo._reset();
         elems.pktInfo._reset();
         elems.erInfo._reset();
     }
