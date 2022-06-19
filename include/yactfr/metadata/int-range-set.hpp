@@ -78,13 +78,13 @@ public:
         return _ranges;
     }
 
-    /// Range iterator set at the first range of this set.
+    /// Range set iterator at the first range of this set.
     typename std::set<Range>::const_iterator begin() const noexcept
     {
         return _ranges.begin();
     }
 
-    /// Range iterator set \em after the last range of this set.
+    /// Range set iterator \em after the last range of this set.
     typename std::set<Range>::const_iterator end() const noexcept
     {
         return _ranges.end();
