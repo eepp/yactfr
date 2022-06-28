@@ -67,7 +67,6 @@
 #include "metadata/trace-type.hpp"
 #include "metadata/var-type-opt.hpp"
 #include "metadata/var-type.hpp"
-#include "metadata/vl-bit-array-type.hpp"
 #include "metadata/vl-enum-type.hpp"
 #include "metadata/vl-int-type.hpp"
 #include "mmap-file-view-factory.hpp"

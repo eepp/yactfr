@@ -50,8 +50,8 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     lastFlBitArrayBo = other.lastFlBitArrayBo;
     remBitsToSkip = other.remBitsToSkip;
     lastIntVal = other.lastIntVal;
-    curVlBitArrayLenBits = other.curVlBitArrayLenBits;
-    curVlBitArrayElem = &this->elemFromOther(other, *other.curVlBitArrayElem);
+    curVlIntLenBits = other.curVlIntLenBits;
+    curVlIntElem = &this->elemFromOther(other, *other.curVlIntElem);
     curId = other.curId;
     pktProc = other.pktProc;
     curDsPktProc = other.curDsPktProc;
@@ -256,7 +256,6 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A16_BE>(&Vm::_execReadFlUEnumA16Be);
     this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A32_BE>(&Vm::_execReadFlUEnumA32Be);
     this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A64_BE>(&Vm::_execReadFlUEnumA64Be);
-    this->_initExecFunc<Instr::Kind::READ_VL_BIT_ARRAY>(&Vm::_execReadVlBitArray);
     this->_initExecFunc<Instr::Kind::READ_VL_UINT>(&Vm::_execReadVlUInt);
     this->_initExecFunc<Instr::Kind::READ_VL_SINT>(&Vm::_execReadVlSInt);
     this->_initExecFunc<Instr::Kind::READ_VL_UENUM>(&Vm::_execReadVlUEnum);
@@ -747,34 +746,24 @@ Vm::_ExecReaction Vm::_execReadFlUEnumA64Be(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadVlBitArray(const Instr& instr)
-{
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlBitArray,
-                                           VmState::CONTINUE_READ_VL_UINT);
-}
-
 Vm::_ExecReaction Vm::_execReadVlUInt(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUInt,
-                                           VmState::CONTINUE_READ_VL_UINT);
+    return this->_execReadVlIntCommon(instr, _pos.elems.vlUInt, VmState::CONTINUE_READ_VL_UINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlSInt(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSInt,
-                                           VmState::CONTINUE_READ_VL_SINT);
+    return this->_execReadVlIntCommon(instr, _pos.elems.vlSInt, VmState::CONTINUE_READ_VL_SINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlUEnum(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlUEnum,
-                                           VmState::CONTINUE_READ_VL_UINT);
+    return this->_execReadVlIntCommon(instr, _pos.elems.vlUEnum, VmState::CONTINUE_READ_VL_UINT);
 }
 
 Vm::_ExecReaction Vm::_execReadVlSEnum(const Instr& instr)
 {
-    return this->_execReadVlBitArrayCommon(instr, _pos.elems.vlSEnum,
-                                           VmState::CONTINUE_READ_VL_SINT);
+    return this->_execReadVlIntCommon(instr, _pos.elems.vlSEnum, VmState::CONTINUE_READ_VL_SINT);
 }
 
 Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)

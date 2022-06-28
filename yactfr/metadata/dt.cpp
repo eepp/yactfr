@@ -15,7 +15,6 @@
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
-#include <yactfr/metadata/vl-bit-array-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/vl-enum-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
@@ -105,12 +104,6 @@ const FixedLengthUnsignedEnumerationType& DataType::asFixedLengthUnsignedEnumera
 {
     assert(this->isFixedLengthUnsignedEnumerationType());
     return static_cast<const FixedLengthUnsignedEnumerationType&>(*this);
-}
-
-const VariableLengthBitArrayType& DataType::asVariableLengthBitArrayType() const noexcept
-{
-    assert(this->isVariableLengthBitArrayType());
-    return static_cast<const VariableLengthBitArrayType&>(*this);
 }
 
 const VariableLengthIntegerType& DataType::asVariableLengthIntegerType() const noexcept

@@ -12,7 +12,6 @@
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
-#include <yactfr/metadata/vl-bit-array-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/vl-enum-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
@@ -308,19 +307,6 @@ static PseudoDt::UP pseudoDtFromVlIntFc(const JsonObjVal& jsonFc, const std::str
     }
 }
 
-static PseudoDt::UP pseudoDtFromVlBitArrayFc(const JsonObjVal& jsonFc, const std::string& type,
-                                             MapItem::UP userAttrs)
-{
-    if (type == strs::VL_BIT_ARRAY) {
-        return createPseudoScalarDtWrapper<VariableLengthBitArrayType>(jsonFc,
-                                                                       std::move(userAttrs));
-    } else {
-        assert(type == strs::VL_UINT || type == strs::VL_SINT ||
-               type == strs::VL_UENUM || type == strs::VL_SENUM);
-        return pseudoDtFromVlIntFc(jsonFc, type, std::move(userAttrs));
-    }
-}
-
 static PseudoDt::UP pseudoDtFromNtStrFc(const JsonObjVal& jsonFc, MapItem::UP userAttrs)
 {
     return createPseudoScalarDtWrapper<NullTerminatedStringType>(jsonFc, std::move(userAttrs));
@@ -569,10 +555,9 @@ PseudoDt::UP pseudoDtOfCtf2Obj(const JsonObjVal& jsonObjVal, const std::string& 
             type == strs::FL_UENUM || type == strs::FL_SENUM ||
             type == strs::FL_FLOAT) {
         return pseudoDtFromFlBitArrayFc(jsonFcObj, type, std::move(userAttrs));
-    } else if (type == strs::VL_BIT_ARRAY ||
-            type == strs::VL_UINT || type == strs::VL_SINT ||
+    } else if (type == strs::VL_UINT || type == strs::VL_SINT ||
             type == strs::VL_UENUM || type == strs::VL_SENUM) {
-        return pseudoDtFromVlBitArrayFc(jsonFcObj, type, std::move(userAttrs));
+        return pseudoDtFromVlIntFc(jsonFcObj, type, std::move(userAttrs));
     } else if (type == strs::NT_STR) {
         return pseudoDtFromNtStrFc(jsonFcObj, std::move(userAttrs));
     } else if (type == strs::SL_STR || type == strs::DL_STR) {

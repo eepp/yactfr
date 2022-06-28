@@ -156,12 +156,6 @@ public:
         *_os << ':' << std::setprecision(6) << elem.value() << '\n';
     }
 
-    void visit(const yactfr::VariableLengthBitArrayElement& elem) override
-    {
-        this->_visitDataElem(elem, "VLBA");
-        *_os << ':' << elem.unsignedIntegerValue() << '\n';
-    }
-
     void visit(const yactfr::VariableLengthSignedIntegerElement& elem) override
     {
         this->_visitDataElem(elem, "VLSI");

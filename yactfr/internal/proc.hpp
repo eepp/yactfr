@@ -75,6 +75,7 @@
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
+#include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
@@ -127,7 +128,7 @@ class ReadFlSIntInstr;
 class ReadNtStrInstr;
 class ReadFlUEnumInstr;
 class ReadFlUIntInstr;
-class ReadVlBitArrayInstr;
+class ReadVlIntInstr;
 class SaveValInstr;
 class SetCurIdInstr;
 class SetDsIdInstr;
@@ -185,7 +186,7 @@ public:
     {
     }
 
-    virtual void visit(ReadVlBitArrayInstr&)
+    virtual void visit(ReadVlIntInstr&)
     {
     }
 
@@ -525,7 +526,6 @@ public:
         READ_FL_BOOL_A8,
         READ_FL_BOOL_BE,
         READ_FL_BOOL_LE,
-        READ_VL_BIT_ARRAY,
         READ_VL_UINT,
         READ_VL_SINT,
         READ_VL_UENUM,
@@ -646,7 +646,6 @@ public:
         case Instr::Kind::READ_FL_BOOL_A8:
         case Instr::Kind::READ_FL_BOOL_BE:
         case Instr::Kind::READ_FL_BOOL_LE:
-        case Instr::Kind::READ_VL_BIT_ARRAY:
         case Instr::Kind::READ_VL_UINT:
         case Instr::Kind::READ_VL_SINT:
         case Instr::Kind::READ_VL_UENUM:
@@ -989,22 +988,22 @@ private:
 };
 
 /*
- * "Read variable-length bit array" procedure instruction.
+ * "Read variable-length integer" procedure instruction.
  */
-class ReadVlBitArrayInstr :
+class ReadVlIntInstr :
     public ReadDataInstr
 {
 public:
-    explicit ReadVlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt);
+    explicit ReadVlIntInstr(const StructureMemberType *memberType, const DataType& dt);
 
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
     }
 
-    const VariableLengthBitArrayType& vlBitArrayType() const noexcept
+    const VariableLengthIntegerType& vlIntType() const noexcept
     {
-        return static_cast<const VariableLengthBitArrayType&>(this->dt());
+        return static_cast<const VariableLengthIntegerType&>(this->dt());
     }
 
 private:

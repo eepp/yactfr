@@ -918,55 +918,14 @@ private:
 };
 
 /*
- * CTF 2 JSON variable-length bit array type value requirement.
- */
-class JsonVlBitArrayTypeValReq :
-    public JsonDtValReq
-{
-protected:
-    explicit JsonVlBitArrayTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
-        JsonDtValReq {std::move(type), std::move(propReqs)}
-    {
-    }
-
-public:
-    explicit JsonVlBitArrayTypeValReq() :
-        JsonVlBitArrayTypeValReq {this->typeStr()}
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonVlBitArrayTypeValReq>();
-    }
-
-    static constexpr const char *typeStr() noexcept
-    {
-        return strs::VL_BIT_ARRAY;
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonDtValReq::_validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid variable-length bit array type:",
-                                      jsonVal.loc());
-            throw;
-        }
-    }
-};
-
-/*
  * CTF 2 JSON variable-length integer type value abstract requirement.
  */
 class JsonVlIntTypeValReq :
-    public JsonVlBitArrayTypeValReq
+    public JsonDtValReq
 {
 protected:
     explicit JsonVlIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
-        JsonVlBitArrayTypeValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
+        JsonDtValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
     {
     }
 
@@ -1803,7 +1762,6 @@ public:
                     JsonFlUEnumTypeValReq::typeStr(),
                     JsonFlSEnumTypeValReq::typeStr(),
                     JsonFlFloatTypeValReq::typeStr(),
-                    JsonVlBitArrayTypeValReq::typeStr(),
                     JsonVlUIntTypeValReq::typeStr(),
                     JsonVlSIntTypeValReq::typeStr(),
                     JsonVlUEnumTypeValReq::typeStr(),
@@ -1840,7 +1798,6 @@ public:
         this->_addToDtValReqs(_flUEnumTypeValReq);
         this->_addToDtValReqs(_flSEnumTypeValReq);
         this->_addToDtValReqs(_flFloatTypeValReq);
-        this->_addToDtValReqs(_vlBitArrayTypeValReq);
         this->_addToDtValReqs(_vlUIntTypeValReq);
         this->_addToDtValReqs(_vlSIntTypeValReq);
         this->_addToDtValReqs(_vlUEnumTypeValReq);
@@ -1900,7 +1857,6 @@ private:
     JsonFlUEnumTypeValReq _flUEnumTypeValReq;
     JsonFlSEnumTypeValReq _flSEnumTypeValReq;
     JsonFlFloatTypeValReq _flFloatTypeValReq;
-    JsonVlBitArrayTypeValReq _vlBitArrayTypeValReq;
     JsonVlUIntTypeValReq _vlUIntTypeValReq;
     JsonVlSIntTypeValReq _vlSIntTypeValReq;
     JsonVlUEnumTypeValReq _vlUEnumTypeValReq;

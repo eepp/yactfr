@@ -132,7 +132,6 @@ public:
         - \p packetHeaderType and all the data types within
           \p dataStreamTypes don't contain the following data types:
 
-          - VariableLengthBitArrayType
           - VariableLengthUnsignedIntegerType
           - VariableLengthSignedIntegerType
           - VariableLengthUnsignedEnumerationType

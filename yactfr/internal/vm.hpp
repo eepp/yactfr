@@ -301,7 +301,6 @@ public:
         FixedLengthSignedEnumerationElement flSEnum;
         FixedLengthUnsignedEnumerationElement flUEnum;
         FixedLengthFloatingPointNumberElement flFloat;
-        VariableLengthBitArrayElement vlBitArray;
         VariableLengthSignedIntegerElement vlSInt;
         VariableLengthUnsignedIntegerElement vlUInt;
         VariableLengthSignedEnumerationElement vlSEnum;
@@ -354,11 +353,11 @@ public:
         std::int64_t i;
     } lastIntVal;
 
-    // current variable-length bit array length (bits)
-    Size curVlBitArrayLenBits;
+    // current variable-length integer length (bits)
+    Size curVlIntLenBits;
 
-    // current variable-length bit array element
-    VariableLengthBitArrayElement *curVlBitArrayElem;
+    // current variable-length integer element
+    VariableLengthIntegerElement *curVlIntElem;
 
     // current ID (event record or data stream type)
     TypeId curId;
@@ -891,18 +890,18 @@ private:
 
     void _signExtendVlSIntVal() noexcept
     {
-        const auto mask = UINT64_C(1) << (_pos.curVlBitArrayLenBits - 1);
+        const auto mask = UINT64_C(1) << (_pos.curVlIntLenBits - 1);
 
-        _pos.lastIntVal.u = _pos.lastIntVal.u & ((UINT64_C(1) << _pos.curVlBitArrayLenBits) - 1);
+        _pos.lastIntVal.u = _pos.lastIntVal.u & ((UINT64_C(1) << _pos.curVlIntLenBits) - 1);
         _pos.lastIntVal.u = (_pos.lastIntVal.u ^ mask) - mask;
     }
 
     void _appendVlIntByte(std::uint8_t byte)
     {
-        // validate future variable-length bit-array length
-        if ((_pos.curVlBitArrayLenBits + 7) > 64) {
+        // validate future variable-length integer length
+        if ((_pos.curVlIntLenBits + 7) > 64) {
 
-            throw OversizedVariableLengthBitArrayDecodingError {_pos.headOffsetInElemSeqBits()};
+            throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
         }
 
         // mark this byte as consumed immediately
@@ -910,10 +909,10 @@ private:
 
         // update unsigned integer value, clearing continuation bit
         _pos.lastIntVal.u |= (static_cast<std::uint64_t>(byte & 0b0111'1111) <<
-                              _pos.curVlBitArrayLenBits);
+                              _pos.curVlIntLenBits);
 
-        // update current variable-length bit-array length
-        _pos.curVlBitArrayLenBits += 7;
+        // update current variable-length integer length
+        _pos.curVlIntLenBits += 7;
     }
 
     template <bool IsSignedV>
@@ -922,12 +921,12 @@ private:
         /*
          * Read a single byte, and then:
          *
-         * If the variable-length bit array is not ended:
+         * If the variable-length integer is not ended:
          *     Keep this state.
          *
          * Otherwise:
-         *     Set the variable-length bit array element and set the
-         *     state to the previous value.
+         *     Set the variable-length integer element and set the state
+         *     to the previous value.
          *
          * See <https://en.wikipedia.org/wiki/LEB128>.
          */
@@ -946,27 +945,27 @@ private:
             /*
              * When calling _setBitArrayElemBase() below,
              * `**_pos.stackTop().it` is the current
-             * `ReadVlBitArrayInstr` instruction.
+             * `ReadVlIntInstr` instruction.
              */
             auto& instr = **_pos.stackTop().it;
 
-            assert(_pos.curVlBitArrayElem);
-            _pos.curVlBitArrayElem->_len = _pos.curVlBitArrayLenBits;
+            assert(_pos.curVlIntElem);
+            _pos.curVlIntElem->_len = _pos.curVlIntLenBits;
 
             /*
              * `_pos.headOffsetInElemSeqBits()` now returns the offset
-             * at the _end_ of the VL bit array; the iterator user
-             * expects its beginning offset.
+             * at the _end_ of the VL integer; the iterator user expects
+             * its beginning offset.
              */
             const auto offset = _pos.headOffsetInElemSeqBits() -
-                                _pos.curVlBitArrayElem->dataLength();
+                                _pos.curVlIntElem->dataLength();
 
             if (IsSignedV) {
                 this->_signExtendVlSIntVal();
-                this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlBitArrayElem,
+                this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlIntElem,
                                            offset);
             } else {
-                this->_setBitArrayElemBase(_pos.lastIntVal.u, instr, *_pos.curVlBitArrayElem,
+                this->_setBitArrayElemBase(_pos.lastIntVal.u, instr, *_pos.curVlIntElem,
                                            offset);
             }
 
@@ -1252,7 +1251,6 @@ private:
     _ExecReaction _execReadFlUEnumA16Be(const Instr& instr);
     _ExecReaction _execReadFlUEnumA32Be(const Instr& instr);
     _ExecReaction _execReadFlUEnumA64Be(const Instr& instr);
-    _ExecReaction _execReadVlBitArray(const Instr& instr);
     _ExecReaction _execReadVlUInt(const Instr& instr);
     _ExecReaction _execReadVlSInt(const Instr& instr);
     _ExecReaction _execReadVlUEnum(const Instr& instr);
@@ -1529,13 +1527,12 @@ private:
         this->_execReadFlFloatPost<FloatT>(val, instr);
     }
 
-    _ExecReaction _execReadVlBitArrayCommon(const Instr& instr,
-                                            VariableLengthBitArrayElement& elem,
-                                            const VmState nextState)
+    _ExecReaction _execReadVlIntCommon(const Instr& instr, VariableLengthIntegerElement& elem,
+                                       const VmState nextState)
     {
         this->_alignHead(instr);
-        _pos.curVlBitArrayElem = &elem;
-        _pos.curVlBitArrayLenBits = 0;
+        _pos.curVlIntElem = &elem;
+        _pos.curVlIntLenBits = 0;
         _pos.lastIntVal.u = 0;
         _pos.nextState = _pos.state();
         _pos.state(nextState);

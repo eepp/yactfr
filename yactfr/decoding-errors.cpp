@@ -210,9 +210,9 @@ InvalidVariantUnsignedIntegerSelectorValueDecodingError::InvalidVariantUnsignedI
 {
 }
 
-OversizedVariableLengthBitArrayDecodingError::OversizedVariableLengthBitArrayDecodingError(const Index offset) :
+OversizedVariableLengthIntegerDecodingError::OversizedVariableLengthIntegerDecodingError(const Index offset) :
     DecodingError {
-        "Oversized variable-length bit array.",
+        "Oversized variable-length integer.",
         offset
     }
 {

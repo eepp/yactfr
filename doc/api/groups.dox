@@ -269,7 +269,6 @@ descriptions below easier to read and to allow recursion.
   FixedLengthSignedIntegerElement |
   FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
-  VariableLengthBitArrayElement |
   VariableLengthSignedIntegerElement |
   VariableLengthSignedEnumerationElement |
   (
@@ -493,7 +492,7 @@ the current element of the iterator is an instance of:
     If the previous element was an instance of one of:
 
     * FixedLengthBitArrayElement
-    * VariableLengthBitArrayElement
+    * VariableLengthIntegerElement
     * SubstringElement
     * BlobSectionElement
 

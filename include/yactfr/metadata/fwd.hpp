@@ -54,7 +54,6 @@ class StaticLengthStringType;
 class StructureMemberType;
 class StructureType;
 class TraceType;
-class VariableLengthBitArrayType;
 class VariableLengthIntegerType;
 class VariableLengthSignedEnumerationType;
 class VariableLengthSignedIntegerType;

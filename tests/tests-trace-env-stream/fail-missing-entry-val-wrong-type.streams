@@ -22,7 +22,8 @@
         {
           "name": "my val",
           "field-class": {
-            "type": "variable-length-bit-array",
+            "type": "static-length-blob",
+            "length": 1,
             "user-attributes": {
               "std": {"is-value": true}
             }

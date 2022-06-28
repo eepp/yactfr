@@ -13,16 +13,17 @@ namespace yactfr {
 VariableLengthIntegerType::VariableLengthIntegerType(const _Kind kind, const unsigned int align,
                                                      const DisplayBase prefDispBase,
                                                      MapItem::UP userAttrs) :
-    VariableLengthBitArrayType {kind, align, std::move(userAttrs)},
+    ScalarDataType {kind, align, std::move(userAttrs)},
     IntegerTypeCommon {prefDispBase}
 {
+    assert(align >= 8);
 }
 
 bool VariableLengthIntegerType::_isEqual(const DataType& other) const noexcept
 {
     auto& otherIntType = static_cast<const VariableLengthIntegerType&>(other);
 
-    return VariableLengthBitArrayType::_isEqual(other) && IntegerTypeCommon::_isEqual(otherIntType);
+    return IntegerTypeCommon::_isEqual(otherIntType);
 }
 
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const _Kind kind,

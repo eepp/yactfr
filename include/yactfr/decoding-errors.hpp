@@ -514,29 +514,29 @@ private:
 
 /*!
 @brief
-    Oversized variable-length bit array decoding error.
+    Oversized variable-length integer decoding error.
 
 @ingroup dec_errors
 
 This is thrown when an
 \link ElementSequenceIterator element sequence iterator\endlink needs is
-in the process of decoding a variable-length bit array, but it contains
+in the process of decoding a variable-length integer, but it contains
 more than nine bytes.
 */
-class OversizedVariableLengthBitArrayDecodingError final :
+class OversizedVariableLengthIntegerDecodingError final :
     public DecodingError
 {
     friend class internal::Vm;
 
 private:
-    explicit OversizedVariableLengthBitArrayDecodingError(Index offset);
+    explicit OversizedVariableLengthIntegerDecodingError(Index offset);
 
 public:
     /// Default copy constructor.
-    OversizedVariableLengthBitArrayDecodingError(const OversizedVariableLengthBitArrayDecodingError&) = default;
+    OversizedVariableLengthIntegerDecodingError(const OversizedVariableLengthIntegerDecodingError&) = default;
 
     /// Default copy assignment operator.
-    OversizedVariableLengthBitArrayDecodingError& operator=(const OversizedVariableLengthBitArrayDecodingError&) = default;
+    OversizedVariableLengthIntegerDecodingError& operator=(const OversizedVariableLengthIntegerDecodingError&) = default;
 };
 
 } // namespace yactfr

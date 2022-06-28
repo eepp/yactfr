@@ -65,7 +65,7 @@ class StructureBeginningElement;
 class StructureEndElement;
 class SubstringElement;
 class TraceTypeUuidElement;
-class VariableLengthBitArrayElement;
+class VariableLengthIntegerElement;
 class VariableLengthSignedEnumerationElement;
 class VariableLengthSignedIntegerElement;
 class VariableLengthUnsignedEnumerationElement;
@@ -145,7 +145,7 @@ public:
     virtual void visit(const StructureEndElement&);
     virtual void visit(const SubstringElement&);
     virtual void visit(const TraceTypeUuidElement&);
-    virtual void visit(const VariableLengthBitArrayElement&);
+    virtual void visit(const VariableLengthIntegerElement&);
     virtual void visit(const VariableLengthSignedEnumerationElement&);
     virtual void visit(const VariableLengthSignedIntegerElement&);
     virtual void visit(const VariableLengthUnsignedEnumerationElement&);

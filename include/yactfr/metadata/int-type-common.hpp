@@ -11,7 +11,6 @@
 #include <set>
 
 #include "bo.hpp"
-#include "vl-bit-array-type.hpp"
 #include "dt.hpp"
 
 namespace yactfr {

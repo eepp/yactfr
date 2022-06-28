@@ -97,7 +97,6 @@ static constexpr auto USER_ATTRS = "user-attributes";
 static constexpr auto UUID = "uuid";
 static constexpr auto VAR = "variant";
 static constexpr auto VERSION = "version";
-static constexpr auto VL_BIT_ARRAY = "variable-length-bit-array";
 static constexpr auto VL_SENUM = "variable-length-signed-enumeration";
 static constexpr auto VL_SINT = "variable-length-signed-integer";
 static constexpr auto VL_UENUM = "variable-length-unsigned-enumeration";

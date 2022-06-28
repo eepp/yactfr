@@ -218,12 +218,6 @@ public:
         return this->_isKind(_KIND_FL_UENUM);
     }
 
-    /// \c true if this type is a variable-length bit array type.
-    bool isVariableLengthBitArrayType() const noexcept
-    {
-        return this->_isKind(_KIND_VL_BIT_ARRAY);
-    }
-
     /// \c true if this type is a variable-length integer type.
     bool isVariableLengthIntegerType() const noexcept
     {
@@ -468,15 +462,6 @@ public:
         This type is a fixed-length unsigned enumeration type.
     */
     const FixedLengthUnsignedEnumerationType& asFixedLengthUnsignedEnumerationType() const noexcept;
-
-    /*!
-    @brief
-        Returns this type as a variable-length bit array type.
-
-    @pre
-        This type is a variable-length bit array type.
-    */
-    const VariableLengthBitArrayType& asVariableLengthBitArrayType() const noexcept;
 
     /*!
     @brief

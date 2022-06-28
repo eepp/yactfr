@@ -113,17 +113,6 @@ public:
 
     /*!
     @brief
-        Visits the variable-length bit array type \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const VariableLengthBitArrayType& type)
-    {
-    }
-
-    /*!
-    @brief
         Visits the variable-length signed integer type \p type.
 
     @param[in] type

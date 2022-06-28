@@ -66,17 +66,6 @@ static bool isReadVlUInt(const Instr& instr) noexcept
            instr.kind() == Instr::Kind::READ_VL_UENUM;
 }
 
-static bool isReadVlSInt(const Instr& instr) noexcept
-{
-    return instr.kind() == Instr::Kind::READ_VL_SINT ||
-           instr.kind() == Instr::Kind::READ_VL_SENUM;
-}
-
-static bool isReadVlInt(const Instr& instr) noexcept
-{
-    return isReadVlUInt(instr) || isReadVlSInt(instr);
-}
-
 static bool isReadFlUInt(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
@@ -222,10 +211,10 @@ public:
         this->visit(static_cast<ReadFlUIntInstr&>(instr));
     }
 
-    void visit(ReadVlBitArrayInstr& instr) override
+    void visit(ReadVlIntInstr& instr) override
     {
         if (_uIntTypeRole && isReadVlUInt(instr) &&
-                instr.vlBitArrayType().asVariableLengthUnsignedIntegerType().hasRole(*_uIntTypeRole)) {
+                instr.vlIntType().asVariableLengthUnsignedIntegerType().hasRole(*_uIntTypeRole)) {
             _func(_curInstrLoc);
         }
     }
@@ -576,11 +565,9 @@ public:
         this->_visit(instr);
     }
 
-    void visit(ReadVlBitArrayInstr& instr) override
+    void visit(ReadVlIntInstr& instr) override
     {
-        if (isReadVlInt(instr)) {
-            this->_visit(instr);
-        }
+        this->_visit(instr);
     }
 
     void visit(BeginReadStructInstr& instr) override
@@ -971,29 +958,24 @@ public:
         _pktProcBuilder->_buildReadFlUEnumInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const VariableLengthBitArrayType& dt) override
-    {
-        _pktProcBuilder->_buildReadVlBitArrayInstr(_memberType, dt, *_baseProc);
-    }
-
     void visit(const VariableLengthSignedIntegerType& dt) override
     {
-        _pktProcBuilder->_buildReadVlBitArrayInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const VariableLengthUnsignedIntegerType& dt) override
     {
-        _pktProcBuilder->_buildReadVlBitArrayInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const VariableLengthSignedEnumerationType& dt) override
     {
-        _pktProcBuilder->_buildReadVlBitArrayInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const VariableLengthUnsignedEnumerationType& dt) override
     {
-        _pktProcBuilder->_buildReadVlBitArrayInstr(_memberType, dt, *_baseProc);
+        _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const NullTerminatedStringType& dt) override
@@ -1131,11 +1113,11 @@ void PktProcBuilder::_buildReadFlUEnumInstr(const StructureMemberType * const me
     buildBasicReadInstr<ReadFlUEnumInstr>(memberType, dt, baseProc);
 }
 
-void PktProcBuilder::_buildReadVlBitArrayInstr(const StructureMemberType * const memberType,
-                                               const DataType& dt, Proc& baseProc)
+void PktProcBuilder::_buildReadVlIntInstr(const StructureMemberType * const memberType,
+                                          const DataType& dt, Proc& baseProc)
 {
-    assert(dt.isVariableLengthBitArrayType());
-    buildBasicReadInstr<ReadVlBitArrayInstr>(memberType, dt, baseProc);
+    assert(dt.isVariableLengthIntegerType());
+    buildBasicReadInstr<ReadVlIntInstr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadNtStrInstr(const StructureMemberType * const memberType,

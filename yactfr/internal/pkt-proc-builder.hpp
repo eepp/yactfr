@@ -88,8 +88,8 @@ private:
     void _buildReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt,
                                 Proc& baseProc);
 
-    void _buildReadVlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt,
-                                   Proc& baseProc);
+    void _buildReadVlIntInstr(const StructureMemberType *memberType, const DataType& dt,
+                              Proc& baseProc);
 
     void _buildReadNtStrInstr(const StructureMemberType *memberType, const DataType& dt,
                               Proc& baseProc);

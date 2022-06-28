@@ -11,9 +11,8 @@
 #include <memory>
 #include <utility>
 
-#include "vl-bit-array-type.hpp"
 #include "int-type-common.hpp"
-#include "dt.hpp"
+#include "scalar-dt.hpp"
 #include "dt-visitor.hpp"
 
 namespace yactfr {
@@ -33,7 +32,7 @@ A variable-length integer type describes data stream variable-length
 integers.
 */
 class VariableLengthIntegerType :
-    public VariableLengthBitArrayType,
+    public ScalarDataType,
     public IntegerTypeCommon
 {
     friend class internal::TraceTypeImpl;
@@ -42,7 +41,6 @@ protected:
     explicit VariableLengthIntegerType(_Kind kind, unsigned int align, DisplayBase prefDispBase,
                                        MapItem::UP userAttrs);
 
-protected:
     bool _isEqual(const DataType& other) const noexcept override;
 };
 

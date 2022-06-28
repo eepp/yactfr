@@ -378,10 +378,6 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_FL_UENUM_A64_BE";
         break;
 
-    case Kind::READ_VL_BIT_ARRAY:
-        kindStr = "READ_VL_BIT_ARRAY";
-        break;
-
     case Kind::READ_VL_UINT:
         kindStr = "READ_VL_UINT";
         break;
@@ -1115,32 +1111,30 @@ std::string ReadFlUEnumInstr::_toStr(Size) const
     return ss.str();
 }
 
-static inline Instr::Kind kindFromVlBitArrayType(const DataType& dt) noexcept
+static inline Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
 {
-    assert(dt.isVariableLengthBitArrayType());
-
-    auto kind = Instr::Kind::READ_VL_BIT_ARRAY;
+    assert(dt.isVariableLengthIntegerType());
 
     if (dt.isVariableLengthUnsignedEnumerationType()) {
-        kind = Instr::Kind::READ_VL_UENUM;
+        return Instr::Kind::READ_VL_UENUM;
     } else if (dt.isVariableLengthSignedEnumerationType()) {
-        kind = Instr::Kind::READ_VL_SENUM;
+        return Instr::Kind::READ_VL_SENUM;
     } else if (dt.isVariableLengthUnsignedIntegerType()) {
-        kind = Instr::Kind::READ_VL_UINT;
+        return Instr::Kind::READ_VL_UINT;
     } else if (dt.isVariableLengthSignedIntegerType()) {
-        kind = Instr::Kind::READ_VL_SINT;
+        return Instr::Kind::READ_VL_SINT;
+    } else {
+        abort();
     }
-
-    return kind;
 }
 
-ReadVlBitArrayInstr::ReadVlBitArrayInstr(const StructureMemberType * const member,
+ReadVlIntInstr::ReadVlIntInstr(const StructureMemberType * const member,
                                          const DataType& dt) :
-    ReadDataInstr {kindFromVlBitArrayType(dt), member, dt}
+    ReadDataInstr {kindFromVlIntType(dt), member, dt}
 {
 }
 
-std::string ReadVlBitArrayInstr::_toStr(Size) const
+std::string ReadVlIntInstr::_toStr(Size) const
 {
     std::ostringstream ss;
 

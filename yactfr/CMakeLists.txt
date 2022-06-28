@@ -74,7 +74,6 @@ add_library (
     metadata/struct-type.cpp
     metadata/trace-type.cpp
     metadata/var-type.cpp
-    metadata/vl-bit-array-type.cpp
     metadata/vl-enum-type.cpp
     metadata/vl-int-type.cpp
     mmap-file-view-factory.cpp
