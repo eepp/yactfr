@@ -41,9 +41,9 @@
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/var-type-opt.hpp>
 #include <yactfr/metadata/data-loc.hpp>
-#include <yactfr/text-parse-error.hpp>
-#include <yactfr/trace-env.hpp>
+#include <yactfr/metadata/trace-env.hpp>
 #include <yactfr/metadata/aliases.hpp>
+#include <yactfr/text-parse-error.hpp>
 
 #include "tsdl-attr.hpp"
 #include "../pseudo-types.hpp"
@@ -87,15 +87,13 @@ public:
     }
 
     /*
-     * Returns the parsed trace environment.
+     * Returns the UUID of the metadata stream which, for CTF 1.8, is
+     * the same as the trace UUID.
      */
-    TraceEnvironment traceEnv()
+    const boost::optional<boost::uuids::uuid>& metadataStreamUuid() const noexcept
     {
-        if (_traceEnv) {
-            return *_traceEnv;
-        }
-
-        return TraceEnvironment {};
+        assert(_pseudoTraceType);
+        return _pseudoTraceType->uuid();
     }
 
 private:
@@ -662,8 +660,8 @@ private:
     PseudoDt::UP _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
-     * Tries to parse a trace environment block and sets `_traceEnv`
-     * accordingly.
+     * Tries to parse a trace environment block and sets the trace
+     * environment of the current pseudo trace type accordingly.
      *
      * Returns whether or not a trace environment block was parsed.
      *
@@ -950,10 +948,11 @@ private:
     void _addPseudoFlUIntTypeDefClkTsRole(PseudoDt& basePseudoDt, const std::string& name);
 
     /*
-     * Sets the "has trace type UUID role" property of all pseudo
+     * Sets the "has metadata stream UUID role" property of all pseudo
      * static-length array types named `name` within `basePseudoDt`.
      */
-    void _setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt, const std::string& name);
+    void _setPseudoSlArrayTypeMetadataStreamUuidRole(PseudoDt& basePseudoDt,
+                                                     const std::string& name);
 
     /*
      * Adds roles to pseudo data types.
@@ -984,14 +983,14 @@ private:
     // final trace type
     TraceType::UP _traceType;
 
-    // final trace environment
-    boost::optional<TraceEnvironment> _traceEnv;
-
     // current native byte order
     boost::optional<ByteOrder> _nativeBo;
 
     // current pseudo trace type
     boost::optional<PseudoTraceType> _pseudoTraceType;
+
+    // whether or not an `env` block was parsed
+    bool _envParsed = false;
 
     // lexical scope stack
     std::vector<_StackFrame> _stack;

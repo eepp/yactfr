@@ -53,9 +53,9 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
-    @param[in] hasTraceTypeUuidRole
+    @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length arrays described by this type
-        have the "trace type UUID" role.
+        have the "metadata stream UUID" role.
 
     @pre
         \p minimumAlignment > 0.
@@ -65,8 +65,8 @@ public:
         \p elementType is set.
     @pre
         @parblock
-        If \p hasTraceTypeUuidRole is true, then \p length is 16 and all
-        of the following are true:
+        If \p hasMetadataStreamUuidRole is true, then \p length is 16
+        and all of the following are true:
 
         - <code>elementType->%isFixedLengthUnsignedIntegerType()</code>
         - <code>elementType->%asFixedLengthUnsignedIntegerType().%length() == 8</code>
@@ -75,7 +75,7 @@ public:
     */
     explicit StaticLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
                                    Size length, MapItem::UP userAttributes = nullptr,
-                                   bool hasTraceTypeUuidRole = false);
+                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
     @brief
@@ -94,16 +94,16 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
-    @param[in] hasTraceTypeUuidRole
+    @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length arrays described by this type
-        have the "trace type UUID" role.
+        have the "metadata stream UUID" role.
 
     @pre
         \p elementType is set.
     @pre
         @parblock
-        If \p hasTraceTypeUuidRole is true, then \p length is 16 and all
-        of the following are true:
+        If \p hasMetadataStreamUuidRole is true, then \p length is 16
+        and all of the following are true:
 
         - <code>elementType->%isFixedLengthUnsignedIntegerType()</code>
         - <code>elementType->%asFixedLengthUnsignedIntegerType().%length() == 8</code>
@@ -112,7 +112,7 @@ public:
     */
     explicit StaticLengthArrayType(DataType::UP elementType, Size length,
                                    MapItem::UP userAttributes = nullptr,
-                                   bool hasTraceTypeUuidRole = false);
+                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
     @brief
@@ -143,10 +143,10 @@ public:
     }
 
     /// Whether or not the static-length arrays described by this type
-    /// have the "trace type UUID" role.
-    bool hasTraceTypeUuidRole() const noexcept
+    /// have the "metadata stream UUID" role.
+    bool hasMetadataStreamUuidRole() const noexcept
     {
-        return _hasTraceTypeUuidRole;
+        return _hasMetadataStreamUuidRole;
     }
 
 private:
@@ -161,7 +161,7 @@ private:
 
 private:
     const Size _len;
-    const bool _hasTraceTypeUuidRole;
+    const bool _hasMetadataStreamUuidRole;
 };
 
 } // namespace yactfr

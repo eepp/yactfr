@@ -24,7 +24,6 @@
 #include "elem-seq.hpp"
 #include "elem-visitor.hpp"
 #include "elem.hpp"
-#include "from-metadata-text.hpp"
 #include "io-error.hpp"
 #include "metadata/aliases.hpp"
 #include "metadata/array-type.hpp"
@@ -47,6 +46,7 @@
 #include "metadata/fl-enum-type.hpp"
 #include "metadata/fl-float-type.hpp"
 #include "metadata/fl-int-type.hpp"
+#include "metadata/from-metadata-text.hpp"
 #include "metadata/fwd.hpp"
 #include "metadata/int-range-set.hpp"
 #include "metadata/int-range.hpp"
@@ -64,6 +64,7 @@
 #include "metadata/sl-str-type.hpp"
 #include "metadata/struct-member-type.hpp"
 #include "metadata/struct-type.hpp"
+#include "metadata/trace-env.hpp"
 #include "metadata/trace-type.hpp"
 #include "metadata/var-type-opt.hpp"
 #include "metadata/var-type.hpp"
@@ -71,7 +72,5 @@
 #include "metadata/vl-int-type.hpp"
 #include "mmap-file-view-factory.hpp"
 #include "text-parse-error.hpp"
-#include "trace-env-stream-decoder.hpp"
-#include "trace-env.hpp"
 
 #endif // _YACTFR_YACTFR_HPP

@@ -96,14 +96,14 @@ public:
     @pre
         @parblock
         If set, no data type in \p eventRecordCommonContextType,
-        recursively, has a role (UnsignedIntegerTypeRole or "trace type
-        UUID" role).
+        recursively, has a role (UnsignedIntegerTypeRole or "metadata
+        stream UUID" role).
 
-        If set, no data type in \p packetContextType, recursively,
-        has a "trace type UUID" role.
+        If set, no data type in \p packetContextType, recursively, has a
+        "metadata stream UUID" role.
 
         If set, no data type in \p eventRecordHeaderType, recursively,
-        has a "trace type UUID" role.
+        has a "metadata stream UUID" role.
 
         If set, any unsigned integer type within \p packetContextType,
         recursively, may only have the following roles:

@@ -23,6 +23,7 @@
 #include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
+#include <yactfr/metadata/trace-env.hpp>
 #include <yactfr/metadata/aliases.hpp>
 
 namespace yactfr {
@@ -454,18 +455,18 @@ public:
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
-    bool hasTraceTypeUuidRole() const noexcept
+    bool hasMetadataStreamUuidRole() const noexcept
     {
-        return _hasTraceTypeUuidRole;
+        return _hasMetadataStreamUuidRole;
     }
 
-    void hasTraceTypeUuidRole(const bool hasTraceTypeUuidRole) noexcept
+    void hasMetadataStreamUuidRole(const bool hasMetadataStreamUuidRole) noexcept
     {
-        _hasTraceTypeUuidRole = hasTraceTypeUuidRole;
+        _hasMetadataStreamUuidRole = hasMetadataStreamUuidRole;
     }
 
 private:
-    bool _hasTraceTypeUuidRole = false;
+    bool _hasMetadataStreamUuidRole = false;
 };
 
 /*
@@ -1056,6 +1057,7 @@ public:
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
                              boost::optional<boost::uuids::uuid> uuid = boost::none,
+                             TraceEnvironment env = TraceEnvironment {},
                              PseudoDt::UP pseudoPktHeaderType = nullptr,
                              MapItem::UP userAttrs = nullptr);
 
@@ -1078,6 +1080,16 @@ public:
     const boost::optional<boost::uuids::uuid>& uuid() const noexcept
     {
         return _uuid;
+    }
+
+    const TraceEnvironment& env() const noexcept
+    {
+        return _env;
+    }
+
+    void env(TraceEnvironment env) noexcept
+    {
+        _env = std::move(env);
     }
 
     const PseudoDt *pseudoPktHeaderType() const noexcept
@@ -1131,6 +1143,7 @@ private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
     boost::optional<boost::uuids::uuid> _uuid;
+    TraceEnvironment _env;
     PseudoDt::UP _pseudoPktHeaderType;
     ClockTypeSet _clkTypes;
     PseudoDsts _pseudoDsts;

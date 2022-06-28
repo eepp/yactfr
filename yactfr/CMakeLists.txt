@@ -18,7 +18,6 @@ add_library (
     elem-seq-it.cpp
     elem-seq.cpp
     elem-visitor.cpp
-    from-metadata-text.cpp
     internal/metadata/data-loc-map.cpp
     internal/metadata/dt-from-pseudo-root-dt.cpp
     internal/metadata/item.cpp
@@ -58,6 +57,7 @@ add_library (
     metadata/fl-enum-type.cpp
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp
+    metadata/from-metadata-text.cpp
     metadata/int-type-common.cpp
     metadata/metadata-stream.cpp
     metadata/metadata.cpp
@@ -72,6 +72,7 @@ add_library (
     metadata/sl-str-type.cpp
     metadata/struct-member-type.cpp
     metadata/struct-type.cpp
+    metadata/trace-env.cpp
     metadata/trace-type.cpp
     metadata/var-type.cpp
     metadata/vl-enum-type.cpp
@@ -79,8 +80,6 @@ add_library (
     mmap-file-view-factory.cpp
     text-loc.cpp
     text-parse-error.cpp
-    trace-env-stream-decoder.cpp
-    trace-env.cpp
 )
 set_target_properties (
     yactfr

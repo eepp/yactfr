@@ -1,7 +1,25 @@
 [
   {
     "type": "preamble",
-    "version": 2
+    "version": 2,
+    "uuid": [
+      18,
+      37,
+      164,
+      76,
+      180,
+      57,
+      79,
+      3,
+      145,
+      43,
+      87,
+      125,
+      225,
+      29,
+      68,
+      211
+    ]
   },
   {
     "packet-header-field-class": {
@@ -22,7 +40,7 @@
           "field-class": {
             "length": 16,
             "roles": [
-              "trace-class-uuid"
+              "metadata-stream-uuid"
             ],
             "type": "static-length-blob"
           },
@@ -63,7 +81,7 @@ c1fc1fc1 1225a44c-b439-4f03-912b-577de11d44d3
     32         PMN:3254525889
     32         SLB:uuid:application/octet-stream {
     32           BS:16:1225a44cb4394f03912b577de11d44d3
-   160           TTU:1225a44c-b439-4f03-912b-577de11d44d3
+   160           MSU:1225a44c-b439-4f03-912b-577de11d44d3
    160         }
    160       }
    160     }

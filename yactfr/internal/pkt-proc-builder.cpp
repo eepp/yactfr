@@ -193,7 +193,7 @@ public:
     }
 
     explicit InstrFinder(Proc& proc, Func func) :
-        _findWithTraceTypeUuidRole {true},
+        _findWithMetadataStreamUuidRole {true},
         _func {std::move(func)}
     {
         this->_visitProc(proc);
@@ -226,7 +226,7 @@ public:
 
     void visit(BeginReadSlArrayInstr& instr) override
     {
-        if (_findWithTraceTypeUuidRole && instr.slArrayType().hasTraceTypeUuidRole()) {
+        if (_findWithMetadataStreamUuidRole && instr.slArrayType().hasMetadataStreamUuidRole()) {
             _func(_curInstrLoc);
         }
 
@@ -235,7 +235,7 @@ public:
 
     void visit(BeginReadSlBlobInstr& instr) override
     {
-        if (_findWithTraceTypeUuidRole && instr.slBlobType().hasTraceTypeUuidRole()) {
+        if (_findWithMetadataStreamUuidRole && instr.slBlobType().hasMetadataStreamUuidRole()) {
             _func(_curInstrLoc);
         }
     }
@@ -296,7 +296,7 @@ private:
 
 private:
     const boost::optional<UnsignedIntegerTypeRole> _uIntTypeRole;
-    const bool _findWithTraceTypeUuidRole = false;
+    const bool _findWithMetadataStreamUuidRole = false;
     const Func _func;
 };
 

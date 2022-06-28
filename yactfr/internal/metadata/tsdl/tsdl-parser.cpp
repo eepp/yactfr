@@ -73,8 +73,8 @@ void TsdlParser::_setImplicitMappedClkTypeName()
     }
 }
 
-void TsdlParser::_setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
-                                                        const std::string& memberTypeName)
+void TsdlParser::_setPseudoSlArrayTypeMetadataStreamUuidRole(PseudoDt& basePseudoDt,
+                                                             const std::string& memberTypeName)
 {
     const auto pseudoDts = findPseudoDtsByName(basePseudoDt, memberTypeName,
                                                [](auto& pseudoDt) {
@@ -111,7 +111,7 @@ void TsdlParser::_setPseudoSlArrayTypeTraceTypeUuidRole(PseudoDt& basePseudoDt,
     for (auto& pseudoDt : pseudoDts) {
         auto& pseudoArrayType = static_cast<PseudoSlArrayType&>(*pseudoDt);
 
-        pseudoArrayType.hasTraceTypeUuidRole(true);
+        pseudoArrayType.hasMetadataStreamUuidRole(true);
     }
 }
 
@@ -188,7 +188,7 @@ void TsdlParser::_addPseudoDtRoles()
         this->_addPseudoFlUIntTypeRoles(*_pseudoTraceType->pseudoPktHeaderType(),
                                         "stream_instance_id",
                                         UnsignedIntegerTypeRole::DATA_STREAM_ID);
-        this->_setPseudoSlArrayTypeTraceTypeUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
+        this->_setPseudoSlArrayTypeMetadataStreamUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
                                                      "uuid");
     }
 
@@ -1763,13 +1763,21 @@ PseudoDt::UP TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
 
 bool TsdlParser::_tryParseEnvBlock()
 {
+    _ss.skipCommentsAndWhitespaces();
+
+    const auto loc = _ss.loc();
+
     // parse `env`
     if (!_ss.tryScanToken("env")) {
         return false;
     }
 
-    if (_traceEnv) {
-        throwTextParseError("Duplicate `env` block.", _ss.loc());
+    if (_envParsed) {
+        throwTextParseError("Duplicate `env` block.", loc);
+    }
+
+    if (!_pseudoTraceType) {
+        throwTextParseError("`env` block: missing `trace` block.", loc);
     }
 
     // parse `{`
@@ -1804,7 +1812,7 @@ bool TsdlParser::_tryParseEnvBlock()
                 && attr.kind != TsdlAttr::Kind::STR) {
             std::ostringstream ss;
 
-            ss << "Environment entry `" << attr.name <<
+            ss << "Trace environment entry `" << attr.name <<
                   "`: expecting constant integer or literal string.";
             throwTextParseError(ss.str(), attr.valTextLoc());
         }
@@ -1817,7 +1825,7 @@ bool TsdlParser::_tryParseEnvBlock()
             if (attr.uintVal >= (1ULL << 63)) {
                 std::ostringstream ss;
 
-                ss << "Environment entry `" << attr.name <<
+                ss << "Trace environment entry `" << attr.name <<
                       "`: value " << attr.uintVal << " is too large " <<
                       "(expecting a 64-bit signed integer).";
                 throwTextParseError(ss.str(), attr.valTextLoc());
@@ -1831,7 +1839,9 @@ bool TsdlParser::_tryParseEnvBlock()
         entries[attr.name] = entry;
     }
 
-    _traceEnv = TraceEnvironment {entries};
+    assert(_pseudoTraceType);
+    _pseudoTraceType->env(TraceEnvironment {std::move(entries)});
+    _envParsed = true;
     return true;
 }
 
@@ -2160,7 +2170,8 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     if (_nativeBo) {
         // second time we parse this: create pseudo trace type
         _pseudoTraceType = PseudoTraceType {
-            *majorVersion, *minorVersion, std::move(uuid), std::move(pseudoPktHeaderType)
+            *majorVersion, *minorVersion, std::move(uuid),
+            TraceEnvironment {}, std::move(pseudoPktHeaderType)
         };
     } else {
         /*
@@ -2896,7 +2907,7 @@ PseudoDt::UP TsdlParser::_parseArraySubscripts(PseudoDt::UP innerPseudoDt)
                 const auto& envKey = pseudoDataLoc->pathElems()[0];
 
                 // find the value in the current environment
-                if (!_traceEnv) {
+                if (!_envParsed) {
                     std::ostringstream ss;
 
                     ss << "Static-length array type refers to the environment entry `" <<
@@ -2904,7 +2915,9 @@ PseudoDt::UP TsdlParser::_parseArraySubscripts(PseudoDt::UP innerPseudoDt)
                     throwTextParseError(ss.str(), subscriptLoc);
                 }
 
-                const auto entry = (*_traceEnv)[envKey];
+                assert(_pseudoTraceType);
+
+                const auto entry = _pseudoTraceType->env()[envKey];
 
                 if (!entry) {
                     std::ostringstream ss;

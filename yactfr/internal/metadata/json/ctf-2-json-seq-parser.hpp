@@ -58,6 +58,14 @@ public:
         return std::move(_traceType);
     }
 
+    /*
+     * Returns the UUID of the metadata stream.
+     */
+    const boost::optional<boost::uuids::uuid>& metadataStreamUuid() const noexcept
+    {
+        return _metadataStreamUuid;
+    }
+
 private:
     /*
      * Creates the yactfr trace type from the pseudo trace type.
@@ -130,6 +138,9 @@ private:
 
     // final trace type
     TraceType::UP _traceType;
+
+    // metadata stream UUID
+    boost::optional<boost::uuids::uuid> _metadataStreamUuid;
 
     // current pseudo trace type
     boost::optional<PseudoTraceType> _pseudoTraceType;

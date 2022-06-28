@@ -1266,8 +1266,8 @@ private:
 /*
  * "Begin reading static-length UUID array" procedure instruction.
  *
- * This is a specialized instruction to read the 16 trace type UUID
- * bytes of a packet header to emit `TraceTypeUuidElement`.
+ * This is a specialized instruction to read the 16 metadata stream UUID
+ * bytes of a packet header to emit `MetadataStreamUuidElement`.
  */
 class BeginReadSlUuidArrayInstr final :
     public BeginReadSlArrayInstr
@@ -1401,7 +1401,7 @@ private:
  * "Begin reading static-length UUID BLOB" procedure instruction.
  *
  * This is a specialized instruction to read the 16 UUID bytes of a
- * packet header to emit `TraceTypeUuidElement`.
+ * packet header to emit `MetadataStreamUuidElement`.
  */
 class BeginReadSlUuidBlobInstr final :
     public BeginReadSlBlobInstr

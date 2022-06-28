@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_TRACE_ENV_HPP
-#define _YACTFR_TRACE_ENV_HPP
+#ifndef _YACTFR_METADATA_TRACE_ENV_HPP
+#define _YACTFR_METADATA_TRACE_ENV_HPP
 
 #include <map>
 #include <string>
@@ -18,7 +18,7 @@ namespace yactfr {
 @brief
     Trace environment.
 
-@ingroup trace
+@ingroup metadata_dt
 */
 class TraceEnvironment final
 {

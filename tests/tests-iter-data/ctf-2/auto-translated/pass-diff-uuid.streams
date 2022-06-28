@@ -1,7 +1,25 @@
 [
   {
     "type": "preamble",
-    "version": 2
+    "version": 2,
+    "uuid": [
+      135,
+      13,
+      171,
+      182,
+      114,
+      173,
+      76,
+      28,
+      153,
+      82,
+      253,
+      152,
+      244,
+      218,
+      95,
+      86
+    ]
   },
   {
     "packet-header-field-class": {
@@ -10,7 +28,7 @@
           "field-class": {
             "length": 16,
             "roles": [
-              "trace-class-uuid"
+              "metadata-stream-uuid"
             ],
             "type": "static-length-blob"
           },
@@ -49,7 +67,7 @@ cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
      0       ST {
      0         SLB:uuid:application/octet-stream {
      0           BS:16:cc1cbce4771843b1a0166cb8cc3c2b4a
-   128           TTU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
+   128           MSU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
    128         }
    128       }
    128     }

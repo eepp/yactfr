@@ -41,7 +41,7 @@ static const auto expected =
     "FLUI:57\n"
     "FLUI:44\n"
     "FLUI:247\n"
-    "TTU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
+    "MSU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
     "}\n"
     "FLUI:stream_id:221\n"
     "}\n"
@@ -159,7 +159,7 @@ static const auto expected =
     "FLUI:57\n"
     "FLUI:44\n"
     "FLUI:247\n"
-    "TTU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
+    "MSU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
     "}\n"
     "FLUI:stream_id:35\n"
     "}\n"
@@ -219,7 +219,7 @@ static const auto expected =
     "FLUI:57\n"
     "FLUI:44\n"
     "FLUI:247\n"
-    "TTU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
+    "MSU:64df608e-8db9-4fed-9c50-0eb972392cf7\n"
     "}\n"
     "FLUI:stream_id:221\n"
     "}\n"
@@ -280,10 +280,10 @@ static const auto expected =
 
 int main()
 {
-    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadata,
-                                                           metadata + std::strlen(metadata));
+    const auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadata,
+                                                              metadata + std::strlen(metadata));
     MemDataSrcFactory factory {stream, sizeof stream};
-    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
+    yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
     std::ostringstream ss;
     ElemPrinter printer {ss, 0};
     auto it = seq.begin();

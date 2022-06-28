@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include <yactfr/trace-env.hpp>
+#include <yactfr/metadata/trace-env.hpp>
 
 namespace yactfr {
 

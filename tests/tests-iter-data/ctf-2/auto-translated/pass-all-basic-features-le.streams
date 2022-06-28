@@ -1,7 +1,25 @@
 [
   {
     "type": "preamble",
-    "version": 2
+    "version": 2,
+    "uuid": [
+      77,
+      134,
+      224,
+      44,
+      245,
+      39,
+      73,
+      113,
+      185,
+      96,
+      151,
+      29,
+      38,
+      7,
+      75,
+      212
+    ]
   },
   {
     "packet-header-field-class": {
@@ -22,7 +40,7 @@
           "field-class": {
             "length": 16,
             "roles": [
-              "trace-class-uuid"
+              "metadata-stream-uuid"
             ],
             "type": "static-length-blob"
           },
@@ -495,7 +513,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
     32         PMN:3254525889
     32         SLB:uuid:application/octet-stream {
     32           BS:16:4d86e02cf5274971b960971d26074bd4
-   160           TTU:4d86e02c-f527-4971-b960-971d26074bd4
+   160           MSU:4d86e02c-f527-4971-b960-971d26074bd4
    160         }
    160         FLUI:stream_id:35
    168       }
@@ -604,7 +622,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    896         PMN:3254525889
    896         SLB:uuid:application/octet-stream {
    896           BS:16:4d86e02cf5274971b960971d26074bd4
-  1024           TTU:4d86e02c-f527-4971-b960-971d26074bd4
+  1024           MSU:4d86e02c-f527-4971-b960-971d26074bd4
   1024         }
   1024         FLUI:stream_id:255
   1032       }
@@ -686,7 +704,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1560         PMN:3254525889
   1560         SLB:uuid:application/octet-stream {
   1560           BS:16:4d86e02cf5274971b960971d26074bd4
-  1688           TTU:4d86e02c-f527-4971-b960-971d26074bd4
+  1688           MSU:4d86e02c-f527-4971-b960-971d26074bd4
   1688         }
   1688         FLUI:stream_id:35
   1696       }

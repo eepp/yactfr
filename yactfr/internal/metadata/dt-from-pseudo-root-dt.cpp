@@ -180,7 +180,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
     return StaticLengthArrayType::create(pseudoArrayType.minAlign(), std::move(elemDt),
                                          pseudoArrayType.len(),
                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()),
-                                         pseudoArrayType.hasTraceTypeUuidRole());
+                                         pseudoArrayType.hasMetadataStreamUuidRole());
 }
 
 const DataLocation& DtFromPseudoRootDtConverter::_getLenLoc(const PseudoDt& pseudoDt) const

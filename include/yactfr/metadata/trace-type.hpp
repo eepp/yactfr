@@ -18,6 +18,7 @@
 #include "dt.hpp"
 #include "struct-type.hpp"
 #include "item.hpp"
+#include "trace-env.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -89,6 +90,8 @@ public:
         Minor version.
     @param[in] uuid
         UUID of traces described by this trace type.
+    @param[in] environment
+        Environment of traces described by this trace type.
     @param[in] packetHeaderType
         Packet header type, or \c nullptr if none.
     @param[in] clockTypes
@@ -113,10 +116,6 @@ public:
         - UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER
         - UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID
         - UnsignedIntegerTypeRole::DATA_STREAM_ID
-
-        If any data type within \p packetHeaderType or
-        \p dataStreamTypes has a "trace type UUID" role, then
-        \p uuid is set.
 
         For each \link DataStreamType data stream type\endlink \em DST
         of \p dataStreamTypes, if \em DST has a default clock type, it
@@ -173,13 +172,15 @@ public:
 
         - If set, any
           \link StaticLengthArrayType static-length array type\endlink
-          within \p packetHeaderType, recursively, doesn't have a "trace
-          type UUID" role (StaticLengthArrayType::hasTraceTypeUuidRole()
-          returns \c false).
+          within \p packetHeaderType, recursively, doesn't have a
+          "metadata stream UUID" role
+          (StaticLengthArrayType::hasMetadataStreamUuidRole() returns
+          \c false).
         @endparblock
     */
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
                        boost::optional<boost::uuids::uuid> uuid,
+                       TraceEnvironment environment,
                        StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
                        DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
 
@@ -215,11 +216,11 @@ public:
     /// Minor version.
     unsigned int minorVersion() const noexcept;
 
-    /// Native byte order.
-    ByteOrder nativeByteOrder() const noexcept;
-
-    /// UUID.
+    /// Trace UUID.
     const boost::optional<boost::uuids::uuid>& uuid() const noexcept;
+
+    /// Trace environment.
+    const TraceEnvironment& environment() const noexcept;
 
     /// Type of the header structure of all the packets of the trace
     /// described by this type, or \c nullptr if there's no packet

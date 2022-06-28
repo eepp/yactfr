@@ -16,10 +16,6 @@ namespace internal {
 VmPos::VmPos(const PktProc& pktProc) :
     pktProc {&pktProc}
 {
-    if (pktProc.traceType().uuid()) {
-        elems.traceTypeUuid._expectedUuid = *pktProc.traceType().uuid();
-    }
-
     this->_initVectorsFromPktProc();
 }
 
@@ -56,7 +52,7 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     pktProc = other.pktProc;
     curDsPktProc = other.curDsPktProc;
     curErProc = other.curErProc;
-    uuid = other.uuid;
+    metadataStreamUuid = other.metadataStreamUuid;
     curExpectedPktTotalLenBits = other.curExpectedPktTotalLenBits;
     curExpectedPktContentLenBits = other.curExpectedPktContentLenBits;
 }

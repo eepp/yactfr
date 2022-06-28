@@ -53,9 +53,9 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
 
     // create yactfr trace type
     return TraceType::create(_pseudoTraceType->majorVersion(), _pseudoTraceType->minorVersion(),
-                             _pseudoTraceType->uuid(), std::move(pktHeaderType),
-                             std::move(_pseudoTraceType->clkTypes()), std::move(dstSet),
-                             tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
+                             _pseudoTraceType->uuid(), _pseudoTraceType->env(),
+                             std::move(pktHeaderType), std::move(_pseudoTraceType->clkTypes()),
+                             std::move(dstSet), tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
 }
 
 StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(const PseudoDt * const pseudoDt,

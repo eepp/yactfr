@@ -392,18 +392,18 @@ static PseudoDt::UP pseudoDtFromDlBlobFc(const JsonObjVal& jsonFc, MapItem::UP u
 static PseudoDt::UP pseudoDtFromSlBlobFc(const JsonObjVal& jsonFc, MapItem::UP userAttrs,
                                          const char * const mediaType)
 {
-    // has trace type UUID role?
-    bool hasTraceTypeUuidRole = false;
+    // has metadata stream UUID role?
+    bool hasMetadataStreamUuidRole = false;
     const auto jsonRolesVal = jsonFc[strs::ROLES];
 
     if (jsonRolesVal && jsonRolesVal->asArray().size() > 0) {
-        hasTraceTypeUuidRole = true;
+        hasMetadataStreamUuidRole = true;
     }
 
     return createPseudoScalarDtWrapper<StaticLengthBlobType>(jsonFc,
                                                              jsonFc.getRawUIntVal(strs::LEN),
                                                              mediaType, std::move(userAttrs),
-                                                             hasTraceTypeUuidRole);
+                                                             hasMetadataStreamUuidRole);
 }
 
 static PseudoDt::UP pseudoDtFromBlobFc(const JsonObjVal& jsonFc, const std::string& type,

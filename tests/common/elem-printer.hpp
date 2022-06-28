@@ -64,10 +64,10 @@ public:
         *_os << "PMN:" << elem.value() << '\n';
     }
 
-    void visit(const yactfr::TraceTypeUuidElement& elem) override
+    void visit(const yactfr::MetadataStreamUuidElement& elem) override
     {
         this->_indent();
-        *_os << "TTU:" << elem.uuid() << '\n';
+        *_os << "MSU:" << elem.uuid() << '\n';
     }
 
     void visit(const yactfr::DefaultClockValueElement& elem) override

@@ -24,10 +24,10 @@ static const auto expected =
 
 int main()
 {
-    const auto traceTypeEnvPair = yactfr::fromMetadataText(metadata,
-                                                           metadata + std::strlen(metadata));
+    const auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadata,
+                                                              metadata + std::strlen(metadata));
     MemDataSrcFactory factory {stream, sizeof stream};
-    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
+    yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
     std::ostringstream ss;
     ElemPrinter printer {ss, 0};
     auto it = seq.begin();

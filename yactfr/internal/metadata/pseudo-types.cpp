@@ -245,7 +245,7 @@ PseudoDt::UP PseudoSlArrayType::clone() const
                                                         tryCloneUserAttrs(this->userAttrs()),
                                                         this->loc());
 
-    pseudoDt->hasTraceTypeUuidRole(_hasTraceTypeUuidRole);
+    pseudoDt->hasMetadataStreamUuidRole(_hasMetadataStreamUuidRole);
     return pseudoDt;
 }
 
@@ -683,11 +683,11 @@ static std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
     return ss.str();
 }
 
-static auto findPseudoSlArrayTypesWithTraceTypeUuidRole(const PseudoDt& basePseudoDt)
+static auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudoDt)
 {
     return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
         return pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
-            static_cast<const PseudoSlArrayType&>(pseudoDt).hasTraceTypeUuidRole();
+            static_cast<const PseudoSlArrayType&>(pseudoDt).hasMetadataStreamUuidRole();
     });
 }
 
@@ -712,7 +712,7 @@ static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
     });
 }
 
-static void validateNoTraceTypeUuidRole(const PseudoDt * const pseudoDt)
+static void validateNoMetadataStreamUuidRole(const PseudoDt * const pseudoDt)
 {
     if (!pseudoDt) {
         return;
@@ -720,14 +720,14 @@ static void validateNoTraceTypeUuidRole(const PseudoDt * const pseudoDt)
 
     const auto set = findPseudoDts(*pseudoDt, [](auto& pseudoDt, auto) {
         if (pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
-                static_cast<const PseudoSlArrayType&>(pseudoDt).hasTraceTypeUuidRole()) {
+                static_cast<const PseudoSlArrayType&>(pseudoDt).hasMetadataStreamUuidRole()) {
             return true;
         }
 
         if (pseudoDt.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
             auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt();
 
-            if (dt.isStaticLengthBlobType() && dt.asStaticLengthBlobType().hasTraceTypeUuidRole()) {
+            if (dt.isStaticLengthBlobType() && dt.asStaticLengthBlobType().hasMetadataStreamUuidRole()) {
                 return true;
             }
         }
@@ -736,7 +736,7 @@ static void validateNoTraceTypeUuidRole(const PseudoDt * const pseudoDt)
     });
 
     if (!set.empty()) {
-        throwTextParseError("Invalid \"trace type UUID\" role within this scope.",
+        throwTextParseError("Invalid \"metadata stream UUID\" role within this scope.",
                             (*set.begin())->loc());
     }
 }
@@ -830,8 +830,8 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoSpecCtxType.get(), {});
 
-            // no "trace type UUID" role
-            validateNoTraceTypeUuidRole(_pseudoSpecCtxType.get());
+            // no "metadata stream UUID" role
+            validateNoMetadataStreamUuidRole(_pseudoSpecCtxType.get());
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the specific context type:",
                                       _pseudoSpecCtxType->loc());
@@ -841,8 +841,8 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoPayloadType.get(), {});
 
-            // no "trace type UUID" role
-            validateNoTraceTypeUuidRole(_pseudoPayloadType.get());
+            // no "metadata stream UUID" role
+            validateNoMetadataStreamUuidRole(_pseudoPayloadType.get());
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the payload type:", _pseudoPayloadType->loc());
         }
@@ -907,8 +907,8 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
                 UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID,
             });
 
-            // no "trace type UUID" role
-            validateNoTraceTypeUuidRole(_pseudoErHeaderType.get());
+            // no "metadata stream UUID" role
+            validateNoMetadataStreamUuidRole(_pseudoErHeaderType.get());
 
             if (!_defClkType) {
                 // default clock related roles not allowed
@@ -936,8 +936,8 @@ void PseudoDst::_validatePktCtxType() const
                 UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER,
             });
 
-            // no "trace type UUID" role
-            validateNoTraceTypeUuidRole(_pseudoPktCtxType.get());
+            // no "metadata stream UUID" role
+            validateNoMetadataStreamUuidRole(_pseudoPktCtxType.get());
 
             if (!_defClkType) {
                 // default clock related roles not allowed
@@ -958,8 +958,8 @@ void PseudoDst::_validateErCommonCtxType() const
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoErCommonCtxType.get(), {});
 
-            // no "trace type UUID" role
-            validateNoTraceTypeUuidRole(_pseudoErCommonCtxType.get());
+            // no "metadata stream UUID" role
+            validateNoMetadataStreamUuidRole(_pseudoErCommonCtxType.get());
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the event record common context type:",
                                       _pseudoErCommonCtxType->loc());
@@ -1000,12 +1000,13 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 }
 
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                                 boost::optional<boost::uuids::uuid> uuid,
+                                 boost::optional<boost::uuids::uuid> uuid, TraceEnvironment env,
                                  PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs) :
     WithUserAttrsMixin {std::move(userAttrs)},
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
     _uuid {std::move(uuid)},
+    _env {std::move(env)},
     _pseudoPktHeaderType {std::move(pseudoPktHeaderType)}
 {
 }
@@ -1083,10 +1084,10 @@ void PseudoTraceType::validate() const
     if (_pseudoPktHeaderType) {
         try {
             /*
-             * Validate pseudo static-length array types with the "trace
-             * type UUID" role.
+             * Validate pseudo static-length array types with the
+             * "metadata stream UUID" role.
              */
-            const auto pseudoUuidDts = findPseudoSlArrayTypesWithTraceTypeUuidRole(*_pseudoPktHeaderType);
+            const auto pseudoUuidDts = findPseudoSlArrayTypesWithMetadataStreamUuidRole(*_pseudoPktHeaderType);
 
             for (auto& pseudoUuidDt : pseudoUuidDts) {
                 auto& pseudoUuidArrayType = static_cast<const PseudoSlArrayType&>(*pseudoUuidDt);
@@ -1111,7 +1112,7 @@ void PseudoTraceType::validate() const
                     }
                 } catch (TextParseError& exc) {
                     appendMsgToTextParseError(exc,
-                                              "Static-length array type with a \"trace type UUID\" role:",
+                                              "Static-length array type with a \"metadata stream UUID\" role:",
                                               pseudoUuidDt->loc());
                     throw;
                 }

@@ -17,8 +17,7 @@ types and eventually get a complete \link TraceType trace
 type\endlink which you can then use to build an
 \link ElementSequence element sequence\endlink. However, it should
 be much more convenient to use fromMetadataText() to
-build a trace type and a \link TraceEnvironment trace
-environment\endlink from a TSDL (CTF&nbsp;1.8) or JSON text sequence
+build a trace type from a TSDL (CTF&nbsp;1.8) or JSON text sequence
 (CTF&nbsp;2) document.
 
 Use createMetadataStream() to create a metadata stream from
@@ -75,37 +74,6 @@ auto myIntType = FixedLengthSignedIntegerType::create(
     8, 32, ByteOrder::LITTLE, DisplayBase::HEXADECIMAL, boost::none
 );
 @endcode
-
-@defgroup trace Trace
-@brief
-    %Trace API.
-
-The trace API is the fromMetadataText() function, the
-TraceEnvironment class, and the TraceEnvironmentStreamDecoder class.
-
-<dl>
-  <dt>CTF&nbsp;1.8
-  <dd>
-    Conceptually, everything found in a CTF&nbsp;1.8
-    \link metadata_stream metadata stream\endlink forms a single
-    \link TraceType trace type\endlink, except the environment which really
-    belongs to the \em trace itself (the conceptual instance of the
-    trace type).
-
-    Therefore, fromMetadataText() returns both a trace type and a trace
-    environment to accomodate CTF&nbsp;1.8.
-
-  <dt>CTF&nbsp;2
-  <dd>
-    The trace environment is not part of a CTF&nbsp;2 metadata stream.
-
-    Therefore, fromMetadataText() returns a trace type and an empty
-    trace environment.
-
-    Use a \link TraceEnvironmentStreamDecoder trace environment stream
-    decoder\endlink to decode a CTF&nbsp;2 trace environment data
-    stream and get the resulting trace environment object.
-</dl>
 
 @defgroup item Item
 @brief
@@ -385,13 +353,13 @@ descriptions below easier to read and to allow recursion.
       (
         StaticLengthArrayBeginningElement
         (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement){16}
-        TraceTypeUuidElement
+        MetadataStreamUuidElement
         StaticLengthArrayEndElement
       ) |
       (
         StaticLengthBlobBeginningElement
         BlobSectionElement *
-        TraceTypeUuidElement
+        MetadataStreamUuidElement
         StaticLengthBlobEndElement
       ) |
       DATA

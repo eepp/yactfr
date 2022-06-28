@@ -12,30 +12,32 @@ namespace yactfr {
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
                                            std::string mediaType, MapItem::UP userAttrs,
-                                           const bool hasTraceTypeUuidRole) :
+                                           const bool hasMetadataStreamUuidRole) :
     BlobType {_KIND_SL_BLOB, align, std::move(userAttrs), std::move(mediaType)},
     _len {len},
-    _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
+    _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const Size len, std::string mediaType,
-                                           MapItem::UP userAttrs, const bool hasTraceTypeUuidRole) :
-    StaticLengthBlobType {8, len, std::move(mediaType), std::move(userAttrs), hasTraceTypeUuidRole}
+                                           MapItem::UP userAttrs,
+                                           const bool hasMetadataStreamUuidRole) :
+    StaticLengthBlobType {8, len, std::move(mediaType), std::move(userAttrs), hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
-                                           MapItem::UP userAttrs, const bool hasTraceTypeUuidRole) :
+                                           MapItem::UP userAttrs,
+                                           const bool hasMetadataStreamUuidRole) :
     BlobType {_KIND_SL_BLOB, align, std::move(userAttrs)},
     _len {len},
-    _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
+    _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::UP userAttrs,
-                                           const bool hasTraceTypeUuidRole) :
-    StaticLengthBlobType {8, len, std::move(userAttrs), hasTraceTypeUuidRole}
+                                           const bool hasMetadataStreamUuidRole) :
+    StaticLengthBlobType {8, len, std::move(userAttrs), hasMetadataStreamUuidRole}
 {
 }
 
@@ -43,7 +45,7 @@ DataType::UP StaticLengthBlobType::_clone() const
 {
     return StaticLengthBlobType::create(this->alignment(), _len, this->mediaType(),
                                         internal::tryCloneUserAttrs(this->userAttributes()),
-                                        _hasTraceTypeUuidRole);
+                                        _hasMetadataStreamUuidRole);
 }
 
 bool StaticLengthBlobType::_isEqual(const DataType& other) const noexcept
@@ -51,7 +53,7 @@ bool StaticLengthBlobType::_isEqual(const DataType& other) const noexcept
     auto& otherSlBlobType = static_cast<const StaticLengthBlobType&>(other);
 
     return BlobType::_isEqual(other) && _len == otherSlBlobType._len &&
-           otherSlBlobType._hasTraceTypeUuidRole == _hasTraceTypeUuidRole;
+           otherSlBlobType._hasMetadataStreamUuidRole == _hasMetadataStreamUuidRole;
 }
 
 } // namespace yactfr

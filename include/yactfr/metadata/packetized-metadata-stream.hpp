@@ -59,7 +59,23 @@ public:
         return _bo;
     }
 
-    /// UUID of this metadata stream.
+    /*!
+    @brief
+        UUID of the \em packets of this metadata stream.
+
+    Not to be confused with the metadata stream UUID as found in either:
+
+    <dl>
+      <dt>CTF 1 (TSDL)
+      <dd>The \c trace block (same as the trace UUID).
+
+      <dt>CTF 2 (JSON text sequence)
+      <dd>The \c uuid property of the preamble fragment.
+    </dl>
+
+    The only purpose of this UUID is to make sure all the metadata
+    stream packets are part of the same stream.
+    */
     const boost::uuids::uuid& uuid() const noexcept
     {
         return _uuid;

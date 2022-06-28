@@ -52,20 +52,20 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
-    @param[in] hasTraceTypeUuidRole
+    @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
-        have the "trace type UUID" role.
+        have the "metadata stream UUID" role.
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
     @pre
-        If \p hasTraceTypeUuidRole is true, then \p length is 16.
+        If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length,
                                   MapItem::UP userAttributes = nullptr,
-                                  bool hasTraceTypeUuidRole = false);
+                                  bool hasMetadataStreamUuidRole = false);
 
     /*!
     @brief
@@ -83,15 +83,15 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
-    @param[in] hasTraceTypeUuidRole
+    @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
-        have the "trace type UUID" role.
+        have the "metadata stream UUID" role.
 
     @pre
-        If \p hasTraceTypeUuidRole is true, then \p length is 16.
+        If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(Size length, MapItem::UP userAttributes = nullptr,
-                                  bool hasTraceTypeUuidRole = false);
+                                  bool hasMetadataStreamUuidRole = false);
 
     /*!
     @brief
@@ -113,20 +113,20 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
-    @param[in] hasTraceTypeUuidRole
+    @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
-        have the "trace type UUID" role.
+        have the "metadata stream UUID" role.
 
     @pre
         \p alignment ≥ 8.
     @pre
         \p alignment is a power of two.
     @pre
-        If \p hasTraceTypeUuidRole is true, then \p length is 16.
+        If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length, std::string mediaType,
                                   MapItem::UP userAttributes = nullptr,
-                                  bool hasTraceTypeUuidRole = false);
+                                  bool hasMetadataStreamUuidRole = false);
 
     /*!
     @brief
@@ -146,16 +146,16 @@ public:
 
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
-    @param[in] hasTraceTypeUuidRole
+    @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
-        have the "trace type UUID" role.
+        have the "metadata stream UUID" role.
 
     @pre
-        If \p hasTraceTypeUuidRole is true, then \p length is 16.
+        If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(Size length, std::string mediaType,
                                   MapItem::UP userAttributes = nullptr,
-                                  bool hasTraceTypeUuidRole = false);
+                                  bool hasMetadataStreamUuidRole = false);
 
     /*!
     @brief
@@ -186,10 +186,10 @@ public:
     }
 
     /// Whether or not the static-length arrays described by this type
-    /// have the "trace type UUID" role.
-    bool hasTraceTypeUuidRole() const noexcept
+    /// have the "metadata stream UUID" role.
+    bool hasMetadataStreamUuidRole() const noexcept
     {
-        return _hasTraceTypeUuidRole;
+        return _hasMetadataStreamUuidRole;
     }
 
 private:
@@ -204,7 +204,7 @@ private:
 
 private:
     const Size _len;
-    const bool _hasTraceTypeUuidRole;
+    const bool _hasMetadataStreamUuidRole;
 };
 
 } // namespace yactfr

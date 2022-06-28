@@ -12,17 +12,17 @@ namespace yactfr {
 
 StaticLengthArrayType::StaticLengthArrayType(const unsigned int minAlign, DataType::UP elemType,
                                              const Size len, MapItem::UP userAttrs,
-                                             const bool hasTraceTypeUuidRole) :
+                                             const bool hasMetadataStreamUuidRole) :
     ArrayType {_KIND_SL_ARRAY, minAlign, std::move(elemType), std::move(userAttrs)},
     _len {len},
-    _hasTraceTypeUuidRole {hasTraceTypeUuidRole}
+    _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthArrayType::StaticLengthArrayType(DataType::UP elemType, const Size len,
                                              MapItem::UP userAttrs,
-                                             const bool hasTraceTypeUuidRole) :
-    StaticLengthArrayType {1, std::move(elemType), len, std::move(userAttrs), hasTraceTypeUuidRole}
+                                             const bool hasMetadataStreamUuidRole) :
+    StaticLengthArrayType {1, std::move(elemType), len, std::move(userAttrs), hasMetadataStreamUuidRole}
 {
 }
 
@@ -30,7 +30,7 @@ DataType::UP StaticLengthArrayType::_clone() const
 {
     return StaticLengthArrayType::create(this->minimumAlignment(), this->elementType().clone(),
                                          _len, internal::tryCloneUserAttrs(this->userAttributes()),
-                                         _hasTraceTypeUuidRole);
+                                         _hasMetadataStreamUuidRole);
 }
 
 bool StaticLengthArrayType::_isEqual(const DataType& other) const noexcept
@@ -38,7 +38,7 @@ bool StaticLengthArrayType::_isEqual(const DataType& other) const noexcept
     auto& otherStaticLengthArrayType = static_cast<const StaticLengthArrayType&>(other);
 
     return ArrayType::_isEqual(other) && _len == otherStaticLengthArrayType._len &&
-           otherStaticLengthArrayType._hasTraceTypeUuidRole == _hasTraceTypeUuidRole;
+           otherStaticLengthArrayType._hasMetadataStreamUuidRole == _hasMetadataStreamUuidRole;
 }
 
 } // namespace yactfr

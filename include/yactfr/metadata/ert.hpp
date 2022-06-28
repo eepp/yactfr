@@ -82,10 +82,11 @@ public:
 
     @pre
         If set, no data type in \p specificContextType, recursively, has
-        a role (UnsignedIntegerTypeRole or "trace type UUID" role).
+        a role (UnsignedIntegerTypeRole or "metadata stream UUID"
+        role).
     @pre
         If set, no data type in \p payloadType, recursively, has a role
-        (UnsignedIntegerTypeRole or "trace type UUID" role).
+        (UnsignedIntegerTypeRole or "metadata stream UUID" role).
     */
     explicit EventRecordType(TypeId id, boost::optional<std::string> nameSpace,
                              boost::optional<std::string> name, boost::optional<LogLevel> logLevel,

@@ -17,13 +17,8 @@
 #include <unordered_set>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <yactfr/aliases.hpp>
-#include <yactfr/trace-env.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/dst.hpp>

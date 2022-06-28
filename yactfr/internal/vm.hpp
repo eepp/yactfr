@@ -52,7 +52,7 @@ enum class VmState {
     CONTINUE_READ_VL_UINT,
     CONTINUE_READ_VL_SINT,
     END_STR,
-    SET_TRACE_TYPE_UUID,
+    SET_METADATA_STREAM_UUID,
     CONTINUE_SKIP_PADDING_BITS,
     CONTINUE_SKIP_CONTENT_PADDING_BITS,
 };
@@ -289,7 +289,7 @@ public:
         EventRecordBeginningElement erBeginning;
         EventRecordEndElement erEnd;
         PacketMagicNumberElement pktMagicNumber;
-        TraceTypeUuidElement traceTypeUuid;
+        MetadataStreamUuidElement metadataStreamUuid;
         DataStreamInfoElement dsInfo;
         PacketInfoElement pktInfo;
         EventRecordInfoElement erInfo;
@@ -371,8 +371,8 @@ public:
     // current event record type procedure
     const ErProc *curErProc = nullptr;
 
-    // trace type UUID
-    boost::uuids::uuid uuid;
+    // metadata stream UUID
+    boost::uuids::uuid metadataStreamUuid;
 
     // current packet expected total length (bits)
     Size curExpectedPktTotalLenBits;
@@ -546,8 +546,8 @@ private:
         case VmState::READ_UUID_BYTE:
             return this->_stateReadUuidByte();
 
-        case VmState::SET_TRACE_TYPE_UUID:
-            return this->_stateSetTraceTypeUuid();
+        case VmState::SET_METADATA_STREAM_UUID:
+            return this->_stateSetMetadataStreamUuid();
 
         case VmState::BEGIN_PKT:
             return this->_stateBeginPkt();
@@ -791,25 +791,22 @@ private:
     {
         if (_pos.stackTop().rem == 0) {
             // set completed UUID
-            _pos.state(VmState::SET_TRACE_TYPE_UUID);
+            _pos.state(VmState::SET_METADATA_STREAM_UUID);
             return false;
         }
 
         auto& instr = **_pos.stackTop().it;
 
         this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8>(instr);
-        _pos.uuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
+        _pos.metadataStreamUuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
         --_pos.stackTop().rem;
         return true;
     }
 
-    bool _stateSetTraceTypeUuid()
+    bool _stateSetMetadataStreamUuid()
     {
-        assert(_pos.pktProc->traceType().uuid());
-
-        // `_pos.elems.traceTypeUuid._expectedUuid` is already set once
-        _pos.elems.traceTypeUuid._uuid = _pos.uuid;
-        this->_updateItForUser(_pos.elems.traceTypeUuid);
+        _pos.elems.metadataStreamUuid._uuid = _pos.metadataStreamUuid;
+        this->_updateItForUser(_pos.elems.metadataStreamUuid);
         _pos.setParentStateAndStackPop();
         return true;
     }
@@ -877,13 +874,13 @@ private:
             const auto startIndex = 16 - _pos.stackTop().rem - blobSize;
 
             for (auto index = startIndex; index < startIndex + blobSize; ++index) {
-                _pos.uuid.data[index] = static_cast<std::uint8_t>(_pos.elems.blobSection.begin()[index]);
+                _pos.metadataStreamUuid.data[index] = static_cast<std::uint8_t>(_pos.elems.blobSection.begin()[index]);
             }
 
             return true;
         } else {
             // done
-            _pos.state(VmState::SET_TRACE_TYPE_UUID);
+            _pos.state(VmState::SET_METADATA_STREAM_UUID);
             return false;
         }
     }

@@ -24,7 +24,6 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include <yactfr/aliases.hpp>
-#include <yactfr/trace-env.hpp>
 #include <yactfr/metadata/item.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/data-loc.hpp>

@@ -62,7 +62,7 @@ void ElementVisitor::visit(const PacketMagicNumberElement&)
 {
 }
 
-void ElementVisitor::visit(const TraceTypeUuidElement&)
+void ElementVisitor::visit(const MetadataStreamUuidElement&)
 {
 }
 

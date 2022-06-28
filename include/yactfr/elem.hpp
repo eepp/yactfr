@@ -72,7 +72,7 @@ private:
         _KIND_PKT_CONTENT                       = 1 << 4,
         _KIND_ER                                = 1 << 5,
         _KIND_PKT_MAGIC_NUMBER                  = 1 << 6,
-        _KIND_TRACE_TYPE_UUID                   = 1 << 7,
+        _KIND_METADATA_STREAM_UUID              = 1 << 7,
         _KIND_DS                                = 1 << 8,
         _KIND_INFO                              = 1 << 9,
         _KIND_DEF_CLK_VAL                       = 1 << 10,
@@ -132,8 +132,8 @@ public:
         /// PacketMagicNumberElement
         PACKET_MAGIC_NUMBER                                 = static_cast<_U>(_KIND_PKT_MAGIC_NUMBER),
 
-        /// TraceTypeUuidElement
-        TRACE_TYPE_UUID                                     = static_cast<_U>(_KIND_TRACE_TYPE_UUID),
+        /// MetadataStreamUuidElement
+        METADATA_STREAM_UUID                                = static_cast<_U>(_KIND_METADATA_STREAM_UUID),
 
         /// DataStreamInfoElement
         DATA_STREAM_INFO                                    = static_cast<_U>(_KIND_DS | _KIND_INFO),
@@ -386,10 +386,10 @@ public:
         return _kind == Kind::PACKET_MAGIC_NUMBER;
     }
 
-    /// \c true if this element is a trace type UUID element.
-    bool isTraceTypeUuidElement() const noexcept
+    /// \c true if this element is a metadata stream UUID element.
+    bool isMetadataStreamUuidElement() const noexcept
     {
-        return _kind == Kind::TRACE_TYPE_UUID;
+        return _kind == Kind::METADATA_STREAM_UUID;
     }
 
     /// \c true if this element is a data stream info element.
@@ -1300,12 +1300,12 @@ public:
 
     /*!
     @brief
-        Returns this element as a trace type UUID element.
+        Returns this element as a metadata stream UUID element.
 
     @pre
-        This type is a trace type UUID element.
+        This type is a metadata stream UUID element.
     */
-    const TraceTypeUuidElement& asTraceTypeUuidElement() const noexcept;
+    const MetadataStreamUuidElement& asMetadataStreamUuidElement() const noexcept;
 
     /*!
     @brief
@@ -1762,25 +1762,21 @@ private:
 
 /*!
 @brief
-    Trace type UUID element.
+    Metadata stream UUID element.
 
 @ingroup elems
 
-This element contains the decoded trace type UUID as well as the
-expected trace type UUID.
-
-isValid() indicates whether or not the decoded UUID is valid, that is,
-that it's equal to TraceType::uuid().
+This element contains the decoded metadata stream UUID.
 */
-class TraceTypeUuidElement final :
+class MetadataStreamUuidElement final :
     public Element
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit TraceTypeUuidElement() : //-V730
-        Element {Kind::TRACE_TYPE_UUID}
+    explicit MetadataStreamUuidElement() : //-V730
+        Element {Kind::METADATA_STREAM_UUID}
     {
     }
 
@@ -1790,27 +1786,14 @@ public:
         visitor.visit(*this);
     }
 
-    /// \c true if the decoded UUID is valid.
-    bool isValid() const noexcept
-    {
-        return _uuid == _expectedUuid;
-    }
-
     /// Decoded UUID.
     const boost::uuids::uuid& uuid() const noexcept
     {
         return _uuid;
     }
 
-    /// Expected UUID.
-    const boost::uuids::uuid& expectedUuid() const noexcept
-    {
-        return _expectedUuid;
-    }
-
 private:
     boost::uuids::uuid _uuid;
-    boost::uuids::uuid _expectedUuid;
 };
 
 /*!
@@ -4485,9 +4468,9 @@ inline const SubstringElement& Element::asSubstringElement() const noexcept
     return static_cast<const SubstringElement&>(*this);
 }
 
-inline const TraceTypeUuidElement& Element::asTraceTypeUuidElement() const noexcept
+inline const MetadataStreamUuidElement& Element::asMetadataStreamUuidElement() const noexcept
 {
-    return static_cast<const TraceTypeUuidElement&>(*this);
+    return static_cast<const MetadataStreamUuidElement&>(*this);
 }
 
 inline const VariableLengthSignedEnumerationElement& Element::asVariableLengthSignedEnumerationElement() const noexcept

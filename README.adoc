@@ -77,9 +77,6 @@ data stream strings have an 8-bit alignment requirement.
 * Decodes CTF packets of any size and event records of any size with
   steady memory usage and performance.
 
-* Decodes a **CTF2-SPECRC-5.0** trace environment data stream as
-  a structured trace environment object.
-
 * Offers a memory mapped file view data source, but you can also
   implement your own data source.
 
@@ -95,7 +92,7 @@ data stream strings have an 8-bit alignment requirement.
   interface, for example:
 
 ** The decoded packet magic number.
-** The decoded trace type UUID.
+** The decoded metadata stream UUID.
 ** The expected total length of the current packet.
 ** The expected content length of the current packet.
 ** The default clock is updated.
@@ -334,13 +331,13 @@ int main(const int argc, const char * const argv[])
     metadataFile.close();
 
     // get a trace type from the metadata text
-    auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text());
+    auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadataStream->text());
 
     // create a memory mapped file view factory to read the data stream file
     yactfr::MemoryMappedFileViewFactory factory {argv[2]};
 
     // create an element sequence from the trace type and data source factory
-    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
+    yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
 
     // print all the event record names
     for (auto& elem : seq) {
@@ -380,13 +377,13 @@ int main(const int argc, const char * const argv[])
     metadataFile.close();
 
     // get a trace type from the metadata text
-    auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text());
+    auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadataStream->text());
 
     // create a memory mapped file view factory to read the data stream file
     yactfr::MemoryMappedFileViewFactory factory {argv[2]};
 
     // create an element sequence from the trace type and data source factory
-    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
+    yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
 
     // print all the fixed-length signed integers of the `sched_switch` ERs
     const auto endIt = seq.end();
@@ -450,13 +447,13 @@ int main(const int argc, const char * const argv[])
     metadataFile.close();
 
     // get a trace type from the metadata text
-    auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text());
+    auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadataStream->text());
 
     // create a memory mapped file view factory to read the data stream file
     yactfr::MemoryMappedFileViewFactory factory {argv[2]};
 
     // create an element sequence from the trace type and data source factory
-    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
+    yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
 
     // print all the packet offsets and lengths (both in bits)
     const auto endIt = seq.end();
@@ -520,13 +517,13 @@ int main(const int argc, const char * const argv[])
     metadataFile.close();
 
     // get a trace type from the metadata text
-    auto traceTypeEnvPair = yactfr::fromMetadataText(metadataStream->text());
+    auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadataStream->text());
 
     // create a memory mapped file view factory to read the data stream file
     yactfr::MemoryMappedFileViewFactory factory {argv[2]};
 
     // create an element sequence from the trace type and data source factory
-    yactfr::ElementSequence seq {*traceTypeEnvPair.first, factory};
+    yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
 
     // print all the packet offsets and lengths (both in bits)
     const auto endIt = seq.end();

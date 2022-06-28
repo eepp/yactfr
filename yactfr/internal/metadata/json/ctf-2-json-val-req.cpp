@@ -1251,14 +1251,14 @@ class JsonSlBlobTypeValReq :
     public JsonBlobTypeValReq
 {
 public:
-    explicit JsonSlBlobTypeValReq(const bool acceptTraceTypeUuidRole) :
-        JsonBlobTypeValReq {this->typeStr(), this->_buildPropReqs(acceptTraceTypeUuidRole)}
+    explicit JsonSlBlobTypeValReq(const bool acceptMetadataStreamUuidRole) :
+        JsonBlobTypeValReq {this->typeStr(), this->_buildPropReqs(acceptMetadataStreamUuidRole)}
     {
     }
 
-    static SP shared(const bool acceptTraceTypeUuidRole)
+    static SP shared(const bool acceptMetadataStreamUuidRole)
     {
-        return std::make_shared<JsonSlBlobTypeValReq>(acceptTraceTypeUuidRole);
+        return std::make_shared<JsonSlBlobTypeValReq>(acceptMetadataStreamUuidRole);
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1267,17 +1267,17 @@ public:
     }
 
 private:
-    static PropReqs _buildPropReqs(const bool acceptTraceTypeUuidRole)
+    static PropReqs _buildPropReqs(const bool acceptMetadataStreamUuidRole)
     {
         PropReqs propReqs;
 
         propReqs.insert(slDtLenPropReqEntry());
 
-        if (acceptTraceTypeUuidRole) {
+        if (acceptMetadataStreamUuidRole) {
             propReqs.insert({
                 strs::ROLES,
                 JsonRolesValReq::shared({
-                    strs::TC_UUID
+                    strs::METADATA_STREAM_UUID
                 })
             });
         }
@@ -1751,7 +1751,7 @@ class JsonAnyDtValReq :
 {
 public:
     explicit JsonAnyDtValReq(const JsonStrValInSetReq::Set& uIntTypeRoles = {},
-                             const bool slBlobHasTraceTypeUuidRole = false) :
+                             const bool slBlobHasMetadataStreamUuidRole = false) :
         JsonObjValReq {{
             {strs::TYPE, {
                 JsonStrValInSetReq::shared({
@@ -1784,7 +1784,7 @@ public:
         _flUEnumTypeValReq {uIntTypeRoles},
         _vlUIntTypeValReq {uIntTypeRoles},
         _vlUEnumTypeValReq {uIntTypeRoles},
-        _slBlobTypeValReq {slBlobHasTraceTypeUuidRole},
+        _slBlobTypeValReq {slBlobHasMetadataStreamUuidRole},
         _structTypeValReq {*this},
         _slArrayTypeValReq {*this},
         _dlArrayTypeValReq {*this},
@@ -1891,20 +1891,22 @@ class JsonScopeTypeValReq :
 {
 public:
     /*
-     * `uIntTypeRoles` and `slBlobHasTraceTypeUuidRole` are forwarded to
-     * the constructor of the underlying `JsonAnyDtValReq` instance.
+     * `uIntTypeRoles` and `slBlobHasMetadataStreamUuidRole` are
+     * forwarded to the constructor of the underlying `JsonAnyDtValReq`
+     * instance.
      */
     explicit JsonScopeTypeValReq(const JsonStrValInSetReq::Set& uIntTypeRoles = {},
-                                 const bool slBlobHasTraceTypeUuidRole = false) :
-        _anyDtValReq {uIntTypeRoles, slBlobHasTraceTypeUuidRole},
+                                 const bool slBlobHasMetadataStreamUuidRole = false) :
+        _anyDtValReq {uIntTypeRoles, slBlobHasMetadataStreamUuidRole},
         _structTypeValReq {_anyDtValReq}
     {
     }
 
     static SP shared(const JsonStrValInSetReq::Set& uIntTypeRoles = {},
-                     const bool slBlobHasTraceTypeUuidRole = false)
+                     const bool slBlobHasMetadataStreamUuidRole = false)
     {
-        return std::make_shared<JsonScopeTypeValReq>(uIntTypeRoles, slBlobHasTraceTypeUuidRole);
+        return std::make_shared<JsonScopeTypeValReq>(uIntTypeRoles,
+                                                     slBlobHasMetadataStreamUuidRole);
     }
 
 private:
@@ -1955,6 +1957,7 @@ public:
     explicit JsonPreFragValReq() :
         JsonFragValReq {this->typeStr(), {
             {strs::VERSION, {JsonUIntValInSetReq::shared(2), true}},
+            {strs::UUID, {JsonUuidValReq::shared()}},
         }}
     {
     }

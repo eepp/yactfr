@@ -104,7 +104,10 @@ void Ctf2JsonSeqParser::_handleFrag(const JsonVal& jsonFrag, const Index index)
             throwTextParseError("Expecting the preamble fragment.", jsonFrag.loc());
         }
 
-        // nothing to do with the preamble fragment, but it must exist
+        // set metadata stream UUID, if any
+        _metadataStreamUuid = uuidOfObj(jsonFragObj);
+
+        // done with this fragment
         return;
     }
 
@@ -132,7 +135,7 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
     }
 
     _pseudoTraceType = PseudoTraceType {
-        2, 0, uuidOfObj(jsonFrag), pseudoDtOfCtf2Obj(jsonFrag, strs::PKT_HEADER_FC),
+        2, 0, uuidOfObj(jsonFrag), TraceEnvironment {}, pseudoDtOfCtf2Obj(jsonFrag, strs::PKT_HEADER_FC),
         userAttrsOfObj(jsonFrag)
     };
 }
