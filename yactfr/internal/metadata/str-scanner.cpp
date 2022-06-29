@@ -12,20 +12,21 @@
 namespace yactfr {
 namespace internal {
 
+const std::regex StrScanner::_realRegex {
+    "^"                     // start of target
+    "-?"                    // optional negation
+    "(?:0|[1-9]\\d*)"       // integer part
+    "(?=[eE.]\\d)"          // assertion: need fraction/exponent part
+    "(?:\\.\\d+)?"          // optional fraction part
+    "(?:[eE][+-]?\\d+)?",   // optional exponent part
+    std::regex::optimize
+};
+
 StrScanner::StrScanner(const char * const begin, const char * const end) : //-V730
     _begin {begin},
     _end {end},
     _at {begin},
-    _lineBegin {begin},
-    _realRegex {
-        "^"                     // start of target
-        "-?"                    // optional negation
-        "(?:0|[1-9]\\d*)"       // integer part
-        "(?=[eE.]\\d)"          // assertion: need fraction/exponent part
-        "(?:\\.\\d+)?"          // optional fraction part
-        "(?:[eE][+-]?\\d+)?",   // optional exponent part
-        std::regex::optimize
-    }
+    _lineBegin {begin}
 {
 }
 

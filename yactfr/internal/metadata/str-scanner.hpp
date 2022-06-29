@@ -457,7 +457,7 @@ private:
     std::string _strBuf;
 
     // real number string regex
-    std::regex _realRegex;
+    static const std::regex _realRegex;
 };
 
 template <bool SkipWsV, bool SkipCommentsV>
@@ -787,7 +787,7 @@ boost::optional<double> StrScanner::tryScanConstReal()
      * This is needed because std::strtod() accepts more formats which
      * JSON doesn't support.
      */
-    if (!std::regex_search(_at, _end, _realRegex)) {
+    if (!std::regex_search(_at, _end, StrScanner::_realRegex)) {
         return boost::none;
     }
 
