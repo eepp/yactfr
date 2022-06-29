@@ -52,7 +52,7 @@ void Ctf2JsonSeqParser::_parseMetadata()
 
     while (true) {
         // find the beginning pointer of the JSON fragment
-        while (*fragBegin == 30) {
+        while (fragEnd != _end && *fragBegin == 30) {
             ++fragBegin;
         }
 
@@ -65,7 +65,7 @@ void Ctf2JsonSeqParser::_parseMetadata()
         // find the end pointer of the JSON fragment
         fragEnd = fragBegin;
 
-        while (*fragEnd != 30 && fragEnd != _end) {
+        while (fragEnd != _end && *fragEnd != 30) {
             ++fragEnd;
         }
 
