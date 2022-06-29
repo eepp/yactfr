@@ -139,6 +139,11 @@ private:
         return _ss.template tryScanLitStr<true, false>("/bfnrtu");
     }
 
+    bool _ssCurCharLikeConstRealFracOrExp() const noexcept
+    {
+        return *_ss.at() == '.' || *_ss.at() == 'E' || *_ss.at() == 'e';
+    }
+
 private:
     // underlying string scanner
     StrScanner _ss;
@@ -247,13 +252,44 @@ bool JsonParser<ListenerT>::_tryParseNumber()
 
     const auto loc = _ss.loc();
 
+    /*
+     * The tryScanConstReal() method call below is somewhat expensive
+     * currently because it involves calling std::regex_search() to
+     * confirm the JSON constant real number form.
+     *
+     * The strategy below is to:
+     *
+     * 1. Call the tryScanConstUInt() and tryScanConstSInt() methods
+     *    first.
+     *
+     *    If either one succeeds, make sure the scanned JSON number
+     *    can't be in fact a real number. If it can, then reset the
+     *    position of the string scanner to before the parsed JSON
+     *    number.
+     *
+     * 2. Call the tryScanConstReal() method.
+     */
+    {
+        StrScannerRejecter ssRej {_ss};
+
+        if (const auto val = _ss.template tryScanConstUInt<true, false, false>()) {
+            if (!this->_ssCurCharLikeConstRealFracOrExp()) {
+                // confirmed unsigned integer form
+                _listener->onScalarVal(*val, loc);
+                ssRej.accept();
+                return true;
+            }
+        } else if (const auto val = _ss.template tryScanConstSInt<true, false, false>()) {
+            if (!this->_ssCurCharLikeConstRealFracOrExp()) {
+                // confirmed signed integer form
+                _listener->onScalarVal(*val, loc);
+                ssRej.accept();
+                return true;
+            }
+        }
+    }
+
     if (const auto val = _ss.template tryScanConstReal<true, false>()) {
-        _listener->onScalarVal(*val, loc);
-        return true;
-    } else if (const auto val = _ss.template tryScanConstUInt<true, false, false>()) {
-        _listener->onScalarVal(*val, loc);
-        return true;
-    } else if (const auto val = _ss.template tryScanConstSInt<true, false, false>()) {
         _listener->onScalarVal(*val, loc);
         return true;
     }
