@@ -68,6 +68,11 @@ const boost::optional<boost::uuids::uuid>& TraceType::uuid() const noexcept
     return _pimpl->uuid();
 }
 
+const TraceEnvironment& TraceType::environment() const noexcept
+{
+    return _pimpl->environment();
+}
+
 const StructureType* TraceType::packetHeaderType() const noexcept
 {
     return _pimpl->pktHeaderType();
