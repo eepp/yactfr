@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <sstream>
+#include <array>
 #include <sys/mman.h>
 
 #include <yactfr/mmap-file-view-factory.hpp>

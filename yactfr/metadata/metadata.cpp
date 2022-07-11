@@ -10,6 +10,7 @@
 #include <sstream>
 #include <vector>
 #include <cassert>
+#include <array>
 #include <boost/endian/conversion.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
