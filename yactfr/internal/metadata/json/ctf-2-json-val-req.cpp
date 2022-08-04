@@ -226,6 +226,23 @@ public:
     }
 };
 
+static void validateSIntUll(const JsonVal& jsonVal)
+{
+    if (!jsonVal.isUInt()) {
+        return;
+    }
+
+    constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
+
+    if (*jsonVal.asUInt() > llMaxAsUll) {
+        std::ostringstream ss;
+
+        ss << "Expecting a signed integer: " << *jsonVal.asUInt() <<
+              " is greater than " << llMaxAsUll << '.';
+        throwTextParseError(ss.str(), jsonVal.loc());
+    }
+}
+
 /*
  * JSON signed integer value (range) requirement.
  */
@@ -242,20 +259,7 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         JsonIntValReq::_validate(jsonVal);
-
-        if (jsonVal.isSInt()) {
-            return;
-        }
-
-        constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
-
-        if (*jsonVal.asUInt() > llMaxAsUll) {
-            std::ostringstream ss;
-
-            ss << "Expecting a signed integer: " << *jsonVal.asUInt() <<
-                  " is greater than " << llMaxAsUll << '.';
-            throwTextParseError(ss.str(), jsonVal.loc());
-        }
+        validateSIntUll(jsonVal);
     }
 };
 
@@ -2081,6 +2085,54 @@ private:
 };
 
 /*
+ * CTF 2 JSON trace environment value requirement.
+ */
+class JsonTraceEnvValReq :
+    public JsonObjValReq
+{
+public:
+    explicit JsonTraceEnvValReq() :
+        JsonObjValReq {{}, true}
+    {
+    }
+
+    static SP shared()
+    {
+        return std::make_shared<JsonTraceEnvValReq>();
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonObjValReq::_validate(jsonVal);
+
+            // validate each entry
+            for (auto& keyJsonValPair : jsonVal.asObj()) {
+                auto& jsonEntryVal = *keyJsonValPair.second;
+
+                try {
+                    if (!jsonEntryVal.isUInt() && !jsonEntryVal.isSInt() && !jsonEntryVal.isStr()) {
+                        throwTextParseError("Expecting an integer or a string.", jsonEntryVal.loc());
+                    }
+
+                    validateSIntUll(jsonEntryVal);
+                } catch (TextParseError& exc) {
+                    std::ostringstream ss;
+
+                    ss << "Invalid trace environment entry `" << keyJsonValPair.first << "`:";
+                    appendMsgToTextParseError(exc, ss.str(), jsonEntryVal.loc());
+                    throw;
+                }
+            }
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid trace environment:", jsonVal.loc());
+            throw;
+        }
+    }
+};
+
+/*
  * CTF 2 trace type fragment value requirement.
  */
 class JsonTraceTypeFragValReq :
@@ -2095,6 +2147,7 @@ public:
                 strs::DS_ID,
                 strs::PKT_MAGIC_NUMBER,
             }, true)}},
+            {strs::ENV, {JsonTraceEnvValReq::shared()}},
         }}
     {
     }

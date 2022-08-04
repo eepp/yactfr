@@ -134,8 +134,30 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
         throwTextParseError("Duplicate trace type fragment.", jsonFrag.loc());
     }
 
+    // environment
+    TraceEnvironment::Entries envEntries;
+
+    const auto jsonEnv = jsonFrag[strs::ENV];
+
+    if (jsonEnv) {
+        for (auto& keyJsonValPair : jsonEnv->asObj()) {
+            auto& jsonEntryVal = *keyJsonValPair.second;
+
+            if (jsonEntryVal.isStr()) {
+                envEntries.emplace(std::make_pair(keyJsonValPair.first, *jsonEntryVal.asStr()));
+            } else if (jsonEntryVal.isSInt()) {
+                envEntries.emplace(std::make_pair(keyJsonValPair.first, *jsonEntryVal.asSInt()));
+            } else {
+                assert(jsonEntryVal.isUInt());
+                envEntries.emplace(std::make_pair(keyJsonValPair.first,
+                                                  static_cast<long long>(*jsonEntryVal.asUInt())));
+            }
+        }
+    }
+
     _pseudoTraceType = PseudoTraceType {
-        2, 0, uuidOfObj(jsonFrag), TraceEnvironment {}, pseudoDtOfCtf2Obj(jsonFrag, strs::PKT_HEADER_FC),
+        2, 0, uuidOfObj(jsonFrag), TraceEnvironment {std::move(envEntries)},
+        pseudoDtOfCtf2Obj(jsonFrag, strs::PKT_HEADER_FC),
         userAttrsOfObj(jsonFrag)
     };
 }

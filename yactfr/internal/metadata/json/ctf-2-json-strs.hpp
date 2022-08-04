@@ -35,6 +35,7 @@ static constexpr auto DS_ID = "data-stream-id";
 static constexpr auto DSC = "data-stream-class";
 static constexpr auto DSC_ID = "data-stream-class-id";
 static constexpr auto ELEM_FC = "element-field-class";
+static constexpr auto ENV = "environment";
 static constexpr auto ER_COMMON_CTX = "event-record-common-context";
 static constexpr auto ER_COMMON_CTX_FC = "event-record-common-context-field-class";
 static constexpr auto ER_HEADER = "event-record-header";
