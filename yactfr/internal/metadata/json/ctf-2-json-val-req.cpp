@@ -20,7 +20,7 @@ namespace internal {
 /*
  * CTF 2 JSON byte order value requirement.
  */
-class JsonBoValReq :
+class JsonBoValReq final :
     public JsonStrValInSetReq
 {
 public:
@@ -49,7 +49,7 @@ private:
 /*
  * CTF 2 JSON UUID value requirement.
  */
-class JsonUuidValReq :
+class JsonUuidValReq final :
     public JsonArrayValReq
 {
 public:
@@ -78,7 +78,7 @@ private:
 /*
  * CTF 2 JSON data location value requirement.
  */
-class JsonDataLocValReq :
+class JsonDataLocValReq final :
     public JsonArrayValReq
 {
 public:
@@ -127,7 +127,7 @@ private:
 /*
  * CTF 2 JSON user attributes value requirement.
  */
-class JsonUserAttrsValReq :
+class JsonUserAttrsValReq final :
     public JsonObjValReq
 {
 public:
@@ -156,7 +156,7 @@ private:
 /*
  * CTF 2 JSON extensions value requirement.
  */
-class JsonExtValReq :
+class JsonExtValReq final :
     public JsonObjValReq
 {
 public:
@@ -211,7 +211,7 @@ protected:
 /*
  * JSON unsigned integer value requirement.
  */
-class JsonUIntValReq :
+class JsonUIntValReq final :
     public JsonValReq
 {
 public:
@@ -246,7 +246,7 @@ static void validateSIntUll(const JsonVal& jsonVal)
 /*
  * JSON signed integer value (range) requirement.
  */
-class JsonSIntValReq :
+class JsonSIntValReq final :
     public JsonIntValReq
 {
 public:
@@ -271,7 +271,7 @@ private:
  * an instance of `JsonIntValReqT`.
  */
 template <typename JsonIntValReqT>
-class JsonIntRangeValReqBase :
+class JsonIntRangeValReqBase final :
     public JsonArrayValReq
 {
 public:
@@ -389,7 +389,7 @@ using JsonIntRangeValReq = JsonIntRangeValReqBase<JsonIntValReq>;
  * `JsonIntRangeValReqBase<JsonIntValReqT>`.
  */
 template <typename JsonIntValReqT>
-class JsonIntRangeSetValReqBase :
+class JsonIntRangeSetValReqBase final :
     public JsonArrayValReq
 {
 public:
@@ -433,7 +433,7 @@ using JsonIntRangeSetValReq = JsonIntRangeSetValReqBase<JsonIntValReq>;
 /*
  * CTF 2 JSON roles value requirement.
  */
-class JsonRolesValReq :
+class JsonRolesValReq final :
     public JsonArrayValReq
 {
 public:
@@ -576,7 +576,7 @@ private:
 /*
  * CTF 2 JSON fixed-length boolean type value requirement.
  */
-class JsonFlBoolTypeValReq :
+class JsonFlBoolTypeValReq final :
     public JsonFlBitArrayTypeValReq
 {
 public:
@@ -747,7 +747,7 @@ private:
  * the integer ranges satisfying an instance of `JsonIntValReqT`.
  */
 template <typename JsonIntValReqT>
-class JsonEnumTypeMappingsValReq :
+class JsonEnumTypeMappingsValReq final :
     public JsonObjValReq
 {
 public:
@@ -806,7 +806,7 @@ JsonObjValReq::PropReqsEntry enumTypeMappingsPropReqEntry()
 /*
  * CTF 2 JSON fixed-length unsigned enumeration type value requirement.
  */
-class JsonFlUEnumTypeValReq :
+class JsonFlUEnumTypeValReq final :
     public JsonFlUIntTypeValReq
 {
 public:
@@ -843,7 +843,7 @@ private:
 /*
  * CTF 2 JSON fixed-length signed enumeration type value requirement.
  */
-class JsonFlSEnumTypeValReq :
+class JsonFlSEnumTypeValReq final :
     public JsonFlSIntTypeValReq
 {
 public:
@@ -878,7 +878,7 @@ private:
 /*
  * CTF 2 JSON fixed-length floating-point number type value requirement.
  */
-class JsonFlFloatTypeValReq :
+class JsonFlFloatTypeValReq final :
     public JsonFlBitArrayTypeValReq
 {
 public:
@@ -1037,7 +1037,7 @@ private:
  * CTF 2 JSON variable-length unsigned enumeration type value
  * requirement.
  */
-class JsonVlUEnumTypeValReq :
+class JsonVlUEnumTypeValReq final :
     public JsonVlUIntTypeValReq
 {
 public:
@@ -1074,7 +1074,7 @@ private:
 /*
  * CTF 2 JSON variable-length signed enumeration type value requirement.
  */
-class JsonVlSEnumTypeValReq :
+class JsonVlSEnumTypeValReq final :
     public JsonVlSIntTypeValReq
 {
 public:
@@ -1109,7 +1109,7 @@ private:
 /*
  * CTF 2 JSON null-terminated string type value requirement.
  */
-class JsonNtStrTypeValReq :
+class JsonNtStrTypeValReq final :
     public JsonDtValReq
 {
 public:
@@ -1163,7 +1163,7 @@ static JsonObjValReq::PropReqsEntry dlDtLenFieldLocPropReqEntry()
 /*
  * CTF 2 JSON static-length string type value requirement.
  */
-class JsonSlStrTypeValReq :
+class JsonSlStrTypeValReq final :
     public JsonDtValReq
 {
 public:
@@ -1197,7 +1197,7 @@ private:
 /*
  * CTF 2 JSON dynamic-length string type value requirement.
  */
-class JsonDlStrTypeValReq :
+class JsonDlStrTypeValReq final :
     public JsonDtValReq
 {
 public:
@@ -1251,7 +1251,7 @@ private:
 /*
  * CTF 2 JSON static-length BLOB type value requirement.
  */
-class JsonSlBlobTypeValReq :
+class JsonSlBlobTypeValReq final :
     public JsonBlobTypeValReq
 {
 public:
@@ -1303,7 +1303,7 @@ private:
 /*
  * CTF 2 JSON dynamic-length BLOB type value requirement.
  */
-class JsonDlBlobTypeValReq :
+class JsonDlBlobTypeValReq final :
     public JsonBlobTypeValReq
 {
 public:
@@ -1353,7 +1353,7 @@ class JsonAnyDtValReq;
  * method forwards the call. A `JsonAnyDtValReqWrapper` instance doesn't
  * own the raw pointer.
  */
-class JsonAnyDtValReqWrapper :
+class JsonAnyDtValReqWrapper final :
     public JsonValReq
 {
 public:
@@ -1398,7 +1398,7 @@ static JsonObjValReq::PropReqsEntry namePropReqEntry(const bool isRequired)
 /*
  * CTF 2 JSON structure field member type value requirement.
  */
-class JsonStructMemberTypeValReq :
+class JsonStructMemberTypeValReq final :
     public JsonObjValReq
 {
 public:
@@ -1474,7 +1474,7 @@ static void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const 
 /*
  * CTF 2 JSON structure type value requirement.
  */
-class JsonStructTypeValReq :
+class JsonStructTypeValReq final :
     public JsonDtValReq
 {
 public:
@@ -1538,7 +1538,7 @@ private:
 /*
  * CTF 2 JSON static-length array type value requirement.
  */
-class JsonSlArrayTypeValReq :
+class JsonSlArrayTypeValReq final :
     public JsonArrayTypeValReq
 {
 public:
@@ -1572,7 +1572,7 @@ private:
 /*
  * CTF 2 JSON dynamic-length array type value requirement.
  */
-class JsonDlArrayTypeValReq :
+class JsonDlArrayTypeValReq final :
     public JsonArrayTypeValReq
 {
 public:
@@ -1626,7 +1626,7 @@ static JsonObjValReq::PropReqsEntry selRangesPropReqEntry(const bool isRequired)
 /*
  * CTF 2 JSON optional type value requirement.
  */
-class JsonOptTypeValReq :
+class JsonOptTypeValReq final :
     public JsonDtValReq
 {
 public:
@@ -1664,7 +1664,7 @@ private:
 /*
  * CTF 2 JSON variant type option value requirement.
  */
-class JsonVarTypeOptValReq :
+class JsonVarTypeOptValReq final :
     public JsonObjValReq
 {
 public:
@@ -1707,7 +1707,7 @@ private:
 /*
  * CTF 2 JSON variant type value requirement.
  */
-class JsonVarTypeValReq :
+class JsonVarTypeValReq final :
     public JsonDtValReq
 {
 public:
@@ -1750,7 +1750,7 @@ private:
 /*
  * CTF 2 JSON (any) data type value requirement.
  */
-class JsonAnyDtValReq :
+class JsonAnyDtValReq final :
     public JsonObjValReq
 {
 public:
@@ -1890,7 +1890,7 @@ void JsonAnyDtValReqWrapper::_validate(const JsonVal& jsonVal) const
  * This is like `JsonStructTypeValReq`, but provides its own
  * `JsonAnyDtValReq` instance.
  */
-class JsonScopeTypeValReq :
+class JsonScopeTypeValReq final :
     public JsonValReq
 {
 public:
@@ -1954,7 +1954,7 @@ private:
 /*
  * CTF 2 preamble fragment value requirement.
  */
-class JsonPreFragValReq :
+class JsonPreFragValReq final :
     public JsonFragValReq
 {
 public:
@@ -1991,7 +1991,7 @@ private:
 /*
  * CTF 2 JSON clock offset value requirement.
  */
-class JsonClkOffsetValReq :
+class JsonClkOffsetValReq final :
     public JsonObjValReq
 {
 public:
@@ -2023,7 +2023,7 @@ private:
 /*
  * CTF 2 clock type fragment value requirement.
  */
-class JsonClkTypeFragValReq :
+class JsonClkTypeFragValReq final :
     public JsonFragValReq
 {
 public:
@@ -2087,7 +2087,7 @@ private:
 /*
  * CTF 2 JSON trace environment value requirement.
  */
-class JsonTraceEnvValReq :
+class JsonTraceEnvValReq final :
     public JsonObjValReq
 {
 public:
@@ -2135,7 +2135,7 @@ private:
 /*
  * CTF 2 trace type fragment value requirement.
  */
-class JsonTraceTypeFragValReq :
+class JsonTraceTypeFragValReq final :
     public JsonFragValReq
 {
 public:
@@ -2197,7 +2197,7 @@ static JsonObjValReq::PropReqsEntry idPropReqEntry()
 /*
  * CTF 2 data stream type fragment value requirement.
  */
-class JsonDstFragValReq :
+class JsonDstFragValReq final :
     public JsonFragValReq
 {
 public:
@@ -2250,7 +2250,7 @@ private:
 /*
  * CTF 2 event record type fragment value requirement.
  */
-class JsonErtFragValReq :
+class JsonErtFragValReq final :
     public JsonFragValReq
 {
 public:
@@ -2291,7 +2291,7 @@ private:
 /*
  * CTF 2 JSON (any) fragment value requirement (implementation).
  */
-class JsonAnyFragValReqImpl :
+class JsonAnyFragValReqImpl final :
     public JsonObjValReq
 {
 public:

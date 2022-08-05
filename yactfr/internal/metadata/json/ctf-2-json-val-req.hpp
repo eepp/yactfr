@@ -23,7 +23,7 @@ class JsonAnyFragValReqImpl;
 /*
  * CTF 2 JSON (any) fragment value requirement.
  */
-class JsonAnyFragValReq :
+class JsonAnyFragValReq final :
     public JsonValReq
 {
 public:
