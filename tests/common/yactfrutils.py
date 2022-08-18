@@ -7,10 +7,14 @@ import subprocess
 import tempfile
 
 
-def _metadata_lines(lines):
+def _join_lines(lines):
+    return '\n'.join(lines)
+
+
+def metadata_lines(lines):
     if lines[0].strip().startswith('['):
         # CTF 2: convert to JSON text sequence
-        frags = json.loads('\n'.join(lines))
+        frags = json.loads(_join_lines(lines))
         json_seq_lines = []
 
         for frag in frags:
@@ -49,25 +53,43 @@ typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
 
     return lines
 
-def _split(path):
+
+def split_text_blocks(path):
     with open(path) as f:
-        lines = f.read().splitlines()
+        lines = f.read().split('\n')
 
-    split_indexes = []
+    sep_indexes = []
 
-    for index, line in enumerate(lines):
+    for line_index, line in enumerate(lines):
         if line.strip() == '----':
-            split_indexes.append(index)
+            sep_indexes.append(line_index)
 
-    metadata_lines = _metadata_lines(lines[0:split_indexes[0]])
-    data_lines = lines[split_indexes[0] + 1:split_indexes[1]]
-    expect_lines = lines[split_indexes[1] + 1:]
-    return metadata_lines, data_lines, expect_lines
+    if len(sep_indexes) == 0:
+        # no separator: single block
+        return [lines]
+
+    # start with first block
+    blocks = [lines[0:sep_indexes[0]]]
+
+    # append middle blocks
+    if len(sep_indexes) >= 2:
+        for i in range(0, len(sep_indexes) - 1):
+            blocks.append(lines[sep_indexes[i] + 1:sep_indexes[i + 1]])
+
+    # append last block
+    blocks.append(lines[sep_indexes[-1] + 1:])
+    return blocks
 
 
-def _create_file_from_lines(filename, lines, out_dir_path):
+def _split(path):
+    blocks = split_text_blocks(path)
+    return metadata_lines(blocks[0]), blocks[1], blocks[2]
+
+
+def create_file_from_lines(filename, lines, out_dir_path):
     with open(os.path.join(out_dir_path, filename), 'w') as f:
-        f.write('\n'.join(lines))
+        f.write(_join_lines(lines))
+        f.write('\n')
 
 
 def _read_bin_bytes(tbytes, index):
@@ -167,12 +189,12 @@ def _create_data_stream(lines, out_dir_path):
 
 def _create_streams(descr_path, out_dir_path):
     metadata_lines, data_lines, expect_lines = _split(descr_path)
-    _create_file_from_lines('metadata', metadata_lines, out_dir_path)
+    create_file_from_lines('metadata', metadata_lines, out_dir_path)
     _create_data_stream(data_lines, out_dir_path)
     return '\n'.join(expect_lines)
 
 
-class _UnexpectedOutput(RuntimeError):
+class UnexpectedOutput(RuntimeError):
     def __init__(self, output, expected):
         self._output = output
         self._expected = expected
@@ -208,7 +230,7 @@ class _StreamsItem(pytest.Item):
         expect = expect.strip('\n')
 
         if output != expect:
-            raise _UnexpectedOutput(output, expect)
+            raise UnexpectedOutput(output, expect)
 
         # delete temporary directory
         trace_tmp_dir.cleanup()
@@ -216,7 +238,7 @@ class _StreamsItem(pytest.Item):
     def repr_failure(self, excinfo, style=None):
         exc = excinfo.value
 
-        if type(exc) is _UnexpectedOutput:
+        if type(exc) is UnexpectedOutput:
             msg = f'; got:\n\n{exc.output}\n\nExpecting:\n\n{exc.expected}'
         else:
             msg = f': {exc}'
