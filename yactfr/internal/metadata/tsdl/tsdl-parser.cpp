@@ -1366,8 +1366,8 @@ PseudoDt::UP TsdlParser::_tryParseFlFloatType()
     if (!(expDig == 8 && mantDig == 24) && !(expDig == 11 && mantDig == 53)) {
         std::ostringstream ss;
 
-        ss << "Invalid `exp_dig` or `mant_dig` attribute combination: " <<
-              "only (8, 24) and (11, 53) are supported.";
+        ss << "Invalid `exp_dig`/`mant_dig` attribute combination: " <<
+              "only 8/24 (single precision) and 11/53 (double precision) are supported.";
         throwTextParseError(ss.str(), beginLoc);
     }
 
