@@ -21,3 +21,10 @@ event {
 		enum Z: FLOAT { X } Y; 
 	};
 };
+----
+[18:1] In `event` root block:
+[20:2] In the `fields` scope:
+[20:12] In `struct` block:
+[21:3] While parsing body of `struct` block:
+[21:3] In `enum` block:
+[21:11] Data type alias `FLOAT` isn't an integer type.

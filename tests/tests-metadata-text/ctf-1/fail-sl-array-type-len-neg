@@ -17,3 +17,9 @@ event {
     string a[-2];
   };
 };
+----
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[17:5] While parsing body of `struct` block:
+[17:14] Length of array type cannot be negative: -2.

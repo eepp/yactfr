@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[15:14] Attribute `offset_s`: expecting constant signed integer.

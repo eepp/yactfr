@@ -14,3 +14,7 @@ trace {
 		uint32_t magic;
 	};
 };
+----
+[7:1] In data type alias:
+[7:11] In `integer` block:
+[7:51] Expecting `0`, `false`, `FALSE`, `1`, `true`, or `TRUE` for `signed` attribute.

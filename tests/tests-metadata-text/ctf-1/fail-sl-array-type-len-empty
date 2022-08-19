@@ -17,3 +17,10 @@ event {
     string a[];
   };
 };
+----
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[17:5] While parsing body of `struct` block:
+[17:14] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[17:14] Empty data location.

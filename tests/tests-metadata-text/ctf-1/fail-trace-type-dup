@@ -23,3 +23,6 @@ trace {
   minor = 8;
   byte_order = le;
 };
+----
+[21:1] In `trace` root block:
+[21:6] Duplicate `trace` block.

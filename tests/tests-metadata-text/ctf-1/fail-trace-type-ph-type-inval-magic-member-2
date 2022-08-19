@@ -21,3 +21,6 @@ event {
     string a;
   };
 };
+----
+[7:20] In the packet header type:
+[9:5] Fixed-length unsigned integer type with the "packet magic number" role must be within the first member type of the packet header structure type.

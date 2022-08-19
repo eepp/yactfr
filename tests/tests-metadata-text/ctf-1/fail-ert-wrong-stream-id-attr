@@ -16,3 +16,6 @@ event {
     string a;
   };
 };
+----
+[12:1] In `event` root block:
+[13:15] Attribute `stream_id`: expecting constant unsigned integer.

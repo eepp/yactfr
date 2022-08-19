@@ -17,3 +17,6 @@ event {
     string a;
   };
 };
+----
+[9:1] In `stream` root block:
+[13:1] Expecting `;`.

@@ -4,3 +4,6 @@ trace {
   major = 1;
   minor = 8;
   byte_order
+----
+[3:1] In `trace` root block:
+[7:1] Expecting `=`.

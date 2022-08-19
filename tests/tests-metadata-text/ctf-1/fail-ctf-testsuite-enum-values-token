@@ -24,3 +24,10 @@ event {
 	   } field;
 	};
 };
+----
+[17:1] In `event` root block:
+[19:2] In the `fields` scope:
+[19:12] In `struct` block:
+[20:5] While parsing body of `struct` block:
+[20:5] In `enum` block:
+[22:12] Expecting valid constant unsigned integer.

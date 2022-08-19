@@ -12,7 +12,7 @@ stream {
   event.context := struct {
     string content_size;
   };
-  event.context := string;
+  event.context := struct {};
 };
 
 event {
@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[9:1] In `stream` root block:
+[15:30] Duplicate `event.context` scope.

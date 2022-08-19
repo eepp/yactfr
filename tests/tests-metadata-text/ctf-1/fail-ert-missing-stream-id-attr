@@ -15,3 +15,5 @@ event {
     string a;
   };
 };
+----
+[13:1] Event record type needs a data stream type (with ID 0) which doesn't exist.

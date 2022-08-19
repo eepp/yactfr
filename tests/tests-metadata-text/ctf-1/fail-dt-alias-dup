@@ -17,3 +17,6 @@ event {
   	string a;
   };
 };
+----
+[4:1] In data type alias:
+[4:26] Duplicate data type alias: `name`.

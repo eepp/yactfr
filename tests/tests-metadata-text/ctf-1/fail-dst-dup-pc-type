@@ -12,7 +12,7 @@ stream {
   packet.context := struct {
     string content_size;
   };
-  packet.context := string;
+  packet.context := struct {};
 };
 
 event {
@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[9:1] In `stream` root block:
+[15:31] Duplicate `packet.context` scope.

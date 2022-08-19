@@ -12,7 +12,7 @@ stream {
   event.header := struct {
     string content_size;
   };
-  event.header := string;
+  event.header := struct {};
 };
 
 event {
@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[9:1] In `stream` root block:
+[15:29] Duplicate `event.header` scope.

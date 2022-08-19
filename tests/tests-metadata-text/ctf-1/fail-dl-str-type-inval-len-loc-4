@@ -27,3 +27,5 @@ event {
     integer { size = 8; encoding = utf8; } seq[len1.len2];
   };
 };
+----
+[24:7] Data location [event record payload: `len1`]: nothing past scalar data type.

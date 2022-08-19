@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[15:15] Attribute `precision`: expecting constant unsigned integer.

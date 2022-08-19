@@ -13,3 +13,6 @@ trace {
 		uint32_t magic;
 	};
 };
+----
+[6:1] In data type alias:
+[6:63] Invalid keyword `trace` in type alias name.

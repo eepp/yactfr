@@ -10,3 +10,6 @@ event {
 	name = "test";
 	id = "wrong";
 };
+----
+[9:1] In `event` root block:
+[11:7] Attribute `id`: expecting constant unsigned integer.

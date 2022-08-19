@@ -20,3 +20,6 @@ event {
     string a;
   };
 };
+----
+[7:20] In the packet header type:
+[8:5] Fixed-length unsigned integer type with the "packet magic number" role must have a length of 32 bits.

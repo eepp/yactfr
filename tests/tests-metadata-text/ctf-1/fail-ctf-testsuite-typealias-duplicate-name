@@ -15,3 +15,6 @@ trace {
 };
 
 
+----
+[6:1] In data type alias:
+[6:73] Duplicate data type alias: `uint32_t`.

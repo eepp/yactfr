@@ -21,3 +21,6 @@ event {
     } var;
   };
 };
+----
+[19:5] Invalid data location (event record payload: `tag`):
+[17:5] Selector type of variant type isn't an integer type.

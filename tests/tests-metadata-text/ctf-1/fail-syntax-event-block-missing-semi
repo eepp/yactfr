@@ -17,3 +17,6 @@ event {
     string a;
   };
 }
+----
+[13:1] In `event` root block:
+[20:1] Expecting `;`.

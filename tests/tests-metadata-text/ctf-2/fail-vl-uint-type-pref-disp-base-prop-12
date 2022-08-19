@@ -16,3 +16,15 @@
       ]
     }
   }
+----
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid scope type:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[7:9] In array element #1:
+[7:9] Invalid structure member type:
+[9:26] In object property `field-class`:
+[9:26] Invalid variable-length unsigned integer type:
+[11:39] In object property `preferred-display-base`:
+[11:39] Unexpected value 12: expecting 2, 8, 10, or 16.

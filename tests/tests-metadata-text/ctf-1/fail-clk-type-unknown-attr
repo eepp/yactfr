@@ -23,3 +23,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[15:2] Unknown attribute `bob`.

@@ -26,6 +26,8 @@ import os.path
 import pytest
 import subprocess
 import pathlib
+import tempfile
+import yactfrutils
 
 
 class _MetadataTextItem(pytest.Item):
@@ -35,16 +37,51 @@ class _MetadataTextItem(pytest.Item):
         self._path = path
 
     def runtest(self):
-        # run the tester, checking the exit status
+        tmp_dir = None
+        metadata_stream_path = self._path
+
+        # if this is an expect-to-fail test item, then create the real
+        # metadata stream file and get the expected lines
+        expect_to_pass = self._basename.startswith('pass-')
+
+        if not expect_to_pass:
+            # create a temporary directory to contain the metadata stream file
+            tmp_dir = tempfile.TemporaryDirectory(prefix='pytest-yactfr')
+
+            # get the metadata stream file and expected output lines
+            blocks = yactfrutils.split_text_blocks(self._path)
+
+            # create the metadata stream file
+            yactfrutils.create_file_from_lines('metadata', blocks[0], tmp_dir.name)
+            metadata_stream_path = os.path.join(tmp_dir.name, 'metadata')
+
+        # run the tester, keeping the output on success
         tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests', 'testers',
                                    'metadata-text-tester')
-        status = subprocess.call([tester_path, self._path])
+        output = subprocess.check_output([tester_path, metadata_stream_path], text=True)
 
-        # compare to the expected exit status
-        assert(status == 0 if self._basename.startswith('pass-') else 2)
+        # compare to the expected lines if it's an expect-to-fail tests
+        if not expect_to_pass:
+            output = output.strip('\n')
+            expect = '\n'.join(blocks[1]).strip('\n')
+
+            if output != expect:
+                raise yactfrutils.UnexpectedOutput(output, expect)
+
+        # delete temporary directory, if any
+        if tmp_dir is not None:
+            #tmp_dir.cleanup()
+            pass
 
     def repr_failure(self, excinfo, style=None):
-        return f'`{self._path}` failed: {excinfo}.'
+        exc = excinfo.value
+
+        if type(exc) is yactfrutils.UnexpectedOutput:
+            msg = f'; got:\n\n{exc.output}\n\nExpecting:\n\n{exc.expected}'
+        else:
+            msg = f': {exc}'
+
+        return f'`{self._path}` failed{msg}'
 
     def reportinfo(self):
         return self._path, None, self.name

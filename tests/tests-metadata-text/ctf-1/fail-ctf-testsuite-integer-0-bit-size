@@ -7,3 +7,7 @@ trace {
 };
 
 typealias integer { size = 0; } := uint32_t;
+----
+[9:1] In data type alias:
+[9:11] In `integer` block:
+[9:28] Invalid `size` attribute (must be greater than 0): 0.

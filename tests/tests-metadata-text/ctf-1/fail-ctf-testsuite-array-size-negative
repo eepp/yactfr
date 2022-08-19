@@ -15,3 +15,6 @@ trace {
 };
 
 typedef uint32_t A[-1];
+----
+[17:1] In data type alias:
+[17:20] Length of array type cannot be negative: -1.

@@ -17,3 +17,6 @@ event {
     string a;
   };
 };
+----
+[12:1] In `event` root block:
+[14:3] Duplicate attribute `id`.

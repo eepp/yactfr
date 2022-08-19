@@ -20,3 +20,6 @@ event {
     string a;
   };
 };
+----
+[18:1] In `event` root block:
+[18:1] Duplicate `event` block with ID 0 and data stream type ID 0.

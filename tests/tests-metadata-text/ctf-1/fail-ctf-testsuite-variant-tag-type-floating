@@ -25,3 +25,6 @@ trace {
 		struct Mystruct ms;
 	};
 };
+----
+[11:1] Invalid data location (packet header: `ms`/`tag`):
+[9:1] Selector type of variant type isn't an integer type.

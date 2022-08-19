@@ -39,3 +39,7 @@ event {
     variant hello lol;
   };
 };
+----
+[13:1] In `event` root block:
+[26:3] In `variant` block:
+[26:18] First element of data location, `tag2`, refers to an identifier which crosses a data type alias (or named structure/variant type) boundary. CTF 1.8 allows this, but this version of yactfr doesn't support it.

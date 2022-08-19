@@ -30,3 +30,8 @@ event {
     variant var zol;
   };
 };
+----
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[30:5] Expecting member type with known data type or data type alias.

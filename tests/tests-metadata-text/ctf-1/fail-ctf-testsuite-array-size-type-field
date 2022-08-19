@@ -23,3 +23,10 @@ event {
 			uint32_t A[uint32_t];
 	};
 };
+----
+[20:1] In `event` root block:
+[22:2] In the `fields` scope:
+[22:12] In `struct` block:
+[23:4] While parsing body of `struct` block:
+[23:15] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[23:15] Invalid relative data location (`uint32_t`): cannot find `uint32_t` (first element).

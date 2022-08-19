@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `stream` root block:
+[13:1] Duplicate `stream` block with ID 2.

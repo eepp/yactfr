@@ -17,3 +17,6 @@ struct Dummy1 {
  uint8_t x;
 } align(0);
 
+----
+[16:1] In `struct` block:
+[18:10] Invalid minimum alignment for `struct` block (must be a power of two): 0.

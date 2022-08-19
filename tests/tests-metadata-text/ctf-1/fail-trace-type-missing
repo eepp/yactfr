@@ -11,3 +11,5 @@ event {
     string a;
   };
 };
+----
+[1:1] Missing `trace` block.

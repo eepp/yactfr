@@ -13,3 +13,10 @@ event {
     string a[salut];
   };
 };
+----
+[9:1] In `event` root block:
+[12:3] In the `fields` scope:
+[12:13] In `struct` block:
+[13:5] While parsing body of `struct` block:
+[13:14] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[13:14] Invalid relative data location (`salut`): cannot find `salut` (first element).

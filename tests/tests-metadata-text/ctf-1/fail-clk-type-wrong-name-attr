@@ -21,3 +21,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[14:10] Attribute `name`: expecting identifier or literal string.

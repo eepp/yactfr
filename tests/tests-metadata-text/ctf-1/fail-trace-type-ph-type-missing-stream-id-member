@@ -23,3 +23,6 @@ event {
     string a;
   };
 };
+----
+[7:20] In the packet header type:
+[7:20] No structure member type with the "data stream type ID" role, but the trace type contains more than one data stream type.

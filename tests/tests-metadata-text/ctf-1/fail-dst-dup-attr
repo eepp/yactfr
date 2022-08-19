@@ -18,3 +18,6 @@ event {
     string a;
   };
 };
+----
+[9:1] In `stream` root block:
+[11:3] Duplicate attribute `id`.

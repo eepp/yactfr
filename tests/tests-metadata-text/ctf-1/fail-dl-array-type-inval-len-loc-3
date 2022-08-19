@@ -24,3 +24,5 @@ event {
     string seq[len1.len2];
   };
 };
+----
+[20:7] Data location [event record payload: `len1`]: nothing past scalar data type.

@@ -22,3 +22,10 @@ event {
 	   enum {} field;
 	};
 };
+----
+[18:1] In `event` root block:
+[20:2] In the `fields` scope:
+[20:12] In `struct` block:
+[22:5] While parsing body of `struct` block:
+[22:5] In `enum` block:
+[22:11] Expecting mapping name (identifier or literal string).

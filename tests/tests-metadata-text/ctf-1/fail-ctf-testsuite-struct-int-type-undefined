@@ -17,3 +17,6 @@ trace {
 };
 
 
+----
+[6:1] In `struct` block:
+[7:3] Expecting member type with known data type or data type alias.

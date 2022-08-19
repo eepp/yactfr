@@ -17,3 +17,6 @@ struct Dummy1 {
  uint8_t x;
 } align(-8);
 
+----
+[16:1] In `struct` block:
+[18:9] Expecting valid constant unsigned integer.

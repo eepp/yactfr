@@ -3,3 +3,6 @@
 trace {
 	test = "abc" "def";
 };
+----
+[3:1] In `trace` root block:
+[4:15] Expecting `;`.

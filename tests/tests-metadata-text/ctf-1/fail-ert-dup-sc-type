@@ -22,3 +22,6 @@ event {
     string z;
   };
 };
+----
+[12:1] In `event` root block:
+[23:5] Duplicate `event.context` scope.

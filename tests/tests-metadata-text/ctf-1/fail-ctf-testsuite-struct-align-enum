@@ -20,3 +20,6 @@ enum : uint32_t {
 struct Dummy1 {
  uint8_t x;
 } align(X);
+----
+[20:1] In `struct` block:
+[22:9] Expecting valid constant unsigned integer.

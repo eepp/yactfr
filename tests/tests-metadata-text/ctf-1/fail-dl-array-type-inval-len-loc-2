@@ -24,3 +24,6 @@ event {
     string seq[len];
   };
 };
+----
+[24:16] Invalid data location (event record payload: `len`):
+[21:7] Length type isn't an unsigned integer type.

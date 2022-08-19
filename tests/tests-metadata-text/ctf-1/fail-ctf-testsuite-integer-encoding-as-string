@@ -13,3 +13,7 @@ trace {
 		uint32_t magic;
 	};
 };
+----
+[6:1] In data type alias:
+[6:11] In `integer` block:
+[6:69] Attribute `encoding`: expecting identifier.

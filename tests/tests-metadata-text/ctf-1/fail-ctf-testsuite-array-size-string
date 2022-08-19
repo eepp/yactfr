@@ -15,3 +15,7 @@ trace {
 };
 
 typedef uint32_t A["x"];
+----
+[17:1] In data type alias:
+[17:20] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[17:20] Empty data location.

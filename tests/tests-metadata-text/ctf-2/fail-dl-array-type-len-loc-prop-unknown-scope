@@ -25,3 +25,17 @@
       ]
     }
   }
+----
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid scope type:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[13:9] In array element #2:
+[13:9] Invalid structure member type:
+[15:26] In object property `field-class`:
+[15:26] Invalid dynamic-length array type:
+[17:38] In object property `length-field-location`:
+[17:38] Invalid data location:
+[17:39] Invalid scope name:
+[17:39] Unexpected value `payload`: expecting `event-record-common-context`, `event-record-header`, `event-record-payload`, `event-record-specific-context`, `packet-context`, or `packet-header`.

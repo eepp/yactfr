@@ -17,3 +17,8 @@ event {
     yes b;
   };
 };
+----
+[9:1] In `event` root block:
+[10:3] In the `fields` scope:
+[10:13] In `struct` block:
+[11:5] Expecting member type with known data type or data type alias.

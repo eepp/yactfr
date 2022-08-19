@@ -26,3 +26,10 @@ event {
 	};
 };
 
+----
+[19:1] In `event` root block:
+[21:2] In the `fields` scope:
+[21:12] In `struct` block:
+[23:5] While parsing body of `struct` block:
+[23:5] In `enum` block:
+[23:5] Implicit `int` data type alias doesn't exist in this scope.

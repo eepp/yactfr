@@ -16,3 +16,6 @@ trace {
 };
 
 
+----
+[6:1] In `enum` block:
+[6:1] Implicit `int` data type alias doesn't exist in this scope.

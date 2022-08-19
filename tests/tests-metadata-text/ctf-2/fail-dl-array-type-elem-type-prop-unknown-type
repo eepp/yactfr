@@ -25,3 +25,17 @@
       ]
     }
   }
+----
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid scope type:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[13:9] In array element #2:
+[13:9] Invalid structure member type:
+[15:26] In object property `field-class`:
+[15:26] Invalid dynamic-length array type:
+[18:36] In object property `element-field-class`:
+[18:36] Invalid type:
+[19:23] In object property `type`:
+[19:23] Unexpected value `utf-16-string`: expecting `dynamic-length-array`, `dynamic-length-blob`, `dynamic-length-string`, `fixed-length-bit-array`, `fixed-length-boolean`, `fixed-length-floating-point-number`, `fixed-length-signed-enumeration`, `fixed-length-signed-integer`, `fixed-length-unsigned-enumeration`, `fixed-length-unsigned-integer`, `null-terminated-string`, `optional`, `static-length-array`, `static-length-blob`, `static-length-string`, `structure`, `variable-length-signed-enumeration`, `variable-length-signed-integer`, `variable-length-unsigned-enumeration`, `variable-length-unsigned-integer`, or `variant`.

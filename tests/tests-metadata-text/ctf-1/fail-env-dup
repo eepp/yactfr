@@ -26,3 +26,6 @@ event {
 env {
   bol = "nouilles";
 };
+----
+[26:1] In `env` root block:
+[26:1] Duplicate `env` block.

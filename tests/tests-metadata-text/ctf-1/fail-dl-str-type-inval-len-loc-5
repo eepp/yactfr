@@ -29,3 +29,6 @@ event {
     integer { size = 8; encoding = utf8; } seq[len1.len2];
   };
 };
+----
+[29:48] Invalid data location (event record payload: `len1`/`len2`):
+[25:9] Length type isn't an unsigned integer type.

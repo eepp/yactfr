@@ -26,3 +26,6 @@ event {
     } var;
   };
 };
+----
+[22:52] Invalid data location (event record payload: `var`/`len`):
+[21:9] Length type isn't an unsigned integer type.

@@ -28,3 +28,5 @@ event {
     } var;
   };
 };
+----
+[21:11] Data location [event record payload: `zop`]: unreachable array element.

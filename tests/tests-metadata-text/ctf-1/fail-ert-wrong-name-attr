@@ -16,3 +16,6 @@ event {
     string a;
   };
 };
+----
+[12:1] In `event` root block:
+[13:10] Attribute `name`: expecting identifier or literal string.

@@ -29,3 +29,6 @@ event {
 	name = string;
 	fields := struct { string str; };
 };
+----
+[17:1] In `env` root block:
+[18:10] Expecting valid constant integer, literal string, or identifier.

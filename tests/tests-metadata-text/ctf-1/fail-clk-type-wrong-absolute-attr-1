@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[15:14] Expecting `0`, `false`, `FALSE`, `1`, `true`, or `TRUE` for `absolute` attribute.

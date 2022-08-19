@@ -17,3 +17,6 @@ event {
     string a;
   };
 };
+----
+[3:1] In `trace` root block:
+[5:11] Invalid `minor` attribute: unsupported minor version (expecting 8): 7.

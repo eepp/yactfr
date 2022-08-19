@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[15:10] Attribute `uuid`: expecting literal string

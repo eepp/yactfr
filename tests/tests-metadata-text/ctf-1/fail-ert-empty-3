@@ -14,3 +14,6 @@ event {
     struct {} a;
   };
 };
+----
+[1:1] In the event record type 0 of data stream type 0:
+[1:1] Any event record would be empty (no data).

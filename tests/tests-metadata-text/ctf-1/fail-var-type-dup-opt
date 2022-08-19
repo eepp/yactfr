@@ -10,7 +10,7 @@ event {
   name = event;
 
   fields := struct {
-    enum { X, Y } tag;
+    enum : integer { size = 8; } { X, Y } tag;
     variant <tag> {
       string X;
       string Y;
@@ -18,3 +18,10 @@ event {
     } a;
   };
 };
+----
+[9:1] In `event` root block:
+[12:3] In the `fields` scope:
+[12:13] In `struct` block:
+[14:5] While parsing body of `struct` block:
+[14:5] In `variant` block:
+[14:5] Duplicate identifier (member type or option name) `X`.

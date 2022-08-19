@@ -25,3 +25,8 @@ variant <2> {
 } field;
 
 };
+----
+[17:1] In `struct` block:
+[21:1] While parsing body of `struct` block:
+[21:1] In `variant` block:
+[21:10] Empty data location.

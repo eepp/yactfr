@@ -27,3 +27,6 @@ trace {
 		struct Mystruct mssmss;
 	};
 };
+----
+[10:1] Invalid data location (packet header: `mssmss`/`tag`):
+[10:1] Selector type of variant type has no mapping named `sel1`.

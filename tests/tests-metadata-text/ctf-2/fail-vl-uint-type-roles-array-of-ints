@@ -15,3 +15,17 @@
       ]
     }
   }
+----
+[2:3] Invalid trace type fragment:
+[4:34] In object property `packet-header-field-class`:
+[4:34] Invalid scope type:
+[4:34] Invalid structure type:
+[6:25] In object property `member-classes`:
+[7:9] In array element #1:
+[7:9] Invalid structure member type:
+[9:26] In object property `field-class`:
+[9:26] Invalid variable-length unsigned integer type:
+[11:22] In object property `roles`:
+[11:22] Invalid roles:
+[11:23] In array element #1:
+[11:23] Expecting a string.

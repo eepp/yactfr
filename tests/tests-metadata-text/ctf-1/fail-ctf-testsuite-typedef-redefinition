@@ -15,3 +15,6 @@ trace {
 		uint32_t magic;
 	};
 };
+----
+[8:1] In data type alias:
+[8:24] Duplicate data type alias: `myint`.

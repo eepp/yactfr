@@ -24,3 +24,6 @@ event {
     } var2;
   };
 };
+----
+[19:5] Invalid data location (event record payload: `tag2`):
+[19:5] Selector type of variant type has no mapping named `d`.

@@ -20,3 +20,16 @@
       ]
     }
   }
+----
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid scope type:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[7:9] In array element #1:
+[7:9] Invalid structure member type:
+[9:26] In object property `field-class`:
+[9:26] Invalid fixed-length signed enumeration type:
+[11:27] In object property `byte-order`:
+[11:27] Invalid byte order:
+[11:27] Unexpected value `little`: expecting `big-endian` or `little-endian`.

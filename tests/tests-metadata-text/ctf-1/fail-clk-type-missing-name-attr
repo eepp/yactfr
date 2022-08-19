@@ -21,3 +21,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[13:1] Missing attribute `name`.

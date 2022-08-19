@@ -25,3 +25,6 @@ event {
     string a;
   };
 };
+----
+[13:1] In `clock` root block:
+[17:3] Duplicate attribute `freq`.

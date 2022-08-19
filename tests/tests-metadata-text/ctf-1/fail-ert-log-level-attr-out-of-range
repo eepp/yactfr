@@ -16,3 +16,6 @@ event {
     string a;
   };
 };
+----
+[12:1] In `event` root block:
+[13:14] Attribute `loglevel`: value is too large: 9223372036854775808.

@@ -22,3 +22,6 @@ event {
     string a;
   };
 };
+----
+[9:1] In `env` root block:
+[10:10] Trace environment entry `allo`: expecting constant integer or literal string.

@@ -32,3 +32,12 @@ event {
     } var1;
   };
 };
+----
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[21:5] While parsing body of `struct` block:
+[21:5] In `variant` block:
+[26:7] While parsing body of `variant` block:
+[26:7] In `variant` block:
+[26:16] Invalid relative data location (`tag2`): cannot find `tag2` (first element).
