@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-27 June 2022
+19 August 2022
 :toc: left
 
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
@@ -63,8 +63,8 @@ $ ldd libyactfr.so
   pointer reference count change, zero virtual method call, and zero
   copy during an element sequence iteration.
 
-** A data stream fixed-length bit array is decoded in-place and is
-   available as an element member.
+** yactfr decodes a data stream fixed-length bit array in place: the
+   result is available as an element member.
 
 ** A data stream string is available as one or more substrings in
    consecutive elements. The actual substring is a pointer to the
