@@ -25,4 +25,4 @@ event {
 [16:13] In `struct` block:
 [17:5] While parsing body of `struct` block:
 [17:5] In `enum` block:
-[17:5] In mapping `c` of enumeration type: at least one value of the range [2, 2] don't fit the range [-2, 1] (with a length of 2 bits).
+[17:5] In mapping `c` of enumeration type: at least one value of the range [2, 2] doesn't fit the range [-2, 1] (with a length of 2 bits).

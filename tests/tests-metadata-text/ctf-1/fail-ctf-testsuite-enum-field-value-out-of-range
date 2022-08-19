@@ -31,4 +31,4 @@ event {
 [20:12] In `struct` block:
 [21:5] While parsing body of `struct` block:
 [21:5] In `enum` block:
-[21:5] In mapping `VAL3` of enumeration type: at least one value of the range [1024, 1024] don't fit the range [0, 255] (with a length of 8 bits).
+[21:5] In mapping `VAL3` of enumeration type: at least one value of the range [1024, 1024] doesn't fit the range [0, 255] (with a length of 8 bits).

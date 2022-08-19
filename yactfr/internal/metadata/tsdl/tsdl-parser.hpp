@@ -1168,7 +1168,7 @@ void TsdlParser::_validateFlEnumTypeMapping(const Size len, const TextLocation& 
             ss << "In mapping `" << name << "` of enumeration type: "
                   "at least one value of the range [" << range.lower() <<
                   ", " << range.upper() <<
-                  "] don't fit the range [" << minLower << ", " << maxUpper << "] "
+                  "] doesn't fit the range [" << minLower << ", " << maxUpper << "] "
                   "(with a length of " << len << " bit" << lenUnitSuffix << ").";
             throwTextParseError(ss.str(), loc);
         }

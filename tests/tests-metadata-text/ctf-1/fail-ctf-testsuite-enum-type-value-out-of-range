@@ -19,4 +19,4 @@ trace {
 
 ----
 [7:1] In `enum` block:
-[7:1] In mapping `x` of enumeration type: at least one value of the range [1024, 1024] don't fit the range [0, 255] (with a length of 8 bits).
+[7:1] In mapping `x` of enumeration type: at least one value of the range [1024, 1024] doesn't fit the range [0, 255] (with a length of 8 bits).
