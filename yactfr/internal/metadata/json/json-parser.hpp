@@ -176,10 +176,6 @@ void JsonParser<ListenerT>::_expectVal()
         return;
     }
 
-    if (this->_tryParseNumber()) {
-        return;
-    }
-
     if (this->_tryParseStr()) {
         return;
     }
@@ -192,6 +188,15 @@ void JsonParser<ListenerT>::_expectVal()
         return;
     }
 
+    /*
+     * This one is last because it's potentially slow due to calling
+     * StrScanner::tryScanConstReal().
+     */
+    if (this->_tryParseNumber()) {
+        return;
+    }
+
+    // nothing valid found
     throwTextParseError("Expecting a JSON value: `null`, `true`, `false`, a supported number "
                         "(for an integer: -9,223,372,036,854,775,808 to 18,446,744,073,709,551,615), "
                         "`\"` (a string), `[` (an array), or `{` (an object).", _ss.loc());
