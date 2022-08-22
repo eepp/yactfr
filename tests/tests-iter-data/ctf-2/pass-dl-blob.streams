@@ -1,0 +1,135 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian"
+          },
+          "name": "len1"
+        },
+        {
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian"
+          },
+          "name": "len2"
+        },
+        {
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian"
+          },
+          "name": "len3"
+        },
+        {
+          "field-class": {
+            "type": "dynamic-length-blob",
+            "length-field-location": ["event-record-payload", "len1"]
+          },
+          "name": "blob"
+        },
+        {
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 4,
+            "byte-order": "big-endian"
+          },
+          "name": "alter alignment"
+        },
+        {
+          "field-class": {
+            "type": "dynamic-length-blob",
+            "length-field-location": ["event-record-payload", "len2"]
+          },
+          "name": "other blob"
+        },
+        {
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 4,
+            "byte-order": "big-endian"
+          },
+          "name": "alter alignment again"
+        },
+        {
+          "field-class": {
+            "type": "dynamic-length-blob",
+            "media-type": "application/lol",
+            "length-field-location": ["event-record-payload", "len3"]
+          },
+          "name": "zero blob"
+        },
+        {
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian"
+          },
+          "name": "last int"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+LENS
+  20 07 00
+DL BLOB
+  00 11 22 33 44 55 66 77
+  88 99 aa bb cc dd ee ff
+  ff ee dd cc bb aa 99 88
+  77 66 55 44 33 22 11 00
+ALTER ALIGN
+  ff
+DL BLOB
+  "meowmix"
+ALTER ALIGN
+  aa
+LAST INT
+  cc
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len1:32
+     8           FLUI:len2:7
+    16           FLUI:len3:0
+    24           DLB:blob:application/octet-stream {
+    24             BS:32:00112233445566778899aabbccddeeffffeeddccbbaa99887766554433221100
+   280           }
+   280           FLUI:alter alignment:15
+   288           DLB:other blob:application/octet-stream {
+   288             BS:7:6d656f776d6978
+   344           }
+   344           FLUI:alter alignment again:10
+   352           DLB:zero blob:application/lol {
+   352           }
+   352           FLUI:last int:204
+   360         }
+   360       }
+   360     }
+   360   }
+   360 }
