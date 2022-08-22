@@ -2465,7 +2465,7 @@ public:
     */
     Size dataLength() const noexcept
     {
-        return _len + _len / 7;
+        return ((_len + 6) / 7) * 8;
     }
 
 private:

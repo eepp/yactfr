@@ -519,9 +519,20 @@ private:
 @ingroup dec_errors
 
 This is thrown when an
-\link ElementSequenceIterator element sequence iterator\endlink needs is
-in the process of decoding a variable-length integer, but it contains
-more than nine bytes.
+\link ElementSequenceIterator element sequence iterator\endlink is in
+the process of decoding a variable-length integer, but (any of):
+
+- It contains more than ten bytes.
+
+- It contains ten bytes, and:
+
+  <dl>
+    <dt>Unsigned</dt>
+    <dd>Its last byte is not 1.</dd>
+
+    <dt>Signed</dt>
+    <dd>Its last byte is not 0 or 127.</dd>
+  </dl>
 */
 class OversizedVariableLengthIntegerDecodingError final :
     public DecodingError

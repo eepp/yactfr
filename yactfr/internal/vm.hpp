@@ -887,29 +887,63 @@ private:
 
     void _signExtendVlSIntVal() noexcept
     {
-        const auto mask = UINT64_C(1) << (_pos.curVlIntLenBits - 1);
+        assert(_pos.curVlIntLenBits <= 64);
 
-        _pos.lastIntVal.u = _pos.lastIntVal.u & ((UINT64_C(1) << _pos.curVlIntLenBits) - 1);
+        if (_pos.curVlIntLenBits == 64) {
+            return;
+        }
+
+        const auto mask = static_cast<std::uint64_t>(1) << (_pos.curVlIntLenBits - 1);
+
+        _pos.lastIntVal.u = _pos.lastIntVal.u & ((static_cast<std::uint64_t>(1) << _pos.curVlIntLenBits) - 1);
         _pos.lastIntVal.u = (_pos.lastIntVal.u ^ mask) - mask;
     }
 
-    void _appendVlIntByte(std::uint8_t byte)
+    template <bool IsSignedV>
+    void _appendVlIntByte(const std::uint8_t byte)
     {
-        // validate future variable-length integer length
-        if ((_pos.curVlIntLenBits + 7) > 64) {
+        auto newVlIntLenBits = _pos.curVlIntLenBits + 7;
+        const auto byteVal = byte & 0b0111'1111;
 
-            throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+        // validate future variable-length integer length
+        if (newVlIntLenBits > 63) {
+            /*
+             * Exception for some 10th byte which can contain the last
+             * bit of a 64-bit integer (as 9 × 7 is 63).
+             *
+             * The condition to accept it is:
+             *
+             * * It's the last byte of the variable-length integer.
+             *
+             * * If `IsSignedV` is false:
+             *       Its 7-bit value (`byteVal`) must be 1.
+             *
+             *   If `IsSignedV` is true:
+             *       Its 7-bit value must be 0 (positive) or 127
+             *       (negative).
+             */
+            if ((byte & 0b1000'0000) != 0) {
+                // not the last byte
+                throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+            }
+
+            if (IsSignedV && byteVal != 0 && byteVal != 0b0111'1111) {
+                throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+            } else if (!IsSignedV && byteVal != 1) {
+                throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+            }
+
+            newVlIntLenBits = 64;
         }
 
         // mark this byte as consumed immediately
         this->_consumeExistingBits(8);
 
         // update unsigned integer value, clearing continuation bit
-        _pos.lastIntVal.u |= (static_cast<std::uint64_t>(byte & 0b0111'1111) <<
-                              _pos.curVlIntLenBits);
+        _pos.lastIntVal.u |= (static_cast<std::uint64_t>(byteVal) << _pos.curVlIntLenBits);
 
         // update current variable-length integer length
-        _pos.curVlIntLenBits += 7;
+        _pos.curVlIntLenBits = newVlIntLenBits;
     }
 
     template <bool IsSignedV>
@@ -937,7 +971,7 @@ private:
 
         if ((byte & 0b1000'0000) == 0) {
             // this is the last byte
-            this->_appendVlIntByte(byte);
+            this->_appendVlIntByte<IsSignedV>(byte);
 
             /*
              * When calling _setBitArrayElemBase() below,
@@ -954,16 +988,13 @@ private:
              * at the _end_ of the VL integer; the iterator user expects
              * its beginning offset.
              */
-            const auto offset = _pos.headOffsetInElemSeqBits() -
-                                _pos.curVlIntElem->dataLength();
+            const auto offset = _pos.headOffsetInElemSeqBits() - _pos.curVlIntElem->dataLength();
 
             if (IsSignedV) {
                 this->_signExtendVlSIntVal();
-                this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlIntElem,
-                                           offset);
+                this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlIntElem, offset);
             } else {
-                this->_setBitArrayElemBase(_pos.lastIntVal.u, instr, *_pos.curVlIntElem,
-                                           offset);
+                this->_setBitArrayElemBase(_pos.lastIntVal.u, instr, *_pos.curVlIntElem, offset);
             }
 
             // we're done with this instruction and this state
@@ -975,7 +1006,7 @@ private:
         }
 
         // not the last byte
-        this->_appendVlIntByte(byte);
+        this->_appendVlIntByte<IsSignedV>(byte);
         return false;
     }
 
