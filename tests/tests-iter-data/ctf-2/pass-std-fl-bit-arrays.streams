@@ -1,0 +1,200 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u8le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u16le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u32le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 64,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u64le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i8le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i16le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i32le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 64,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i64le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u8be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 16,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u16be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u32be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 64,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "u64be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i8be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 16,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i16be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i32be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 64,
+            "type": "fixed-length-bit-array"
+          },
+          "name": "i64be"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+LE UNSIGNED fe 173b 10a815fc 12341234abcdabcd
+LE SIGNED   fd 0154 ffff1122 2736abd7bda6bdf6
+BE UNSIGNED fe 173b 10a815fc 12341234abcdabcd
+BE SIGNED   fd d154 ffff112f 2736abd7bda6bdf6
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLBA:u8le:254
+     8           FLBA:u16le:15127
+    24           FLBA:u32le:4229277712
+    56           FLBA:u64le:14820165133989458962
+   120           FLBA:i8le:253
+   128           FLBA:i16le:21505
+   144           FLBA:i32le:571604991
+   176           FLBA:i64le:17779550238225937959
+   240           FLBA:u8be:254
+   248           FLBA:u16be:5947
+   264           FLBA:u32be:279451132
+   296           FLBA:u64be:1311693408901639117
+   360           FLBA:i8be:253
+   368           FLBA:i16be:53588
+   384           FLBA:i32be:4294906159
+   416           FLBA:i64be:2825634759309704694
+   480         }
+   480       }
+   480     }
+   480   }
+   480 }
