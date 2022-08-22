@@ -464,7 +464,8 @@ the current element of the iterator is an instance of:
     * SubstringElement
     * BlobSectionElement
 
-    then the offset is the one of the previous element plus its length.
+    then the offset is the one of the previous element plus its length
+    and, possibly, some padding.
 
     If it was an instance of EndElement, then the offset is the same as
     it was for the previous element.
