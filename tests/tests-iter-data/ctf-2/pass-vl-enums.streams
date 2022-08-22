@@ -1,0 +1,313 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu1a"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu1b"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu2"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu3"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu4"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu5"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu6"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu7"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu8"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu9"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-unsigned-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vu10"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi1a"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi1b"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi1c"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi2"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi3"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi4"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi5"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi6"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi7"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi8"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi9"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi10a"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi10b"
+        },
+        {
+          "field-class": {
+            "type": "variable-length-signed-enumeration",
+            "mappings": {
+              "lol": [[23, 23]]
+            }
+          },
+          "name": "vi10c"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+UNSIGNED
+  00
+  4d
+  b1 01
+  f3 d0 02
+  86 ae b4 0a
+  86 d4 a3 8a 13
+  86 dc cf ad e2 02
+  86 fc b3 ae b3 94 03
+  c3 c8 e6 d0 ec e5 cf 01
+  d5 aa 85 e9 e8 9c 8f d0 04
+  ff ff ff ff ff ff ff ff ff 01
+SIGNED
+  00
+  7f
+  17
+  e4 7e
+  ec c2 00
+  f7 a8 a2 50
+  af b2 a1 f0 1e
+  fb cb ef a6 80 7b
+  b1 cd e4 af 88 89 1c
+  c6 f2 d0 94 f0 87 81 7e
+  ff ff a7 ec 85 af d1 b1 01
+  bf fb c2 ff ff ff ff ff ff 00
+  ff ff ff ff ff ff ff ff ff 00
+  80 80 80 80 80 80 80 80 80 7f
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           VLUE:vu1a:0
+     8           VLUE:vu1b:77
+    16           VLUE:vu2:177
+    32           VLUE:vu3:43123
+    56           VLUE:vu4:21829382
+    88           VLUE:vu5:5121829382
+   128           VLUE:vu6:95121829382
+   176           VLUE:vu7:13895121829382
+   232           VLUE:vu8:913895121855555
+   296           VLUE:vu9:333333333333333333
+   368           VLUE:vu10:18446744073709551615
+   448           VLSE:vi1a:0
+   456           VLSE:vi1b:-1
+   464           VLSE:vi1c:23
+   472           VLSE:vi2:-156
+   488           VLSE:vi3:8556
+   512           VLSE:vi4:-100101001
+   544           VLSE:vi5:8288491823
+   584           VLSE:vi6:-171717171717
+   632           VLSE:vi7:123456787654321
+   688           VLSE:vi8:-1121231234123450
+   752           VLSE:vi9:99999999999999999
+   824           VLSE:vi10a:9223372036853775807
+   904           VLSE:vi10b:9223372036854775807
+   984           VLSE:vi10c:-9223372036854775808
+  1064         }
+  1064       }
+  1064     }
+  1064   }
+  1064 }
