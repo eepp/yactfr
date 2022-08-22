@@ -1,0 +1,200 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u8le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u16le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u32le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 64,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u64le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i8le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 16,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i16le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 32,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i32le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 64,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i64le"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u8be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 16,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u16be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u32be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 64,
+            "type": "fixed-length-boolean"
+          },
+          "name": "u64be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i8be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 16,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i16be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 32,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i32be"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 64,
+            "type": "fixed-length-boolean"
+          },
+          "name": "i64be"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+LE UNSIGNED fe 173b 10a815fc 0000000000000000
+LE SIGNED   fd 0000 ffff1122 2736abd7bda6bdf6
+BE UNSIGNED fe 173b 10a815fc 0000000000000000
+BE SIGNED   00 d154 00000001 2736abd7bda6bdf6
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLB:u8le:true
+     8           FLB:u16le:true
+    24           FLB:u32le:true
+    56           FLB:u64le:false
+   120           FLB:i8le:true
+   128           FLB:i16le:false
+   144           FLB:i32le:true
+   176           FLB:i64le:true
+   240           FLB:u8be:true
+   248           FLB:u16be:true
+   264           FLB:u32be:true
+   296           FLB:u64be:false
+   360           FLB:i8be:false
+   368           FLB:i16be:true
+   384           FLB:i32be:true
+   416           FLB:i64be:true
+   480         }
+   480       }
+   480     }
+   480   }
+   480 }
