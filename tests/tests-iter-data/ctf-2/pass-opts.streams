@@ -1,0 +1,338 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "data-stream-class",
+    "event-record-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "id",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "length": 8,
+            "roles": ["event-record-class-id"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "id": 0,
+    "name": "bool sel",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-boolean"
+          }
+        },
+        {
+          "name": "opt",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": ["event-record-payload", "sel"],
+            "field-class": {
+              "type": "null-terminated-string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "id": 1,
+    "name": "uint sel",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          }
+        },
+        {
+          "name": "opt",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": ["event-record-payload", "sel"],
+            "selector-field-ranges": [[33, 55]],
+            "field-class": {
+              "type": "null-terminated-string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "id": 2,
+    "name": "sint sel",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "big-endian",
+            "length": 8,
+            "type": "fixed-length-signed-integer"
+          }
+        },
+        {
+          "name": "opt",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": ["event-record-payload", "sel"],
+            "selector-field-ranges": [[-23, 17]],
+            "field-class": {
+              "type": "null-terminated-string"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+----
+EV  00
+  SEL   00
+
+EV  00
+  SEL   55
+  OPT   "fallen leaves" 00
+
+EV  00
+  SEL   00
+
+EV  01
+  SEL   20
+
+EV  01
+  SEL   21
+  OPT   "pins and needles" 00
+
+EV  01
+  SEL   38
+
+EV  01
+  SEL   2d
+  OPT   "river below" 00
+
+EV  02
+  SEL   e8
+
+EV  02
+  SEL   e9
+  OPT   "surrender" 00
+
+EV  02
+  SEL   10
+  OPT   "rusted from the rain" 00
+
+EV  02
+  SEL   12
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       SC:2 {
+     0         ST {
+     0           FLUI:id:0
+     8         }
+     8       }
+     8       ERI:T0:#bool sel
+     8       SC:5 {
+     8         ST {
+     8           FLB:sel:false
+    16           OB:opt:disabled {
+    16           }
+    16         }
+    16       }
+    16     }
+    16     ER {
+    16       SC:2 {
+    16         ST {
+    16           FLUI:id:0
+    24         }
+    24       }
+    24       ERI:T0:#bool sel
+    24       SC:5 {
+    24         ST {
+    24           FLB:sel:true
+    32           OB:opt:enabled {
+    32             NTS {
+    32               SS:14:fallen leaves
+   144             }
+   144           }
+   144         }
+   144       }
+   144     }
+   144     ER {
+   144       SC:2 {
+   144         ST {
+   144           FLUI:id:0
+   152         }
+   152       }
+   152       ERI:T0:#bool sel
+   152       SC:5 {
+   152         ST {
+   152           FLB:sel:false
+   160           OB:opt:disabled {
+   160           }
+   160         }
+   160       }
+   160     }
+   160     ER {
+   160       SC:2 {
+   160         ST {
+   160           FLUI:id:1
+   168         }
+   168       }
+   168       ERI:T1:#uint sel
+   168       SC:5 {
+   168         ST {
+   168           FLUI:sel:32
+   176           OU:opt:disabled:32 {
+   176           }
+   176         }
+   176       }
+   176     }
+   176     ER {
+   176       SC:2 {
+   176         ST {
+   176           FLUI:id:1
+   184         }
+   184       }
+   184       ERI:T1:#uint sel
+   184       SC:5 {
+   184         ST {
+   184           FLUI:sel:33
+   192           OU:opt:enabled:33 {
+   192             NTS {
+   192               SS:17:pins and needles
+   328             }
+   328           }
+   328         }
+   328       }
+   328     }
+   328     ER {
+   328       SC:2 {
+   328         ST {
+   328           FLUI:id:1
+   336         }
+   336       }
+   336       ERI:T1:#uint sel
+   336       SC:5 {
+   336         ST {
+   336           FLUI:sel:56
+   344           OU:opt:disabled:56 {
+   344           }
+   344         }
+   344       }
+   344     }
+   344     ER {
+   344       SC:2 {
+   344         ST {
+   344           FLUI:id:1
+   352         }
+   352       }
+   352       ERI:T1:#uint sel
+   352       SC:5 {
+   352         ST {
+   352           FLUI:sel:45
+   360           OU:opt:enabled:45 {
+   360             NTS {
+   360               SS:12:river below
+   456             }
+   456           }
+   456         }
+   456       }
+   456     }
+   456     ER {
+   456       SC:2 {
+   456         ST {
+   456           FLUI:id:2
+   464         }
+   464       }
+   464       ERI:T2:#sint sel
+   464       SC:5 {
+   464         ST {
+   464           FLSI:sel:-24
+   472           OS:opt:disabled:-24 {
+   472           }
+   472         }
+   472       }
+   472     }
+   472     ER {
+   472       SC:2 {
+   472         ST {
+   472           FLUI:id:2
+   480         }
+   480       }
+   480       ERI:T2:#sint sel
+   480       SC:5 {
+   480         ST {
+   480           FLSI:sel:-23
+   488           OS:opt:enabled:-23 {
+   488             NTS {
+   488               SS:10:surrender
+   568             }
+   568           }
+   568         }
+   568       }
+   568     }
+   568     ER {
+   568       SC:2 {
+   568         ST {
+   568           FLUI:id:2
+   576         }
+   576       }
+   576       ERI:T2:#sint sel
+   576       SC:5 {
+   576         ST {
+   576           FLSI:sel:16
+   584           OS:opt:enabled:16 {
+   584             NTS {
+   584               SS:21:rusted from the rain
+   752             }
+   752           }
+   752         }
+   752       }
+   752     }
+   752     ER {
+   752       SC:2 {
+   752         ST {
+   752           FLUI:id:2
+   760         }
+   760       }
+   760       ERI:T2:#sint sel
+   760       SC:5 {
+   760         ST {
+   760           FLSI:sel:18
+   768           OS:opt:disabled:18 {
+   768           }
+   768         }
+   768       }
+   768     }
+   768   }
+   768 }
