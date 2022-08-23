@@ -27,8 +27,11 @@ An integer range set is a set of
 
 @tparam ValueT
     Type of the lower and upper values of contained integer ranges.
+@tparam ValidatePreconditionsV
+    Kindly ignore this parameter which is currently only used internally
+    and must remain \c true.
 */
-template <typename ValueT>
+template <typename ValueT, bool ValidatePreconditionsV = true>
 class IntegerRangeSet final
 {
 public:
@@ -36,7 +39,7 @@ public:
     using Value = ValueT;
 
     /// Type of the contained integer ranges.
-    using Range = IntegerRange<ValueT>;
+    using Range = IntegerRange<ValueT, ValidatePreconditionsV>;
 
 public:
     /*!
@@ -61,16 +64,16 @@ public:
     }
 
     /// Default copy constructor.
-    IntegerRangeSet(const IntegerRangeSet<ValueT>&) = default;
+    IntegerRangeSet(const IntegerRangeSet&) = default;
 
     /// Default move constructor.
-    IntegerRangeSet(IntegerRangeSet<ValueT>&&) = default;
+    IntegerRangeSet(IntegerRangeSet&&) = default;
 
     /// Default copy assignment operator.
-    IntegerRangeSet<ValueT>& operator=(const IntegerRangeSet<ValueT>&) = default;
+    IntegerRangeSet& operator=(const IntegerRangeSet&) = default;
 
     /// Default move assignment operator.
-    IntegerRangeSet<ValueT>& operator=(IntegerRangeSet<ValueT>&&) = default;
+    IntegerRangeSet& operator=(IntegerRangeSet&&) = default;
 
     /// Ranges of this integer range set.
     const std::set<Range>& ranges() const noexcept
@@ -127,7 +130,7 @@ public:
         \c true if at least one range contained in \p other intersects
         with at least one range contained in this integer range set.
     */
-    bool intersects(const IntegerRangeSet<ValueT>& other) const noexcept
+    bool intersects(const IntegerRangeSet& other) const noexcept
     {
         for (auto& range : _ranges) {
             for (auto& otherRange : other.ranges()) {
@@ -150,7 +153,7 @@ public:
     @returns
         \c true if \p other is equal to this integer range set.
     */
-    bool operator==(const IntegerRangeSet<ValueT>& other) const noexcept
+    bool operator==(const IntegerRangeSet& other) const noexcept
     {
         return other.ranges() == _ranges;
     }
@@ -166,7 +169,7 @@ public:
         \c true if \p other is not equal to
         this integer range set.
     */
-    bool operator!=(const IntegerRangeSet<ValueT>& other) const noexcept
+    bool operator!=(const IntegerRangeSet& other) const noexcept
     {
         return !(*this == other);
     }

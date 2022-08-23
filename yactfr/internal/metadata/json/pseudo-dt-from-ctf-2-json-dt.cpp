@@ -43,21 +43,23 @@ PseudoDt::UP createPseudoScalarDtWrapper(const JsonVal& jsonVal, ArgTs&&... args
     return std::make_unique<PseudoScalarDtWrapper>(std::move(dt), jsonVal.loc());
 }
 
-template <typename ValT>
-IntegerRangeSet<ValT> intRangesFromArray(const JsonArrayVal& jsonArrayVal)
+template <typename ValT, bool ValidatePrecondsV = true>
+IntegerRangeSet<ValT, ValidatePrecondsV> intRangesFromArray(const JsonArrayVal& jsonArrayVal)
 {
-    std::set<IntegerRange<ValT>> ranges;
+    using Ranges = IntegerRangeSet<ValT, ValidatePrecondsV>;
+
+    std::set<typename Ranges::Range> ranges;
 
     for (auto& jsonRange : jsonArrayVal) {
         auto& jsonRangeArray = jsonRange->asArray();
 
-        ranges.insert(IntegerRange<ValT> {
+        ranges.insert(typename Ranges::Range {
             rawIntValFromJsonIntVal<ValT>(jsonRangeArray[0]),
             rawIntValFromJsonIntVal<ValT>(jsonRangeArray[1])
         });
     }
 
-    return IntegerRangeSet<ValT> {std::move(ranges)};
+    return Ranges {std::move(ranges)};
 }
 
 template <typename EnumTypeT>
@@ -478,7 +480,7 @@ static PseudoDt::UP pseudoDtFromOptWithIntSelFc(const JsonObjVal& jsonFc, MapIte
                                                 const JsonArrayVal& jsonSelFieldRanges)
 {
     return std::make_unique<PseudoOptWithIntSelType>(std::move(pseudoDt), std::move(pseudoSelLoc),
-                                                     intRangesFromArray<unsigned long long>(jsonSelFieldRanges),
+                                                     intRangesFromArray<unsigned long long, false>(jsonSelFieldRanges),
                                                      std::move(userAttrs), jsonFc.loc());
 }
 
@@ -518,7 +520,7 @@ static PseudoDt::UP pseudoDtFromVarFc(const JsonObjVal& jsonFc, MapItem::UP user
 
     for (auto& jsonOpt : jsonFc[strs::OPTS]->asArray()) {
         auto& jsonOptObj = jsonOpt->asObj();
-        auto intRanges = intRangesFromArray<unsigned long long>(jsonOptObj[strs::SEL_FIELD_RANGES]->asArray());
+        auto intRanges = intRangesFromArray<unsigned long long, false>(jsonOptObj[strs::SEL_FIELD_RANGES]->asArray());
 
         selRangeSets.push_back(std::move(intRanges));
         pseudoOpts.push_back(std::make_unique<PseudoNamedDt>(optStrOfObj(jsonOptObj, strs::NAME),

@@ -695,7 +695,7 @@ public:
      *
      * Hackish, but safe.
      */
-    using RangeSets = std::vector<IntegerRangeSet<unsigned long long>>;
+    using RangeSets = std::vector<IntegerRangeSet<unsigned long long, false>>;
 
 public:
     /*
@@ -807,7 +807,7 @@ public:
      *
      * Hackish, but safe.
      */
-    using RangeSet = IntegerRangeSet<unsigned long long>;
+    using RangeSet = IntegerRangeSet<unsigned long long, false>;
 
 public:
     explicit PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,

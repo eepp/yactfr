@@ -551,6 +551,19 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
                                                    tryCloneUserAttrs(pseudoOptType.userAttrs()));
 }
 
+static IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(const IntegerRangeSet<unsigned long long, false>& ranges)
+{
+    using Ranges = IntegerRangeSet<unsigned long long>;
+
+    std::set<Ranges::Range> newRanges;
+
+    for (auto& range : ranges) {
+        newRanges.insert(Ranges::Range {range.lower(), range.upper()});
+    }
+
+    return Ranges {std::move(newRanges)};
+}
+
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt)
 {
     assert(_pseudoTraceType->majorVersion() == 2);
@@ -569,7 +582,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
     if ((*pseudoSelDts.begin())->isUInt()) {
         return OptionalWithUnsignedIntegerSelectorType::create(1, std::move(containedDt),
                                                                std::move(selLoc),
-                                                               pseudoOptType.selRanges(),
+                                                               uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(pseudoOptType.selRanges()),
                                                                tryCloneUserAttrs(pseudoOptType.userAttrs()));
     } else {
         using SInt = long long;

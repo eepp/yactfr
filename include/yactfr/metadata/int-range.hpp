@@ -24,8 +24,11 @@ included in the range.
 
 @tparam ValueT
     Type of the lower and upper values.
+@tparam ValidatePreconditionsV
+    Kindly ignore this parameter which is currently only used internally
+    and must remain \c true.
 */
-template <typename ValueT>
+template <typename ValueT, bool ValidatePreconditionsV = true>
 class IntegerRange final
 {
 public:
@@ -50,14 +53,16 @@ public:
         _lower {lower},
         _upper {upper}
     {
-        assert(lower <= upper);
+        if (ValidatePreconditionsV) {
+            assert(lower <= upper);
+        }
     }
 
     /// Default copy constructor.
-    IntegerRange(const IntegerRange<ValueT>&) noexcept = default;
+    IntegerRange(const IntegerRange&) noexcept = default;
 
     /// Default copy assignment operator.
-    IntegerRange<ValueT>& operator=(const IntegerRange<ValueT>&) noexcept = default;
+    IntegerRange& operator=(const IntegerRange&) noexcept = default;
 
     /// Lower bound of this integer range.
     ValueT lower() const noexcept
@@ -98,7 +103,7 @@ public:
     @returns
         \c true if \p range intersects with this integer range.
     */
-    bool intersects(const IntegerRange<ValueT>& range) const noexcept
+    bool intersects(const IntegerRange& range) const noexcept
     {
         return _lower <= range.upper() && range.lower() <= _upper;
     }
@@ -113,7 +118,7 @@ public:
     @returns
         \c true if \p other is equal to this integer range.
     */
-    bool operator==(const IntegerRange<ValueT>& other) const noexcept
+    bool operator==(const IntegerRange& other) const noexcept
     {
         return other.lower() == _lower && other.upper() == _upper;
     }
@@ -128,7 +133,7 @@ public:
     @returns
         \c true if \p other is not equal to this integer range.
     */
-    bool operator!=(const IntegerRange<ValueT>& other) const noexcept
+    bool operator!=(const IntegerRange& other) const noexcept
     {
         return !(*this == other);
     }
@@ -144,7 +149,7 @@ public:
         \c true if this integer range is less than \p other (respects
         total order).
     */
-    bool operator<(const IntegerRange<ValueT>& other) const noexcept
+    bool operator<(const IntegerRange& other) const noexcept
     {
         if (_lower < other._lower) {
             return true;
