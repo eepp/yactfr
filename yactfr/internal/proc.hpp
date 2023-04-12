@@ -25,7 +25,7 @@
  *     more subprocedures.
  *
  * The top-level procedure is a `PktProc`. A `PktProc` object contains
- * all the instructions to apply for a whole packet.
+ * all the instructions to execute for a whole packet.
  *
  * At the beginning of a packet:
  *

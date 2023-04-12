@@ -98,10 +98,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-payload",
-              "tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["tag"]
+            },
             "type": "variant"
           },
           "name": "outer"
@@ -117,11 +117,10 @@
             "element-field-class": {
               "type": "null-terminated-string"
             },
-            "length-field-location": [
-              "event-record-payload",
-              "outer",
-              "len"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["outer", "len"]
+            },
             "type": "dynamic-length-array"
           },
           "name": "seq"

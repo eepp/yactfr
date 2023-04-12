@@ -19,4 +19,4 @@ trace {
 };
 ----
 [9:1] In data type alias:
-[9:33] Duplicate data type alias: `array_type`.
+[9:33] Duplicate data type alias named `array_type`.

@@ -18,7 +18,6 @@ add_library (
     elem-seq-it.cpp
     elem-seq.cpp
     elem-visitor.cpp
-    internal/metadata/data-loc-map.cpp
     internal/metadata/dt-from-pseudo-root-dt.cpp
     internal/metadata/item.cpp
     internal/metadata/json/ctf-2-json-seq-parser.cpp
@@ -28,8 +27,10 @@ add_library (
     internal/metadata/json/json-val-from-text.cpp
     internal/metadata/json/json-val-req.cpp
     internal/metadata/json/json-val.cpp
-    internal/metadata/json/pseudo-dt-from-ctf-2-json-dt.cpp
+    internal/metadata/json/pseudo-dt-erector.cpp
     internal/metadata/pseudo-types.cpp
+    internal/metadata/set-pseudo-dt-data-loc.cpp
+    internal/metadata/set-pseudo-dt-pos-in-scope.cpp
     internal/metadata/str-scanner.cpp
     internal/metadata/trace-type-from-pseudo-trace-type.cpp
     internal/metadata/trace-type-impl.cpp

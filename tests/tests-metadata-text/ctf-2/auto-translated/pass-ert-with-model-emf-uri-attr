@@ -1,4 +1,25 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"allo"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "allo"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

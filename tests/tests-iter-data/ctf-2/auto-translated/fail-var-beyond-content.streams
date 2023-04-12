@@ -109,10 +109,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-payload",
-              "tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["tag"]
+            },
             "type": "variant"
           },
           "name": "v"

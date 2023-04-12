@@ -19,4 +19,4 @@ event {
 };
 ----
 [4:1] In data type alias:
-[4:26] Duplicate data type alias: `name`.
+[4:26] Duplicate data type alias named `name`.

@@ -1,4 +1,84 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"a"},{"field-class":{"type":"null-terminated-string"},"name":"b"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"c"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"d"},{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["event-record-payload","c"],"type":"dynamic-length-array"},"name":"e"}],"type":"structure"},"name":"ee"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"f"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "a"
+      },
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "b"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "c"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "d"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "element-field-class": {
+                  "type": "null-terminated-string"
+                },
+                "length-field-location": {
+                  "origin": "event-record-payload",
+                  "path": [
+                    "c"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "e"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "ee"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "f"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

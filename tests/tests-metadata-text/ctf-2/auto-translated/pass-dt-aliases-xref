@@ -1,2 +1,33 @@
-{"type":"preamble","version":2}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"element-field-class":{"element-field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":32,"type":"fixed-length-unsigned-integer"},"length":23,"type":"static-length-array"},"length":17,"type":"static-length-array"},"length":2,"type":"static-length-array"},"name":"s"}],"type":"structure"},"type":"trace-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "element-field-class": {
+            "element-field-class": {
+              "element-field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 32,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "length": 23,
+              "type": "static-length-array"
+            },
+            "length": 17,
+            "type": "static-length-array"
+          },
+          "length": 2,
+          "type": "static-length-array"
+        },
+        "name": "s"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}

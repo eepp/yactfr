@@ -15,8 +15,14 @@
         {
           "name": "test",
           "field-class": {
-            "type": "dynamic-length-string",
-            "length-field-location": ["len"]
+            "type": "dynamic-length-array",
+            "length-field-location": {
+              "path": ["len"],
+              "coke": "zero"
+            },
+            "element-field-class": {
+              "type": "null-terminated-string"
+            }
           }
         }
       ]
@@ -25,13 +31,12 @@
 ----
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
-[4:28] Invalid scope type:
 [4:28] Invalid structure type:
 [6:25] In object property `member-classes`:
 [13:9] In array element #2:
 [13:9] Invalid structure member type:
 [15:26] In object property `field-class`:
-[15:26] Invalid dynamic-length string type:
+[15:26] Invalid dynamic-length array type:
 [17:38] In object property `length-field-location`:
 [17:38] Invalid data location:
-[17:38] Size of array (1) is too small: expecting at least 2 elements.
+[19:23] Unknown object property `coke`.

@@ -23,7 +23,7 @@
 #include "ctf-2-json-val-req.hpp"
 #include "ctf-2-json-utils.hpp"
 #include "json-val.hpp"
-#include "pseudo-dt-from-ctf-2-json-dt.hpp"
+#include "pseudo-dt-erector.hpp"
 #include "../pseudo-types.hpp"
 
 namespace yactfr {
@@ -100,6 +100,13 @@ private:
     void _handleTraceTypeFrag(const JsonObjVal& jsonFrag);
 
     /*
+     * Handles the JSON data type alias fragment `jsonFrag`, updating
+     * the internal state on success, or throwing `TextParseError` on
+     * failure.
+     */
+    void _handleDtAliasFrag(const JsonObjVal& jsonFrag);
+
+    /*
      * Handles the JSON clock type fragment `jsonFrag`, updating the
      * internal state on success, or throwing `TextParseError` on
      * failure.
@@ -125,6 +132,12 @@ private:
      */
     void _ensureExistingPseudoTraceType();
 
+    /*
+     * Calls `_pseudoDtErector.pseudoDtOfJsonObj()`, also validating
+     * that the returned value is a pseudo structure type.
+     */
+    PseudoDt::UP _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
+
 private:
     // beginning and end metadata string pointers
     const char *_begin;
@@ -132,6 +145,9 @@ private:
 
     // fragment requirement
     JsonAnyFragValReq _fragValReq;
+
+    // pseudo data type erector
+    PseudoDtErector _pseudoDtErector;
 
     // default clock offset JSON value
     JsonObjVal::UP _defClkOffsetVal;

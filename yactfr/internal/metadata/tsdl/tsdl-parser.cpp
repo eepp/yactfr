@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <iostream>
+
 #include "tsdl-parser.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
 #include "../../utils.hpp"
@@ -189,7 +191,7 @@ void TsdlParser::_addPseudoDtRoles()
                                         "stream_instance_id",
                                         UnsignedIntegerTypeRole::DATA_STREAM_ID);
         this->_setPseudoSlArrayTypeMetadataStreamUuidRole(*_pseudoTraceType->pseudoPktHeaderType(),
-                                                     "uuid");
+                                                          "uuid");
     }
 
     for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
@@ -468,45 +470,51 @@ boost::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& 
 
 struct PseudoDataLocBase
 {
-    PseudoDataLocBase(const bool isAbs, const bool isEnv, const Scope scope,
-                      const DataLocation::PathElements::const_iterator restPos) :
-        isAbs {isAbs},
-        isEnv {isEnv},
-        scope {scope},
+    explicit PseudoDataLocBase(const PseudoDataLoc::Kind kind, boost::optional<Scope> scope,
+                               const PseudoDataLoc::PathElems::const_iterator restPos) :
+        kind {kind},
+        scope {std::move(scope)},
         restPos {restPos}
     {
     }
 
-    bool isAbs = false;
-    bool isEnv = false;
-    Scope scope;
-    DataLocation::PathElements::const_iterator restPos;
+    PseudoDataLoc::Kind kind;
+    boost::optional<Scope> scope;
+    PseudoDataLoc::PathElems::const_iterator restPos;
 };
 
-static PseudoDataLocBase pseudoDataLocBase(const DataLocation::PathElements& allPathElems,
-                                           const TextLocation& loc)
+static boost::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
+                                                            const TextLocation& loc)
 {
     const auto beginPos = allPathElems.begin();
 
     if (allPathElems.size() >= 3) {
-        if (allPathElems[0] == "trace") {
-            if (allPathElems[1] == "packet") {
-                if (allPathElems[2] == "header") {
-                    return {true, false, Scope::PACKET_HEADER, beginPos + 3};
+        if (*allPathElems[0] == "trace") {
+            if (*allPathElems[1] == "packet") {
+                if (*allPathElems[2] == "header") {
+                    return PseudoDataLocBase {
+                        PseudoDataLoc::Kind::ABS, Scope::PACKET_HEADER, beginPos + 3
+                    };
                 }
             }
 
             throwTextParseError("Expecting `packet.header` after `trace.`.", loc);
-        } else if (allPathElems[0] == "stream") {
-            if (allPathElems[1] == "packet") {
-                if (allPathElems[2] == "context") {
-                    return {true, false, Scope::PACKET_CONTEXT, beginPos + 3};
+        } else if (*allPathElems[0] == "stream") {
+            if (*allPathElems[1] == "packet") {
+                if (*allPathElems[2] == "context") {
+                    return PseudoDataLocBase {
+                        PseudoDataLoc::Kind::ABS, Scope::PACKET_CONTEXT, beginPos + 3
+                    };
                 }
-            } else if (allPathElems[1] == "event") {
-                if (allPathElems[2] == "header") {
-                    return {true, false, Scope::EVENT_RECORD_HEADER, beginPos + 3};
-                } else if (allPathElems[2] == "context") {
-                    return {true, false, Scope::EVENT_RECORD_COMMON_CONTEXT, beginPos + 3};
+            } else if (*allPathElems[1] == "event") {
+                if (*allPathElems[2] == "header") {
+                    return PseudoDataLocBase {
+                        PseudoDataLoc::Kind::ABS, Scope::EVENT_RECORD_HEADER, beginPos + 3
+                    };
+                } else if (*allPathElems[2] == "context") {
+                    return PseudoDataLocBase {
+                        PseudoDataLoc::Kind::ABS, Scope::EVENT_RECORD_COMMON_CONTEXT, beginPos + 3
+                    };
                 }
             }
 
@@ -516,29 +524,37 @@ static PseudoDataLocBase pseudoDataLocBase(const DataLocation::PathElements& all
     }
 
     if (allPathElems.size() >= 2) {
-        if (allPathElems[0] == "event") {
-            if (allPathElems[1] == "context") {
-                return {true, false, Scope::EVENT_RECORD_SPECIFIC_CONTEXT, beginPos + 2};
-            } else if (allPathElems[1] == "fields") {
-                return {true, false, Scope::EVENT_RECORD_PAYLOAD, beginPos + 2};
+        if (*allPathElems[0] == "event") {
+            if (*allPathElems[1] == "context") {
+                return PseudoDataLocBase {
+                    PseudoDataLoc::Kind::ABS, Scope::EVENT_RECORD_SPECIFIC_CONTEXT, beginPos + 2
+                };
+            } else if (*allPathElems[1] == "fields") {
+                return PseudoDataLocBase {
+                    PseudoDataLoc::Kind::ABS, Scope::EVENT_RECORD_PAYLOAD, beginPos + 2
+                };
             }
+
             throwTextParseError("Expecting `context` or `fields` after `event.`.", loc);
         }
     }
 
-    if (allPathElems.size() >= 1 && allPathElems[0] == "env") {
-        return {true, true, Scope::PACKET_HEADER, beginPos + 1};
+    if (allPathElems.size() >= 1 && *allPathElems[0] == "env") {
+        return PseudoDataLocBase {
+            PseudoDataLoc::Kind::ENV, boost::none, beginPos + 1
+        };
     }
 
-    return {false, false, Scope::PACKET_HEADER, beginPos};
+    return boost::none;
 }
 
-boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const DataLocation::PathElements& allPathElems,
+boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                              const TextLocation& loc)
 {
     const auto psDataLocBase = pseudoDataLocBase(allPathElems, loc);
 
-    if (!psDataLocBase.isAbs) {
+    if (!psDataLocBase || (psDataLocBase->kind != PseudoDataLoc::Kind::ABS &&
+                           psDataLocBase->kind != PseudoDataLoc::Kind::ENV)) {
         return boost::none;
     }
 
@@ -546,18 +562,17 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(con
      * Data location is already absolute: skip the root scope part (or
      * `env`) to create the path elements.
      */
-    DataLocation::PathElements pathElems;
+    PseudoDataLoc::PathElems pathElems;
 
-    std::copy(psDataLocBase.restPos, allPathElems.end(), std::back_inserter(pathElems));
+    std::copy(psDataLocBase->restPos, allPathElems.end(), std::back_inserter(pathElems));
 
     return PseudoDataLoc {
-        psDataLocBase.isEnv, psDataLocBase.isAbs, psDataLocBase.scope,
-        std::move(pathElems), loc
+        psDataLocBase->kind, psDataLocBase->scope, std::move(pathElems), loc
     };
 }
 
-boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const DataLocation::PathElements& allPathElems,
-                                                                                 const TextLocation& loc)
+boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+                                                                             const TextLocation& loc)
 {
     /*
      * In this method, we only want to make sure that the relative data
@@ -609,7 +624,7 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
 
     // find position of first path element in stack from top to bottom
     auto stackIt = _stack.cend() - 1;
-    const auto& firstPathElem = allPathElems.front();
+    const auto& firstPathElem = *allPathElems.front();
 
     while (true) {
         if (stackIt->kind == _StackFrame::Kind::DT_ALIAS) {
@@ -626,7 +641,9 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
 
             if (std::find(frameIdents.begin(), frameIdents.end(), firstPathElem) != frameIdents.end()) {
                 // identifier found in this frame: win!
-                return PseudoDataLoc {false, false, Scope::PACKET_HEADER, allPathElems, loc};
+                return PseudoDataLoc {
+                    PseudoDataLoc::Kind::REL_1, boost::none, allPathElems, loc
+                };
             }
         }
 
@@ -638,7 +655,7 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
             ss << "Invalid relative data location (`";
 
             for (auto it = allPathElems.begin(); it != allPathElems.end(); ++it) {
-                ss << *it;
+                ss << **it;
 
                 if (it != allPathElems.end() - 1) {
                     ss << ".";
@@ -655,7 +672,7 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
     return boost::none;
 }
 
-PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const DataLocation::PathElements& allPathElems,
+PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                          const TextLocation& loc)
 {
     assert(!allPathElems.empty());
@@ -689,7 +706,7 @@ void TsdlParser::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
     if (frame.dtAliases.find(name) != frame.dtAliases.end()) {
         std::ostringstream ss;
 
-        ss << "Duplicate data type alias: `" << name << "`.";
+        ss << "Duplicate data type alias named `" << name << "`.";
         throwTextParseError(ss.str(), curLoc);
     }
 
@@ -734,6 +751,17 @@ TsdlParser::TsdlParser(const char * const begin, const char * const end) :
     this->_parseMetadata();
 }
 
+const boost::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const noexcept
+{
+    assert(_pseudoTraceType);
+
+    if (!_pseudoTraceType->uid()) {
+        return boost::none;
+    }
+
+    return TsdlParser::_uuidFromStr(*_pseudoTraceType->uid());
+}
+
 void TsdlParser::_parseMetadata()
 {
     _LexicalScope lexScope {*this, _StackFrame::Kind::ROOT};
@@ -746,7 +774,7 @@ void TsdlParser::_parseMetadata()
     if (!_ss.isDone()) {
         throwTextParseError("Expecting data type alias (`typealias`, `typedef`, `enum NAME`, "
                             "`struct NAME`, or `variant NAME`), trace type block (`trace`), "
-                            "environment block of trace type (`env`), "
+                            "trace environment block (`env`), "
                             "clock type block (`clock`), data stream type block (`stream`), "
                             "or event record type block (`event`). Did you forget the `;` "
                             "after the closing `}` of the block?",
@@ -1701,7 +1729,7 @@ PseudoDt::UP TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
                 pseudoDataLoc = this->_expectDataLoc();
                 assert(pseudoDataLoc);
 
-                if (pseudoDataLoc->isEnv()) {
+                if (pseudoDataLoc->kind() == PseudoDataLoc::Kind::ENV) {
                     throwTextParseError("Selector location of variant type "
                                         "cannot start with `env.`.",
                                         _ss.loc());
@@ -1917,12 +1945,12 @@ bool TsdlParser::_tryParseClkTypeBlock()
 
     std::string name;
     boost::optional<std::string> descr;
-    boost::optional<boost::uuids::uuid> uuid;
+    boost::optional<std::string> uuid;
     auto freq = 1'000'000'000ULL;
-    auto precision = 0ULL;
+    auto prec = 0ULL;
     auto offsetSecs = 0LL;
     Cycles offsetCycles = 0;
-    auto originIsUnixEpoch = false;
+    auto origIsUnixEpoch = false;
 
     // check attributes
     for (const auto& attr : attrs) {
@@ -1941,16 +1969,14 @@ bool TsdlParser::_tryParseClkTypeBlock()
         } else if (attr.name == "uuid") {
             attr.checkKind(TsdlAttr::Kind::STR);
 
-            const auto tmpUuid = TsdlParser::_uuidFromStr(attr.strVal);
-
-            if (!tmpUuid) {
+            if (!TsdlParser::_uuidFromStr(attr.strVal)) {
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            uuid = tmpUuid;
+            uuid = attr.strVal;
         } else if (attr.name == "freq") {
             attr.checkKind(TsdlAttr::Kind::UINT);
 
@@ -1965,7 +1991,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
             freq = static_cast<unsigned long long>(attr.uintVal);
         } else if (attr.name == "precision") {
             attr.checkKind(TsdlAttr::Kind::UINT);
-            precision = attr.uintVal;
+            prec = attr.uintVal;
         } else if (attr.name == "offset_s") {
             if (attr.kind != TsdlAttr::Kind::SINT && attr.kind != TsdlAttr::Kind::UINT) {
                 throwTextParseError("Attribute `offset_s`: expecting constant signed integer.",
@@ -1990,7 +2016,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
             attr.checkKind(TsdlAttr::Kind::UINT);
             offsetCycles = static_cast<Cycles>(attr.uintVal);
         } else if (attr.name == "absolute") {
-            originIsUnixEpoch = attr.boolEquiv();
+            origIsUnixEpoch = attr.boolEquiv();
         } else {
             attr.throwUnknown();
         }
@@ -2021,8 +2047,19 @@ bool TsdlParser::_tryParseClkTypeBlock()
     // TODO: throw if this would cause a `long long` overflow
     offsetSecs += completeSecsInOffsetCycles;
 
-    auto clkType = ClockType::create(freq, name, descr, uuid, precision, ClockOffset {offsetSecs,
-                                     offsetCycles}, originIsUnixEpoch);
+    // create origin
+    auto origin = [&name, &origIsUnixEpoch, &uuid]() -> boost::optional<ClockOrigin> {
+        if (origIsUnixEpoch) {
+            return ClockOrigin {};
+        } else if (uuid) {
+            return ClockOrigin {name, *uuid};
+        }
+
+        return boost::none;
+    }();
+
+    auto clkType = ClockType::create(freq, name, descr, std::move(origin), prec,
+                                     ClockOffset {offsetSecs, offsetCycles});
 
     _pseudoTraceType->clkTypes().insert(std::move(clkType));
     return true;
@@ -2091,7 +2128,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     boost::optional<unsigned int> majorVersion;
     boost::optional<unsigned int> minorVersion;
     boost::optional<ByteOrder> nativeBo;
-    boost::optional<boost::uuids::uuid> uuid;
+    boost::optional<std::string> uid;
 
     // check attributes
     for (const auto& attr : attrs) {
@@ -2138,14 +2175,14 @@ bool TsdlParser::_tryParseTraceTypeBlock()
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            uuid = TsdlParser::_uuidFromStr(attr.strVal);
-
-            if (!uuid) {
+            if (!TsdlParser::_uuidFromStr(attr.strVal)) {
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
+
+            uid = attr.strVal;
         } else {
             attr.throwUnknown();
         }
@@ -2170,7 +2207,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     if (_nativeBo) {
         // second time we parse this: create pseudo trace type
         _pseudoTraceType = PseudoTraceType {
-            *majorVersion, *minorVersion, std::move(uuid),
+            *majorVersion, *minorVersion, std::move(uid),
             TraceEnvironment {}, std::move(pseudoPktHeaderType)
         };
     } else {
@@ -2685,7 +2722,7 @@ PseudoDt::UP TsdlParser::_tryParseDtAliasRef()
                     const auto selLoc = _ss.loc();
                     auto pseudoSelLoc = this->_expectDataLoc();
 
-                    if (pseudoSelLoc.isEnv()) {
+                    if (pseudoSelLoc.kind() == PseudoDataLoc::Kind::ENV) {
                         throwTextParseError("Selector location of variant type cannot start with `env.`.",
                                             selLoc);
                     }
@@ -2807,7 +2844,7 @@ PseudoDataLoc TsdlParser::_expectDataLoc()
     _ss.skipCommentsAndWhitespaces();
 
     const auto beginLoc = _ss.loc();
-    DataLocation::PathElements allPathElems;
+    PseudoDataLoc::PathElems allPathElems;
 
     while (true) {
         const auto ident = _ss.tryScanIdent();
@@ -2896,7 +2933,7 @@ PseudoDt::UP TsdlParser::_parseArraySubscripts(PseudoDt::UP innerPseudoDt)
 
             assert(pseudoDataLoc);
 
-            if (pseudoDataLoc->isEnv()) {
+            if (pseudoDataLoc->kind() == PseudoDataLoc::Kind::ENV) {
                 // only the `env.KEY` format is accepted
                 if (pseudoDataLoc->pathElems().size() != 1) {
                     throwTextParseError("Invalid environment location: expecting `env.KEY`, "
@@ -2904,7 +2941,7 @@ PseudoDt::UP TsdlParser::_parseArraySubscripts(PseudoDt::UP innerPseudoDt)
                                         subscriptLoc);
                 }
 
-                const auto& envKey = pseudoDataLoc->pathElems()[0];
+                const auto& envKey = *pseudoDataLoc->pathElems()[0];
 
                 // find the value in the current environment
                 if (!_envParsed) {

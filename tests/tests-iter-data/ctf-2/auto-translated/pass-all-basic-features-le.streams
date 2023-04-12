@@ -62,29 +62,11 @@
       "type": "structure"
     },
     "type": "trace-class",
-    "uuid": [
-      77,
-      134,
-      224,
-      44,
-      245,
-      39,
-      73,
-      113,
-      185,
-      96,
-      151,
-      29,
-      38,
-      7,
-      75,
-      212
-    ]
+    "uid": "3b446657-46f1-4ef5-9c37-08ee57081d5b"
   },
   {
     "frequency": 1000000000,
     "name": "def",
-    "origin-is-unix-epoch": false,
     "type": "clock-class"
   },
   {
@@ -260,10 +242,10 @@
                     "length": 32,
                     "type": "fixed-length-unsigned-integer"
                   },
-                  "length-field-location": [
-                    "event-record-header",
-                    "id"
-                  ],
+                  "length-field-location": {
+                    "origin": "event-record-header",
+                    "path": ["id"]
+                  },
                   "type": "dynamic-length-array"
                 },
                 "name": "JOVI",
@@ -275,10 +257,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-common-context",
-              "ctx1"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-common-context",
+              "path": ["ctx1"]
+            },
             "type": "variant"
           },
           "name": "vvv"
@@ -317,10 +299,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-payload",
-              "tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["tag"]
+            },
             "type": "variant"
           },
           "name": "zigzag"
@@ -434,10 +416,10 @@
               "length": 8,
               "type": "fixed-length-unsigned-integer"
             },
-            "length-field-location": [
-              "packet-context",
-              "len"
-            ],
+            "length-field-location": {
+              "origin": "packet-context",
+              "path": ["len"]
+            },
             "type": "dynamic-length-array"
           },
           "name": "seq1"
@@ -447,10 +429,10 @@
             "element-field-class": {
               "type": "null-terminated-string"
             },
-            "length-field-location": [
-              "event-record-payload",
-              "len"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            },
             "type": "dynamic-length-array"
           },
           "name": "seq2"

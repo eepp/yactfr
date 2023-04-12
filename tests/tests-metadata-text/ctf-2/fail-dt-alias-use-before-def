@@ -1,0 +1,33 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "field-class-alias",
+    "name": "joujou",
+    "field-class": "coucou"
+  }
+
+  {
+    "type": "field-class-alias",
+    "name": "coucou",
+    "field-class": {
+      "type": "variable-length-unsigned-integer"
+    }
+  }
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": "joujou"
+        }
+      ]
+    }
+  }
+----
+[2:3] In data type alias fragment:
+[5:20] In object property `field-class`:
+[5:20] Cannot find data type alias `coucou`.

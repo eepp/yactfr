@@ -19,7 +19,6 @@
 ----
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
-[4:28] Invalid scope type:
 [4:28] Invalid structure type:
 [6:25] In object property `member-classes`:
 [7:9] In array element #1:

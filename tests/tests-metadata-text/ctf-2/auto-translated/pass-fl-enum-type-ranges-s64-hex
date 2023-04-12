@@ -1,4 +1,42 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":64,"mappings":{"A":[[-9223372036854775808,-9223372036854775808]],"B":[[9223372036854775807,9223372036854775807]]},"type":"fixed-length-signed-enumeration"},"name":"en"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 64,
+          "mappings": {
+            "A": [
+              [
+                -9223372036854775808,
+                -9223372036854775808
+              ]
+            ],
+            "B": [
+              [
+                9223372036854775807,
+                9223372036854775807
+              ]
+            ]
+          },
+          "type": "fixed-length-signed-enumeration"
+        },
+        "name": "en"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

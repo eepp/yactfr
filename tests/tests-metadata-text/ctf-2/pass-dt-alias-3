@@ -1,0 +1,57 @@
+
+{
+  "type": "preamble",
+  "version": 2
+}
+
+{
+  "type": "field-class-alias",
+  "name": "meow",
+  "field-class": {
+    "type": "static-length-array",
+    "length": 23,
+    "element-field-class": {
+      "type": "null-terminated-string"
+    }
+  }
+}
+
+{
+  "type": "field-class-alias",
+  "name": "mix",
+  "field-class": "meow"
+}
+
+{
+  "type": "trace-class"
+}
+
+{
+  "type": "data-stream-class"
+}
+
+{
+  "type": "field-class-alias",
+  "name": "pfc",
+  "field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "a",
+        "field-class": {
+          "type": "null-terminated-string"
+        }
+      },
+      {
+        "name": "b",
+        "field-class": "mix"
+      }
+    ]
+  }
+}
+
+{
+  "type": "event-record-class",
+  "name": "event",
+  "payload-field-class": "pfc"
+}

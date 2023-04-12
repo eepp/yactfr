@@ -26,19 +26,16 @@
   {
     "frequency": 1000000000,
     "name": "grandiose",
-    "origin-is-unix-epoch": false,
     "type": "clock-class"
   },
   {
     "frequency": 1000000000,
     "name": "salut",
-    "origin-is-unix-epoch": false,
     "type": "clock-class"
   },
   {
     "frequency": 1000000000,
     "name": "snails",
-    "origin-is-unix-epoch": false,
     "type": "clock-class"
   },
   {

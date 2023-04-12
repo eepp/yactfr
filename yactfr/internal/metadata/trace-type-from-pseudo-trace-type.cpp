@@ -53,12 +53,12 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
 
     // create yactfr trace type
     return TraceType::create(_pseudoTraceType->majorVersion(), _pseudoTraceType->minorVersion(),
-                             _pseudoTraceType->uuid(), _pseudoTraceType->env(),
+                             _pseudoTraceType->uid(), _pseudoTraceType->env(),
                              std::move(pktHeaderType), std::move(_pseudoTraceType->clkTypes()),
                              std::move(dstSet), tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
 }
 
-StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(const PseudoDt * const pseudoDt,
+StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(PseudoDt * const pseudoDt,
                                                                                       const Scope scope,
                                                                                       const PseudoDst * const pseudoDst,
                                                                                       const PseudoErt * const pseudoErt) const
@@ -70,14 +70,14 @@ StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPse
     return dtFromPseudoRootDt(*pseudoDt, scope, *_pseudoTraceType, pseudoDst, pseudoErt);
 }
 
-std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_dstFromPseudoDst(const PseudoDst& pseudoDst)
+std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_dstFromPseudoDst(PseudoDst& pseudoDst)
 {
     // collect pseudo child event record types
     PseudoErtSet pseudoErts;
     const auto it = _pseudoTraceType->pseudoOrphanErts().find(pseudoDst.id());
 
     if (it != _pseudoTraceType->pseudoOrphanErts().end()) {
-        for (const auto& ertIdPseudoOrphanErtPair : it->second) {
+        for (auto& ertIdPseudoOrphanErtPair : it->second) {
             pseudoErts.insert(&ertIdPseudoOrphanErtPair.second.pseudoErt());
         }
     }
@@ -108,7 +108,7 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
                                   pseudoDst.defClkType(), tryCloneUserAttrs(pseudoDst.userAttrs()));
 }
 
-std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_ertFromPseudoErt(const PseudoErt& pseudoErt,
+std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_ertFromPseudoErt(PseudoErt& pseudoErt,
                                                                                                 const PseudoDst& curPseudoDst)
 {
     // validate pseudo event record type

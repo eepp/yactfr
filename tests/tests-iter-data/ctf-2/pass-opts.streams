@@ -41,7 +41,10 @@
           "name": "opt",
           "field-class": {
             "type": "optional",
-            "selector-field-location": ["event-record-payload", "sel"],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
             "field-class": {
               "type": "null-terminated-string"
             }
@@ -70,7 +73,10 @@
           "name": "opt",
           "field-class": {
             "type": "optional",
-            "selector-field-location": ["event-record-payload", "sel"],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
             "selector-field-ranges": [[33, 55]],
             "field-class": {
               "type": "null-terminated-string"
@@ -100,7 +106,10 @@
           "name": "opt",
           "field-class": {
             "type": "optional",
-            "selector-field-location": ["event-record-payload", "sel"],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
             "selector-field-ranges": [[-23, 17]],
             "field-class": {
               "type": "null-terminated-string"

@@ -30,6 +30,7 @@
 #include "metadata/blob-type.hpp"
 #include "metadata/bo.hpp"
 #include "metadata/clk-offset.hpp"
+#include "metadata/clk-orig.hpp"
 #include "metadata/clk-type.hpp"
 #include "metadata/clk-value-interval.hpp"
 #include "metadata/compound-dt.hpp"

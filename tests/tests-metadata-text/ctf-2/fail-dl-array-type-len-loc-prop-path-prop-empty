@@ -16,8 +16,12 @@
           "name": "test",
           "field-class": {
             "type": "dynamic-length-array",
-            "length-field-location": ["event-record-payload", "len"],
-            "element-field-class": "null-terminated-string"
+            "length-field-location": {
+              "path": []
+            },
+            "element-field-class": {
+              "type": "null-terminated-string"
+            }
           }
         }
       ]
@@ -26,12 +30,13 @@
 ----
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
-[4:28] Invalid scope type:
 [4:28] Invalid structure type:
 [6:25] In object property `member-classes`:
 [13:9] In array element #2:
 [13:9] Invalid structure member type:
 [15:26] In object property `field-class`:
 [15:26] Invalid dynamic-length array type:
-[18:36] In object property `element-field-class`:
-[18:36] Expecting an object.
+[17:38] In object property `length-field-location`:
+[17:38] Invalid data location:
+[18:23] In object property `path`:
+[18:23] Size of array (0) is too small: expecting at least 1 elements.

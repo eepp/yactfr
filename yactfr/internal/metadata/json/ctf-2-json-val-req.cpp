@@ -79,18 +79,24 @@ private:
  * CTF 2 JSON data location value requirement.
  */
 class JsonDataLocValReq final :
-    public JsonArrayValReq
+    public JsonObjValReq
 {
 public:
     explicit JsonDataLocValReq() :
-        JsonArrayValReq {2, boost::none, JsonValReq::shared(JsonVal::Kind::STR)},
-        _scopeValReq {{
-            strs::PKT_HEADER,
-            strs::PKT_CTX,
-            strs::ER_HEADER,
-            strs::ER_COMMON_CTX,
-            strs::ER_SPEC_CTX,
-            strs::ER_PAYLOAD,
+        JsonObjValReq {{
+            {strs::ORIG, {JsonStrValInSetReq::shared({
+                strs::PKT_HEADER,
+                strs::PKT_CTX,
+                strs::ER_HEADER,
+                strs::ER_COMMON_CTX,
+                strs::ER_SPEC_CTX,
+                strs::ER_PAYLOAD,
+            })}},
+            {strs::PATH, {
+                JsonArrayValReq::shared(1, boost::none,
+                                        JsonValReq::shared(JsonVal::Kind::STR, true)),
+                true
+            }},
         }}
     {
     }
@@ -104,24 +110,18 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonArrayValReq::_validate(jsonVal);
+            JsonObjValReq::_validate(jsonVal);
 
-            auto& firstJsonItem = jsonVal.asArray()[0];
+            const auto& jsonLastPathElem = **(jsonVal.asObj()[strs::PATH]->asArray().end() - 1);
 
-            try {
-                _scopeValReq.validate(firstJsonItem);
-            } catch (TextParseError& exc) {
-                appendMsgToTextParseError(exc, "Invalid scope name:", firstJsonItem.loc());
-                throw;
+            if (jsonLastPathElem.isNull()) {
+                throwTextParseError("Path ends with `null`.", jsonLastPathElem.loc());
             }
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid data location:", jsonVal.loc());
             throw;
         }
     }
-
-private:
-    JsonStrValInSetReq _scopeValReq;
 };
 
 /*
@@ -437,14 +437,14 @@ class JsonRolesValReq final :
     public JsonArrayValReq
 {
 public:
-    explicit JsonRolesValReq(JsonStrValInSetReq::Set validRoles) :
-        JsonArrayValReq {JsonStrValInSetReq::shared(std::move(validRoles))}
+    explicit JsonRolesValReq() :
+        JsonArrayValReq {JsonValReq::shared(JsonVal::Kind::STR)}
     {
     }
 
-    static SP shared(JsonStrValInSetReq::Set validRoles)
+    static SP shared()
     {
-        return std::make_shared<JsonRolesValReq>(std::move(validRoles));
+        return std::make_shared<JsonRolesValReq>();
     }
 
 private:
@@ -502,7 +502,7 @@ static JsonObjValReq::PropReqsEntry extPropReqEntry()
 }
 
 /*
- * CTF 2 JSON data type value abstract requirement.
+ * CTF 2 JSON full data type value abstract requirement.
  */
 class JsonDtValReq :
     public JsonObjValReq
@@ -639,12 +639,12 @@ private:
 
 /*
  * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 unsigned integer
- * type roles object property requirement.
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 data type roles
+ * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry uIntTypeRolesPropReqEntry(const JsonStrValInSetReq::Set& roles)
+static JsonObjValReq::PropReqsEntry rolesPropReqEntry()
 {
-    return {strs::ROLES, {JsonRolesValReq::shared(roles)}};
+    return {strs::ROLES, {JsonRolesValReq::shared()}};
 }
 
 /*
@@ -654,21 +654,20 @@ class JsonFlUIntTypeValReq :
     public JsonFlIntTypeValReq
 {
 protected:
-    explicit JsonFlUIntTypeValReq(std::string&& type, const JsonStrValInSetReq::Set& roles,
-                                  PropReqs&& propReqs = {}) :
-        JsonFlIntTypeValReq {std::move(type), this->_buildPropReqs(roles, std::move(propReqs))}
+    explicit JsonFlUIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
+        JsonFlIntTypeValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
     {
     }
 
 public:
-    explicit JsonFlUIntTypeValReq(const JsonStrValInSetReq::Set& roles) :
-        JsonFlUIntTypeValReq {this->typeStr(), roles}
+    explicit JsonFlUIntTypeValReq() :
+        JsonFlUIntTypeValReq {this->typeStr()}
     {
     }
 
-    static SP shared(const JsonStrValInSetReq::Set& roles)
+    static SP shared()
     {
-        return std::make_shared<JsonFlUIntTypeValReq>(roles);
+        return std::make_shared<JsonFlUIntTypeValReq>();
     }
 
     static constexpr const char *typeStr() noexcept
@@ -677,12 +676,9 @@ public:
     }
 
 private:
-    static PropReqs _buildPropReqs(const JsonStrValInSetReq::Set& roles, PropReqs&& propReqs)
+    static PropReqs _buildPropReqs(PropReqs&& propReqs)
     {
-        if (!roles.empty()) {
-            propReqs.insert(uIntTypeRolesPropReqEntry(roles));
-        }
-
+        propReqs.insert(rolesPropReqEntry());
         return std::move(propReqs);
     }
 
@@ -810,16 +806,16 @@ class JsonFlUEnumTypeValReq final :
     public JsonFlUIntTypeValReq
 {
 public:
-    explicit JsonFlUEnumTypeValReq(const JsonStrValInSetReq::Set& roles) :
+    explicit JsonFlUEnumTypeValReq() :
         JsonFlUIntTypeValReq {
-            this->typeStr(), roles, {enumTypeMappingsPropReqEntry<JsonUIntValReq>()}
+            this->typeStr(), {enumTypeMappingsPropReqEntry<JsonUIntValReq>()}
         }
     {
     }
 
-    static SP shared(const JsonStrValInSetReq::Set& roles)
+    static SP shared()
     {
-        return std::make_shared<JsonFlUEnumTypeValReq>(roles);
+        return std::make_shared<JsonFlUEnumTypeValReq>();
     }
 
     static constexpr const char *typeStr() noexcept
@@ -948,21 +944,20 @@ class JsonVlUIntTypeValReq :
     public JsonVlIntTypeValReq
 {
 protected:
-    explicit JsonVlUIntTypeValReq(std::string&& type, const JsonStrValInSetReq::Set& roles,
-                                  PropReqs&& propReqs = {}) :
-        JsonVlIntTypeValReq {std::move(type), this->_buildPropReqs(roles, std::move(propReqs))}
+    explicit JsonVlUIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
+        JsonVlIntTypeValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
     {
     }
 
 public:
-    explicit JsonVlUIntTypeValReq(const JsonStrValInSetReq::Set& roles) :
-        JsonVlUIntTypeValReq {this->typeStr(), roles}
+    explicit JsonVlUIntTypeValReq() :
+        JsonVlUIntTypeValReq {this->typeStr()}
     {
     }
 
-    static SP shared(const JsonStrValInSetReq::Set& roles)
+    static SP shared()
     {
-        return std::make_shared<JsonVlUIntTypeValReq>(roles);
+        return std::make_shared<JsonVlUIntTypeValReq>();
     }
 
     static constexpr const char *typeStr() noexcept
@@ -971,12 +966,9 @@ public:
     }
 
 private:
-    static PropReqs _buildPropReqs(const JsonStrValInSetReq::Set& roles, PropReqs&& propReqs)
+    static PropReqs _buildPropReqs(PropReqs&& propReqs)
     {
-        if (!roles.empty()) {
-            propReqs.insert(uIntTypeRolesPropReqEntry(roles));
-        }
-
+        propReqs.insert(rolesPropReqEntry());
         return std::move(propReqs);
     }
 
@@ -1041,16 +1033,16 @@ class JsonVlUEnumTypeValReq final :
     public JsonVlUIntTypeValReq
 {
 public:
-    explicit JsonVlUEnumTypeValReq(const JsonStrValInSetReq::Set& roles) :
+    explicit JsonVlUEnumTypeValReq() :
         JsonVlUIntTypeValReq {
-            this->typeStr(), roles, {enumTypeMappingsPropReqEntry<JsonUIntValReq>()}
+            this->typeStr(), {enumTypeMappingsPropReqEntry<JsonUIntValReq>()}
         }
     {
     }
 
-    static SP shared(const JsonStrValInSetReq::Set& roles)
+    static SP shared()
     {
-        return std::make_shared<JsonVlUEnumTypeValReq>(roles);
+        return std::make_shared<JsonVlUEnumTypeValReq>();
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1255,14 +1247,14 @@ class JsonSlBlobTypeValReq final :
     public JsonBlobTypeValReq
 {
 public:
-    explicit JsonSlBlobTypeValReq(const bool acceptMetadataStreamUuidRole) :
-        JsonBlobTypeValReq {this->typeStr(), this->_buildPropReqs(acceptMetadataStreamUuidRole)}
+    explicit JsonSlBlobTypeValReq() :
+        JsonBlobTypeValReq {this->typeStr(), this->_buildPropReqs()}
     {
     }
 
-    static SP shared(const bool acceptMetadataStreamUuidRole)
+    static SP shared()
     {
-        return std::make_shared<JsonSlBlobTypeValReq>(acceptMetadataStreamUuidRole);
+        return std::make_shared<JsonSlBlobTypeValReq>();
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1271,21 +1263,12 @@ public:
     }
 
 private:
-    static PropReqs _buildPropReqs(const bool acceptMetadataStreamUuidRole)
+    static PropReqs _buildPropReqs()
     {
         PropReqs propReqs;
 
         propReqs.insert(slDtLenPropReqEntry());
-
-        if (acceptMetadataStreamUuidRole) {
-            propReqs.insert({
-                strs::ROLES,
-                JsonRolesValReq::shared({
-                    strs::METADATA_STREAM_UUID
-                })
-            });
-        }
-
+        propReqs.insert(rolesPropReqEntry());
         return propReqs;
     }
 
@@ -1335,54 +1318,55 @@ private:
     }
 };
 
-class JsonAnyDtValReq;
+class JsonAnyFullDtValReq;
 
 /*
  * CTF 2 data types are recursive, in that some data types may contain
  * other data types.
  *
- * To make it possible to build a `JsonAnyDtValReq` instance without a
- * shared pointer, the constructor of compound data type requirements
- * accepts a `const JsonAnyDtValReq *` (raw pointer) parameter. The raw
- * pointer must therefore remain valid as long as the compound data type
- * using it exists.
+ * To make it possible to build a `JsonAnyFullDtValReq` instance without
+ * a shared pointer, the constructor of compound data type requirements
+ * accepts a `const JsonAnyFullDtValReq *` (raw pointer) parameter. The
+ * raw pointer must therefore remain valid as long as the compound data
+ * type using it exists.
  *
  * Because JSON value requirements work with shared pointers to
  * `JsonValReq` (`JsonValReq::SP`), this `JsonAnyDtValReqWrapper` class
- * simply wraps such a `const JsonAnyDtValReq *` value: its _validate()
- * method forwards the call. A `JsonAnyDtValReqWrapper` instance doesn't
- * own the raw pointer.
+ * simply wraps such a `const JsonAnyFullDtValReq *` value: its
+ * _validate() method forwards the call. A `JsonAnyDtValReqWrapper`
+ * instance doesn't own the raw pointer.
  */
 class JsonAnyDtValReqWrapper final :
     public JsonValReq
 {
 public:
-    explicit JsonAnyDtValReqWrapper(const JsonAnyDtValReq& anyDtValReq) :
-        _anyDtValReq {&anyDtValReq}
+    explicit JsonAnyDtValReqWrapper(const JsonAnyFullDtValReq& anyFullDtValReq) :
+        _anyFullDtValReq {&anyFullDtValReq}
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonAnyDtValReqWrapper>(anyDtValReq);
+        return std::make_shared<JsonAnyDtValReqWrapper>(anyFullDtValReq);
     }
 
 private:
     void _validate(const JsonVal& jsonVal) const override;
 
 private:
-    const JsonAnyDtValReq *_anyDtValReq;
+    const JsonAnyFullDtValReq *_anyFullDtValReq;
 };
 
 /*
  * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 data type object
- * property requirement having the key `key`.
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 data type property
+ * requirement having the key `key`.
  */
 static JsonObjValReq::PropReqsEntry anyDtPropReqEntry(std::string&& key,
-                                                      const JsonAnyDtValReq& anyDtValReq)
+                                                      const JsonAnyFullDtValReq& anyFullDtValReq,
+                                                      const bool isRequired = false)
 {
-    return {std::move(key), {JsonAnyDtValReqWrapper::shared(anyDtValReq), true}};
+    return {std::move(key), {JsonAnyDtValReqWrapper::shared(anyFullDtValReq), isRequired}};
 }
 
 /*
@@ -1402,19 +1386,19 @@ class JsonStructMemberTypeValReq final :
     public JsonObjValReq
 {
 public:
-    explicit JsonStructMemberTypeValReq(const JsonAnyDtValReq& anyDtValReq) :
+    explicit JsonStructMemberTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonObjValReq {{
             namePropReqEntry(true),
-            anyDtPropReqEntry(strs::FC, anyDtValReq),
+            anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
             userAttrsPropReqEntry(),
             extPropReqEntry(),
         }}
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonStructMemberTypeValReq>(anyDtValReq);
+        return std::make_shared<JsonStructMemberTypeValReq>(anyFullDtValReq);
     }
 
 private:
@@ -1478,19 +1462,19 @@ class JsonStructTypeValReq final :
     public JsonDtValReq
 {
 public:
-    explicit JsonStructTypeValReq(const JsonAnyDtValReq& anyDtValReq) :
+    explicit JsonStructTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
             {strs::MEMBER_CLSS, {
-                JsonArrayValReq::shared(JsonStructMemberTypeValReq::shared(anyDtValReq))
+                JsonArrayValReq::shared(JsonStructMemberTypeValReq::shared(anyFullDtValReq))
             }},
             minAlignPropReqEntry(),
         }}
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonStructTypeValReq>(anyDtValReq);
+        return std::make_shared<JsonStructTypeValReq>(anyFullDtValReq);
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1520,16 +1504,16 @@ class JsonArrayTypeValReq :
     public JsonDtValReq
 {
 protected:
-    explicit JsonArrayTypeValReq(std::string&& type, const JsonAnyDtValReq& anyDtValReq,
+    explicit JsonArrayTypeValReq(std::string&& type, const JsonAnyFullDtValReq& anyFullDtValReq,
                                  PropReqs&& propReqs = {}) :
-        JsonDtValReq {std::move(type), this->_buildPropReqs(anyDtValReq, std::move(propReqs))}
+        JsonDtValReq {std::move(type), this->_buildPropReqs(anyFullDtValReq, std::move(propReqs))}
     {
     }
 
 private:
-    static PropReqs _buildPropReqs(const JsonAnyDtValReq& anyDtValReq, PropReqs&& propReqs)
+    static PropReqs _buildPropReqs(const JsonAnyFullDtValReq& anyFullDtValReq, PropReqs&& propReqs)
     {
-        propReqs.insert(anyDtPropReqEntry(strs::ELEM_FC, anyDtValReq));
+        propReqs.insert(anyDtPropReqEntry(strs::ELEM_FC, anyFullDtValReq, true));
         propReqs.insert(minAlignPropReqEntry());
         return std::move(propReqs);
     }
@@ -1542,14 +1526,14 @@ class JsonSlArrayTypeValReq final :
     public JsonArrayTypeValReq
 {
 public:
-    explicit JsonSlArrayTypeValReq(const JsonAnyDtValReq& anyDtValReq) :
-        JsonArrayTypeValReq {this->typeStr(), anyDtValReq, {slDtLenPropReqEntry()}}
+    explicit JsonSlArrayTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
+        JsonArrayTypeValReq {this->typeStr(), anyFullDtValReq, {slDtLenPropReqEntry()}}
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonSlArrayTypeValReq>(anyDtValReq);
+        return std::make_shared<JsonSlArrayTypeValReq>(anyFullDtValReq);
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1576,14 +1560,14 @@ class JsonDlArrayTypeValReq final :
     public JsonArrayTypeValReq
 {
 public:
-    explicit JsonDlArrayTypeValReq(const JsonAnyDtValReq& anyDtValReq) :
-        JsonArrayTypeValReq {this->typeStr(), anyDtValReq, {dlDtLenFieldLocPropReqEntry()}}
+    explicit JsonDlArrayTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
+        JsonArrayTypeValReq {this->typeStr(), anyFullDtValReq, {dlDtLenFieldLocPropReqEntry()}}
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonDlArrayTypeValReq>(anyDtValReq);
+        return std::make_shared<JsonDlArrayTypeValReq>(anyFullDtValReq);
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1630,18 +1614,18 @@ class JsonOptTypeValReq final :
     public JsonDtValReq
 {
 public:
-    explicit JsonOptTypeValReq(const JsonAnyDtValReq& anyDtValReq) :
+    explicit JsonOptTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
-            anyDtPropReqEntry(strs::FC, anyDtValReq),
+            anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
             selLocPropReqEntry(),
             selRangesPropReqEntry(false),
         }}
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonOptTypeValReq>(anyDtValReq);
+        return std::make_shared<JsonOptTypeValReq>(anyFullDtValReq);
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1668,10 +1652,10 @@ class JsonVarTypeOptValReq final :
     public JsonObjValReq
 {
 public:
-    explicit JsonVarTypeOptValReq(const JsonAnyDtValReq& anyDtValReq) :
+    explicit JsonVarTypeOptValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonObjValReq {{
             namePropReqEntry(false),
-            anyDtPropReqEntry(strs::FC, anyDtValReq),
+            anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
             selRangesPropReqEntry(true),
             userAttrsPropReqEntry(),
             extPropReqEntry(),
@@ -1679,9 +1663,9 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonVarTypeOptValReq>(anyDtValReq);
+        return std::make_shared<JsonVarTypeOptValReq>(anyFullDtValReq);
     }
 
 private:
@@ -1711,10 +1695,11 @@ class JsonVarTypeValReq final :
     public JsonDtValReq
 {
 public:
-    explicit JsonVarTypeValReq(const JsonAnyDtValReq& anyDtValReq) :
+    explicit JsonVarTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
             {strs::OPTS, {
-                JsonArrayValReq::shared(1, boost::none, JsonVarTypeOptValReq::shared(anyDtValReq)),
+                JsonArrayValReq::shared(1, boost::none,
+                                        JsonVarTypeOptValReq::shared(anyFullDtValReq)),
                 true
             }},
             selLocPropReqEntry(),
@@ -1722,9 +1707,9 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyDtValReq& anyDtValReq)
+    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
-        return std::make_shared<JsonVarTypeValReq>(anyDtValReq);
+        return std::make_shared<JsonVarTypeValReq>(anyFullDtValReq);
     }
 
     static constexpr const char *typeStr() noexcept
@@ -1750,12 +1735,11 @@ private:
 /*
  * CTF 2 JSON (any) data type value requirement.
  */
-class JsonAnyDtValReq final :
+class JsonAnyFullDtValReq final :
     public JsonObjValReq
 {
 public:
-    explicit JsonAnyDtValReq(const JsonStrValInSetReq::Set& uIntTypeRoles = {},
-                             const bool slBlobHasMetadataStreamUuidRole = false) :
+    explicit JsonAnyFullDtValReq() :
         JsonObjValReq {{
             {strs::TYPE, {
                 JsonStrValInSetReq::shared({
@@ -1784,11 +1768,6 @@ public:
                 true
             }},
         }, true},
-        _flUIntTypeValReq {uIntTypeRoles},
-        _flUEnumTypeValReq {uIntTypeRoles},
-        _vlUIntTypeValReq {uIntTypeRoles},
-        _vlUEnumTypeValReq {uIntTypeRoles},
-        _slBlobTypeValReq {slBlobHasMetadataStreamUuidRole},
         _structTypeValReq {*this},
         _slArrayTypeValReq {*this},
         _dlArrayTypeValReq {*this},
@@ -1820,7 +1799,7 @@ public:
 
     static SP shared()
     {
-        return std::make_shared<JsonAnyDtValReq>();
+        return std::make_shared<JsonAnyFullDtValReq>();
     }
 
 private:
@@ -1838,7 +1817,7 @@ private:
         try {
             JsonObjValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid type:", jsonVal.loc());
+            appendMsgToTextParseError(exc, "Invalid data type:", jsonVal.loc());
             throw;
         }
 
@@ -1880,54 +1859,18 @@ private:
 
 void JsonAnyDtValReqWrapper::_validate(const JsonVal& jsonVal) const
 {
+    // check for data type alias name (JSON string)
+    if (jsonVal.isStr()) {
+        /*
+         * Always valid: PseudoDtErector::pseudoDtOfCtf2Obj() will
+         * validate that the data type alias exists.
+         */
+        return;
+    }
+
     // delegate
-    _anyDtValReq->validate(jsonVal);
+    _anyFullDtValReq->validate(jsonVal);
 }
-
-/*
- * CTF 2 JSON scope data type value requirement.
- *
- * This is like `JsonStructTypeValReq`, but provides its own
- * `JsonAnyDtValReq` instance.
- */
-class JsonScopeTypeValReq final :
-    public JsonValReq
-{
-public:
-    /*
-     * `uIntTypeRoles` and `slBlobHasMetadataStreamUuidRole` are
-     * forwarded to the constructor of the underlying `JsonAnyDtValReq`
-     * instance.
-     */
-    explicit JsonScopeTypeValReq(const JsonStrValInSetReq::Set& uIntTypeRoles = {},
-                                 const bool slBlobHasMetadataStreamUuidRole = false) :
-        _anyDtValReq {uIntTypeRoles, slBlobHasMetadataStreamUuidRole},
-        _structTypeValReq {_anyDtValReq}
-    {
-    }
-
-    static SP shared(const JsonStrValInSetReq::Set& uIntTypeRoles = {},
-                     const bool slBlobHasMetadataStreamUuidRole = false)
-    {
-        return std::make_shared<JsonScopeTypeValReq>(uIntTypeRoles,
-                                                     slBlobHasMetadataStreamUuidRole);
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            _structTypeValReq.validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid scope type:", jsonVal.loc());
-            throw;
-        }
-    }
-
-private:
-    JsonAnyDtValReq _anyDtValReq;
-    JsonStructTypeValReq _structTypeValReq;
-};
 
 /*
  * CTF 2 JSON fragment value abstract requirement.
@@ -1989,6 +1932,46 @@ private:
 };
 
 /*
+ * CTF 2 data type alias fragment value requirement.
+ */
+class JsonDtAliasFragValReq final :
+    public JsonFragValReq
+{
+public:
+    explicit JsonDtAliasFragValReq() :
+        JsonFragValReq {this->typeStr(), {
+            namePropReqEntry(true),
+            anyDtPropReqEntry(strs::FC, _anyFullDtValReq, true),
+        }}
+    {
+    }
+
+    static SP shared()
+    {
+        return std::make_shared<JsonDtAliasFragValReq>();
+    }
+
+    static constexpr const char *typeStr() noexcept
+    {
+        return strs::FC_ALIAS;
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonFragValReq::_validate(jsonVal);
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid data type alias fragment:", jsonVal.loc());
+            throw;
+        }
+    }
+
+private:
+    JsonAnyFullDtValReq _anyFullDtValReq;
+};
+
+/*
  * CTF 2 JSON clock offset value requirement.
  */
 class JsonClkOffsetValReq final :
@@ -2021,6 +2004,88 @@ private:
 };
 
 /*
+ * Returns the pair (suitable for insertion into a
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 object namespace
+ * object property requirement.
+ */
+static JsonObjValReq::PropReqsEntry nsPropReqEntry()
+{
+    return {strs::NS, {JsonValReq::shared(JsonVal::Kind::STR)}};
+}
+
+/*
+ * CTF 2 JSON clock origin value requirement.
+ */
+class JsonClkOrigValReq final :
+    public JsonObjValReq
+{
+public:
+    explicit JsonClkOrigValReq() :
+        JsonObjValReq {{
+            nsPropReqEntry(),
+            namePropReqEntry(true),
+            {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR), true}},
+        }}
+    {
+    }
+
+    static SP shared()
+    {
+        return std::make_shared<JsonClkOrigValReq>();
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonObjValReq::_validate(jsonVal);
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid clock origin:", jsonVal.loc());
+            throw;
+        }
+    }
+};
+
+/*
+ * CTF 2 JSON clock type origin property requirement.
+ */
+class JsonClkTypeOrigPropValReq final :
+    public JsonValReq
+{
+public:
+    JsonClkTypeOrigPropValReq() = default;
+
+    static SP shared()
+    {
+        return std::make_shared<JsonClkTypeOrigPropValReq>();
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            if (jsonVal.isStr()) {
+                if (*jsonVal.asStr() != strs::UNIX_EPOCH) {
+                    throwTextParseError("Expecting `unix-epoch`.", jsonVal.loc());
+                }
+            } else {
+                if (!jsonVal.isObj()) {
+                    throwTextParseError("Expecting a string or an object.", jsonVal.loc());
+                }
+
+                _objReq.validate(jsonVal);
+            }
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid clock origin:", jsonVal.loc());
+            throw;
+        }
+    }
+
+private:
+    JsonClkOrigValReq _objReq;
+};
+
+/*
  * CTF 2 clock type fragment value requirement.
  */
 class JsonClkTypeFragValReq final :
@@ -2032,9 +2097,8 @@ public:
             namePropReqEntry(true),
             {strs::FREQ, {JsonUIntValInRangeReq::shared(1, boost::none), true}},
             {strs::DESCR, {JsonValReq::shared(JsonVal::Kind::STR)}},
-            {strs::UUID, {JsonUuidValReq::shared()}},
-            {strs::ORIG_IS_UNIX_EPOCH, {JsonValReq::shared(JsonVal::Kind::BOOL)}},
-            {strs::OFFSET, {JsonClkOffsetValReq::shared()}},
+            {strs::ORIG, {JsonClkTypeOrigPropValReq::shared()}},
+            {strs::OFFSET_FROM_ORIG, {JsonClkOffsetValReq::shared()}},
             {strs::PREC, {JsonValReq::shared(JsonVal::Kind::UINT)}},
         }}
     {
@@ -2057,10 +2121,10 @@ private:
             JsonFragValReq::_validate(jsonVal);
 
             auto& jsonObjVal = jsonVal.asObj();
-            const auto jsonOffsetVal = jsonObjVal[strs::OFFSET];
+            const auto jsonOffsetFromOrigVal = jsonObjVal[strs::OFFSET_FROM_ORIG];
 
-            if (jsonOffsetVal) {
-                const auto jsonCyclesVal = jsonOffsetVal->asObj()[strs::CYCLES];
+            if (jsonOffsetFromOrigVal) {
+                const auto jsonCyclesVal = jsonOffsetFromOrigVal->asObj()[strs::CYCLES];
 
                 if (jsonCyclesVal) {
                     const auto cycles = *jsonCyclesVal->asUInt();
@@ -2070,7 +2134,7 @@ private:
                         std::ostringstream ss;
 
                         ss << "Invalid `" << strs::CYCLES << "` property of " <<
-                              "`" << strs::OFFSET << "` property: " <<
+                              "`" << strs::OFFSET_FROM_ORIG << "` property: " <<
                               "value " << cycles << " is greater than the value of the " <<
                               "`" << strs::FREQ << "` property (" << freq << ").";
                         throwTextParseError(ss.str(), jsonCyclesVal->loc());
@@ -2141,12 +2205,8 @@ class JsonTraceTypeFragValReq final :
 public:
     explicit JsonTraceTypeFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            {strs::UUID, {JsonUuidValReq::shared()}},
-            {strs::PKT_HEADER_FC, {JsonScopeTypeValReq::shared({
-                strs::DSC_ID,
-                strs::DS_ID,
-                strs::PKT_MAGIC_NUMBER,
-            }, true)}},
+            {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            anyDtPropReqEntry(strs::PKT_HEADER_FC, _anyFullDtValReq),
             {strs::ENV, {JsonTraceEnvValReq::shared()}},
         }}
     {
@@ -2172,17 +2232,10 @@ private:
             throw;
         }
     }
-};
 
-/*
- * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 object namespace
- * object property requirement.
- */
-static JsonObjValReq::PropReqsEntry nsPropReqEntry()
-{
-    return {strs::NS, {JsonValReq::shared(JsonVal::Kind::STR)}};
-}
+private:
+    JsonAnyFullDtValReq _anyFullDtValReq;
+};
 
 /*
  * Returns the pair (suitable for insertion into a
@@ -2207,20 +2260,9 @@ public:
             nsPropReqEntry(),
             idPropReqEntry(),
             {strs::DEF_CC_NAME, {JsonValReq::shared(JsonVal::Kind::STR)}},
-            {strs::PKT_CTX_FC, {JsonScopeTypeValReq::shared({
-                strs::DEF_CLK_TS,
-                strs::DISC_ER_COUNTER_SNAP,
-                strs::PKT_CONTENT_LEN,
-                strs::PKT_TOTAL_LEN,
-                strs::PKT_END_DEF_CLK_TS,
-                strs::PKT_SEQ_NUM,
-                strs::PKT_TOTAL_LEN,
-            })}},
-            {strs::ER_HEADER_FC, {JsonScopeTypeValReq::shared({
-                strs::DEF_CLK_TS,
-                strs::ERC_ID,
-            })}},
-            {strs::ER_COMMON_CTX_FC, {JsonScopeTypeValReq::shared()}},
+            anyDtPropReqEntry(strs::PKT_CTX_FC, _anyFullDtValReq),
+            anyDtPropReqEntry(strs::ER_HEADER_FC, _anyFullDtValReq),
+            anyDtPropReqEntry(strs::ER_COMMON_CTX_FC, _anyFullDtValReq),
         }}
     {
     }
@@ -2245,6 +2287,9 @@ private:
             throw;
         }
     }
+
+private:
+    JsonAnyFullDtValReq _anyFullDtValReq;
 };
 
 /*
@@ -2260,8 +2305,8 @@ public:
             nsPropReqEntry(),
             idPropReqEntry(),
             {strs::DSC_ID, {JsonValReq::shared(JsonVal::Kind::UINT)}},
-            {strs::SPEC_CTX_FC, {JsonScopeTypeValReq::shared()}},
-            {strs::PAYLOAD_FC, {JsonScopeTypeValReq::shared()}},
+            anyDtPropReqEntry(strs::SPEC_CTX_FC, _anyFullDtValReq),
+            anyDtPropReqEntry(strs::PAYLOAD_FC, _anyFullDtValReq),
         }}
     {
     }
@@ -2286,6 +2331,9 @@ private:
             throw;
         }
     }
+
+private:
+    JsonAnyFullDtValReq _anyFullDtValReq;
 };
 
 /*
@@ -2300,6 +2348,7 @@ public:
             {strs::TYPE, {
                 JsonStrValInSetReq::shared({
                     JsonPreFragValReq::typeStr(),
+                    JsonDtAliasFragValReq::typeStr(),
                     JsonTraceTypeFragValReq::typeStr(),
                     JsonClkTypeFragValReq::typeStr(),
                     JsonDstFragValReq::typeStr(),
@@ -2310,10 +2359,11 @@ public:
         }, true}
     {
         this->_addToFragValReqs(_preFragValReq);
-        this->_addToFragValReqs(_traceClsFragValReq);
-        this->_addToFragValReqs(_clkClsFragValReq);
-        this->_addToFragValReqs(_dsClsFragValReq);
-        this->_addToFragValReqs(_erClsFragValReq);
+        this->_addToFragValReqs(_dtAliasFragValReq);
+        this->_addToFragValReqs(_traceTypeFragValReq);
+        this->_addToFragValReqs(_clkTypeFragValReq);
+        this->_addToFragValReqs(_dstFragValReq);
+        this->_addToFragValReqs(_ertFragValReq);
     }
 
     static SP shared()
@@ -2353,10 +2403,11 @@ private:
 
 private:
     JsonPreFragValReq _preFragValReq;
-    JsonTraceTypeFragValReq _traceClsFragValReq;
-    JsonClkTypeFragValReq _clkClsFragValReq;
-    JsonDstFragValReq _dsClsFragValReq;
-    JsonErtFragValReq _erClsFragValReq;
+    JsonDtAliasFragValReq _dtAliasFragValReq;
+    JsonTraceTypeFragValReq _traceTypeFragValReq;
+    JsonClkTypeFragValReq _clkTypeFragValReq;
+    JsonDstFragValReq _dstFragValReq;
+    JsonErtFragValReq _ertFragValReq;
     std::unordered_map<std::string, const JsonValReq *> _fragValReqs;
 };
 

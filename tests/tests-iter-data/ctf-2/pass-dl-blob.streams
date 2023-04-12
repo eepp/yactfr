@@ -40,7 +40,10 @@
         {
           "field-class": {
             "type": "dynamic-length-blob",
-            "length-field-location": ["event-record-payload", "len1"]
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len1"]
+            }
           },
           "name": "blob"
         },
@@ -55,7 +58,10 @@
         {
           "field-class": {
             "type": "dynamic-length-blob",
-            "length-field-location": ["event-record-payload", "len2"]
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len2"]
+            }
           },
           "name": "other blob"
         },
@@ -71,7 +77,10 @@
           "field-class": {
             "type": "dynamic-length-blob",
             "media-type": "application/lol",
-            "length-field-location": ["event-record-payload", "len3"]
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len3"]
+            }
           },
           "name": "zero blob"
         },

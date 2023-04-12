@@ -16,7 +16,10 @@
           "name": "test",
           "field-class": {
             "type": "dynamic-length-string",
-            "length-field-location": ["event-record-payload", "len"],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            },
             "covid": 19
           }
         }
@@ -26,11 +29,10 @@
 ----
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
-[4:28] Invalid scope type:
 [4:28] Invalid structure type:
 [6:25] In object property `member-classes`:
 [13:9] In array element #2:
 [13:9] Invalid structure member type:
 [15:26] In object property `field-class`:
 [15:26] Invalid dynamic-length string type:
-[18:22] Unknown object property `covid`.
+[21:22] Unknown object property `covid`.

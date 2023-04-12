@@ -46,7 +46,7 @@ public:
      * Builds a JSON value requirement: if `kind` is set, then
      * validate() validates that the kind of the JSON value is `*kind`.
      */
-    explicit JsonValReq(boost::optional<JsonVal::Kind> kind = boost::none);
+    explicit JsonValReq(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
 
     virtual ~JsonValReq() = default;
 
@@ -59,7 +59,7 @@ public:
      * Returns a shared pointer to JSON value requirement, forwarding
      * the parameter to the constructor.
      */
-    static SP shared(boost::optional<JsonVal::Kind> kind);
+    static SP shared(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
 
 protected:
     /*
@@ -70,6 +70,9 @@ protected:
 private:
     // required JSON value kind
     boost::optional<JsonVal::Kind> _kind;
+
+    // allow `null` too
+    bool _allowNull = false;
 };
 
 /*

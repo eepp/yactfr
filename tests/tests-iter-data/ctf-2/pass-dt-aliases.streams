@@ -1,0 +1,238 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "field-class-alias",
+    "name": "nt-str",
+    "field-class": {
+      "type": "null-terminated-string"
+    }
+  },
+  {
+    "type": "field-class-alias",
+    "name": "pkt-header-fc",
+    "field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "magic",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 32,
+            "byte-order": "little-endian",
+            "roles": ["packet-magic-number"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "trace-class",
+    "packet-header-field-class": "pkt-header-fc"
+  },
+  {
+    "type": "field-class-alias",
+    "name": "pkt-ctx-fc",
+    "field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "seq",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "roles": ["packet-sequence-number"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "field-class-alias",
+    "name": "er-header-fc",
+    "field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "the ID",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "roles": ["event-record-class-id"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "field-class-alias",
+    "name": "u8",
+    "field-class": {
+      "type": "fixed-length-unsigned-integer",
+      "length": 8,
+      "byte-order": "little-endian"
+    }
+  },
+  {
+    "type": "field-class-alias",
+    "name": "er-common-ctx-fc",
+    "field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "yo",
+          "field-class": "u8"
+        }
+      ]
+    }
+  },
+  {
+    "type": "data-stream-class",
+    "packet-context-field-class": "pkt-ctx-fc",
+    "event-record-header-field-class": "er-header-fc",
+    "event-record-common-context-field-class": "er-common-ctx-fc"
+  },
+  {
+    "type": "field-class-alias",
+    "name": "er-spec-ctx-fc",
+    "field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "kilo",
+          "field-class": "u8"
+        }
+      ]
+    }
+  },
+  {
+    "type": "field-class-alias",
+    "name": "u8u8",
+    "field-class": "u8"
+  },
+  {
+    "type": "field-class-alias",
+    "name": "er-payload-fc",
+    "field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "zoom",
+          "field-class": "nt-str"
+        },
+        {
+          "name": "mini",
+          "field-class": {
+            "type": "static-length-array",
+            "length": 3,
+            "element-field-class": "u8u8"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "specific-context-field-class": "er-spec-ctx-fc",
+    "payload-field-class": "er-payload-fc"
+  }
+]
+----
+MAGIC
+  c1 fc 1f c1
+SEQ NUM
+  05
+ER
+  ID 00
+  CC 23
+  SC ab
+  PL "salut" 00 01 02 03
+ER
+  ID 00
+  CC 42
+  SC cd
+  PL "meow mix" 00 04 05 06
+----
+
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3240099009
+    32         PMN:3240099009
+    32       }
+    32     }
+    32     DSI:T0
+    32     SC:1 {
+    32       ST {
+    32         FLUI:seq:5
+    40       }
+    40     }
+    40     PI:S5
+    40     ER {
+    40       SC:2 {
+    40         ST {
+    40           FLUI:the ID:0
+    48         }
+    48       }
+    48       ERI:T0:#test
+    48       SC:3 {
+    48         ST {
+    48           FLUI:yo:35
+    56         }
+    56       }
+    56       SC:4 {
+    56         ST {
+    56           FLUI:kilo:171
+    64         }
+    64       }
+    64       SC:5 {
+    64         ST {
+    64           NTS:zoom {
+    64             SS:6:salut
+   112           }
+   112           SLA:mini {
+   112             FLUI:1
+   120             FLUI:2
+   128             FLUI:3
+   136           }
+   136         }
+   136       }
+   136     }
+   136     ER {
+   136       SC:2 {
+   136         ST {
+   136           FLUI:the ID:0
+   144         }
+   144       }
+   144       ERI:T0:#test
+   144       SC:3 {
+   144         ST {
+   144           FLUI:yo:66
+   152         }
+   152       }
+   152       SC:4 {
+   152         ST {
+   152           FLUI:kilo:205
+   160         }
+   160       }
+   160       SC:5 {
+   160         ST {
+   160           NTS:zoom {
+   160             SS:9:meow mix
+   232           }
+   232           SLA:mini {
+   232             FLUI:4
+   240             FLUI:5
+   248             FLUI:6
+   256           }
+   256         }
+   256       }
+   256     }
+   256   }
+   256 }

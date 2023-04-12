@@ -64,13 +64,13 @@ private:
      * Converts the pseudo data stream type `pseudoDst` to a yactfr data
      * stream type.
      */
-    std::unique_ptr<const DataStreamType> _dstFromPseudoDst(const PseudoDst& pseudoDst);
+    std::unique_ptr<const DataStreamType> _dstFromPseudoDst(PseudoDst& pseudoDst);
 
     /*
      * Converts the pseudo event record type `pseudoErt` to a yactfr
      * event record type.
      */
-    std::unique_ptr<const EventRecordType> _ertFromPseudoErt(const PseudoErt& pseudoErt,
+    std::unique_ptr<const EventRecordType> _ertFromPseudoErt(PseudoErt& pseudoErt,
                                                              const PseudoDst& curPseudoDst);
 
     /*
@@ -80,7 +80,7 @@ private:
      * If `pseudoDt` is `nullptr`, then this method returns an empty
      * pointer immediately.
      */
-    StructureType::UP _scopeStructTypeFromPseudoDt(const PseudoDt *pseudoDt, Scope scope,
+    StructureType::UP _scopeStructTypeFromPseudoDt(PseudoDt *pseudoDt, Scope scope,
                                                    const PseudoDst *curPseudoDst = nullptr,
                                                    const PseudoErt *curPseudoErt = nullptr) const;
 

@@ -1,4 +1,44 @@
-{"type":"preamble","version":2}
-{"type":"trace-class","uuid":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "uuid": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "version": 2
+}
+{
+  "type": "trace-class",
+  "uid": "00000000-0000-0000-0000-000000000000"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "a"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

@@ -13,10 +13,10 @@
 #include <utility>
 #include <boost/core/noncopyable.hpp>
 #include <boost/optional.hpp>
-#include <boost/uuid/uuid.hpp>
 
 #include "aliases.hpp"
 #include "clk-offset.hpp"
+#include "clk-orig.hpp"
 #include "clk-value-interval.hpp"
 #include "item.hpp"
 
@@ -48,15 +48,13 @@ public:
         Frequency (Hz) of data stream clocks described by this type.
     @param[in] description
         Description.
-    @param[in] uuid
-        UUID of data stream clocks described by this type.
+    @param[in] origin
+        Origin of data stream clocks described by this type, or
+        \c boost::none if the origin is unknown.
     @param[in] precision
         Precision (cycles) of data stream clocks described by this type.
-    @param[in] offset
+    @param[in] offsetFromOrigin
         Offset from origin of data stream clocks described by this type.
-    @param[in] originIsUnixEpoch
-        \c true if this clock type describes clocks of which the origin
-        is 1970-01-01T00:00:00Z.
     @param[in] userAttributes
         @parblock
         User attributes of data stream clocks described by this type.
@@ -72,9 +70,9 @@ public:
     explicit ClockType(unsigned long long frequency,
                        boost::optional<std::string> name = boost::none,
                        boost::optional<std::string> description = boost::none,
-                       boost::optional<boost::uuids::uuid> uuid = boost::none,
-                       Cycles precision = 0, const ClockOffset& offset = ClockOffset {},
-                       bool originIsUnixEpoch = true, MapItem::UP userAttributes = nullptr);
+                       boost::optional<ClockOrigin> origin = boost::none, Cycles precision = 0,
+                       const ClockOffset& offsetFromOrigin = ClockOffset {},
+                       MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
@@ -108,10 +106,11 @@ public:
         return _freq;
     }
 
-    /// UUID of data stream clocks described by this type.
-    const boost::optional<boost::uuids::uuid>& uuid() const noexcept
+    /// Origin of data stream clocks described by this type, or
+    /// \c boost::none if the origin is unknown.
+    const boost::optional<ClockOrigin>& origin() const noexcept
     {
-        return _uuid;
+        return _orig;
     }
 
     /// Description.
@@ -127,9 +126,9 @@ public:
     }
 
     /// Offset from origin of data stream clocks described by this type.
-    const ClockOffset& offset() const noexcept
+    const ClockOffset& offsetFromOrigin() const noexcept
     {
-        return _offset;
+        return _offsetFromOrig;
     }
 
     /*!
@@ -147,13 +146,6 @@ public:
         precision of this clock type.
     */
     ClockValueInterval clockValueInterval(Cycles cycles) const noexcept;
-
-    /// \c true if this clock type describes data stream clocks of which
-    /// the origin is 1970-01-01T00:00:00Z.
-    bool originIsUnixEpoch() const noexcept
-    {
-        return _originIsUnixEpoch;
-    }
 
     /*!
     @brief
@@ -174,10 +166,9 @@ private:
     const unsigned long long _freq;
     const boost::optional<std::string> _name;
     const boost::optional<std::string> _descr;
-    const boost::optional<boost::uuids::uuid> _uuid;
+    const boost::optional<ClockOrigin> _orig;
     const Cycles _prec;
-    const ClockOffset _offset;
-    const bool _originIsUnixEpoch;
+    const ClockOffset _offsetFromOrig;
     const MapItem::UP _userAttrs;
 };
 

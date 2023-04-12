@@ -1,2 +1,24 @@
-{"type":"preamble","version":2}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":32,"roles":["packet-magic-number"],"type":"fixed-length-unsigned-integer"},"name":"magic"}],"type":"structure"},"type":"trace-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "roles": [
+            "packet-magic-number"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "magic"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}

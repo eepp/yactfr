@@ -1,4 +1,31 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "environment": {
+    "signed_int_neg": -9223372036854775808,
+    "signed_int_pos": 9223372036854775807,
+    "string": "a string",
+    "zero": 0
+  },
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "a"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

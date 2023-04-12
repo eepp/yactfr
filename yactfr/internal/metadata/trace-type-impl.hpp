@@ -28,7 +28,7 @@ class TraceTypeImpl final
 {
 public:
     explicit TraceTypeImpl(unsigned int majorVersion, unsigned int minorVersion,
-                           boost::optional<boost::uuids::uuid>&& uuid, TraceEnvironment&& env,
+                           boost::optional<std::string>&& uid, TraceEnvironment&& env,
                            StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
                            DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
                            const TraceType& traceType);
@@ -43,9 +43,9 @@ public:
         return _minorVersion;
     }
 
-    const boost::optional<boost::uuids::uuid>& uuid() const noexcept
+    const boost::optional<std::string>& uid() const noexcept
     {
-        return _uuid;
+        return _uid;
     }
 
     const TraceEnvironment& environment() const noexcept
@@ -128,7 +128,7 @@ private:
 private:
     const unsigned int _majorVersion;
     const unsigned int _minorVersion;
-    const boost::optional<boost::uuids::uuid> _uuid;
+    const boost::optional<std::string> _uid;
     const TraceEnvironment _env;
     const StructureType::UP _pktHeaderType;
     const ClockTypeSet _clkTypes;

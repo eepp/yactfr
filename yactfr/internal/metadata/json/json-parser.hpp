@@ -121,12 +121,12 @@ private:
 
     bool _tryScanToken(const char * const token)
     {
-        return _ss.template tryScanToken<true, false>(token);
+        return _ss.tryScanToken<true, false>(token);
     }
 
     void _skipWhitespaces()
     {
-        _ss.template skipCommentsAndWhitespaces<true, false>();
+        _ss.skipCommentsAndWhitespaces<true, false>();
     }
 
     Index _at() const
@@ -136,7 +136,7 @@ private:
 
     const std::string *_tryScanLitStr()
     {
-        return _ss.template tryScanLitStr<true, false>("/bfnrtu");
+        return _ss.tryScanLitStr<true, false>("/bfnrtu");
     }
 
     bool _ssCurCharLikeConstRealFracOrExp() const noexcept
@@ -277,14 +277,14 @@ bool JsonParser<ListenerT>::_tryParseNumber()
     {
         StrScannerRejecter ssRej {_ss};
 
-        if (const auto val = _ss.template tryScanConstUInt<true, false, false>()) {
+        if (const auto val = _ss.tryScanConstUInt<true, false, false>()) {
             if (!this->_ssCurCharLikeConstRealFracOrExp()) {
                 // confirmed unsigned integer form
                 _listener->onScalarVal(*val, loc);
                 ssRej.accept();
                 return true;
             }
-        } else if (const auto val = _ss.template tryScanConstSInt<true, false, false>()) {
+        } else if (const auto val = _ss.tryScanConstSInt<true, false, false>()) {
             if (!this->_ssCurCharLikeConstRealFracOrExp()) {
                 // confirmed signed integer form
                 _listener->onScalarVal(*val, loc);
@@ -294,7 +294,7 @@ bool JsonParser<ListenerT>::_tryParseNumber()
         }
     }
 
-    if (const auto val = _ss.template tryScanConstReal<true, false>()) {
+    if (const auto val = _ss.tryScanConstReal<true, false>()) {
         _listener->onScalarVal(*val, loc);
         return true;
     }

@@ -40,11 +40,10 @@
                     "element-field-class": {
                       "type": "null-terminated-string"
                     },
-                    "length-field-location": [
-                      "event-record-payload",
-                      "seq",
-                      "len2"
-                    ],
+                    "length-field-location": {
+                      "origin": "event-record-payload",
+                      "path": ["seq", "len2"]
+                    },
                     "type": "dynamic-length-array"
                   },
                   "name": "seq"
@@ -52,10 +51,10 @@
               ],
               "type": "structure"
             },
-            "length-field-location": [
-              "event-record-payload",
-              "len"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            },
             "type": "dynamic-length-array"
           },
           "name": "seq"
@@ -106,22 +105,22 @@
                   "length": 8,
                   "type": "fixed-length-unsigned-integer"
                 },
-                "length-field-location": [
-                  "event-record-payload",
-                  "c"
-                ],
+                "length-field-location": {
+                  "origin": "event-record-payload",
+                  "path": ["c"]
+                },
                 "type": "dynamic-length-array"
               },
-              "length-field-location": [
-                "event-record-payload",
-                "b"
-              ],
+              "length-field-location": {
+                "origin": "event-record-payload",
+                "path": ["b"]
+              },
               "type": "dynamic-length-array"
             },
-            "length-field-location": [
-              "event-record-payload",
-              "a"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["a"]
+            },
             "type": "dynamic-length-array"
           },
           "name": "seq3"

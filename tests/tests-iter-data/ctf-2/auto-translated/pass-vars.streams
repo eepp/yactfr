@@ -89,10 +89,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "packet-header",
-              "tag"
-            ],
+            "selector-field-location": {
+              "origin": "packet-header",
+              "path": ["tag"]
+            },
             "type": "variant"
           },
           "name": "v"
@@ -172,10 +172,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "packet-header",
-              "ph_tag"
-            ],
+            "selector-field-location": {
+              "origin": "packet-header",
+              "path": ["ph_tag"]
+            },
             "type": "variant"
           },
           "name": "v_rel"
@@ -263,10 +263,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-common-context",
-              "e1c_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-common-context",
+              "path": ["e1c_tag"]
+            },
             "type": "variant"
           },
           "name": "v_rel"
@@ -317,10 +317,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-header",
-              "eh_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-header",
+              "path": ["eh_tag"]
+            },
             "type": "variant"
           },
           "name": "v_abs"
@@ -405,10 +405,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-header",
-              "eh_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-header",
+              "path": ["eh_tag"]
+            },
             "type": "variant"
           },
           "name": "v_rel"
@@ -459,10 +459,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "packet-context",
-              "pc_tag"
-            ],
+            "selector-field-location": {
+              "origin": "packet-context",
+              "path": ["pc_tag"]
+            },
             "type": "variant"
           },
           "name": "v_abs"
@@ -547,10 +547,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "packet-context",
-              "pc_tag"
-            ],
+            "selector-field-location": {
+              "origin": "packet-context",
+              "path": ["pc_tag"]
+            },
             "type": "variant"
           },
           "name": "v_rel"
@@ -601,10 +601,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "packet-header",
-              "ph_tag"
-            ],
+            "selector-field-location": {
+              "origin": "packet-header",
+              "path": ["ph_tag"]
+            },
             "type": "variant"
           },
           "name": "v_abs"
@@ -693,10 +693,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-payload",
-              "ep_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["ep_tag"]
+            },
             "type": "variant"
           },
           "name": "v_rel"
@@ -747,10 +747,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-specific-context",
-              "e2c_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-specific-context",
+              "path": ["e2c_tag"]
+            },
             "type": "variant"
           },
           "name": "v_abs"
@@ -835,10 +835,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-specific-context",
-              "e2c_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-specific-context",
+              "path": ["e2c_tag"]
+            },
             "type": "variant"
           },
           "name": "v_rel"
@@ -889,10 +889,10 @@
                 ]
               }
             ],
-            "selector-field-location": [
-              "event-record-common-context",
-              "e1c_tag"
-            ],
+            "selector-field-location": {
+              "origin": "event-record-common-context",
+              "path": ["e1c_tag"]
+            },
             "type": "variant"
           },
           "name": "v_abs"

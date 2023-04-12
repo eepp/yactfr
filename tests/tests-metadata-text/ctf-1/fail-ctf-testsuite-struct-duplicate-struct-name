@@ -22,4 +22,4 @@ trace {
 
 
 ----
-[12:3] Duplicate data type alias: `struct a`.
+[12:3] Duplicate data type alias named `struct a`.

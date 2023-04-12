@@ -1,5 +1,263 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"frequency":1000000000,"name":"the_clock","origin-is-unix-epoch":false,"type":"clock-class"}
-{"default-clock-class-name":"the_clock","event-record-header-field-class":{"member-classes":[{"field-class":{"alignment":32,"byte-order":"big-endian","length":18,"roles":["default-clock-timestamp"],"type":"fixed-length-unsigned-integer"},"name":"int_clock"}],"type":"structure"},"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"alignment":32,"byte-order":"big-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_bo_0"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_bo_1"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_bo_2"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_base_0"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_base_1"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_base_2"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_base_3"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_base_4"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":16,"type":"fixed-length-unsigned-integer"},"name":"int_base_5"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":16,"type":"fixed-length-unsigned-integer"},"name":"int_base_6"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":16,"type":"fixed-length-unsigned-integer"},"name":"int_base_7"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":16,"type":"fixed-length-unsigned-integer"},"name":"int_base_8"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":16,"type":"fixed-length-unsigned-integer"},"name":"int_base_9"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":8,"type":"fixed-length-unsigned-integer"},"name":"int_base_10"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":8,"type":"fixed-length-unsigned-integer"},"name":"int_base_11"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":8,"type":"fixed-length-unsigned-integer"},"name":"int_base_12"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":2,"type":"fixed-length-unsigned-integer"},"name":"int_base_13"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":2,"type":"fixed-length-unsigned-integer"},"name":"int_base_14"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":2,"type":"fixed-length-unsigned-integer"},"name":"int_base_15"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"type":"fixed-length-unsigned-integer"},"name":"int_base_16"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":8,"type":"fixed-length-unsigned-integer"},"name":"int_base_17"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":16,"type":"fixed-length-unsigned-integer"},"name":"int_base_18"},{"field-class":{"alignment":32,"byte-order":"little-endian","length":18,"preferred-display-base":2,"type":"fixed-length-unsigned-integer"},"name":"int_base_19"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "frequency": 1000000000,
+  "name": "the_clock",
+  "type": "clock-class"
+}
+{
+  "default-clock-class-name": "the_clock",
+  "event-record-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "big-endian",
+          "length": 18,
+          "roles": [
+            "default-clock-timestamp"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_clock"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "big-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_bo_0"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_bo_1"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_bo_2"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_0"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_1"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_2"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_3"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_4"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_5"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_6"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_7"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_8"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_9"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_10"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_11"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_12"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 2,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_13"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 2,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_14"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 2,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_15"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_16"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_17"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_18"
+      },
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 18,
+          "preferred-display-base": 2,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "int_base_19"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

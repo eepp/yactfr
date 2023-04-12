@@ -88,13 +88,9 @@ public:
 
     /*
      * Returns the UUID of the metadata stream which, for CTF 1.8, is
-     * the same as the trace UUID.
+     * the trace UID as a UUID canonical textual representation.
      */
-    const boost::optional<boost::uuids::uuid>& metadataStreamUuid() const noexcept
-    {
-        assert(_pseudoTraceType);
-        return _pseudoTraceType->uuid();
-    }
+    const boost::optional<boost::uuids::uuid> metadataStreamUuid() const noexcept;
 
 private:
     /*
@@ -821,7 +817,7 @@ private:
      * data location path elements `allPathElems`, returning
      * `boost::none` if it can't.
      */
-    boost::optional<PseudoDataLoc> _pseudoDataLocFromAbsAllPathElems(const DataLocation::PathElements& allPathElems,
+    boost::optional<PseudoDataLoc> _pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                      const TextLocation& loc);
 
     /*
@@ -829,14 +825,14 @@ private:
      * location path elements `allPathElems`, returning `boost::none` if
      * it can't.
      */
-    boost::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const DataLocation::PathElements& allPathElems,
+    boost::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                      const TextLocation& loc);
 
     /*
      * Returns a pseudo data location from the absolute or relative data
      * location path elements `allPathElems`, thowing on error.
      */
-    PseudoDataLoc _pseudoDataLocFromAllPathElems(const DataLocation::PathElements& allPathElems,
+    PseudoDataLoc _pseudoDataLocFromAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                  const TextLocation& loc);
 
     /*

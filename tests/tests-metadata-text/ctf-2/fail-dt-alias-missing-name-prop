@@ -1,0 +1,25 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "field-class-alias",
+    "field-class": {
+      "type": "null-terminated-string"
+    }
+  }
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": "joujou"
+        }
+      ]
+    }
+  }
+----
+[2:3] Invalid data type alias fragment:
+[2:3] Missing mandatory object property `name`.

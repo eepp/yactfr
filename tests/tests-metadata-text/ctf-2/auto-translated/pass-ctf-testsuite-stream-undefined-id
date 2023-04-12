@@ -1,7 +1,63 @@
-{"type":"preamble","version":2}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":32,"roles":["data-stream-class-id"],"type":"fixed-length-unsigned-integer"},"name":"stream_id"}],"type":"structure"},"type":"trace-class"}
-{"event-record-header-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":32,"roles":["event-record-class-id"],"type":"fixed-length-unsigned-integer"},"name":"id"}],"type":"structure"},"type":"data-stream-class"}
-{"name":"event0","type":"event-record-class"}
-{"id":1,"name":"event1","type":"event-record-class"}
-{"id":2,"name":"event2","type":"event-record-class"}
-{"id":3,"name":"event3","type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "roles": [
+            "data-stream-class-id"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "stream_id"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}
+{
+  "event-record-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "roles": [
+            "event-record-class-id"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "id"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "data-stream-class"
+}
+{
+  "name": "event0",
+  "type": "event-record-class"
+}
+{
+  "id": 1,
+  "name": "event1",
+  "type": "event-record-class"
+}
+{
+  "id": 2,
+  "name": "event2",
+  "type": "event-record-class"
+}
+{
+  "id": 3,
+  "name": "event3",
+  "type": "event-record-class"
+}

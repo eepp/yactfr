@@ -47,10 +47,10 @@
               "length": 32,
               "type": "fixed-length-unsigned-integer"
             },
-            "length-field-location": [
-              "event-record-payload",
-              "len"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            },
             "type": "dynamic-length-array"
           },
           "name": "yy"

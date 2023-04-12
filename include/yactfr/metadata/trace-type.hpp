@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <utility>
-#include <boost/uuid/uuid.hpp>
+#include <string>
 #include <boost/optional.hpp>
 
 #include "clk-type.hpp"
@@ -88,8 +88,8 @@ public:
         Major version.
     @param[in] minorVersion
         Minor version.
-    @param[in] uuid
-        UUID of traces described by this trace type.
+    @param[in] uid
+        Unique ID of traces described by this trace type.
     @param[in] environment
         Environment of traces described by this trace type.
     @param[in] packetHeaderType
@@ -179,8 +179,7 @@ public:
         @endparblock
     */
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
-                       boost::optional<boost::uuids::uuid> uuid,
-                       TraceEnvironment environment,
+                       boost::optional<std::string> uid, TraceEnvironment environment,
                        StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
                        DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
 
@@ -216,8 +215,8 @@ public:
     /// Minor version.
     unsigned int minorVersion() const noexcept;
 
-    /// Trace UUID.
-    const boost::optional<boost::uuids::uuid>& uuid() const noexcept;
+    /// Trace unique ID.
+    const boost::optional<std::string>& uid() const noexcept;
 
     /// Trace environment.
     const TraceEnvironment& environment() const noexcept;

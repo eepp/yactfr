@@ -1,4 +1,54 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"mappings":{"A":[[0,0]],"B":[[1,1]],"C":[[2,2]],"D":[[3,3]]},"type":"fixed-length-unsigned-enumeration"},"name":"salut"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "mappings": {
+            "A": [
+              [
+                0,
+                0
+              ]
+            ],
+            "B": [
+              [
+                1,
+                1
+              ]
+            ],
+            "C": [
+              [
+                2,
+                2
+              ]
+            ],
+            "D": [
+              [
+                3,
+                3
+              ]
+            ]
+          },
+          "type": "fixed-length-unsigned-enumeration"
+        },
+        "name": "salut"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

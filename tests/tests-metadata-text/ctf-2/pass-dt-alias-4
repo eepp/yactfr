@@ -1,0 +1,46 @@
+
+{
+  "type": "preamble",
+  "version": 2
+}
+
+{
+  "type": "field-class-alias",
+  "name": "meow",
+  "field-class": {
+    "type": "static-length-array",
+    "length": 23,
+    "element-field-class": {
+      "type": "null-terminated-string"
+    }
+  },
+  "user-attributes": {
+    "meow": -45
+  }
+}
+
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "type": "event-record-class",
+  "name": "event",
+  "payload-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "a",
+        "field-class": {
+          "type": "null-terminated-string"
+        }
+      },
+      {
+        "name": "b",
+        "field-class": "meow"
+      }
+    ]
+  }
+}

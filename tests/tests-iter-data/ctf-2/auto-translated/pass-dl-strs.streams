@@ -33,10 +33,10 @@
         },
         {
           "field-class": {
-            "length-field-location": [
-              "event-record-payload",
-              "len1"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len1"]
+            },
             "type": "dynamic-length-string"
           },
           "name": "text1"
@@ -52,20 +52,20 @@
         },
         {
           "field-class": {
-            "length-field-location": [
-              "event-record-payload",
-              "zlen"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["zlen"]
+            },
             "type": "dynamic-length-string"
           },
           "name": "text2"
         },
         {
           "field-class": {
-            "length-field-location": [
-              "event-record-payload",
-              "len2"
-            ],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len2"]
+            },
             "type": "dynamic-length-string"
           },
           "name": "text3"

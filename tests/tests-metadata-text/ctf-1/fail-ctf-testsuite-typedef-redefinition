@@ -17,4 +17,4 @@ trace {
 };
 ----
 [8:1] In data type alias:
-[8:24] Duplicate data type alias: `myint`.
+[8:24] Duplicate data type alias named `myint`.

@@ -1,4 +1,39 @@
-{"type":"preamble","version":2}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":32,"type":"fixed-length-signed-integer"},"name":"stream_id"}],"type":"structure"},"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "type": "fixed-length-signed-integer"
+        },
+        "name": "stream_id"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "a"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

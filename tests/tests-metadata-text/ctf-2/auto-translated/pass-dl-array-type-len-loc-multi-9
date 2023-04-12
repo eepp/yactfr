@@ -1,4 +1,118 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"mappings":{"x":[[0,0]],"y":[[1,1]]},"type":"fixed-length-unsigned-enumeration"},"name":"tag"},{"field-class":{"options":[{"field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"len"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["event-record-payload","v","len"],"type":"dynamic-length-array"},"name":"seq"}],"type":"structure"},"name":"x","selector-field-ranges":[[0,0]]},{"field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":16,"type":"fixed-length-unsigned-integer"},"name":"len"}],"type":"structure"},"name":"y","selector-field-ranges":[[1,1]]}],"selector-field-location":["event-record-payload","tag"],"type":"variant"},"name":"v"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "mappings": {
+            "x": [
+              [
+                0,
+                0
+              ]
+            ],
+            "y": [
+              [
+                1,
+                1
+              ]
+            ]
+          },
+          "type": "fixed-length-unsigned-enumeration"
+        },
+        "name": "tag"
+      },
+      {
+        "field-class": {
+          "options": [
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "alignment": 8,
+                      "byte-order": "little-endian",
+                      "length": 8,
+                      "type": "fixed-length-unsigned-integer"
+                    },
+                    "name": "len"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-payload",
+                        "path": [
+                          "v",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "seq"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "x",
+              "selector-field-ranges": [
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "alignment": 8,
+                      "byte-order": "little-endian",
+                      "length": 16,
+                      "type": "fixed-length-unsigned-integer"
+                    },
+                    "name": "len"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y",
+              "selector-field-ranges": [
+                [
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "selector-field-location": {
+            "origin": "event-record-payload",
+            "path": [
+              "tag"
+            ]
+          },
+          "type": "variant"
+        },
+        "name": "v"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

@@ -1,0 +1,35 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "field-class-alias",
+    "name": "joujou",
+    "field-class": {
+      "type": "null-terminated-string"
+    }
+  }
+
+  {
+    "type": "field-class-alias",
+    "name": "joujou",
+    "field-class": {
+      "type": "variable-length-unsigned-integer"
+    }
+  }
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": "joujou"
+        }
+      ]
+    }
+  }
+----
+[2:3] In data type alias fragment:
+[4:13] Duplicate data type alias named `joujou`.
+

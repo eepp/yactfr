@@ -1,4 +1,167 @@
-{"type":"preamble","version":2}
-{"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"length-field-location":["event-record-specific-context","outer","inner"],"type":"dynamic-length-string"},"name":"seq"}],"type":"structure"},"specific-context-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"mappings":{"x":[[0,0]],"y":[[1,1]]},"type":"fixed-length-unsigned-enumeration"},"name":"tag"},{"field-class":{"options":[{"field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"s"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"inner"}],"type":"structure"},"name":"x","selector-field-ranges":[[0,0]]},{"field-class":{"member-classes":[{"field-class":{"options":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":16,"type":"fixed-length-unsigned-integer"},"name":"x","selector-field-ranges":[[0,0]]},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"y","selector-field-ranges":[[1,1]]}],"selector-field-location":["event-record-specific-context","tag"],"type":"variant"},"name":"inner"},{"field-class":{"type":"null-terminated-string"},"name":"s"}],"type":"structure"},"name":"y","selector-field-ranges":[[1,1]]}],"selector-field-location":["event-record-specific-context","tag"],"type":"variant"},"name":"outer"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "length-field-location": {
+            "origin": "event-record-specific-context",
+            "path": [
+              "outer",
+              "inner"
+            ]
+          },
+          "type": "dynamic-length-string"
+        },
+        "name": "seq"
+      }
+    ],
+    "type": "structure"
+  },
+  "specific-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "mappings": {
+            "x": [
+              [
+                0,
+                0
+              ]
+            ],
+            "y": [
+              [
+                1,
+                1
+              ]
+            ]
+          },
+          "type": "fixed-length-unsigned-enumeration"
+        },
+        "name": "tag"
+      },
+      {
+        "field-class": {
+          "options": [
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "s"
+                  },
+                  {
+                    "field-class": {
+                      "alignment": 8,
+                      "byte-order": "little-endian",
+                      "length": 8,
+                      "type": "fixed-length-unsigned-integer"
+                    },
+                    "name": "inner"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "x",
+              "selector-field-ranges": [
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "options": [
+                        {
+                          "field-class": {
+                            "alignment": 8,
+                            "byte-order": "little-endian",
+                            "length": 16,
+                            "type": "fixed-length-unsigned-integer"
+                          },
+                          "name": "x",
+                          "selector-field-ranges": [
+                            [
+                              0,
+                              0
+                            ]
+                          ]
+                        },
+                        {
+                          "field-class": {
+                            "alignment": 8,
+                            "byte-order": "little-endian",
+                            "length": 8,
+                            "type": "fixed-length-unsigned-integer"
+                          },
+                          "name": "y",
+                          "selector-field-ranges": [
+                            [
+                              1,
+                              1
+                            ]
+                          ]
+                        }
+                      ],
+                      "selector-field-location": {
+                        "origin": "event-record-specific-context",
+                        "path": [
+                          "tag"
+                        ]
+                      },
+                      "type": "variant"
+                    },
+                    "name": "inner"
+                  },
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "s"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y",
+              "selector-field-ranges": [
+                [
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "selector-field-location": {
+            "origin": "event-record-specific-context",
+            "path": [
+              "tag"
+            ]
+          },
+          "type": "variant"
+        },
+        "name": "outer"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

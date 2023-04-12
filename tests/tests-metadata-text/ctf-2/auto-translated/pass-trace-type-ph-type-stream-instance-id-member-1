@@ -1,4 +1,36 @@
-{"type":"preamble","version":2}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"stream_instance_id"}],"type":"structure"},"type":"trace-class"}
-{"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "stream_instance_id"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "a"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

@@ -1,4 +1,824 @@
-{"type":"preamble","version":2}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"len"},{"field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-header","x","len"],"type":"dynamic-length-array"},"name":"tph"}],"type":"structure"},"name":"y"}],"type":"structure"},"name":"x"}],"type":"structure"},"type":"trace-class"}
-{"event-record-common-context-field-class":{"member-classes":[{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-header","x","len"],"type":"dynamic-length-array"},"name":"tph"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"lan"},{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"},{"field-class":{"type":"null-terminated-string"},"name":"a"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["event-record-header","x","y","len"],"type":"dynamic-length-array"},"name":"seh"},{"field-class":{"type":"null-terminated-string"},"name":"c"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-common-context","MmE","lan"],"type":"dynamic-length-array"},"name":"sec"}],"type":"structure"},"name":"y"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"}],"type":"structure"},"name":"MmE"}],"type":"structure"},"event-record-header-field-class":{"member-classes":[{"field-class":{"member-classes":[{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-header","x","len"],"type":"dynamic-length-array"},"name":"tph"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"len"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["event-record-header","x","y","len"],"type":"dynamic-length-array"},"name":"seh"}],"type":"structure"},"name":"y"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"}],"type":"structure"},"name":"x"}],"type":"structure"},"packet-context-field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"len"},{"field-class":{"member-classes":[{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"len"},{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-header","x","len"],"type":"dynamic-length-array"},"name":"tph"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"}],"type":"structure"},"name":"y"}],"type":"structure"},"name":"x"}],"type":"structure"},"type":"data-stream-class"}
-{"name":"event","payload-field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"b"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-common-context","MmE","lan"],"type":"dynamic-length-array"},"name":"sec"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"c"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-specific-context","x","y","b"],"type":"dynamic-length-array"},"name":"ec"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"d"},{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-common-context","MmE","lan"],"type":"dynamic-length-array"},"name":"sec"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"mappings":{"a":[[0,0]],"kk":[[1,1]]},"type":"fixed-length-unsigned-enumeration"},"name":"tag"},{"field-class":{"options":[{"field-class":{"element-field-class":{"member-classes":[{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-specific-context","x","y","b"],"type":"dynamic-length-array"},"name":"ec"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"a"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-header","x","len"],"type":"dynamic-length-array"},"name":"tph"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-specific-context","x","y","b"],"type":"dynamic-length-array"},"name":"sec"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-header","x","y","len"],"type":"dynamic-length-array"},"name":"seh"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-payload","ee","tag"],"type":"dynamic-length-array"},"name":"ep"}],"type":"structure"},"length-field-location":["event-record-payload","d"],"type":"dynamic-length-array"},"name":"a","selector-field-ranges":[[0,0]]},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-specific-context","x","y","b"],"type":"dynamic-length-array"},"name":"kk","selector-field-ranges":[[1,1]]}],"selector-field-location":["event-record-payload","ee","tag"],"type":"variant"},"name":"var"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"zz"}],"type":"structure"},"name":"ee"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"f"}],"type":"structure"},"specific-context-field-class":{"member-classes":[{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["event-record-header","x","y","len"],"type":"dynamic-length-array"},"name":"seh"},{"field-class":{"member-classes":[{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-common-context","MmE","lan"],"type":"dynamic-length-array"},"name":"sec"},{"field-class":{"member-classes":[{"field-class":{"type":"null-terminated-string"},"name":"a"},{"field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"name":"b"},{"field-class":{"element-field-class":{"alignment":8,"byte-order":"little-endian","length":8,"type":"fixed-length-unsigned-integer"},"length-field-location":["event-record-specific-context","x","y","b"],"type":"dynamic-length-array"},"name":"ec"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"},{"field-class":{"type":"null-terminated-string"},"name":"c"}],"type":"structure"},"name":"y"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-header","x","len"],"type":"dynamic-length-array"},"name":"tph"},{"field-class":{"element-field-class":{"type":"null-terminated-string"},"length-field-location":["packet-context","x","len"],"type":"dynamic-length-array"},"name":"spc"}],"type":"structure"},"name":"x"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "len"
+            },
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "a"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-header",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "tph"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "x"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}
+{
+  "event-record-common-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "element-field-class": {
+                  "type": "null-terminated-string"
+                },
+                "length-field-location": {
+                  "origin": "packet-header",
+                  "path": [
+                    "x",
+                    "len"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "tph"
+            },
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "lan"
+            },
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-context",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "spc"
+                  },
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "a"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-header",
+                        "path": [
+                          "x",
+                          "y",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "seh"
+                  },
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "c"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "alignment": 8,
+                        "byte-order": "little-endian",
+                        "length": 8,
+                        "type": "fixed-length-unsigned-integer"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-common-context",
+                        "path": [
+                          "MmE",
+                          "lan"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "sec"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y"
+            },
+            {
+              "field-class": {
+                "element-field-class": {
+                  "type": "null-terminated-string"
+                },
+                "length-field-location": {
+                  "origin": "packet-context",
+                  "path": [
+                    "x",
+                    "len"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "spc"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "MmE"
+      }
+    ],
+    "type": "structure"
+  },
+  "event-record-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-header",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "tph"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-context",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "spc"
+                  },
+                  {
+                    "field-class": {
+                      "alignment": 8,
+                      "byte-order": "little-endian",
+                      "length": 8,
+                      "type": "fixed-length-unsigned-integer"
+                    },
+                    "name": "len"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-header",
+                        "path": [
+                          "x",
+                          "y",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "seh"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y"
+            },
+            {
+              "field-class": {
+                "element-field-class": {
+                  "type": "null-terminated-string"
+                },
+                "length-field-location": {
+                  "origin": "packet-context",
+                  "path": [
+                    "x",
+                    "len"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "spc"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "x"
+      }
+    ],
+    "type": "structure"
+  },
+  "packet-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "len"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "len"
+            },
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-header",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "tph"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-context",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "spc"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "x"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "b"
+      },
+      {
+        "field-class": {
+          "element-field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "length-field-location": {
+            "origin": "event-record-common-context",
+            "path": [
+              "MmE",
+              "lan"
+            ]
+          },
+          "type": "dynamic-length-array"
+        },
+        "name": "sec"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "c"
+      },
+      {
+        "field-class": {
+          "element-field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-unsigned-integer"
+          },
+          "length-field-location": {
+            "origin": "event-record-specific-context",
+            "path": [
+              "x",
+              "y",
+              "b"
+            ]
+          },
+          "type": "dynamic-length-array"
+        },
+        "name": "ec"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "d"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "element-field-class": {
+                  "alignment": 8,
+                  "byte-order": "little-endian",
+                  "length": 8,
+                  "type": "fixed-length-unsigned-integer"
+                },
+                "length-field-location": {
+                  "origin": "event-record-common-context",
+                  "path": [
+                    "MmE",
+                    "lan"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "sec"
+            },
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "mappings": {
+                  "a": [
+                    [
+                      0,
+                      0
+                    ]
+                  ],
+                  "kk": [
+                    [
+                      1,
+                      1
+                    ]
+                  ]
+                },
+                "type": "fixed-length-unsigned-enumeration"
+              },
+              "name": "tag"
+            },
+            {
+              "field-class": {
+                "options": [
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "member-classes": [
+                          {
+                            "field-class": {
+                              "element-field-class": {
+                                "alignment": 8,
+                                "byte-order": "little-endian",
+                                "length": 8,
+                                "type": "fixed-length-unsigned-integer"
+                              },
+                              "length-field-location": {
+                                "origin": "event-record-specific-context",
+                                "path": [
+                                  "x",
+                                  "y",
+                                  "b"
+                                ]
+                              },
+                              "type": "dynamic-length-array"
+                            },
+                            "name": "ec"
+                          },
+                          {
+                            "field-class": {
+                              "alignment": 8,
+                              "byte-order": "little-endian",
+                              "length": 8,
+                              "type": "fixed-length-unsigned-integer"
+                            },
+                            "name": "a"
+                          },
+                          {
+                            "field-class": {
+                              "element-field-class": {
+                                "type": "null-terminated-string"
+                              },
+                              "length-field-location": {
+                                "origin": "packet-header",
+                                "path": [
+                                  "x",
+                                  "len"
+                                ]
+                              },
+                              "type": "dynamic-length-array"
+                            },
+                            "name": "tph"
+                          },
+                          {
+                            "field-class": {
+                              "element-field-class": {
+                                "type": "null-terminated-string"
+                              },
+                              "length-field-location": {
+                                "origin": "packet-context",
+                                "path": [
+                                  "x",
+                                  "len"
+                                ]
+                              },
+                              "type": "dynamic-length-array"
+                            },
+                            "name": "spc"
+                          },
+                          {
+                            "field-class": {
+                              "element-field-class": {
+                                "alignment": 8,
+                                "byte-order": "little-endian",
+                                "length": 8,
+                                "type": "fixed-length-unsigned-integer"
+                              },
+                              "length-field-location": {
+                                "origin": "event-record-specific-context",
+                                "path": [
+                                  "x",
+                                  "y",
+                                  "b"
+                                ]
+                              },
+                              "type": "dynamic-length-array"
+                            },
+                            "name": "sec"
+                          },
+                          {
+                            "field-class": {
+                              "element-field-class": {
+                                "alignment": 8,
+                                "byte-order": "little-endian",
+                                "length": 8,
+                                "type": "fixed-length-unsigned-integer"
+                              },
+                              "length-field-location": {
+                                "origin": "event-record-header",
+                                "path": [
+                                  "x",
+                                  "y",
+                                  "len"
+                                ]
+                              },
+                              "type": "dynamic-length-array"
+                            },
+                            "name": "seh"
+                          },
+                          {
+                            "field-class": {
+                              "element-field-class": {
+                                "alignment": 8,
+                                "byte-order": "little-endian",
+                                "length": 8,
+                                "type": "fixed-length-unsigned-integer"
+                              },
+                              "length-field-location": {
+                                "origin": "event-record-payload",
+                                "path": [
+                                  "ee",
+                                  "tag"
+                                ]
+                              },
+                              "type": "dynamic-length-array"
+                            },
+                            "name": "ep"
+                          }
+                        ],
+                        "type": "structure"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-payload",
+                        "path": [
+                          "d"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "a",
+                    "selector-field-ranges": [
+                      [
+                        0,
+                        0
+                      ]
+                    ]
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "alignment": 8,
+                        "byte-order": "little-endian",
+                        "length": 8,
+                        "type": "fixed-length-unsigned-integer"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-specific-context",
+                        "path": [
+                          "x",
+                          "y",
+                          "b"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "kk",
+                    "selector-field-ranges": [
+                      [
+                        1,
+                        1
+                      ]
+                    ]
+                  }
+                ],
+                "selector-field-location": {
+                  "origin": "event-record-payload",
+                  "path": [
+                    "ee",
+                    "tag"
+                  ]
+                },
+                "type": "variant"
+              },
+              "name": "var"
+            },
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "zz"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "ee"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "f"
+      }
+    ],
+    "type": "structure"
+  },
+  "specific-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "element-field-class": {
+            "type": "null-terminated-string"
+          },
+          "length-field-location": {
+            "origin": "event-record-header",
+            "path": [
+              "x",
+              "y",
+              "len"
+            ]
+          },
+          "type": "dynamic-length-array"
+        },
+        "name": "seh"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "element-field-class": {
+                  "alignment": 8,
+                  "byte-order": "little-endian",
+                  "length": 8,
+                  "type": "fixed-length-unsigned-integer"
+                },
+                "length-field-location": {
+                  "origin": "event-record-common-context",
+                  "path": [
+                    "MmE",
+                    "lan"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "sec"
+            },
+            {
+              "field-class": {
+                "member-classes": [
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "a"
+                  },
+                  {
+                    "field-class": {
+                      "alignment": 8,
+                      "byte-order": "little-endian",
+                      "length": 8,
+                      "type": "fixed-length-unsigned-integer"
+                    },
+                    "name": "b"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "alignment": 8,
+                        "byte-order": "little-endian",
+                        "length": 8,
+                        "type": "fixed-length-unsigned-integer"
+                      },
+                      "length-field-location": {
+                        "origin": "event-record-specific-context",
+                        "path": [
+                          "x",
+                          "y",
+                          "b"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "ec"
+                  },
+                  {
+                    "field-class": {
+                      "element-field-class": {
+                        "type": "null-terminated-string"
+                      },
+                      "length-field-location": {
+                        "origin": "packet-context",
+                        "path": [
+                          "x",
+                          "len"
+                        ]
+                      },
+                      "type": "dynamic-length-array"
+                    },
+                    "name": "spc"
+                  },
+                  {
+                    "field-class": {
+                      "type": "null-terminated-string"
+                    },
+                    "name": "c"
+                  }
+                ],
+                "type": "structure"
+              },
+              "name": "y"
+            },
+            {
+              "field-class": {
+                "element-field-class": {
+                  "type": "null-terminated-string"
+                },
+                "length-field-location": {
+                  "origin": "packet-header",
+                  "path": [
+                    "x",
+                    "len"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "tph"
+            },
+            {
+              "field-class": {
+                "element-field-class": {
+                  "type": "null-terminated-string"
+                },
+                "length-field-location": {
+                  "origin": "packet-context",
+                  "path": [
+                    "x",
+                    "len"
+                  ]
+                },
+                "type": "dynamic-length-array"
+              },
+              "name": "spc"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "x"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

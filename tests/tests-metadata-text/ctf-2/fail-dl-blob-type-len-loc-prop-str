@@ -25,7 +25,6 @@
 ----
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
-[4:28] Invalid scope type:
 [4:28] Invalid structure type:
 [6:25] In object property `member-classes`:
 [13:9] In array element #2:
@@ -33,4 +32,4 @@
 [15:26] In object property `field-class`:
 [15:26] Invalid dynamic-length BLOB type:
 [17:38] In object property `length-field-location`:
-[17:38] Expecting an array.
+[17:38] Expecting an object.

@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 
 #include <yactfr/metadata/clk-type.hpp>
+#include <yactfr/metadata/clk-orig.hpp>
 
 namespace yactfr {
 
@@ -24,21 +25,43 @@ ClockOffset::ClockOffset(const long long secs, const Cycles cycles) noexcept :
 {
 }
 
+const char *ClockOrigin::_UNIX_EPOCH_NS = "github.com/eepp/yactfr";
+const char *ClockOrigin::_UNIX_EPOCH_NAME = "unix-epoch";
+const char *ClockOrigin::_UNIX_EPOCH_UID = "";
+
+ClockOrigin::ClockOrigin() :
+    _ns {_UNIX_EPOCH_NS},
+    _name {_UNIX_EPOCH_NAME},
+    _uid {_UNIX_EPOCH_UID}
+{
+}
+
+ClockOrigin::ClockOrigin(boost::optional<std::string> ns, std::string name, std::string uid) :
+    _ns {std::move(ns)},
+    _name {std::move(name)},
+    _uid {std::move(uid)}
+{
+}
+
+ClockOrigin::ClockOrigin(std::string name, std::string uid) :
+    _name {std::move(name)},
+    _uid {std::move(uid)}
+{
+}
+
 ClockType::ClockType(const unsigned long long freq, boost::optional<std::string> name,
-                     boost::optional<std::string> descr, boost::optional<boost::uuids::uuid> uuid,
-                     const Cycles prec, const ClockOffset& offset, const bool originIsUnixEpoch,
-                     MapItem::UP userAttrs) :
+                     boost::optional<std::string> descr, boost::optional<ClockOrigin> orig,
+                     const Cycles prec, const ClockOffset& offsetFromOrig, MapItem::UP userAttrs) :
     _freq {freq},
     _name {std::move(name)},
     _descr {std::move(descr)},
-    _uuid {std::move(uuid)},
+    _orig {std::move(orig)},
     _prec {prec},
-    _offset {offset},
-    _originIsUnixEpoch {originIsUnixEpoch},
+    _offsetFromOrig {offsetFromOrig},
     _userAttrs {std::move(userAttrs)}
 {
     assert(freq > 0);
-    assert(offset.cycles() < freq);
+    assert(offsetFromOrig.cycles() < freq);
 }
 
 ClockValueInterval ClockType::clockValueInterval(const Cycles cycles) const noexcept

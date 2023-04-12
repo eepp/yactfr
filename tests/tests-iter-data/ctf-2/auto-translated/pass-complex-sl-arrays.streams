@@ -84,11 +84,10 @@
                                   ]
                                 }
                               ],
-                              "selector-field-location": [
-                                "event-record-payload",
-                                "hope",
-                                "tag"
-                              ],
+                              "selector-field-location": {
+                                "origin": "event-record-payload",
+                                "path": ["hope", "tag"]
+                              },
                               "type": "variant"
                             },
                             "length": 2,

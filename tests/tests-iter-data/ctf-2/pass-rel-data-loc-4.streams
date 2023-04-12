@@ -1,0 +1,81 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "une autre",
+          "field-class": {
+            "type": "structure",
+            "member-classes": [
+              {
+                "name": "len",
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "big-endian"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "la struct",
+          "field-class": {
+            "type": "structure",
+            "member-classes": [
+              {
+                "name": "str",
+                "field-class": {
+                  "type": "dynamic-length-string",
+                  "length-field-location": {
+                    "path": [null, "une autre", "len"]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
+----
+LEN
+  08
+DL STR
+  "meow mix"
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           ST:une autre {
+     0             FLUI:len:8
+     8           }
+     8           ST:la struct {
+     8             DLS:str {
+     8               SS:8:meow mix
+    72             }
+    72           }
+    72         }
+    72       }
+    72     }
+    72   }
+    72 }

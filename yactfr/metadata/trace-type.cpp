@@ -29,11 +29,11 @@
 namespace yactfr {
 
 TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                     boost::optional<boost::uuids::uuid> uuid, TraceEnvironment environment,
+                     boost::optional<std::string> uid, TraceEnvironment environment,
                      StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
                      DataStreamTypeSet&& dsts, MapItem::UP userAttrs) :
     _pimpl {
-        std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(uuid),
+        std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(uid),
                                                   std::move(environment), std::move(pktHeaderType),
                                                   std::move(clkTypes), std::move(dsts),
                                                   std::move(userAttrs), *this)
@@ -63,9 +63,9 @@ unsigned int TraceType::minorVersion() const noexcept
     return _pimpl->minorVersion();
 }
 
-const boost::optional<boost::uuids::uuid>& TraceType::uuid() const noexcept
+const boost::optional<std::string>& TraceType::uid() const noexcept
 {
-    return _pimpl->uuid();
+    return _pimpl->uid();
 }
 
 const TraceEnvironment& TraceType::environment() const noexcept

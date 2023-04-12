@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2023 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,14 +30,14 @@
 namespace yactfr {
 namespace internal {
 
-PseudoDataLoc::PseudoDataLoc(const bool isEnv, const bool isAbs, const Scope scope,
-                             DataLocation::PathElements pathElems, TextLocation loc) :
-    _isEnv {isEnv},
-    _isAbs {isAbs},
-    _scope {scope},
+PseudoDataLoc::PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems pathElems,
+                             TextLocation loc) :
+    _kind {kind},
+    _scope {std::move(scope)},
     _pathElems {std::move(pathElems)},
     _loc {std::move(loc)}
 {
+    assert(_scope || _kind != Kind::ABS);
 }
 
 PseudoDt::PseudoDt(TextLocation loc) :
@@ -413,8 +413,8 @@ PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                              PseudoNamedDts&& pseudoOpts, MapItem::UP userAttrs, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithUserAttrsMixin {std::move(userAttrs)},
-    _pseudoSelLoc {std::move(pseudoSelLoc)},
-    _pseudoOpts {std::move(pseudoOpts)}
+    _pseudoOpts {std::move(pseudoOpts)},
+    _pseudoSelLoc {std::move(pseudoSelLoc)}
 {
 }
 
@@ -1000,12 +1000,12 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 }
 
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                                 boost::optional<boost::uuids::uuid> uuid, TraceEnvironment env,
+                                 boost::optional<std::string> uid, TraceEnvironment env,
                                  PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs) :
     WithUserAttrsMixin {std::move(userAttrs)},
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
-    _uuid {std::move(uuid)},
+    _uid {std::move(uid)},
     _env {std::move(env)},
     _pseudoPktHeaderType {std::move(pseudoPktHeaderType)}
 {

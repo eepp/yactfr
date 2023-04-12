@@ -1,0 +1,31 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "dynamic-length-array",
+            "length-field-location": {
+              "path": ["len"]
+            },
+            "element-field-class": {
+              "type": "null-terminated-string"
+            }
+          }
+        },
+        {
+          "name": "len",
+          "field-class": {
+            "type": "variable-length-unsigned-integer"
+          }
+        }
+      ]
+    }
+  }
+----
+[9:26] Data location [event record payload: `len`]: a length/selector wouldn't be decoded yet to decode the datum which needs it.

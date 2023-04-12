@@ -1,4 +1,84 @@
-{"type":"preamble","version":2,"uuid":[42,100,34,208,108,238,17,224,140,8,203,7,215,179,165,100]}
-{"packet-header-field-class":{"member-classes":[{"field-class":{"alignment":32,"byte-order":"little-endian","length":32,"preferred-display-base":16,"roles":["packet-magic-number"],"type":"fixed-length-unsigned-integer"},"name":"magic"},{"field-class":{"length":16,"roles":["metadata-stream-uuid"],"type":"static-length-blob"},"name":"uuid"}],"type":"structure"},"type":"trace-class","uuid":[42,100,34,208,108,238,17,224,140,8,203,7,215,179,165,100]}
-{"type":"data-stream-class"}
-{"name":"string","payload-field-class":{"member-classes":[{"field-class":{"alignment":32,"byte-order":"little-endian","length":32,"mappings":{"VAL1":[[0,0]]},"preferred-display-base":16,"type":"fixed-length-unsigned-enumeration"},"name":"field"}],"type":"structure"},"type":"event-record-class"}
+{
+  "type": "preamble",
+  "uuid": [
+    42,
+    100,
+    34,
+    208,
+    108,
+    238,
+    17,
+    224,
+    140,
+    8,
+    203,
+    7,
+    215,
+    179,
+    165,
+    100
+  ],
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 32,
+          "preferred-display-base": 16,
+          "roles": [
+            "packet-magic-number"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "magic"
+      },
+      {
+        "field-class": {
+          "length": 16,
+          "roles": [
+            "metadata-stream-uuid"
+          ],
+          "type": "static-length-blob"
+        },
+        "name": "uuid"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class",
+  "uid": "2a6422d0-6cee-11e0-8c08-cb07d7b3a564"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "string",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 32,
+          "byte-order": "little-endian",
+          "length": 32,
+          "mappings": {
+            "VAL1": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          "preferred-display-base": 16,
+          "type": "fixed-length-unsigned-enumeration"
+        },
+        "name": "field"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

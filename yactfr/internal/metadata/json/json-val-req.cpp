@@ -13,19 +13,20 @@
 namespace yactfr {
 namespace internal {
 
-JsonValReq::JsonValReq(boost::optional<JsonVal::Kind> kind) :
-    _kind {kind}
+JsonValReq::JsonValReq(boost::optional<JsonVal::Kind> kind, const bool allowNull) :
+    _kind {std::move(kind)},
+    _allowNull {(kind && *kind == JsonVal::Kind::NUL) ? false : allowNull}
 {
 }
 
-JsonValReq::SP JsonValReq::shared(boost::optional<JsonVal::Kind> kind)
+JsonValReq::SP JsonValReq::shared(boost::optional<JsonVal::Kind> kind, const bool allowNull)
 {
-    return std::make_shared<JsonValReq>(std::move(kind));
+    return std::make_shared<JsonValReq>(std::move(kind), allowNull);
 }
 
 void JsonValReq::validate(const JsonVal& jsonVal) const
 {
-    if (_kind && jsonVal.kind() != *_kind) {
+    if (_kind && jsonVal.kind() != *_kind && (!_allowNull || jsonVal.kind() != JsonVal::Kind::NUL)) {
         std::ostringstream ss;
 
         ss << "Expecting ";
@@ -65,6 +66,10 @@ void JsonValReq::validate(const JsonVal& jsonVal) const
 
         default:
             std::abort();
+        }
+
+        if (_allowNull) {
+            ss << " or `null`";
         }
 
         ss << '.';

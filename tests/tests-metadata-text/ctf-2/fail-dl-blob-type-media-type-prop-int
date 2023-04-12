@@ -16,7 +16,10 @@
           "name": "test",
           "field-class": {
             "type": "dynamic-length-blob",
-            "length-field-location": ["event-record-payload", "len"],
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            },
             "media-type": 17
           }
         }
@@ -26,12 +29,11 @@
 ----
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
-[4:28] Invalid scope type:
 [4:28] Invalid structure type:
 [6:25] In object property `member-classes`:
 [13:9] In array element #2:
 [13:9] Invalid structure member type:
 [15:26] In object property `field-class`:
 [15:26] Invalid dynamic-length BLOB type:
-[18:27] In object property `media-type`:
-[18:27] Expecting a string.
+[21:27] In object property `media-type`:
+[21:27] Expecting a string.

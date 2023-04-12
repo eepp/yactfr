@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2023 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <boost/optional.hpp>
-#include <boost/uuid/uuid.hpp>
+#include <boost/variant.hpp>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/data-loc.hpp>
@@ -25,6 +25,7 @@
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/trace-env.hpp>
 #include <yactfr/metadata/aliases.hpp>
+#include <yactfr/text-loc.hpp>
 
 namespace yactfr {
 namespace internal {
@@ -38,46 +39,73 @@ namespace internal {
  */
 
 /*
- * A pseudo data location is the result of parsing a TSDL data location,
+ * A pseudo data location is the result of parsing a data location,
  * possibly not yet converted to an absolute data location (as yactfr
  * requires).
  *
- * If `isEnv` is true, then the parsed data location was
- * `env.SOMETHING`, where `SOMETHING` must be an existing environment
- * key (for static-length array types). The first element of `pathElems`
- * is `SOMETHING` in this case.
+ * The kinds of pseudo data locations are:
  *
- * If `isAbs` is false, then don't consider `scope`. Otherwise, `scope`
- * indicates the root scope, and `pathElems` contains everything else
- * (`stream.packet.context` and so forth are stripped).
+ * `Kind::ENV`:
+ *     The parsed data location (TSDL) was `env.SOMETHING`, where
+ *     `SOMETHING` must be an existing environment key (for
+ *     static-length array types). The first element of `pathElems` is
+ *     `SOMETHING` in this case.
+ *
+ * `Kind::ABS`:
+ *     Absolute (has a scope).
+ *
+ *     `scope` indicates the root scope, and `pathElems` contains
+ *     everything else (`stream.packet.context` and so forth are
+ *     stripped for TSDL).
+ *
+ * `Kind::REL_1`::
+ *     Relative from CTF 1.8.
+ *
+ *     All path elements have values.
+ *
+ * `Kind::REL_2`::
+ *     Relative from CTF 2.
+ *
+ *     A path element may be `boost::none` to indicate "parent".
+ *
+ * The distinction between `Kind::REL_1` and `Kind::REL_2` is important
+ * because `Kind::REL_2` allows no-value path elements (`boost::none`)
+ * to explicitly indicate "parent", whereas `Kind::REL_1` indicates
+ * "parent" implicitly.
  */
 class PseudoDataLoc final
 {
 public:
-    explicit PseudoDataLoc(bool isEnv, bool isAbs, Scope scope,
-                           DataLocation::PathElements pathElems, TextLocation loc);
+    // `boost::none` explicitly means "parent" here (CTF 2)
+    using PathElems = std::vector<boost::optional<std::string>>;
+
+    enum class Kind {
+        ENV,    // environment (CTF 1.8)
+        ABS,    // absolute
+        REL_1,  // relative from CTF 1.8
+        REL_2,  // relative from CTF 2
+    };
+
+public:
+    explicit PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems pathElems,
+                           TextLocation loc);
 
     PseudoDataLoc(const PseudoDataLoc&) = default;
     PseudoDataLoc(PseudoDataLoc&&) = default;
     PseudoDataLoc& operator=(const PseudoDataLoc&) = default;
     PseudoDataLoc& operator=(PseudoDataLoc&&) = default;
 
-    bool isEnv() const noexcept
+    Kind kind() const noexcept
     {
-        return _isEnv;
+        return _kind;
     }
 
-    bool isAbs() const noexcept
-    {
-        return _isAbs;
-    }
-
-    Scope scope() const noexcept
+    const boost::optional<Scope>& scope() const noexcept
     {
         return _scope;
     }
 
-    const DataLocation::PathElements& pathElems() const noexcept
+    const PathElems& pathElems() const noexcept
     {
         return _pathElems;
     }
@@ -88,10 +116,9 @@ public:
     }
 
 private:
-    bool _isEnv;
-    bool _isAbs;
-    Scope _scope;
-    DataLocation::PathElements _pathElems;
+    Kind _kind;
+    boost::optional<Scope> _scope;
+    PathElems _pathElems;
     TextLocation _loc;
 };
 
@@ -107,7 +134,6 @@ class PseudoDt :
 {
 public:
     using UP = std::unique_ptr<PseudoDt>;
-    using FindFunc = std::function<bool (const PseudoDt&, const std::string&)>;
 
     enum class Kind
     {
@@ -154,8 +180,28 @@ public:
         _loc = std::move(loc);
     }
 
+    const boost::optional<Index>& posInScope() const noexcept
+    {
+        return _posInScope;
+    }
+
+    void posInScope(const Index posInScope) noexcept
+    {
+        _posInScope = posInScope;
+    }
+
 private:
     TextLocation _loc;
+
+    /*
+     * Numeric position of this pseudo data type within its root scope.
+     *
+     * This is used during a length/selector pseudo data type lookup to
+     * validate that the target will be decoded before the source.
+     *
+     * Set by setPseudoDtPosInScope().
+     */
+    boost::optional<Index> _posInScope;
 };
 
 using PseudoDtSet = std::unordered_set<PseudoDt *>;
@@ -395,8 +441,21 @@ public:
         return _pseudoLenLoc;
     }
 
+    const boost::optional<DataLocation>& lenLoc() const noexcept
+    {
+        return _lenLoc;
+    }
+
+    void lenLoc(DataLocation&& lenLoc) noexcept
+    {
+        _lenLoc = std::move(lenLoc);
+    }
+
 protected:
     PseudoDataLoc _pseudoLenLoc;
+
+    // set by setPseudoDtDataLoc() from `_pseudoLenLoc`
+    boost::optional<DataLocation> _lenLoc;
 };
 
 /*
@@ -659,6 +718,16 @@ public:
         _pseudoSelLoc = std::move(loc);
     }
 
+    const boost::optional<DataLocation>& selLoc() const noexcept
+    {
+        return _selLoc;
+    }
+
+    void selLoc(DataLocation&& selLoc) noexcept
+    {
+        _selLoc = std::move(selLoc);
+    }
+
     PseudoNamedDts& pseudoOpts() noexcept
     {
         return _pseudoOpts;
@@ -673,8 +742,11 @@ protected:
     PseudoNamedDts _clonePseudoOpts() const;
 
 private:
-    boost::optional<PseudoDataLoc> _pseudoSelLoc;
     PseudoNamedDts _pseudoOpts;
+    boost::optional<PseudoDataLoc> _pseudoSelLoc;
+
+    // set by setPseudoDtDataLoc() from `_pseudoSelLoc`
+    boost::optional<DataLocation> _selLoc;
 };
 
 /*
@@ -756,14 +828,22 @@ public:
         return _pseudoSelLoc;
     }
 
-    void pseudoSelLoc(PseudoDataLoc loc) noexcept
+    const boost::optional<DataLocation>& selLoc() const noexcept
     {
-        _pseudoSelLoc = std::move(loc);
+        return _selLoc;
+    }
+
+    void selLoc(DataLocation&& selLoc) noexcept
+    {
+        _selLoc = std::move(selLoc);
     }
 
 private:
     PseudoDt::UP _pseudoDt;
     PseudoDataLoc _pseudoSelLoc;
+
+    // set by setPseudoDtDataLoc() from `_pseudoSelLoc`
+    boost::optional<DataLocation> _selLoc;
 };
 
 /*
@@ -919,7 +999,7 @@ private:
 /*
  * Set of pseudo event record types.
  */
-using PseudoErtSet = std::unordered_set<const PseudoErt *>;
+using PseudoErtSet = std::unordered_set<PseudoErt *>;
 
 /*
  * Pseudo data stream type: mutable data stream type.
@@ -1034,6 +1114,11 @@ public:
         return _pseudoErt;
     }
 
+    PseudoErt& pseudoErt() noexcept
+    {
+        return _pseudoErt;
+    }
+
     const TextLocation& loc() const noexcept
     {
         return _loc;
@@ -1056,7 +1141,7 @@ public:
 
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
-                             boost::optional<boost::uuids::uuid> uuid = boost::none,
+                             boost::optional<std::string> uid = boost::none,
                              TraceEnvironment env = TraceEnvironment {},
                              PseudoDt::UP pseudoPktHeaderType = nullptr,
                              MapItem::UP userAttrs = nullptr);
@@ -1077,9 +1162,9 @@ public:
         return _minorVersion;
     }
 
-    const boost::optional<boost::uuids::uuid>& uuid() const noexcept
+    const boost::optional<std::string>& uid() const noexcept
     {
-        return _uuid;
+        return _uid;
     }
 
     const TraceEnvironment& env() const noexcept
@@ -1142,7 +1227,7 @@ public:
 private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
-    boost::optional<boost::uuids::uuid> _uuid;
+    boost::optional<std::string> _uid;
     TraceEnvironment _env;
     PseudoDt::UP _pseudoPktHeaderType;
     ClockTypeSet _clkTypes;
