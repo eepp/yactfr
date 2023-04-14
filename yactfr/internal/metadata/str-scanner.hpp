@@ -398,6 +398,7 @@ private:
     void _skipComment();
     void _skipWhitespaces();
     void _appendEscapedUnicodeChar(const char *at);
+    void _appendEscapedHexChar(const char *at);
 
     /*
      * Tries to append an escaped character to `_strBuf` from the

@@ -100,6 +100,33 @@ void StrScanner::_appendEscapedUnicodeChar(const char * const at)
     }
 }
 
+void StrScanner::_appendEscapedHexChar(const char * const at)
+{
+    // create array of two hex characters
+    const std::string hexByteBuf {at, at + 2};
+
+    // validate hex characters
+    for (const auto ch : hexByteBuf) {
+        if (!std::isxdigit(ch)) {
+            std::ostringstream ss;
+
+            ss << "In `\\x` escape sequence: unexpected character `" << ch << "`.";
+            throwTextParseError(ss.str(), this->loc());
+        }
+    }
+
+    // convert hex characters to byte (always works)
+    const auto byte = std::strtoull(hexByteBuf.data(), nullptr, 16);
+
+    // validate value
+    if (byte == 0) {
+        throwTextParseError("Invalid `\\x00` escape sequence.", this->loc());
+    }
+
+    // append byte
+    _strBuf.push_back(static_cast<char>(byte));
+}
+
 bool StrScanner::_tryAppendEscapedChar(const char * const escapeSeqStartList)
 {
     if (this->charsLeft() < 2) {
@@ -122,6 +149,14 @@ bool StrScanner::_tryAppendEscapedChar(const char * const escapeSeqStartList)
 
                 this->_appendEscapedUnicodeChar(_at + 2);
                 _at += 6;
+            } else if (_at[1] == 'x') {
+                if (this->charsLeft() < 4) {
+                    throwTextParseError("`\\x` escape sequence needs two hexadecimal digits.",
+                                        this->loc());
+                }
+
+                this->_appendEscapedHexChar(_at + 2);
+                _at += 4;
             } else {
                 switch (_at[1]) {
                 case 'a':
