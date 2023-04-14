@@ -60,13 +60,16 @@ class _MetadataTextItem(pytest.Item):
                                    'metadata-text-tester')
         output = subprocess.check_output([tester_path, metadata_stream_path], text=True)
 
-        # compare to the expected lines if it's an expect-to-fail tests
-        if not expect_to_pass:
-            output = output.strip('\n')
+        # compare to the expected lines
+        output = output.strip('\n')
+
+        if expect_to_pass:
+            expect = ''
+        else:
             expect = '\n'.join(blocks[1]).strip('\n')
 
-            if output != expect:
-                raise yactfrutils.UnexpectedOutput(output, expect)
+        if output != expect:
+            raise yactfrutils.UnexpectedOutput(output, expect)
 
         # delete temporary directory, if any
         if tmp_dir is not None:
