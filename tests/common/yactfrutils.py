@@ -18,7 +18,7 @@ def metadata_lines(lines):
         json_seq_lines = []
 
         for frag in frags:
-            json_seq_lines.append('\x1e' + json.dumps(frag))
+            json_seq_lines.append('\x1e' + json.dumps(frag, ensure_ascii=False))
 
         lines = json_seq_lines
     else:
