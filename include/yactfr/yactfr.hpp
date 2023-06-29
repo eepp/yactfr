@@ -72,6 +72,7 @@
 #include "metadata/vl-enum-type.hpp"
 #include "metadata/vl-int-type.hpp"
 #include "mmap-file-view-factory.hpp"
+#include "ds20-packet-view-factory.hpp"
 #include "text-parse-error.hpp"
 
 #endif // _YACTFR_YACTFR_HPP

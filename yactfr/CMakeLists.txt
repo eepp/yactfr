@@ -37,6 +37,7 @@ add_library (
     internal/metadata/tsdl/tsdl-attr.cpp
     internal/metadata/tsdl/tsdl-parser.cpp
     internal/mmap-file-view-factory-impl.cpp
+    internal/ds20-packet-view-factory-impl.cpp
     internal/pkt-proc-builder.cpp
     internal/proc.cpp
     internal/utils.cpp
@@ -79,6 +80,7 @@ add_library (
     metadata/vl-enum-type.cpp
     metadata/vl-int-type.cpp
     mmap-file-view-factory.cpp
+    ds20-packet-view-factory.cpp
     text-loc.cpp
     text-parse-error.cpp
 )
