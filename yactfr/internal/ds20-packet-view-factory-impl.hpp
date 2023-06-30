@@ -14,12 +14,12 @@ public:
     explicit DS20PacketViewFactoryImpl(uint8_t *buffer, size_t bufferSize);
     ~DS20PacketViewFactoryImpl();
 
-    Size _packetSize() const noexcept
+    Size _packetSize(void) const noexcept
     {
         return _bufferSize;
     }
 
-    uint8_t* path() const noexcept
+    uint8_t* _PacketAddr(void) const noexcept
     {
         return _buffer;
     }

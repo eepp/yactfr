@@ -50,6 +50,9 @@ DS20PacketView::~DS20PacketView()
 boost::optional<DataBlock> DS20PacketView::_data(const Index offset, const Size minSize)
 {
 
+    _packetAddr = _ds20PacketViewFactoryImpl->_PacketAddr();
+    _packetLength = _ds20PacketViewFactoryImpl->_packetSize();
+
     if ((offset + minSize) > _ds20PacketViewFactoryImpl->_packetSize()) {
         // no more data
         return boost::none;
@@ -57,9 +60,9 @@ boost::optional<DataBlock> DS20PacketView::_data(const Index offset, const Size 
 
     assert(_packetAddr);
 
-    const auto offsetFromEndPacket = offset - _packetLength;
+    const size_t offsetFromEndPacket = offset;
     const void * const addr = static_cast<const void *>(static_cast<const std::uint8_t *>(_packetAddr) + offsetFromEndPacket);
-    const auto availSize = _packetLength - offsetFromEndPacket;
+    const size_t availSize = _packetLength - offsetFromEndPacket;
 
 // This should not be happening
 #if 0
@@ -82,7 +85,12 @@ boost::optional<DataBlock> DS20PacketView::_data(const Index offset, const Size 
         return DataBlock {addr, availSize};
     }
 #endif
+
+    if (availSize < minSize) {
+        return DataBlock {addr, minSize};
+    } else {
         return DataBlock {addr, availSize};
+    }
 }
 
 } // namespace internal
