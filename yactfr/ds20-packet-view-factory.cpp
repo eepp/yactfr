@@ -32,7 +32,7 @@ private:
 
 private:
     std::shared_ptr<internal::DS20PacketViewFactoryImpl> _ds20PacketViewFactoryImpl;
-    uint8_t *_packetAddr = NULL;
+    const uint8_t *_packetAddr = NULL;
     Size _packetLength = 0;
     Index _packetOffset = 0;
     std::array<std::uint8_t, 16> _tmpBuf;
@@ -95,7 +95,7 @@ boost::optional<DataBlock> DS20PacketView::_data(const Index offset, const Size 
 
 } // namespace internal
 
-DS20PacketViewFactory::DS20PacketViewFactory(uint8_t *buffer, size_t bufferSize):
+DS20PacketViewFactory::DS20PacketViewFactory(const uint8_t *buffer, size_t bufferSize):
     _pimpl {
         std::make_shared<internal::DS20PacketViewFactoryImpl>(buffer, bufferSize)
     }

@@ -11,7 +11,7 @@ namespace internal {
 class DS20PacketViewFactoryImpl final
 {
 public:
-    explicit DS20PacketViewFactoryImpl(uint8_t *buffer, size_t bufferSize);
+    explicit DS20PacketViewFactoryImpl(const uint8_t *buffer, size_t bufferSize);
     ~DS20PacketViewFactoryImpl();
 
     Size _packetSize(void) const noexcept
@@ -19,13 +19,13 @@ public:
         return _bufferSize;
     }
 
-    uint8_t* _PacketAddr(void) const noexcept
+    const uint8_t* _PacketAddr(void) const noexcept
     {
         return _buffer;
     }
 
 private:
-    uint8_t *_buffer;
+    const uint8_t *_buffer;
     Size _bufferSize;
 };
 

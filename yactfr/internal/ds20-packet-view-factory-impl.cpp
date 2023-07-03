@@ -16,7 +16,7 @@
 namespace yactfr {
 namespace internal {
 
-DS20PacketViewFactoryImpl::DS20PacketViewFactoryImpl(uint8_t *buffer, size_t bufferSize):
+DS20PacketViewFactoryImpl::DS20PacketViewFactoryImpl(const uint8_t *buffer, size_t bufferSize):
     _buffer {buffer},
     _bufferSize {bufferSize}
 {

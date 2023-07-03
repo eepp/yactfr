@@ -22,7 +22,7 @@ class DS20PacketViewFactory final :
 public:
 
 public:
-    explicit DS20PacketViewFactory(uint8_t *buffer, size_t bufferSize);
+    explicit DS20PacketViewFactory(const uint8_t *buffer, size_t bufferSize);
 
 private:
     DataSource::UP _createDataSource() override;
