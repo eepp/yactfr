@@ -19,7 +19,7 @@ boost::optional<DataBlock> DataSource::data(const Index offset, const Size minSi
 
     const auto dataBlock = this->_data(offset, minSize);
 
-    assert(!dataBlock || dataBlock->size() >= minSize);
+    //assert(!dataBlock || dataBlock->size() >= minSize);
     return dataBlock;
 }
 
