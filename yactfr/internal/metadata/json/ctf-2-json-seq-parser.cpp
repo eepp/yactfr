@@ -232,7 +232,7 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
             orig = ClockOrigin {
                 optStrOfObj(jsonOrigObjVal, strs::NS),
                 *jsonOrigObjVal[strs::NAME]->asStr(),
-                *jsonOrigObjVal[strs::NAME]->asStr()
+                *jsonOrigObjVal[strs::UID]->asStr()
             };
         }
     }
