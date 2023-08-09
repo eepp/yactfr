@@ -65,6 +65,8 @@ public:
         Namespace.
     @param[in] name
         Name.
+    @param[in] uid
+        Unique ID.
     @param[in] logLevel
         Log level.
     @param[in] emfUri
@@ -89,7 +91,8 @@ public:
         (UnsignedIntegerTypeRole or "metadata stream UUID" role).
     */
     explicit EventRecordType(TypeId id, boost::optional<std::string> nameSpace,
-                             boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
+                             boost::optional<std::string> name, boost::optional<std::string> uid,
+                             boost::optional<LogLevel> logLevel,
                              boost::optional<std::string> emfUri,
                              std::unique_ptr<const StructureType> specificContextType,
                              std::unique_ptr<const StructureType> payloadType,
@@ -133,6 +136,12 @@ public:
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
+    }
+
+    /// Unique ID.
+    const boost::optional<std::string>& uid() const noexcept
+    {
+        return _uid;
     }
 
     /// Log level.
@@ -192,6 +201,7 @@ private:
     const TypeId _id;
     const boost::optional<std::string> _ns;
     const boost::optional<std::string> _name;
+    const boost::optional<std::string> _uid;
     const boost::optional<LogLevel> _logLevel;
     const boost::optional<std::string> _emfUri;
     std::unique_ptr<const StructureType> _specCtxType;

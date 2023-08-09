@@ -76,6 +76,8 @@ public:
         Namespace.
     @param[in] name
         Name.
+    @param[in] uid
+        Unique ID.
     @param[in] eventRecordTypes
         Children event record types (moved to this type).
     @param[in] packetContextType
@@ -127,6 +129,7 @@ public:
     */
     explicit DataStreamType(TypeId id, boost::optional<std::string> nameSpace,
                             boost::optional<std::string> name,
+                            boost::optional<std::string> uid,
                             EventRecordTypeSet&& eventRecordTypes,
                             StructureType::UP packetContextType,
                             StructureType::UP eventRecordHeaderType,
@@ -136,7 +139,8 @@ public:
 
     /*!
     @brief
-        Builds a data stream type without namespace and name properties.
+        Builds a data stream type without namespace, name, and unique ID
+        properties.
 
     @param[in] id
         Data stream type ID.
@@ -201,6 +205,12 @@ public:
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
+    }
+
+    /// Unique ID.
+    const boost::optional<std::string>& uid() const noexcept
+    {
+        return _uid;
     }
 
     /// Contained event record types.
@@ -311,6 +321,7 @@ private:
     const TypeId _id;
     const boost::optional<std::string> _ns;
     const boost::optional<std::string> _name;
+    const boost::optional<std::string> _uid;
     const EventRecordTypeSet _erts;
     std::unordered_map<TypeId, const EventRecordType *> _idsToErts;
     StructureType::UP _pktCtxType;

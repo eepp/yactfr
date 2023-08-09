@@ -53,6 +53,7 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
 
     // create yactfr trace type
     return TraceType::create(_pseudoTraceType->majorVersion(), _pseudoTraceType->minorVersion(),
+                             _pseudoTraceType->ns(), _pseudoTraceType->name(),
                              _pseudoTraceType->uid(), _pseudoTraceType->env(),
                              std::move(pktHeaderType), std::move(_pseudoTraceType->clkTypes()),
                              std::move(dstSet), tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
@@ -103,7 +104,7 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
 
     // create yactfr data stream type
     return DataStreamType::create(pseudoDst.id(), pseudoDst.ns(), pseudoDst.name(),
-                                  std::move(ertSet), std::move(pseudoPktCtxType),
+                                  pseudoDst.uid(), std::move(ertSet), std::move(pseudoPktCtxType),
                                   std::move(erHeaderType), std::move(erCommonCtxType),
                                   pseudoDst.defClkType(), tryCloneUserAttrs(pseudoDst.userAttrs()));
 }
@@ -124,7 +125,7 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
 
     // create yactfr event record type
     return EventRecordType::create(pseudoErt.id(), pseudoErt.ns(), pseudoErt.name(),
-                                   pseudoErt.logLevel(), pseudoErt.emfUri(),
+                                   pseudoErt.uid(), pseudoErt.logLevel(), pseudoErt.emfUri(),
                                    std::move(specCtxType), std::move(payloadType),
                                    tryCloneUserAttrs(pseudoErt.userAttrs()));
 }

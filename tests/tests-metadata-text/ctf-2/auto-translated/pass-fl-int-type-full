@@ -7,11 +7,12 @@
 }
 {
   "frequency": 1000000000,
+  "id": "the_clock",
   "name": "the_clock",
   "type": "clock-class"
 }
 {
-  "default-clock-class-name": "the_clock",
+  "default-clock-class-id": "the_clock",
   "event-record-header-field-class": {
     "member-classes": [
       {

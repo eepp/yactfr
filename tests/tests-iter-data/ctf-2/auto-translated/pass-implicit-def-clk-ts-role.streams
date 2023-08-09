@@ -7,12 +7,14 @@
     "type": "trace-class"
   },
   {
-    "frequency": 1000000000,
+    "id": "clk",
     "name": "clk",
+    "uid": "",
+    "frequency": 1000000000,
     "type": "clock-class"
   },
   {
-    "default-clock-class-name": "clk",
+    "default-clock-class-id": "clk",
     "event-record-header-field-class": {
       "member-classes": [
         {

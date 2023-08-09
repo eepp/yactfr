@@ -17,6 +17,7 @@ namespace yactfr {
 
 EventRecordType::EventRecordType(const TypeId id, boost::optional<std::string> ns,
                                  boost::optional<std::string> name,
+                                 boost::optional<std::string> uid,
                                  boost::optional<LogLevel> logLevel,
                                  boost::optional<std::string> emfUri,
                                  StructureType::UP specCtxType, StructureType::UP payloadType,
@@ -24,6 +25,7 @@ EventRecordType::EventRecordType(const TypeId id, boost::optional<std::string> n
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
+    _uid {std::move(uid)},
     _logLevel {std::move(logLevel)},
     _emfUri {std::move(emfUri)},
     _specCtxType {std::move(specCtxType)},

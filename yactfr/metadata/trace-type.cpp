@@ -29,14 +29,15 @@
 namespace yactfr {
 
 TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                     boost::optional<std::string> uid, TraceEnvironment environment,
+                     boost::optional<std::string> ns, boost::optional<std::string> name,
+                     boost::optional<std::string> uid, TraceEnvironment env,
                      StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
                      DataStreamTypeSet&& dsts, MapItem::UP userAttrs) :
     _pimpl {
-        std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(uid),
-                                                  std::move(environment), std::move(pktHeaderType),
-                                                  std::move(clkTypes), std::move(dsts),
-                                                  std::move(userAttrs), *this)
+        std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(ns),
+                                                  std::move(name), std::move(uid), std::move(env),
+                                                  std::move(pktHeaderType), std::move(clkTypes),
+                                                  std::move(dsts), std::move(userAttrs), *this)
     }
 {
 #ifndef NDEBUG
@@ -61,6 +62,16 @@ unsigned int TraceType::majorVersion() const noexcept
 unsigned int TraceType::minorVersion() const noexcept
 {
     return _pimpl->minorVersion();
+}
+
+const boost::optional<std::string>& TraceType::nameSpace() const noexcept
+{
+    return _pimpl->ns();
+}
+
+const boost::optional<std::string>& TraceType::name() const noexcept
+{
+    return _pimpl->name();
 }
 
 const boost::optional<std::string>& TraceType::uid() const noexcept

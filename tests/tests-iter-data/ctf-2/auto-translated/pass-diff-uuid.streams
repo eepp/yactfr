@@ -38,6 +38,7 @@
       "type": "structure"
     },
     "type": "trace-class",
+    "name": "",
     "uid": "9911b75d-0c2e-430b-8c67-22de04157d7a"
   }
 ]

@@ -16,6 +16,7 @@
 
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
+#include <yactfr/metadata/aliases.hpp>
 #include <yactfr/metadata/item.hpp>
 
 #include "../proc.hpp"
@@ -28,6 +29,7 @@ class TraceTypeImpl final
 {
 public:
     explicit TraceTypeImpl(unsigned int majorVersion, unsigned int minorVersion,
+                           boost::optional<std::string>&& ns, boost::optional<std::string>&& name,
                            boost::optional<std::string>&& uid, TraceEnvironment&& env,
                            StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
                            DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
@@ -41,6 +43,16 @@ public:
     unsigned int minorVersion() const noexcept
     {
         return _minorVersion;
+    }
+
+    const boost::optional<std::string>& ns() const noexcept
+    {
+        return _ns;
+    }
+
+    const boost::optional<std::string>& name() const noexcept
+    {
+        return _name;
     }
 
     const boost::optional<std::string>& uid() const noexcept
@@ -128,6 +140,8 @@ private:
 private:
     const unsigned int _majorVersion;
     const unsigned int _minorVersion;
+    const boost::optional<std::string> _ns;
+    const boost::optional<std::string> _name;
     const boost::optional<std::string> _uid;
     const TraceEnvironment _env;
     const StructureType::UP _pktHeaderType;

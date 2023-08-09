@@ -22,12 +22,16 @@ namespace yactfr {
 namespace internal {
 
 TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int minorVersion,
+                             boost::optional<std::string>&& ns,
+                             boost::optional<std::string>&& name,
                              boost::optional<std::string>&& uid, TraceEnvironment&& env,
                              StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
                              DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
                              const TraceType& traceType) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
+    _ns {std::move(ns)},
+    _name {std::move(name)},
     _uid {std::move(uid)},
     _env {std::move(env)},
     _pktHeaderType {std::move(pktHeaderType)},

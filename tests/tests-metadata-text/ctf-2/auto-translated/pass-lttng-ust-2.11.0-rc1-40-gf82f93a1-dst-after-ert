@@ -85,19 +85,17 @@
 {
   "description": "Monotonic Clock",
   "frequency": 1000000000,
+  "id": "monotonic",
   "name": "monotonic",
   "offset-from-origin": {
     "cycles": 854673436,
     "seconds": 1539253786
   },
-  "origin": {
-    "name": "",
-    "uid": "eb91a656-a4d6-41cb-b9c1-cb8695f651da"
-  },
-  "type": "clock-class"
+  "type": "clock-class",
+  "uid": "eb91a656-a4d6-41cb-b9c1-cb8695f651da"
 }
 {
-  "default-clock-class-name": "monotonic",
+  "default-clock-class-id": "monotonic",
   "event-record-header-field-class": {
     "member-classes": [
       {
@@ -1447,7 +1445,7 @@
   "type": "event-record-class"
 }
 {
-  "default-clock-class-name": "monotonic",
+  "default-clock-class-id": "monotonic",
   "event-record-header-field-class": {
     "member-classes": [
       {
@@ -2824,7 +2822,7 @@
   "type": "event-record-class"
 }
 {
-  "default-clock-class-name": "monotonic",
+  "default-clock-class-id": "monotonic",
   "event-record-header-field-class": {
     "member-classes": [
       {

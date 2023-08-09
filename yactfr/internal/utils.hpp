@@ -10,9 +10,9 @@
 
 #include <string>
 #include <vector>
+#include <boost/optional.hpp>
 
 #include <yactfr/aliases.hpp>
-#include <yactfr/metadata/dt.hpp>
 
 namespace yactfr {
 namespace internal {

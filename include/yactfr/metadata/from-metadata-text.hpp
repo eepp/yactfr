@@ -36,8 +36,61 @@ using FromMetadataTextReturn = std::pair<TraceType::UP, boost::optional<boost::u
 
 @ingroup metadata
 
-This method automatically discovers whether the text between \p begin
+This function automatically discovers whether the text between \p begin
 and \p end is a CTF&nbsp;1.8 or CTF&nbsp;2 metadata text.
+
+@note
+    @parblock
+    For CTF&nbsp;1.8, this function sets the following
+    \link ClockType clock type\endlink properties accordingly
+    from a TSDL clock type <em>CC</em>:
+
+    <dl>
+      <dt>Internal ID</dt>
+      <dd>Value of the \c name attribute of \em CC.</dd>
+
+      <dt>Namespace</dt>
+      <dd>None.</dd>
+
+      <dt>Name</dt>
+      <dd>
+        Value of the \c name attribute of <em>CC</em>,
+        or none if missing.
+      </dd>
+
+      <dt>Unique ID (UID)</dt>
+      <dd>
+        Value of the \c uuid attribute of <em>CC</em>,
+        or none if it's is missing.
+      </dd>
+
+      <dt>Original UUID</dt>
+      <dd>
+        Equivalent UUID of the value of the \c uuid attribute of \em CC,
+        or \c boost::none if missing.
+      </dd>
+
+      <dt>Origin</dt>
+      <dd>
+        Unix epoch if the \c absolute attribute of \em CC is true,
+        or \c boost::none if missing.
+      </dd>
+
+      <dt>Precision</dt>
+      <dd>
+        Value of the \c precision attribute of \em CC,
+        or \c boost::none if missing.
+      </dd>
+
+      <dt>Accuracy</dt>
+      <dd>\c boost::none.
+    </dl>
+    @endparblock
+
+@note
+    For CTF&nbsp;1.8, if the TSDL trace type has a \c uuid attribute,
+    then this function sets the unique ID property to the value of the
+    \c uuid attribute.
 
 @param[in] begin
     Beginning of metadata text.
@@ -59,8 +112,9 @@ FromMetadataTextReturn fromMetadataText(const char *begin, const char *end);
 
 @ingroup metadata
 
-This method automatically discovers whether \p text is a CTF&nbsp;1.8 or
-CTF&nbsp;2 metadata text.
+This function effectively calls
+fromMetadataText(const char *, const char *), therefore refer to its
+documentation.
 
 @param[in] text
     Metadata text.

@@ -7,12 +7,10 @@
 }
 {
   "frequency": 1000000000,
+  "id": "salut",
   "name": "salut",
-  "origin": {
-    "name": "",
-    "uid": "00000000-0000-0000-0000-000000000000"
-  },
-  "type": "clock-class"
+  "type": "clock-class",
+  "uid": "00000000-0000-0000-0000-000000000000"
 }
 {
   "type": "data-stream-class"

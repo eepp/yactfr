@@ -6,6 +6,10 @@
  */
 
 #include <iostream>
+#include <sstream>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include "tsdl-parser.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
@@ -19,32 +23,39 @@ TsdlParser::_StackFrame::_StackFrame(const Kind kind) :
 {
 }
 
-void TsdlParser::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
-                                               const std::string& memberTypeName)
+void TsdlParser::_setImplicitMappedClkTypeId(PseudoDt& basePseudoDt,
+                                             const std::string& memberTypeName)
 {
     /*
      * If there's exactly one clock type in the pseudo trace type:
-     *     Use the name of this clock type.
+     *     Use the internal ID of this clock type.
      *
      * If there's no clock type in the pseudo trace type:
-     *     Create a default 1-GHz clock type and use this name.
+     *     Create a default 1-GHz clock type and use its internal ID
+     *     (`default`).
      *
      * If there's more than one clock type in the pseudo trace type:
-     *     Leave it as is (no mapped clock type name).
+     *     Leave it as is (no mapped clock type internal ID).
      */
     for (auto& pseudoDt : findPseudoUIntTypesByName(basePseudoDt, memberTypeName)) {
         assert(pseudoDt->isFlUInt() && pseudoDt->kind() != PseudoDt::Kind::SCALAR_DT_WRAPPER);
 
         auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
-        if (pseudoIntType.mappedClkTypeName()) {
+        if (pseudoIntType.mappedClkTypeId()) {
             continue;
         }
 
         if (_pseudoTraceType->clkTypes().empty()) {
             // create implicit 1-GHz clock type
-            _pseudoTraceType->clkTypes().insert(ClockType::create(1'000'000'000ULL,
-                                                                  std::string {"default"}));
+            static const std::string defStr {"default"};
+
+            _pseudoTraceType->clkTypes().insert(ClockType::create(defStr, boost::none, boost::none,
+                                                                  boost::none, boost::none,
+                                                                  1'000'000'000ULL,
+                                                                  boost::none, boost::none,
+                                                                  boost::none, boost::none,
+                                                                  ClockOffset {}));
         }
 
         if (_pseudoTraceType->clkTypes().size() != 1) {
@@ -54,23 +65,23 @@ void TsdlParser::_setImplicitMappedClkTypeName(PseudoDt& basePseudoDt,
 
         const auto& clkType = *_pseudoTraceType->clkTypes().begin();
 
-        assert(clkType->name());
-        pseudoIntType.mappedClkTypeName(*clkType->name());
+        assert(clkType->internalId());
+        pseudoIntType.mappedClkTypeId(*clkType->internalId());
     }
 }
 
-void TsdlParser::_setImplicitMappedClkTypeName()
+void TsdlParser::_setImplicitMappedClkTypeId()
 {
    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
         auto& pseudoDst = idPseudoDstPair.second;
 
         if (pseudoDst->pseudoErHeaderType()) {
-            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoErHeaderType(), "timestamp");
+            this->_setImplicitMappedClkTypeId(*pseudoDst->pseudoErHeaderType(), "timestamp");
         }
 
         if (pseudoDst->pseudoPktCtxType()) {
-            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoPktCtxType(), "timestamp_begin");
-            this->_setImplicitMappedClkTypeName(*pseudoDst->pseudoPktCtxType(), "timestamp_end");
+            this->_setImplicitMappedClkTypeId(*pseudoDst->pseudoPktCtxType(), "timestamp_begin");
+            this->_setImplicitMappedClkTypeId(*pseudoDst->pseudoPktCtxType(), "timestamp_end");
         }
     }
 }
@@ -125,7 +136,7 @@ public:
 
     void visit(PseudoFlUIntType& pseudoDt) override
     {
-        if (pseudoDt.mappedClkTypeName() &&
+        if (pseudoDt.mappedClkTypeId() &&
                 !pseudoDt.hasRole(UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP)) {
             pseudoDt.addRole(UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP);
         }
@@ -170,8 +181,8 @@ private:
 void TsdlParser::_addPseudoDtRoles()
 {
     /*
-     * First, set an implicit mapped clock type name on specific pseudo
-     * fixed-length unsigned integer types.
+     * First, set an implicit mapped clock type internal ID on specific
+     * pseudo fixed-length unsigned integer types.
      *
      * For example, if the current pseudo trace type contains a single
      * clock type, then any pseudo fixed-length unsigned integer type
@@ -179,7 +190,7 @@ void TsdlParser::_addPseudoDtRoles()
      * are not already mapped to a clock type, are mapped to this single
      * clock type.
      */
-    this->_setImplicitMappedClkTypeName();
+    this->_setImplicitMappedClkTypeId();
 
     // add/set simple roles
     if (_pseudoTraceType->pseudoPktHeaderType()) {
@@ -246,26 +257,26 @@ public:
 
     void visit(PseudoFlUIntType& pseudoDt) override
     {
-        if (pseudoDt.mappedClkTypeName()) {
-            if (!_clkTypeName) {
-                _clkTypeName = &*pseudoDt.mappedClkTypeName();
+        if (pseudoDt.mappedClkTypeId()) {
+            if (!_clkTypeId) {
+                _clkTypeId = &*pseudoDt.mappedClkTypeId();
             }
 
-            if (*pseudoDt.mappedClkTypeName() != *_clkTypeName) {
+            if (*pseudoDt.mappedClkTypeId() != *_clkTypeId) {
                 std::ostringstream ss;
 
                 ss << "Unsigned fixed-length integer type is mapped to a clock type (`" <<
-                      *pseudoDt.mappedClkTypeName() << "` which is "
+                      *pseudoDt.mappedClkTypeId() << "` which is "
                       "different than another mapped clock type (`" <<
-                      *_clkTypeName << "`) within the same data stream type.";
+                      *_clkTypeId << "`) within the same data stream type.";
                 throwTextParseError(ss.str(), pseudoDt.loc());
             }
 
             if (!_pseudoDst->defClkType()) {
                 for (auto& clkType : _pseudoTraceType->clkTypes()) {
-                    assert(clkType->name());
+                    assert(clkType->internalId());
 
-                    if (*clkType->name() == *_clkTypeName) {
+                    if (*clkType->internalId() == *_clkTypeId) {
                         _pseudoDst->defClkType(*clkType);
                     }
                 }
@@ -274,7 +285,7 @@ public:
                     // not found
                     std::ostringstream ss;
 
-                    ss << "`" << *_clkTypeName << "` doesn't name an existing clock type.";
+                    ss << "`" << *_clkTypeId << "` doesn't identify an existing clock type.";
                     throwTextParseError(ss.str(), pseudoDt.loc());
                 }
             }
@@ -319,7 +330,7 @@ private:
 private:
     PseudoTraceType * const _pseudoTraceType;
     PseudoDst * const _pseudoDst;
-    const std::string *_clkTypeName = nullptr;
+    const std::string *_clkTypeId = nullptr;
 };
 
 void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
@@ -1232,7 +1243,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
     auto dispBase = DisplayBase::DECIMAL;
     auto isSigned = false;
     auto hasEncoding = false;
-    boost::optional<std::string> mappedClkTypeName;
+    boost::optional<std::string> mappedClkTypeId;
     boost::optional<TextLocation> mapAttrLoc;
 
     // check attributes
@@ -1272,7 +1283,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
         } else if (attr.name == "signed") {
             isSigned = attr.boolEquiv();
         } else if (attr.name == "map") {
-            mappedClkTypeName = std::move(attr.strVal);
+            mappedClkTypeId = std::move(attr.strVal);
             mapAttrLoc = attr.nameTextLoc();
         } else {
             attr.throwUnknown();
@@ -1296,7 +1307,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
     PseudoDt::UP pseudoDt;
 
     if (isSigned) {
-        if (mappedClkTypeName) {
+        if (mappedClkTypeId) {
             throwTextParseError("Illegal `map` attribute for a fixed-length signed integer type.",
                                 *mapAttrLoc);
         }
@@ -1307,7 +1318,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
                                                            beforeKwLoc);
     } else {
         pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, hasEncoding,
-                                                      mappedClkTypeName, nullptr,
+                                                      mappedClkTypeId, nullptr,
                                                       UnsignedIntegerTypeRoleSet {}, beforeKwLoc);
     }
 
@@ -1563,7 +1574,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                        pseudoUIntType.len(), pseudoUIntType.bo(),
                                                        pseudoUIntType.prefDispBase(), mappings,
                                                        pseudoUIntType.hasEncoding(),
-                                                       pseudoUIntType.mappedClkTypeName(), nullptr,
+                                                       pseudoUIntType.mappedClkTypeId(), nullptr,
                                                        UnsignedIntegerTypeRoleSet {},
                                                        pseudoDt.loc());
         });
@@ -1945,9 +1956,10 @@ bool TsdlParser::_tryParseClkTypeBlock()
 
     std::string name;
     boost::optional<std::string> descr;
-    boost::optional<std::string> uuid;
+    boost::optional<std::string> uuidStr;
+    boost::optional<boost::uuids::uuid> uuid;
     auto freq = 1'000'000'000ULL;
-    auto prec = 0ULL;
+    boost::optional<Cycles> prec;
     auto offsetSecs = 0LL;
     Cycles offsetCycles = 0;
     auto origIsUnixEpoch = false;
@@ -1968,15 +1980,16 @@ bool TsdlParser::_tryParseClkTypeBlock()
             descr = attr.strVal;
         } else if (attr.name == "uuid") {
             attr.checkKind(TsdlAttr::Kind::STR);
+            uuid = TsdlParser::_uuidFromStr(attr.strVal);
 
-            if (!TsdlParser::_uuidFromStr(attr.strVal)) {
+            if (!uuid) {
                 std::ostringstream ss;
 
                 ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            uuid = attr.strVal;
+            uuidStr = attr.strVal;
         } else if (attr.name == "freq") {
             attr.checkKind(TsdlAttr::Kind::UINT);
 
@@ -2048,20 +2061,19 @@ bool TsdlParser::_tryParseClkTypeBlock()
     offsetSecs += completeSecsInOffsetCycles;
 
     // create origin
-    auto origin = [&name, &origIsUnixEpoch, &uuid]() -> boost::optional<ClockOrigin> {
+    auto origin = [&origIsUnixEpoch]() -> boost::optional<ClockOrigin> {
         if (origIsUnixEpoch) {
             return ClockOrigin {};
-        } else if (uuid) {
-            return ClockOrigin {name, *uuid};
         }
 
         return boost::none;
     }();
 
-    auto clkType = ClockType::create(freq, name, descr, std::move(origin), prec,
-                                     ClockOffset {offsetSecs, offsetCycles});
-
-    _pseudoTraceType->clkTypes().insert(std::move(clkType));
+    _pseudoTraceType->clkTypes().insert(ClockType::create(name, boost::none, name, std::move(uuidStr),
+                                                          std::move(uuid), freq, descr,
+                                                          std::move(origin), std::move(prec),
+                                                          boost::none,
+                                                          ClockOffset {offsetSecs, offsetCycles}));
     return true;
 }
 
@@ -2128,7 +2140,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     boost::optional<unsigned int> majorVersion;
     boost::optional<unsigned int> minorVersion;
     boost::optional<ByteOrder> nativeBo;
-    boost::optional<std::string> uid;
+    boost::optional<std::string> uuidStr;
 
     // check attributes
     for (const auto& attr : attrs) {
@@ -2182,7 +2194,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            uid = attr.strVal;
+            uuidStr = attr.strVal;
         } else {
             attr.throwUnknown();
         }
@@ -2207,7 +2219,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     if (_nativeBo) {
         // second time we parse this: create pseudo trace type
         _pseudoTraceType = PseudoTraceType {
-            *majorVersion, *minorVersion, std::move(uid),
+            *majorVersion, *minorVersion, boost::none, boost::none, std::move(uuidStr),
             TraceEnvironment {}, std::move(pseudoPktHeaderType)
         };
     } else {
@@ -2339,7 +2351,7 @@ bool TsdlParser::_tryParseDstBlock()
     }
 
     // create and initialize pseudo data stream type
-    auto pseudoDst = std::make_unique<PseudoDst>(id, boost::none, boost::none,
+    auto pseudoDst = std::make_unique<PseudoDst>(id, boost::none, boost::none, boost::none,
                                                  std::move(pseudoPktCtxType),
                                                  std::move(pseudoErHeaderType),
                                                  std::move(pseudoErCommonCtxType));
@@ -2488,7 +2500,7 @@ bool TsdlParser::_tryParseErtBlock()
     // build event record type object
     dstPseudoOrphanErts.insert(std::make_pair(id, PseudoOrphanErt {
         PseudoErt {
-            id, boost::none, std::move(name), std::move(logLevel),
+            id, boost::none, std::move(name), boost::none, std::move(logLevel),
             std::move(emfUri), std::move(pseudoSpecCtxType),
             std::move(pseudoPayloadType)
         },
@@ -2612,11 +2624,11 @@ TsdlAttr TsdlParser::_expectAttr()
         // parse `.`
         this->_expectToken(".");
 
-        // parse name of clock type
+        // parse internal ID (name) of clock type
         const auto ident = _ss.tryScanIdent();
 
         if (!ident) {
-            throwTextParseError("Expecting identifier (clock type name).", _ss.loc());
+            throwTextParseError("Expecting identifier (clock type internal ID).", _ss.loc());
         }
 
         attr.strVal = *ident;

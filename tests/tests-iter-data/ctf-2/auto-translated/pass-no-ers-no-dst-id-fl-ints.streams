@@ -50,6 +50,7 @@
       "type": "structure"
     },
     "type": "trace-class",
+    "name": "",
     "uid": "78f376a3-dff9-44d9-a37b-dca9ccf8c5ac"
   }
 ]

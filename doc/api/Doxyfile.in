@@ -19,7 +19,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 4
-ALIASES                = yactfr_ctf2="<strong><a href=\"https://diamon.org/ctf/files/CTF2-SPECRC-4.0rA.html\">CTF2-SPECRC-4.0</a></strong>"
+ALIASES                = yactfr_ctf2="<strong><a href=\"https://diamon.org/ctf/files/CTF2-SPECRC-8.0.html\">CTF2-SPECRC-8.0</a></strong>"
 TCL_SUBST              =
 OPTIMIZE_OUTPUT_FOR_C  = NO
 EXTENSION_MAPPING      =

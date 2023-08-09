@@ -11,6 +11,8 @@
 #include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/clk-orig.hpp>
 
+#include "../internal/utils.hpp"
+
 namespace yactfr {
 
 ClockValueInterval::ClockValueInterval(const Cycles lower, const Cycles upper) noexcept :
@@ -49,14 +51,22 @@ ClockOrigin::ClockOrigin(std::string name, std::string uid) :
 {
 }
 
-ClockType::ClockType(const unsigned long long freq, boost::optional<std::string> name,
+ClockType::ClockType(boost::optional<std::string> id, boost::optional<std::string> ns,
+                     boost::optional<std::string> name, boost::optional<std::string> uid,
+                     boost::optional<boost::uuids::uuid> origUuid, unsigned long long freq,
                      boost::optional<std::string> descr, boost::optional<ClockOrigin> orig,
-                     const Cycles prec, const ClockOffset& offsetFromOrig, MapItem::UP userAttrs) :
-    _freq {freq},
+                     boost::optional<Cycles> prec, boost::optional<Cycles> accuracy,
+                     const ClockOffset& offsetFromOrig, MapItem::UP userAttrs) :
+    _id {std::move(id)},
+    _ns {std::move(ns)},
     _name {std::move(name)},
+    _uid {std::move(uid)},
+    _origUuid {std::move(origUuid)},
+    _freq {freq},
     _descr {std::move(descr)},
     _orig {std::move(orig)},
-    _prec {prec},
+    _prec {std::move(prec)},
+    _accuracy {std::move(accuracy)},
     _offsetFromOrig {offsetFromOrig},
     _userAttrs {std::move(userAttrs)}
 {
@@ -64,9 +74,11 @@ ClockType::ClockType(const unsigned long long freq, boost::optional<std::string>
     assert(offsetFromOrig.cycles() < freq);
 }
 
-ClockValueInterval ClockType::clockValueInterval(const Cycles cycles) const noexcept
+ClockValueInterval ClockType::clockValueInterval(const Cycles val) const noexcept
 {
-    return ClockValueInterval {cycles - _prec, cycles + _prec};
+    assert(_prec);
+    assert(_accuracy);
+    return ClockValueInterval {val - *_prec - *_accuracy, val + *_prec + *_accuracy};
 }
 
 } // namespace yactfr

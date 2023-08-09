@@ -19,13 +19,14 @@ namespace yactfr {
 namespace internal {
 namespace strs {
 
+static constexpr auto ACCURACY = "accuracy";
 static constexpr auto ALIGN = "alignment";
 static constexpr auto APP_OCTET_STREAM = "application/octet-stream";
 static constexpr auto BE = "big-endian";
 static constexpr auto BO = "byte-order";
 static constexpr auto CC = "clock-class";
 static constexpr auto CYCLES = "cycles";
-static constexpr auto DEF_CC_NAME = "default-clock-class-name";
+static constexpr auto DEF_CC_ID = "default-clock-class-id";
 static constexpr auto DEF_CLK_TS = "default-clock-timestamp";
 static constexpr auto DESCR = "description";
 static constexpr auto DISC_ER_COUNTER_SNAP = "discarded-event-record-counter-snapshot";

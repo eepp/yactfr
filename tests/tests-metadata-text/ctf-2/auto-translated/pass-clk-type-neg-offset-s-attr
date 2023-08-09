@@ -7,6 +7,7 @@
 }
 {
   "frequency": 1000000000,
+  "id": "salut",
   "name": "salut",
   "offset-from-origin": {
     "cycles": 0,

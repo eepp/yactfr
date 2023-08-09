@@ -2014,6 +2014,16 @@ static JsonObjValReq::PropReqsEntry nsPropReqEntry()
 }
 
 /*
+ * Returns the pair (suitable for insertion into a
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 object unique ID
+ * object property requirement.
+ */
+static JsonObjValReq::PropReqsEntry uidPropReqEntry(const bool isRequired)
+{
+    return {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
+}
+
+/*
  * CTF 2 JSON clock origin value requirement.
  */
 class JsonClkOrigValReq final :
@@ -2024,7 +2034,7 @@ public:
         JsonObjValReq {{
             nsPropReqEntry(),
             namePropReqEntry(true),
-            {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR), true}},
+            uidPropReqEntry(true),
         }}
     {
     }
@@ -2066,7 +2076,10 @@ private:
         try {
             if (jsonVal.isStr()) {
                 if (*jsonVal.asStr() != strs::UNIX_EPOCH) {
-                    throwTextParseError("Expecting `unix-epoch`.", jsonVal.loc());
+                    std::ostringstream ss;
+
+                    ss << "Expecting `" << strs::UNIX_EPOCH << "` or a clock origin object.";
+                    throwTextParseError(ss.str(), jsonVal.loc());
                 }
             } else {
                 if (!jsonVal.isObj()) {
@@ -2086,6 +2099,16 @@ private:
 };
 
 /*
+ * Returns the pair (suitable for insertion into a
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 object numeric ID
+ * object property requirement.
+ */
+static JsonObjValReq::PropReqsEntry idPropReqEntry()
+{
+    return {strs::ID, {JsonValReq::shared(JsonVal::Kind::UINT)}};
+}
+
+/*
  * CTF 2 clock type fragment value requirement.
  */
 class JsonClkTypeFragValReq final :
@@ -2094,12 +2117,16 @@ class JsonClkTypeFragValReq final :
 public:
     explicit JsonClkTypeFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            namePropReqEntry(true),
+            {strs::ID, {JsonValReq::shared(JsonVal::Kind::STR), true}},
+            nsPropReqEntry(),
+            namePropReqEntry(false),
+            uidPropReqEntry(false),
             {strs::FREQ, {JsonUIntValInRangeReq::shared(1, boost::none), true}},
             {strs::DESCR, {JsonValReq::shared(JsonVal::Kind::STR)}},
             {strs::ORIG, {JsonClkTypeOrigPropValReq::shared()}},
             {strs::OFFSET_FROM_ORIG, {JsonClkOffsetValReq::shared()}},
             {strs::PREC, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::ACCURACY, {JsonValReq::shared(JsonVal::Kind::UINT)}},
         }}
     {
     }
@@ -2205,7 +2232,9 @@ class JsonTraceTypeFragValReq final :
 public:
     explicit JsonTraceTypeFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            nsPropReqEntry(),
+            namePropReqEntry(false),
+            uidPropReqEntry(false),
             anyDtPropReqEntry(strs::PKT_HEADER_FC, _anyFullDtValReq),
             {strs::ENV, {JsonTraceEnvValReq::shared()}},
         }}
@@ -2238,16 +2267,6 @@ private:
 };
 
 /*
- * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 object numeric ID
- * object property requirement.
- */
-static JsonObjValReq::PropReqsEntry idPropReqEntry()
-{
-    return {strs::ID, {JsonValReq::shared(JsonVal::Kind::UINT)}};
-}
-
-/*
  * CTF 2 data stream type fragment value requirement.
  */
 class JsonDstFragValReq final :
@@ -2256,10 +2275,11 @@ class JsonDstFragValReq final :
 public:
     explicit JsonDstFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            namePropReqEntry(false),
             nsPropReqEntry(),
+            namePropReqEntry(false),
+            uidPropReqEntry(false),
             idPropReqEntry(),
-            {strs::DEF_CC_NAME, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            {strs::DEF_CC_ID, {JsonValReq::shared(JsonVal::Kind::STR)}},
             anyDtPropReqEntry(strs::PKT_CTX_FC, _anyFullDtValReq),
             anyDtPropReqEntry(strs::ER_HEADER_FC, _anyFullDtValReq),
             anyDtPropReqEntry(strs::ER_COMMON_CTX_FC, _anyFullDtValReq),
@@ -2301,8 +2321,9 @@ class JsonErtFragValReq final :
 public:
     explicit JsonErtFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            namePropReqEntry(false),
             nsPropReqEntry(),
+            namePropReqEntry(false),
+            uidPropReqEntry(false),
             idPropReqEntry(),
             {strs::DSC_ID, {JsonValReq::shared(JsonVal::Kind::UINT)}},
             anyDtPropReqEntry(strs::SPEC_CTX_FC, _anyFullDtValReq),

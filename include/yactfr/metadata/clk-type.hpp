@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2023 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,6 +13,7 @@
 #include <utility>
 #include <boost/core/noncopyable.hpp>
 #include <boost/optional.hpp>
+#include <boost/uuid/uuid.hpp>
 
 #include "aliases.hpp"
 #include "clk-offset.hpp"
@@ -42,8 +43,22 @@ public:
     @brief
         Builds a clock type.
 
+    @param[in] internalId
+        ID internal to the trace type containing this type.
+    @param[in] nameSpace
+        Namespace of data stream clocks described by this type.
     @param[in] name
-        Name.
+        Name of data stream clocks described by this type.
+    @param[in] uid
+        Unique ID of data stream clocks described by this type.
+    @param[in] originalUuid
+        @parblock
+        Original UUID of data stream clocks described by this type.
+
+        This is only relevant when the TraceType::majorVersion() method
+        for the trace type which will contain this clock type
+        will return&nbsp;1.
+        @endparblock
     @param[in] frequency
         Frequency (Hz) of data stream clocks described by this type.
     @param[in] description
@@ -52,7 +67,11 @@ public:
         Origin of data stream clocks described by this type, or
         \c boost::none if the origin is unknown.
     @param[in] precision
-        Precision (cycles) of data stream clocks described by this type.
+        Precision (cycles) of data stream clocks described by this type,
+        or \c boost::none if the precision is unknown.
+    @param[in] accuracy
+        Accuracy (cycles) of data stream clocks described by this type,
+        or \c boost::none if the accuracy is unknown.
     @param[in] offsetFromOrigin
         Offset from origin of data stream clocks described by this type.
     @param[in] userAttributes
@@ -67,11 +86,14 @@ public:
     @pre
         <code>offset.cycles()</code> is less than \p frequency.
     */
-    explicit ClockType(unsigned long long frequency,
-                       boost::optional<std::string> name = boost::none,
-                       boost::optional<std::string> description = boost::none,
-                       boost::optional<ClockOrigin> origin = boost::none, Cycles precision = 0,
-                       const ClockOffset& offsetFromOrigin = ClockOffset {},
+    explicit ClockType(boost::optional<std::string> internalId,
+                       boost::optional<std::string> nameSpace,
+                       boost::optional<std::string> name,
+                       boost::optional<std::string> uid,
+                       boost::optional<boost::uuids::uuid> originalUuid,
+                       unsigned long long frequency, boost::optional<std::string> description,
+                       boost::optional<ClockOrigin> origin, boost::optional<Cycles> precision,
+                       boost::optional<Cycles> accuracy, const ClockOffset& offsetFromOrigin,
                        MapItem::UP userAttributes = nullptr);
 
     /*!
@@ -94,10 +116,40 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Name.
+    /// ID internal to the trace type containing this type.
+    const boost::optional<std::string>& internalId() const noexcept
+    {
+        return _id;
+    }
+
+    /// Namespace of data stream clocks described by this type.
+    const boost::optional<std::string>& nameSpace() const noexcept
+    {
+        return _ns;
+    }
+
+    /// Name of data stream clocks described by this type.
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
+    }
+
+    /// Unique ID of data stream clocks described by this type.
+    const boost::optional<std::string>& uid() const noexcept
+    {
+        return _uid;
+    }
+
+    /*!
+    @brief
+        Original UUID of data stream clocks described by this type.
+
+    This is only relevant when the TraceType::majorVersion() method for
+    the trace type containing this clock type returns&nbsp;1.
+    */
+    const boost::optional<boost::uuids::uuid>& originalUuid() const noexcept
+    {
+        return _origUuid;
     }
 
     /// Frequency (Hz) of data stream clocks described by this type.
@@ -106,8 +158,11 @@ public:
         return _freq;
     }
 
-    /// Origin of data stream clocks described by this type, or
-    /// \c boost::none if the origin is unknown.
+    /*!
+    @brief
+        Origin of data stream clocks described by this type, or
+        \c boost::none if the origin is unknown.
+    */
     const boost::optional<ClockOrigin>& origin() const noexcept
     {
         return _orig;
@@ -119,10 +174,24 @@ public:
         return _descr;
     }
 
-    /// Precision (cycles) of data stream clocks described by this type.
-    Cycles precision() const noexcept
+    /*!
+    @brief
+        Precision (cycles) of data stream clocks described by this type
+        (\c boost::none means unknown).
+    */
+    const boost::optional<Cycles>& precision() const noexcept
     {
         return _prec;
+    }
+
+    /*!
+    @brief
+        Accuracy (cycles) of data stream clocks described by this type
+        (\c boost::none means unknown).
+    */
+    const boost::optional<Cycles>& accuracy() const noexcept
+    {
+        return _accuracy;
     }
 
     /// Offset from origin of data stream clocks described by this type.
@@ -133,19 +202,25 @@ public:
 
     /*!
     @brief
-        Returns the interval of possible data stream clock values for a
-        given value \p cycles considering the precision (precision())
-        of this clock type.
+        Returns the interval of possible \em true data stream clock
+        values for a given value \p cycles considering the precision
+        (precision()) and accuracy (accuracy()) of data stream clocks
+        described by this type.
 
-    @param[in] cycles
+    @param[in] value
         Data stream clock value for which to get the interval of
-        possible values considering the precision of this clock type.
+        possible true values considering the precision and accuracy
+        of this clock type.
 
     @returns
         Interval of possible values for \p cycles considering the
         precision of this clock type.
+
+    @pre
+        Both the precision() and accuracy() methods for this clock type
+        return a value.
     */
-    ClockValueInterval clockValueInterval(Cycles cycles) const noexcept;
+    ClockValueInterval clockValueInterval(Cycles value) const noexcept;
 
     /*!
     @brief
@@ -163,11 +238,16 @@ public:
     }
 
 private:
-    const unsigned long long _freq;
+    const boost::optional<std::string> _id;
+    const boost::optional<std::string> _ns;
     const boost::optional<std::string> _name;
+    const boost::optional<std::string> _uid;
+    boost::optional<boost::uuids::uuid> _origUuid;
+    const unsigned long long _freq;
     const boost::optional<std::string> _descr;
     const boost::optional<ClockOrigin> _orig;
-    const Cycles _prec;
+    const boost::optional<Cycles> _prec;
+    const boost::optional<Cycles> _accuracy;
     const ClockOffset _offsetFromOrig;
     const MapItem::UP _userAttrs;
 };

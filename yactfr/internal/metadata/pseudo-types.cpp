@@ -121,7 +121,7 @@ WithUserAttrsMixin::WithUserAttrsMixin(MapItem::UP userAttrs) :
 PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
                                    const ByteOrder bo, const DisplayBase prefDispBase,
                                    const bool hasEncoding,
-                                   boost::optional<std::string> mappedClkTypeName,
+                                   boost::optional<std::string> mappedClkTypeId,
                                    MapItem::UP userAttrs, UnsignedIntegerTypeRoleSet roles,
                                    TextLocation loc) :
     PseudoDt {std::move(loc)},
@@ -131,7 +131,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
     _bo {bo},
     _prefDispBase {prefDispBase},
     _hasEncoding {hasEncoding},
-    _mappedClkTypeName {std::move(mappedClkTypeName)},
+    _mappedClkTypeId {std::move(mappedClkTypeId)},
     _roles {std::move(roles)}
 {
 }
@@ -139,7 +139,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
 PseudoDt::UP PseudoFlUIntType::clone() const
 {
     return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
-                                              _mappedClkTypeName,
+                                              _mappedClkTypeId,
                                               tryCloneUserAttrs(this->userAttrs()), this->roles(),
                                               this->loc());
 }
@@ -173,12 +173,12 @@ PseudoFlUEnumType::PseudoFlUEnumType(const unsigned int align, const unsigned in
                                      const ByteOrder bo, const DisplayBase prefDispBase,
                                      FixedLengthUnsignedEnumerationType::Mappings mappings,
                                      const bool hasEncoding,
-                                     boost::optional<std::string> mappedClkTypeName,
+                                     boost::optional<std::string> mappedClkTypeId,
                                      MapItem::UP userAttrs, UnsignedIntegerTypeRoleSet roles,
                                      TextLocation loc) :
     PseudoFlUIntType {
         align, len, bo, prefDispBase, hasEncoding,
-        std::move(mappedClkTypeName), std::move(userAttrs),
+        std::move(mappedClkTypeId), std::move(userAttrs),
         std::move(roles), std::move(loc)
     },
     _mappings {std::move(mappings)}
@@ -189,7 +189,7 @@ PseudoDt::UP PseudoFlUEnumType::clone() const
 {
     return std::make_unique<PseudoFlUEnumType>(this->align(), this->len(), this->bo(),
                                                this->prefDispBase(), _mappings,
-                                               this->hasEncoding(), this->mappedClkTypeName(),
+                                               this->hasEncoding(), this->mappedClkTypeId(),
                                                tryCloneUserAttrs(this->userAttrs()), this->roles(),
                                                this->loc());
 }
@@ -563,13 +563,15 @@ void PseudoOptWithIntSelType::accept(ConstPseudoDtVisitor& visitor) const
 }
 
 PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
-                     boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
-                     boost::optional<std::string> emfUri, PseudoDt::UP pseudoSpecCtxType,
-                     PseudoDt::UP pseudoPayloadType, MapItem::UP userAttrs) :
+                     boost::optional<std::string> name, boost::optional<std::string> uid,
+                     boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
+                     PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType,
+                     MapItem::UP userAttrs) :
     WithUserAttrsMixin {std::move(userAttrs)},
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
+    _uid {std::move(uid)},
     _logLevel {std::move(logLevel)},
     _emfUri {std::move(emfUri)},
     _pseudoSpecCtxType {std::move(pseudoSpecCtxType)},
@@ -611,14 +613,14 @@ static bool isFlUIntNotDtWrapper(const PseudoDt& pseudoDt) noexcept
            pseudoDt.kind() == PseudoDt::Kind::FL_UENUM;
 }
 
-static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
+static auto validateNoMappedClkTypeId(const PseudoDt& basePseudoDt)
 {
     const auto pseudoDts = findPseudoUIntTypes(basePseudoDt, [](auto& pseudoIntType, auto) {
         if (!isFlUIntNotDtWrapper(pseudoIntType)) {
             return false;
         }
 
-        return static_cast<const PseudoFlUIntType&>(pseudoIntType).mappedClkTypeName().has_value();
+        return static_cast<const PseudoFlUIntType&>(pseudoIntType).mappedClkTypeId().has_value();
     });
 
     if (!pseudoDts.empty()) {
@@ -629,11 +631,11 @@ static auto validateNoMappedClkTypeName(const PseudoDt& basePseudoDt)
     }
 }
 
-void PseudoErt::_validateNoMappedClkTypeName() const
+void PseudoErt::_validateNoMappedClkTypeId() const
 {
     if (_pseudoSpecCtxType) {
         try {
-            validateNoMappedClkTypeName(*_pseudoSpecCtxType);
+            validateNoMappedClkTypeId(*_pseudoSpecCtxType);
         } catch (TextParseError& exc) {
             std::ostringstream ss;
 
@@ -645,7 +647,7 @@ void PseudoErt::_validateNoMappedClkTypeName() const
 
     if (_pseudoPayloadType) {
         try {
-            validateNoMappedClkTypeName(*_pseudoPayloadType);
+            validateNoMappedClkTypeId(*_pseudoPayloadType);
         } catch (TextParseError& exc) {
             std::ostringstream ss;
 
@@ -824,7 +826,7 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
 {
     try {
         this->_validateNotEmpty(pseudoDst);
-        this->_validateNoMappedClkTypeName();
+        this->_validateNoMappedClkTypeId();
 
         try {
             // validate unsigned integer type roles
@@ -863,13 +865,15 @@ PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
 }
 
 PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
-                     boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
-                     PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
-                     const ClockType * const defClkType, MapItem::UP userAttrs) :
+                     boost::optional<std::string> name, boost::optional<std::string> uid,
+                     PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
+                     PseudoDt::UP pseudoErCommonCtxType, const ClockType * const defClkType,
+                     MapItem::UP userAttrs) :
     WithUserAttrsMixin {std::move(userAttrs)},
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
+    _uid {std::move(uid)},
     _pseudoPktCtxType {std::move(pseudoPktCtxType)},
     _pseudoErHeaderType {std::move(pseudoErHeaderType)},
     _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)},
@@ -968,11 +972,11 @@ void PseudoDst::_validateErCommonCtxType() const
     }
 }
 
-void PseudoDst::_validateNoMappedClkTypeName() const
+void PseudoDst::_validateNoMappedClkTypeId() const
 {
     if (_pseudoErCommonCtxType) {
         try {
-            validateNoMappedClkTypeName(*_pseudoErCommonCtxType);
+            validateNoMappedClkTypeId(*_pseudoErCommonCtxType);
         } catch (TextParseError& exc) {
             std::ostringstream ss;
 
@@ -989,7 +993,7 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
         this->_validatePktCtxType();
         this->_validateErHeaderType(pseudoErts);
         this->_validateErCommonCtxType();
-        this->_validateNoMappedClkTypeName();
+        this->_validateNoMappedClkTypeId();
     } catch (TextParseError& exc) {
         std::ostringstream ss;
 
@@ -1000,28 +1004,32 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 }
 
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
+                                 boost::optional<std::string> ns,
+                                 boost::optional<std::string> name,
                                  boost::optional<std::string> uid, TraceEnvironment env,
                                  PseudoDt::UP pseudoPktHeaderType, MapItem::UP userAttrs) :
     WithUserAttrsMixin {std::move(userAttrs)},
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
+    _ns {std::move(ns)},
+    _name {std::move(name)},
     _uid {std::move(uid)},
     _env {std::move(env)},
     _pseudoPktHeaderType {std::move(pseudoPktHeaderType)}
 {
 }
 
-bool PseudoTraceType::hasClkType(const std::string& name) const noexcept
+bool PseudoTraceType::hasClkType(const std::string& id) const noexcept
 {
-    return this->findClkType(name);
+    return this->findClkType(id);
 }
 
-const ClockType *PseudoTraceType::findClkType(const std::string& name) const noexcept
+const ClockType *PseudoTraceType::findClkType(const std::string& id) const noexcept
 {
     const auto it = std::find_if(_clkTypes.begin(), _clkTypes.end(),
-                                 [&name](auto& clkType) {
-        assert(clkType->name());
-        return *clkType->name() == name;
+                                 [&id](auto& clkType) {
+        assert(clkType->internalId());
+        return *clkType->internalId() == id;
     });
 
     if (it == _clkTypes.end()) {
@@ -1172,7 +1180,7 @@ void PseudoTraceType::validate() const
             }
 
             // no mapped clock type within the packet header type
-            validateNoMappedClkTypeName(*_pseudoPktHeaderType);
+            validateNoMappedClkTypeId(*_pseudoPktHeaderType);
 
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoPktHeaderType.get(), {

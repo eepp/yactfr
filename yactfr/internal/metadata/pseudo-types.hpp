@@ -18,6 +18,7 @@
 #include <boost/variant.hpp>
 
 #include <yactfr/aliases.hpp>
+#include <yactfr/metadata/aliases.hpp>
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/int-range-set.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
@@ -278,8 +279,8 @@ private:
  * This is needed because:
  *
  * * During the decoding process, a TSDL fixed-length unsigned integer
- *   type may be mapped to a clock type by name, and we want to keep
- *   this name for validation and role creation purposes.
+ *   type may be mapped to a clock type by internal ID, and we want to
+ *   keep this ID for validation and role creation purposes.
  *
  * * A TSDL fixed-length unsigned integer type may have an implicit
  *   role, but we need its structure member type name to assign it.
@@ -289,7 +290,7 @@ private:
  *   string types; a yactfr fixed-length integer type has no encoding.
  *
  * Keep an unmapped fixed-length unsigned integer type here as well as
- * the _name_ of the mapped clock type, if any.
+ * the _internal ID_ of the mapped clock type, if any.
  */
 class PseudoFlUIntType :
     public PseudoDt,
@@ -298,7 +299,7 @@ class PseudoFlUIntType :
 public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
                               DisplayBase prefDispBase, bool hasEncoding = false,
-                              boost::optional<std::string> mappedClkTypeName = boost::none,
+                              boost::optional<std::string> mappedClkTypeId = boost::none,
                               MapItem::UP userAttrs = nullptr,
                               UnsignedIntegerTypeRoleSet roles = {},
                               TextLocation loc = TextLocation {});
@@ -340,14 +341,14 @@ public:
         return _hasEncoding;
     }
 
-    const boost::optional<std::string>& mappedClkTypeName() const noexcept
+    const boost::optional<std::string>& mappedClkTypeId() const noexcept
     {
-        return _mappedClkTypeName;
+        return _mappedClkTypeId;
     }
 
-    void mappedClkTypeName(std::string name) noexcept
+    void mappedClkTypeId(std::string id) noexcept
     {
-        _mappedClkTypeName = std::move(name);
+        _mappedClkTypeId = std::move(id);
     }
 
     const UnsignedIntegerTypeRoleSet& roles() const noexcept
@@ -371,7 +372,7 @@ private:
     ByteOrder _bo;
     DisplayBase _prefDispBase;
     bool _hasEncoding;
-    boost::optional<std::string> _mappedClkTypeName;
+    boost::optional<std::string> _mappedClkTypeId;
     UnsignedIntegerTypeRoleSet _roles;
 };
 
@@ -386,7 +387,7 @@ public:
                                DisplayBase prefDispBase,
                                FixedLengthUnsignedEnumerationType::Mappings mappings,
                                bool hasEncoding = false,
-                               boost::optional<std::string> mappedClkTypeName = boost::none,
+                               boost::optional<std::string> mappedClkTypeId = boost::none,
                                MapItem::UP userAttrs = nullptr,
                                UnsignedIntegerTypeRoleSet roles = {},
                                TextLocation loc = TextLocation {});
@@ -922,9 +923,10 @@ class PseudoErt final :
 {
 public:
     explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
-                       boost::optional<std::string> name, boost::optional<LogLevel> logLevel,
-                       boost::optional<std::string> emfUri, PseudoDt::UP pseudoSpecCtxType,
-                       PseudoDt::UP pseudoPayloadType, MapItem::UP userAttrs = nullptr);
+                       boost::optional<std::string> name, boost::optional<std::string> uid,
+                       boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
+                       PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType,
+                       MapItem::UP userAttrs = nullptr);
 
     PseudoErt(const PseudoErt&) = delete;
     PseudoErt(PseudoErt&&) = default;
@@ -950,6 +952,11 @@ public:
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
+    }
+
+    const boost::optional<std::string>& uid() const noexcept
+    {
+        return _uid;
     }
 
     const boost::optional<LogLevel>& logLevel() const noexcept
@@ -984,12 +991,13 @@ public:
 
 private:
     void _validateNotEmpty(const PseudoDst& pseudoDst) const;
-    void _validateNoMappedClkTypeName() const;
+    void _validateNoMappedClkTypeId() const;
 
 private:
     TypeId _id = 0;
     boost::optional<std::string> _ns;
     boost::optional<std::string> _name;
+    boost::optional<std::string> _uid;
     boost::optional<LogLevel> _logLevel;
     boost::optional<std::string> _emfUri;
     PseudoDt::UP _pseudoSpecCtxType;
@@ -1010,9 +1018,10 @@ class PseudoDst final :
 public:
     explicit PseudoDst() = default;
     explicit PseudoDst(TypeId id, boost::optional<std::string> ns,
-                       boost::optional<std::string> name, PseudoDt::UP pseudoPktCtxType,
-                       PseudoDt::UP pseudoErHeaderType, PseudoDt::UP pseudoErCommonCtxType,
-                       const ClockType *defClkType = nullptr, MapItem::UP userAttrs = nullptr);
+                       boost::optional<std::string> name, boost::optional<std::string> uid,
+                       PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
+                       PseudoDt::UP pseudoErCommonCtxType, const ClockType *defClkType = nullptr,
+                       MapItem::UP userAttrs = nullptr);
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -1039,6 +1048,11 @@ public:
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
+    }
+
+    const boost::optional<std::string>& uid() const noexcept
+    {
+        return _uid;
     }
 
     const PseudoDt *pseudoPktCtxType() const noexcept
@@ -1085,12 +1099,13 @@ private:
     void _validatePktCtxType() const;
     void _validateErHeaderType(const PseudoErtSet& pseudoErts) const;
     void _validateErCommonCtxType() const;
-    void _validateNoMappedClkTypeName() const;
+    void _validateNoMappedClkTypeId() const;
 
 private:
     TypeId _id = 0;
     boost::optional<std::string> _ns;
     boost::optional<std::string> _name;
+    boost::optional<std::string> _uid;
     PseudoDt::UP _pseudoPktCtxType;
     PseudoDt::UP _pseudoErHeaderType;
     PseudoDt::UP _pseudoErCommonCtxType;
@@ -1141,6 +1156,8 @@ public:
 
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
+                             boost::optional<std::string> ns = boost::none,
+                             boost::optional<std::string> name = boost::none,
                              boost::optional<std::string> uid = boost::none,
                              TraceEnvironment env = TraceEnvironment {},
                              PseudoDt::UP pseudoPktHeaderType = nullptr,
@@ -1160,6 +1177,16 @@ public:
     unsigned int minorVersion() const noexcept
     {
         return _minorVersion;
+    }
+
+    const boost::optional<std::string>& ns() const noexcept
+    {
+        return _ns;
+    }
+
+    const boost::optional<std::string>& name() const noexcept
+    {
+        return _name;
     }
 
     const boost::optional<std::string>& uid() const noexcept
@@ -1197,8 +1224,8 @@ public:
         return _clkTypes;
     }
 
-    bool hasClkType(const std::string& name) const noexcept;
-    const ClockType *findClkType(const std::string& name) const noexcept;
+    bool hasClkType(const std::string& id) const noexcept;
+    const ClockType *findClkType(const std::string& id) const noexcept;
 
     const PseudoDsts& pseudoDsts() const noexcept
     {
@@ -1227,6 +1254,8 @@ public:
 private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
+    boost::optional<std::string> _ns;
+    boost::optional<std::string> _name;
     boost::optional<std::string> _uid;
     TraceEnvironment _env;
     PseudoDt::UP _pseudoPktHeaderType;

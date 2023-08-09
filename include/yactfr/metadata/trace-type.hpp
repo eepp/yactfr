@@ -13,6 +13,8 @@
 #include <string>
 #include <boost/optional.hpp>
 
+#include <yactfr/metadata/aliases.hpp>
+
 #include "clk-type.hpp"
 #include "dst.hpp"
 #include "dt.hpp"
@@ -25,12 +27,12 @@ namespace internal {
 
 class TraceTypeImpl;
 
-struct ClkTypeNameComp final
+struct ClkTypeAddrComp final
 {
     bool operator()(const std::unique_ptr<const ClockType>& a,
                     const std::unique_ptr<const ClockType>& b) const
     {
-        return a->name() < b->name();
+        return a.get() < b.get();
     }
 };
 
@@ -47,11 +49,11 @@ struct DstIdComp final
 
 /*!
 @brief
-    Set of clock types with unique names.
+    Set of clock types with unique internal IDs.
 
 @ingroup metadata
 */
-using ClockTypeSet = std::set<std::unique_ptr<const ClockType>, internal::ClkTypeNameComp>;
+using ClockTypeSet = std::set<std::unique_ptr<const ClockType>, internal::ClkTypeAddrComp>;
 
 /*!
 @brief
@@ -88,6 +90,10 @@ public:
         Major version.
     @param[in] minorVersion
         Minor version.
+    @param[in] nameSpace
+        Namespace of traces described by this trace type.
+    @param[in] name
+        Name of traces described by this trace type.
     @param[in] uid
         Unique ID of traces described by this trace type.
     @param[in] environment
@@ -120,6 +126,11 @@ public:
         For each \link DataStreamType data stream type\endlink \em DST
         of \p dataStreamTypes, if \em DST has a default clock type, it
         points to one of the clock types of \p clockTypes.
+
+        For each \link ClockType clock type\endlink \em CT of
+        \p clockTypes, if the ClockType::internalId() method for \em CT
+        returns a value, then this method doesn't return the same value
+        for any other clock type in \p clockTypes.
 
         The data types of \p packetHeaderType and of
         \p dataStreamTypes, recursively, have
@@ -179,6 +190,7 @@ public:
         @endparblock
     */
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
+                       boost::optional<std::string> nameSpace, boost::optional<std::string> name,
                        boost::optional<std::string> uid, TraceEnvironment environment,
                        StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
                        DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
@@ -209,11 +221,17 @@ public:
      */
     ~TraceType();
 
-    /// Major version.
+    /// Major version (1 or 2).
     unsigned int majorVersion() const noexcept;
 
-    /// Minor version.
+    /// Minor version (8 or 0).
     unsigned int minorVersion() const noexcept;
+
+    /// Trace namespace.
+    const boost::optional<std::string>& nameSpace() const noexcept;
+
+    /// Trace name.
+    const boost::optional<std::string>& name() const noexcept;
 
     /// Trace unique ID.
     const boost::optional<std::string>& uid() const noexcept;

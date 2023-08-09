@@ -921,23 +921,23 @@ private:
                                      const typename FlEnumTypeT::Mappings& mappings) const;
 
     /*
-     * Sets an implicit mapped clock type name for specific pseudo
-     * fixed-length unsigned integer types named `memberTypeName` within
-     * `basePseudoDt`.
+     * Sets an implicit mapped clock type internal ID for specific
+     * pseudo fixed-length unsigned integer types named `memberTypeName`
+     * within `basePseudoDt`.
      */
-    void _setImplicitMappedClkTypeName(PseudoDt& basePseudoDt, const std::string& memberTypeName);
+    void _setImplicitMappedClkTypeId(PseudoDt& basePseudoDt, const std::string& memberTypeName);
 
     /*
-     * Sets an implicit mapped clock type name for specific pseudo
-     * fixed-length unsigned integer types.
+     * Sets an implicit mapped clock type internal ID for specific
+     * pseudo fixed-length unsigned integer types.
      */
-    void _setImplicitMappedClkTypeName();
+    void _setImplicitMappedClkTypeId();
 
     /*
      * Add the role `role` to all pseudo fixed-length unsigned integer
      * types named `name` within `basePseudoDt`.
      */
-    template <bool OnlyIfMappedClkTypeName = false>
+    template <bool OnlyIfMappedClkTypeId = false>
     void _addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt, const std::string& name,
                                    UnsignedIntegerTypeRole role);
 
@@ -1188,7 +1188,7 @@ void TsdlParser::_validateFlEnumTypeMappings(const Size len, const TextLocation&
     }
 }
 
-template <bool OnlyIfMappedClkTypeName>
+template <bool OnlyIfMappedClkTypeId>
 void TsdlParser::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
                                            const std::string& memberTypeName,
                                            const UnsignedIntegerTypeRole role)
@@ -1197,7 +1197,7 @@ void TsdlParser::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
         assert(pseudoDt->isFlUInt());
         auto& pseudoIntType = static_cast<PseudoFlUIntType&>(*pseudoDt);
 
-        if (OnlyIfMappedClkTypeName && !pseudoIntType.mappedClkTypeName()) {
+        if (OnlyIfMappedClkTypeId && !pseudoIntType.mappedClkTypeId()) {
             continue;
         }
 

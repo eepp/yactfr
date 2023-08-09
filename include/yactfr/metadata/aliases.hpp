@@ -8,6 +8,9 @@
 #ifndef _YACTFR_METADATA_ALIASES_HPP
 #define _YACTFR_METADATA_ALIASES_HPP
 
+#include <utility>
+#include <string>
+
 namespace yactfr {
 
 /*!

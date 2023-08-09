@@ -16,13 +16,14 @@
 namespace yactfr {
 
 DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
-                               boost::optional<std::string> name, EventRecordTypeSet&& erts,
-                               StructureType::UP pktCtxType, StructureType::UP erHeaderType,
-                               StructureType::UP erCommonCtxType,
+                               boost::optional<std::string> name, boost::optional<std::string> uid,
+                               EventRecordTypeSet&& erts, StructureType::UP pktCtxType,
+                               StructureType::UP erHeaderType, StructureType::UP erCommonCtxType,
                                const ClockType * const defClkType, MapItem::UP userAttrs) :
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
+    _uid {std::move(uid)},
     _erts {std::move(erts)},
     _pktCtxType {std::move(pktCtxType)},
     _erHeaderType {std::move(erHeaderType)},
@@ -39,7 +40,7 @@ DataStreamType::DataStreamType(const TypeId id, EventRecordTypeSet&& erts,
                                StructureType::UP erCommonCtxType,
                                const ClockType * const defClkType, MapItem::UP userAttrs) :
     DataStreamType {
-        id, boost::none, boost::none, std::move(erts),
+        id, boost::none, boost::none, boost::none, std::move(erts),
         std::move(pktCtxType), std::move(erHeaderType), std::move(erCommonCtxType),
         defClkType, std::move(userAttrs)
     }

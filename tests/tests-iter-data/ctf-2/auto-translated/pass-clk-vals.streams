@@ -24,22 +24,28 @@
     "type": "trace-class"
   },
   {
-    "frequency": 1000000000,
+    "id": "grandiose",
     "name": "grandiose",
+    "uid": "",
+    "frequency": 1000000000,
     "type": "clock-class"
   },
   {
-    "frequency": 1000000000,
+    "id": "salut",
     "name": "salut",
-    "type": "clock-class"
-  },
-  {
+    "uid": "",
     "frequency": 1000000000,
-    "name": "snails",
     "type": "clock-class"
   },
   {
-    "default-clock-class-name": "grandiose",
+    "id": "snails",
+    "name": "snails",
+    "uid": "",
+    "frequency": 1000000000,
+    "type": "clock-class"
+  },
+  {
+    "default-clock-class-id": "grandiose",
     "event-record-header-field-class": {
       "member-classes": [
         {
@@ -119,7 +125,7 @@
     "type": "event-record-class"
   },
   {
-    "default-clock-class-name": "salut",
+    "default-clock-class-id": "salut",
     "id": 5,
     "packet-context-field-class": {
       "member-classes": [

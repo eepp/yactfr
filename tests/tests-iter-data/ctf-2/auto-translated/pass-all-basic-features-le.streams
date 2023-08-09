@@ -62,15 +62,18 @@
       "type": "structure"
     },
     "type": "trace-class",
+    "name": "",
     "uid": "3b446657-46f1-4ef5-9c37-08ee57081d5b"
   },
   {
-    "frequency": 1000000000,
+    "id": "def",
     "name": "def",
+    "uid": "",
+    "frequency": 1000000000,
     "type": "clock-class"
   },
   {
-    "default-clock-class-name": "def",
+    "default-clock-class-id": "def",
     "event-record-common-context-field-class": {
       "member-classes": [
         {

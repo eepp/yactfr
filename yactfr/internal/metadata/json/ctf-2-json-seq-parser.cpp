@@ -150,14 +150,6 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
         throwTextParseError("Duplicate trace type fragment.", jsonFrag.loc());
     }
 
-    // unique ID
-    boost::optional<std::string> uid;
-    const auto jsonUidVal = jsonFrag[strs::UID];
-
-    if (jsonUidVal) {
-        uid = *jsonUidVal->asStr();
-    }
-
     // environment
     TraceEnvironment::Entries envEntries;
 
@@ -181,7 +173,9 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
 
     try {
         _pseudoTraceType = PseudoTraceType {
-            2, 0, std::move(uid), TraceEnvironment {std::move(envEntries)},
+            2, 0, optStrOfObj(jsonFrag, strs::NS), optStrOfObj(jsonFrag, strs::NAME),
+            optStrOfObj(jsonFrag, strs::UID),
+            TraceEnvironment {std::move(envEntries)},
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::PKT_HEADER_FC),
             userAttrsOfObj(jsonFrag)
         };
@@ -195,13 +189,13 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
 {
     this->_ensureExistingPseudoTraceType();
 
-    // name
-    auto name = jsonFrag.getRawStrVal(strs::NAME);
+    // internal ID
+    auto id = jsonFrag.getRawStrVal(strs::ID);
 
-    if (_pseudoTraceType->hasClkType(name)) {
+    if (_pseudoTraceType->hasClkType(id)) {
         std::ostringstream ss;
 
-        ss << "Duplicate clock type fragment named `" << name << "`.";
+        ss << "Duplicate clock type fragment with internal ID `" << id << "`.";
         throwTextParseError(ss.str(), jsonFrag.loc());
     }
 
@@ -238,9 +232,13 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
     }
 
     // create corresponding clock type
-    auto clkType = ClockType::create(jsonFrag.getRawUIntVal(strs::FREQ), std::move(name),
+    auto clkType = ClockType::create(std::move(id), optStrOfObj(jsonFrag, strs::NS),
+                                     optStrOfObj(jsonFrag, strs::NAME),
+                                     optStrOfObj(jsonFrag, strs::UID), boost::none,
+                                     jsonFrag.getRawUIntVal(strs::FREQ),
                                      optStrOfObj(jsonFrag, strs::DESCR), std::move(orig),
-                                     jsonFrag.getRawVal(strs::PREC, 0ULL),
+                                     optUIntOfObj(jsonFrag, strs::PREC),
+                                     optUIntOfObj(jsonFrag, strs::ACCURACY),
                                      ClockOffset {offsetFromOrigSecs, offsetFromOrigCycles},
                                      userAttrsOfObj(jsonFrag));
 
@@ -274,24 +272,25 @@ void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
         throwTextParseError(ss.str(), jsonFrag.loc());
     }
 
-    // default clock type name
-    const auto defClkTypeName = optStrOfObjWithLoc(jsonFrag, strs::DEF_CC_NAME);
+    // default clock type internal ID
+    const auto defClkTypeId = optStrOfObjWithLoc(jsonFrag, strs::DEF_CC_ID);
     const ClockType *defClkType = nullptr;
 
-    if (defClkTypeName) {
-        defClkType = _pseudoTraceType->findClkType(defClkTypeName->first);
+    if (defClkTypeId) {
+        defClkType = _pseudoTraceType->findClkType(defClkTypeId->first);
 
         if (!defClkType) {
             std::ostringstream ss;
 
-            ss << '`' << defClkTypeName->first << "` doesn't name an existing clock type.";
-            throwTextParseError(ss.str(), defClkTypeName->second);
+            ss << '`' << defClkTypeId->first << "` doesn't identify an existing clock type.";
+            throwTextParseError(ss.str(), defClkTypeId->second);
         }
     }
 
     try {
         auto pseudoDst = std::make_unique<PseudoDst>(id, optStrOfObj(jsonFrag, strs::NS),
                                                      optStrOfObj(jsonFrag, strs::NAME),
+                                                     optStrOfObj(jsonFrag, strs::UID),
                                                      this->_pseudoScopeDtOfJsonObj(jsonFrag,
                                                                                    strs::PKT_CTX_FC),
                                                      this->_pseudoScopeDtOfJsonObj(jsonFrag,
@@ -340,6 +339,7 @@ void Ctf2JsonSeqParser::_handleErtFrag(const JsonObjVal& jsonFrag)
         _pseudoTraceType->pseudoOrphanErts()[dstId].insert(std::make_pair(id, PseudoOrphanErt {
             PseudoErt {
                 id, optStrOfObj(jsonFrag, strs::NS), optStrOfObj(jsonFrag, strs::NAME),
+                optStrOfObj(jsonFrag, strs::UID),
                 boost::none, boost::none,
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::SPEC_CTX_FC),
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::PAYLOAD_FC),

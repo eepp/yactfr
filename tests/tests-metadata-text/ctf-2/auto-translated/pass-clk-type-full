@@ -8,6 +8,7 @@
 {
   "description": "je suis une \n description",
   "frequency": 101014124,
+  "id": "salut",
   "name": "salut",
   "offset-from-origin": {
     "cycles": 5,
@@ -15,7 +16,8 @@
   },
   "origin": "unix-epoch",
   "precision": 308,
-  "type": "clock-class"
+  "type": "clock-class",
+  "uid": "f4edba67-6e57-4a34-a1e3-8be1f282f684"
 }
 {
   "type": "data-stream-class"
