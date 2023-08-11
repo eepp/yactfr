@@ -122,16 +122,22 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Location of lengths of data stream dynamic-length arrays
-    /// described by this type.
+    /*!
+    @brief
+        Location of lengths of data stream dynamic-length arrays
+        described by this type.
+    */
     const DataLocation& lengthLocation() const noexcept
     {
         return _lenLoc;
     }
 
-    /// Types of lengths of data stream dynamic-length arrays described
-    /// by this type, or an empty set if this type is not part of a
-    /// trace type yet.
+    /*!
+    @brief
+        Types of lengths of data stream dynamic-length arrays described
+        by this type, or an empty set if this type is not part of a
+        trace type yet.
+    */
     const DataTypeSet& lengthTypes() const noexcept
     {
         return _theLenTypes;

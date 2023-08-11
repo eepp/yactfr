@@ -45,16 +45,22 @@ protected:
                          MapItem::UP userAttrs);
 
 public:
-    /// Location of selectors of data stream variants described by this
-    /// type.
+    /*!
+    @brief
+        Location of selectors of data stream variants described by this
+        type.
+    */
     const DataLocation& selectorLocation() const noexcept
     {
         return _selLoc;
     }
 
-    /// Types of selectors of data stream variants described by this
-    /// type, or an empty set if this type is not part of a trace type
-    /// yet.
+    /*!
+    @brief
+        Types of selectors of data stream variants described by this
+        type, or an empty set if this type is not part of a trace type
+        yet.
+    */
     const DataTypeSet& selectorTypes() const noexcept
     {
         return _theSelTypes;
@@ -120,8 +126,11 @@ public:
         return _opts.begin();
     }
 
-    /// Constant option iterator set \em after the last option of this
-    /// type.
+    /*!
+    @brief
+        Constant option iterator set \em after the last option of this
+        type.
+    */
     typename Options::const_iterator end() const noexcept
     {
         return _opts.end();
@@ -229,8 +238,11 @@ class VariantWithUnsignedIntegerSelectorType final :
     public VariantWithIntegerSelectorType<VariantWithUnsignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
-    /// Unique pointer to constant type of data stream variants
-    /// with an unsigned integer selector.
+    /*!
+    @brief
+        Unique pointer to constant type of data stream variants
+        with an unsigned integer selector.
+    */
     using UP = std::unique_ptr<const VariantWithUnsignedIntegerSelectorType>;
 
 public:
@@ -342,8 +354,11 @@ class VariantWithSignedIntegerSelectorType final :
     public VariantWithIntegerSelectorType<VariantWithSignedIntegerSelectorTypeOption::SelectorValue>
 {
 public:
-    /// Unique pointer to constant type of data stream variants
-    /// with a signed integer selector.
+    /*!
+    @brief
+        Unique pointer to constant type of data stream variants
+        with a signed integer selector.
+    */
     using UP = std::unique_ptr<const VariantWithSignedIntegerSelectorType>;
 
 public:

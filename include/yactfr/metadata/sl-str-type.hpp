@@ -98,8 +98,11 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Maximum length (UTF-8 bytes) of data stream static-length
-    /// strings described by this type.
+    /*!
+    @brief
+        Maximum length (UTF-8 bytes) of data stream static-length
+        strings described by this type.
+    */
     Size maximumLength() const noexcept
     {
         return _maxLen;

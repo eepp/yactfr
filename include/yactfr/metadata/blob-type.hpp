@@ -29,8 +29,11 @@ protected:
                       std::string&& mediaType = BlobType::defaultMediaType());
 
 public:
-    /// <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
-    /// of data stream BLOBs described by this type.
+    /*!
+    @brief
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
+        of data stream BLOBs described by this type.
+    */
     const std::string& mediaType() const
     {
         return _mediaType;

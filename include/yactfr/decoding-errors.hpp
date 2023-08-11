@@ -59,8 +59,11 @@ public:
         return _reason;
     }
 
-    /// Offset (bits) from the beginning of the element sequence which
-    /// created this iterator.
+    /*!
+    @brief
+        Offset (bits) from the beginning of the element sequence which
+        created this iterator.
+    */
     Index offset() const noexcept
     {
         return _offset;

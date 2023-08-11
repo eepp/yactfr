@@ -239,9 +239,12 @@ public:
     /// Trace environment.
     const TraceEnvironment& environment() const noexcept;
 
-    /// Type of the header structure of all the packets of the trace
-    /// described by this type, or \c nullptr if there's no packet
-    /// header type.
+    /*!
+    @brief
+        Type of the header structure of all the packets of the trace
+        described by this type, or \c nullptr if there's no packet
+        header type.
+    */
     const StructureType *packetHeaderType() const noexcept;
 
     /// Contained clock types.
@@ -275,12 +278,18 @@ public:
     */
     const DataStreamType *operator[](TypeId id) const;
 
-    /// Data stream type constant iterator set at the first data stream
-    /// type of this type.
+    /*!
+    @brief
+        Data stream type constant iterator set at the first data stream
+        type of this type.
+    */
     DataStreamTypeSet::const_iterator begin() const noexcept;
 
-    /// Data stream type constant iterator set \em after the last data
-    /// stream type of this type.
+    /*!
+    @brief
+        Data stream type constant iterator set \em after the last data
+        stream type of this type.
+    */
     DataStreamTypeSet::const_iterator end() const noexcept;
 
     /// Number of data stream types this type has.

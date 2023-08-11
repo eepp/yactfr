@@ -28,8 +28,11 @@ protected:
                               MapItem::UP userAttrs);
 
 public:
-    /// Minimum alignment of the first data stream bit described by this
-    /// type.
+    /*!
+    @brief
+        Minimum alignment of the first data stream bit described by this
+        type.
+    */
     unsigned int minimumAlignment() const noexcept
     {
         return _minAlign;

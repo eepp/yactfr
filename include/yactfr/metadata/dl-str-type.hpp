@@ -108,16 +108,22 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Location of maximum lengths (UTF-8 bytes) of data stream
-    /// dynamic-length strings described by this type.
+    /*!
+    @brief
+        Location of maximum lengths (UTF-8 bytes) of data stream
+        dynamic-length strings described by this type.
+    */
     const DataLocation& maximumLengthLocation() const noexcept
     {
         return _maxLenLoc;
     }
 
-    /// Types of maximum lengths of data stream dynamic-length strings
-    /// described by this type, or an empty set if this type is not part
-    /// of a trace type yet.
+    /*!
+    @brief
+        Types of maximum lengths of data stream dynamic-length strings
+        described by this type, or an empty set if this type is not part
+        of a trace type yet.
+    */
     const DataTypeSet& maximumLengthTypes() const noexcept
     {
         return _theMaxLenTypes;

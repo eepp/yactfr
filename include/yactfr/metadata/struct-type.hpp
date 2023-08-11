@@ -119,8 +119,11 @@ public:
         return _memberTypes.begin();
     }
 
-    /// Member type iterator set \em after the last member type of
-    /// this type.
+    /*!
+    @brief
+        Member type iterator set \em after the last member type of
+        this type.
+    */
     MemberTypes::const_iterator end() const noexcept
     {
         return _memberTypes.end();

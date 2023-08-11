@@ -188,8 +188,11 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Numeric ID, unique amongst the IDs of all the data stream types
-    /// which are part of the same \link TraceType trace type\endlink.
+    /*!
+    @brief
+        Numeric ID, unique amongst the IDs of all the data stream types
+        which are part of the same \link TraceType trace type\endlink.
+    */
     TypeId id() const noexcept
     {
         return _id;
@@ -232,15 +235,21 @@ public:
     */
     const EventRecordType *operator[](TypeId id) const;
 
-    /// Event record type constant iterator set at the first event
-    /// record type of this type.
+    /*!
+    @brief
+        Event record type constant iterator set at the first event
+        record type of this type.
+    */
     EventRecordTypeSet::const_iterator begin() const noexcept
     {
         return _erts.begin();
     }
 
-    /// Event record type constant iterator set \em after the last event
-    /// record type of this type.
+    /*!
+    @brief
+        Event record type constant iterator set \em after the last event
+        record type of this type.
+    */
     EventRecordTypeSet::const_iterator end() const noexcept
     {
         return _erts.end();
@@ -258,33 +267,45 @@ public:
         return _erts.empty();
     }
 
-    /// Type of the context structure following the header structure of
-    /// the packets of the data streams described by this type, or
-    /// \c nullptr if there's no packet context type.
+    /*!
+    @brief
+        Type of the context structure following the header structure of
+        the packets of the data streams described by this type, or
+        \c nullptr if there's no packet context type.
+    */
     const StructureType *packetContextType() const noexcept
     {
         return _pktCtxType.get();
     }
 
-    /// Type of the header structure of all the event records contained in
-    /// the packets of the data streams described by this type, or
-    /// \c nullptr if there's no event record header type.
+    /*!
+    @brief
+        Type of the header structure of all the event records contained in
+        the packets of the data streams described by this type, or
+        \c nullptr if there's no event record header type.
+    */
     const StructureType *eventRecordHeaderType() const noexcept
     {
         return _erHeaderType.get();
     }
 
-    /// Type of the common context structure following the header structure of
-    /// all the event records contained in the packets of
-    /// the data streams described by this type, or
-    /// \c nullptr if there's no event record common context type.
+    /*!
+    @brief
+        Type of the common context structure following the header structure of
+        all the event records contained in the packets of
+        the data streams described by this type, or
+        \c nullptr if there's no event record common context type.
+    */
     const StructureType *eventRecordCommonContextType() const noexcept
     {
         return _erCommonCtxType.get();
     }
 
-    /// Type of the default clock of the data streams describe by this
-    /// type.
+    /*!
+    @brief
+        Type of the default clock of the data streams describe by this
+        type.
+    */
     const ClockType *defaultClockType() const noexcept
     {
         return _defClkType;
@@ -305,8 +326,11 @@ public:
         return _userAttrs.get();
     }
 
-    /// Parent trace type of this type, or \c nullptr if this type is
-    /// not part of a trace type yet.
+    /*!
+    @brief
+        Parent trace type of this type, or \c nullptr if this type is
+        not part of a trace type yet.
+    */
     const TraceType *traceType() const noexcept
     {
         return _traceType;

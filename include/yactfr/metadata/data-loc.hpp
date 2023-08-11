@@ -74,22 +74,31 @@ public:
         return _scope;
     }
 
-    /// Names of the structure members to follow from scope() to reach
-    /// the target.
+    /*!
+    @brief
+        Names of the structure members to follow from scope() to reach
+        the target.
+    */
     const PathElements& pathElements() const noexcept
     {
         return _pathElems;
     }
 
-    /// Path element iterator set at the first path element of this data
-    /// location.
+    /*!
+    @brief
+        Path element iterator set at the first path element of this data
+        location.
+    */
     PathElements::const_iterator begin() const noexcept
     {
         return _pathElems.begin();
     }
 
-    /// Path element iterator set \em after the last path element of
-    /// this data location.
+    /*!
+    @brief
+        Path element iterator set \em after the last path element of
+        this data location.
+    */
     PathElements::const_iterator end() const noexcept
     {
         return _pathElems.end();

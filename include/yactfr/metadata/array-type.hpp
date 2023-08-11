@@ -27,8 +27,11 @@ protected:
                        MapItem::UP userAttrs);
 
 public:
-    /// Type of fields (elements) contained in data stream arrays
-    /// described by this type.
+    /*!
+    @brief
+        Type of fields (elements) contained in data stream arrays
+        described by this type.
+    */
     const DataType& elementType() const
     {
         return *_elemType;

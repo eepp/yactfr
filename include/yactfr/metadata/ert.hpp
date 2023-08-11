@@ -118,9 +118,12 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Numeric ID, unique amongst the IDs of all the event record types
-    /// which are part of the same \link DataStreamType data stream
-    /// type\endlink.
+    /*!
+    @brief
+        Numeric ID, unique amongst the IDs of all the event record types
+        which are part of the same \link DataStreamType data stream
+        type\endlink.
+    */
     TypeId id() const noexcept
     {
         return _id;
@@ -156,24 +159,33 @@ public:
         return _emfUri;
     }
 
-    /// Type of the context structure following the common context
-    /// structure of the event records described by this type, or
-    /// \c nullptr if there's no specific context type.
+    /*!
+    @brief
+        Type of the context structure following the common context
+        structure of the event records described by this type, or
+        \c nullptr if there's no specific context type.
+    */
     const StructureType *specificContextType() const noexcept
     {
         return _specCtxType.get();
     }
 
-    /// Type of the payload structure following the specific context
-    /// structure of the event records described by this type, or
-    /// \c nullptr if there's no payload type.
+    /*!
+    @brief
+        Type of the payload structure following the specific context
+        structure of the event records described by this type, or
+        \c nullptr if there's no payload type.
+    */
     const StructureType *payloadType() const noexcept
     {
         return _payloadType.get();
     }
 
-    /// Parent data stream type of this type, or \c nullptr if this type
-    /// is not part of a trace type yet.
+    /*!
+    @brief
+        Parent data stream type of this type, or \c nullptr if this type
+        is not part of a trace type yet.
+    */
     const DataStreamType *dataStreamType() const noexcept
     {
         return _dst;

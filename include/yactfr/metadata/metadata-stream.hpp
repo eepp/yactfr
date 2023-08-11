@@ -38,8 +38,9 @@ public:
     /// Major CTF version (1 or 2).
     unsigned int majorVersion() const noexcept;
 
-    /// \c true if the metadata text has a recognized initial CTF&nbsp;1
-    /// signature, that is, <code>/* CTF 1.8</code>.
+    /// @brief
+    ///     \c true if the metadata text has a recognized initial
+    ///     CTF&nbsp;1 signature, that is, <code>/* CTF 1.8</code>.
     bool hasCtf1Signature() const noexcept;
 
 private:

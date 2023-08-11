@@ -135,15 +135,21 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Length of data stream static-length arrays described by this
-    /// type (count of element).
+    /*!
+    @brief
+        Length of data stream static-length arrays described by this
+        type (count of element).
+    */
     Size length() const noexcept
     {
         return _len;
     }
 
-    /// Whether or not the static-length arrays described by this type
-    /// have the "metadata stream UUID" role.
+    /*!
+    @brief
+        Whether or not the static-length arrays described by this type
+        have the "metadata stream UUID" role.
+    */
     bool hasMetadataStreamUuidRole() const noexcept
     {
         return _hasMetadataStreamUuidRole;

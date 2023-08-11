@@ -178,15 +178,21 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Length (bytes) of data stream static-length BLOBs described by
-    /// this type.
+    /*!
+    @brief
+        Length (bytes) of data stream static-length BLOBs described by
+        this type.
+    */
     Size length() const noexcept
     {
         return _len;
     }
 
-    /// Whether or not the static-length arrays described by this type
-    /// have the "metadata stream UUID" role.
+    /*!
+    @brief
+        Whether or not the static-length arrays described by this type
+        have the "metadata stream UUID" role.
+    */
     bool hasMetadataStreamUuidRole() const noexcept
     {
         return _hasMetadataStreamUuidRole;

@@ -45,23 +45,32 @@ protected:
                           DataLocation&& selLoc, MapItem::UP userAttrs);
 
 public:
-    /// Location of selectors of data stream optionals described by this
-    /// type.
+    /*!
+    @brief
+        Location of selectors of data stream optionals described by this
+        type.
+    */
     const DataLocation& selectorLocation() const noexcept
     {
         return _selLoc;
     }
 
-    /// Types of selectors of data stream optionals described by this
-    /// type, or an empty set if this type is not part of a trace type
-    /// yet.
+    /*!
+    @brief
+        Types of selectors of data stream optionals described by this
+        type, or an empty set if this type is not part of a trace type
+        yet.
+    */
     const DataTypeSet& selectorTypes() const noexcept
     {
         return _theSelTypes;
     }
 
-    /// Type of the data contained by data stream optionals described
-    /// by this type.
+    /*!
+    @brief
+        Type of the data contained by data stream optionals described
+        by this type.
+    */
     const DataType& dataType() const noexcept
     {
         return *_dt;
@@ -93,8 +102,11 @@ class OptionalWithBooleanSelectorType :
     friend class internal::TraceTypeImpl;
 
 public:
-    /// Unique pointer to constant type of data stream optionals
-    /// with a boolean selector.
+    /*!
+    @brief
+        Unique pointer to constant type of data stream optionals
+        with a boolean selector.
+    */
     using UP = std::unique_ptr<const OptionalWithBooleanSelectorType>;
 
 public:
@@ -240,8 +252,11 @@ class OptionalWithUnsignedIntegerSelectorType :
     friend class internal::TraceTypeImpl;
 
 public:
-    /// Unique pointer to constant type of data stream optionals
-    /// with an unsigned integer selector.
+    /*!
+    @brief
+        Unique pointer to constant type of data stream optionals
+        with an unsigned integer selector.
+    */
     using UP = std::unique_ptr<const OptionalWithUnsignedIntegerSelectorType>;
 
 public:
@@ -357,8 +372,11 @@ class OptionalWithSignedIntegerSelectorType :
     friend class internal::TraceTypeImpl;
 
 public:
-    /// Unique pointer to constant type of data stream optionals
-    /// with a signed integer selector.
+    /*!
+    @brief
+        Unique pointer to constant type of data stream optionals
+        with a signed integer selector.
+    */
     using UP = std::unique_ptr<const OptionalWithSignedIntegerSelectorType>;
 
 public:

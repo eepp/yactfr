@@ -115,8 +115,11 @@ public:
         return _dispName;
     }
 
-    /// Data type of data stream structure members described by
-    /// this type.
+    /*!
+    @brief
+        Data type of data stream structure members described by
+        this type.
+    */
     const DataType& dataType() const noexcept
     {
         return *_dt;

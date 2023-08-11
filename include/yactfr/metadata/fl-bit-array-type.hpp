@@ -117,15 +117,21 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-    /// Length of data stream fixed-length bit arrays (bits) described
-    /// by this type.
+    /*!
+    @brief
+        Length of data stream fixed-length bit arrays (bits) described
+        by this type.
+    */
     unsigned int length() const noexcept
     {
         return _len;
     }
 
-    /// Byte order of data stream fixed-length bit arrays described by
-    /// this type.
+    /*!
+    @brief
+        Byte order of data stream fixed-length bit arrays described by
+        this type.
+    */
     ByteOrder byteOrder() const noexcept
     {
         return _bo;

@@ -82,8 +82,11 @@ public:
         return _mappings.begin();
     }
 
-    /// Constant mapping iterator set \em after the last mapping of this
-    /// type.
+    /*!
+    @brief
+        Constant mapping iterator set \em after the last mapping of this
+        type.
+    */
     typename Mappings::const_iterator end() const noexcept
     {
         return _mappings.end();

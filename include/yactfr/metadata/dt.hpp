@@ -192,8 +192,11 @@ public:
         return this->_isKind(_KIND_FL_UINT);
     }
 
-    /// \c true if this type is a fixed-length floating point number
-    /// type.
+    /*!
+    @brief
+        \c true if this type is a fixed-length floating point number
+        type.
+    */
     bool isFixedLengthFloatingPointNumberType() const noexcept
     {
         return this->_isKind(_KIND_FL_FLOAT);
@@ -211,8 +214,11 @@ public:
         return this->_isKind(_KIND_FL_SENUM);
     }
 
-    /// \c true if this type is a fixed-length unsigned enumeration
-    /// type.
+    /*!
+    @brief
+        \c true if this type is a fixed-length unsigned enumeration
+        type.
+    */
     bool isFixedLengthUnsignedEnumerationType() const noexcept
     {
         return this->_isKind(_KIND_FL_UENUM);
@@ -242,15 +248,21 @@ public:
         return this->_isKind(_KIND_VL_ENUM);
     }
 
-    /// \c true if this type is a variable-length signed enumeration
-    /// type.
+    /*!
+    @brief
+        \c true if this type is a variable-length signed enumeration
+        type.
+    */
     bool isVariableLengthSignedEnumerationType() const noexcept
     {
         return this->_isKind(_KIND_VL_SENUM);
     }
 
-    /// \c true if this type is a variable-length unsigned enumeration
-    /// type.
+    /*!
+    @brief
+        \c true if this type is a variable-length unsigned enumeration
+        type.
+    */
     bool isVariableLengthUnsignedEnumerationType() const noexcept
     {
         return this->_isKind(_KIND_VL_UENUM);
@@ -280,8 +292,11 @@ public:
         return this->_isKind(_KIND_DL_ARRAY);
     }
 
-    /// \c true if this type is a string type which is not a
-    /// null-terminated string type.
+    /*!
+    @brief
+        \c true if this type is a string type which is not a
+        null-terminated string type.
+    */
     bool isNonNullTerminatedStringType() const noexcept
     {
         return this->_isKind(_KIND_NON_NT_STR);
@@ -329,15 +344,21 @@ public:
         return this->_isKind(_KIND_VAR);
     }
 
-    /// \c true if this type is the type of data stream variants with an
-    /// unsigned integer selector.
+    /*!
+    @brief
+        \c true if this type is the type of data stream variants with an
+        unsigned integer selector.
+    */
     bool isVariantWithUnsignedIntegerSelectorType() const noexcept
     {
         return this->_isKind(_KIND_VAR_UINT_SEL);
     }
 
-    /// \c true if this type is the type of data stream variants with a
-    /// signed integer selector.
+    /*!
+    @brief
+        \c true if this type is the type of data stream variants with a
+        signed integer selector.
+    */
     bool isVariantWithSignedIntegerSelectorType() const noexcept
     {
         return this->_isKind(_KIND_VAR_SINT_SEL);
@@ -349,43 +370,61 @@ public:
         return this->_isKind(_KIND_OPT);
     }
 
-    /// \c true if this type is the type of data stream optionals with
-    /// a boolean selector.
+    /*!
+    @brief
+        \c true if this type is the type of data stream optionals with
+        a boolean selector.
+    */
     bool isOptionalWithBooleanSelectorType() const noexcept
     {
         return this->_isKind(_KIND_OPT_BOOL_SEL);
     }
 
-    /// \c true if this type is the type of data stream optionals with
-    /// an integer selector.
+    /*!
+    @brief
+        \c true if this type is the type of data stream optionals with
+        an integer selector.
+    */
     bool isOptionalWithIntegerSelectorType() const noexcept
     {
         return this->_isKind(_KIND_OPT_INT_SEL);
     }
 
-    /// \c true if this type is the type of data stream optionals with
-    /// an unsigned integer selector.
+    /*!
+    @brief
+        \c true if this type is the type of data stream optionals with
+        an unsigned integer selector.
+    */
     bool isOptionalWithUnsignedIntegerSelectorType() const noexcept
     {
         return this->_isKind(_KIND_OPT_UINT_SEL);
     }
 
-    /// \c true if this type is the type of data stream optionals with a
-    /// signed integer selector.
+    /*!
+    @brief
+        \c true if this type is the type of data stream optionals with a
+        signed integer selector.
+    */
     bool isOptionalWithSignedIntegerSelectorType() const noexcept
     {
         return this->_isKind(_KIND_OPT_SINT_SEL);
     }
 
-    /// \c true if this type is a scalar type (doesn't contains another
-    /// data type).
+    /*!
+    @brief
+        \c true if this type is a scalar type (doesn't contains another
+        data type).
+    */
     bool isScalarDataType() const noexcept
     {
         return this->_isKind(_KIND_SCALAR);
     }
 
-    /// \c true if this type is a compound type (contains another data
-    /// type).
+    /*!
+    @brief
+        \c true if this type is a compound type (contains another data
+        type).
+    */
     bool isCompoundDataType() const noexcept
     {
         return this->_isKind(_KIND_COMPOUND);

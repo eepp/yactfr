@@ -1823,8 +1823,11 @@ public:
         visitor.visit(*this);
     }
 
-    /// Type of the data stream of the current packet, or \c nullptr if
-    /// the trace type has no data stream types.
+    /*!
+    @brief
+        Type of the data stream of the current packet, or \c nullptr if
+        the trace type has no data stream types.
+    */
     const DataStreamType *type() const noexcept
     {
         return _dst;
@@ -2041,8 +2044,11 @@ public:
         visitor.visit(*this);
     }
 
-    /// Type of the current event record, or \c nullptr if the data
-    /// stream type has no event record types.
+    /*!
+    @brief
+        Type of the current event record, or \c nullptr if the data
+        stream type has no event record types.
+    */
     const EventRecordType *type() const noexcept
     {
         return _ert;
@@ -2073,8 +2079,11 @@ protected:
     explicit DataElement() = default;
 
 public:
-    /// Type of the immediate structure member containing this element,
-    /// or \c nullptr if none (scope).
+    /*!
+    @brief
+        Type of the immediate structure member containing this element,
+        or \c nullptr if none (scope).
+    */
     const StructureMemberType *structureMemberType() const noexcept
     {
         return _structMemberType;
@@ -2760,8 +2769,11 @@ private:
     }
 
 public:
-    /// Beginning of the data of this substring (\em not necessarily
-    /// null-terminated).
+    /*!
+    @brief
+        Beginning of the data of this substring (\em not necessarily
+        null-terminated).
+    */
     const char *begin() const noexcept
     {
         return _begin;
@@ -2779,8 +2791,11 @@ public:
         return _end;
     }
 
-    /// End of this null-terminated substring (points to either the
-    /// first null byte, or is end() if none).
+    /*!
+    @brief
+        End of this null-terminated substring (points to either the
+        first null byte, or is end() if none).
+    */
     const char *stringEnd() const noexcept
     {
         return std::find(_begin, _end, '\0');
@@ -2799,23 +2814,32 @@ public:
         return _end - _begin;
     }
 
-    /// Size of this null-terminated substring (bytes), excluding any
-    /// terminating null character.
+    /*!
+    @brief
+        Size of this null-terminated substring (bytes), excluding any
+        terminating null character.
+    */
     Size stringSize() const noexcept
     {
         return this->stringEnd() - _begin;
     }
 
-    /// String containing the text data (between begin() and
-    /// stringEnd()) of this substring.
+    /*!
+    @brief
+        String containing the text data (between begin() and
+        stringEnd()) of this substring.
+    */
     std::string string() const
     {
         return {_begin, this->stringEnd()};
     }
 
 #ifdef __cpp_lib_string_view
-    /// String view wrapping the text data (between begin() and
-    /// stringEnd()) of this substring.
+    /*!
+    @brief
+        String view wrapping the text data (between begin() and
+        stringEnd()) of this substring.
+    */
     std::string_view stringView() const
     {
         return {_begin, this->stringSize()};
