@@ -357,7 +357,7 @@ class ArrayItem final :
 {
 public:
     /// Raw container.
-    using Container = _Container;
+    using Container = typename internal::ArrayItemMixin<Item>::_Container;
 
     /// Unique pointer to constant array item.
     using UP = std::unique_ptr<const ArrayItem>;
@@ -440,7 +440,7 @@ class MapItem final :
 {
 public:
     /// Raw container.
-    using Container = _Container;
+    using Container = typename internal::MapItemMixin<Item>::_Container;
 
     /// Unique pointer to constant map item.
     using UP = std::unique_ptr<const MapItem>;
