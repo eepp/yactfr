@@ -224,6 +224,34 @@ public:
 
     /*!
     @brief
+        Returns \c true if the clock type \p other has the same identity
+        as this clock type.
+
+    @param[in] other
+        Other clock type to compare to.
+
+    @returns
+        \c true if \p other has the same identity as this clock type.
+    */
+    bool hasSameIdentity(const ClockType& other) const noexcept
+    {
+        if (_ns != other._ns) {
+            return false;
+        }
+
+        if (_name && other._name && *_name != *other._name) {
+            return false;
+        }
+
+        if (_uid && other._uid && *_uid != *other._uid) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /*!
+    @brief
         User attributes.
 
     If set, each key of \p *userAttributes is a namespace.
