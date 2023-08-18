@@ -62,19 +62,21 @@ public:
     @param[in] id
         Event record type ID.
     @param[in] nameSpace
-        Namespace.
+        Namespace of event records described by this type.
     @param[in] name
-        Name.
+        Name of event records described by this type.
     @param[in] uid
-        Unique ID.
+        Unique ID of event records described by this type.
     @param[in] logLevel
-        Log level.
+        Log level of event records described by this type.
     @param[in] emfUri
-        EMF URI.
+        EMF URI of event records described by this type.
     @param[in] specificContextType
-        Specific context type, or \c nullptr if none.
+        Type of specific contexts of event records described by this
+        type, or \c nullptr if none.
     @param[in] payloadType
-        Payload type, or \c nullptr if none.
+        Type of payloads of event records described by this type, or \c
+        nullptr if none.
     @param[in] userAttributes
         @parblock
         User attributes.
@@ -129,31 +131,31 @@ public:
         return _id;
     }
 
-    /// Namespace.
+    /// Namespace of event records described by this type.
     const boost::optional<std::string>& nameSpace() const noexcept
     {
         return _ns;
     }
 
-    /// Name.
+    /// Name of event records described by this type.
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
-    /// Unique ID.
+    /// Unique ID of event records described by this type.
     const boost::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
 
-    /// Log level.
+    /// Log level of event records described by this type.
     const boost::optional<LogLevel>& logLevel() const noexcept
     {
         return _logLevel;
     }
 
-    /// EMF URI.
+    /// EMF URI of event records described by this type.
     const boost::optional<std::string>& emfUri() const noexcept
     {
         return _emfUri;
@@ -184,7 +186,7 @@ public:
     /*!
     @brief
         Parent data stream type of this type, or \c nullptr if this type
-        is not part of a trace type yet.
+        isn't part of a trace type yet.
     */
     const DataStreamType *dataStreamType() const noexcept
     {

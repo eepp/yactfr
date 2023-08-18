@@ -73,21 +73,25 @@ public:
     @param[in] id
         Data stream type ID.
     @param[in] nameSpace
-        Namespace.
+        Namespace of data streams described by this type.
     @param[in] name
-        Name.
+        Name of data streams described by this type..
     @param[in] uid
-        Unique ID.
+        Unique ID of data streams described by this type..
     @param[in] eventRecordTypes
         Children event record types (moved to this type).
     @param[in] packetContextType
-        Packet context type, or \c nullptr if none.
+        Type of packet contexts of data streams described by this type,
+        or \c nullptr if none.
     @param[in] eventRecordHeaderType
-        Event record header type, or \c nullptr if none.
+        Type of event record headers of data streams described by this
+        type, or \c nullptr if none.
     @param[in] eventRecordCommonContextType
-        Event record common context type, or \c nullptr if none.
+        Type of common event record context of data streams described by
+        this type, or \c nullptr if none.
     @param[in] defaultClockType
-        Default clock type, or \c nullptr if none.
+        Type of the default clock of data streams described by this
+        type, or \c nullptr if none.
     @param[in] userAttributes
         @parblock
         User attributes.
@@ -147,13 +151,17 @@ public:
     @param[in] eventRecordTypes
         Children event record types (moved to this type).
     @param[in] packetContextType
-        Packet context type, or \c nullptr if none.
+        Type of packet contexts of data streams described by this type,
+        or \c nullptr if none.
     @param[in] eventRecordHeaderType
-        Event record header type, or \c nullptr if none.
+        Type of event record headers of data streams described by this
+        type, or \c nullptr if none.
     @param[in] eventRecordCommonContextType
-        Event record common context type, or \c nullptr if none.
+        Type of common event record context of data streams described by
+        this type, or \c nullptr if none.
     @param[in] defaultClockType
-        Default clock type, or \c nullptr if none.
+        Type of the default clock of a data stream described by this
+        type, or \c nullptr if none.
     @param[in] userAttributes
         @parblock
         User attributes.
@@ -230,19 +238,19 @@ public:
         return _id;
     }
 
-    /// Namespace.
+    /// Namespace of data streams described by this type.
     const boost::optional<std::string>& nameSpace() const noexcept
     {
         return _ns;
     }
 
-    /// Name.
+    /// Name of data streams described by this type.
     const boost::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
-    /// Unique ID.
+    /// Unique ID of data streams described by this type.
     const boost::optional<std::string>& uid() const noexcept
     {
         return _uid;
@@ -312,8 +320,8 @@ public:
 
     /*!
     @brief
-        Type of the header structure of all the event records contained in
-        the packets of the data streams described by this type, or
+        Type of the header structure of all the event records contained
+        in the packets of the data streams described by this type, or
         \c nullptr if there's no event record header type.
     */
     const StructureType *eventRecordHeaderType() const noexcept
@@ -323,8 +331,8 @@ public:
 
     /*!
     @brief
-        Type of the common context structure following the header structure of
-        all the event records contained in the packets of
+        Type of the common context structure following the header
+        structure of all the event records contained in the packets of
         the data streams described by this type, or
         \c nullptr if there's no event record common context type.
     */

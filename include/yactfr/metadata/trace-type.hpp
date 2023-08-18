@@ -87,23 +87,24 @@ public:
         Builds a trace type.
 
     @param[in] majorVersion
-        Major version.
+        Major CTF version.
     @param[in] minorVersion
-        Minor version.
+        Minor CTF version.
     @param[in] nameSpace
-        Namespace of traces described by this trace type.
+        Namespace of traces described by this type.
     @param[in] name
-        Name of traces described by this trace type.
+        Name of traces described by this type.
     @param[in] uid
-        Unique ID of traces described by this trace type.
+        Unique ID of traces described by this type.
     @param[in] environment
-        Environment of traces described by this trace type.
+        Environment of traces described by this type.
     @param[in] packetHeaderType
-        Packet header type, or \c nullptr if none.
+        Type of packet header of traces described by this type, or \c
+        nullptr if none.
     @param[in] clockTypes
-        Clock types of the trace type (moved).
+        Clock types of this type (moved).
     @param[in] dataStreamTypes
-        Data stream types (moved).
+        Data stream types of this type (moved).
     @param[in] userAttributes
         @parblock
         User attributes.
