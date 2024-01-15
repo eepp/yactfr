@@ -28,6 +28,7 @@ import pytest
 import pathlib
 import subprocess
 import tempfile
+import sys
 
 
 def _join_lines(lines):
@@ -288,3 +289,7 @@ def collect_streams_file(parent, path, tester_path):
 
     # create the file node
     return _StreamsFile.from_parent(parent, path=pathlib.Path(path), tester_path=tester_path)
+
+
+if __name__ == '__main__':
+    _create_streams(sys.argv[1], sys.argv[2])
