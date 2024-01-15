@@ -22,9 +22,7 @@ BlobType::BlobType(const _Kind kind, const unsigned int align, MapItem::UP userA
 
 bool BlobType::_isEqual(const DataType& other) const noexcept
 {
-    const auto& otherBlobType = static_cast<const BlobType&>(other);
-
-    return _mediaType == otherBlobType._mediaType;
+    return _mediaType == other.asBlobType()._mediaType;
 }
 
 } // namespace yactfr

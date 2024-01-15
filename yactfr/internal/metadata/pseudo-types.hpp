@@ -23,6 +23,7 @@
 #include <yactfr/metadata/int-range-set.hpp>
 #include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
+#include <yactfr/metadata/str-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/trace-env.hpp>
 #include <yactfr/metadata/aliases.hpp>
@@ -222,7 +223,8 @@ class PseudoScalarDtWrapper :
     public PseudoDt
 {
 public:
-    explicit PseudoScalarDtWrapper(DataType::UP dt, bool hasEncoding = false,
+    explicit PseudoScalarDtWrapper(DataType::UP dt,
+                                   boost::optional<StringEncoding> encoding = boost::none,
                                    TextLocation loc = TextLocation {});
 
     explicit PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc = TextLocation {});
@@ -245,14 +247,14 @@ public:
         return *_dt;
     }
 
-    bool hasEncoding() const noexcept
+    const boost::optional<StringEncoding>& encoding() const noexcept
     {
-        return _hasEncoding;
+        return _encoding;
     }
 
 private:
     DataType::UP _dt;
-    bool _hasEncoding = false;
+    boost::optional<StringEncoding> _encoding;
 };
 
 /*
@@ -298,7 +300,8 @@ class PseudoFlUIntType :
 {
 public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
-                              DisplayBase prefDispBase, bool hasEncoding = false,
+                              DisplayBase prefDispBase,
+                              boost::optional<StringEncoding> encoding = boost::none,
                               boost::optional<std::string> mappedClkTypeId = boost::none,
                               MapItem::UP userAttrs = nullptr,
                               UnsignedIntegerTypeRoleSet roles = {},
@@ -336,9 +339,9 @@ public:
         return _prefDispBase;
     }
 
-    bool hasEncoding() const noexcept
+    const boost::optional<StringEncoding>& encoding() const noexcept
     {
-        return _hasEncoding;
+        return _encoding;
     }
 
     const boost::optional<std::string>& mappedClkTypeId() const noexcept
@@ -371,7 +374,7 @@ private:
     unsigned int _len;
     ByteOrder _bo;
     DisplayBase _prefDispBase;
-    bool _hasEncoding;
+    boost::optional<StringEncoding> _encoding;
     boost::optional<std::string> _mappedClkTypeId;
     UnsignedIntegerTypeRoleSet _roles;
 };
@@ -386,7 +389,7 @@ public:
     explicit PseudoFlUEnumType(unsigned int align, unsigned int len, ByteOrder bo,
                                DisplayBase prefDispBase,
                                FixedLengthUnsignedEnumerationType::Mappings mappings,
-                               bool hasEncoding = false,
+                               boost::optional<StringEncoding> encoding = boost::none,
                                boost::optional<std::string> mappedClkTypeId = boost::none,
                                MapItem::UP userAttrs = nullptr,
                                UnsignedIntegerTypeRoleSet roles = {},

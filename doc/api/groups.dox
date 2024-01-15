@@ -241,7 +241,7 @@ descriptions below easier to read and to allow recursion.
   VariableLengthSignedEnumerationElement |
   (
     NullTerminatedStringBeginningElement
-    SubstringElement *
+    RawDataElement *
     NullTerminatedStringEndElement
   ) |
   (
@@ -256,22 +256,22 @@ descriptions below easier to read and to allow recursion.
   ) |
   (
     StaticLengthStringBeginningElement
-    SubstringElement *
+    RawDataElement *
     StaticLengthStringEndElement
   ) |
   (
     DynamicLengthStringBeginningElement
-    SubstringElement *
+    RawDataElement *
     DynamicLengthStringEndElement
   ) |
   (
     StaticLengthBlobBeginningElement
-    BlobSectionElement *
+    RawDataElement *
     StaticLengthBlobEndElement
   ) |
   (
     DynamicLengthBlobBeginningElement
-    BlobSectionElement *
+    RawDataElement *
     DynamicLengthBlobEndElement
   ) |
   (
@@ -358,7 +358,7 @@ descriptions below easier to read and to allow recursion.
       ) |
       (
         StaticLengthBlobBeginningElement
-        BlobSectionElement *
+        RawDataElement *
         MetadataStreamUuidElement
         StaticLengthBlobEndElement
       ) |
@@ -461,8 +461,7 @@ the current element of the iterator is an instance of:
 
     * FixedLengthBitArrayElement
     * VariableLengthIntegerElement
-    * SubstringElement
-    * BlobSectionElement
+    * RawDataElement
 
     then the offset is the one of the previous element plus its length
     and, possibly, some padding.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2018-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,12 +10,14 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cassert>
 #include <memory>
 #include <vector>
 #include <string>
 #include <iomanip>
 #include <ostream>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <yactfr/elem-visitor.hpp>
 #include <yactfr/elem.hpp>
@@ -187,16 +189,10 @@ public:
         ++_indentLevel;
     }
 
-    void visit(const yactfr::SubstringElement& elem) override
+    void visit(const yactfr::RawDataElement& elem) override
     {
         this->_indent();
-        *_os << "SS:" << elem.size() << ":" << elem.string() << '\n';
-    }
-
-    void visit(const yactfr::BlobSectionElement& elem) override
-    {
-        this->_indent();
-        *_os << "BS:" << elem.size() << ":";
+        *_os << "RD:" << elem.size() << ":";
 
         std::ios init {nullptr};
 
@@ -204,7 +200,15 @@ public:
         *_os << std::hex << std::setfill('0');
 
         for (const auto byte : elem) {
-            *_os << std::setw(2) << static_cast<unsigned int>(byte);
+            if (!_inBlob && std::isprint(byte) && byte != '$') {
+                *_os << static_cast<char>(byte);
+            } else {
+                if (!_inBlob) {
+                    *_os << '$';
+                }
+
+                *_os << std::setw(2) << static_cast<unsigned int>(byte);
+            }
         }
 
         _os->copyfmt(init);
@@ -227,6 +231,7 @@ public:
 
     void visit(const yactfr::StaticLengthBlobBeginningElement& elem) override
     {
+        _inBlob = true;
         this->_visitDataElem(elem, "SLB");
         *_os << ':' << elem.type().mediaType() << " {\n";
         ++_indentLevel;
@@ -248,6 +253,7 @@ public:
 
     void visit(const yactfr::DynamicLengthBlobBeginningElement& elem) override
     {
+        _inBlob = true;
         this->_visitDataElem(elem, "DLB");
         *_os << ':' << elem.type().mediaType() << " {\n";
         ++_indentLevel;
@@ -290,6 +296,7 @@ public:
     void visit(const yactfr::EndElement&) override
     {
         --_indentLevel;
+        _inBlob = false;
         this->_indent();
         *_os << "}\n";
     }
@@ -345,6 +352,7 @@ private:
     std::ostream * const _os;
     const unsigned long _indentWidth;
     unsigned long _indentLevel = 0;
+    bool _inBlob = false;
 };
 
 #endif // _YACTFR_TESTS_ELEM_PRINTER_HPP

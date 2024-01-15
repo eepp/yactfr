@@ -12,7 +12,7 @@
 #include <utility>
 
 #include "dt.hpp"
-#include "scalar-dt.hpp"
+#include "str-type.hpp"
 #include "dt-visitor.hpp"
 
 namespace yactfr {
@@ -27,7 +27,7 @@ A null-terminated string type describes data stream null-terminated
 strings.
 */
 class NullTerminatedStringType final :
-    public ScalarDataType
+    public StringType
 {
 public:
     /// Unique pointer to constant null-terminated string type.
@@ -40,6 +40,9 @@ public:
 
     @param[in] alignment
         Alignment of data stream null-terminated strings described by
+        this type.
+    @param[in] encoding
+        Encoding of data stream null-terminated strings described by
         this type.
     @param[in] userAttributes
         @parblock
@@ -54,13 +57,18 @@ public:
     @pre
         \p alignment is a power of two.
     */
-    explicit NullTerminatedStringType(unsigned int alignment, MapItem::UP userAttributes = nullptr);
+    explicit NullTerminatedStringType(unsigned int alignment,
+                                      StringEncoding encoding = StringEncoding::UTF_8,
+                                      MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
         Builds a null-terminated string type having a default alignment
         property (8).
 
+    @param[in] encoding
+        Encoding of data stream null-terminated strings described by
+        this type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream null-terminated strings described
@@ -69,7 +77,8 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
     */
-    explicit NullTerminatedStringType(MapItem::UP userAttributes = nullptr);
+    explicit NullTerminatedStringType(StringEncoding encoding = StringEncoding::UTF_8,
+                                      MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief
@@ -119,7 +128,6 @@ public:
 
 private:
     DataType::UP _clone() const override;
-    bool _isEqual(const DataType& other) const noexcept override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {

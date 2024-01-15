@@ -21,9 +21,7 @@ ArrayType::ArrayType(const _Kind kind, const unsigned int minAlign, DataType::UP
 
 bool ArrayType::_isEqual(const DataType& other) const noexcept
 {
-    const auto& otherArrayType = static_cast<const ArrayType&>(other);
-
-    return CompoundDataType::_isEqual(other) && *_elemType == *otherArrayType._elemType;
+    return CompoundDataType::_isEqual(other) && *_elemType == *other.asArrayType()._elemType;
 }
 
 } // namespace yactfr

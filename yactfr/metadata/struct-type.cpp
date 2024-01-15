@@ -63,7 +63,7 @@ bool StructureType::_isEqual(const DataType& other) const noexcept
         return false;
     }
 
-    const auto& otherStructType = static_cast<const StructureType&>(other);
+    const auto& otherStructType = other.asStructureType();
 
     if (_memberTypes.size() != otherStructType._memberTypes.size()) {
         return false;

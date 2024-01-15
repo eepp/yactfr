@@ -13,10 +13,10 @@ namespace yactfr {
 
 NonNullTerminatedStringType::NonNullTerminatedStringType(const _Kind kind,
                                                          const unsigned int align,
+                                                         const StringEncoding encoding,
                                                          MapItem::UP userAttrs) :
-    ScalarDataType {kind, align, std::move(userAttrs)}
+    StringType {kind, align, encoding, std::move(userAttrs)}
 {
-    assert(align >= 8);
 }
 
 } // namespace yactfr

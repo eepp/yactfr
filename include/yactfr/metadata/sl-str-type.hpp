@@ -43,6 +43,9 @@ public:
     @param[in] maximumLength
         Maximum length (UTF-8 bytes) of data stream static-length
         strings described by this type.
+    @param[in] encoding
+        Encoding of data stream static-length strings described by this
+        type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream static-length strings described
@@ -57,6 +60,7 @@ public:
         \p alignment is a power of two.
     */
     explicit StaticLengthStringType(unsigned int alignment, Size maximumLength,
+                                    StringEncoding encoding = StringEncoding::UTF_8,
                                     MapItem::UP userAttributes = nullptr);
 
     /*!
@@ -67,6 +71,9 @@ public:
     @param[in] maximumLength
         Maximum length (UTF-8 bytes) of data stream static-length
         strings described by this type.
+    @param[in] encoding
+        Encoding of data stream static-length strings described by this
+        type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream static-length strings described
@@ -75,7 +82,9 @@ public:
         If set, each key of \p *userAttributes is a namespace.
         @endparblock
     */
-    explicit StaticLengthStringType(Size maximumLength, MapItem::UP userAttributes = nullptr);
+    explicit StaticLengthStringType(Size maximumLength,
+                                    StringEncoding encoding = StringEncoding::UTF_8,
+                                    MapItem::UP userAttributes = nullptr);
 
     /*!
     @brief

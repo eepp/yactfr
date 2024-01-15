@@ -8,7 +8,7 @@
 #ifndef _YACTFR_METADATA_NON_NT_STR_TYPE_HPP
 #define _YACTFR_METADATA_NON_NT_STR_TYPE_HPP
 
-#include "scalar-dt.hpp"
+#include "str-type.hpp"
 #include "dt.hpp"
 
 namespace yactfr {
@@ -20,10 +20,11 @@ namespace yactfr {
 @ingroup metadata_dt
 */
 class NonNullTerminatedStringType :
-    public ScalarDataType
+    public StringType
 {
 protected:
-    explicit NonNullTerminatedStringType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
+    explicit NonNullTerminatedStringType(_Kind kind, unsigned int align, StringEncoding encoding,
+                                         MapItem::UP userAttrs);
 };
 
 } // namespace yactfr

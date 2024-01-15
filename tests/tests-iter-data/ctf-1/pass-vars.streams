@@ -139,7 +139,7 @@ V_ABS     cd
      0         FLUE:tag:11
      8         VU:v:11 {
      8           NTS {
-     8             SS:9:ethereal
+     8             RD:9:ethereal$00
     80           }
     80         }
     80         FLSE:ph_tag:2
@@ -154,7 +154,7 @@ V_ABS     cd
     96         FLUE:pc_tag:0
    104         VU:v_rel:0 {
    104           NTS {
-   104             SS:6:faded
+   104             RD:6:faded$00
    152           }
    152         }
    152         VS:v_abs:2 {
@@ -172,7 +172,7 @@ V_ABS     cd
    200           }
    200           VU:v_abs:0 {
    200             NTS {
-   200               SS:5:wing
+   200               RD:5:wing$00
    240             }
    240           }
    240         }
@@ -183,7 +183,7 @@ V_ABS     cd
    240           FLUE:e1c_tag:0
    248           VU:v_rel:0 {
    248             NTS {
-   248               SS:9:cultured
+   248               RD:9:cultured$00
    320             }
    320           }
    320           VU:v_abs:1 {
@@ -199,7 +199,7 @@ V_ABS     cd
    368           }
    368           VU:v_abs:0 {
    368             NTS {
-   368               SS:5:nest
+   368               RD:5:nest$00
    408             }
    408           }
    408         }

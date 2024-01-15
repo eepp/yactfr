@@ -93,13 +93,13 @@
      0           FLUI:len2:11
      8           FLUI:len1:42
     16           DLS:text1 {
-    16             SS:42:I've tasted both the fantasy
+    16             RD:42:I've tasted both the fantasy$00 and the deed
    352           }
    352           FLUI:zlen:0
    360           DLS:text2 {
    360           }
    360           DLS:text3 {
-   360             SS:11:dan boucher
+   360             RD:11:dan boucher
    448           }
    448         }
    448       }

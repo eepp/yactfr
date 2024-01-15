@@ -1,0 +1,38 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "len",
+          "field-class": {
+            "type": "variable-length-unsigned-integer"
+          }
+        },
+        {
+          "name": "test",
+          "field-class": {
+            "type": "dynamic-length-string",
+            "length-field-location": {
+              "path": ["len"]
+            },
+            "encoding": "utf32-be"
+          }
+        }
+      ]
+    }
+  }
+----
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[13:9] In array element #2:
+[13:9] Invalid structure member type:
+[15:26] In object property `field-class`:
+[15:26] Invalid dynamic-length string type:
+[20:25] In object property `encoding`:
+[20:25] Unexpected value `utf32-be`: expecting `utf-16be`, `utf-16le`, `utf-32be`, `utf-32le`, or `utf-8`.

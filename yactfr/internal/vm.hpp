@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -45,9 +45,10 @@ enum class VmState {
     EXEC_INSTR,
     EXEC_ARRAY_INSTR,
     READ_UUID_BYTE,
-    READ_SUBSTR_UNTIL_NULL,
-    READ_SUBSTR,
-    READ_BLOB_SECTION,
+    READ_UTF_8_DATA_UNTIL_NULL,
+    READ_UTF_16_DATA_UNTIL_NULL,
+    READ_UTF_32_DATA_UNTIL_NULL,
+    READ_RAW_DATA,
     READ_UUID_BLOB_SECTION,
     CONTINUE_READ_VL_UINT,
     CONTINUE_READ_VL_SINT,
@@ -307,8 +308,7 @@ public:
         VariableLengthUnsignedEnumerationElement vlUEnum;
         NullTerminatedStringBeginningElement ntStrBeginning;
         NullTerminatedStringEndElement ntStrEnd;
-        SubstringElement substr;
-        BlobSectionElement blobSection;
+        RawDataElement rawData;
         StaticLengthArrayBeginningElement slArrayBeginning;
         StaticLengthArrayEndElement slArrayEnd;
         DynamicLengthArrayBeginningElement dlArrayBeginning;
@@ -358,6 +358,39 @@ public:
 
     // current variable-length integer element
     VariableLengthIntegerElement *curVlIntElem;
+
+    /*
+     * Code unit buffer for null-terminated strings.
+     *
+     * This makes it possible for _stateReadStrDataUntilNull() to find
+     * the encoded U+0000 codepoint even if it spans multiple
+     * data blocks.
+     *
+     * For example, assume `ntStrCuBuf.index` is 0 and what's left in
+     * the current data block is
+     *
+     *     64 00 20 00 3c d8 3b df 00
+     *
+     * Also assume the encoding is UTF-16LE (code unit size is two).
+     * Then there are five complete code units there, and half of one
+     * (the last zero byte). Therefore, after reading that last zero
+     * byte, `ntStrCuBuf.buf[0]` would be zero and `ntStrCuBuf.index`
+     * one.
+     *
+     * Now assume the next data block starts with
+     *
+     *     00 1f fc cc bc 44 35 56
+     *
+     * _stateReadStrDataUntilNull() continues reading the current code
+     * unit, making `ntStrCuBuf.buf[1]` zero and `ntStrCuBuf.index` two.
+     * Since `ntStrCuBuf.index` is equal to the code unit size, the
+     * method can check the current code unit value: two zeros, which
+     * means U+0000, which means the end of that string.
+     */
+    struct {
+        std::uint8_t buf[4];
+        Index index = 0;
+    } ntStrCuBuf;
 
     // current ID (event record or data stream type)
     TypeId curId;
@@ -516,11 +549,8 @@ private:
         case VmState::END_ER:
             return this->_stateEndEr();
 
-        case VmState::READ_SUBSTR:
-            return this->_stateReadSubstr();
-
-        case VmState::READ_BLOB_SECTION:
-            return this->_stateReadBlobSection();
+        case VmState::READ_RAW_DATA:
+            return this->_stateReadRawData();
 
         case VmState::READ_UUID_BLOB_SECTION:
             return this->_stateReadUuidBlobSection();
@@ -531,8 +561,14 @@ private:
         case VmState::CONTINUE_READ_VL_SINT:
             return this->_stateContinueReadVlInt<true>();
 
-        case VmState::READ_SUBSTR_UNTIL_NULL:
-            return this->_stateReadSubstrUntilNull();
+        case VmState::READ_UTF_8_DATA_UNTIL_NULL:
+            return this->_stateReadStrDataUntilNull<1>();
+
+        case VmState::READ_UTF_16_DATA_UNTIL_NULL:
+            return this->_stateReadStrDataUntilNull<2>();
+
+        case VmState::READ_UTF_32_DATA_UNTIL_NULL:
+            return this->_stateReadStrDataUntilNull<4>();
 
         case VmState::END_STR:
             return this->_stateEndStr();
@@ -811,8 +847,7 @@ private:
         return true;
     }
 
-    template <typename ByteT, typename ElemT>
-    bool _stateReadBytes(ElemT& elem)
+    bool _stateReadBytes()
     {
         assert((_pos.headOffsetInCurPktBits & 7) == 0);
 
@@ -835,29 +870,18 @@ private:
             };
         }
 
-        elem._begin = reinterpret_cast<const ByteT *>(buf);
-        elem._end = reinterpret_cast<const ByteT *>(buf + sectionSizeBytes);
-        assert(elem.size() > 0);
-        this->_updateItForUser(elem);
+        _pos.elems.rawData._begin = buf;
+        _pos.elems.rawData._end = buf + sectionSizeBytes;
+        assert(_pos.elems.rawData.size() > 0);
+        this->_updateItForUser(_pos.elems.rawData);
         this->_consumeExistingBits(sectionSizeBytes * 8);
         _pos.stackTop().rem -= sectionSizeBytes;
         return true;
     }
 
-    bool _stateReadSubstr()
+    bool _stateReadRawData()
     {
-        const auto cont = this->_stateReadBytes<char>(_pos.elems.substr);
-
-        if (!cont) {
-            _pos.setParentStateAndStackPop();
-        }
-
-        return cont;
-    }
-
-    bool _stateReadBlobSection()
-    {
-        const auto cont = this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection);
+        const auto cont = this->_stateReadBytes();
 
         if (!cont) {
             _pos.setParentStateAndStackPop();
@@ -868,13 +892,13 @@ private:
 
     bool _stateReadUuidBlobSection()
     {
-        if (this->_stateReadBytes<std::uint8_t>(_pos.elems.blobSection)) {
+        if (this->_stateReadBytes()) {
             // new UUID bytes
-            const auto blobSize = _pos.elems.blobSection.size();
+            const auto blobSize = _pos.elems.rawData.size();
             const auto startIndex = 16 - _pos.stackTop().rem - blobSize;
 
             for (auto index = startIndex; index < startIndex + blobSize; ++index) {
-                _pos.metadataStreamUuid.data[index] = static_cast<std::uint8_t>(_pos.elems.blobSection.begin()[index]);
+                _pos.metadataStreamUuid.data[index] = static_cast<std::uint8_t>(_pos.elems.rawData.begin()[index]);
             }
 
             return true;
@@ -1010,50 +1034,64 @@ private:
         return false;
     }
 
-    bool _stateReadSubstrUntilNull()
+    template <Size CuLenV>
+    bool _stateReadStrDataUntilNull()
     {
         assert((_pos.headOffsetInCurPktBits & 7) == 0);
 
         // require at least one byte
         this->_requireContentBits(8);
 
-        const auto buf = this->_bufAtHead();
+        const auto begin = this->_bufAtHead();
         const auto bufSizeBytes = this->_remBitsInBuf() / 8;
 
         assert(bufSizeBytes >= 1);
 
-        auto res = reinterpret_cast<const char *>(std::memchr(buf, 0, bufSizeBytes));
-        auto begin = reinterpret_cast<const char *>(buf);
-        const char *end;
+        auto end = begin + bufSizeBytes;
+        auto gotNull = false;
 
-        if (res) {
-            // _after_ the null byte to include it
-            end = res + 1;
-        } else {
-            // no null byte yet: current end of buffer
-            end = reinterpret_cast<const char *>(buf + bufSizeBytes);
+        // try to find a complete or partial encoded U+0000 codepoint
+        for (Index i = 0; i < bufSizeBytes; ++i) {
+            _pos.ntStrCuBuf.buf[_pos.ntStrCuBuf.index] = begin[i];
+            ++_pos.ntStrCuBuf.index;
+
+            if (_pos.ntStrCuBuf.index == CuLenV) {
+                // end of code unit: is it U+0000?
+                if (std::all_of(_pos.ntStrCuBuf.buf,
+                                _pos.ntStrCuBuf.buf + CuLenV,
+                                [](const auto b) {
+                                    return b == 0;
+                                })) {
+                    // this is the real end
+                    gotNull = true;
+                    end = begin + i + 1;
+                    break;
+                } else {
+                    _pos.ntStrCuBuf.index = 0;
+                }
+            }
         }
 
-        const Size substrLenBits = (end - begin) * 8;
+        const Size rawDataLenBits = (end - begin) * 8;
 
-        if (substrLenBits > _pos.remContentBitsInPkt()) {
+        if (rawDataLenBits > _pos.remContentBitsInPkt()) {
             throw CannotDecodeDataBeyondPacketContentDecodingError {
                 _pos.headOffsetInElemSeqBits(),
-                substrLenBits, _pos.remContentBitsInPkt()
+                rawDataLenBits, _pos.remContentBitsInPkt()
             };
         }
 
-        _pos.elems.substr._begin = begin;
-        _pos.elems.substr._end = end;
+        _pos.elems.rawData._begin = begin;
+        _pos.elems.rawData._end = end;
 
-        if (res) {
+        if (gotNull) {
             // we're done
             _pos.state(VmState::END_STR);
         }
 
-        assert(_pos.elems.substr.size() > 0);
-        this->_updateItForUser(_pos.elems.substr);
-        this->_consumeExistingBits(_pos.elems.substr.size() * 8);
+        assert(_pos.elems.rawData.size() > 0);
+        this->_updateItForUser(_pos.elems.rawData);
+        this->_consumeExistingBits(_pos.elems.rawData.size() * 8);
         return true;
     }
 
@@ -1283,7 +1321,9 @@ private:
     _ExecReaction _execReadVlSInt(const Instr& instr);
     _ExecReaction _execReadVlUEnum(const Instr& instr);
     _ExecReaction _execReadVlSEnum(const Instr& instr);
-    _ExecReaction _execReadNtStr(const Instr& instr);
+    _ExecReaction _execReadNtStrUtf8(const Instr& instr);
+    _ExecReaction _execReadNtStrUtf16(const Instr& instr);
+    _ExecReaction _execReadNtStrUtf32(const Instr& instr);
     _ExecReaction _execBeginReadScope(const Instr& instr);
     _ExecReaction _execEndReadScope(const Instr& instr);
     _ExecReaction _execBeginReadStruct(const Instr& instr);
@@ -1332,6 +1372,8 @@ private:
     _ExecReaction _execSetDsInfo(const Instr& instr);
     _ExecReaction _execSetPktInfo(const Instr& instr);
     _ExecReaction _execSetErInfo(const Instr& instr);
+
+    _ExecReaction _execReadNtStrCommon(const Instr& instr, const VmState state);
 
     template <typename ElemT>
     static void _setDataElemFromInstr(ElemT& elem, const Instr& instr) noexcept

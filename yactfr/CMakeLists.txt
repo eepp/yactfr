@@ -71,6 +71,7 @@ add_library (
     metadata/sl-array-type.cpp
     metadata/sl-blob-type.cpp
     metadata/sl-str-type.cpp
+    metadata/str-type.cpp
     metadata/struct-member-type.cpp
     metadata/struct-type.cpp
     metadata/trace-env.cpp

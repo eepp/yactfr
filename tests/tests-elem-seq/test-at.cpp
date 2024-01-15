@@ -226,9 +226,9 @@ static const auto expected =
     "SC:5 {\n"
     "ST {\n"
     "NTS:a {\n"
-    "SS:1:s\n"
-    "SS:3:alu\n"
-    "SS:2:t\n";
+    "RD:1:s\n"
+    "RD:3:alu\n"
+    "RD:2:t$00\n";
 
 int main()
 {

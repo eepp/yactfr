@@ -72,7 +72,7 @@
      8         ST {
      8           FLUI:yy:3735928559
     40           NTS:str {
-    40             SS:6:salut
+    40             RD:6:salut$00
     88           }
     88         }
     88       }

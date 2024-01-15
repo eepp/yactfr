@@ -21,9 +21,7 @@ VariableLengthIntegerType::VariableLengthIntegerType(const _Kind kind, const uns
 
 bool VariableLengthIntegerType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherIntType = static_cast<const VariableLengthIntegerType&>(other);
-
-    return IntegerTypeCommon::_isEqual(otherIntType);
+    return IntegerTypeCommon::_isEqual(other.asVariableLengthIntegerType());
 }
 
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const _Kind kind,
@@ -65,9 +63,8 @@ DataType::UP VariableLengthUnsignedIntegerType::_clone() const
 
 bool VariableLengthUnsignedIntegerType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherIntType = static_cast<const VariableLengthUnsignedIntegerType&>(other);
-
-    return VariableLengthIntegerType::_isEqual(other) && UnsignedIntegerTypeCommon::_isEqual(otherIntType);
+    return VariableLengthIntegerType::_isEqual(other) &&
+           UnsignedIntegerTypeCommon::_isEqual(other.asVariableLengthUnsignedIntegerType());
 }
 
 VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const _Kind kind,

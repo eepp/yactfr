@@ -23,7 +23,7 @@ OptionalType::OptionalType(const _Kind kind, const unsigned int minAlign, DataTy
 
 bool OptionalType::_isEqual(const DataType& other) const noexcept
 {
-    const auto& otherOptType = static_cast<const OptionalType&>(other);
+    const auto& otherOptType = other.asOptionalType();
 
     return CompoundDataType::_isEqual(other) && *_dt == *otherOptType._dt &&
            _selLoc == otherOptType._selLoc;

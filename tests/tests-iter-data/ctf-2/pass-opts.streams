@@ -190,7 +190,7 @@ EV  02
     24           FLB:sel:true
     32           OB:opt:enabled {
     32             NTS {
-    32               SS:14:fallen leaves
+    32               RD:14:fallen leaves$00
    144             }
    144           }
    144         }
@@ -238,7 +238,7 @@ EV  02
    184           FLUI:sel:33
    192           OU:opt:enabled:33 {
    192             NTS {
-   192               SS:17:pins and needles
+   192               RD:17:pins and needles$00
    328             }
    328           }
    328         }
@@ -271,7 +271,7 @@ EV  02
    352           FLUI:sel:45
    360           OU:opt:enabled:45 {
    360             NTS {
-   360               SS:12:river below
+   360               RD:12:river below$00
    456             }
    456           }
    456         }
@@ -304,7 +304,7 @@ EV  02
    480           FLSI:sel:-23
    488           OS:opt:enabled:-23 {
    488             NTS {
-   488               SS:10:surrender
+   488               RD:10:surrender$00
    568             }
    568           }
    568         }
@@ -322,7 +322,7 @@ EV  02
    576           FLSI:sel:16
    584           OS:opt:enabled:16 {
    584             NTS {
-   584               SS:21:rusted from the rain
+   584               RD:21:rusted from the rain$00
    752             }
    752           }
    752         }

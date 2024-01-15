@@ -1,4 +1,4 @@
-            trace {
+trace {
     major = 1;
     minor = 8;
     uuid = "4d86e02c-f527-4971-b960-971d26074bd4";
@@ -192,7 +192,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    248         ST {
    248           FLUE:ctx1:602918315
    280           NTS:ctx2 {
-   280             SS:12:hello hello
+   280             RD:12:hello hello$00
    376           }
    376         }
    376       }
@@ -204,7 +204,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    416       SC:5 {
    416         ST {
    416           NTS:z {
-   416             SS:9:meow mix
+   416             RD:9:meow mix$00
    488           }
    488         }
    488       }
@@ -222,7 +222,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    504         ST {
    504           FLUE:ctx1:1
    536           NTS:ctx2 {
-   536             SS:10:submarine
+   536             RD:10:submarine$00
    616           }
    616         }
    616       }
@@ -245,7 +245,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    664         ST {
    664           FLUE:ctx1:1147574528
    696           NTS:ctx2 {
-   696             SS:4:lel
+   696             RD:4:lel$00
    728           }
    728         }
    728       }
@@ -257,7 +257,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    800       SC:5 {
    800         ST {
    800           NTS:z {
-   800             SS:7:KANADA
+   800             RD:7:KANADA$00
    856           }
    856         }
    856       }
@@ -316,13 +316,13 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1168           }
   1168           DLA:seq2 {
   1168             NTS {
-  1168               SS:4:yes
+  1168               RD:4:yes$00
   1200             }
   1200             NTS {
-  1200               SS:4:sir
+  1200               RD:4:sir$00
   1232             }
   1232             NTS {
-  1232               SS:7:miller
+  1232               RD:7:miller$00
   1288             }
   1288           }
   1288         }
@@ -344,16 +344,16 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1376           }
   1376           DLA:seq2 {
   1376             NTS {
-  1376               SS:2:a
+  1376               RD:2:a$00
   1392             }
   1392             NTS {
-  1392               SS:6:whole
+  1392               RD:6:whole$00
   1440             }
   1440             NTS {
-  1440               SS:6:lotta
+  1440               RD:6:lotta$00
   1488             }
   1488             NTS {
-  1488               SS:5:love
+  1488               RD:5:love$00
   1528             }
   1528           }
   1528         }
@@ -413,7 +413,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1776         ST {
   1776           FLUE:ctx1:1146447479
   1808           NTS:ctx2 {
-  1808             SS:8:mystery
+  1808             RD:8:mystery$00
   1872           }
   1872         }
   1872       }
@@ -422,7 +422,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1872           FLUE:tag:192
   1880           VU:vvv:1146447479 {
   1880             NTS {
-  1880               SS:13:it's my life
+  1880               RD:13:it's my life$00
   1984             }
   1984           }
   1984           VU:zigzag:192 {
@@ -444,7 +444,7 @@ c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2064         ST {
   2064           FLUE:ctx1:1146447480
   2096           NTS:ctx2 {
-  2096             SS:12:parenthesis
+  2096             RD:12:parenthesis$00
   2192           }
   2192         }
   2192       }

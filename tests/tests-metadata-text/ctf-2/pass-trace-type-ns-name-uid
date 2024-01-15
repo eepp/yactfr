@@ -1,0 +1,15 @@
+
+{
+  "type": "preamble",
+  "version": 2
+}
+
+{
+  "type": "trace-class",
+  "namespace": "a namespace",
+  "name": "a name",
+  "uid": "a unique ID"
+}
+{
+  "type": "data-stream-class"
+}

@@ -43,7 +43,7 @@ ff 78 "heille Lynda" 00
     16       SC:5 {
     16         ST {
     16           NTS:str {
-    16             SS:13:heille Marie
+    16             RD:13:heille Marie$00
    120           }
    120         }
    120       }
@@ -69,7 +69,7 @@ ff 78 "heille Lynda" 00
    136       SC:5 {
    136         ST {
    136           NTS:str {
-   136             SS:13:heille Serge
+   136             RD:13:heille Serge$00
    240           }
    240         }
    240       }
@@ -95,7 +95,7 @@ ff 78 "heille Lynda" 00
    256       SC:5 {
    256         ST {
    256           NTS:str {
-   256             SS:13:heille Lynda
+   256             RD:13:heille Lynda$00
    360           }
    360         }
    360       }

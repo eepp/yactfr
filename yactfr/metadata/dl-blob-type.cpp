@@ -43,9 +43,8 @@ DataType::UP DynamicLengthBlobType::_clone() const
 
 bool DynamicLengthBlobType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherDlBlobType = static_cast<const DynamicLengthBlobType&>(other);
-
-    return BlobType::_isEqual(other) && _lenLoc == otherDlBlobType._lenLoc;
+    return BlobType::_isEqual(other) &&
+           _lenLoc == other.asDynamicLengthBlobType()._lenLoc;
 }
 
 } // namespace yactfr

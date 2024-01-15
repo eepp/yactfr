@@ -1,4 +1,4 @@
-            trace {
+trace {
     major = 1;
     minor = 8;
     byte_order = be;
@@ -27,10 +27,10 @@ event {
      0         ST {
      0           FLUI:len:3
      8           NTS:salut {
-     8             SS:15:salut les mecs
+     8             RD:15:salut les mecs$00
    128           }
    128           DLS:meow {
-   128             SS:3:sel
+   128             RD:3:sel
    152           }
    152         }
    152       }
@@ -41,10 +41,10 @@ event {
    152         ST {
    152           FLUI:len:6
    160           NTS:salut {
-   160             SS:9:tomatoes
+   160             RD:9:tomatoes$00
    232           }
    232           DLS:meow {
-   232             SS:6:poi
+   232             RD:6:poi$00re
    280           }
    280         }
    280       }
@@ -55,8 +55,8 @@ event {
    280         ST {
    280           FLUI:len:4
    288           NTS:salut {
-   288             SS:6:madly
+   288             RD:6:madly$00
    336           }
    336           DLS:meow {
-   336             SS:2:ca
+   336             RD:2:ca
    352 Cannot read 8 bits at this point: reaching end of data source.

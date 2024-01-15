@@ -66,10 +66,10 @@ $ ldd libyactfr.so
 ** yactfr decodes a data stream fixed-length bit array in place: the
    result is available as an element member.
 
-** A data stream string is available as one or more substrings in
-   consecutive elements. The actual substring is a pointer to the
+** A data stream string/BLOB is available as one or more raw data parts
+   in consecutive elements. The actual raw data is a pointer to the
    current data block of the data source (for example, from a memory
-   mapped region), which means zero string copy.
+   mapped region), which means zero string/BLOB copy.
 +
 This is possible because, as per CTF{nbsp}1.8.2 and **CTF2-SPECRC-8.1**,
 data stream strings have an 8-bit alignment requirement.

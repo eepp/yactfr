@@ -133,7 +133,7 @@
     24       SC:5 {
     24         ST {
     24           NTS:str {
-    24             SS:7:coucou
+    24             RD:7:coucou$00
     80           }
     80         }
     80       }
@@ -159,7 +159,7 @@
     96       SC:5 {
     96         ST {
     96           NTS:str {
-    96             SS:6:salut
+    96             RD:6:salut$00
    144           }
    144         }
    144       }
@@ -186,7 +186,7 @@
    168       SC:5 {
    168         ST {
    168           NTS:str {
-   168             SS:9:meow mix
+   168             RD:9:meow mix$00
    240           }
    240         }
    240       }

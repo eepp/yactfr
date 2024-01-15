@@ -57,7 +57,7 @@
      0       SC:5 {
      0         ST {
      0           NTS:salut {
-     0             SS:15:salut les mecs
+     0             RD:15:salut les mecs$00
    120           }
    120           FLUI:meow:3735928559
    152           FLUI:extra:1
@@ -69,7 +69,7 @@
    160       SC:5 {
    160         ST {
    160           NTS:salut {
-   160             SS:9:tomatoes
+   160             RD:9:tomatoes$00
    232           }
    232           FLUI:meow:3735929054
    264           FLUI:extra:1
@@ -81,7 +81,7 @@
    272       SC:5 {
    272         ST {
    272           NTS:salut {
-   272             SS:6:madly
+   272             RD:6:madly$00
    320           }
    320           FLUI:meow:4277009102
    352 Cannot read 1 bit at this point: reaching end of data source.

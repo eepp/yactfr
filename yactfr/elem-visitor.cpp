@@ -150,11 +150,7 @@ void ElementVisitor::visit(const NullTerminatedStringEndElement& elem)
     this->visit(static_cast<const EndElement&>(elem));
 }
 
-void ElementVisitor::visit(const SubstringElement&)
-{
-}
-
-void ElementVisitor::visit(const BlobSectionElement&)
+void ElementVisitor::visit(const RawDataElement&)
 {
 }
 

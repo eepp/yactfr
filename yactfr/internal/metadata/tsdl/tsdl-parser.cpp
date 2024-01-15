@@ -1242,7 +1242,7 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
     auto bo = this->_absNativeBo();
     auto dispBase = DisplayBase::DECIMAL;
     auto isSigned = false;
-    auto hasEncoding = false;
+    boost::optional<StringEncoding> encoding;
     boost::optional<std::string> mappedClkTypeId;
     boost::optional<TextLocation> mapAttrLoc;
 
@@ -1279,7 +1279,10 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
                 bo = *attrBo;
             }
         } else if (attr.name == "encoding") {
-            hasEncoding = attr.hasEncoding();
+            if (attr.hasEncoding()) {
+                // CTF 1.8 only supports UTF-8 (and ASCII, which is a subset)
+                encoding = StringEncoding::UTF_8;
+            }
         } else if (attr.name == "signed") {
             isSigned = attr.boolEquiv();
         } else if (attr.name == "map") {
@@ -1314,10 +1317,10 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
 
         auto intType = FixedLengthSignedIntegerType::create(align, size, bo, dispBase);
 
-        pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), hasEncoding,
+        pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), encoding,
                                                            beforeKwLoc);
     } else {
-        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, hasEncoding,
+        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, encoding,
                                                       mappedClkTypeId, nullptr,
                                                       UnsignedIntegerTypeRoleSet {}, beforeKwLoc);
     }
@@ -1573,7 +1576,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
             return std::make_unique<PseudoFlUEnumType>(pseudoUIntType.align(),
                                                        pseudoUIntType.len(), pseudoUIntType.bo(),
                                                        pseudoUIntType.prefDispBase(), mappings,
-                                                       pseudoUIntType.hasEncoding(),
+                                                       pseudoUIntType.encoding(),
                                                        pseudoUIntType.mappedClkTypeId(), nullptr,
                                                        UnsignedIntegerTypeRoleSet {},
                                                        pseudoDt.loc());

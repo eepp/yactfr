@@ -34,52 +34,52 @@ event {
      0             ST {
      0               SLA:arr {
      0                 NTS {
-     0                   SS:7:copper
+     0                   RD:7:copper$00
     56                 }
     56                 NTS {
-    56                   SS:8:explain
+    56                   RD:8:explain$00
    120                 }
    120                 NTS {
-   120                   SS:6:truck
+   120                   RD:6:truck$00
    168                 }
    168               }
    168             }
    168             ST {
    168               SLA:arr {
    168                 NTS {
-   168                   SS:5:neat
+   168                   RD:5:neat$00
    208                 }
    208                 NTS {
-   208                   SS:1:
+   208                   RD:1:$00
    216                 }
    216                 NTS {
-   216                   SS:9:decisive
+   216                   RD:9:decisive$00
    288                 }
    288               }
    288             }
    288             ST {
    288               SLA:arr {
    288                 NTS {
-   288                   SS:7:notice
+   288                   RD:7:notice$00
    344                 }
    344                 NTS {
-   344                   SS:4:hum
+   344                   RD:4:hum$00
    376                 }
    376                 NTS {
-   376                   SS:6:nerve
+   376                   RD:6:nerve$00
    424                 }
    424               }
    424             }
    424             ST {
    424               SLA:arr {
    424                 NTS {
-   424                   SS:1:
+   424                   RD:1:$00
    432                 }
    432                 NTS {
-   432                   SS:6:blood
+   432                   RD:6:blood$00
    480                 }
    480                 NTS {
-   480                   SS:5:calm
+   480                   RD:5:calm$00
    520                 }
    520               }
    520             }

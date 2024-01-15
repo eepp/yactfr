@@ -1,0 +1,27 @@
+
+{
+  "type": "preamble",
+  "version": 2
+}
+
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "type": "event-record-class",
+  "namespace": "a namespace",
+  "name": "a name",
+  "uid": "a unique ID",
+  "payload-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "yo",
+        "field-class": {"type": "null-terminated-string"}
+      }
+    ]
+  }
+}

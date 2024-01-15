@@ -155,22 +155,22 @@
      8             ST {
      8               FLUI:len:3
     16               NTS:s {
-    16                 SS:6:salut
+    16                 RD:6:salut$00
     64               }
     64             }
     64           }
     64           NTS:z {
-    64             SS:4:pad
+    64             RD:4:pad$00
     96           }
     96           DLA:seq {
     96             NTS {
-    96               SS:3:un
+    96               RD:3:un$00
    120             }
    120             NTS {
-   120               SS:5:deux
+   120               RD:5:deux$00
    160             }
    160             NTS {
-   160               SS:6:trois
+   160               RD:6:trois$00
    208             }
    208           }
    208         }
@@ -184,29 +184,29 @@
    216           VU:outer:1 {
    216             ST {
    216               NTS:s {
-   216                 SS:7:coucou
+   216                 RD:7:coucou$00
    272               }
    272               FLUI:len:5
    288             }
    288           }
    288           NTS:z {
-   288             SS:4:pad
+   288             RD:4:pad$00
    320           }
    320           DLA:seq {
    320             NTS {
-   320               SS:3:un
+   320               RD:3:un$00
    344             }
    344             NTS {
-   344               SS:5:deux
+   344               RD:5:deux$00
    384             }
    384             NTS {
-   384               SS:6:trois
+   384               RD:6:trois$00
    432             }
    432             NTS {
-   432               SS:7:quatre
+   432               RD:7:quatre$00
    488             }
    488             NTS {
-   488               SS:5:cinq
+   488               RD:5:cinq$00
    528             }
    528           }
    528         }

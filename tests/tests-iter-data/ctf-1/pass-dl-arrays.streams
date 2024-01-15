@@ -51,13 +51,13 @@ event {
     32               FLUI:len2:3
     48               DLA:seq {
     48                 NTS {
-    48                   SS:7:copper
+    48                   RD:7:copper$00
    104                 }
    104                 NTS {
-   104                   SS:8:explain
+   104                   RD:8:explain$00
    168                 }
    168                 NTS {
-   168                   SS:6:truck
+   168                   RD:6:truck$00
    216                 }
    216               }
    216             }
@@ -65,10 +65,10 @@ event {
    216               FLUI:len2:2
    232               DLA:seq {
    232                 NTS {
-   232                   SS:5:neat
+   232                   RD:5:neat$00
    272                 }
    272                 NTS {
-   272                   SS:8:tenuous
+   272                   RD:8:tenuous$00
    336                 }
    336               }
    336             }
@@ -81,10 +81,10 @@ event {
    352               FLUI:len2:2
    368               DLA:seq {
    368                 NTS {
-   368                   SS:9:decisive
+   368                   RD:9:decisive$00
    440                 }
    440                 NTS {
-   440                   SS:7:notice
+   440                   RD:7:notice$00
    496                 }
    496               }
    496             }
@@ -92,7 +92,7 @@ event {
    496               FLUI:len2:1
    512               DLA:seq {
    512                 NTS {
-   512                   SS:4:hum
+   512                   RD:4:hum$00
    544                 }
    544               }
    544             }
@@ -100,7 +100,7 @@ event {
    544               FLUI:len2:1
    560               DLA:seq {
    560                 NTS {
-   560                   SS:1:
+   560                   RD:1:$00
    568                 }
    568               }
    568             }
@@ -108,10 +108,10 @@ event {
    568               FLUI:len2:2
    584               DLA:seq {
    584                 NTS {
-   584                   SS:6:nerve
+   584                   RD:6:nerve$00
    632                 }
    632                 NTS {
-   632                   SS:7:locket
+   632                   RD:7:locket$00
    688                 }
    688               }
    688             }

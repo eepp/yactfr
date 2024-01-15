@@ -194,7 +194,7 @@ ER
     64       SC:5 {
     64         ST {
     64           NTS:zoom {
-    64             SS:6:salut
+    64             RD:6:salut$00
    112           }
    112           SLA:mini {
    112             FLUI:1
@@ -224,7 +224,7 @@ ER
    160       SC:5 {
    160         ST {
    160           NTS:zoom {
-   160             SS:9:meow mix
+   160             RD:9:meow mix$00
    232           }
    232           SLA:mini {
    232             FLUI:4

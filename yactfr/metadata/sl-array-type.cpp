@@ -35,7 +35,7 @@ DataType::UP StaticLengthArrayType::_clone() const
 
 bool StaticLengthArrayType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherStaticLengthArrayType = static_cast<const StaticLengthArrayType&>(other);
+    auto& otherStaticLengthArrayType = other.asStaticLengthArrayType();
 
     return ArrayType::_isEqual(other) && _len == otherStaticLengthArrayType._len &&
            otherStaticLengthArrayType._hasMetadataStreamUuidRole == _hasMetadataStreamUuidRole;

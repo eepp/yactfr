@@ -394,8 +394,16 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_VL_SENUM";
         break;
 
-    case Kind::READ_NT_STR:
-        kindStr = "READ_NT_STR";
+    case Kind::READ_NT_STR_UTF_8:
+        kindStr = "READ_NT_STR_UTF_8";
+        break;
+
+    case Kind::READ_NT_STR_UTF_16:
+        kindStr = "READ_NT_STR_UTF_16";
+        break;
+
+    case Kind::READ_NT_STR_UTF_32:
+        kindStr = "READ_NT_STR_UTF_32";
         break;
 
     case Kind::BEGIN_READ_SCOPE:
@@ -1142,10 +1150,27 @@ std::string ReadVlIntInstr::_toStr(Size) const
     return ss.str();
 }
 
-ReadNtStrInstr::ReadNtStrInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadDataInstr {Kind::READ_NT_STR, member, dt}
+static inline Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) noexcept
 {
-    assert(dt.isNullTerminatedStringType());
+    switch (dt.encoding()) {
+    case StringEncoding::UTF_8:
+        return Instr::Kind::READ_NT_STR_UTF_8;
+
+    case StringEncoding::UTF_16BE:
+    case StringEncoding::UTF_16LE:
+        return Instr::Kind::READ_NT_STR_UTF_16;
+
+    case StringEncoding::UTF_32BE:
+    case StringEncoding::UTF_32LE:
+        return Instr::Kind::READ_NT_STR_UTF_32;
+    }
+
+    std::abort();
+}
+
+ReadNtStrInstr::ReadNtStrInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadDataInstr {kindFromNtStrType(dt.asNullTerminatedStringType()), member, dt}
+{
 }
 
 std::string ReadNtStrInstr::_toStr(Size) const

@@ -1,0 +1,20 @@
+
+{
+  "type": "preamble",
+  "version": 2
+}
+
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "type": "clock-class",
+  "frequency": 1500,
+  "id": "lol",
+  "namespace": "a namespace",
+  "name": "a name",
+  "uid": "a unique ID"
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "str",
+          "field-class": {
+            "type": "null-terminated-string",
+            "encoding": "utf-32be"
+          }
+        }
+      ]
+    }
+  }
+]
+----
+00 00 00 "m" 00 00 00 "e" 00 00 00 "o" 00 00 00 "w" 00 00 00 00
+00 00 00 "m" 00 00 00 "i" 00 00 00 "x"              00 00 00 00
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           NTS:str {
+     0             RD:20:$00$00$00m$00$00$00e$00$00$00o$00$00$00w$00$00$00$00
+   160           }
+   160         }
+   160       }
+   160     }
+   160     ER {
+   160       ERI:T0:#test
+   160       SC:5 {
+   160         ST {
+   160           NTS:str {
+   160             RD:16:$00$00$00m$00$00$00i$00$00$00x$00$00$00$00
+   288           }
+   288         }
+   288       }
+   288     }
+   288   }
+   288 }

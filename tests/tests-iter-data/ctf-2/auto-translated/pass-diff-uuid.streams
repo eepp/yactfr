@@ -50,7 +50,7 @@ cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
      0     SC:0 {
      0       ST {
      0         SLB:uuid:application/octet-stream {
-     0           BS:16:cc1cbce4771843b1a0166cb8cc3c2b4a
+     0           RD:16:cc1cbce4771843b1a0166cb8cc3c2b4a
    128           MSU:cc1cbce4-7718-43b1-a016-6cb8cc3c2b4a
    128         }
    128       }

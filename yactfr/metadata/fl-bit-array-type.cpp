@@ -63,7 +63,7 @@ bool FixedLengthBitArrayType::operator<(const FixedLengthBitArrayType& other) co
 
 bool FixedLengthBitArrayType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherBitArrayType = static_cast<const FixedLengthBitArrayType&>(other);
+    auto& otherBitArrayType = other.asFixedLengthBitArrayType();
 
     return _len == otherBitArrayType._len && _bo == otherBitArrayType._bo;
 }

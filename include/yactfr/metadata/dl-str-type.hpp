@@ -51,6 +51,9 @@ public:
     @param[in] maximumLengthLocation
         Location of maximum lengths (UTF-8 bytes) of data stream
         dynamic-length strings described by this type.
+    @param[in] encoding
+        Encoding of data stream dynamic-length strings described by this
+        type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream dynamic-length strings described
@@ -65,6 +68,7 @@ public:
         \p alignment is a power of two.
     */
     explicit DynamicLengthStringType(unsigned int alignment, DataLocation maximumLengthLocation,
+                                     StringEncoding encoding = StringEncoding::UTF_8,
                                      MapItem::UP userAttributes = nullptr);
 
 
@@ -76,6 +80,9 @@ public:
     @param[in] maximumLengthLocation
         Location of maximum lengths (UTF-8 bytes) of data stream
         dynamic-length strings described by this type.
+    @param[in] encoding
+        Encoding of data stream dynamic-length strings described by this
+        type.
     @param[in] userAttributes
         @parblock
         User attributes of data stream dynamic-length strings described
@@ -85,6 +92,7 @@ public:
         @endparblock
     */
     explicit DynamicLengthStringType(DataLocation maximumLengthLocation,
+                                     StringEncoding encoding = StringEncoding::UTF_8,
                                      MapItem::UP userAttributes = nullptr);
 
     /*!

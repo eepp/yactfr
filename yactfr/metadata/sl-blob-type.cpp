@@ -50,7 +50,7 @@ DataType::UP StaticLengthBlobType::_clone() const
 
 bool StaticLengthBlobType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherSlBlobType = static_cast<const StaticLengthBlobType&>(other);
+    auto& otherSlBlobType = other.asStaticLengthBlobType();
 
     return BlobType::_isEqual(other) && _len == otherSlBlobType._len &&
            otherSlBlobType._hasMetadataStreamUuidRole == _hasMetadataStreamUuidRole;

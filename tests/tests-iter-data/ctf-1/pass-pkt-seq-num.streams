@@ -37,7 +37,7 @@ event {
     16       SC:5 {
     16         ST {
     16           NTS:str {
-    16             SS:7:coucou
+    16             RD:7:coucou$00
     72           }
     72         }
     72       }
@@ -59,7 +59,7 @@ event {
     88       SC:5 {
     88         ST {
     88           NTS:str {
-    88             SS:6:salut
+    88             RD:6:salut$00
    136           }
    136         }
    136       }
@@ -81,7 +81,7 @@ event {
    152       SC:5 {
    152         ST {
    152           NTS:str {
-   152             SS:9:meow mix
+   152             RD:9:meow mix$00
    224           }
    224         }
    224       }

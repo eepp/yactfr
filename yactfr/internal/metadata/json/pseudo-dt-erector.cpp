@@ -313,9 +313,34 @@ static PseudoDt::UP pseudoDtFromVlIntType(const JsonObjVal& jsonDt, const std::s
     }
 }
 
+static StringEncoding strEncodingOfStrType(const JsonObjVal& jsonDt) noexcept
+{
+    const auto jsonEncodingVal = jsonDt[strs::ENCODING];
+
+    if (!jsonEncodingVal) {
+        return StringEncoding::UTF_8;
+    }
+
+    auto& jsonEncodingStrVal = *jsonEncodingVal->asStr();
+
+    if (jsonEncodingStrVal == strs::UTF_8) {
+        return StringEncoding::UTF_8;
+    } else if (jsonEncodingStrVal == strs::UTF_16BE) {
+        return StringEncoding::UTF_16BE;
+    } else if (jsonEncodingStrVal == strs::UTF_16LE) {
+        return StringEncoding::UTF_16LE;
+    } else if (jsonEncodingStrVal == strs::UTF_32BE) {
+        return StringEncoding::UTF_32BE;
+    } else {
+        assert(jsonEncodingStrVal == strs::UTF_32LE);
+        return StringEncoding::UTF_32LE;
+    }
+}
+
 static PseudoDt::UP pseudoDtFromNtStrType(const JsonObjVal& jsonDt, MapItem::UP userAttrs)
 {
-    return createPseudoScalarDtWrapper<NullTerminatedStringType>(jsonDt, std::move(userAttrs));
+    return createPseudoScalarDtWrapper<NullTerminatedStringType>(jsonDt, strEncodingOfStrType(jsonDt),
+                                                                 std::move(userAttrs));
 }
 
 static PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& propName)
@@ -376,7 +401,8 @@ static PseudoDt::UP pseudoDtFromDlStrType(const JsonObjVal& jsonDt, MapItem::UP 
      * array type to a `DynamicLengthStringType` instance.
      */
     auto pseudoElemType = std::make_unique<PseudoFlUIntType>(8, 8, ByteOrder::BIG,
-                                                             DisplayBase::DECIMAL, true);
+                                                             DisplayBase::DECIMAL,
+                                                             strEncodingOfStrType(jsonDt));
 
     return std::make_unique<PseudoDlArrayType>(pseudoDataLocOfDynDt(jsonDt, strs::LEN_FIELD_LOC),
                                                std::move(pseudoElemType), std::move(userAttrs),
@@ -387,6 +413,7 @@ static PseudoDt::UP pseudoDtFromSlStrType(const JsonObjVal& jsonDt, MapItem::UP 
 {
     return createPseudoScalarDtWrapper<StaticLengthStringType>(jsonDt,
                                                                jsonDt.getRawUIntVal(strs::LEN),
+                                                               strEncodingOfStrType(jsonDt),
                                                                std::move(userAttrs));
 }
 

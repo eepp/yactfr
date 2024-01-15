@@ -72,20 +72,20 @@ event {
     64                     VU:66 {
     64                       SLA {
     64                         NTS {
-    64                           SS:7:purple
+    64                           RD:7:purple$00
    120                         }
    120                         NTS {
-   120                           SS:5:unit
+   120                           RD:5:unit$00
    160                         }
    160                       }
    160                     }
    160                     VU:66 {
    160                       SLA {
    160                         NTS {
-   160                           SS:7:planes
+   160                           RD:7:planes$00
    216                         }
    216                         NTS {
-   216                           SS:5:hate
+   216                           RD:5:hate$00
    256                         }
    256                       }
    256                     }

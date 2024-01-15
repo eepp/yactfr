@@ -53,12 +53,12 @@
      0       SC:5 {
      0         ST {
      0           SLS:text1 {
-     0             SS:42:I've tasted both the fantasy
+     0             RD:42:I've tasted both the fantasy$00 and the deed
    336           }
    336           SLS:text2 {
    336           }
    336           SLS:text3 {
-   336             SS:11:dan boucher
+   336             RD:11:dan boucher
    424           }
    424         }
    424       }

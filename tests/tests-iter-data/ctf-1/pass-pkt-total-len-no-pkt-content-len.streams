@@ -39,7 +39,7 @@ event {
     32       SC:5 {
     32         ST {
     32           NTS:str {
-    32             SS:20:salut tout le monde
+    32             RD:20:salut tout le monde$00
    192           }
    192         }
    192       }
@@ -49,7 +49,7 @@ event {
    192       SC:5 {
    192         ST {
    192           NTS:str {
-   192             SS:10:diet cola
+   192             RD:10:diet cola$00
    272           }
    272         }
    272       }
@@ -59,7 +59,7 @@ event {
    272       SC:5 {
    272         ST {
    272           NTS:str {
-   272             SS:9:learning
+   272             RD:9:learning$00
    344           }
    344         }
    344       }

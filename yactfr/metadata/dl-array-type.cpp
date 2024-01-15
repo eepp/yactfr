@@ -31,9 +31,7 @@ DataType::UP DynamicLengthArrayType::_clone() const
 
 bool DynamicLengthArrayType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherDlArrayType = static_cast<const DynamicLengthArrayType&>(other);
-
-    return ArrayType::_isEqual(other) && _lenLoc == otherDlArrayType._lenLoc;
+    return ArrayType::_isEqual(other) && _lenLoc == other.asDynamicLengthArrayType()._lenLoc;
 }
 
 } // namespace yactfr

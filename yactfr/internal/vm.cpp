@@ -49,6 +49,7 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     curVlIntLenBits = other.curVlIntLenBits;
     curVlIntElem = &this->elemFromOther(other, *other.curVlIntElem);
     curId = other.curId;
+    ntStrCuBuf = other.ntStrCuBuf;
     pktProc = other.pktProc;
     curDsPktProc = other.curDsPktProc;
     curErProc = other.curErProc;
@@ -256,7 +257,9 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::READ_VL_SINT>(&Vm::_execReadVlSInt);
     this->_initExecFunc<Instr::Kind::READ_VL_UENUM>(&Vm::_execReadVlUEnum);
     this->_initExecFunc<Instr::Kind::READ_VL_SENUM>(&Vm::_execReadVlSEnum);
-    this->_initExecFunc<Instr::Kind::READ_NT_STR>(&Vm::_execReadNtStr);
+    this->_initExecFunc<Instr::Kind::READ_NT_STR_UTF_8>(&Vm::_execReadNtStrUtf8);
+    this->_initExecFunc<Instr::Kind::READ_NT_STR_UTF_16>(&Vm::_execReadNtStrUtf16);
+    this->_initExecFunc<Instr::Kind::READ_NT_STR_UTF_32>(&Vm::_execReadNtStrUtf32);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_SCOPE>(&Vm::_execBeginReadScope);
     this->_initExecFunc<Instr::Kind::END_READ_SCOPE>(&Vm::_execEndReadScope);
     this->_initExecFunc<Instr::Kind::BEGIN_READ_STRUCT>(&Vm::_execBeginReadStruct);
@@ -762,15 +765,31 @@ Vm::_ExecReaction Vm::_execReadVlSEnum(const Instr& instr)
     return this->_execReadVlIntCommon(instr, _pos.elems.vlSEnum, VmState::CONTINUE_READ_VL_SINT);
 }
 
-Vm::_ExecReaction Vm::_execReadNtStr(const Instr& instr)
+Vm::_ExecReaction Vm::_execReadNtStrCommon(const Instr& instr, const VmState state)
 {
     this->_alignHead(instr);
     this->_setDataElemFromInstr(_pos.elems.ntStrBeginning, instr);
     this->_setDataElemFromInstr(_pos.elems.ntStrEnd, instr);
     this->_updateItForUser(_pos.elems.ntStrBeginning);
     _pos.nextState = _pos.state();
-    _pos.state(VmState::READ_SUBSTR_UNTIL_NULL);
+    _pos.state(state);
+    _pos.ntStrCuBuf.index = 0;
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadNtStrUtf8(const Instr& instr)
+{
+    return this->_execReadNtStrCommon(instr, VmState::READ_UTF_8_DATA_UNTIL_NULL);
+}
+
+Vm::_ExecReaction Vm::_execReadNtStrUtf16(const Instr& instr)
+{
+    return this->_execReadNtStrCommon(instr, VmState::READ_UTF_16_DATA_UNTIL_NULL);
+}
+
+Vm::_ExecReaction Vm::_execReadNtStrUtf32(const Instr& instr)
+{
+    return this->_execReadNtStrCommon(instr, VmState::READ_UTF_32_DATA_UNTIL_NULL);
 }
 
 Vm::_ExecReaction Vm::_execBeginReadScope(const Instr& instr)
@@ -835,7 +854,7 @@ Vm::_ExecReaction Vm::_execBeginReadSlStr(const Instr& instr)
 
     _pos.elems.slStrBeginning._maxLen = beginReadSlStrInstr.maxLen();
     this->_execBeginReadStaticData(beginReadSlStrInstr, _pos.elems.slStrBeginning,
-                                   beginReadSlStrInstr.maxLen(), nullptr, VmState::READ_SUBSTR);
+                                   beginReadSlStrInstr.maxLen(), nullptr, VmState::READ_RAW_DATA);
     return _ExecReaction::STOP;
 }
 
@@ -874,7 +893,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlStr(const Instr& instr)
 
     this->_execBeginReadDynData(beginReadDlStrInstr, _pos.elems.dlStrBeginning,
                                 beginReadDlStrInstr.maxLenPos(), _pos.elems.dlStrBeginning._maxLen,
-                                nullptr, VmState::READ_SUBSTR);
+                                nullptr, VmState::READ_RAW_DATA);
     return _ExecReaction::STOP;
 }
 
@@ -887,7 +906,7 @@ Vm::_ExecReaction Vm::_execEndReadDlStr(const Instr& instr)
 
 Vm::_ExecReaction Vm::_execBeginReadSlBlob(const Instr& instr)
 {
-    return this->_execBeginReadSlBlob(instr, VmState::READ_BLOB_SECTION);
+    return this->_execBeginReadSlBlob(instr, VmState::READ_RAW_DATA);
 }
 
 Vm::_ExecReaction Vm::_execBeginReadSlUuidBlob(const Instr& instr)
@@ -908,7 +927,7 @@ Vm::_ExecReaction Vm::_execBeginReadDlBlob(const Instr& instr)
 
     this->_execBeginReadDynData(beginReadDlBlobInstr, _pos.elems.dlBlobBeginning,
                                 beginReadDlBlobInstr.lenPos(), _pos.elems.dlBlobBeginning._len,
-                                nullptr, VmState::READ_BLOB_SECTION);
+                                nullptr, VmState::READ_RAW_DATA);
     return _ExecReaction::STOP;
 }
 

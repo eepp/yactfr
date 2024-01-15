@@ -12,28 +12,30 @@
 namespace yactfr {
 
 DynamicLengthStringType::DynamicLengthStringType(const unsigned int align, DataLocation maxLenLoc,
+                                                 const StringEncoding encoding,
                                                  MapItem::UP userAttrs) :
-    NonNullTerminatedStringType {_KIND_DL_STR, align, std::move(userAttrs)},
+    NonNullTerminatedStringType {_KIND_DL_STR, align, encoding, std::move(userAttrs)},
     _maxLenLoc {std::move(maxLenLoc)}
 {
 }
 
-DynamicLengthStringType::DynamicLengthStringType(DataLocation maxLenLoc, MapItem::UP userAttrs) :
-    DynamicLengthStringType {8, std::move(maxLenLoc), std::move(userAttrs)}
+DynamicLengthStringType::DynamicLengthStringType(DataLocation maxLenLoc,
+                                                 const StringEncoding encoding,
+                                                 MapItem::UP userAttrs) :
+    DynamicLengthStringType {8, std::move(maxLenLoc), encoding, std::move(userAttrs)}
 {
 }
 
 DataType::UP DynamicLengthStringType::_clone() const
 {
-    return DynamicLengthStringType::create(this->alignment(), _maxLenLoc,
+    return DynamicLengthStringType::create(this->alignment(), _maxLenLoc, this->encoding(),
                                            internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool DynamicLengthStringType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherDlStrType = static_cast<const DynamicLengthStringType&>(other);
-
-    return _maxLenLoc == otherDlStrType._maxLenLoc;
+    return StringType::_isEqual(other) &&
+           _maxLenLoc == other.asDynamicLengthStringType()._maxLenLoc;
 }
 
 } // namespace yactfr

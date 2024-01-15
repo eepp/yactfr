@@ -89,11 +89,11 @@ LAST INT
      0       SC:5 {
      0         ST {
      0           SLB:blob:application/octet-stream {
-     0             BS:32:00112233445566778899aabbccddeeffffeeddccbbaa99887766554433221100
+     0             RD:32:00112233445566778899aabbccddeeffffeeddccbbaa99887766554433221100
    256           }
    256           FLUI:alter alignment:15
    264           SLB:other blob:application/octet-stream {
-   264             BS:7:6d656f776d6978
+   264             RD:7:6d656f776d6978
    320           }
    320           FLUI:alter alignment again:10
    328           SLB:zero blob:application/lol {

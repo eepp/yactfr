@@ -48,7 +48,7 @@
      0       SC:5 {
      0         ST {
      0           NTS:salut {
-     0             SS:13:heille salut
+     0             RD:13:heille salut$00
    104           }
    104           SLA:yes {
    104             ST {
@@ -160,7 +160,7 @@
    104       SC:5 {
    104         ST {
    104           NTS:salut {
-   104             SS:12:autre event
+   104             RD:12:autre event$00
    200           }
    200           SLA:yes {
    200             ST {

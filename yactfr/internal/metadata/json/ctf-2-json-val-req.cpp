@@ -1099,14 +1099,40 @@ private:
 };
 
 /*
+ * CTF 2 JSON string type value abstract requirement.
+ */
+class JsonStrTypeValReq :
+    public JsonDtValReq
+{
+protected:
+    explicit JsonStrTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
+        JsonDtValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
+    {
+    }
+
+private:
+    static PropReqs _buildPropReqs(PropReqs&& propReqs)
+    {
+        addToPropReqs(propReqs, strs::ENCODING, JsonStrValInSetReq::shared({
+            strs::UTF_8,
+            strs::UTF_16BE,
+            strs::UTF_16LE,
+            strs::UTF_32BE,
+            strs::UTF_32LE,
+        }));
+        return std::move(propReqs);
+    }
+};
+
+/*
  * CTF 2 JSON null-terminated string type value requirement.
  */
 class JsonNtStrTypeValReq final :
-    public JsonDtValReq
+    public JsonStrTypeValReq
 {
 public:
     explicit JsonNtStrTypeValReq() :
-        JsonDtValReq {this->typeStr()}
+        JsonStrTypeValReq {this->typeStr()}
     {
     }
 
@@ -1124,7 +1150,7 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonStrTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid null-terminated string type:", jsonVal.loc());
             throw;
@@ -1156,11 +1182,11 @@ static JsonObjValReq::PropReqsEntry dlDtLenFieldLocPropReqEntry()
  * CTF 2 JSON static-length string type value requirement.
  */
 class JsonSlStrTypeValReq final :
-    public JsonDtValReq
+    public JsonStrTypeValReq
 {
 public:
     explicit JsonSlStrTypeValReq() :
-        JsonDtValReq {this->typeStr(), {slDtLenPropReqEntry()}}
+        JsonStrTypeValReq {this->typeStr(), {slDtLenPropReqEntry()}}
     {
     }
 
@@ -1178,7 +1204,7 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonStrTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid static-length string type:", jsonVal.loc());
             throw;
@@ -1190,11 +1216,11 @@ private:
  * CTF 2 JSON dynamic-length string type value requirement.
  */
 class JsonDlStrTypeValReq final :
-    public JsonDtValReq
+    public JsonStrTypeValReq
 {
 public:
     explicit JsonDlStrTypeValReq() :
-        JsonDtValReq {this->typeStr(), {dlDtLenFieldLocPropReqEntry()}}
+        JsonStrTypeValReq {this->typeStr(), {dlDtLenFieldLocPropReqEntry()}}
     {
     }
 
@@ -1212,7 +1238,7 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonStrTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid dynamic-length string type:", jsonVal.loc());
             throw;

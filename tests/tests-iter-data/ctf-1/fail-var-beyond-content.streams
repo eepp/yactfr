@@ -1,4 +1,4 @@
-            trace {
+trace {
     major = 1;
     minor = 8;
     byte_order = be;

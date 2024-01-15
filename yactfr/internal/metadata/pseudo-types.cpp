@@ -65,22 +65,23 @@ bool PseudoDt::isFlUInt() const noexcept
     return false;
 }
 
-PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, const bool hasEncoding,
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt,
+                                             boost::optional<StringEncoding> encoding,
                                              TextLocation loc) :
     PseudoDt {std::move(loc)},
     _dt {std::move(dt)},
-    _hasEncoding {hasEncoding}
+    _encoding {std::move(encoding)}
 {
 }
 
 PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) :
-    PseudoScalarDtWrapper {std::move(dt), false, std::move(loc)}
+    PseudoScalarDtWrapper {std::move(dt), boost::none, std::move(loc)}
 {
 }
 
 PseudoDt::UP PseudoScalarDtWrapper::clone() const
 {
-    return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), _hasEncoding, this->loc());
+    return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), _encoding, this->loc());
 }
 
 bool PseudoScalarDtWrapper::isEmpty() const
@@ -120,7 +121,7 @@ WithUserAttrsMixin::WithUserAttrsMixin(MapItem::UP userAttrs) :
 
 PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
                                    const ByteOrder bo, const DisplayBase prefDispBase,
-                                   const bool hasEncoding,
+                                   boost::optional<StringEncoding> encoding,
                                    boost::optional<std::string> mappedClkTypeId,
                                    MapItem::UP userAttrs, UnsignedIntegerTypeRoleSet roles,
                                    TextLocation loc) :
@@ -130,7 +131,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
     _len {len},
     _bo {bo},
     _prefDispBase {prefDispBase},
-    _hasEncoding {hasEncoding},
+    _encoding {std::move(encoding)},
     _mappedClkTypeId {std::move(mappedClkTypeId)},
     _roles {std::move(roles)}
 {
@@ -138,7 +139,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
 
 PseudoDt::UP PseudoFlUIntType::clone() const
 {
-    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _hasEncoding,
+    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _encoding,
                                               _mappedClkTypeId,
                                               tryCloneUserAttrs(this->userAttrs()), this->roles(),
                                               this->loc());
@@ -172,12 +173,12 @@ bool PseudoFlUIntType::isFlUInt() const noexcept
 PseudoFlUEnumType::PseudoFlUEnumType(const unsigned int align, const unsigned int len,
                                      const ByteOrder bo, const DisplayBase prefDispBase,
                                      FixedLengthUnsignedEnumerationType::Mappings mappings,
-                                     const bool hasEncoding,
+                                     boost::optional<StringEncoding> encoding,
                                      boost::optional<std::string> mappedClkTypeId,
                                      MapItem::UP userAttrs, UnsignedIntegerTypeRoleSet roles,
                                      TextLocation loc) :
     PseudoFlUIntType {
-        align, len, bo, prefDispBase, hasEncoding,
+        align, len, bo, prefDispBase, std::move(encoding),
         std::move(mappedClkTypeId), std::move(userAttrs),
         std::move(roles), std::move(loc)
     },
@@ -189,7 +190,7 @@ PseudoDt::UP PseudoFlUEnumType::clone() const
 {
     return std::make_unique<PseudoFlUEnumType>(this->align(), this->len(), this->bo(),
                                                this->prefDispBase(), _mappings,
-                                               this->hasEncoding(), this->mappedClkTypeId(),
+                                               this->encoding(), this->mappedClkTypeId(),
                                                tryCloneUserAttrs(this->userAttrs()), this->roles(),
                                                this->loc());
 }

@@ -48,7 +48,7 @@
      0       SC:5 {
      0         ST {
      0           NTS:salut {
-     0             SS:15:salut les mecs
+     0             RD:15:salut les mecs$00
    120           }
    120           FLUI:meow:3735928559
    152         }
@@ -59,7 +59,7 @@
    152       SC:5 {
    152         ST {
    152           NTS:salut {
-   152             SS:9:tomatoes
+   152             RD:9:tomatoes$00
    224           }
    224           FLUI:meow:3735929054
    256         }
@@ -70,6 +70,6 @@
    256       SC:5 {
    256         ST {
    256           NTS:salut {
-   256             SS:6:madly
+   256             RD:6:madly$00
    304           }
    304 Cannot read 32 bits at this point: reaching end of data source.

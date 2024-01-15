@@ -12,33 +12,30 @@
 
 namespace yactfr {
 
-NullTerminatedStringType::NullTerminatedStringType(const unsigned int align, MapItem::UP userAttrs) :
-    ScalarDataType {_KIND_NT_STR, align, std::move(userAttrs)}
+NullTerminatedStringType::NullTerminatedStringType(const unsigned int align, const StringEncoding encoding, MapItem::UP userAttrs) :
+    StringType {_KIND_NT_STR, align, encoding, std::move(userAttrs)}
 {
     assert(align >= 8);
 }
 
-NullTerminatedStringType::NullTerminatedStringType(MapItem::UP userAttrs) :
-    NullTerminatedStringType {8, std::move(userAttrs)}
+NullTerminatedStringType::NullTerminatedStringType(const StringEncoding encoding,
+                                                   MapItem::UP userAttrs) :
+    NullTerminatedStringType {8, encoding, std::move(userAttrs)}
 {
 }
 
 NullTerminatedStringType::NullTerminatedStringType(const NullTerminatedStringType& other) :
-    ScalarDataType {
-        _KIND_NT_STR, other.alignment(), internal::tryCloneUserAttrs(other.userAttributes())
+    StringType {
+        _KIND_NT_STR, other.alignment(), other.encoding(),
+        internal::tryCloneUserAttrs(other.userAttributes())
     }
 {
 }
 
 DataType::UP NullTerminatedStringType::_clone() const
 {
-    return NullTerminatedStringType::create(this->alignment(),
+    return NullTerminatedStringType::create(this->alignment(), this->encoding(),
                                             internal::tryCloneUserAttrs(this->userAttributes()));
-}
-
-bool NullTerminatedStringType::_isEqual(const DataType&) const noexcept
-{
-    return true;
 }
 
 } // namespace yactfr

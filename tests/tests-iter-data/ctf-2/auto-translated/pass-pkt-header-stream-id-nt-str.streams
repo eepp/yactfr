@@ -29,7 +29,7 @@
      0     SC:0 {
      0       ST {
      0         NTS:stream_id {
-     0           SS:6:salut
+     0           RD:6:salut$00
     48         }
     48       }
     48     }

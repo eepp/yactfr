@@ -324,27 +324,27 @@ DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
                                                                               LenT&& len)
 {
     if (pseudoElemType.isInt()) {
-        bool hasEncoding;
+        boost::optional<StringEncoding> encoding;
         unsigned int align;
         unsigned int elemLen;
 
         if (pseudoElemType.isUInt()) {
             auto& pseudoIntElemType = static_cast<const PseudoFlUIntType&>(pseudoElemType);
 
-            hasEncoding = pseudoIntElemType.hasEncoding();
+            encoding = pseudoIntElemType.encoding();
             align = pseudoIntElemType.align();
             elemLen = pseudoIntElemType.len();
         } else {
             auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(pseudoElemType);
             auto& intType = pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType();
 
-            hasEncoding = pseudoScalarDtWrapper.hasEncoding();
+            encoding = pseudoScalarDtWrapper.encoding();
             align = intType.alignment();
             elemLen = intType.length();
         }
 
-        if (hasEncoding && align == 8 && elemLen == 8) {
-            return StrTypeT::create(8, std::forward<LenT>(len),
+        if (encoding && align == 8 && elemLen == 8) {
+            return StrTypeT::create(8, std::forward<LenT>(len), *encoding,
                                     this->_tryCloneUserAttrs(pseudoArrayType.userAttrs()));
         }
     }

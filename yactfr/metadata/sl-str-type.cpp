@@ -13,28 +13,29 @@
 namespace yactfr {
 
 StaticLengthStringType::StaticLengthStringType(const unsigned int align, const Size maxLen,
+                                               const StringEncoding encoding,
                                                MapItem::UP userAttrs) :
-    NonNullTerminatedStringType {_KIND_SL_STR, align, std::move(userAttrs)},
+    NonNullTerminatedStringType {_KIND_SL_STR, align, encoding, std::move(userAttrs)},
     _maxLen {maxLen}
 {
 }
 
-StaticLengthStringType::StaticLengthStringType(const Size maxLen, MapItem::UP userAttrs) :
-    StaticLengthStringType {8, maxLen, std::move(userAttrs)}
+StaticLengthStringType::StaticLengthStringType(const Size maxLen, const StringEncoding encoding,
+                                               MapItem::UP userAttrs) :
+    StaticLengthStringType {8, maxLen, encoding, std::move(userAttrs)}
 {
 }
 
 DataType::UP StaticLengthStringType::_clone() const
 {
-    return StaticLengthStringType::create(this->alignment(), _maxLen,
+    return StaticLengthStringType::create(this->alignment(), _maxLen, this->encoding(),
                                           internal::tryCloneUserAttrs(this->userAttributes()));
 }
 
 bool StaticLengthStringType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherSlStrType = static_cast<const StaticLengthStringType&>(other);
-
-    return _maxLen == otherSlStrType._maxLen;
+    return StringType::_isEqual(other) &&
+           _maxLen == other.asStaticLengthStringType()._maxLen;
 }
 
 } // namespace yactfr

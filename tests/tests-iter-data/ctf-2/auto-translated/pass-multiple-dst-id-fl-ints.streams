@@ -105,7 +105,7 @@
      0         FLUI:stream_id:67
      8         ST:s {
      8           NTS:aaa {
-     8             SS:6:paste
+     8             RD:6:paste$00
     56           }
     56           FLUI:stream_id:66
     64         }
@@ -118,7 +118,7 @@
     64       SC:5 {
     64         ST {
     64           NTS:salut {
-    64             SS:11:the string
+    64             RD:11:the string$00
    152           }
    152         }
    152       }

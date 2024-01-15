@@ -21,9 +21,8 @@ FixedLengthIntegerType::FixedLengthIntegerType(const _Kind kind, const unsigned 
 
 bool FixedLengthIntegerType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherIntType = static_cast<const FixedLengthIntegerType&>(other);
-
-    return FixedLengthBitArrayType::_isEqual(other) && IntegerTypeCommon::_isEqual(otherIntType);
+    return FixedLengthBitArrayType::_isEqual(other) &&
+           IntegerTypeCommon::_isEqual(other.asFixedLengthIntegerType());
 }
 
 bool FixedLengthIntegerType::operator<(const FixedLengthIntegerType& other) const noexcept
@@ -127,9 +126,8 @@ DataType::UP FixedLengthUnsignedIntegerType::_clone() const
 
 bool FixedLengthUnsignedIntegerType::_isEqual(const DataType& other) const noexcept
 {
-    auto& otherIntType = static_cast<const FixedLengthUnsignedIntegerType&>(other);
-
-    return FixedLengthIntegerType::_isEqual(other) && UnsignedIntegerTypeCommon::_isEqual(otherIntType);
+    return FixedLengthIntegerType::_isEqual(other) &&
+           UnsignedIntegerTypeCommon::_isEqual(other.asFixedLengthUnsignedIntegerType());
 }
 
 bool FixedLengthUnsignedIntegerType::operator<(const FixedLengthUnsignedIntegerType& other) const noexcept

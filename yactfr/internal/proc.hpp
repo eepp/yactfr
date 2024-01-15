@@ -498,7 +498,9 @@ public:
         READ_FL_SINT_A8,
         READ_FL_SINT_BE,
         READ_FL_SINT_LE,
-        READ_NT_STR,
+        READ_NT_STR_UTF_8,
+        READ_NT_STR_UTF_16,
+        READ_NT_STR_UTF_32,
         READ_FL_UENUM_A16_BE,
         READ_FL_UENUM_A16_LE,
         READ_FL_UENUM_A32_BE,
@@ -618,7 +620,9 @@ public:
         case Instr::Kind::READ_FL_SINT_A8:
         case Instr::Kind::READ_FL_SINT_BE:
         case Instr::Kind::READ_FL_SINT_LE:
-        case Instr::Kind::READ_NT_STR:
+        case Instr::Kind::READ_NT_STR_UTF_8:
+        case Instr::Kind::READ_NT_STR_UTF_16:
+        case Instr::Kind::READ_NT_STR_UTF_32:
         case Instr::Kind::READ_FL_UENUM_A16_BE:
         case Instr::Kind::READ_FL_UENUM_A16_LE:
         case Instr::Kind::READ_FL_UENUM_A32_BE:

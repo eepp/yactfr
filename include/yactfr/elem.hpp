@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,10 +13,6 @@
 #include <algorithm>
 #include <boost/uuid/uuid.hpp>
 #include <boost/optional/optional.hpp>
-
-#ifdef __cpp_lib_string_view
-#include <string_view>
-#endif
 
 #include "metadata/fwd.hpp"
 #include "metadata/dt.hpp"
@@ -85,18 +81,17 @@ private:
         _KIND_ENUM_DATA                         = _KIND_INT_DATA | (1 << 17),
         _KIND_VL_INT                            = _KIND_INT_DATA | (1 << 18),
         _KIND_NT_STR                            = 1 << 19,
-        _KIND_SUBSTR                            = 1 << 20,
-        _KIND_BLOB_SECTION                      = 1 << 21,
-        _KIND_STRUCT                            = 1 << 22,
-        _KIND_SL_DATA                           = 1 << 23,
-        _KIND_DL_DATA                           = 1 << 24,
-        _KIND_ARRAY                             = 1 << 25,
-        _KIND_NON_NT_STR                        = 1 << 26,
-        _KIND_BLOB                              = 1 << 27,
-        _KIND_VAR                               = 1 << 28,
-        _KIND_INT_SEL                           = 1 << 29,
-        _KIND_BOOL_SEL                          = 1 << 30,
-        _KIND_OPT                               = 1 << 31,
+        _KIND_RAW_DATA                          = 1 << 20,
+        _KIND_STRUCT                            = 1 << 21,
+        _KIND_SL_DATA                           = 1 << 22,
+        _KIND_DL_DATA                           = 1 << 23,
+        _KIND_ARRAY                             = 1 << 24,
+        _KIND_NON_NT_STR                        = 1 << 25,
+        _KIND_BLOB                              = 1 << 26,
+        _KIND_VAR                               = 1 << 27,
+        _KIND_INT_SEL                           = 1 << 28,
+        _KIND_BOOL_SEL                          = 1 << 29,
+        _KIND_OPT                               = 1 << 30,
     };
 
     using _U = unsigned long long;
@@ -186,11 +181,8 @@ public:
         /// NullTerminatedStringEndElement
         NULL_TERMINATED_STRING_END                          = static_cast<_U>(_KIND_NT_STR | _KIND_END),
 
-        /// SubstringElement
-        SUBSTRING                                           = static_cast<_U>(_KIND_SUBSTR),
-
-        /// BlobSectionElement
-        BLOB_SECTION                                        = static_cast<_U>(_KIND_BLOB_SECTION),
+        /// RawDataElement
+        RAW_DATA                                            = static_cast<_U>(_KIND_RAW_DATA),
 
         /// StructureBeginningElement
         STRUCTURE_BEGINNING                                 = static_cast<_U>(_KIND_STRUCT | _KIND_BEG),
@@ -566,16 +558,10 @@ public:
         return _kind == Kind::NULL_TERMINATED_STRING_END;
     }
 
-    /// \c true if this element is a substring element.
-    bool isSubstringElement() const noexcept
+    /// \c true if this element is a raw data element.
+    bool isRawDataElement() const noexcept
     {
-        return _kind == Kind::SUBSTRING;
-    }
-
-    /// \c true if this element is a BLOB section element.
-    bool isBlobSectionElement() const noexcept
-    {
-        return _kind == Kind::BLOB_SECTION;
+        return _kind == Kind::RAW_DATA;
     }
 
     /// \c true if this element is a structure beginning/end element.
@@ -865,15 +851,6 @@ public:
     {
         return _kind == Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END;
     }
-
-    /*!
-    @brief
-        Returns this element as a BLOB element.
-
-    @pre
-        This type is a BLOB element.
-    */
-    const BlobSectionElement& asBlobSectionElement() const noexcept;
 
     /*!
     @brief
@@ -1291,12 +1268,12 @@ public:
 
     /*!
     @brief
-        Returns this element as a substring element.
+        Returns this element as a raw data element.
 
     @pre
-        This type is a substring element.
+        This type is a raw data element.
     */
-    const SubstringElement& asSubstringElement() const noexcept;
+    const RawDataElement& asRawDataElement() const noexcept;
 
     /*!
     @brief
@@ -2638,11 +2615,11 @@ public:
 This element indicates the beginning of a data stream null-terminated
 string.
 
-The next SubstringElement elements before the next
-NullTerminatedStringEndElement are consecutive substrings of this
-beginning null-terminated string.
+The next RawDataElement elements before the next
+NullTerminatedStringEndElement are consecutive parts of this beginning
+null-terminated string.
 
-@sa SubstringElement
+@sa RawDataElement
 @sa NullTerminatedStringEndElement
 */
 class NullTerminatedStringBeginningElement final :
@@ -2709,11 +2686,11 @@ public:
 
 /*!
 @brief
-    Substring element.
+    Raw data element.
 
 @ingroup elems
 
-This element can occur:
+This element can occur zero or more times:
 
 <dl>
   <dt>Data stream null-terminated string</dt>
@@ -2733,138 +2710,7 @@ This element can occur:
     Between DynamicLengthStringBeginningElement and
     DynamicLengthStringEndElement elements.
   </dd>
-</dl>
 
-begin() points to the first byte of the substring and end() points to
-the byte \em after the last byte of the substring. Use size() to compute
-the size of the substring \em data in bytes.
-
-The whole substring may contain <em>zero or more</em> null bytes. If
-there's a null byte between begin() and end(), the substring finishes at
-this point, but for static-length and dynamic-length strings, there may
-be other non-null bytes before end() which are still part of the data
-stream. Knowing this:
-
-- Use stringEnd() to get the end of the null-terminated substring
-  (the first null byte or end() if none).
-
-- Use stringSize() to get the size of the null-terminated substring.
-
-- Use string() to get a string containing the text data of
-  the null-terminate substring.
-
-- If available, use stringView() to get a string view containing the
-  text data of the null-terminated substring.
-*/
-class SubstringElement final :
-    public Element
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit SubstringElement() :
-        Element {Kind::SUBSTRING}
-    {
-    }
-
-public:
-    /*!
-    @brief
-        Beginning of the data of this substring (\em not necessarily
-        null-terminated).
-    */
-    const char *begin() const noexcept
-    {
-        return _begin;
-    }
-
-    /*!
-    @brief
-        End of the data of this substring (points to the byte \em after
-        the last byte of the substring).
-
-    Use stringEnd() to get the end of the null-terminated substring.
-    */
-    const char *end() const noexcept
-    {
-        return _end;
-    }
-
-    /*!
-    @brief
-        End of this null-terminated substring (points to either the
-        first null byte, or is end() if none).
-    */
-    const char *stringEnd() const noexcept
-    {
-        return std::find(_begin, _end, '\0');
-    }
-
-    /*!
-    @brief
-        Size of this substring (bytes), including null characters and
-        characters after that, if any.
-
-    Use stringSize() to get the size of this null-terminated string,
-    excluding any terminating null character.
-    */
-    Size size() const noexcept
-    {
-        return _end - _begin;
-    }
-
-    /*!
-    @brief
-        Size of this null-terminated substring (bytes), excluding any
-        terminating null character.
-    */
-    Size stringSize() const noexcept
-    {
-        return this->stringEnd() - _begin;
-    }
-
-    /*!
-    @brief
-        String containing the text data (between begin() and
-        stringEnd()) of this substring.
-    */
-    std::string string() const
-    {
-        return {_begin, this->stringEnd()};
-    }
-
-#ifdef __cpp_lib_string_view
-    /*!
-    @brief
-        String view wrapping the text data (between begin() and
-        stringEnd()) of this substring.
-    */
-    std::string_view stringView() const
-    {
-        return {_begin, this->stringSize()};
-    }
-#endif
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-
-private:
-    const char *_begin = nullptr;
-    const char *_end = nullptr;
-};
-
-/*!
-@brief
-    BLOB section element.
-
-@ingroup elems
-
-This element can occur:
-
-<dl>
   <dt>Data stream static-length BLOB</dt>
   <dd>
     Between StaticLengthBlobBeginningElement and
@@ -2878,36 +2724,93 @@ This element can occur:
   </dd>
 </dl>
 
-begin() points to the first byte of the BLOB section and end() points to
-the byte \em after the last byte of the BLOB section. Use size() to
-compute the size of the BLOB section.
+begin() points to the first byte of the raw data and end() points to
+the byte \em after the last byte of the raw data. Use size() to compute
+the size of the raw data \em in bytes.
+
+The pointed raw data is actually part of a \link DataBlock data
+block\endlink which the \link DataSource data source\endlink provided
+(zero copy).
+
+The concatenated data of all the raw data elements between a pair of
+string/BLOB beginning and end elements forms:
+
+<dl>
+  <dt>For a string</dt>
+  <dd>
+    The actual encoded string.
+
+    @note
+        yactfr doesn't perform any string conversion: use the
+        StringType::encoding() method of the string type of the last
+        string beginning element to get the encoding of the concatenated
+        encoded string parts.
+
+    Considering the concatenated data \em D of all the raw data elements
+    between a pair of string beginning and string end elements, \em D
+    may contain an encoded U+0000 (null) codepoint. In that case, the
+    actual encoded string finishes at this point, and excludes said
+    encoded U+0000 codepoint. For static-length and dynamic-length
+    strings, \em D may contain more garbage bytes after an encoded
+    U+0000 codepoint. Such data is still part of the data stream, but
+    not part of the encoded string.
+
+    For example, consider the following bytes of <em>D</em> representing
+    a CTF 23-byte static-length UTF-16LE string:
+
+    @code
+    68 00 65 00 6c 00 6c 00 6f 00 20 00 77 00 6f 00
+    72 00 6c 00 64 00 20 00 3c d8 3b df 00 00 dd ff
+    44 52 00 00 bd cc 4e
+    @endcode
+
+    The encoded string is "hello world 🌻" (everything before the first
+    encoded U+0000 codepoint, which is two zero bytes in UTF-16) while
+    the bytes
+
+    @code
+    00 00 dd ff 44 52 00 00 bd cc 4e
+    @endcode
+
+    are garbage bytes.
+  </dd>
+
+  <dt>For a BLOB</dt>
+  <dd>
+    The whole BLOB data.
+  </dd>
+</dl>
 */
-class BlobSectionElement final :
+class RawDataElement final :
     public Element
 {
     friend class internal::Vm;
     friend class internal::VmPos;
 
 private:
-    explicit BlobSectionElement() :
-        Element {Kind::BLOB_SECTION}
+    explicit RawDataElement() :
+        Element {Kind::RAW_DATA}
     {
     }
 
 public:
-    /// Beginning of the data of this BLOB section.
+    /// Beginning of the data of this element.
     const std::uint8_t *begin() const noexcept
     {
         return _begin;
     }
 
-    /// End of the data of this BLOB section.
+    /*!
+    @brief
+        End of the data of this element (points to the byte \em after
+        the last byte of the raw data).
+    */
     const std::uint8_t *end() const noexcept
     {
         return _end;
     }
 
-    /// Size (bytes) of this BLOB section.
+    /// Size of this raw data (bytes).
     Size size() const noexcept
     {
         return _end - _begin;
@@ -3214,11 +3117,11 @@ public:
 This element indicates the beginning of a data stream static-length
 string.
 
-The next SubstringElement elements before the next
-StaticLengthStringEndElement are consecutive substrings of this
+The next RawDataElement elements before the next
+StaticLengthStringEndElement are consecutive parts of this
 beginning static-length string.
 
-@sa SubstringElement
+@sa RawDataElement
 @sa StaticLengthStringEndElement
 */
 class StaticLengthStringBeginningElement final :
@@ -3254,7 +3157,7 @@ public:
 
 This element indicates the end of a data stream static-length string.
 
-@sa SubstringElement
+@sa RawDataElement
 @sa StaticLengthStringBeginningElement
 */
 class StaticLengthStringEndElement final :
@@ -3291,11 +3194,11 @@ public:
 This element indicates the beginning of a data stream dynamic-length
 string.
 
-The next SubstringElement elements before the next
-DynamicLengthStringEndElement are consecutive substrings of this
+The next RawDataElement elements before the next
+DynamicLengthStringEndElement are consecutive parts of this
 beginning dynamic-length string.
 
-@sa SubstringElement
+@sa RawDataElement
 @sa DynamicLengthStringEndElement
 */
 class DynamicLengthStringBeginningElement final :
@@ -3331,7 +3234,7 @@ public:
 
 This element indicates the end of a data stream dynamic-length string.
 
-@sa SubstringElement
+@sa RawDataElement
 @sa DynamicLengthStringBeginningElement
 */
 class DynamicLengthStringEndElement final :
@@ -3445,11 +3348,11 @@ public:
 This element indicates the beginning of a data stream static-length
 BLOB.
 
-The next BlobSectionElement elements before the next
-StaticLengthBlobEndElement are consecutive BLOB sections of this
+The next RawDataElement elements before the next
+StaticLengthBlobEndElement are consecutive parts of this
 beginning static-length BLOB.
 
-@sa BlobSectionElement
+@sa RawDataElement
 @sa StaticLengthBlobEndElement
 */
 class StaticLengthBlobBeginningElement final :
@@ -3485,7 +3388,7 @@ public:
 
 This element indicates the end of a data stream static-length BLOB.
 
-@sa BlobSectionElement
+@sa RawDataElement
 @sa StaticLengthBlobEndElement
 */
 class StaticLengthBlobEndElement final :
@@ -3522,11 +3425,11 @@ public:
 This element indicates the beginning of a data stream dynamic-length
 BLOB.
 
-The next BlobSectionElement elements before the next
-DynamicLengthBlobEndElement are consecutive BLOB sections of this
+The next RawDataElement elements before the next
+DynamicLengthBlobEndElement are consecutive parts of this
 beginning dynamic-length BLOB.
 
-@sa BlobSectionElement
+@sa RawDataElement
 @sa DynamicLengthBlobEndElement
 */
 class DynamicLengthBlobBeginningElement final :
@@ -3562,7 +3465,7 @@ public:
 
 This element indicates the end of a data stream dynamic-length BLOB.
 
-@sa BlobSectionElement
+@sa RawDataElement
 @sa DynamicLengthBlobEndElement
 */
 class DynamicLengthBlobEndElement final :
@@ -4262,11 +4165,6 @@ public:
     }
 };
 
-inline const BlobSectionElement& Element::asBlobSectionElement() const noexcept
-{
-    return static_cast<const BlobSectionElement&>(*this);
-}
-
 inline const DataStreamInfoElement& Element::asDataStreamInfoElement() const noexcept
 {
     return static_cast<const DataStreamInfoElement&>(*this);
@@ -4487,9 +4385,9 @@ inline const StructureEndElement& Element::asStructureEndElement() const noexcep
     return static_cast<const StructureEndElement&>(*this);
 }
 
-inline const SubstringElement& Element::asSubstringElement() const noexcept
+inline const RawDataElement& Element::asRawDataElement() const noexcept
 {
-    return static_cast<const SubstringElement&>(*this);
+    return static_cast<const RawDataElement&>(*this);
 }
 
 inline const MetadataStreamUuidElement& Element::asMetadataStreamUuidElement() const noexcept
