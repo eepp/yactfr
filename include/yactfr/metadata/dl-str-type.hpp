@@ -54,12 +54,12 @@ public:
     @param[in] encoding
         Encoding of data stream dynamic-length strings described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream dynamic-length strings described
+        Attributes of data stream dynamic-length strings described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -69,7 +69,7 @@ public:
     */
     explicit DynamicLengthStringType(unsigned int alignment, DataLocation maximumLengthLocation,
                                      StringEncoding encoding = StringEncoding::UTF_8,
-                                     MapItem::UP userAttributes = nullptr);
+                                     MapItem::UP attributes = nullptr);
 
 
     /*!
@@ -83,17 +83,17 @@ public:
     @param[in] encoding
         Encoding of data stream dynamic-length strings described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream dynamic-length strings described
+        Attributes of data stream dynamic-length strings described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     */
     explicit DynamicLengthStringType(DataLocation maximumLengthLocation,
                                      StringEncoding encoding = StringEncoding::UTF_8,
-                                     MapItem::UP userAttributes = nullptr);
+                                     MapItem::UP attributes = nullptr);
 
     /*!
     @brief

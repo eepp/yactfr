@@ -20,7 +20,7 @@
               "origin": "event-record-payload",
               "path": ["len"]
             },
-            "user-attributes": "allo",
+            "attributes": "allo",
             "element-field-class": {
               "type": "null-terminated-string"
             }
@@ -38,5 +38,5 @@
 [13:9] Invalid structure member type:
 [15:26] In object property `field-class`:
 [15:26] Invalid dynamic-length array type:
-[21:32] In object property `user-attributes`:
-[21:32] Expecting an object.
+[21:27] In object property `attributes`:
+[21:27] Expecting an object.

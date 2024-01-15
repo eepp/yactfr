@@ -32,7 +32,7 @@ public:
                            boost::optional<std::string>&& ns, boost::optional<std::string>&& name,
                            boost::optional<std::string>&& uid, TraceEnvironment&& env,
                            StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                           DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
+                           DataStreamTypeSet&& dsts, MapItem::UP attrs,
                            const TraceType& traceType);
 
     unsigned int majorVersion() const noexcept
@@ -80,9 +80,9 @@ public:
         return _dsts;
     }
 
-    const MapItem *userAttrs() const noexcept
+    const MapItem *attrs() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
     const DataStreamType *findDst(TypeId id) const noexcept;
@@ -148,7 +148,7 @@ private:
     const ClockTypeSet _clkTypes;
     const DataStreamTypeSet _dsts;
     std::unordered_map<TypeId, const DataStreamType *> _idsToDsts;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
     const TraceType *_traceType;
 
     // packet procedure cache; created the first time we need it

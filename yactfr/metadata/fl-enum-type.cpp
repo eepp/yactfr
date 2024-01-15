@@ -18,9 +18,9 @@ FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigne
                                                                    const ByteOrder bo,
                                                                    Mappings mappings,
                                                                    const DisplayBase prefDispBase,
-                                                                   MapItem::UP userAttrs) :
+                                                                   MapItem::UP attrs) :
     EnumerationType<FixedLengthSignedIntegerType, internal::SignedEnumerationTypeValue> {
-        _KIND_FL_SENUM, std::move(mappings), align, len, bo, prefDispBase, std::move(userAttrs)
+        _KIND_FL_SENUM, std::move(mappings), align, len, bo, prefDispBase, std::move(attrs)
     }
 {
 }
@@ -29,9 +29,9 @@ FixedLengthSignedEnumerationType::FixedLengthSignedEnumerationType(const unsigne
                                                                    const ByteOrder bo,
                                                                    Mappings mappings,
                                                                    const DisplayBase prefDispBase,
-                                                                   MapItem::UP userAttrs) :
+                                                                   MapItem::UP attrs) :
     FixedLengthSignedEnumerationType {
-        1, len, bo, std::move(mappings), prefDispBase, std::move(userAttrs)
+        1, len, bo, std::move(mappings), prefDispBase, std::move(attrs)
     }
 {
 }
@@ -41,7 +41,7 @@ DataType::UP FixedLengthSignedEnumerationType::_clone() const
     return FixedLengthSignedEnumerationType::create(this->alignment(), this->length(),
                                                     this->byteOrder(), this->mappings(),
                                                     this->preferredDisplayBase(),
-                                                    internal::tryCloneUserAttrs(this->userAttributes()));
+                                                    internal::tryCloneAttrs(this->attributes()));
 }
 
 FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const unsigned int align,
@@ -49,11 +49,11 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
                                                                        const ByteOrder bo,
                                                                        Mappings mappings,
                                                                        const DisplayBase prefDispBase,
-                                                                       MapItem::UP userAttrs,
+                                                                       MapItem::UP attrs,
                                                                        UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<FixedLengthUnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
         _KIND_FL_UENUM, std::move(mappings), align, len, bo, prefDispBase,
-        std::move(userAttrs), std::move(roles)
+        std::move(attrs), std::move(roles)
     }
 {
 }
@@ -62,10 +62,10 @@ FixedLengthUnsignedEnumerationType::FixedLengthUnsignedEnumerationType(const uns
                                                                        const ByteOrder bo,
                                                                        Mappings mappings,
                                                                        const DisplayBase prefDispBase,
-                                                                       MapItem::UP userAttrs,
+                                                                       MapItem::UP attrs,
                                                                        UnsignedIntegerTypeRoleSet roles) :
     FixedLengthUnsignedEnumerationType {
-        1, len, bo, std::move(mappings), prefDispBase, std::move(userAttrs), std::move(roles)
+        1, len, bo, std::move(mappings), prefDispBase, std::move(attrs), std::move(roles)
     }
 {
 }
@@ -75,7 +75,7 @@ DataType::UP FixedLengthUnsignedEnumerationType::_clone() const
     return FixedLengthUnsignedEnumerationType::create(this->alignment(), this->length(),
                                                       this->byteOrder(), this->mappings(),
                                                       this->preferredDisplayBase(),
-                                                      internal::tryCloneUserAttrs(this->userAttributes()),
+                                                      internal::tryCloneAttrs(this->attributes()),
                                                       this->roles());
 }
 

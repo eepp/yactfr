@@ -11,40 +11,40 @@
 namespace yactfr {
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
-                                           std::string mediaType, MapItem::UP userAttrs,
+                                           std::string mediaType, MapItem::UP attrs,
                                            const bool hasMetadataStreamUuidRole) :
-    BlobType {_KIND_SL_BLOB, align, std::move(userAttrs), std::move(mediaType)},
+    BlobType {_KIND_SL_BLOB, align, std::move(attrs), std::move(mediaType)},
     _len {len},
     _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const Size len, std::string mediaType,
-                                           MapItem::UP userAttrs,
+                                           MapItem::UP attrs,
                                            const bool hasMetadataStreamUuidRole) :
-    StaticLengthBlobType {8, len, std::move(mediaType), std::move(userAttrs), hasMetadataStreamUuidRole}
+    StaticLengthBlobType {8, len, std::move(mediaType), std::move(attrs), hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
-                                           MapItem::UP userAttrs,
+                                           MapItem::UP attrs,
                                            const bool hasMetadataStreamUuidRole) :
-    BlobType {_KIND_SL_BLOB, align, std::move(userAttrs)},
+    BlobType {_KIND_SL_BLOB, align, std::move(attrs)},
     _len {len},
     _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
-StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::UP userAttrs,
+StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::UP attrs,
                                            const bool hasMetadataStreamUuidRole) :
-    StaticLengthBlobType {8, len, std::move(userAttrs), hasMetadataStreamUuidRole}
+    StaticLengthBlobType {8, len, std::move(attrs), hasMetadataStreamUuidRole}
 {
 }
 
 DataType::UP StaticLengthBlobType::_clone() const
 {
     return StaticLengthBlobType::create(this->alignment(), _len, this->mediaType(),
-                                        internal::tryCloneUserAttrs(this->userAttributes()),
+                                        internal::tryCloneAttrs(this->attributes()),
                                         _hasMetadataStreamUuidRole);
 }
 

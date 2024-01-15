@@ -24,7 +24,7 @@ class ArrayType :
 {
 protected:
     explicit ArrayType(_Kind kind, unsigned int minAlign, DataType::UP elemType,
-                       MapItem::UP userAttrs);
+                       MapItem::UP attrs);
 
 public:
     /*!

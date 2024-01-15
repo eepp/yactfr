@@ -14,7 +14,7 @@
       "type": "null-terminated-string"
     }
   },
-  "user-attributes": {
+  "attributes": {
     "meow": -45
   }
 }

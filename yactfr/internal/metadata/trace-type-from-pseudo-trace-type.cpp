@@ -56,7 +56,7 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
                              _pseudoTraceType->ns(), _pseudoTraceType->name(),
                              _pseudoTraceType->uid(), _pseudoTraceType->env(),
                              std::move(pktHeaderType), std::move(_pseudoTraceType->clkTypes()),
-                             std::move(dstSet), tryCloneUserAttrs(_pseudoTraceType->userAttrs()));
+                             std::move(dstSet), tryCloneAttrs(_pseudoTraceType->attrs()));
 }
 
 StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(PseudoDt * const pseudoDt,
@@ -106,7 +106,7 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
     return DataStreamType::create(pseudoDst.id(), pseudoDst.ns(), pseudoDst.name(),
                                   pseudoDst.uid(), std::move(ertSet), std::move(pseudoPktCtxType),
                                   std::move(erHeaderType), std::move(erCommonCtxType),
-                                  pseudoDst.defClkType(), tryCloneUserAttrs(pseudoDst.userAttrs()));
+                                  pseudoDst.defClkType(), tryCloneAttrs(pseudoDst.attrs()));
 }
 
 std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_ertFromPseudoErt(PseudoErt& pseudoErt,
@@ -127,7 +127,7 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
     return EventRecordType::create(pseudoErt.id(), pseudoErt.ns(), pseudoErt.name(),
                                    pseudoErt.uid(), pseudoErt.logLevel(), pseudoErt.emfUri(),
                                    std::move(specCtxType), std::move(payloadType),
-                                   tryCloneUserAttrs(pseudoErt.userAttrs()));
+                                   tryCloneAttrs(pseudoErt.attrs()));
 }
 
 } // namespace internal

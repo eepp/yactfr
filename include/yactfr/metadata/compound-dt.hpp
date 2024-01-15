@@ -25,7 +25,7 @@ class CompoundDataType :
 {
 protected:
     explicit CompoundDataType(_Kind kind, unsigned int minAlign, unsigned int align,
-                              MapItem::UP userAttrs);
+                              MapItem::UP attrs);
 
 public:
     /*!

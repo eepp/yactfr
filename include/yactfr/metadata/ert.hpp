@@ -77,11 +77,11 @@ public:
     @param[in] payloadType
         Type of payloads of event records described by this type, or \c
         nullptr if none.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes.
+        Attributes.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -98,7 +98,7 @@ public:
                              boost::optional<std::string> emfUri,
                              std::unique_ptr<const StructureType> specificContextType,
                              std::unique_ptr<const StructureType> payloadType,
-                             MapItem::UP userAttributes = nullptr);
+                             MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -195,17 +195,17 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
     If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept
+    const MapItem *attributes() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
 private:
@@ -220,7 +220,7 @@ private:
     const boost::optional<std::string> _emfUri;
     std::unique_ptr<const StructureType> _specCtxType;
     std::unique_ptr<const StructureType> _payloadType;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
     mutable const DataStreamType *_dst = nullptr;
 };
 

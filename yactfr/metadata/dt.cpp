@@ -30,17 +30,17 @@
 
 namespace yactfr {
 
-DataType::DataType(const _Kind kind, const unsigned int align, MapItem::UP userAttrs) :
+DataType::DataType(const _Kind kind, const unsigned int align, MapItem::UP attrs) :
     _theKind {kind},
     _align {align},
-    _userAttrs {std::move(userAttrs)}
+    _attrs {std::move(attrs)}
 {
 }
 
 bool DataType::operator==(const DataType& other) const noexcept
 {
     return _theKind == other._theKind && _align == other._align &&
-           _userAttrs == other._userAttrs && this->_isEqual(other);
+           _attrs == other._attrs && this->_isEqual(other);
 }
 
 bool DataType::operator!=(const DataType& other) const noexcept

@@ -14,8 +14,8 @@
 namespace yactfr {
 
 VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLocation&& selLoc,
-                         MapItem::UP userAttrs) :
-    CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
+                         MapItem::UP attrs) :
+    CompoundDataType {kind, minAlign, 1, std::move(attrs)},
     _selLoc {std::move(selLoc)}
 {
 }
@@ -23,19 +23,19 @@ VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLoca
 VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(const unsigned int minAlign,
                                                                                Options&& opts,
                                                                                DataLocation selLoc,
-                                                                               MapItem::UP userAttrs) :
+                                                                               MapItem::UP attrs) :
     VariantWithIntegerSelectorType {
         DataType::_KIND_VAR_UINT_SEL, minAlign, std::move(opts),
-        std::move(selLoc), std::move(userAttrs)
+        std::move(selLoc), std::move(attrs)
     }
 {
 }
 
 VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(Options&& opts,
                                                                                DataLocation selLoc,
-                                                                               MapItem::UP userAttrs) :
+                                                                               MapItem::UP attrs) :
     VariantWithUnsignedIntegerSelectorType {
-        1, std::move(opts), std::move(selLoc), std::move(userAttrs)
+        1, std::move(opts), std::move(selLoc), std::move(attrs)
     }
 {
 }
@@ -45,25 +45,25 @@ DataType::UP VariantWithUnsignedIntegerSelectorType::_clone() const
     return VariantWithUnsignedIntegerSelectorType::create(this->minimumAlignment(),
                                                           this->_cloneOpts(),
                                                           this->selectorLocation(),
-                                                          internal::tryCloneUserAttrs(this->userAttributes()));
+                                                          internal::tryCloneAttrs(this->attributes()));
 }
 
 VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(const unsigned int minAlign,
                                                                            Options&& opts,
                                                                            DataLocation selLoc,
-                                                                           MapItem::UP userAttrs) :
+                                                                           MapItem::UP attrs) :
     VariantWithIntegerSelectorType {
         DataType::_KIND_VAR_SINT_SEL, minAlign, std::move(opts),
-        std::move(selLoc), std::move(userAttrs)
+        std::move(selLoc), std::move(attrs)
     }
 {
 }
 
 VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(Options&& opts,
                                                                            DataLocation selLoc,
-                                                                           MapItem::UP userAttrs) :
+                                                                           MapItem::UP attrs) :
     VariantWithSignedIntegerSelectorType {
-        1, std::move(opts), std::move(selLoc), std::move(userAttrs)
+        1, std::move(opts), std::move(selLoc), std::move(attrs)
     }
 {
 }
@@ -73,7 +73,7 @@ DataType::UP VariantWithSignedIntegerSelectorType::_clone() const
     return VariantWithSignedIntegerSelectorType::create(this->minimumAlignment(),
                                                         this->_cloneOpts(),
                                                         this->selectorLocation(),
-                                                        internal::tryCloneUserAttrs(this->userAttributes()));
+                                                        internal::tryCloneAttrs(this->attributes()));
 }
 
 } // namespace yactfr

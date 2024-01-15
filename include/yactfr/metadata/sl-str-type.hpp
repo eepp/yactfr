@@ -46,12 +46,12 @@ public:
     @param[in] encoding
         Encoding of data stream static-length strings described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length strings described
+        Attributes of data stream static-length strings described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -61,7 +61,7 @@ public:
     */
     explicit StaticLengthStringType(unsigned int alignment, Size maximumLength,
                                     StringEncoding encoding = StringEncoding::UTF_8,
-                                    MapItem::UP userAttributes = nullptr);
+                                    MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -74,17 +74,17 @@ public:
     @param[in] encoding
         Encoding of data stream static-length strings described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length strings described
+        Attributes of data stream static-length strings described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     */
     explicit StaticLengthStringType(Size maximumLength,
                                     StringEncoding encoding = StringEncoding::UTF_8,
-                                    MapItem::UP userAttributes = nullptr);
+                                    MapItem::UP attributes = nullptr);
 
     /*!
     @brief

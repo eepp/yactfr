@@ -177,7 +177,7 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
             optStrOfObj(jsonFrag, strs::UID),
             TraceEnvironment {std::move(envEntries)},
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::PKT_HEADER_FC),
-            userAttrsOfObj(jsonFrag)
+            attrsOfObj(jsonFrag)
         };
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In trace type fragment:", jsonFrag.loc());
@@ -240,7 +240,7 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
                                      optUIntOfObj(jsonFrag, strs::PREC),
                                      optUIntOfObj(jsonFrag, strs::ACCURACY),
                                      ClockOffset {offsetFromOrigSecs, offsetFromOrigCycles},
-                                     userAttrsOfObj(jsonFrag));
+                                     attrsOfObj(jsonFrag));
 
     // add to pseudo trace type
     _pseudoTraceType->clkTypes().insert(std::move(clkType));
@@ -297,7 +297,7 @@ void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
                                                                                    strs::ER_HEADER_FC),
                                                      this->_pseudoScopeDtOfJsonObj(jsonFrag,
                                                                                    strs::ER_COMMON_CTX_FC),
-                                                     defClkType, userAttrsOfObj(jsonFrag));
+                                                     defClkType, attrsOfObj(jsonFrag));
 
         _pseudoTraceType->pseudoDsts().insert(std::make_pair(id, std::move(pseudoDst)));
     } catch (TextParseError& exc) {
@@ -343,7 +343,7 @@ void Ctf2JsonSeqParser::_handleErtFrag(const JsonObjVal& jsonFrag)
                 boost::none, boost::none,
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::SPEC_CTX_FC),
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::PAYLOAD_FC),
-                userAttrsOfObj(jsonFrag)
+                attrsOfObj(jsonFrag)
             },
             jsonFrag.loc()
         }));

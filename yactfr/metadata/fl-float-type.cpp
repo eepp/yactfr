@@ -15,16 +15,16 @@ namespace yactfr {
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int align,
                                                                        const unsigned int len,
                                                                        const ByteOrder bo,
-                                                                       MapItem::UP userAttrs) :
-    FixedLengthBitArrayType {_KIND_FL_FLOAT, align, len, bo, std::move(userAttrs)}
+                                                                       MapItem::UP attrs) :
+    FixedLengthBitArrayType {_KIND_FL_FLOAT, align, len, bo, std::move(attrs)}
 {
     assert(len == 32 || len == 64);
 }
 
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int len,
                                                                        const ByteOrder bo,
-                                                                       MapItem::UP userAttrs) :
-    FixedLengthFloatingPointNumberType {1, len, bo, std::move(userAttrs)}
+                                                                       MapItem::UP attrs) :
+    FixedLengthFloatingPointNumberType {1, len, bo, std::move(attrs)}
 {
 }
 
@@ -37,7 +37,7 @@ DataType::UP FixedLengthFloatingPointNumberType::_clone() const
 {
     return FixedLengthFloatingPointNumberType::create(this->alignment(), this->length(),
                                                       this->byteOrder(),
-                                                      internal::tryCloneUserAttrs(this->userAttributes()));
+                                                      internal::tryCloneAttrs(this->attributes()));
 }
 
 } // namespace yactfr

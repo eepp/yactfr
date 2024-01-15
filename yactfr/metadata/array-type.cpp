@@ -12,8 +12,8 @@
 namespace yactfr {
 
 ArrayType::ArrayType(const _Kind kind, const unsigned int minAlign, DataType::UP elemType,
-                     MapItem::UP userAttrs) :
-    CompoundDataType {kind, minAlign, elemType->alignment(), std::move(userAttrs)},
+                     MapItem::UP attrs) :
+    CompoundDataType {kind, minAlign, elemType->alignment(), std::move(attrs)},
     _elemType {std::move(elemType)}
 {
     assert(_elemType);

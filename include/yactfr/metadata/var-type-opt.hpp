@@ -62,11 +62,11 @@ public:
         Data type of the variant type option.
     @param[in] selectorRanges
         Selector values for which this option is selected.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of this variant type option.
+        Attributes of this variant type option.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -76,11 +76,11 @@ public:
     */
     explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
                                SelectorRangeSet selectorRanges,
-                               MapItem::UP userAttributes = nullptr) :
+                               MapItem::UP attributes = nullptr) :
         _name {std::move(name)},
         _dt {std::move(dataType)},
         _selRanges {std::move(selectorRanges)},
-        _userAttrs {std::move(userAttributes)}
+        _attrs {std::move(attributes)}
     {
     }
 
@@ -93,11 +93,11 @@ public:
         Data type of the variant type option.
     @param[in] selectorRanges
         Selector values for which this option is selected.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of this variant type option.
+        Attributes of this variant type option.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -106,9 +106,9 @@ public:
         \p selectorRanges is not empty.
     */
     explicit VariantTypeOption(DataType::UP dataType, SelectorRangeSet selectorRanges,
-                               MapItem::UP userAttributes = nullptr) :
+                               MapItem::UP attributes = nullptr) :
         VariantTypeOption {
-            boost::none, std::move(dataType), std::move(selectorRanges), std::move(userAttributes)
+            boost::none, std::move(dataType), std::move(selectorRanges), std::move(attributes)
         }
     {
     }
@@ -175,24 +175,24 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
-    If set, each key of \p *userAttributes is a namespace.
+    If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept
+    const MapItem *attributes() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
     /// Clone (deep copy) of this variant type option.
     UP clone() const
     {
         return VariantTypeOption::create(_name, _dt->clone(), _selRanges,
-                                         internal::tryCloneUserAttrs(this->userAttributes()));
+                                         internal::tryCloneAttrs(this->attributes()));
     }
 
     /*!
@@ -230,7 +230,7 @@ private:
     mutable boost::optional<std::string> _dispName;
     const DataType::UP _dt;
     const SelectorRangeSet _selRanges;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
 };
 
 /*!

@@ -13,8 +13,8 @@ namespace yactfr {
 FixedLengthIntegerType::FixedLengthIntegerType(const _Kind kind, const unsigned int align,
                                                const unsigned int len, const ByteOrder bo,
                                                const DisplayBase prefDispBase,
-                                               MapItem::UP userAttrs) :
-    FixedLengthBitArrayType {kind, align, len, bo, std::move(userAttrs)},
+                                               MapItem::UP attrs) :
+    FixedLengthBitArrayType {kind, align, len, bo, std::move(attrs)},
     IntegerTypeCommon {prefDispBase}
 {
 }
@@ -43,8 +43,8 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const _Kind kind,
                                                            const unsigned int len,
                                                            const ByteOrder bo,
                                                            const DisplayBase prefDispBase,
-                                                           MapItem::UP userAttrs) :
-    FixedLengthIntegerType {kind, align, len, bo, prefDispBase, std::move(userAttrs)}
+                                                           MapItem::UP attrs) :
+    FixedLengthIntegerType {kind, align, len, bo, prefDispBase, std::move(attrs)}
 {
 }
 
@@ -52,16 +52,16 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int al
                                                            const unsigned int len,
                                                            const ByteOrder bo,
                                                            const DisplayBase prefDispBase,
-                                                           MapItem::UP userAttrs) :
-    FixedLengthIntegerType {_KIND_FL_SINT, align, len, bo, prefDispBase, std::move(userAttrs)}
+                                                           MapItem::UP attrs) :
+    FixedLengthIntegerType {_KIND_FL_SINT, align, len, bo, prefDispBase, std::move(attrs)}
 {
 }
 
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int len,
                                                            const ByteOrder bo,
                                                            const DisplayBase prefDispBase,
-                                                           MapItem::UP userAttrs) :
-    FixedLengthSignedIntegerType {1, len, bo, prefDispBase, std::move(userAttrs)}
+                                                           MapItem::UP attrs) :
+    FixedLengthSignedIntegerType {1, len, bo, prefDispBase, std::move(attrs)}
 {
 }
 
@@ -69,7 +69,7 @@ DataType::UP FixedLengthSignedIntegerType::_clone() const
 {
     return FixedLengthSignedIntegerType::create(this->alignment(), this->length(),
                                                 this->byteOrder(), this->preferredDisplayBase(),
-                                                internal::tryCloneUserAttrs(this->userAttributes()));
+                                                internal::tryCloneAttrs(this->attributes()));
 }
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const _Kind kind,
@@ -77,9 +77,9 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const _Kind kind,
                                                                const unsigned int len,
                                                                const ByteOrder bo,
                                                                const DisplayBase prefDispBase,
-                                                               MapItem::UP userAttrs,
+                                                               MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
-    FixedLengthIntegerType {kind, align, len, bo, prefDispBase, std::move(userAttrs)},
+    FixedLengthIntegerType {kind, align, len, bo, prefDispBase, std::move(attrs)},
     UnsignedIntegerTypeCommon {std::move(roles)}
 {
 }
@@ -88,11 +88,11 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
                                                                const unsigned int len,
                                                                const ByteOrder bo,
                                                                const DisplayBase prefDispBase,
-                                                               MapItem::UP userAttrs,
+                                                               MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthUnsignedIntegerType {
         _KIND_FL_UINT, align, len, bo, prefDispBase,
-        std::move(userAttrs), std::move(roles)
+        std::move(attrs), std::move(roles)
     }
 {
 }
@@ -100,10 +100,10 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int len,
                                                                const ByteOrder bo,
                                                                const DisplayBase prefDispBase,
-                                                               MapItem::UP userAttrs,
+                                                               MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthUnsignedIntegerType {
-        1, len, bo, prefDispBase, std::move(userAttrs), std::move(roles)
+        1, len, bo, prefDispBase, std::move(attrs), std::move(roles)
     }
 {
 }
@@ -111,7 +111,7 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const FixedLengthUnsignedIntegerType& other) :
     FixedLengthUnsignedIntegerType {
         other.alignment(), other.length(), other.byteOrder(),
-        other.preferredDisplayBase(), internal::tryCloneUserAttrs(other.userAttributes()), other.roles()
+        other.preferredDisplayBase(), internal::tryCloneAttrs(other.attributes()), other.roles()
     }
 {
 }
@@ -120,7 +120,7 @@ DataType::UP FixedLengthUnsignedIntegerType::_clone() const
 {
     return FixedLengthUnsignedIntegerType::create(this->alignment(), this->length(),
                                                   this->byteOrder(), this->preferredDisplayBase(),
-                                                  internal::tryCloneUserAttrs(this->userAttributes()),
+                                                  internal::tryCloneAttrs(this->attributes()),
                                                   this->roles());
 }
 

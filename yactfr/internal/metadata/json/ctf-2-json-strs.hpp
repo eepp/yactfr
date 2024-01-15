@@ -22,6 +22,7 @@ namespace strs {
 static constexpr auto ACCURACY = "accuracy";
 static constexpr auto ALIGN = "alignment";
 static constexpr auto APP_OCTET_STREAM = "application/octet-stream";
+static constexpr auto ATTRS = "attributes";
 static constexpr auto BE = "big-endian";
 static constexpr auto BO = "byte-order";
 static constexpr auto CC = "clock-class";
@@ -101,7 +102,6 @@ static constexpr auto TC = "trace-class";
 static constexpr auto TYPE = "type";
 static constexpr auto UID = "uid";
 static constexpr auto UNIX_EPOCH = "unix-epoch";
-static constexpr auto USER_ATTRS = "user-attributes";
 static constexpr auto UTF_8 = "utf-8";
 static constexpr auto UTF_16BE = "utf-16be";
 static constexpr auto UTF_16LE = "utf-16le";

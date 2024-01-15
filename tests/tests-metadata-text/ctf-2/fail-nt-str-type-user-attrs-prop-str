@@ -10,7 +10,7 @@
           "name": "test",
           "field-class": {
             "type": "null-terminated-string",
-            "user-attributes": "allo"
+            "attributes": "allo"
           }
         }
       ]
@@ -25,5 +25,5 @@
 [7:9] Invalid structure member type:
 [9:26] In object property `field-class`:
 [9:26] Invalid null-terminated string type:
-[11:32] In object property `user-attributes`:
-[11:32] Expecting an object.
+[11:27] In object property `attributes`:
+[11:27] Expecting an object.

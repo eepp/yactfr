@@ -12,9 +12,9 @@
 
 namespace yactfr {
 
-BlobType::BlobType(const _Kind kind, const unsigned int align, MapItem::UP userAttrs,
+BlobType::BlobType(const _Kind kind, const unsigned int align, MapItem::UP attrs,
                    std::string&& mediaType) :
-    ScalarDataType {kind, align, std::move(userAttrs)},
+    ScalarDataType {kind, align, std::move(attrs)},
     _mediaType {std::move(mediaType)}
 {
     assert(align >= 8);

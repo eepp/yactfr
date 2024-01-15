@@ -94,7 +94,7 @@ protected:
     };
 
 protected:
-    explicit DataType(_Kind kind, unsigned int align, MapItem::UP userAttrs);
+    explicit DataType(_Kind kind, unsigned int align, MapItem::UP attrs);
 
 public:
     virtual ~DataType() = default;
@@ -107,17 +107,17 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
     If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept
+    const MapItem *attributes() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
     /// \c true if this type is a bit array type.
@@ -781,7 +781,7 @@ private:
 private:
     const _Kind _theKind;
     unsigned int _align;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
 };
 
 /*!

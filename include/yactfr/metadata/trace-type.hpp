@@ -105,11 +105,11 @@ public:
         Clock types of this type (moved).
     @param[in] dataStreamTypes
         Data stream types of this type (moved).
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes.
+        Attributes.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -153,23 +153,23 @@ public:
           - OptionalWithUnsignedIntegerSelectorType
           - OptionalWithSignedIntegerSelectorType
 
-        - \p userAttributes is not set.
+        - \p attributes is not set.
 
         - All the \link ClockType clock types\endlink
-          within \p clockTypes have no user attributes
-          (ClockType::userAttributes() returns \c nullptr).
+          within \p clockTypes have no attributes
+          (ClockType::attributes() returns \c nullptr).
 
         - All the \link DataStreamType data stream types\endlink
-          within \p dataStreamTypes have no user attributes
-          (DataStreamType::userAttributes() returns \c nullptr).
+          within \p dataStreamTypes have no attributes
+          (DataStreamType::attributes() returns \c nullptr).
 
         - All the \link EventRecordType event record types\endlink
-          within \p dataStreamTypes have no user attributes
-          (EventRecordType::userAttributes() returns \c nullptr).
+          within \p dataStreamTypes have no attributes
+          (EventRecordType::attributes() returns \c nullptr).
 
         - All the \link DataType data types\endlink
-          within \p dataStreamTypes have no user attributes
-          (DataType::userAttributes() returns \c nullptr).
+          within \p dataStreamTypes have no attributes
+          (DataType::attributes() returns \c nullptr).
 
         <strong>If \p majorVersion is 2</strong>, then:
 
@@ -194,7 +194,7 @@ public:
                        boost::optional<std::string> nameSpace, boost::optional<std::string> name,
                        boost::optional<std::string> uid, TraceEnvironment environment,
                        StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
-                       DataStreamTypeSet&& dataStreamTypes, MapItem::UP userAttributes = nullptr);
+                       DataStreamTypeSet&& dataStreamTypes, MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -256,15 +256,15 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
     If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept;
+    const MapItem *attributes() const noexcept;
 
     /*!
     @brief

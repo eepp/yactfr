@@ -32,12 +32,12 @@ TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVe
                      boost::optional<std::string> ns, boost::optional<std::string> name,
                      boost::optional<std::string> uid, TraceEnvironment env,
                      StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                     DataStreamTypeSet&& dsts, MapItem::UP userAttrs) :
+                     DataStreamTypeSet&& dsts, MapItem::UP attrs) :
     _pimpl {
         std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(ns),
                                                   std::move(name), std::move(uid), std::move(env),
                                                   std::move(pktHeaderType), std::move(clkTypes),
-                                                  std::move(dsts), std::move(userAttrs), *this)
+                                                  std::move(dsts), std::move(attrs), *this)
     }
 {
 #ifndef NDEBUG
@@ -99,9 +99,9 @@ const DataStreamTypeSet& TraceType::dataStreamTypes() const noexcept
     return _pimpl->dsts();
 }
 
-const MapItem *TraceType::userAttributes() const noexcept
+const MapItem *TraceType::attributes() const noexcept
 {
-    return _pimpl->userAttrs();
+    return _pimpl->attrs();
 }
 
 const DataStreamType *TraceType::operator[](const TypeId id) const

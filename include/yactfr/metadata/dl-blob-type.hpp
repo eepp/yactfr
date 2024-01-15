@@ -54,12 +54,12 @@ public:
     @param[in] mediaType
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
         of data stream dynamic-length BLOBs described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream dynamic-length BLOBs described by
+        Attributes of data stream dynamic-length BLOBs described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -68,7 +68,7 @@ public:
         \p alignment is a power of two.
     */
     explicit DynamicLengthBlobType(unsigned int alignment, DataLocation lengthLocation,
-                                   std::string mediaType, MapItem::UP userAttributes = nullptr);
+                                   std::string mediaType, MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -81,16 +81,16 @@ public:
     @param[in] mediaType
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
         of data stream dynamic-length BLOBs described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream dynamic-length BLOBs described by
+        Attributes of data stream dynamic-length BLOBs described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     */
     explicit DynamicLengthBlobType(DataLocation lengthLocation,
-                                   std::string mediaType, MapItem::UP userAttributes = nullptr);
+                                   std::string mediaType, MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -103,8 +103,8 @@ public:
     @param[in] lengthLocation
         Location of lengths (bytes) of data stream dynamic-length BLOBs
         described by this type.
-    @param[in] userAttributes
-        User attributes of data stream dynamic-length BLOBs described
+    @param[in] attributes
+        Attributes of data stream dynamic-length BLOBs described
         by this type.
 
     @pre
@@ -113,7 +113,7 @@ public:
         \p alignment is a power of two.
     */
     explicit DynamicLengthBlobType(unsigned int alignment, DataLocation lengthLocation,
-                                   MapItem::UP userAttributes = nullptr);
+                                   MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -124,12 +124,12 @@ public:
     @param[in] lengthLocation
         Location of lengths (bytes) of data stream dynamic-length BLOBs
         described by this type.
-    @param[in] userAttributes
-        User attributes of data stream dynamic-length BLOBs described
+    @param[in] attributes
+        Attributes of data stream dynamic-length BLOBs described
         by this type.
     */
     explicit DynamicLengthBlobType(DataLocation lengthLocation,
-                                   MapItem::UP userAttributes = nullptr);
+                                   MapItem::UP attributes = nullptr);
 
     /*!
     @brief

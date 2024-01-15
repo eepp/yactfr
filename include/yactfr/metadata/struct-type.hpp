@@ -54,12 +54,12 @@ public:
         type.
     @param[in] memberTypes
         Member types of the structure type (moved to this type).
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream structures described by this
+        Attributes of data stream structures described by this
         type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -68,7 +68,7 @@ public:
         \p minimumAlignment is a power of two.
     */
     explicit StructureType(unsigned int minimumAlignment, MemberTypes&& memberTypes,
-                           MapItem::UP userAttributes = nullptr);
+                           MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -77,15 +77,15 @@ public:
 
     @param[in] memberTypes
         Member types of the structure type (moved to this type).
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream structures described by this
+        Attributes of data stream structures described by this
         type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     */
-    explicit StructureType(MemberTypes&& memberTypes, MapItem::UP userAttributes = nullptr);
+    explicit StructureType(MemberTypes&& memberTypes, MapItem::UP attributes = nullptr);
 
     /*!
     @brief

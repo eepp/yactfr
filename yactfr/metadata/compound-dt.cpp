@@ -12,8 +12,8 @@
 namespace yactfr {
 
 CompoundDataType::CompoundDataType(const _Kind kind, const unsigned int minAlign,
-                                   const unsigned int align, MapItem::UP userAttrs) :
-    DataType {kind, std::max(minAlign, align), std::move(userAttrs)},
+                                   const unsigned int align, MapItem::UP attrs) :
+    DataType {kind, std::max(minAlign, align), std::move(attrs)},
     _minAlign {minAlign}
 {
 }

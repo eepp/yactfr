@@ -81,7 +81,7 @@ typename EnumTypeT::Mappings enumTypeMappingsOfEnumType(const JsonObjVal& jsonDt
     return mappings;
 }
 
-static PseudoDt::UP pseudoDtFromFlUEnumType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromFlUEnumType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                             const unsigned int len, const ByteOrder bo,
                                             const unsigned int align,
                                             const DisplayBase prefDispBase,
@@ -93,11 +93,11 @@ static PseudoDt::UP pseudoDtFromFlUEnumType(const JsonObjVal& jsonDt, MapItem::U
     return createPseudoScalarDtWrapper<FixedLengthUnsignedEnumerationType>(jsonDt, align, len, bo,
                                                                            std::move(mappings),
                                                                            prefDispBase,
-                                                                           std::move(userAttrs),
+                                                                           std::move(attrs),
                                                                            std::move(roles));
 }
 
-static PseudoDt::UP pseudoDtFromFlSEnumType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromFlSEnumType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                             const unsigned int len, const ByteOrder bo,
                                             const unsigned int align,
                                             const DisplayBase prefDispBase)
@@ -108,7 +108,7 @@ static PseudoDt::UP pseudoDtFromFlSEnumType(const JsonObjVal& jsonDt, MapItem::U
     return createPseudoScalarDtWrapper<FixedLengthSignedEnumerationType>(jsonDt, align, len, bo,
                                                                          std::move(mappings),
                                                                          prefDispBase,
-                                                                         std::move(userAttrs));
+                                                                         std::move(attrs));
 }
 
 static UnsignedIntegerTypeRoleSet uIntTypeRolesOfUIntType(const JsonObjVal& jsonDt)
@@ -151,7 +151,7 @@ static UnsignedIntegerTypeRoleSet uIntTypeRolesOfUIntType(const JsonObjVal& json
 }
 
 static PseudoDt::UP pseudoDtFromFlUIntType(const JsonObjVal& jsonDt, const std::string& type,
-                                           MapItem::UP userAttrs, const unsigned int len,
+                                           MapItem::UP attrs, const unsigned int len,
                                            const ByteOrder bo, const unsigned int align,
                                            const DisplayBase prefDispBase)
 {
@@ -161,32 +161,32 @@ static PseudoDt::UP pseudoDtFromFlUIntType(const JsonObjVal& jsonDt, const std::
     if (type == strs::FL_UINT) {
         return createPseudoScalarDtWrapper<FixedLengthUnsignedIntegerType>(jsonDt, align, len, bo,
                                                                            prefDispBase,
-                                                                           std::move(userAttrs),
+                                                                           std::move(attrs),
                                                                            std::move(roles));
     } else {
         assert(type == strs::FL_UENUM);
-        return pseudoDtFromFlUEnumType(jsonDt, std::move(userAttrs), len, bo, align, prefDispBase,
+        return pseudoDtFromFlUEnumType(jsonDt, std::move(attrs), len, bo, align, prefDispBase,
                                        std::move(roles));
     }
 }
 
 static PseudoDt::UP pseudoDtFromFlSIntType(const JsonObjVal& jsonDt, const std::string& type,
-                                           MapItem::UP userAttrs, const unsigned int len,
+                                           MapItem::UP attrs, const unsigned int len,
                                            const ByteOrder bo, const unsigned int align,
                                            const DisplayBase prefDispBase)
 {
     if (type == strs::FL_SINT) {
         return createPseudoScalarDtWrapper<FixedLengthSignedIntegerType>(jsonDt, align, len, bo,
                                                                          prefDispBase,
-                                                                         std::move(userAttrs));
+                                                                         std::move(attrs));
     } else {
         assert(type == strs::FL_SENUM);
-        return pseudoDtFromFlSEnumType(jsonDt, std::move(userAttrs), len, bo, align, prefDispBase);
+        return pseudoDtFromFlSEnumType(jsonDt, std::move(attrs), len, bo, align, prefDispBase);
     }
 }
 
 static PseudoDt::UP pseudoDtFromFlIntType(const JsonObjVal& jsonDt, const std::string& type,
-                                          MapItem::UP userAttrs, const unsigned int len,
+                                          MapItem::UP attrs, const unsigned int len,
                                           const ByteOrder bo, const unsigned int align)
 {
     // preferred display base
@@ -194,33 +194,33 @@ static PseudoDt::UP pseudoDtFromFlIntType(const JsonObjVal& jsonDt, const std::s
                                                                         10ULL));
 
     if (type == strs::FL_UINT || type == strs::FL_UENUM) {
-        return pseudoDtFromFlUIntType(jsonDt, type, std::move(userAttrs), len, bo, align,
+        return pseudoDtFromFlUIntType(jsonDt, type, std::move(attrs), len, bo, align,
                                       prefDispBase);
     } else {
         assert(type == strs::FL_SINT || type == strs::FL_SENUM);
-        return pseudoDtFromFlSIntType(jsonDt, type, std::move(userAttrs), len, bo, align,
+        return pseudoDtFromFlSIntType(jsonDt, type, std::move(attrs), len, bo, align,
                                       prefDispBase);
     }
 }
 
-static PseudoDt::UP pseudoDtFromFlBoolType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromFlBoolType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                            const unsigned int len, const ByteOrder bo,
                                            const unsigned int align)
 {
     return createPseudoScalarDtWrapper<FixedLengthBooleanType>(jsonDt, align, len, bo,
-                                                               std::move(userAttrs));
+                                                               std::move(attrs));
 }
 
-static PseudoDt::UP pseudoDtFromFlFloatType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromFlFloatType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                             const unsigned int len, const ByteOrder bo,
                                             const unsigned int align)
 {
     return createPseudoScalarDtWrapper<FixedLengthFloatingPointNumberType>(jsonDt, align, len, bo,
-                                                                           std::move(userAttrs));
+                                                                           std::move(attrs));
 }
 
 static PseudoDt::UP pseudoDtFromFlBitArrayType(const JsonObjVal& jsonDt, const std::string& type,
-                                               MapItem::UP userAttrs)
+                                               MapItem::UP attrs)
 {
     // length
     const auto len = jsonDt.getRawUIntVal(strs::LEN);
@@ -233,19 +233,19 @@ static PseudoDt::UP pseudoDtFromFlBitArrayType(const JsonObjVal& jsonDt, const s
 
     if (type == strs::FL_BIT_ARRAY) {
         return createPseudoScalarDtWrapper<FixedLengthBitArrayType>(jsonDt, align, len, bo,
-                                                                    std::move(userAttrs));
+                                                                    std::move(attrs));
     } else if (type == strs::FL_BOOL) {
-        return pseudoDtFromFlBoolType(jsonDt, std::move(userAttrs), len, bo, align);
+        return pseudoDtFromFlBoolType(jsonDt, std::move(attrs), len, bo, align);
     } else if (type == strs::FL_UINT || type == strs::FL_SINT ||
             type == strs::FL_UENUM || type == strs::FL_SENUM) {
-        return pseudoDtFromFlIntType(jsonDt, type, std::move(userAttrs), len, bo, align);
+        return pseudoDtFromFlIntType(jsonDt, type, std::move(attrs), len, bo, align);
     } else {
         assert(type == strs::FL_FLOAT);
-        return pseudoDtFromFlFloatType(jsonDt, std::move(userAttrs), len, bo, align);
+        return pseudoDtFromFlFloatType(jsonDt, std::move(attrs), len, bo, align);
     }
 }
 
-static PseudoDt::UP pseudoDtFromVlUEnumType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromVlUEnumType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                             const DisplayBase prefDispBase,
                                             UnsignedIntegerTypeRoleSet&& roles)
 {
@@ -255,11 +255,11 @@ static PseudoDt::UP pseudoDtFromVlUEnumType(const JsonObjVal& jsonDt, MapItem::U
     return createPseudoScalarDtWrapper<VariableLengthUnsignedEnumerationType>(jsonDt,
                                                                               std::move(mappings),
                                                                               prefDispBase,
-                                                                              std::move(userAttrs),
+                                                                              std::move(attrs),
                                                                               std::move(roles));
 }
 
-static PseudoDt::UP pseudoDtFromVlSEnumType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromVlSEnumType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                             const DisplayBase prefDispBase)
 {
     // mappings
@@ -268,48 +268,48 @@ static PseudoDt::UP pseudoDtFromVlSEnumType(const JsonObjVal& jsonDt, MapItem::U
     return createPseudoScalarDtWrapper<VariableLengthSignedEnumerationType>(jsonDt,
                                                                             std::move(mappings),
                                                                             prefDispBase,
-                                                                            std::move(userAttrs));
+                                                                            std::move(attrs));
 }
 
 static PseudoDt::UP pseudoDtFromVlUIntType(const JsonObjVal& jsonDt, const std::string& type,
-                                           MapItem::UP userAttrs, const DisplayBase prefDispBase)
+                                           MapItem::UP attrs, const DisplayBase prefDispBase)
 {
     // roles
     auto roles = uIntTypeRolesOfUIntType(jsonDt);
 
     if (type == strs::VL_UINT) {
         return createPseudoScalarDtWrapper<VariableLengthUnsignedIntegerType>(jsonDt, prefDispBase,
-                                                                              std::move(userAttrs));
+                                                                              std::move(attrs));
     } else {
         assert(type == strs::VL_UENUM);
-        return pseudoDtFromVlUEnumType(jsonDt, std::move(userAttrs), prefDispBase,
+        return pseudoDtFromVlUEnumType(jsonDt, std::move(attrs), prefDispBase,
                                        std::move(roles));
     }
 }
 
 static PseudoDt::UP pseudoDtFromVlSIntType(const JsonObjVal& jsonDt, const std::string& type,
-                                           MapItem::UP userAttrs, const DisplayBase prefDispBase)
+                                           MapItem::UP attrs, const DisplayBase prefDispBase)
 {
     if (type == strs::VL_SINT) {
         return createPseudoScalarDtWrapper<VariableLengthSignedIntegerType>(jsonDt, prefDispBase,
-                                                                            std::move(userAttrs));
+                                                                            std::move(attrs));
     } else {
         assert(type == strs::VL_SENUM);
-        return pseudoDtFromVlSEnumType(jsonDt, std::move(userAttrs), prefDispBase);
+        return pseudoDtFromVlSEnumType(jsonDt, std::move(attrs), prefDispBase);
     }
 }
 
 static PseudoDt::UP pseudoDtFromVlIntType(const JsonObjVal& jsonDt, const std::string& type,
-                                          MapItem::UP userAttrs)
+                                          MapItem::UP attrs)
 {
     // preferred display base
     const auto prefDispBase = static_cast<DisplayBase>(jsonDt.getRawVal(strs::PREF_DISP_BASE, 10ULL));
 
     if (type == strs::VL_UINT || type == strs::VL_UENUM) {
-        return pseudoDtFromVlUIntType(jsonDt, type, std::move(userAttrs), prefDispBase);
+        return pseudoDtFromVlUIntType(jsonDt, type, std::move(attrs), prefDispBase);
     } else {
         assert(type == strs::VL_SINT || type == strs::VL_SENUM);
-        return pseudoDtFromVlSIntType(jsonDt, type, std::move(userAttrs), prefDispBase);
+        return pseudoDtFromVlSIntType(jsonDt, type, std::move(attrs), prefDispBase);
     }
 }
 
@@ -337,10 +337,10 @@ static StringEncoding strEncodingOfStrType(const JsonObjVal& jsonDt) noexcept
     }
 }
 
-static PseudoDt::UP pseudoDtFromNtStrType(const JsonObjVal& jsonDt, MapItem::UP userAttrs)
+static PseudoDt::UP pseudoDtFromNtStrType(const JsonObjVal& jsonDt, MapItem::UP attrs)
 {
     return createPseudoScalarDtWrapper<NullTerminatedStringType>(jsonDt, strEncodingOfStrType(jsonDt),
-                                                                 std::move(userAttrs));
+                                                                 std::move(attrs));
 }
 
 static PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& propName)
@@ -389,7 +389,7 @@ static PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::s
     };
 }
 
-static PseudoDt::UP pseudoDtFromDlStrType(const JsonObjVal& jsonDt, MapItem::UP userAttrs)
+static PseudoDt::UP pseudoDtFromDlStrType(const JsonObjVal& jsonDt, MapItem::UP attrs)
 {
     /*
      * Returning a pseudo dynamic-length array type having a pseudo
@@ -405,38 +405,38 @@ static PseudoDt::UP pseudoDtFromDlStrType(const JsonObjVal& jsonDt, MapItem::UP 
                                                              strEncodingOfStrType(jsonDt));
 
     return std::make_unique<PseudoDlArrayType>(pseudoDataLocOfDynDt(jsonDt, strs::LEN_FIELD_LOC),
-                                               std::move(pseudoElemType), std::move(userAttrs),
+                                               std::move(pseudoElemType), std::move(attrs),
                                                jsonDt.loc());
 }
 
-static PseudoDt::UP pseudoDtFromSlStrType(const JsonObjVal& jsonDt, MapItem::UP userAttrs)
+static PseudoDt::UP pseudoDtFromSlStrType(const JsonObjVal& jsonDt, MapItem::UP attrs)
 {
     return createPseudoScalarDtWrapper<StaticLengthStringType>(jsonDt,
                                                                jsonDt.getRawUIntVal(strs::LEN),
                                                                strEncodingOfStrType(jsonDt),
-                                                               std::move(userAttrs));
+                                                               std::move(attrs));
 }
 
 static PseudoDt::UP pseudoDtFromNonNtStrType(const JsonObjVal& jsonDt, const std::string& type,
-                                             MapItem::UP userAttrs)
+                                             MapItem::UP attrs)
 {
     if (type == strs::SL_STR) {
-        return pseudoDtFromSlStrType(jsonDt, std::move(userAttrs));
+        return pseudoDtFromSlStrType(jsonDt, std::move(attrs));
     } else {
         assert(type == strs::DL_STR);
-        return pseudoDtFromDlStrType(jsonDt, std::move(userAttrs));
+        return pseudoDtFromDlStrType(jsonDt, std::move(attrs));
     }
 }
 
-static PseudoDt::UP pseudoDtFromDlBlobType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromDlBlobType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                            const char * const mediaType)
 {
     return std::make_unique<PseudoDlBlobType>(pseudoDataLocOfDynDt(jsonDt, strs::LEN_FIELD_LOC),
-                                              std::string {mediaType}, std::move(userAttrs),
+                                              std::string {mediaType}, std::move(attrs),
                                               jsonDt.loc());
 }
 
-static PseudoDt::UP pseudoDtFromSlBlobType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromSlBlobType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                            const char * const mediaType)
 {
     // has metadata stream UUID role?
@@ -449,56 +449,56 @@ static PseudoDt::UP pseudoDtFromSlBlobType(const JsonObjVal& jsonDt, MapItem::UP
 
     return createPseudoScalarDtWrapper<StaticLengthBlobType>(jsonDt,
                                                              jsonDt.getRawUIntVal(strs::LEN),
-                                                             mediaType, std::move(userAttrs),
+                                                             mediaType, std::move(attrs),
                                                              hasMetadataStreamUuidRole);
 }
 
 static PseudoDt::UP pseudoDtFromBlobType(const JsonObjVal& jsonDt, const std::string& type,
-                                         MapItem::UP userAttrs)
+                                         MapItem::UP attrs)
 {
     // media type
     const auto mediaType = jsonDt.getRawVal(strs::MEDIA_TYPE, strs::APP_OCTET_STREAM);
 
     if (type == strs::SL_BLOB) {
-        return pseudoDtFromSlBlobType(jsonDt, std::move(userAttrs), mediaType);
+        return pseudoDtFromSlBlobType(jsonDt, std::move(attrs), mediaType);
     } else {
         assert(type == strs::DL_BLOB);
-        return pseudoDtFromDlBlobType(jsonDt, std::move(userAttrs), mediaType);
+        return pseudoDtFromDlBlobType(jsonDt, std::move(attrs), mediaType);
     }
 }
 
 PseudoDt::UP PseudoDtErector::_pseudoDtFromDlArrayType(const JsonObjVal& jsonDt,
-                                                       MapItem::UP userAttrs,
+                                                       MapItem::UP attrs,
                                                        const unsigned int minAlign)
 {
     return std::make_unique<PseudoDlArrayType>(minAlign,
                                                pseudoDataLocOfDynDt(jsonDt, strs::LEN_FIELD_LOC),
                                                this->pseudoDtOfJsonObj(jsonDt, strs::ELEM_FC),
-                                               std::move(userAttrs), jsonDt.loc());
+                                               std::move(attrs), jsonDt.loc());
 }
 
 PseudoDt::UP PseudoDtErector::_pseudoDtFromSlArrayType(const JsonObjVal& jsonDt,
-                                                       MapItem::UP userAttrs,
+                                                       MapItem::UP attrs,
                                                        unsigned int minAlign)
 {
     return std::make_unique<PseudoSlArrayType>(minAlign, jsonDt.getRawUIntVal(strs::LEN),
                                                this->pseudoDtOfJsonObj(jsonDt, strs::ELEM_FC),
-                                               std::move(userAttrs), jsonDt.loc());
+                                               std::move(attrs), jsonDt.loc());
 }
 
 PseudoDt::UP PseudoDtErector::_pseudoDtFromArrayType(const JsonObjVal& jsonDt,
                                                      const std::string& type,
-                                                     MapItem::UP userAttrs)
+                                                     MapItem::UP attrs)
 {
     // minimum alignment
     const auto minAlign = jsonDt.getRawVal(strs::MIN_ALIGN, 1ULL);
 
     try {
         if (type == strs::SL_ARRAY) {
-            return this->_pseudoDtFromSlArrayType(jsonDt, std::move(userAttrs), minAlign);
+            return this->_pseudoDtFromSlArrayType(jsonDt, std::move(attrs), minAlign);
         } else {
             assert(type == strs::DL_ARRAY);
-            return this->_pseudoDtFromDlArrayType(jsonDt, std::move(userAttrs), minAlign);
+            return this->_pseudoDtFromDlArrayType(jsonDt, std::move(attrs), minAlign);
         }
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In array type:", jsonDt.loc());
@@ -507,7 +507,7 @@ PseudoDt::UP PseudoDtErector::_pseudoDtFromArrayType(const JsonObjVal& jsonDt,
 }
 
 PseudoDt::UP PseudoDtErector::_pseudoDtFromStructType(const JsonObjVal& jsonDt,
-                                                      MapItem::UP userAttrs)
+                                                      MapItem::UP attrs)
 {
     // member types
     PseudoNamedDts pseudoMemberTypes;
@@ -531,34 +531,34 @@ PseudoDt::UP PseudoDtErector::_pseudoDtFromStructType(const JsonObjVal& jsonDt,
 
             pseudoMemberTypes.push_back(std::make_unique<PseudoNamedDt>(std::move(name),
                                                                         std::move(pseudoDt),
-                                                                        userAttrsOfObj(jsonMemberClsObj)));
+                                                                        attrsOfObj(jsonMemberClsObj)));
         }
     }
 
     return std::make_unique<PseudoStructType>(jsonDt.getRawVal(strs::MIN_ALIGN, 1ULL),
-                                              std::move(pseudoMemberTypes), std::move(userAttrs),
+                                              std::move(pseudoMemberTypes), std::move(attrs),
                                               jsonDt.loc());
 }
 
-static PseudoDt::UP pseudoDtFromOptWithIntSelType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromOptWithIntSelType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                                   PseudoDataLoc&& pseudoSelLoc,
                                                   PseudoDt::UP pseudoDt,
                                                   const JsonArrayVal& jsonSelFieldRanges)
 {
     return std::make_unique<PseudoOptWithIntSelType>(std::move(pseudoDt), std::move(pseudoSelLoc),
                                                      intRangesFromArray<unsigned long long, false>(jsonSelFieldRanges),
-                                                     std::move(userAttrs), jsonDt.loc());
+                                                     std::move(attrs), jsonDt.loc());
 }
 
-static PseudoDt::UP pseudoDtFromOptWithBoolSelType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+static PseudoDt::UP pseudoDtFromOptWithBoolSelType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                                    PseudoDataLoc&& pseudoSelLoc,
                                                    PseudoDt::UP pseudoDt)
 {
     return std::make_unique<PseudoOptWithBoolSelType>(std::move(pseudoDt), std::move(pseudoSelLoc),
-                                                      std::move(userAttrs), jsonDt.loc());
+                                                      std::move(attrs), jsonDt.loc());
 }
 
-PseudoDt::UP PseudoDtErector::_pseudoDtFromOptType(const JsonObjVal& jsonDt, MapItem::UP userAttrs)
+PseudoDt::UP PseudoDtErector::_pseudoDtFromOptType(const JsonObjVal& jsonDt, MapItem::UP attrs)
 {
     // selector location
     auto pseudoSelLoc = pseudoDataLocOfDynDt(jsonDt, strs::SEL_FIELD_LOC);
@@ -577,15 +577,15 @@ PseudoDt::UP PseudoDtErector::_pseudoDtFromOptType(const JsonObjVal& jsonDt, Map
     const auto jsonSelFieldRanges = jsonDt[strs::SEL_FIELD_RANGES];
 
     if (jsonSelFieldRanges) {
-        return pseudoDtFromOptWithIntSelType(jsonDt, std::move(userAttrs), std::move(pseudoSelLoc),
+        return pseudoDtFromOptWithIntSelType(jsonDt, std::move(attrs), std::move(pseudoSelLoc),
                                              std::move(pseudoDt), jsonSelFieldRanges->asArray());
     } else {
-        return pseudoDtFromOptWithBoolSelType(jsonDt, std::move(userAttrs),
+        return pseudoDtFromOptWithBoolSelType(jsonDt, std::move(attrs),
                                               std::move(pseudoSelLoc), std::move(pseudoDt));
     }
 }
 
-PseudoDt::UP PseudoDtErector::_pseudoDtFromVarType(const JsonObjVal& jsonDt, MapItem::UP userAttrs)
+PseudoDt::UP PseudoDtErector::_pseudoDtFromVarType(const JsonObjVal& jsonDt, MapItem::UP attrs)
 {
     // options and selector ranges
     PseudoNamedDts pseudoOpts;
@@ -609,14 +609,14 @@ PseudoDt::UP PseudoDtErector::_pseudoDtFromVarType(const JsonObjVal& jsonDt, Map
         selRangeSets.push_back(std::move(intRanges));
         pseudoOpts.push_back(std::make_unique<PseudoNamedDt>(optStrOfObj(jsonOptObj, strs::NAME),
                                                              std::move(pseudoDt),
-                                                             userAttrsOfObj(jsonOptObj)));
+                                                             attrsOfObj(jsonOptObj)));
     }
 
     return std::make_unique<PseudoVarWithIntRangesType>(pseudoDataLocOfDynDt(jsonDt,
                                                                              strs::SEL_FIELD_LOC),
                                                         std::move(pseudoOpts),
                                                         std::move(selRangeSets),
-                                                        std::move(userAttrs), jsonDt.loc());
+                                                        std::move(attrs), jsonDt.loc());
 }
 
 PseudoDt::UP PseudoDtErector::pseudoDtOfJsonObj(const JsonObjVal& jsonObjVal,
@@ -648,8 +648,8 @@ PseudoDt::UP PseudoDtErector::pseudoDtOfJsonObj(const JsonObjVal& jsonObjVal,
     // get type
     auto& type = jsonDtObj.getRawStrVal(strs::TYPE);
 
-    // user attributes
-    auto userAttrs = userAttrsOfObj(jsonDtObj);
+    // attributes
+    auto attrs = attrsOfObj(jsonDtObj);
 
     // defer to specific method
     if (type == strs::FL_BIT_ARRAY ||
@@ -657,25 +657,25 @@ PseudoDt::UP PseudoDtErector::pseudoDtOfJsonObj(const JsonObjVal& jsonObjVal,
             type == strs::FL_UINT || type == strs::FL_SINT ||
             type == strs::FL_UENUM || type == strs::FL_SENUM ||
             type == strs::FL_FLOAT) {
-        return pseudoDtFromFlBitArrayType(jsonDtObj, type, std::move(userAttrs));
+        return pseudoDtFromFlBitArrayType(jsonDtObj, type, std::move(attrs));
     } else if (type == strs::VL_UINT || type == strs::VL_SINT ||
             type == strs::VL_UENUM || type == strs::VL_SENUM) {
-        return pseudoDtFromVlIntType(jsonDtObj, type, std::move(userAttrs));
+        return pseudoDtFromVlIntType(jsonDtObj, type, std::move(attrs));
     } else if (type == strs::NT_STR) {
-        return pseudoDtFromNtStrType(jsonDtObj, std::move(userAttrs));
+        return pseudoDtFromNtStrType(jsonDtObj, std::move(attrs));
     } else if (type == strs::SL_STR || type == strs::DL_STR) {
-        return pseudoDtFromNonNtStrType(jsonDtObj, type, std::move(userAttrs));
+        return pseudoDtFromNonNtStrType(jsonDtObj, type, std::move(attrs));
     } else if (type == strs::SL_BLOB || type == strs::DL_BLOB) {
-        return pseudoDtFromBlobType(jsonDtObj, type, std::move(userAttrs));
+        return pseudoDtFromBlobType(jsonDtObj, type, std::move(attrs));
     } else if (type == strs::SL_ARRAY || type == strs::DL_ARRAY) {
-        return this->_pseudoDtFromArrayType(jsonDtObj, type, std::move(userAttrs));
+        return this->_pseudoDtFromArrayType(jsonDtObj, type, std::move(attrs));
     } else if (type == strs::STRUCT) {
-        return this->_pseudoDtFromStructType(jsonDtObj, std::move(userAttrs));
+        return this->_pseudoDtFromStructType(jsonDtObj, std::move(attrs));
     } else if (type == strs::OPT) {
-        return this->_pseudoDtFromOptType(jsonDtObj, std::move(userAttrs));
+        return this->_pseudoDtFromOptType(jsonDtObj, std::move(attrs));
     } else {
         assert(type == strs::VAR);
-        return this->_pseudoDtFromVarType(jsonDtObj, std::move(userAttrs));
+        return this->_pseudoDtFromVarType(jsonDtObj, std::move(attrs));
     }
 }
 

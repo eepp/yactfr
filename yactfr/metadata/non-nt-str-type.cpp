@@ -14,8 +14,8 @@ namespace yactfr {
 NonNullTerminatedStringType::NonNullTerminatedStringType(const _Kind kind,
                                                          const unsigned int align,
                                                          const StringEncoding encoding,
-                                                         MapItem::UP userAttrs) :
-    StringType {kind, align, encoding, std::move(userAttrs)}
+                                                         MapItem::UP attrs) :
+    StringType {kind, align, encoding, std::move(attrs)}
 {
 }
 

@@ -21,7 +21,7 @@ EventRecordType::EventRecordType(const TypeId id, boost::optional<std::string> n
                                  boost::optional<LogLevel> logLevel,
                                  boost::optional<std::string> emfUri,
                                  StructureType::UP specCtxType, StructureType::UP payloadType,
-                                 MapItem::UP userAttrs) :
+                                 MapItem::UP attrs) :
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
@@ -30,7 +30,7 @@ EventRecordType::EventRecordType(const TypeId id, boost::optional<std::string> n
     _emfUri {std::move(emfUri)},
     _specCtxType {std::move(specCtxType)},
     _payloadType {std::move(payloadType)},
-    _userAttrs {std::move(userAttrs)}
+    _attrs {std::move(attrs)}
 {
 }
 

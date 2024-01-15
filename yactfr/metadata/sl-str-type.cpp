@@ -14,22 +14,22 @@ namespace yactfr {
 
 StaticLengthStringType::StaticLengthStringType(const unsigned int align, const Size maxLen,
                                                const StringEncoding encoding,
-                                               MapItem::UP userAttrs) :
-    NonNullTerminatedStringType {_KIND_SL_STR, align, encoding, std::move(userAttrs)},
+                                               MapItem::UP attrs) :
+    NonNullTerminatedStringType {_KIND_SL_STR, align, encoding, std::move(attrs)},
     _maxLen {maxLen}
 {
 }
 
 StaticLengthStringType::StaticLengthStringType(const Size maxLen, const StringEncoding encoding,
-                                               MapItem::UP userAttrs) :
-    StaticLengthStringType {8, maxLen, encoding, std::move(userAttrs)}
+                                               MapItem::UP attrs) :
+    StaticLengthStringType {8, maxLen, encoding, std::move(attrs)}
 {
 }
 
 DataType::UP StaticLengthStringType::_clone() const
 {
     return StaticLengthStringType::create(this->alignment(), _maxLen, this->encoding(),
-                                          internal::tryCloneUserAttrs(this->userAttributes()));
+                                          internal::tryCloneAttrs(this->attributes()));
 }
 
 bool StaticLengthStringType::_isEqual(const DataType& other) const noexcept

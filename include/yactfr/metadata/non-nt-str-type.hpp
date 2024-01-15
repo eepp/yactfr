@@ -24,7 +24,7 @@ class NonNullTerminatedStringType :
 {
 protected:
     explicit NonNullTerminatedStringType(_Kind kind, unsigned int align, StringEncoding encoding,
-                                         MapItem::UP userAttrs);
+                                         MapItem::UP attrs);
 };
 
 } // namespace yactfr

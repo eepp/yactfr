@@ -12,7 +12,7 @@
             "type": "fixed-length-unsigned-enumeration",
             "byte-order": "big-endian",
             "length": 32,
-            "user-attributes": "allo",
+            "attributes": "allo",
             "mappings": {
               "a": [[23, 23]]
             }
@@ -30,5 +30,5 @@
 [7:9] Invalid structure member type:
 [9:26] In object property `field-class`:
 [9:26] Invalid fixed-length unsigned enumeration type:
-[13:32] In object property `user-attributes`:
-[13:32] Expecting an object.
+[13:27] In object property `attributes`:
+[13:27] Expecting an object.

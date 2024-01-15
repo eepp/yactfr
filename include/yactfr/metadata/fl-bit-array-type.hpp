@@ -36,7 +36,7 @@ public:
 
 protected:
     explicit FixedLengthBitArrayType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
-                                     MapItem::UP userAttrs);
+                                     MapItem::UP attrs);
 
 public:
     /*!
@@ -52,12 +52,12 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length bit arrays described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream fixed-length bit arrays described
+        Attributes of data stream fixed-length bit arrays described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -69,7 +69,7 @@ public:
     */
     explicit FixedLengthBitArrayType(unsigned int alignment, unsigned int length,
                                      ByteOrder byteOrder,
-                                     MapItem::UP userAttributes = nullptr);
+                                     MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -82,19 +82,19 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length bit arrays described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream fixed-length bit arrays described
+        Attributes of data stream fixed-length bit arrays described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
         \p length > 0.
     */
     explicit FixedLengthBitArrayType(unsigned int length, ByteOrder byteOrder,
-                                     MapItem::UP userAttributes = nullptr);
+                                     MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -142,7 +142,7 @@ public:
         Less-than operator.
 
     @attention
-        This operator doesn't consider user attributes.
+        This operator doesn't consider attributes.
 
     @param[in] other
         Other fixed-length bit array type to compare to.

@@ -19,13 +19,13 @@
 namespace yactfr {
 namespace internal {
 
-static inline MapItem::UP tryCloneUserAttrs(const MapItem * const userAttrs)
+static inline MapItem::UP tryCloneAttrs(const MapItem * const attrs)
 {
-    if (!userAttrs) {
+    if (!attrs) {
         return nullptr;
     }
 
-    return MapItem::UP {static_cast<const MapItem *>(userAttrs->clone().release())};
+    return MapItem::UP {static_cast<const MapItem *>(attrs->clone().release())};
 }
 
 } // namespace internal

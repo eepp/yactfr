@@ -52,19 +52,19 @@ public:
     @param[in] dataType
         Data type of data stream structure members described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream structure members described by
+        Attributes of data stream structure members described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
         \p dataType is set.
     */
     explicit StructureMemberType(std::string name, DataType::UP dataType,
-                                 MapItem::UP userAttributes = nullptr);
+                                 MapItem::UP attributes = nullptr);
 
     /// Name of data stream structure members described by this type.
     const std::string& name() const noexcept
@@ -127,17 +127,17 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
-    If set, each key of \p *userAttributes is a namespace.
+    If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept
+    const MapItem *attributes() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
     /*!
@@ -180,7 +180,7 @@ private:
     mutable boost::optional<std::string> _dispName;
     const std::string _name;
     const DataType::UP _dt;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
 };
 
 } // namespace yactfr

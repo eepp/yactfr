@@ -44,12 +44,12 @@ public:
     @param[in] encoding
         Encoding of data stream null-terminated strings described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream null-terminated strings described
+        Attributes of data stream null-terminated strings described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -59,7 +59,7 @@ public:
     */
     explicit NullTerminatedStringType(unsigned int alignment,
                                       StringEncoding encoding = StringEncoding::UTF_8,
-                                      MapItem::UP userAttributes = nullptr);
+                                      MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -69,16 +69,16 @@ public:
     @param[in] encoding
         Encoding of data stream null-terminated strings described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream null-terminated strings described
+        Attributes of data stream null-terminated strings described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     */
     explicit NullTerminatedStringType(StringEncoding encoding = StringEncoding::UTF_8,
-                                      MapItem::UP userAttributes = nullptr);
+                                      MapItem::UP attributes = nullptr);
 
     /*!
     @brief

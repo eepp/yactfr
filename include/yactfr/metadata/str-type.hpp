@@ -49,7 +49,7 @@ class StringType :
 {
 protected:
     explicit StringType(_Kind kind, unsigned int align, StringEncoding encoding,
-                        MapItem::UP userAttrs);
+                        MapItem::UP attrs);
 
 public:
     /// Encoding of a string described by this type.

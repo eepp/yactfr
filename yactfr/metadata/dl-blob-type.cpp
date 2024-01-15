@@ -11,34 +11,34 @@
 namespace yactfr {
 
 DynamicLengthBlobType::DynamicLengthBlobType(const unsigned int align, DataLocation lenLoc,
-                                             std::string mediaType, MapItem::UP userAttrs) :
-    BlobType {_KIND_DL_BLOB, align, std::move(userAttrs), std::move(mediaType)},
+                                             std::string mediaType, MapItem::UP attrs) :
+    BlobType {_KIND_DL_BLOB, align, std::move(attrs), std::move(mediaType)},
     _lenLoc {std::move(lenLoc)}
 {
 }
 
 DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, std::string mediaType,
-                                             MapItem::UP userAttrs) :
-    DynamicLengthBlobType {8, std::move(lenLoc), std::move(mediaType), std::move(userAttrs)}
+                                             MapItem::UP attrs) :
+    DynamicLengthBlobType {8, std::move(lenLoc), std::move(mediaType), std::move(attrs)}
 {
 }
 
 DynamicLengthBlobType::DynamicLengthBlobType(const unsigned int align, DataLocation lenLoc,
-                                             MapItem::UP userAttrs) :
-    BlobType {_KIND_DL_BLOB, align, std::move(userAttrs)},
+                                             MapItem::UP attrs) :
+    BlobType {_KIND_DL_BLOB, align, std::move(attrs)},
     _lenLoc {std::move(lenLoc)}
 {
 }
 
-DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, MapItem::UP userAttrs) :
-    DynamicLengthBlobType {8, std::move(lenLoc), std::move(userAttrs)}
+DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, MapItem::UP attrs) :
+    DynamicLengthBlobType {8, std::move(lenLoc), std::move(attrs)}
 {
 }
 
 DataType::UP DynamicLengthBlobType::_clone() const
 {
     return DynamicLengthBlobType::create(this->alignment(), _lenLoc, this->mediaType(),
-                                         internal::tryCloneUserAttrs(this->userAttributes()));
+                                         internal::tryCloneAttrs(this->attributes()));
 }
 
 bool DynamicLengthBlobType::_isEqual(const DataType& other) const noexcept

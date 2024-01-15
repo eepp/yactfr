@@ -92,11 +92,11 @@ public:
     @param[in] defaultClockType
         Type of the default clock of data streams described by this
         type, or \c nullptr if none.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes.
+        Attributes.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -139,7 +139,7 @@ public:
                             StructureType::UP eventRecordHeaderType,
                             StructureType::UP eventRecordCommonContextType,
                             const ClockType *defaultClockType = nullptr,
-                            MapItem::UP userAttributes = nullptr);
+                            MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -162,11 +162,11 @@ public:
     @param[in] defaultClockType
         Type of the default clock of a data stream described by this
         type, or \c nullptr if none.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes.
+        Attributes.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -206,7 +206,7 @@ public:
                             StructureType::UP eventRecordHeaderType,
                             StructureType::UP eventRecordCommonContextType,
                             const ClockType *defaultClockType = nullptr,
-                            MapItem::UP userAttributes = nullptr);
+                            MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -353,17 +353,17 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
     If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept
+    const MapItem *attributes() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
     /*!
@@ -392,7 +392,7 @@ private:
     StructureType::UP _erHeaderType;
     StructureType::UP _erCommonCtxType;
     const ClockType * const _defClkType;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
     mutable const TraceType *_traceType = nullptr;
 };
 

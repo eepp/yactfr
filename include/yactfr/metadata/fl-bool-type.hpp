@@ -49,12 +49,12 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length booleans described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream fixed-length booleans described
+        Attributes of data stream fixed-length booleans described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -65,7 +65,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBooleanType(unsigned int alignment, unsigned int length,
-                                    ByteOrder byteOrder, MapItem::UP userAttributes = nullptr);
+                                    ByteOrder byteOrder, MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -78,19 +78,19 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length booleans described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream fixed-length booleans described
+        Attributes of data stream fixed-length booleans described
         by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
         \p length > 0.
     */
     explicit FixedLengthBooleanType(unsigned int length, ByteOrder byteOrder,
-                                    MapItem::UP userAttributes = nullptr);
+                                    MapItem::UP attributes = nullptr);
 
     /*!
     @brief

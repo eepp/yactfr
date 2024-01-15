@@ -14,8 +14,8 @@ namespace yactfr {
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const _Kind kind, const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
-                                                 MapItem::UP userAttrs) :
-    ScalarDataType {kind, align, std::move(userAttrs)},
+                                                 MapItem::UP attrs) :
+    ScalarDataType {kind, align, std::move(attrs)},
     _len {len},
     _bo {bo}
 {
@@ -25,14 +25,14 @@ FixedLengthBitArrayType::FixedLengthBitArrayType(const _Kind kind, const unsigne
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
-                                                 MapItem::UP userAttrs) :
-    FixedLengthBitArrayType {_KIND_FL_BIT_ARRAY, align, len, bo, std::move(userAttrs)}
+                                                 MapItem::UP attrs) :
+    FixedLengthBitArrayType {_KIND_FL_BIT_ARRAY, align, len, bo, std::move(attrs)}
 {
 }
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int len, const ByteOrder bo,
-                                                 MapItem::UP userAttrs) :
-    FixedLengthBitArrayType {1, len, bo, std::move(userAttrs)}
+                                                 MapItem::UP attrs) :
+    FixedLengthBitArrayType {1, len, bo, std::move(attrs)}
 {
 }
 
@@ -71,7 +71,7 @@ bool FixedLengthBitArrayType::_isEqual(const DataType& other) const noexcept
 DataType::UP FixedLengthBitArrayType::_clone() const
 {
     return FixedLengthBitArrayType::create(this->alignment(), this->length(), this->byteOrder(),
-                                           internal::tryCloneUserAttrs(this->userAttributes()));
+                                           internal::tryCloneAttrs(this->attributes()));
 }
 
 } // namespace yactfr

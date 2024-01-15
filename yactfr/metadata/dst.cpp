@@ -19,7 +19,7 @@ DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
                                boost::optional<std::string> name, boost::optional<std::string> uid,
                                EventRecordTypeSet&& erts, StructureType::UP pktCtxType,
                                StructureType::UP erHeaderType, StructureType::UP erCommonCtxType,
-                               const ClockType * const defClkType, MapItem::UP userAttrs) :
+                               const ClockType * const defClkType, MapItem::UP attrs) :
     _id {id},
     _ns {std::move(ns)},
     _name {std::move(name)},
@@ -29,7 +29,7 @@ DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
     _erHeaderType {std::move(erHeaderType)},
     _erCommonCtxType {std::move(erCommonCtxType)},
     _defClkType {defClkType},
-    _userAttrs {std::move(userAttrs)}
+    _attrs {std::move(attrs)}
 {
     this->_buildErtMap();
     // TODO: Add validation.
@@ -38,11 +38,11 @@ DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
 DataStreamType::DataStreamType(const TypeId id, EventRecordTypeSet&& erts,
                                StructureType::UP pktCtxType, StructureType::UP erHeaderType,
                                StructureType::UP erCommonCtxType,
-                               const ClockType * const defClkType, MapItem::UP userAttrs) :
+                               const ClockType * const defClkType, MapItem::UP attrs) :
     DataStreamType {
         id, boost::none, boost::none, boost::none, std::move(erts),
         std::move(pktCtxType), std::move(erHeaderType), std::move(erCommonCtxType),
-        defClkType, std::move(userAttrs)
+        defClkType, std::move(attrs)
     }
 {
     this->_buildErtMap();

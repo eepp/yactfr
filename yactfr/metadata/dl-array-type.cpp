@@ -11,22 +11,22 @@
 namespace yactfr {
 
 DynamicLengthArrayType::DynamicLengthArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                               DataLocation lenLoc, MapItem::UP userAttrs) :
-    ArrayType {_KIND_DL_ARRAY, minAlign, std::move(elemType), std::move(userAttrs)},
+                                               DataLocation lenLoc, MapItem::UP attrs) :
+    ArrayType {_KIND_DL_ARRAY, minAlign, std::move(elemType), std::move(attrs)},
     _lenLoc {std::move(lenLoc)}
 {
 }
 
 DynamicLengthArrayType::DynamicLengthArrayType(DataType::UP elemType, DataLocation lenLoc,
-                                               MapItem::UP userAttrs) :
-    DynamicLengthArrayType {1, std::move(elemType), std::move(lenLoc), std::move(userAttrs)}
+                                               MapItem::UP attrs) :
+    DynamicLengthArrayType {1, std::move(elemType), std::move(lenLoc), std::move(attrs)}
 {
 }
 
 DataType::UP DynamicLengthArrayType::_clone() const
 {
     return DynamicLengthArrayType::create(this->alignment(), this->elementType().clone(), _lenLoc,
-                                          internal::tryCloneUserAttrs(this->userAttributes()));
+                                          internal::tryCloneAttrs(this->attributes()));
 }
 
 bool DynamicLengthArrayType::_isEqual(const DataType& other) const noexcept

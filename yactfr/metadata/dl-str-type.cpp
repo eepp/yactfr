@@ -13,23 +13,23 @@ namespace yactfr {
 
 DynamicLengthStringType::DynamicLengthStringType(const unsigned int align, DataLocation maxLenLoc,
                                                  const StringEncoding encoding,
-                                                 MapItem::UP userAttrs) :
-    NonNullTerminatedStringType {_KIND_DL_STR, align, encoding, std::move(userAttrs)},
+                                                 MapItem::UP attrs) :
+    NonNullTerminatedStringType {_KIND_DL_STR, align, encoding, std::move(attrs)},
     _maxLenLoc {std::move(maxLenLoc)}
 {
 }
 
 DynamicLengthStringType::DynamicLengthStringType(DataLocation maxLenLoc,
                                                  const StringEncoding encoding,
-                                                 MapItem::UP userAttrs) :
-    DynamicLengthStringType {8, std::move(maxLenLoc), encoding, std::move(userAttrs)}
+                                                 MapItem::UP attrs) :
+    DynamicLengthStringType {8, std::move(maxLenLoc), encoding, std::move(attrs)}
 {
 }
 
 DataType::UP DynamicLengthStringType::_clone() const
 {
     return DynamicLengthStringType::create(this->alignment(), _maxLenLoc, this->encoding(),
-                                           internal::tryCloneUserAttrs(this->userAttributes()));
+                                           internal::tryCloneAttrs(this->attributes()));
 }
 
 bool DynamicLengthStringType::_isEqual(const DataType& other) const noexcept

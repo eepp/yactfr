@@ -26,7 +26,7 @@ TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int
                              boost::optional<std::string>&& name,
                              boost::optional<std::string>&& uid, TraceEnvironment&& env,
                              StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                             DataStreamTypeSet&& dsts, MapItem::UP userAttrs,
+                             DataStreamTypeSet&& dsts, MapItem::UP attrs,
                              const TraceType& traceType) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
@@ -37,7 +37,7 @@ TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int
     _pktHeaderType {std::move(pktHeaderType)},
     _clkTypes {std::move(clkTypes)},
     _dsts {std::move(dsts)},
-    _userAttrs {std::move(userAttrs)},
+    _attrs {std::move(attrs)},
     _traceType {&traceType}
 {
     this->_buildDstMap();

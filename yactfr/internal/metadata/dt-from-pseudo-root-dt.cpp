@@ -243,7 +243,7 @@ private:
     template <typename MappingsT>
     static bool _enumTypeMappingsOverlap(const MappingsT& mappings);
 
-    static MapItem::UP _tryCloneUserAttrs(const MapItem *userAttrs);
+    static MapItem::UP _tryCloneAttrs(const MapItem *attrs);
 
 private:
     // final yactfr data type
@@ -345,7 +345,7 @@ DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
 
         if (encoding && align == 8 && elemLen == 8) {
             return StrTypeT::create(8, std::forward<LenT>(len), *encoding,
-                                    this->_tryCloneUserAttrs(pseudoArrayType.userAttrs()));
+                                    this->_tryCloneAttrs(pseudoArrayType.attrs()));
         }
     }
 
@@ -401,14 +401,14 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
 
         opts.push_back(VarTypeT::Option::create(*pseudoOpt->name(), std::move(optDt),
                                                 rangesIt->second,
-                                                this->_tryCloneUserAttrs(pseudoOpt->userAttrs())));
+                                                this->_tryCloneAttrs(pseudoOpt->attrs())));
     }
 
     // not visited anymore
     _current.erase(&pseudoVarType);
 
     return VarTypeT::create(1, std::move(opts), selLoc,
-                            this->_tryCloneUserAttrs(pseudoVarType.userAttrs()));
+                            this->_tryCloneAttrs(pseudoVarType.attrs()));
 }
 
 template <typename VarTypeT, typename IntRangeValueT>
@@ -434,14 +434,14 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
 
         opts.push_back(VarTypeT::Option::create(pseudoOpt->name(), std::move(optDt),
                                                 IntegerRangeSet<IntRangeValueT> {std::move(ranges)},
-                                                this->_tryCloneUserAttrs(pseudoOpt->userAttrs())));
+                                                this->_tryCloneAttrs(pseudoOpt->attrs())));
     }
 
     // not visited anymore
     _current.erase(&pseudoVarType);
 
     return VarTypeT::create(1, std::move(opts), std::move(selLoc),
-                            this->_tryCloneUserAttrs(pseudoVarType.userAttrs()));
+                            this->_tryCloneAttrs(pseudoVarType.attrs()));
 }
 
 template <typename PseudoDtT, typename FuncT>
@@ -570,7 +570,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUIntType(const PseudoDt
     return FixedLengthUnsignedIntegerType::create(pseudoUIntType.align(), pseudoUIntType.len(),
                                                   pseudoUIntType.bo(),
                                                   pseudoUIntType.prefDispBase(),
-                                                  tryCloneUserAttrs(pseudoUIntType.userAttrs()),
+                                                  tryCloneAttrs(pseudoUIntType.attrs()),
                                                   pseudoUIntType.roles());
 }
 
@@ -582,7 +582,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoD
                                                       pseudoUEnumType.len(), pseudoUEnumType.bo(),
                                                       pseudoUEnumType.mappings(),
                                                       pseudoUEnumType.prefDispBase(),
-                                                      tryCloneUserAttrs(pseudoUEnumType.userAttrs()),
+                                                      tryCloneAttrs(pseudoUEnumType.attrs()),
                                                       pseudoUEnumType.roles());
 }
 
@@ -603,7 +603,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoD
 
     return StaticLengthArrayType::create(pseudoArrayType.minAlign(), std::move(elemDt),
                                          pseudoArrayType.len(),
-                                         tryCloneUserAttrs(pseudoArrayType.userAttrs()),
+                                         tryCloneAttrs(pseudoArrayType.attrs()),
                                          pseudoArrayType.hasMetadataStreamUuidRole());
 }
 
@@ -643,7 +643,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
     });
 
     return DynamicLengthArrayType::create(pseudoArrayType.minAlign(), std::move(elemDt), lenLoc,
-                                          tryCloneUserAttrs(pseudoArrayType.userAttrs()));
+                                          tryCloneAttrs(pseudoArrayType.attrs()));
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt& pseudoDt)
@@ -653,10 +653,10 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDlBlobType(const PseudoDt
 
     if (pseudoBlobType.mediaType()) {
         return DynamicLengthBlobType::create(8, lenLoc, *pseudoBlobType.mediaType(),
-                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
+                                             tryCloneAttrs(pseudoBlobType.attrs()));
     } else {
         return DynamicLengthBlobType::create(8, lenLoc,
-                                             tryCloneUserAttrs(pseudoBlobType.userAttrs()));
+                                             tryCloneAttrs(pseudoBlobType.attrs()));
     }
 }
 
@@ -670,11 +670,11 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt
 
         memberTypes.push_back(StructureMemberType::create(*pseudoMemberType->name(),
                                                           std::move(memberDt),
-                                                          tryCloneUserAttrs(pseudoMemberType->userAttrs())));
+                                                          tryCloneAttrs(pseudoMemberType->attrs())));
     }
 
     return StructureType::create(pseudoStructType.minAlign(), std::move(memberTypes),
-                                 tryCloneUserAttrs(pseudoStructType.userAttrs()));
+                                 tryCloneAttrs(pseudoStructType.attrs()));
 }
 
 bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
@@ -1005,7 +1005,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
 
     return OptionalWithBooleanSelectorType::create(1, std::move(containedDt),
                                                    std::move(selLocPseudoDtsPair.first),
-                                                   tryCloneUserAttrs(pseudoOptType.userAttrs()));
+                                                   tryCloneAttrs(pseudoOptType.attrs()));
 }
 
 static IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(const IntegerRangeSet<unsigned long long, false>& ranges)
@@ -1040,7 +1040,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
         return OptionalWithUnsignedIntegerSelectorType::create(1, std::move(containedDt),
                                                                std::move(selLoc),
                                                                uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(pseudoOptType.selRanges()),
-                                                               tryCloneUserAttrs(pseudoOptType.userAttrs()));
+                                                               tryCloneAttrs(pseudoOptType.attrs()));
     } else {
         using SInt = long long;
 
@@ -1056,7 +1056,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
         return OptionalWithSignedIntegerSelectorType::create(1, std::move(containedDt),
                                                              std::move(selLoc),
                                                              IntegerRangeSet<SInt> {std::move(ranges)},
-                                                             tryCloneUserAttrs(pseudoOptType.userAttrs()));
+                                                             tryCloneAttrs(pseudoOptType.attrs()));
     }
 
     return nullptr;
@@ -1079,9 +1079,9 @@ void DtFromPseudoRootDtConverter::_throwInvalDataLoc(const std::string& initMsg,
     }
 }
 
-MapItem::UP DtFromPseudoRootDtConverter::_tryCloneUserAttrs(const MapItem * const userAttrs)
+MapItem::UP DtFromPseudoRootDtConverter::_tryCloneAttrs(const MapItem * const attrs)
 {
-    return tryCloneUserAttrs(userAttrs);
+    return tryCloneAttrs(attrs);
 }
 
 StructureType::UP dtFromPseudoRootDt(PseudoDt& pseudoDt, const Scope scope,

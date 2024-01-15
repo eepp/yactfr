@@ -26,10 +26,10 @@ namespace internal {
 boost::optional<boost::uuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal);
 
 /*
- * Returns the user attributes of the JSON object value `jsonObjVal`, or
- * an empty map item there's no such property.
+ * Returns the attributes of the JSON object value `jsonObjVal`, or an
+ * empty map item there's no such property.
  */
-MapItem::UP userAttrsOfObj(const JsonObjVal& jsonObjVal);
+MapItem::UP attrsOfObj(const JsonObjVal& jsonObjVal);
 
 /*
  * Returns the raw integer value from the JSON unsigned or signed

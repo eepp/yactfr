@@ -56,7 +56,7 @@ ClockType::ClockType(boost::optional<std::string> id, boost::optional<std::strin
                      boost::optional<boost::uuids::uuid> origUuid, unsigned long long freq,
                      boost::optional<std::string> descr, boost::optional<ClockOrigin> orig,
                      boost::optional<Cycles> prec, boost::optional<Cycles> accuracy,
-                     const ClockOffset& offsetFromOrig, MapItem::UP userAttrs) :
+                     const ClockOffset& offsetFromOrig, MapItem::UP attrs) :
     _id {std::move(id)},
     _ns {std::move(ns)},
     _name {std::move(name)},
@@ -68,7 +68,7 @@ ClockType::ClockType(boost::optional<std::string> id, boost::optional<std::strin
     _prec {std::move(prec)},
     _accuracy {std::move(accuracy)},
     _offsetFromOrig {offsetFromOrig},
-    _userAttrs {std::move(userAttrs)}
+    _attrs {std::move(attrs)}
 {
     assert(freq > 0);
     assert(offsetFromOrig.cycles() < freq);

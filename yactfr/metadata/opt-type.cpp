@@ -14,8 +14,8 @@
 namespace yactfr {
 
 OptionalType::OptionalType(const _Kind kind, const unsigned int minAlign, DataType::UP dt,
-                           DataLocation&& selLoc, MapItem::UP userAttrs) :
-    CompoundDataType {kind, minAlign, 1, std::move(userAttrs)},
+                           DataLocation&& selLoc, MapItem::UP attrs) :
+    CompoundDataType {kind, minAlign, 1, std::move(attrs)},
     _dt {std::move(dt)},
     _selLoc {std::move(selLoc)}
 {
@@ -32,18 +32,18 @@ bool OptionalType::_isEqual(const DataType& other) const noexcept
 OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(const unsigned int minAlign,
                                                                  DataType::UP dt,
                                                                  DataLocation selLoc,
-                                                                 MapItem::UP userAttrs) :
+                                                                 MapItem::UP attrs) :
     OptionalType {
         DataType::_KIND_OPT_UINT_SEL, minAlign, std::move(dt),
-        std::move(selLoc), std::move(userAttrs)
+        std::move(selLoc), std::move(attrs)
     }
 {
 }
 
 OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(DataType::UP dt,
                                                                  DataLocation selLoc,
-                                                                 MapItem::UP userAttrs) :
-    OptionalWithBooleanSelectorType {1, std::move(dt), std::move(selLoc), std::move(userAttrs)}
+                                                                 MapItem::UP attrs) :
+    OptionalWithBooleanSelectorType {1, std::move(dt), std::move(selLoc), std::move(attrs)}
 {
 }
 
@@ -52,17 +52,17 @@ DataType::UP OptionalWithBooleanSelectorType::_clone() const
     return OptionalWithBooleanSelectorType::create(this->minimumAlignment(),
                                                    this->dataType().clone(),
                                                    this->selectorLocation(),
-                                                   internal::tryCloneUserAttrs(this->userAttributes()));
+                                                   internal::tryCloneAttrs(this->attributes()));
 }
 
 OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(const unsigned int minAlign,
                                                                                  DataType::UP dt,
                                                                                  DataLocation selLoc,
                                                                                  SelectorRangeSet selRanges,
-                                                                                 MapItem::UP userAttrs) :
+                                                                                 MapItem::UP attrs) :
     OptionalWithIntegerSelectorType<unsigned long long> {
         DataType::_KIND_OPT_UINT_SEL, minAlign, std::move(dt),
-        std::move(selLoc), std::move(selRanges), std::move(userAttrs)
+        std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
@@ -70,9 +70,9 @@ OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType
 OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(DataType::UP dt,
                                                                                  DataLocation selLoc,
                                                                                  SelectorRangeSet selRanges,
-                                                                                 MapItem::UP userAttrs) :
+                                                                                 MapItem::UP attrs) :
     OptionalWithUnsignedIntegerSelectorType {
-        1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(userAttrs)
+        1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
@@ -83,17 +83,17 @@ DataType::UP OptionalWithUnsignedIntegerSelectorType::_clone() const
                                                            this->dataType().clone(),
                                                            this->selectorLocation(),
                                                            this->selectorRanges(),
-                                                           internal::tryCloneUserAttrs(this->userAttributes()));
+                                                           internal::tryCloneAttrs(this->attributes()));
 }
 
 OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(const unsigned int minAlign,
                                                                              DataType::UP dt,
                                                                              DataLocation selLoc,
                                                                              SelectorRangeSet selRanges,
-                                                                             MapItem::UP userAttrs) :
+                                                                             MapItem::UP attrs) :
     OptionalWithIntegerSelectorType<long long> {
         DataType::_KIND_OPT_SINT_SEL, minAlign, std::move(dt),
-        std::move(selLoc), std::move(selRanges), std::move(userAttrs)
+        std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
@@ -101,9 +101,9 @@ OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(con
 OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(DataType::UP dt,
                                                                              DataLocation selLoc,
                                                                              SelectorRangeSet selRanges,
-                                                                             MapItem::UP userAttrs) :
+                                                                             MapItem::UP attrs) :
     OptionalWithSignedIntegerSelectorType {
-        1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(userAttrs)
+        1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
@@ -114,7 +114,7 @@ DataType::UP OptionalWithSignedIntegerSelectorType::_clone() const
                                                          this->dataType().clone(),
                                                          this->selectorLocation(),
                                                          this->selectorRanges(),
-                                                         internal::tryCloneUserAttrs(this->userAttributes()));
+                                                         internal::tryCloneAttrs(this->attributes()));
 }
 
 } // namespace yactfr

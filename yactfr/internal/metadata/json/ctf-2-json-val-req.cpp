@@ -125,20 +125,20 @@ private:
 };
 
 /*
- * CTF 2 JSON user attributes value requirement.
+ * CTF 2 JSON attributes value requirement.
  */
-class JsonUserAttrsValReq final :
+class JsonAttrsValReq final :
     public JsonObjValReq
 {
 public:
-    explicit JsonUserAttrsValReq() :
+    explicit JsonAttrsValReq() :
         JsonObjValReq {{}, true}
     {
     }
 
     static SP shared()
     {
-        return std::make_shared<JsonUserAttrsValReq>();
+        return std::make_shared<JsonAttrsValReq>();
     }
 
 private:
@@ -147,7 +147,7 @@ private:
         try {
             JsonObjValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid user attributes:", jsonVal.loc());
+            appendMsgToTextParseError(exc, "Invalid attributes:", jsonVal.loc());
             throw;
         }
     }
@@ -483,12 +483,12 @@ static JsonObjValReq::PropReqsEntry objTypePropReqEntry(std::string&& type)
 
 /*
  * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 user attributes
- * object property requirement.
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 attributes object
+ * property requirement.
  */
-static JsonObjValReq::PropReqsEntry userAttrsPropReqEntry()
+static JsonObjValReq::PropReqsEntry attrsPropReqEntry()
 {
-    return {strs::USER_ATTRS, {JsonUserAttrsValReq::shared()}};
+    return {strs::ATTRS, {JsonAttrsValReq::shared()}};
 }
 
 /*
@@ -517,7 +517,7 @@ private:
     static PropReqs _buildPropReqs(std::string&& type, PropReqs&& propReqs)
     {
         propReqs.insert(objTypePropReqEntry(std::move(type)));
-        propReqs.insert(userAttrsPropReqEntry());
+        propReqs.insert(attrsPropReqEntry());
         propReqs.insert(extPropReqEntry());
         return std::move(propReqs);
     }
@@ -1416,7 +1416,7 @@ public:
         JsonObjValReq {{
             namePropReqEntry(true),
             anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
-            userAttrsPropReqEntry(),
+            attrsPropReqEntry(),
             extPropReqEntry(),
         }}
     {
@@ -1683,7 +1683,7 @@ public:
             namePropReqEntry(false),
             anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
             selRangesPropReqEntry(true),
-            userAttrsPropReqEntry(),
+            attrsPropReqEntry(),
             extPropReqEntry(),
         }}
     {
@@ -1914,7 +1914,7 @@ private:
     static PropReqs _buildPropReqs(std::string&& type, PropReqs&& propReqs)
     {
         propReqs.insert(objTypePropReqEntry(std::move(type)));
-        propReqs.insert(userAttrsPropReqEntry());
+        propReqs.insert(attrsPropReqEntry());
         propReqs.insert(extPropReqEntry());
         return std::move(propReqs);
     }

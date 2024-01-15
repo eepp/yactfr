@@ -42,7 +42,7 @@ class OptionalType :
 
 protected:
     explicit OptionalType(_Kind kind, const unsigned int minAlign, DataType::UP dt,
-                          DataLocation&& selLoc, MapItem::UP userAttrs);
+                          DataLocation&& selLoc, MapItem::UP attrs);
 
 public:
     /*!
@@ -123,11 +123,11 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream optionals described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream optionals described by this type.
+        Attributes of data stream optionals described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -141,7 +141,7 @@ public:
     */
     explicit OptionalWithBooleanSelectorType(unsigned int minimumAlignment, DataType::UP dataType,
                                              DataLocation selectorLocation,
-                                             MapItem::UP userAttributes = nullptr);
+                                             MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -154,11 +154,11 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream optionals described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream optionals described by this type.
+        Attributes of data stream optionals described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -167,7 +167,7 @@ public:
         \p selectorLocation only locates booleans.
     */
     explicit OptionalWithBooleanSelectorType(DataType::UP dataType, DataLocation selectorLocation,
-                                             MapItem::UP userAttributes = nullptr);
+                                             MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -223,8 +223,8 @@ public:
 protected:
     explicit OptionalWithIntegerSelectorType(_Kind kind, unsigned int minAlign, DataType::UP dt,
                                              DataLocation&& selLoc, SelectorRangeSet&& selRanges,
-                                             MapItem::UP userAttrs) :
-        OptionalType {kind, minAlign, std::move(dt), std::move(selLoc), std::move(userAttrs)},
+                                             MapItem::UP attrs) :
+        OptionalType {kind, minAlign, std::move(dt), std::move(selLoc), std::move(attrs)},
         _selRanges {std::move(selRanges)}
     {
     }
@@ -276,11 +276,11 @@ public:
         type.
     @param[in] selectorRanges
         Selector values for which an instance of this type is enabled.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream optionals described by this type.
+        Attributes of data stream optionals described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -296,7 +296,7 @@ public:
                                                      DataType::UP dataType,
                                                      DataLocation selectorLocation,
                                                      SelectorRangeSet selectorRanges,
-                                                     MapItem::UP userAttributes = nullptr);
+                                                     MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -311,11 +311,11 @@ public:
         type.
     @param[in] selectorRanges
         Selector values for which an instance of this type is enabled.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream optionals described by this type.
+        Attributes of data stream optionals described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -326,7 +326,7 @@ public:
     explicit OptionalWithUnsignedIntegerSelectorType(DataType::UP dataType,
                                                      DataLocation selectorLocation,
                                                      SelectorRangeSet selectorRanges,
-                                                     MapItem::UP userAttributes = nullptr);
+                                                     MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -396,11 +396,11 @@ public:
         type.
     @param[in] selectorRanges
         Selector values for which an instance of this type is enabled.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream optionals described by this type.
+        Attributes of data stream optionals described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -416,7 +416,7 @@ public:
                                                    DataType::UP dataType,
                                                    DataLocation selectorLocation,
                                                    SelectorRangeSet selectorRanges,
-                                                   MapItem::UP userAttributes = nullptr);
+                                                   MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -431,11 +431,11 @@ public:
         type.
     @param[in] selectorRanges
         Selector values for which an instance of this type is enabled.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream optionals described by this type.
+        Attributes of data stream optionals described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -446,7 +446,7 @@ public:
     explicit OptionalWithSignedIntegerSelectorType(DataType::UP dataType,
                                                    DataLocation selectorLocation,
                                                    SelectorRangeSet selectorRanges,
-                                                   MapItem::UP userAttributes = nullptr);
+                                                   MapItem::UP attributes = nullptr);
 
     /*!
     @brief

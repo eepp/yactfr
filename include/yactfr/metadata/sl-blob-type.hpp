@@ -45,12 +45,12 @@ public:
     @param[in] length
         Length (bytes) of data stream static-length BLOBs described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length BLOBs described by
+        Attributes of data stream static-length BLOBs described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
@@ -64,7 +64,7 @@ public:
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length,
-                                  MapItem::UP userAttributes = nullptr,
+                                  MapItem::UP attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -76,12 +76,12 @@ public:
     @param[in] length
         Length (bytes) of data stream static-length BLOBs described by
         this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length BLOBs described by
+        Attributes of data stream static-length BLOBs described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
@@ -90,7 +90,7 @@ public:
     @pre
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
-    explicit StaticLengthBlobType(Size length, MapItem::UP userAttributes = nullptr,
+    explicit StaticLengthBlobType(Size length, MapItem::UP attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -106,12 +106,12 @@ public:
     @param[in] mediaType
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
         of data stream static-length BLOBs described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length BLOBs described by
+        Attributes of data stream static-length BLOBs described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
@@ -125,7 +125,7 @@ public:
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length, std::string mediaType,
-                                  MapItem::UP userAttributes = nullptr,
+                                  MapItem::UP attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -139,12 +139,12 @@ public:
     @param[in] mediaType
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">IANA media type</a>
         of data stream static-length BLOBs described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length BLOBs described by
+        Attributes of data stream static-length BLOBs described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length BLOBs described by this type
@@ -154,7 +154,7 @@ public:
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(Size length, std::string mediaType,
-                                  MapItem::UP userAttributes = nullptr,
+                                  MapItem::UP attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!

@@ -25,15 +25,15 @@ static inline unsigned int realMinAlign(const StructureType::MemberTypes& member
 }
 
 StructureType::StructureType(const unsigned int minAlign, StructureType::MemberTypes&& memberTypes,
-                             MapItem::UP userAttrs) :
-    CompoundDataType {_KIND_STRUCT, minAlign, realMinAlign(memberTypes), std::move(userAttrs)},
+                             MapItem::UP attrs) :
+    CompoundDataType {_KIND_STRUCT, minAlign, realMinAlign(memberTypes), std::move(attrs)},
     _memberTypes {std::move(memberTypes)}
 {
     this->_initNamesToMemberTypes();
 }
 
-StructureType::StructureType(StructureType::MemberTypes&& memberTypes, MapItem::UP userAttrs) :
-    StructureType {1, std::move(memberTypes), std::move(userAttrs)}
+StructureType::StructureType(StructureType::MemberTypes&& memberTypes, MapItem::UP attrs) :
+    StructureType {1, std::move(memberTypes), std::move(attrs)}
 {
 }
 
@@ -54,7 +54,7 @@ DataType::UP StructureType::_clone() const
     }
 
     return StructureType::create(this->minimumAlignment(), std::move(memberTypes),
-                                 internal::tryCloneUserAttrs(this->userAttributes()));
+                                 internal::tryCloneAttrs(this->attributes()));
 }
 
 bool StructureType::_isEqual(const DataType& other) const noexcept

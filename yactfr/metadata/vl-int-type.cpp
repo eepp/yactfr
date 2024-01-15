@@ -12,8 +12,8 @@ namespace yactfr {
 
 VariableLengthIntegerType::VariableLengthIntegerType(const _Kind kind, const unsigned int align,
                                                      const DisplayBase prefDispBase,
-                                                     MapItem::UP userAttrs) :
-    ScalarDataType {kind, align, std::move(userAttrs)},
+                                                     MapItem::UP attrs) :
+    ScalarDataType {kind, align, std::move(attrs)},
     IntegerTypeCommon {prefDispBase}
 {
     assert(align >= 8);
@@ -27,28 +27,28 @@ bool VariableLengthIntegerType::_isEqual(const DataType& other) const noexcept
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const _Kind kind,
                                                                      const unsigned int align,
                                                                      const DisplayBase prefDispBase,
-                                                                     MapItem::UP userAttrs,
+                                                                     MapItem::UP attrs,
                                                                      UnsignedIntegerTypeRoleSet roles) :
-    VariableLengthIntegerType {kind, align, prefDispBase, std::move(userAttrs)},
+    VariableLengthIntegerType {kind, align, prefDispBase, std::move(attrs)},
     UnsignedIntegerTypeCommon {std::move(roles)}
 {
 }
 
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const unsigned int align,
                                                                      const DisplayBase prefDispBase,
-                                                                     MapItem::UP userAttrs,
+                                                                     MapItem::UP attrs,
                                                                      UnsignedIntegerTypeRoleSet roles) :
     VariableLengthUnsignedIntegerType {
-        _KIND_VL_UINT, align, prefDispBase, std::move(userAttrs), std::move(roles)
+        _KIND_VL_UINT, align, prefDispBase, std::move(attrs), std::move(roles)
     }
 {
 }
 
 VariableLengthUnsignedIntegerType::VariableLengthUnsignedIntegerType(const DisplayBase prefDispBase,
-                                                                     MapItem::UP userAttrs,
+                                                                     MapItem::UP attrs,
                                                                      UnsignedIntegerTypeRoleSet roles) :
     VariableLengthUnsignedIntegerType {
-        8, prefDispBase, std::move(userAttrs), std::move(roles)
+        8, prefDispBase, std::move(attrs), std::move(roles)
     }
 {
 }
@@ -57,7 +57,7 @@ DataType::UP VariableLengthUnsignedIntegerType::_clone() const
 {
     return VariableLengthUnsignedIntegerType::create(this->alignment(),
                                                      this->preferredDisplayBase(),
-                                                     internal::tryCloneUserAttrs(this->userAttributes()),
+                                                     internal::tryCloneAttrs(this->attributes()),
                                                      this->roles());
 }
 
@@ -70,28 +70,28 @@ bool VariableLengthUnsignedIntegerType::_isEqual(const DataType& other) const no
 VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const _Kind kind,
                                                                  const unsigned int align,
                                                                  const DisplayBase prefDispBase,
-                                                                 MapItem::UP userAttrs) :
-    VariableLengthIntegerType {kind, align, prefDispBase, std::move(userAttrs)}
+                                                                 MapItem::UP attrs) :
+    VariableLengthIntegerType {kind, align, prefDispBase, std::move(attrs)}
 {
 }
 
 VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const unsigned int align,
                                                                  const DisplayBase prefDispBase,
-                                                                 MapItem::UP userAttrs) :
-    VariableLengthIntegerType {_KIND_VL_SINT, align, prefDispBase, std::move(userAttrs)}
+                                                                 MapItem::UP attrs) :
+    VariableLengthIntegerType {_KIND_VL_SINT, align, prefDispBase, std::move(attrs)}
 {
 }
 
 VariableLengthSignedIntegerType::VariableLengthSignedIntegerType(const DisplayBase prefDispBase,
-                                                                 MapItem::UP userAttrs) :
-    VariableLengthSignedIntegerType {8, prefDispBase, std::move(userAttrs)}
+                                                                 MapItem::UP attrs) :
+    VariableLengthSignedIntegerType {8, prefDispBase, std::move(attrs)}
 {
 }
 
 DataType::UP VariableLengthSignedIntegerType::_clone() const
 {
     return VariableLengthSignedIntegerType::create(this->alignment(), this->preferredDisplayBase(),
-                                                   internal::tryCloneUserAttrs(this->userAttributes()));
+                                                   internal::tryCloneAttrs(this->attributes()));
 }
 
 } // namespace yactfr

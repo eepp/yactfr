@@ -46,18 +46,18 @@ public:
 private:
     PseudoDt::UP _aliasedPseudoDt(const std::string& name, const TextLocation& textLoc);
 
-    PseudoDt::UP _pseudoDtFromDlArrayType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+    PseudoDt::UP _pseudoDtFromDlArrayType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                           unsigned int minAlign);
 
-    PseudoDt::UP _pseudoDtFromSlArrayType(const JsonObjVal& jsonDt, MapItem::UP userAttrs,
+    PseudoDt::UP _pseudoDtFromSlArrayType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                           unsigned int minAlign);
 
     PseudoDt::UP _pseudoDtFromArrayType(const JsonObjVal& jsonDt, const std::string& type,
-                                        MapItem::UP userAttrs);
+                                        MapItem::UP attrs);
 
-    PseudoDt::UP _pseudoDtFromStructType(const JsonObjVal& jsonDt, MapItem::UP userAttrs);
-    PseudoDt::UP _pseudoDtFromOptType(const JsonObjVal& jsonDt, MapItem::UP userAttrs);
-    PseudoDt::UP _pseudoDtFromVarType(const JsonObjVal& jsonDt, MapItem::UP userAttrs);
+    PseudoDt::UP _pseudoDtFromStructType(const JsonObjVal& jsonDt, MapItem::UP attrs);
+    PseudoDt::UP _pseudoDtFromOptType(const JsonObjVal& jsonDt, MapItem::UP attrs);
+    PseudoDt::UP _pseudoDtFromVarType(const JsonObjVal& jsonDt, MapItem::UP attrs);
 
 private:
     std::unordered_map<std::string, PseudoDt::UP> _aliases;

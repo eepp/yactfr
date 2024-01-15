@@ -12,8 +12,8 @@
 namespace yactfr {
 
 StringType::StringType(const _Kind kind, const unsigned int align, const StringEncoding encoding,
-                       MapItem::UP userAttrs) :
-    ScalarDataType {kind, align, std::move(userAttrs)},
+                       MapItem::UP attrs) :
+    ScalarDataType {kind, align, std::move(attrs)},
     _encoding {encoding}
 {
     assert(align >= 8);

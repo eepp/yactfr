@@ -46,12 +46,12 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         enumerations described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variable-length signed
+        Attributes of data stream variable-length signed
         enumerations described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -65,7 +65,7 @@ public:
     */
     explicit VariableLengthSignedEnumerationType(unsigned int alignment, Mappings mappings,
                                                  DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                 MapItem::UP userAttributes = nullptr);
+                                                 MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -77,12 +77,12 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         enumerations described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variable-length signed
+        Attributes of data stream variable-length signed
         enumerations described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -92,7 +92,7 @@ public:
     */
     explicit VariableLengthSignedEnumerationType(Mappings mappings,
                                                  DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                 MapItem::UP userAttributes = nullptr);
+                                                 MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -155,12 +155,12 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         enumerations described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variable-length unsigned
+        Attributes of data stream variable-length unsigned
         enumerations described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] roles
         Roles of variable-length unsigned enumerations described by this
@@ -177,7 +177,7 @@ public:
     */
     explicit VariableLengthUnsignedEnumerationType(unsigned int alignment, Mappings mappings,
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                   MapItem::UP userAttributes = nullptr,
+                                                   MapItem::UP attributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
@@ -190,12 +190,12 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         enumerations described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variable-length unsigned
+        Attributes of data stream variable-length unsigned
         enumerations described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] roles
         Roles of variable-length unsigned enumerations described by this
@@ -208,7 +208,7 @@ public:
     */
     explicit VariableLengthUnsignedEnumerationType(Mappings mappings,
                                                    DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
-                                                   MapItem::UP userAttributes = nullptr,
+                                                   MapItem::UP attributes = nullptr,
                                                    UnsignedIntegerTypeRoleSet roles = {});
 
     /*!

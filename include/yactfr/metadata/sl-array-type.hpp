@@ -46,12 +46,12 @@ public:
     @param[in] length
         Length of data stream static-length arrays described by this
         type (count of element).
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length arrays described by
+        Attributes of data stream static-length arrays described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length arrays described by this type
@@ -74,7 +74,7 @@ public:
         @endparblock
     */
     explicit StaticLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
-                                   Size length, MapItem::UP userAttributes = nullptr,
+                                   Size length, MapItem::UP attributes = nullptr,
                                    bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -87,12 +87,12 @@ public:
     @param[in] length
         Length of data stream static-length arrays described by this
         type (count of element).
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream static-length arrays described by
+        Attributes of data stream static-length arrays described by
         this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
     @param[in] hasMetadataStreamUuidRole
         Whether or not the static-length arrays described by this type
@@ -111,7 +111,7 @@ public:
         @endparblock
     */
     explicit StaticLengthArrayType(DataType::UP elementType, Size length,
-                                   MapItem::UP userAttributes = nullptr,
+                                   MapItem::UP attributes = nullptr,
                                    bool hasMetadataStreamUuidRole = false);
 
     /*!

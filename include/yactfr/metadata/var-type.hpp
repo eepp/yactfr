@@ -42,7 +42,7 @@ class VariantType :
 
 protected:
     explicit VariantType(_Kind kind, unsigned int minAlign, DataLocation&& selLoc,
-                         MapItem::UP userAttrs);
+                         MapItem::UP attrs);
 
 public:
     /*!
@@ -107,8 +107,8 @@ public:
 protected:
     explicit VariantWithIntegerSelectorType(const _Kind kind, const unsigned int minAlign,
                                             Options&& opts, DataLocation&& selLoc,
-                                            MapItem::UP userAttrs) :
-        VariantType {kind, minAlign, std::move(selLoc), std::move(userAttrs)},
+                                            MapItem::UP attrs) :
+        VariantType {kind, minAlign, std::move(selLoc), std::move(attrs)},
         _opts {std::move(opts)}
     {
     }
@@ -259,11 +259,11 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream variants described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variants described by this type.
+        Attributes of data stream variants described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -281,7 +281,7 @@ public:
     explicit VariantWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
                                                     Options&& options,
                                                     DataLocation selectorLocation,
-                                                    MapItem::UP userAttributes);
+                                                    MapItem::UP attributes);
 
     /*!
     @brief
@@ -293,11 +293,11 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream variants described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variants described by this type.
+        Attributes of data stream variants described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -310,7 +310,7 @@ public:
     */
     explicit VariantWithUnsignedIntegerSelectorType(Options&& options,
                                                     DataLocation selectorLocation,
-                                                    MapItem::UP userAttributes);
+                                                    MapItem::UP attributes);
 
     /*!
     @brief
@@ -375,11 +375,11 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream variants described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variants described by this type.
+        Attributes of data stream variants described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -396,7 +396,7 @@ public:
     */
     explicit VariantWithSignedIntegerSelectorType(unsigned int minimumAlignment, Options&& options,
                                                   DataLocation selectorLocation,
-                                                  MapItem::UP userAttributes);
+                                                  MapItem::UP attributes);
 
     /*!
     @brief
@@ -408,11 +408,11 @@ public:
     @param[in] selectorLocation
         Location of selectors of data stream variants described by this
         type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream variants described by this type.
+        Attributes of data stream variants described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -424,7 +424,7 @@ public:
         ranges between them.
     */
     explicit VariantWithSignedIntegerSelectorType(Options&& options, DataLocation selectorLocation,
-                                                  MapItem::UP userAttributes);
+                                                  MapItem::UP attributes);
 
     /*!
     @brief

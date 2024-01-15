@@ -258,21 +258,21 @@ private:
 };
 
 /*
- * Mixin to add user attribute property.
+ * Mixin to add attribute property.
  */
-class WithUserAttrsMixin
+class WithAttrsMixin
 {
 public:
-    explicit WithUserAttrsMixin() = default;
-    explicit WithUserAttrsMixin(MapItem::UP userAttrs);
+    explicit WithAttrsMixin() = default;
+    explicit WithAttrsMixin(MapItem::UP attrs);
 
-    const MapItem *userAttrs() const noexcept
+    const MapItem *attrs() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
 private:
-    MapItem::UP _userAttrs;
+    MapItem::UP _attrs;
 };
 
 /*
@@ -296,14 +296,14 @@ private:
  */
 class PseudoFlUIntType :
     public PseudoDt,
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
                               DisplayBase prefDispBase,
                               boost::optional<StringEncoding> encoding = boost::none,
                               boost::optional<std::string> mappedClkTypeId = boost::none,
-                              MapItem::UP userAttrs = nullptr,
+                              MapItem::UP attrs = nullptr,
                               UnsignedIntegerTypeRoleSet roles = {},
                               TextLocation loc = TextLocation {});
 
@@ -391,7 +391,7 @@ public:
                                FixedLengthUnsignedEnumerationType::Mappings mappings,
                                boost::optional<StringEncoding> encoding = boost::none,
                                boost::optional<std::string> mappedClkTypeId = boost::none,
-                               MapItem::UP userAttrs = nullptr,
+                               MapItem::UP attrs = nullptr,
                                UnsignedIntegerTypeRoleSet roles = {},
                                TextLocation loc = TextLocation {});
 
@@ -467,11 +467,11 @@ protected:
  */
 struct PseudoArrayType :
     public PseudoDt,
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 protected:
     explicit PseudoArrayType(unsigned int minAlign, PseudoDt::UP pseudoElemType,
-                             MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                             MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
     PseudoDt& pseudoElemType() noexcept
@@ -503,10 +503,10 @@ class PseudoSlArrayType final :
 {
 public:
     explicit PseudoSlArrayType(unsigned int minAlign, Size len, PseudoDt::UP pseudoElemType,
-                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                               MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
     explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
-                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                               MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -543,11 +543,11 @@ class PseudoDlArrayType final :
 {
 public:
     explicit PseudoDlArrayType(unsigned int minAlign, PseudoDataLoc pseudoLenLoc,
-                               PseudoDt::UP pseudoElemType, MapItem::UP userAttrs = nullptr,
+                               PseudoDt::UP pseudoElemType, MapItem::UP attrs = nullptr,
                                TextLocation loc = TextLocation {});
 
     explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                               MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                               MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -565,11 +565,11 @@ public:
  */
 struct PseudoBlobType :
     public PseudoDt,
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 protected:
     explicit PseudoBlobType(boost::optional<std::string> mediaType,
-                            MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                            MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
     const boost::optional<std::string>& mediaType() const noexcept
@@ -593,7 +593,7 @@ class PseudoDlBlobType final :
 {
 public:
     explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, boost::optional<std::string> mediaType,
-                              MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                              MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -609,7 +609,7 @@ public:
  * Pseudo named data type.
  */
 class PseudoNamedDt final :
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     using UP = std::unique_ptr<PseudoNamedDt>;
@@ -618,7 +618,7 @@ public:
     explicit PseudoNamedDt() = default;
 
     explicit PseudoNamedDt(boost::optional<std::string> name, PseudoDt::UP pseudoDt,
-                           MapItem::UP userAttrs = nullptr);
+                           MapItem::UP attrs = nullptr);
 
     const boost::optional<std::string>& name() const noexcept
     {
@@ -647,11 +647,11 @@ using PseudoNamedDts = std::vector<PseudoNamedDt::UP>;
  */
 class PseudoStructType final :
     public PseudoDt,
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     explicit PseudoStructType(unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                              MapItem::UP userAttrs = nullptr, TextLocation loc = TextLocation {});
+                              MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -695,11 +695,11 @@ private:
  */
 class PseudoVarType :
     public PseudoDt,
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     explicit PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
-                           PseudoNamedDts&& pseudoOpts, MapItem::UP userAttrs = nullptr,
+                           PseudoNamedDts&& pseudoOpts, MapItem::UP attrs = nullptr,
                            TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -780,7 +780,7 @@ public:
      */
     explicit PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                                         PseudoNamedDts&& pseudoOpts, RangeSets&& rangeSets,
-                                        MapItem::UP userAttrs = nullptr,
+                                        MapItem::UP attrs = nullptr,
                                         TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -808,11 +808,11 @@ private:
  */
 class PseudoOptType :
     public PseudoDt,
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 protected:
     explicit PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
-                           MapItem::UP userAttrs, TextLocation&& loc);
+                           MapItem::UP attrs, TextLocation&& loc);
 
 public:
     bool isEmpty() const override;
@@ -860,7 +860,7 @@ class PseudoOptWithBoolSelType :
 {
 public:
     explicit PseudoOptWithBoolSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
-                                      MapItem::UP userAttrs = nullptr,
+                                      MapItem::UP attrs = nullptr,
                                       TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -895,7 +895,7 @@ public:
 
 public:
     explicit PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
-                                     RangeSet&& selRanges, MapItem::UP userAttrs = nullptr,
+                                     RangeSet&& selRanges, MapItem::UP attrs = nullptr,
                                      TextLocation loc = TextLocation {});
 
     const RangeSet& selRanges() const noexcept
@@ -922,14 +922,14 @@ class PseudoDst;
  * Pseudo event record type: mutable event record type.
  */
 class PseudoErt final :
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
                        boost::optional<std::string> name, boost::optional<std::string> uid,
                        boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
                        PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType,
-                       MapItem::UP userAttrs = nullptr);
+                       MapItem::UP attrs = nullptr);
 
     PseudoErt(const PseudoErt&) = delete;
     PseudoErt(PseudoErt&&) = default;
@@ -1016,7 +1016,7 @@ using PseudoErtSet = std::unordered_set<PseudoErt *>;
  * Pseudo data stream type: mutable data stream type.
  */
 class PseudoDst final :
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     explicit PseudoDst() = default;
@@ -1024,7 +1024,7 @@ public:
                        boost::optional<std::string> name, boost::optional<std::string> uid,
                        PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
                        PseudoDt::UP pseudoErCommonCtxType, const ClockType *defClkType = nullptr,
-                       MapItem::UP userAttrs = nullptr);
+                       MapItem::UP attrs = nullptr);
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -1151,7 +1151,7 @@ private:
  * Pseudo trace type: mutable trace type.
  */
 class PseudoTraceType final :
-    public WithUserAttrsMixin
+    public WithAttrsMixin
 {
 public:
     using PseudoDsts = std::unordered_map<TypeId, std::unique_ptr<PseudoDst>>;
@@ -1164,7 +1164,7 @@ public:
                              boost::optional<std::string> uid = boost::none,
                              TraceEnvironment env = TraceEnvironment {},
                              PseudoDt::UP pseudoPktHeaderType = nullptr,
-                             MapItem::UP userAttrs = nullptr);
+                             MapItem::UP attrs = nullptr);
 
     /*
      * Validates this pseudo trace type, throwing `TextParseError`

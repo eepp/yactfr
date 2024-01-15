@@ -74,11 +74,11 @@ public:
         or \c boost::none if the accuracy is unknown.
     @param[in] offsetFromOrigin
         Offset from origin of data stream clocks described by this type.
-    @param[in] userAttributes
+    @param[in] attributes
         @parblock
-        User attributes of data stream clocks described by this type.
+        Attributes of data stream clocks described by this type.
 
-        If set, each key of \p *userAttributes is a namespace.
+        If set, each key of \p *attributes is a namespace.
         @endparblock
 
     @pre
@@ -94,7 +94,7 @@ public:
                        unsigned long long frequency, boost::optional<std::string> description,
                        boost::optional<ClockOrigin> origin, boost::optional<Cycles> precision,
                        boost::optional<Cycles> accuracy, const ClockOffset& offsetFromOrigin,
-                       MapItem::UP userAttributes = nullptr);
+                       MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -252,17 +252,17 @@ public:
 
     /*!
     @brief
-        User attributes.
+        Attributes.
 
-    If set, each key of \p *userAttributes is a namespace.
+    If set, each key of the returned map item is a namespace.
 
     @note
         Even if the return value isn't \c nullptr, the returned map
-        item may still be empty (which also means no user attributes).
+        item may still be empty (which also means no attributes).
     */
-    const MapItem *userAttributes() const noexcept
+    const MapItem *attributes() const noexcept
     {
-        return _userAttrs.get();
+        return _attrs.get();
     }
 
 private:
@@ -277,7 +277,7 @@ private:
     const boost::optional<Cycles> _prec;
     const boost::optional<Cycles> _accuracy;
     const ClockOffset _offsetFromOrig;
-    const MapItem::UP _userAttrs;
+    const MapItem::UP _attrs;
 };
 
 } // namespace yactfr

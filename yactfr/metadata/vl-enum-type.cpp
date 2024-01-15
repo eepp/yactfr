@@ -16,18 +16,18 @@ namespace yactfr {
 VariableLengthSignedEnumerationType::VariableLengthSignedEnumerationType(const unsigned int align,
                                                                          Mappings mappings,
                                                                          const DisplayBase prefDispBase,
-                                                                         MapItem::UP userAttrs) :
+                                                                         MapItem::UP attrs) :
     EnumerationType<VariableLengthSignedIntegerType, internal::SignedEnumerationTypeValue> {
-        _KIND_VL_SENUM, std::move(mappings), align, prefDispBase, std::move(userAttrs)
+        _KIND_VL_SENUM, std::move(mappings), align, prefDispBase, std::move(attrs)
     }
 {
 }
 
 VariableLengthSignedEnumerationType::VariableLengthSignedEnumerationType(Mappings mappings,
                                                                          const DisplayBase prefDispBase,
-                                                                         MapItem::UP userAttrs) :
+                                                                         MapItem::UP attrs) :
     VariableLengthSignedEnumerationType {
-        8, std::move(mappings), prefDispBase, std::move(userAttrs)
+        8, std::move(mappings), prefDispBase, std::move(attrs)
     }
 {
 }
@@ -36,27 +36,27 @@ DataType::UP VariableLengthSignedEnumerationType::_clone() const
 {
     return VariableLengthSignedEnumerationType::create(this->alignment(), this->mappings(),
                                                        this->preferredDisplayBase(),
-                                                       internal::tryCloneUserAttrs(this->userAttributes()));
+                                                       internal::tryCloneAttrs(this->attributes()));
 }
 
 VariableLengthUnsignedEnumerationType::VariableLengthUnsignedEnumerationType(const unsigned int align,
                                                                              Mappings mappings,
                                                                              const DisplayBase prefDispBase,
-                                                                             MapItem::UP userAttrs,
+                                                                             MapItem::UP attrs,
                                                                              UnsignedIntegerTypeRoleSet roles) :
     EnumerationType<VariableLengthUnsignedIntegerType, internal::UnsignedEnumerationTypeValue> {
         _KIND_VL_UENUM, std::move(mappings), align, prefDispBase,
-        std::move(userAttrs), std::move(roles)
+        std::move(attrs), std::move(roles)
     }
 {
 }
 
 VariableLengthUnsignedEnumerationType::VariableLengthUnsignedEnumerationType(Mappings mappings,
                                                                              const DisplayBase prefDispBase,
-                                                                             MapItem::UP userAttrs,
+                                                                             MapItem::UP attrs,
                                                                              UnsignedIntegerTypeRoleSet roles) :
     VariableLengthUnsignedEnumerationType {
-        8, std::move(mappings), prefDispBase, std::move(userAttrs), std::move(roles)
+        8, std::move(mappings), prefDispBase, std::move(attrs), std::move(roles)
     }
 {
 }
@@ -65,7 +65,7 @@ DataType::UP VariableLengthUnsignedEnumerationType::_clone() const
 {
     return VariableLengthUnsignedEnumerationType::create(this->alignment(), this->mappings(),
                                                          this->preferredDisplayBase(),
-                                                         internal::tryCloneUserAttrs(this->userAttributes()),
+                                                         internal::tryCloneAttrs(this->attributes()),
                                                          this->roles());
 }
 
