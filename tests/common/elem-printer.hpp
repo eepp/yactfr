@@ -140,18 +140,6 @@ public:
         *_os << ':' << elem.value() << '\n';
     }
 
-    void visit(const yactfr::FixedLengthSignedEnumerationElement& elem) override
-    {
-        this->_visitDataElem(elem, "FLSE");
-        *_os << ':' << elem.value() << '\n';
-    }
-
-    void visit(const yactfr::FixedLengthUnsignedEnumerationElement& elem) override
-    {
-        this->_visitDataElem(elem, "FLUE");
-        *_os << ':' << elem.value() << '\n';
-    }
-
     void visit(const yactfr::FixedLengthFloatingPointNumberElement& elem) override
     {
         this->_visitDataElem(elem, "FLFPN");
@@ -167,18 +155,6 @@ public:
     void visit(const yactfr::VariableLengthUnsignedIntegerElement& elem) override
     {
         this->_visitDataElem(elem, "VLUI");
-        *_os << ':' << elem.value() << '\n';
-    }
-
-    void visit(const yactfr::VariableLengthSignedEnumerationElement& elem) override
-    {
-        this->_visitDataElem(elem, "VLSE");
-        *_os << ':' << elem.value() << '\n';
-    }
-
-    void visit(const yactfr::VariableLengthUnsignedEnumerationElement& elem) override
-    {
-        this->_visitDataElem(elem, "VLUE");
         *_os << ':' << elem.value() << '\n';
     }
 

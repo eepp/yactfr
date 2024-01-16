@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -235,28 +235,8 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_64_BE>(&Vm::_execReadFlFloat64Be);
     this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_A64_LE>(&Vm::_execReadFlFloatA64Le);
     this->_initExecFunc<Instr::Kind::READ_FL_FLOAT_A64_BE>(&Vm::_execReadFlFloatA64Be);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_LE>(&Vm::_execReadFlSEnumLe);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_BE>(&Vm::_execReadFlSEnumBe);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A8>(&Vm::_execReadFlSEnumA8);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A16_LE>(&Vm::_execReadFlSEnumA16Le);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A32_LE>(&Vm::_execReadFlSEnumA32Le);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A64_LE>(&Vm::_execReadFlSEnumA64Le);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A16_BE>(&Vm::_execReadFlSEnumA16Be);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A32_BE>(&Vm::_execReadFlSEnumA32Be);
-    this->_initExecFunc<Instr::Kind::READ_FL_SENUM_A64_BE>(&Vm::_execReadFlSEnumA64Be);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_LE>(&Vm::_execReadFlUEnumLe);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_BE>(&Vm::_execReadFlUEnumBe);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A8>(&Vm::_execReadFlUEnumA8);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A16_LE>(&Vm::_execReadFlUEnumA16Le);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A32_LE>(&Vm::_execReadFlUEnumA32Le);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A64_LE>(&Vm::_execReadFlUEnumA64Le);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A16_BE>(&Vm::_execReadFlUEnumA16Be);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A32_BE>(&Vm::_execReadFlUEnumA32Be);
-    this->_initExecFunc<Instr::Kind::READ_FL_UENUM_A64_BE>(&Vm::_execReadFlUEnumA64Be);
     this->_initExecFunc<Instr::Kind::READ_VL_UINT>(&Vm::_execReadVlUInt);
     this->_initExecFunc<Instr::Kind::READ_VL_SINT>(&Vm::_execReadVlSInt);
-    this->_initExecFunc<Instr::Kind::READ_VL_UENUM>(&Vm::_execReadVlUEnum);
-    this->_initExecFunc<Instr::Kind::READ_VL_SENUM>(&Vm::_execReadVlSEnum);
     this->_initExecFunc<Instr::Kind::READ_NT_STR_UTF_8>(&Vm::_execReadNtStrUtf8);
     this->_initExecFunc<Instr::Kind::READ_NT_STR_UTF_16>(&Vm::_execReadNtStrUtf16);
     this->_initExecFunc<Instr::Kind::READ_NT_STR_UTF_32>(&Vm::_execReadNtStrUtf32);
@@ -637,114 +617,6 @@ Vm::_ExecReaction Vm::_execReadFlFloatA64Be(const Instr& instr)
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
-Vm::_ExecReaction Vm::_execReadFlSEnumLe(const Instr& instr)
-{
-    this->_execReadFlEnum<std::int64_t, readFlSIntLeFuncs>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumBe(const Instr& instr)
-{
-    this->_execReadFlEnum<std::int64_t, readFlSIntBeFuncs>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA8(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 8, readFlSInt8>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA16Le(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 16, readFlSIntLe16>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA32Le(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 32, readFlSIntLe32>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA64Le(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 64, readFlSIntLe64>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA16Be(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 16, readFlSIntBe16>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA32Be(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 32, readFlSIntBe32>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlSEnumA64Be(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::int64_t, 64, readFlSIntBe64>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumLe(const Instr& instr)
-{
-    this->_execReadFlEnum<std::uint64_t, readFlUIntLeFuncs>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumBe(const Instr& instr)
-{
-    this->_execReadFlEnum<std::uint64_t, readFlUIntBeFuncs>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA8(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 8, readFlUInt8>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA16Le(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 16, readFlUIntLe16>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA32Le(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 32, readFlUIntLe32>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA64Le(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 64, readFlUIntLe64>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA16Be(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 16, readFlUIntBe16>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA32Be(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 32, readFlUIntBe32>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
-Vm::_ExecReaction Vm::_execReadFlUEnumA64Be(const Instr& instr)
-{
-    this->_execReadStdFlEnum<std::uint64_t, 64, readFlUIntBe64>(instr);
-    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
-}
-
 Vm::_ExecReaction Vm::_execReadVlUInt(const Instr& instr)
 {
     return this->_execReadVlIntCommon(instr, _pos.elems.vlUInt, VmState::CONTINUE_READ_VL_UINT);
@@ -753,16 +625,6 @@ Vm::_ExecReaction Vm::_execReadVlUInt(const Instr& instr)
 Vm::_ExecReaction Vm::_execReadVlSInt(const Instr& instr)
 {
     return this->_execReadVlIntCommon(instr, _pos.elems.vlSInt, VmState::CONTINUE_READ_VL_SINT);
-}
-
-Vm::_ExecReaction Vm::_execReadVlUEnum(const Instr& instr)
-{
-    return this->_execReadVlIntCommon(instr, _pos.elems.vlUEnum, VmState::CONTINUE_READ_VL_UINT);
-}
-
-Vm::_ExecReaction Vm::_execReadVlSEnum(const Instr& instr)
-{
-    return this->_execReadVlIntCommon(instr, _pos.elems.vlSEnum, VmState::CONTINUE_READ_VL_SINT);
 }
 
 Vm::_ExecReaction Vm::_execReadNtStrCommon(const Instr& instr, const VmState state)

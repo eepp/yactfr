@@ -55,7 +55,6 @@ add_library (
     metadata/ert.cpp
     metadata/fl-bit-array-type.cpp
     metadata/fl-bool-type.cpp
-    metadata/fl-enum-type.cpp
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp
     metadata/from-metadata-text.cpp
@@ -77,7 +76,6 @@ add_library (
     metadata/trace-env.cpp
     metadata/trace-type.cpp
     metadata/var-type.cpp
-    metadata/vl-enum-type.cpp
     metadata/vl-int-type.cpp
     mmap-file-view-factory.cpp
     text-loc.cpp

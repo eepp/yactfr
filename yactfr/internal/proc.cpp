@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -306,92 +306,12 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_FL_FLOAT_A64_BE";
         break;
 
-    case Kind::READ_FL_SENUM_LE:
-        kindStr = "READ_FL_SENUM_LE";
-        break;
-
-    case Kind::READ_FL_SENUM_BE:
-        kindStr = "READ_FL_SENUM_BE";
-        break;
-
-    case Kind::READ_FL_SENUM_A8:
-        kindStr = "READ_FL_SENUM_A8";
-        break;
-
-    case Kind::READ_FL_SENUM_A16_LE:
-        kindStr = "READ_FL_SENUM_A16_LE";
-        break;
-
-    case Kind::READ_FL_SENUM_A32_LE:
-        kindStr = "READ_FL_SENUM_A32_LE";
-        break;
-
-    case Kind::READ_FL_SENUM_A64_LE:
-        kindStr = "READ_FL_SENUM_A64_LE";
-        break;
-
-    case Kind::READ_FL_SENUM_A16_BE:
-        kindStr = "READ_FL_SENUM_A16_BE";
-        break;
-
-    case Kind::READ_FL_SENUM_A32_BE:
-        kindStr = "READ_FL_SENUM_A32_BE";
-        break;
-
-    case Kind::READ_FL_SENUM_A64_BE:
-        kindStr = "READ_FL_SENUM_A64_BE";
-        break;
-
-    case Kind::READ_FL_UENUM_LE:
-        kindStr = "READ_FL_UENUM_LE";
-        break;
-
-    case Kind::READ_FL_UENUM_BE:
-        kindStr = "READ_FL_UENUM_BE";
-        break;
-
-    case Kind::READ_FL_UENUM_A8:
-        kindStr = "READ_FL_UENUM_A8";
-        break;
-
-    case Kind::READ_FL_UENUM_A16_LE:
-        kindStr = "READ_FL_UENUM_A16_LE";
-        break;
-
-    case Kind::READ_FL_UENUM_A32_LE:
-        kindStr = "READ_FL_UENUM_A32_LE";
-        break;
-
-    case Kind::READ_FL_UENUM_A64_LE:
-        kindStr = "READ_FL_UENUM_A64_LE";
-        break;
-
-    case Kind::READ_FL_UENUM_A16_BE:
-        kindStr = "READ_FL_UENUM_A16_BE";
-        break;
-
-    case Kind::READ_FL_UENUM_A32_BE:
-        kindStr = "READ_FL_UENUM_A32_BE";
-        break;
-
-    case Kind::READ_FL_UENUM_A64_BE:
-        kindStr = "READ_FL_UENUM_A64_BE";
-        break;
-
     case Kind::READ_VL_UINT:
         kindStr = "READ_VL_UINT";
         break;
 
     case Kind::READ_VL_SINT:
         kindStr = "READ_VL_SINT";
-        break;
-
-    case Kind::READ_VL_UENUM:
-        kindStr = "READ_VL_UENUM";
-        break;
-
-    case Kind::READ_VL_SENUM:
-        kindStr = "READ_VL_SENUM";
         break;
 
     case Kind::READ_NT_STR_UTF_8:
@@ -830,14 +750,14 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
     assert(dt.isFixedLengthIntegerType());
 
     auto kind = Instr::Kind::UNSET;
-    const auto& intType = dt.asFixedLengthIntegerType();
+    const auto& bitArrayType = dt.asFixedLengthBitArrayType();
 
     if (dt.isFixedLengthUnsignedIntegerType()) {
-        if (intType.byteOrder() == ByteOrder::LITTLE) {
+        if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
             kind = Instr::Kind::READ_FL_UINT_LE;
 
             if (dt.alignment() % 8 == 0) {
-                switch (intType.length()) {
+                switch (bitArrayType.length()) {
                 case 8:
                     return Instr::Kind::READ_FL_UINT_A8;
 
@@ -858,7 +778,7 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
             kind = Instr::Kind::READ_FL_UINT_BE;
 
             if (dt.alignment() % 8 == 0) {
-                switch (intType.length()) {
+                switch (bitArrayType.length()) {
                 case 8:
                     return Instr::Kind::READ_FL_UINT_A8;
 
@@ -877,11 +797,11 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
             }
         }
     } else {
-        if (intType.byteOrder() == ByteOrder::LITTLE) {
+        if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
             kind = Instr::Kind::READ_FL_SINT_LE;
 
             if (dt.alignment() % 8 == 0) {
-                switch (intType.length()) {
+                switch (bitArrayType.length()) {
                 case 8:
                     return Instr::Kind::READ_FL_SINT_A8;
 
@@ -902,7 +822,7 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
             kind = Instr::Kind::READ_FL_SINT_BE;
 
             if (dt.alignment() % 8 == 0) {
-                switch (intType.length()) {
+                switch (bitArrayType.length()) {
                 case 8:
                     return Instr::Kind::READ_FL_SINT_A8;
 
@@ -1029,110 +949,15 @@ ReadFlFloatInstr::ReadFlFloatInstr(const StructureMemberType * const member, con
     assert(dt.isFixedLengthFloatingPointNumberType());
 }
 
-static inline Instr::Kind kindFromFlEnumType(const DataType& dt) noexcept
-{
-    switch (kindFromFlIntType(dt)) {
-    case Instr::Kind::READ_FL_SINT_LE:
-        return Instr::Kind::READ_FL_SENUM_LE;
-
-    case Instr::Kind::READ_FL_SINT_BE:
-        return Instr::Kind::READ_FL_SENUM_BE;
-
-    case Instr::Kind::READ_FL_SINT_A8:
-        return Instr::Kind::READ_FL_SENUM_A8;
-
-    case Instr::Kind::READ_FL_SINT_A16_LE:
-        return Instr::Kind::READ_FL_SENUM_A16_LE;
-
-    case Instr::Kind::READ_FL_SINT_A32_LE:
-        return Instr::Kind::READ_FL_SENUM_A32_LE;
-
-    case Instr::Kind::READ_FL_SINT_A64_LE:
-        return Instr::Kind::READ_FL_SENUM_A64_LE;
-
-    case Instr::Kind::READ_FL_SINT_A16_BE:
-        return Instr::Kind::READ_FL_SENUM_A16_BE;
-
-    case Instr::Kind::READ_FL_SINT_A32_BE:
-        return Instr::Kind::READ_FL_SENUM_A32_BE;
-
-    case Instr::Kind::READ_FL_SINT_A64_BE:
-        return Instr::Kind::READ_FL_SENUM_A64_BE;
-
-    case Instr::Kind::READ_FL_UINT_LE:
-        return Instr::Kind::READ_FL_UENUM_LE;
-
-    case Instr::Kind::READ_FL_UINT_BE:
-        return Instr::Kind::READ_FL_UENUM_BE;
-
-    case Instr::Kind::READ_FL_UINT_A8:
-        return Instr::Kind::READ_FL_UENUM_A8;
-
-    case Instr::Kind::READ_FL_UINT_A16_LE:
-        return Instr::Kind::READ_FL_UENUM_A16_LE;
-
-    case Instr::Kind::READ_FL_UINT_A32_LE:
-        return Instr::Kind::READ_FL_UENUM_A32_LE;
-
-    case Instr::Kind::READ_FL_UINT_A64_LE:
-        return Instr::Kind::READ_FL_UENUM_A64_LE;
-
-    case Instr::Kind::READ_FL_UINT_A16_BE:
-        return Instr::Kind::READ_FL_UENUM_A16_BE;
-
-    case Instr::Kind::READ_FL_UINT_A32_BE:
-        return Instr::Kind::READ_FL_UENUM_A32_BE;
-
-    case Instr::Kind::READ_FL_UINT_A64_BE:
-        return Instr::Kind::READ_FL_UENUM_A64_BE;
-
-    default:
-        std::abort();
-    }
-}
-
-ReadFlSEnumInstr::ReadFlSEnumInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadFlSIntInstr {kindFromFlEnumType(dt), member, dt}
-{
-    assert(dt.isFixedLengthSignedEnumerationType());
-}
-
-std::string ReadFlSEnumInstr::_toStr(Size) const
-{
-    std::ostringstream ss;
-
-    ss << this->_commonToStr() << std::endl;
-    return ss.str();
-}
-
-ReadFlUEnumInstr::ReadFlUEnumInstr(const StructureMemberType * const member, const DataType& dt) :
-    ReadFlUIntInstr {kindFromFlEnumType(dt), member, dt}
-{
-    assert(dt.isFixedLengthUnsignedEnumerationType());
-}
-
-std::string ReadFlUEnumInstr::_toStr(Size) const
-{
-    std::ostringstream ss;
-
-    ss << this->_commonToStr() << std::endl;
-    return ss.str();
-}
-
 static inline Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
 {
     assert(dt.isVariableLengthIntegerType());
 
-    if (dt.isVariableLengthUnsignedEnumerationType()) {
-        return Instr::Kind::READ_VL_UENUM;
-    } else if (dt.isVariableLengthSignedEnumerationType()) {
-        return Instr::Kind::READ_VL_SENUM;
-    } else if (dt.isVariableLengthUnsignedIntegerType()) {
+    if (dt.isVariableLengthUnsignedIntegerType()) {
         return Instr::Kind::READ_VL_UINT;
-    } else if (dt.isVariableLengthSignedIntegerType()) {
-        return Instr::Kind::READ_VL_SINT;
     } else {
-        abort();
+        assert(dt.isVariableLengthSignedIntegerType());
+        return Instr::Kind::READ_VL_SINT;
     }
 }
 

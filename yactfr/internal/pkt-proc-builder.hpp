@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -80,12 +80,6 @@ private:
                                Proc& baseProc);
 
     void _buildReadFlFloatInstr(const StructureMemberType *memberType, const DataType& dt,
-                                Proc& baseProc);
-
-    void _buildReadFlSEnumInstr(const StructureMemberType *memberType, const DataType& dt,
-                                Proc& baseProc);
-
-    void _buildReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt,
                                 Proc& baseProc);
 
     void _buildReadVlIntInstr(const StructureMemberType *memberType, const DataType& dt,

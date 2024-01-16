@@ -25,7 +25,7 @@
               ]
             ]
           },
-          "type": "fixed-length-unsigned-enumeration"
+          "type": "fixed-length-unsigned-integer"
         },
         "name": "tag"
       },

@@ -145,8 +145,6 @@ public:
 
           - VariableLengthUnsignedIntegerType
           - VariableLengthSignedIntegerType
-          - VariableLengthUnsignedEnumerationType
-          - VariableLengthSignedEnumerationType
           - StaticLengthBlobType
           - DynamicLengthBlobType
           - OptionalWithBooleanSelectorType

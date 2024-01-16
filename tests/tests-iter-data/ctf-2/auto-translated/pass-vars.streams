@@ -35,7 +35,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "tag"
         },
@@ -122,7 +122,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-signed-enumeration"
+            "type": "fixed-length-signed-integer"
           },
           "name": "ph_tag"
         },
@@ -213,7 +213,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "e1c_tag"
         },
@@ -355,7 +355,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "eh_tag"
         },
@@ -497,7 +497,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "pc_tag"
         },
@@ -643,7 +643,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "ep_tag"
         },
@@ -785,7 +785,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "e2c_tag"
         },
@@ -933,13 +933,13 @@ V_ABS     cd
      0   PC {
      0     SC:0 {
      0       ST {
-     0         FLUE:tag:11
+     0         FLUI:tag:11
      8         VU:v:11 {
      8           NTS {
      8             RD:9:ethereal$00
     80           }
     80         }
-    80         FLSE:ph_tag:2
+    80         FLSI:ph_tag:2
     88         VS:v_rel:2 {
     88           FLUI:254
     96         }
@@ -948,7 +948,7 @@ V_ABS     cd
     96     DSI:T0
     96     SC:1 {
     96       ST {
-    96         FLUE:pc_tag:0
+    96         FLUI:pc_tag:0
    104         VU:v_rel:0 {
    104           NTS {
    104             RD:6:faded$00
@@ -963,7 +963,7 @@ V_ABS     cd
    160     ER {
    160       SC:2 {
    160         ST {
-   160           FLUE:eh_tag:1
+   160           FLUI:eh_tag:1
    168           VU:v_rel:1 {
    168             FLUI:305419896
    200           }
@@ -977,7 +977,7 @@ V_ABS     cd
    240       ERI:T0:#test
    240       SC:3 {
    240         ST {
-   240           FLUE:e1c_tag:0
+   240           FLUI:e1c_tag:0
    248           VU:v_rel:0 {
    248             NTS {
    248               RD:9:cultured$00
@@ -990,7 +990,7 @@ V_ABS     cd
    352       }
    352       SC:4 {
    352         ST {
-   352           FLUE:e2c_tag:2
+   352           FLUI:e2c_tag:2
    360           VU:v_rel:2 {
    360             FLUI:23
    368           }
@@ -1003,7 +1003,7 @@ V_ABS     cd
    408       }
    408       SC:5 {
    408         ST {
-   408           FLUE:ep_tag:1
+   408           FLUI:ep_tag:1
    416           VU:v_rel:1 {
    416             FLUI:3131746989
    448           }

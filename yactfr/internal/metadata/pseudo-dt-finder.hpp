@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -50,11 +50,6 @@ public:
     }
 
     void visit(_PseudoDt<PseudoFlUIntType>& pseudoDt) override
-    {
-        this->_tryAdd(pseudoDt);
-    }
-
-    void visit(_PseudoDt<PseudoFlUEnumType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
     }

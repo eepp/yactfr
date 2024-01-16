@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -29,7 +29,6 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/ert.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/int-range.hpp>
 #include <yactfr/metadata/item.hpp>
 #include <yactfr/metadata/opt-type.hpp>
@@ -121,12 +120,6 @@ private:
      * yactfr data type.
      */
     DataType::UP _dtFromPseudoFlUIntType(const PseudoDt& pseudoDt) const;
-
-    /*
-     * Converts the pseudo unsigned enumeration type wrapper `pseudoDt`
-     * to a yactfr data type.
-     */
-    DataType::UP _dtFromPseudoFlUEnumType(const PseudoDt& pseudoDt) const;
 
     /*
      * Tries to convert the pseudo array type `pseudoArrayType` to a
@@ -241,7 +234,7 @@ private:
 
 
     template <typename MappingsT>
-    static bool _enumTypeMappingsOverlap(const MappingsT& mappings);
+    static bool _intTypeMappingsOverlap(const MappingsT& mappings);
 
     static MapItem::UP _tryCloneAttrs(const MapItem *attrs);
 
@@ -353,7 +346,7 @@ DataType::UP DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
 }
 
 template <typename MappingsT>
-bool DtFromPseudoRootDtConverter::_enumTypeMappingsOverlap(const MappingsT& mappings)
+bool DtFromPseudoRootDtConverter::_intTypeMappingsOverlap(const MappingsT& mappings)
 {
     for (auto it1 = mappings.begin(); it1 != mappings.end(); ++it1) {
         for (auto it2 = std::next(it1); it2 != mappings.end(); ++it2) {
@@ -372,7 +365,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
                                                                const DataLocation& selLoc)
 {
     // validate that the selector type has no overlapping mappings
-    if (this->_enumTypeMappingsOverlap(selTypeMappings)) {
+    if (this->_intTypeMappingsOverlap(selTypeMappings)) {
         this->_throwInvalDataLoc("Selector type of variant type contains overlapping mappings.",
                                  pseudoVarType.loc(), selLoc, pseudoVarType.loc());
     }
@@ -526,9 +519,6 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoDt(const PseudoDt& pseudo
     case PseudoDt::Kind::FL_UINT:
         return this->_dtFromPseudoFlUIntType(pseudoDt);
 
-    case PseudoDt::Kind::FL_UENUM:
-        return this->_dtFromPseudoFlUEnumType(pseudoDt);
-
     case PseudoDt::Kind::SL_ARRAY:
         return this->_dtFromPseudoSlArrayType(pseudoDt);
 
@@ -570,20 +560,9 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUIntType(const PseudoDt
     return FixedLengthUnsignedIntegerType::create(pseudoUIntType.align(), pseudoUIntType.len(),
                                                   pseudoUIntType.bo(),
                                                   pseudoUIntType.prefDispBase(),
+                                                  pseudoUIntType.mappings(),
                                                   tryCloneAttrs(pseudoUIntType.attrs()),
                                                   pseudoUIntType.roles());
-}
-
-DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUEnumType(const PseudoDt& pseudoDt) const
-{
-    auto& pseudoUEnumType = static_cast<const PseudoFlUEnumType&>(pseudoDt);
-
-    return FixedLengthUnsignedEnumerationType::create(pseudoUEnumType.align(),
-                                                      pseudoUEnumType.len(), pseudoUEnumType.bo(),
-                                                      pseudoUEnumType.mappings(),
-                                                      pseudoUEnumType.prefDispBase(),
-                                                      tryCloneAttrs(pseudoUEnumType.attrs()),
-                                                      pseudoUEnumType.roles());
 }
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoDt& pseudoDt)
@@ -684,7 +663,6 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
     switch (pseudoDt.kind()) {
     case PseudoDt::Kind::SCALAR_DT_WRAPPER:
     case PseudoDt::Kind::FL_UINT:
-    case PseudoDt::Kind::FL_UENUM:
         if (locIt != loc.pathElements().end()) {
             std::ostringstream ss;
 
@@ -932,7 +910,8 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     auto& selLoc = selLocPseudoDtsPair.first;
     auto& pseudoSelDts = selLocPseudoDtsPair.second;
     const PseudoDt *pseudoSelDt = nullptr;
-    bool selIsFlUEnumType;
+    bool selIsFlUIntType;
+    bool hasAtLeastOneMapping;
 
     // validate selector type
     {
@@ -948,20 +927,27 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
                                      pseudoSelDt->loc(), selLoc, pseudoDt.loc());
         }
 
-        bool isFlEnumType;
-
         if (pseudoSelDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
             auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
 
-            isFlEnumType = pseudoScalarDtWrapper.dt().isFixedLengthEnumerationType();
-            selIsFlUEnumType = pseudoScalarDtWrapper.dt().isFixedLengthUnsignedEnumerationType();
+            selIsFlUIntType = pseudoScalarDtWrapper.dt().isFixedLengthUnsignedIntegerType();
+
+            if (selIsFlUIntType) {
+                hasAtLeastOneMapping = !pseudoScalarDtWrapper.dt().asFixedLengthUnsignedIntegerType().mappings().empty();
+            } else {
+                hasAtLeastOneMapping = !pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType().mappings().empty();
+            }
         } else {
-            isFlEnumType = pseudoSelDt->kind() == PseudoDt::Kind::FL_UENUM;
-            selIsFlUEnumType = true;
+            assert(pseudoSelDt->kind() == PseudoDt::Kind::FL_UINT);
+
+            auto& pseudoFlUIntType = static_cast<const PseudoFlUIntType&>(*pseudoSelDt);
+
+            selIsFlUIntType = true;
+            hasAtLeastOneMapping = !pseudoFlUIntType.mappings().empty();
         }
 
-        if (!isFlEnumType) {
-            this->_throwInvalDataLoc("Selector type of variant type isn't an enumeration type.",
+        if (!hasAtLeastOneMapping) {
+            this->_throwInvalDataLoc("Selector type of variant type has no mappings.",
                                      pseudoSelDt->loc(), selLoc, pseudoDt.loc());
         }
 
@@ -969,15 +955,15 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
 
     assert(pseudoSelDt);
 
-    if (selIsFlUEnumType) {
-        auto& pseudoUEnumSelType = static_cast<const PseudoFlUEnumType&>(*pseudoSelDt);
+    if (selIsFlUIntType) {
+        auto& pseudoUIntSelType = static_cast<const PseudoFlUIntType&>(*pseudoSelDt);
 
         return this->_dtFromPseudoVarType<VariantWithUnsignedIntegerSelectorType>(pseudoVarType,
-                                                                                  pseudoUEnumSelType.mappings(),
+                                                                                  pseudoUIntSelType.mappings(),
                                                                                   selLoc);
     } else {
         auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
-        auto& mappings = pseudoScalarDtWrapper.dt().asFixedLengthSignedEnumerationType().mappings();
+        auto& mappings = pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType().mappings();
 
         return this->_dtFromPseudoVarType<VariantWithSignedIntegerSelectorType>(pseudoVarType,
                                                                                 mappings, selLoc);

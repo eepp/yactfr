@@ -23,7 +23,6 @@
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/ert.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/int-range.hpp>
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/text-parse-error.hpp>

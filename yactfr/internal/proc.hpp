@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms of the
  * MIT license. See the LICENSE file for details.
@@ -74,7 +74,6 @@
 #include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
@@ -123,10 +122,8 @@ class ReadDataInstr;
 class ReadFlBitArrayInstr;
 class ReadFlBoolInstr;
 class ReadFlFloatInstr;
-class ReadFlSEnumInstr;
 class ReadFlSIntInstr;
 class ReadNtStrInstr;
-class ReadFlUEnumInstr;
 class ReadFlUIntInstr;
 class ReadVlIntInstr;
 class SaveValInstr;
@@ -175,14 +172,6 @@ public:
     }
 
     virtual void visit(ReadFlFloatInstr&)
-    {
-    }
-
-    virtual void visit(ReadFlSEnumInstr&)
-    {
-    }
-
-    virtual void visit(ReadFlUEnumInstr&)
     {
     }
 
@@ -480,15 +469,6 @@ public:
         READ_FL_FLOAT_A32_LE,
         READ_FL_FLOAT_A64_BE,
         READ_FL_FLOAT_A64_LE,
-        READ_FL_SENUM_A16_BE,
-        READ_FL_SENUM_A16_LE,
-        READ_FL_SENUM_A32_BE,
-        READ_FL_SENUM_A32_LE,
-        READ_FL_SENUM_A64_BE,
-        READ_FL_SENUM_A64_LE,
-        READ_FL_SENUM_A8,
-        READ_FL_SENUM_BE,
-        READ_FL_SENUM_LE,
         READ_FL_SINT_A16_BE,
         READ_FL_SINT_A16_LE,
         READ_FL_SINT_A32_BE,
@@ -501,15 +481,6 @@ public:
         READ_NT_STR_UTF_8,
         READ_NT_STR_UTF_16,
         READ_NT_STR_UTF_32,
-        READ_FL_UENUM_A16_BE,
-        READ_FL_UENUM_A16_LE,
-        READ_FL_UENUM_A32_BE,
-        READ_FL_UENUM_A32_LE,
-        READ_FL_UENUM_A64_BE,
-        READ_FL_UENUM_A64_LE,
-        READ_FL_UENUM_A8,
-        READ_FL_UENUM_BE,
-        READ_FL_UENUM_LE,
         READ_FL_UINT_A16_BE,
         READ_FL_UINT_A16_LE,
         READ_FL_UINT_A32_BE,
@@ -530,8 +501,6 @@ public:
         READ_FL_BOOL_LE,
         READ_VL_UINT,
         READ_VL_SINT,
-        READ_VL_UENUM,
-        READ_VL_SENUM,
         SAVE_VAL,
         SET_CUR_ID,
         SET_DS_ID,
@@ -602,15 +571,6 @@ public:
         case Instr::Kind::READ_FL_FLOAT_A32_LE:
         case Instr::Kind::READ_FL_FLOAT_A64_BE:
         case Instr::Kind::READ_FL_FLOAT_A64_LE:
-        case Instr::Kind::READ_FL_SENUM_A16_BE:
-        case Instr::Kind::READ_FL_SENUM_A16_LE:
-        case Instr::Kind::READ_FL_SENUM_A32_BE:
-        case Instr::Kind::READ_FL_SENUM_A32_LE:
-        case Instr::Kind::READ_FL_SENUM_A64_BE:
-        case Instr::Kind::READ_FL_SENUM_A64_LE:
-        case Instr::Kind::READ_FL_SENUM_A8:
-        case Instr::Kind::READ_FL_SENUM_BE:
-        case Instr::Kind::READ_FL_SENUM_LE:
         case Instr::Kind::READ_FL_SINT_A16_BE:
         case Instr::Kind::READ_FL_SINT_A16_LE:
         case Instr::Kind::READ_FL_SINT_A32_BE:
@@ -623,15 +583,6 @@ public:
         case Instr::Kind::READ_NT_STR_UTF_8:
         case Instr::Kind::READ_NT_STR_UTF_16:
         case Instr::Kind::READ_NT_STR_UTF_32:
-        case Instr::Kind::READ_FL_UENUM_A16_BE:
-        case Instr::Kind::READ_FL_UENUM_A16_LE:
-        case Instr::Kind::READ_FL_UENUM_A32_BE:
-        case Instr::Kind::READ_FL_UENUM_A32_LE:
-        case Instr::Kind::READ_FL_UENUM_A64_BE:
-        case Instr::Kind::READ_FL_UENUM_A64_LE:
-        case Instr::Kind::READ_FL_UENUM_A8:
-        case Instr::Kind::READ_FL_UENUM_BE:
-        case Instr::Kind::READ_FL_UENUM_LE:
         case Instr::Kind::READ_FL_UINT_A16_BE:
         case Instr::Kind::READ_FL_UINT_A16_LE:
         case Instr::Kind::READ_FL_UINT_A32_BE:
@@ -652,8 +603,6 @@ public:
         case Instr::Kind::READ_FL_BOOL_LE:
         case Instr::Kind::READ_VL_UINT:
         case Instr::Kind::READ_VL_SINT:
-        case Instr::Kind::READ_VL_UENUM:
-        case Instr::Kind::READ_VL_SENUM:
             return true;
 
         default:
@@ -866,11 +815,6 @@ protected:
 
 public:
     explicit ReadFlIntInstr(const StructureMemberType *memberType, const DataType& dt);
-
-    const FixedLengthIntegerType& intType() const noexcept
-    {
-        return static_cast<const FixedLengthIntegerType&>(this->dt());
-    }
 };
 
 /*
@@ -946,52 +890,6 @@ public:
 };
 
 /*
- * "Read fixed-length signed enumeration" procedure instruction.
- */
-class ReadFlSEnumInstr final :
-    public ReadFlSIntInstr
-{
-public:
-    explicit ReadFlSEnumInstr(const StructureMemberType *memberType, const DataType& dt);
-
-    void accept(InstrVisitor& visitor) override
-    {
-        visitor.visit(*this);
-    }
-
-    const FixedLengthSignedEnumerationType& sEnumType() const noexcept
-    {
-        return static_cast<const FixedLengthSignedEnumerationType&>(this->dt());
-    }
-
-private:
-    std::string _toStr(Size indent = 0) const override;
-};
-
-/*
- * "Read fixed-length unsigned enumeration" procedure instruction.
- */
-class ReadFlUEnumInstr final :
-    public ReadFlUIntInstr
-{
-public:
-    explicit ReadFlUEnumInstr(const StructureMemberType *memberType, const DataType& dt);
-
-    void accept(InstrVisitor& visitor) override
-    {
-        visitor.visit(*this);
-    }
-
-    const FixedLengthUnsignedEnumerationType& uEnumType() const noexcept
-    {
-        return static_cast<const FixedLengthUnsignedEnumerationType&>(this->dt());
-    }
-
-private:
-    std::string _toStr(Size indent = 0) const override;
-};
-
-/*
  * "Read variable-length integer" procedure instruction.
  */
 class ReadVlIntInstr :
@@ -1003,11 +901,6 @@ public:
     void accept(InstrVisitor& visitor) override
     {
         visitor.visit(*this);
-    }
-
-    const VariableLengthIntegerType& vlIntType() const noexcept
-    {
-        return static_cast<const VariableLengthIntegerType&>(this->dt());
     }
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2022-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -31,17 +31,31 @@ class TraceTypeImpl;
 A variable-length integer type describes data stream variable-length
 integers.
 */
+template <typename MappingValueT>
 class VariableLengthIntegerType :
     public ScalarDataType,
-    public IntegerTypeCommon
+    public IntegerTypeCommon<MappingValueT>
 {
     friend class internal::TraceTypeImpl;
 
+public:
+    using typename IntegerTypeCommon<MappingValueT>::Mappings;
+    using typename IntegerTypeCommon<MappingValueT>::MappingRangeSet;
+    using typename IntegerTypeCommon<MappingValueT>::MappingValue;
+
 protected:
     explicit VariableLengthIntegerType(_Kind kind, unsigned int align, DisplayBase prefDispBase,
-                                       MapItem::UP attrs);
+                                       Mappings&& mappings,
+                                       MapItem::UP attrs) :
+        ScalarDataType {kind, align, std::move(attrs)},
+        IntegerTypeCommon<MappingValueT> {prefDispBase, std::move(mappings)}
+    {
+    }
 
-    bool _isEqual(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override
+    {
+        return IntegerTypeCommon<MappingValueT>::_isEqual(static_cast<const VariableLengthIntegerType&>(other));
+    }
 };
 
 /*!
@@ -53,19 +67,13 @@ protected:
 A variable-length unsigned integer type describes data stream
 variable-length unsigned integers.
 */
-class VariableLengthUnsignedIntegerType :
-    public VariableLengthIntegerType,
+class VariableLengthUnsignedIntegerType final :
+    public VariableLengthIntegerType<internal::UnsignedIntegerTypeMappingValue>,
     public UnsignedIntegerTypeCommon
 {
 public:
     /// Unique pointer to constant variable-length unsigned integer type.
     using UP = std::unique_ptr<const VariableLengthUnsignedIntegerType>;
-
-protected:
-    explicit VariableLengthUnsignedIntegerType(_Kind kind, unsigned int align,
-                                               DisplayBase prefDispBase,
-                                               MapItem::UP attrs,
-                                               UnsignedIntegerTypeRoleSet roles);
 
 public:
     /*!
@@ -78,6 +86,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream variable-length unsigned integers
@@ -96,6 +106,7 @@ public:
     */
     explicit VariableLengthUnsignedIntegerType(unsigned int alignment,
                                                DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                               Mappings mappings = Mappings {},
                                                MapItem::UP attributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
@@ -107,6 +118,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length unsigned
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream variable-length unsigned integers
@@ -119,6 +132,7 @@ public:
         type.
     */
     explicit VariableLengthUnsignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                               Mappings mappings = Mappings {},
                                                MapItem::UP attributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
@@ -144,10 +158,8 @@ public:
         return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
     }
 
-protected:
-    bool _isEqual(const DataType& other) const noexcept override;
-
 private:
+    bool _isEqual(const DataType& other) const noexcept override;
     DataType::UP _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
@@ -165,16 +177,12 @@ private:
 A variable-length signed integer type describes data stream
 variable-length signed integers.
 */
-class VariableLengthSignedIntegerType :
-    public VariableLengthIntegerType
+class VariableLengthSignedIntegerType final :
+    public VariableLengthIntegerType<internal::SignedIntegerTypeMappingValue>
 {
 public:
     /// Unique pointer to constant variable-length signed integer type.
     using UP = std::unique_ptr<const VariableLengthSignedIntegerType>;
-
-protected:
-    explicit VariableLengthSignedIntegerType(_Kind kind, unsigned int align,
-                                             DisplayBase prefDispBase, MapItem::UP attrs);
 
 public:
     /*!
@@ -187,6 +195,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream variable-length signed integers
@@ -202,6 +212,7 @@ public:
     */
     explicit VariableLengthSignedIntegerType(unsigned int alignment,
                                              DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                             Mappings mappings = Mappings {},
                                              MapItem::UP attributes = nullptr);
 
     /*!
@@ -212,6 +223,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream variable-length signed
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream variable-length signed integers
@@ -221,6 +234,7 @@ public:
         @endparblock
     */
     explicit VariableLengthSignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                             Mappings mappings = Mappings {},
                                              MapItem::UP attributes = nullptr);
 
     /*!

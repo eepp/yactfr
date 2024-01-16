@@ -36,7 +36,7 @@
                         ]
                       ]
                     },
-                    "type": "fixed-length-unsigned-enumeration"
+                    "type": "fixed-length-unsigned-integer"
                   },
                   "name": "tag"
                 },
@@ -146,7 +146,7 @@
      0         ST {
      0           SLA:hope {
      0             ST {
-     0               FLUE:tag:67
+     0               FLUI:tag:67
      8               SLA:point {
      8                 ST {
      8                   SLA:v {
@@ -171,7 +171,7 @@
     56               }
     56             }
     56             ST {
-    56               FLUE:tag:66
+    56               FLUI:tag:66
     64               SLA:point {
     64                 ST {
     64                   SLA:v {

@@ -54,9 +54,7 @@ static constexpr auto FC_ALIAS = "field-class-alias";
 static constexpr auto FL_BIT_ARRAY = "fixed-length-bit-array";
 static constexpr auto FL_BOOL = "fixed-length-boolean";
 static constexpr auto FL_FLOAT = "fixed-length-floating-point-number";
-static constexpr auto FL_SENUM = "fixed-length-signed-enumeration";
 static constexpr auto FL_SINT = "fixed-length-signed-integer";
-static constexpr auto FL_UENUM = "fixed-length-unsigned-enumeration";
 static constexpr auto FL_UINT = "fixed-length-unsigned-integer";
 static constexpr auto FREQ = "frequency";
 static constexpr auto ID = "id";
@@ -110,9 +108,7 @@ static constexpr auto UTF_32LE = "utf-32le";
 static constexpr auto UUID = "uuid";
 static constexpr auto VAR = "variant";
 static constexpr auto VERSION = "version";
-static constexpr auto VL_SENUM = "variable-length-signed-enumeration";
 static constexpr auto VL_SINT = "variable-length-signed-integer";
-static constexpr auto VL_UENUM = "variable-length-unsigned-enumeration";
 static constexpr auto VL_UINT = "variable-length-unsigned-integer";
 
 } // namespace strs

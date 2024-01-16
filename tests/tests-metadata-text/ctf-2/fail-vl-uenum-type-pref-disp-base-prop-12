@@ -1,32 +1,0 @@
-{"type": "preamble", "version": 2}
-{"type": "data-stream-class"}
-
-  {
-    "type": "event-record-class",
-    "payload-field-class": {
-      "type": "structure",
-      "member-classes": [
-        {
-          "name": "test",
-          "field-class": {
-            "type": "variable-length-unsigned-enumeration",
-            "preferred-display-base": 12,
-            "mappings": {
-              "a": [[23, 23]]
-            }
-          }
-        }
-      ]
-    }
-  }
-----
-[2:3] Invalid event record type fragment:
-[4:28] In object property `payload-field-class`:
-[4:28] Invalid structure type:
-[6:25] In object property `member-classes`:
-[7:9] In array element #1:
-[7:9] Invalid structure member type:
-[9:26] In object property `field-class`:
-[9:26] Invalid variable-length unsigned enumeration type:
-[11:39] In object property `preferred-display-base`:
-[11:39] Unexpected value 12: expecting 2, 8, 10, or 16.

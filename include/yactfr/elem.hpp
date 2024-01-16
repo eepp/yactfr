@@ -20,9 +20,7 @@
 #include "metadata/fl-bool-type.hpp"
 #include "metadata/fl-float-type.hpp"
 #include "metadata/fl-int-type.hpp"
-#include "metadata/fl-enum-type.hpp"
 #include "metadata/vl-int-type.hpp"
-#include "metadata/vl-enum-type.hpp"
 #include "metadata/sl-array-type.hpp"
 #include "metadata/dl-array-type.hpp"
 #include "metadata/sl-str-type.hpp"
@@ -78,7 +76,6 @@ private:
         _KIND_SIGNED                            = 1 << 14,
         _KIND_UNSIGNED                          = 1 << 15,
         _KIND_FLOAT_DATA                        = 1 << 16,
-        _KIND_ENUM_DATA                         = _KIND_INT_DATA | (1 << 17),
         _KIND_VL_INT                            = _KIND_INT_DATA | (1 << 18),
         _KIND_NT_STR                            = 1 << 19,
         _KIND_RAW_DATA                          = 1 << 20,
@@ -157,23 +154,11 @@ public:
         /// FixedLengthFloatingPointNumberElement
         FIXED_LENGTH_FLOATING_POINT_NUMBER                  = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_FLOAT_DATA),
 
-        /// FixedLengthSignedEnumerationElement
-        FIXED_LENGTH_SIGNED_ENUMERATION                     = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED),
-
-        /// FixedLengthUnsignedEnumerationElement
-        FIXED_LENGTH_UNSIGNED_ENUMERATION                   = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED),
-
         /// VariableLengthSignedIntegerElement
         VARIABLE_LENGTH_SIGNED_INTEGER                      = static_cast<_U>(_KIND_VL_INT | _KIND_SIGNED),
 
         /// VariableLengthUnsignedIntegerElement
         VARIABLE_LENGTH_UNSIGNED_INTEGER                    = static_cast<_U>(_KIND_VL_INT | _KIND_UNSIGNED),
-
-        /// VariableLengthSignedEnumerationElement
-        VARIABLE_LENGTH_SIGNED_ENUMERATION                  = static_cast<_U>(_KIND_VL_INT | _KIND_ENUM_DATA | _KIND_SIGNED),
-
-        /// VariableLengthUnsignedEnumerationElement
-        VARIABLE_LENGTH_UNSIGNED_ENUMERATION                = static_cast<_U>(_KIND_VL_INT | _KIND_ENUM_DATA | _KIND_UNSIGNED),
 
         /// NullTerminatedStringBeginningElement
         NULL_TERMINATED_STRING_BEGINNING                    = static_cast<_U>(_KIND_NT_STR | _KIND_BEG),
@@ -468,42 +453,6 @@ public:
         return _kind == Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER;
     }
 
-    /// \c true if this element is an enumeration element.
-    bool isEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_ENUM_DATA);
-    }
-
-    /// \c true if this element is a fixed-length enumeration element.
-    bool isFixedLengthEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA);
-    }
-
-    /// \c true if this element is a signed enumeration element.
-    bool isSignedEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_ENUM_DATA | _KIND_SIGNED);
-    }
-
-    /// \c true if this element is an unsigned enumeration element.
-    bool isUnsignedEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_ENUM_DATA | _KIND_UNSIGNED);
-    }
-
-    /// \c true if this element is a fixed-length signed enumeration element.
-    bool isFixedLengthSignedEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_SIGNED);
-    }
-
-    /// \c true if this element is a fixed-length unsigned enumeration element.
-    bool isFixedLengthUnsignedEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_ENUM_DATA | _KIND_UNSIGNED);
-    }
-
     /// \c true if this element is a variable-length integer element.
     bool isVariableLengthIntegerElement() const noexcept
     {
@@ -520,24 +469,6 @@ public:
     bool isVariableLengthUnsignedIntegerElement() const noexcept
     {
         return this->_isKind(_KIND_VL_INT | _KIND_UNSIGNED);
-    }
-
-    /// \c true if this element is a variable-length enumeration element.
-    bool isVariableLengthEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_INT | _KIND_ENUM_DATA);
-    }
-
-    /// \c true if this element is a variable-length signed enumeration element.
-    bool isVariableLengthSignedEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_INT | _KIND_ENUM_DATA | _KIND_SIGNED);
-    }
-
-    /// \c true if this element is a variable-length unsigned enumeration element.
-    bool isVariableLengthUnsignedEnumerationElement() const noexcept
-    {
-        return this->_isKind(_KIND_VL_INT | _KIND_ENUM_DATA | _KIND_UNSIGNED);
     }
 
     /// \c true if this element is a null-terminated string beginning/end element.
@@ -983,32 +914,12 @@ public:
 
     /*!
     @brief
-        Returns this element as a fixed-length signed enumeration
-        element.
-
-    @pre
-        This type is a fixed-length signed enumeration element.
-    */
-    const FixedLengthSignedEnumerationElement& asFixedLengthSignedEnumerationElement() const noexcept;
-
-    /*!
-    @brief
         Returns this element as a fixed-length signed integer element.
 
     @pre
         This type is a fixed-length signed integer element.
     */
     const FixedLengthSignedIntegerElement& asFixedLengthSignedIntegerElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a fixed-length unsigned enumeration
-        element.
-
-    @pre
-        This type is a fixed-length unsigned enumeration element.
-    */
-    const FixedLengthUnsignedEnumerationElement& asFixedLengthUnsignedEnumerationElement() const noexcept;
 
     /*!
     @brief
@@ -1286,16 +1197,6 @@ public:
 
     /*!
     @brief
-        Returns this element as a variable-length signed enumeration
-        element.
-
-    @pre
-        This type is a variable-length signed enumeration element.
-    */
-    const VariableLengthSignedEnumerationElement& asVariableLengthSignedEnumerationElement() const noexcept;
-
-    /*!
-    @brief
         Returns this element as a variable-length signed integer
         element.
 
@@ -1303,16 +1204,6 @@ public:
         This type is a variable-length signed integer element.
     */
     const VariableLengthSignedIntegerElement& asVariableLengthSignedIntegerElement() const noexcept;
-
-    /*!
-    @brief
-        Returns this element as a variable-length unsigned enumeration
-        element.
-
-    @pre
-        This type is a variable-length unsigned enumeration element.
-    */
-    const VariableLengthUnsignedEnumerationElement& asVariableLengthUnsignedEnumerationElement() const noexcept;
 
     /*!
     @brief
@@ -2223,7 +2114,7 @@ public:
 
 @ingroup elems
 */
-class FixedLengthSignedIntegerElement :
+class FixedLengthSignedIntegerElement final :
     public FixedLengthBitArrayElement
 {
     friend class internal::Vm;
@@ -2266,7 +2157,7 @@ public:
 
 @ingroup elems
 */
-class FixedLengthUnsignedIntegerElement :
+class FixedLengthUnsignedIntegerElement final :
     public FixedLengthBitArrayElement
 {
     friend class internal::Vm;
@@ -2295,68 +2186,6 @@ public:
     unsigned long long value() const noexcept
     {
         return static_cast<unsigned long long>(_theVal.u);
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Fixed-length signed enumeration element.
-
-@ingroup elems
-*/
-class FixedLengthSignedEnumerationElement final :
-    public FixedLengthSignedIntegerElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit FixedLengthSignedEnumerationElement() :
-        FixedLengthSignedIntegerElement {Kind::FIXED_LENGTH_SIGNED_ENUMERATION}
-    {
-    }
-
-public:
-    /// Fixed-length signed enumeration type.
-    const FixedLengthSignedEnumerationType& type() const noexcept
-    {
-        return this->dataType().asFixedLengthSignedEnumerationType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Fixed-length unsigned enumeration element.
-
-@ingroup elems
-*/
-class FixedLengthUnsignedEnumerationElement final :
-    public FixedLengthUnsignedIntegerElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit FixedLengthUnsignedEnumerationElement() :
-        FixedLengthUnsignedIntegerElement {Kind::FIXED_LENGTH_UNSIGNED_ENUMERATION}
-    {
-    }
-
-public:
-    /// Fixed-length unsigned enumeration type.
-    const FixedLengthUnsignedEnumerationType& type() const noexcept
-    {
-        return this->dataType().asFixedLengthUnsignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -2422,12 +2251,6 @@ protected:
     }
 
 public:
-    /// Variable-length integer type.
-    const VariableLengthIntegerType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthIntegerType();
-    }
-
     /*!
     @brief
         Bit-array length (bits).
@@ -2464,7 +2287,7 @@ private:
 
 @ingroup elems
 */
-class VariableLengthSignedIntegerElement :
+class VariableLengthSignedIntegerElement final :
     public VariableLengthIntegerElement
 {
     friend class internal::Vm;
@@ -2507,7 +2330,7 @@ public:
 
 @ingroup elems
 */
-class VariableLengthUnsignedIntegerElement :
+class VariableLengthUnsignedIntegerElement final :
     public VariableLengthIntegerElement
 {
     friend class internal::Vm;
@@ -2536,68 +2359,6 @@ public:
     unsigned long long value() const noexcept
     {
         return static_cast<unsigned long long>(_theVal.u);
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length signed enumeration element.
-
-@ingroup elems
-*/
-class VariableLengthSignedEnumerationElement final :
-    public VariableLengthSignedIntegerElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit VariableLengthSignedEnumerationElement() :
-        VariableLengthSignedIntegerElement {Kind::VARIABLE_LENGTH_SIGNED_ENUMERATION}
-    {
-    }
-
-public:
-    /// Variable-length signed enumeration type.
-    const VariableLengthSignedEnumerationType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthSignedEnumerationType();
-    }
-
-    void accept(ElementVisitor& visitor) const override
-    {
-        visitor.visit(*this);
-    }
-};
-
-/*!
-@brief
-    Variable-length unsigned enumeration element.
-
-@ingroup elems
-*/
-class VariableLengthUnsignedEnumerationElement final :
-    public VariableLengthUnsignedIntegerElement
-{
-    friend class internal::Vm;
-    friend class internal::VmPos;
-
-private:
-    explicit VariableLengthUnsignedEnumerationElement() :
-        VariableLengthUnsignedIntegerElement {Kind::VARIABLE_LENGTH_UNSIGNED_ENUMERATION}
-    {
-    }
-
-public:
-    /// Variable-length unsigned enumeration type.
-    const VariableLengthUnsignedEnumerationType& type() const noexcept
-    {
-        return this->dataType().asVariableLengthUnsignedEnumerationType();
     }
 
     void accept(ElementVisitor& visitor) const override
@@ -4235,19 +3996,9 @@ inline const FixedLengthFloatingPointNumberElement& Element::asFixedLengthFloati
     return static_cast<const FixedLengthFloatingPointNumberElement&>(*this);
 }
 
-inline const FixedLengthSignedEnumerationElement& Element::asFixedLengthSignedEnumerationElement() const noexcept
-{
-    return static_cast<const FixedLengthSignedEnumerationElement&>(*this);
-}
-
 inline const FixedLengthSignedIntegerElement& Element::asFixedLengthSignedIntegerElement() const noexcept
 {
     return static_cast<const FixedLengthSignedIntegerElement&>(*this);
-}
-
-inline const FixedLengthUnsignedEnumerationElement& Element::asFixedLengthUnsignedEnumerationElement() const noexcept
-{
-    return static_cast<const FixedLengthUnsignedEnumerationElement&>(*this);
 }
 
 inline const FixedLengthUnsignedIntegerElement& Element::asFixedLengthUnsignedIntegerElement() const noexcept
@@ -4395,19 +4146,9 @@ inline const MetadataStreamUuidElement& Element::asMetadataStreamUuidElement() c
     return static_cast<const MetadataStreamUuidElement&>(*this);
 }
 
-inline const VariableLengthSignedEnumerationElement& Element::asVariableLengthSignedEnumerationElement() const noexcept
-{
-    return static_cast<const VariableLengthSignedEnumerationElement&>(*this);
-}
-
 inline const VariableLengthSignedIntegerElement& Element::asVariableLengthSignedIntegerElement() const noexcept
 {
     return static_cast<const VariableLengthSignedIntegerElement&>(*this);
-}
-
-inline const VariableLengthUnsignedEnumerationElement& Element::asVariableLengthUnsignedEnumerationElement() const noexcept
-{
-    return static_cast<const VariableLengthUnsignedEnumerationElement&>(*this);
 }
 
 inline const VariableLengthUnsignedIntegerElement& Element::asVariableLengthUnsignedIntegerElement() const noexcept

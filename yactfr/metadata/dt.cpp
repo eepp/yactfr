@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,9 +14,7 @@
 #include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
-#include <yactfr/metadata/vl-enum-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
@@ -70,12 +68,6 @@ const FixedLengthBooleanType& DataType::asFixedLengthBooleanType() const noexcep
     return static_cast<const FixedLengthBooleanType&>(*this);
 }
 
-const FixedLengthIntegerType& DataType::asFixedLengthIntegerType() const noexcept
-{
-    assert(this->isFixedLengthIntegerType());
-    return static_cast<const FixedLengthIntegerType&>(*this);
-}
-
 const FixedLengthSignedIntegerType& DataType::asFixedLengthSignedIntegerType() const noexcept
 {
     assert(this->isFixedLengthSignedIntegerType());
@@ -94,24 +86,6 @@ const FixedLengthFloatingPointNumberType& DataType::asFixedLengthFloatingPointNu
     return static_cast<const FixedLengthFloatingPointNumberType&>(*this);
 }
 
-const FixedLengthSignedEnumerationType& DataType::asFixedLengthSignedEnumerationType() const noexcept
-{
-    assert(this->isFixedLengthSignedEnumerationType());
-    return static_cast<const FixedLengthSignedEnumerationType&>(*this);
-}
-
-const FixedLengthUnsignedEnumerationType& DataType::asFixedLengthUnsignedEnumerationType() const noexcept
-{
-    assert(this->isFixedLengthUnsignedEnumerationType());
-    return static_cast<const FixedLengthUnsignedEnumerationType&>(*this);
-}
-
-const VariableLengthIntegerType& DataType::asVariableLengthIntegerType() const noexcept
-{
-    assert(this->isVariableLengthIntegerType());
-    return static_cast<const VariableLengthIntegerType&>(*this);
-}
-
 const VariableLengthSignedIntegerType& DataType::asVariableLengthSignedIntegerType() const noexcept
 {
     assert(this->isVariableLengthSignedIntegerType());
@@ -122,18 +96,6 @@ const VariableLengthUnsignedIntegerType& DataType::asVariableLengthUnsignedInteg
 {
     assert(this->isVariableLengthUnsignedIntegerType());
     return static_cast<const VariableLengthUnsignedIntegerType&>(*this);
-}
-
-const VariableLengthSignedEnumerationType& DataType::asVariableLengthSignedEnumerationType() const noexcept
-{
-    assert(this->isVariableLengthSignedEnumerationType());
-    return static_cast<const VariableLengthSignedEnumerationType&>(*this);
-}
-
-const VariableLengthUnsignedEnumerationType& DataType::asVariableLengthUnsignedEnumerationType() const noexcept
-{
-    assert(this->isVariableLengthUnsignedEnumerationType());
-    return static_cast<const VariableLengthUnsignedEnumerationType&>(*this);
 }
 
 const NullTerminatedStringType& DataType::asNullTerminatedStringType() const noexcept

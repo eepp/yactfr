@@ -30,7 +30,6 @@
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
@@ -604,7 +603,7 @@ private:
      */
     PseudoDt::UP _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
-    template <typename FlEnumTypeT, typename CreatePseudoDtFuncT>
+    template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
     PseudoDt::UP _finishParseFlEnumType(PseudoDt::UP pseudoDt, bool addDtAlias,
                                         std::string&& potDtAliasName,
                                         CreatePseudoDtFuncT&& createPseudoDtFunc);
@@ -912,13 +911,13 @@ private:
      */
     static boost::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
 
-    template <typename FlEnumTypeT>
-    void _validateFlEnumTypeMapping(Size len, const TextLocation& loc, const std::string& name,
-                                    const typename FlEnumTypeT::RangeSet& ranges) const;
+    template <typename FlIntTypeT>
+    void _validateFlIntTypeMapping(Size len, const TextLocation& loc, const std::string& name,
+                                   const typename FlIntTypeT::MappingRangeSet& ranges) const;
 
-    template <typename FlEnumTypeT>
-    void _validateFlEnumTypeMappings(Size len, const TextLocation& loc,
-                                     const typename FlEnumTypeT::Mappings& mappings) const;
+    template <typename FlIntTypeT>
+    void _validateFlIntTypeMappings(Size len, const TextLocation& loc,
+                                    const typename FlIntTypeT::Mappings& mappings) const;
 
     /*
      * Sets an implicit mapped clock type internal ID for specific
@@ -992,14 +991,14 @@ private:
     std::vector<_StackFrame> _stack;
 };
 
-template <typename FlEnumTypeT, typename CreatePseudoDtFuncT>
+template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
 PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const bool addDtAlias,
                                                 std::string&& potDtAliasName,
                                                 CreatePseudoDtFuncT&& createPseudoDtFunc)
 {
     // parse mappings (we're after `{`)
-    std::unordered_map<std::string, std::set<typename FlEnumTypeT::RangeSet::Range>> pseudoMappings;
-    typename FlEnumTypeT::RangeSet::Value curVal = 0;
+    std::unordered_map<std::string, std::set<typename FlIntTypeT::MappingRangeSet::Range>> pseudoMappings;
+    typename FlIntTypeT::MappingValue curVal = 0;
 
     while (true) {
         std::string name;
@@ -1071,7 +1070,7 @@ PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const boo
             throwTextParseError(ss.str(), *loc);
         }
 
-        pseudoMappings[name].insert(typename FlEnumTypeT::RangeSet::Range {lower, upper});
+        pseudoMappings[name].insert(typename FlIntTypeT::MappingRangeSet::Range {lower, upper});
 
         const bool gotComma = _ss.tryScanToken(",");
 
@@ -1089,10 +1088,10 @@ PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const boo
         throwTextParseError("Expecting at least one mapping.", pseudoDt->loc());
     }
 
-    typename FlEnumTypeT::Mappings mappings;
+    typename FlIntTypeT::Mappings mappings;
 
     for (const auto& nameRangesPair : pseudoMappings) {
-        mappings[nameRangesPair.first] = typename FlEnumTypeT::RangeSet {
+        mappings[nameRangesPair.first] = typename FlIntTypeT::MappingRangeSet {
             std::move(nameRangesPair.second)
         };
     }
@@ -1104,7 +1103,7 @@ PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const boo
         const auto& pseudoDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoDt);
 
         assert(pseudoDtWrapper.dt().isFixedLengthSignedIntegerType());
-        len = pseudoDtWrapper.dt().asFixedLengthIntegerType().length();
+        len = pseudoDtWrapper.dt().asFixedLengthBitArrayType().length();
     } else {
         assert(pseudoDt->kind() == PseudoDt::Kind::FL_UINT);
 
@@ -1113,26 +1112,25 @@ PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const boo
         len = pseudoUIntType.len();
     }
 
-    this->_validateFlEnumTypeMappings<FlEnumTypeT>(len, pseudoDt->loc(), mappings);
+    this->_validateFlIntTypeMappings<FlIntTypeT>(len, pseudoDt->loc(), mappings);
 
-    // create pseudo fixed-length enumeration type
-    auto pseudoEnumType = std::forward<CreatePseudoDtFuncT>(createPseudoDtFunc)(*pseudoDt,
-                                                                                mappings);
+    // create pseudo fixed-length integer type
+    auto pseudoIntType = createPseudoDtFunc(*pseudoDt, mappings);
 
-    // add data type alias if this fixed-length enumeration type has a name
+    // add data type alias if this fixed-length integer type has a name
     if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::move(potDtAliasName), *pseudoEnumType);
+        this->_addDtAlias(std::move(potDtAliasName), *pseudoIntType);
     }
 
-    return pseudoEnumType;
+    return pseudoIntType;
 }
 
-template <typename FlEnumTypeT>
-void TsdlParser::_validateFlEnumTypeMapping(const Size len, const TextLocation& loc,
-                                            const std::string& name,
-                                            const typename FlEnumTypeT::RangeSet& ranges) const
+template <typename FlIntTypeT>
+void TsdlParser::_validateFlIntTypeMapping(const Size len, const TextLocation& loc,
+                                           const std::string& name,
+                                           const typename FlIntTypeT::MappingRangeSet& ranges) const
 {
-    using Value = typename FlEnumTypeT::RangeSet::Value;
+    using Value = typename FlIntTypeT::MappingValue;
 
     const auto lenUnitSuffix = (len == 1) ? "" : "s";
 
@@ -1171,9 +1169,9 @@ void TsdlParser::_validateFlEnumTypeMapping(const Size len, const TextLocation& 
     }
 }
 
-template <typename FlEnumTypeT>
-void TsdlParser::_validateFlEnumTypeMappings(const Size len, const TextLocation& loc,
-                                             const typename FlEnumTypeT::Mappings& mappings) const
+template <typename FlIntTypeT>
+void TsdlParser::_validateFlIntTypeMappings(const Size len, const TextLocation& loc,
+                                             const typename FlIntTypeT::Mappings& mappings) const
 {
     assert(len > 0);
     assert(len <= 64);
@@ -1183,7 +1181,7 @@ void TsdlParser::_validateFlEnumTypeMappings(const Size len, const TextLocation&
     }
 
     for (const auto& nameRangesPair : mappings) {
-        this->_validateFlEnumTypeMapping<FlEnumTypeT>(len, loc, nameRangesPair.first,
+        this->_validateFlIntTypeMapping<FlIntTypeT>(len, loc, nameRangesPair.first,
                                                       nameRangesPair.second);
     }
 }

@@ -226,19 +226,15 @@ descriptions below easier to read and to allow recursion.
   (
     (
       FixedLengthUnsignedIntegerElement |
-      FixedLengthUnsignedEnumerationElement |
       VariableLengthUnsignedIntegerElement |
-      VariableLengthUnsignedEnumerationElement
     )
     [DefaultClockValueElement]
   ) |
   FixedLengthBitArrayElement |
   FixedLengthBooleanElement |
   FixedLengthSignedIntegerElement |
-  FixedLengthSignedEnumerationElement |
   FixedLengthFloatingPointNumberElement |
   VariableLengthSignedIntegerElement |
-  VariableLengthSignedEnumerationElement |
   (
     NullTerminatedStringBeginningElement
     RawDataElement *
@@ -347,12 +343,12 @@ descriptions below easier to read and to allow recursion.
     StructureBeginningElement
     (
       (
-        (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement)
+        FixedLengthUnsignedIntegerElement
         PacketMagicNumberElement
       ) |
       (
         StaticLengthArrayBeginningElement
-        (FixedLengthUnsignedIntegerElement | FixedLengthUnsignedEnumerationElement){16}
+        FixedLengthUnsignedIntegerElement{16}
         MetadataStreamUuidElement
         StaticLengthArrayEndElement
       ) |

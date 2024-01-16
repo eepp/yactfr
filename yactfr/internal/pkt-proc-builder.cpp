@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2016-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,6 @@
 
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
-#include <yactfr/metadata/vl-enum-type.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
@@ -60,24 +59,9 @@ protected:
     Index _curLevel = 0;
 };
 
-static bool isReadVlUInt(const Instr& instr) noexcept
-{
-    return instr.kind() == Instr::Kind::READ_VL_UINT ||
-           instr.kind() == Instr::Kind::READ_VL_UENUM;
-}
-
 static bool isReadFlUInt(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
-    case Instr::Kind::READ_FL_UENUM_A16_BE:
-    case Instr::Kind::READ_FL_UENUM_A16_LE:
-    case Instr::Kind::READ_FL_UENUM_A32_BE:
-    case Instr::Kind::READ_FL_UENUM_A32_LE:
-    case Instr::Kind::READ_FL_UENUM_A64_BE:
-    case Instr::Kind::READ_FL_UENUM_A64_LE:
-    case Instr::Kind::READ_FL_UENUM_A8:
-    case Instr::Kind::READ_FL_UENUM_BE:
-    case Instr::Kind::READ_FL_UENUM_LE:
     case Instr::Kind::READ_FL_UINT_A16_BE:
     case Instr::Kind::READ_FL_UINT_A16_LE:
     case Instr::Kind::READ_FL_UINT_A32_BE:
@@ -97,7 +81,7 @@ static bool isReadFlUInt(const Instr& instr) noexcept
 #ifndef NDEBUG
 static bool isReadUInt(const Instr& instr) noexcept
 {
-    return isReadFlUInt(instr) || isReadVlUInt(instr);
+    return isReadFlUInt(instr) || instr.kind() == Instr::Kind::READ_VL_UINT;
 }
 #endif // NDEBUG
 
@@ -206,15 +190,10 @@ public:
         }
     }
 
-    void visit(ReadFlUEnumInstr& instr) override
-    {
-        this->visit(static_cast<ReadFlUIntInstr&>(instr));
-    }
-
     void visit(ReadVlIntInstr& instr) override
     {
-        if (_uIntTypeRole && isReadVlUInt(instr) &&
-                instr.vlIntType().asVariableLengthUnsignedIntegerType().hasRole(*_uIntTypeRole)) {
+        if (_uIntTypeRole && instr.kind() == Instr::Kind::READ_VL_UINT &&
+                instr.dt().asVariableLengthUnsignedIntegerType().hasRole(*_uIntTypeRole)) {
             _func(_curInstrLoc);
         }
     }
@@ -427,7 +406,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
             instrLoc.proc->insert(std::next(instrLoc.it),
                                   std::make_shared<UpdateDefClkValFlInstr>(readFlBitArrayInstr.len()));
         } else {
-            assert(isReadVlUInt(readUIntInstr));
+            assert(readUIntInstr.kind() == Instr::Kind::READ_VL_UINT);
             instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<UpdateDefClkValInstr>());
         }
     };
@@ -551,16 +530,6 @@ public:
     }
 
     void visit(ReadFlUIntInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(ReadFlSEnumInstr& instr) override
-    {
-        this->_visit(instr);
-    }
-
-    void visit(ReadFlUEnumInstr& instr) override
     {
         this->_visit(instr);
     }
@@ -948,32 +917,12 @@ public:
         _pktProcBuilder->_buildReadFlFloatInstr(_memberType, dt, *_baseProc);
     }
 
-    void visit(const FixedLengthSignedEnumerationType& dt) override
-    {
-        _pktProcBuilder->_buildReadFlSEnumInstr(_memberType, dt, *_baseProc);
-    }
-
-    void visit(const FixedLengthUnsignedEnumerationType& dt) override
-    {
-        _pktProcBuilder->_buildReadFlUEnumInstr(_memberType, dt, *_baseProc);
-    }
-
     void visit(const VariableLengthSignedIntegerType& dt) override
     {
         _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
     }
 
     void visit(const VariableLengthUnsignedIntegerType& dt) override
-    {
-        _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
-    }
-
-    void visit(const VariableLengthSignedEnumerationType& dt) override
-    {
-        _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
-    }
-
-    void visit(const VariableLengthUnsignedEnumerationType& dt) override
     {
         _pktProcBuilder->_buildReadVlIntInstr(_memberType, dt, *_baseProc);
     }
@@ -1097,20 +1046,6 @@ void PktProcBuilder::_buildReadFlFloatInstr(const StructureMemberType * const me
 {
     assert(dt.isFixedLengthFloatingPointNumberType());
     buildBasicReadInstr<ReadFlFloatInstr>(memberType, dt, baseProc);
-}
-
-void PktProcBuilder::_buildReadFlSEnumInstr(const StructureMemberType * const memberType,
-                                            const DataType& dt, Proc& baseProc)
-{
-    assert(dt.isFixedLengthSignedEnumerationType());
-    buildBasicReadInstr<ReadFlSEnumInstr>(memberType, dt, baseProc);
-}
-
-void PktProcBuilder::_buildReadFlUEnumInstr(const StructureMemberType * const memberType,
-                                            const DataType& dt, Proc& baseProc)
-{
-    assert(dt.isFixedLengthUnsignedEnumerationType());
-    buildBasicReadInstr<ReadFlUEnumInstr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadVlIntInstr(const StructureMemberType * const memberType,

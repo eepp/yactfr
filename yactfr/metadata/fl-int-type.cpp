@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,58 +10,24 @@
 
 namespace yactfr {
 
-FixedLengthIntegerType::FixedLengthIntegerType(const _Kind kind, const unsigned int align,
-                                               const unsigned int len, const ByteOrder bo,
-                                               const DisplayBase prefDispBase,
-                                               MapItem::UP attrs) :
-    FixedLengthBitArrayType {kind, align, len, bo, std::move(attrs)},
-    IntegerTypeCommon {prefDispBase}
-{
-}
-
-bool FixedLengthIntegerType::_isEqual(const DataType& other) const noexcept
-{
-    return FixedLengthBitArrayType::_isEqual(other) &&
-           IntegerTypeCommon::_isEqual(other.asFixedLengthIntegerType());
-}
-
-bool FixedLengthIntegerType::operator<(const FixedLengthIntegerType& other) const noexcept
-{
-    if (this->preferredDisplayBase() < other.preferredDisplayBase()) {
-        return true;
-    }
-
-    if (other.preferredDisplayBase() < this->preferredDisplayBase()) {
-        return false;
-    }
-
-    return FixedLengthBitArrayType::operator<(other);
-}
-
-FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const _Kind kind,
-                                                           const unsigned int align,
-                                                           const unsigned int len,
-                                                           const ByteOrder bo,
-                                                           const DisplayBase prefDispBase,
-                                                           MapItem::UP attrs) :
-    FixedLengthIntegerType {kind, align, len, bo, prefDispBase, std::move(attrs)}
-{
-}
-
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int align,
                                                            const unsigned int len,
                                                            const ByteOrder bo,
                                                            const DisplayBase prefDispBase,
+                                                           Mappings mappings,
                                                            MapItem::UP attrs) :
-    FixedLengthIntegerType {_KIND_FL_SINT, align, len, bo, prefDispBase, std::move(attrs)}
+    FixedLengthIntegerType {
+        _KIND_FL_SINT, align, len, bo, prefDispBase, std::move(mappings), std::move(attrs)
+    }
 {
 }
 
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int len,
                                                            const ByteOrder bo,
                                                            const DisplayBase prefDispBase,
+                                                           Mappings mappings,
                                                            MapItem::UP attrs) :
-    FixedLengthSignedIntegerType {1, len, bo, prefDispBase, std::move(attrs)}
+    FixedLengthSignedIntegerType {1, len, bo, prefDispBase, std::move(mappings), std::move(attrs)}
 {
 }
 
@@ -69,41 +35,33 @@ DataType::UP FixedLengthSignedIntegerType::_clone() const
 {
     return FixedLengthSignedIntegerType::create(this->alignment(), this->length(),
                                                 this->byteOrder(), this->preferredDisplayBase(),
+                                                this->mappings(),
                                                 internal::tryCloneAttrs(this->attributes()));
-}
-
-FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const _Kind kind,
-                                                               const unsigned int align,
-                                                               const unsigned int len,
-                                                               const ByteOrder bo,
-                                                               const DisplayBase prefDispBase,
-                                                               MapItem::UP attrs,
-                                                               UnsignedIntegerTypeRoleSet roles) :
-    FixedLengthIntegerType {kind, align, len, bo, prefDispBase, std::move(attrs)},
-    UnsignedIntegerTypeCommon {std::move(roles)}
-{
 }
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int align,
                                                                const unsigned int len,
                                                                const ByteOrder bo,
                                                                const DisplayBase prefDispBase,
+                                                               Mappings mappings,
                                                                MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
-    FixedLengthUnsignedIntegerType {
+    FixedLengthIntegerType {
         _KIND_FL_UINT, align, len, bo, prefDispBase,
-        std::move(attrs), std::move(roles)
-    }
+        std::move(mappings), std::move(attrs)
+    },
+    UnsignedIntegerTypeCommon {std::move(roles)}
 {
 }
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int len,
                                                                const ByteOrder bo,
                                                                const DisplayBase prefDispBase,
+                                                               Mappings mappings,
                                                                MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthUnsignedIntegerType {
-        1, len, bo, prefDispBase, std::move(attrs), std::move(roles)
+        1, len, bo, prefDispBase, std::move(mappings), std::move(attrs), std::move(roles)
     }
 {
 }
@@ -111,7 +69,8 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const FixedLengthUnsignedIntegerType& other) :
     FixedLengthUnsignedIntegerType {
         other.alignment(), other.length(), other.byteOrder(),
-        other.preferredDisplayBase(), internal::tryCloneAttrs(other.attributes()), other.roles()
+        other.preferredDisplayBase(), other.mappings(),
+        internal::tryCloneAttrs(other.attributes()), other.roles()
     }
 {
 }
@@ -120,6 +79,7 @@ DataType::UP FixedLengthUnsignedIntegerType::_clone() const
 {
     return FixedLengthUnsignedIntegerType::create(this->alignment(), this->length(),
                                                   this->byteOrder(), this->preferredDisplayBase(),
+                                                  this->mappings(),
                                                   internal::tryCloneAttrs(this->attributes()),
                                                   this->roles());
 }

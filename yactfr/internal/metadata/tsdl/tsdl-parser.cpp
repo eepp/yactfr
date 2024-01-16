@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -140,11 +140,6 @@ public:
                 !pseudoDt.hasRole(UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP)) {
             pseudoDt.addRole(UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP);
         }
-    }
-
-    void visit(PseudoFlUEnumType& pseudoDt) override
-    {
-        this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
     }
 
     void visit(PseudoSlArrayType& pseudoDt) override
@@ -290,11 +285,6 @@ public:
                 }
             }
         }
-    }
-
-    void visit(PseudoFlUEnumType& pseudoDt) override
-    {
-        this->visit(static_cast<PseudoFlUIntType&>(pseudoDt));
     }
 
     void visit(PseudoSlArrayType& pseudoDt) override
@@ -1320,8 +1310,9 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
         pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), encoding,
                                                            beforeKwLoc);
     } else {
-        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase, encoding,
-                                                      mappedClkTypeId, nullptr,
+        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase,
+                                                      FixedLengthUnsignedIntegerType::Mappings {},
+                                                      encoding, mappedClkTypeId, nullptr,
                                                       UnsignedIntegerTypeRoleSet {}, beforeKwLoc);
     }
 
@@ -1567,32 +1558,34 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
     assert(pseudoDt->isInt());
 
     if (pseudoDt->isUInt()) {
-        return this->_finishParseFlEnumType<FixedLengthUnsignedEnumerationType>(std::move(pseudoDt), addDtAlias,
-                                                                                std::move(potDtAliasName),
-                                                                                [](const auto& pseudoDt,
-                                                                                   const auto& mappings) {
+        return this->_finishParseFlEnumType<FixedLengthUnsignedIntegerType>(std::move(pseudoDt),
+                                                                            addDtAlias,
+                                                                            std::move(potDtAliasName),
+                                                                            [](const auto& pseudoDt,
+                                                                               const auto& mappings) {
             const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoDt);
 
-            return std::make_unique<PseudoFlUEnumType>(pseudoUIntType.align(),
-                                                       pseudoUIntType.len(), pseudoUIntType.bo(),
-                                                       pseudoUIntType.prefDispBase(), mappings,
-                                                       pseudoUIntType.encoding(),
-                                                       pseudoUIntType.mappedClkTypeId(), nullptr,
-                                                       UnsignedIntegerTypeRoleSet {},
-                                                       pseudoDt.loc());
+            return std::make_unique<PseudoFlUIntType>(pseudoUIntType.align(), pseudoUIntType.len(),
+                                                      pseudoUIntType.bo(),
+                                                      pseudoUIntType.prefDispBase(), mappings,
+                                                      pseudoUIntType.encoding(),
+                                                      pseudoUIntType.mappedClkTypeId(), nullptr,
+                                                      UnsignedIntegerTypeRoleSet {},
+                                                      pseudoDt.loc());
         });
     } else {
-        return this->_finishParseFlEnumType<FixedLengthSignedEnumerationType>(std::move(pseudoDt), addDtAlias,
-                                                                              std::move(potDtAliasName),
-                                                                              [](const auto& pseudoDt,
-                                                                                 const auto& mappings) {
-            auto& intType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthIntegerType();
-            auto enumType = FixedLengthSignedEnumerationType::create(intType.alignment(),
-                                                                     intType.length(),
-                                                                     intType.byteOrder(), mappings,
-                                                                     intType.preferredDisplayBase());
+        return this->_finishParseFlEnumType<FixedLengthSignedIntegerType>(std::move(pseudoDt), addDtAlias,
+                                                                          std::move(potDtAliasName),
+                                                                          [](const auto& pseudoDt,
+                                                                             const auto& mappings) {
+            auto& baseIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthSignedIntegerType();
+            auto intType = FixedLengthSignedIntegerType::create(baseIntType.alignment(),
+                                                                baseIntType.length(),
+                                                                baseIntType.byteOrder(),
+                                                                baseIntType.preferredDisplayBase(),
+                                                                mappings);
 
-            return std::make_unique<PseudoScalarDtWrapper>(std::move(enumType), pseudoDt.loc());
+            return std::make_unique<PseudoScalarDtWrapper>(std::move(intType), pseudoDt.loc());
         });
     }
 }

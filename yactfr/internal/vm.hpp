@@ -299,13 +299,9 @@ public:
         FixedLengthBooleanElement flBool;
         FixedLengthSignedIntegerElement flSInt;
         FixedLengthUnsignedIntegerElement flUInt;
-        FixedLengthSignedEnumerationElement flSEnum;
-        FixedLengthUnsignedEnumerationElement flUEnum;
         FixedLengthFloatingPointNumberElement flFloat;
         VariableLengthSignedIntegerElement vlSInt;
         VariableLengthUnsignedIntegerElement vlUInt;
-        VariableLengthSignedEnumerationElement vlSEnum;
-        VariableLengthUnsignedEnumerationElement vlUEnum;
         NullTerminatedStringBeginningElement ntStrBeginning;
         NullTerminatedStringEndElement ntStrEnd;
         RawDataElement rawData;
@@ -1299,28 +1295,8 @@ private:
     _ExecReaction _execReadFlFloat64Be(const Instr& instr);
     _ExecReaction _execReadFlFloatA64Le(const Instr& instr);
     _ExecReaction _execReadFlFloatA64Be(const Instr& instr);
-    _ExecReaction _execReadFlSEnumLe(const Instr& instr);
-    _ExecReaction _execReadFlSEnumBe(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA8(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA16Le(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA32Le(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA64Le(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA16Be(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA32Be(const Instr& instr);
-    _ExecReaction _execReadFlSEnumA64Be(const Instr& instr);
-    _ExecReaction _execReadFlUEnumLe(const Instr& instr);
-    _ExecReaction _execReadFlUEnumBe(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA8(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA16Le(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA32Le(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA64Le(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA16Be(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA32Be(const Instr& instr);
-    _ExecReaction _execReadFlUEnumA64Be(const Instr& instr);
     _ExecReaction _execReadVlUInt(const Instr& instr);
     _ExecReaction _execReadVlSInt(const Instr& instr);
-    _ExecReaction _execReadVlUEnum(const Instr& instr);
-    _ExecReaction _execReadVlSEnum(const Instr& instr);
     _ExecReaction _execReadNtStrUtf8(const Instr& instr);
     _ExecReaction _execReadNtStrUtf16(const Instr& instr);
     _ExecReaction _execReadNtStrUtf32(const Instr& instr);
@@ -1421,16 +1397,6 @@ private:
         this->_setBitArrayElemBase(val, instr, _pos.elems.flSInt);
     }
 
-    void _setFlEnumElem(const std::uint64_t val, const Instr& instr) noexcept
-    {
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flUEnum);
-    }
-
-    void _setFlEnumElem(const std::int64_t val, const Instr& instr) noexcept
-    {
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flSEnum);
-    }
-
     void _setFlFloatVal(const double val, const ReadDataInstr& instr) noexcept
     {
         Vm::_setDataElemFromInstr(_pos.elems.flFloat, instr);
@@ -1480,15 +1446,6 @@ private:
         const auto val = this->_readStdFlInt<RetT, LenBits, Func>(instr);
 
         this->_setFlIntElem(val, instr);
-        this->_consumeExistingBits(LenBits);
-    }
-
-    template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
-    void _execReadStdFlEnum(const Instr& instr)
-    {
-        const auto val = this->_readStdFlInt<RetT, LenBits, Func>(instr);
-
-        this->_setFlEnumElem(val, instr);
         this->_consumeExistingBits(LenBits);
     }
 
@@ -1547,15 +1504,6 @@ private:
         const auto val = this->_readFlInt<RetT, Funcs>(instr);
 
         this->_setFlIntElem(val, instr);
-        this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
-    }
-
-    template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
-    void _execReadFlEnum(const Instr& instr)
-    {
-        const auto val = this->_readFlInt<RetT, Funcs>(instr);
-
-        this->_setFlEnumElem(val, instr);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 

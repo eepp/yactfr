@@ -32,7 +32,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "tag"
         },
@@ -150,7 +150,7 @@
      0       ERI:T0:#test
      0       SC:5 {
      0         ST {
-     0           FLUE:tag:0
+     0           FLUI:tag:0
      8           VU:outer:0 {
      8             ST {
      8               FLUI:len:3
@@ -180,7 +180,7 @@
    208       ERI:T0:#test
    208       SC:5 {
    208         ST {
-   208           FLUE:tag:1
+   208           FLUI:tag:1
    216           VU:outer:1 {
    216             ST {
    216               NTS:s {

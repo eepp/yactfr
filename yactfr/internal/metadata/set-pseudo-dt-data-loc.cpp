@@ -18,7 +18,6 @@
 #include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/ert.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
 #include <yactfr/metadata/int-range.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>

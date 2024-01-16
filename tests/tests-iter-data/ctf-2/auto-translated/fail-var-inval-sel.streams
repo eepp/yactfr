@@ -38,7 +38,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "tag"
         },
@@ -117,5 +117,5 @@
      0       ERI:T0:#test
      0       SC:5 {
      0         ST {
-     0           FLUE:tag:3
+     0           FLUI:tag:3
      8 Selector value 3 doesn't select a valid variant option.

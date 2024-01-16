@@ -91,28 +91,6 @@ public:
 
     /*!
     @brief
-        Visits the fixed-length signed enumeration type \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const FixedLengthSignedEnumerationType& type)
-    {
-    }
-
-    /*!
-    @brief
-        Visits the fixed-length unsigned enumeration type \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const FixedLengthUnsignedEnumerationType& type)
-    {
-    }
-
-    /*!
-    @brief
         Visits the variable-length signed integer type \p type.
 
     @param[in] type
@@ -130,28 +108,6 @@ public:
         Data type to visit.
     */
     virtual void visit(const VariableLengthUnsignedIntegerType& type)
-    {
-    }
-
-    /*!
-    @brief
-        Visits the variable-length signed enumeration type \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const VariableLengthSignedEnumerationType& type)
-    {
-    }
-
-    /*!
-    @brief
-        Visits the variable-length unsigned enumeration type \p type.
-
-    @param[in] type
-        Data type to visit.
-    */
-    virtual void visit(const VariableLengthUnsignedEnumerationType& type)
     {
     }
 

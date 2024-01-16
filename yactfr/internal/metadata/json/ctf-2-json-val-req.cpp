@@ -551,7 +551,7 @@ public:
         return strs::FL_BIT_ARRAY;
     }
 
-private:
+protected:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
@@ -647,21 +647,82 @@ static JsonObjValReq::PropReqsEntry rolesPropReqEntry()
     return {strs::ROLES, {JsonRolesValReq::shared()}};
 }
 
+
 /*
- * CTF 2 JSON fixed-length unsigned integer type value requirement.
+ * CTF 2 JSON integer type mappings value requirement,
+ *
+ * An instance of this class validates that a given JSON value is
+ * a CTF 2 integer type mappings object, each integer value within
+ * the integer ranges satisfying an instance of `JsonIntValReqT`.
  */
-class JsonFlUIntTypeValReq :
-    public JsonFlIntTypeValReq
+template <typename JsonIntValReqT>
+class JsonIntTypeMappingsValReq final :
+    public JsonObjValReq
 {
-protected:
-    explicit JsonFlUIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
-        JsonFlIntTypeValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
+public:
+    explicit JsonIntTypeMappingsValReq() :
+        JsonObjValReq {{}, true}
     {
     }
 
+    static SP shared()
+    {
+        return std::make_shared<JsonIntTypeMappingsValReq>();
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonObjValReq::_validate(jsonVal);
+
+            for (auto& keyJsonValPair : jsonVal.asObj()) {
+                try {
+                    _rangeSetReq.validate(*keyJsonValPair.second);
+                } catch (TextParseError& exc) {
+                    std::ostringstream ss;
+
+                    ss << "In mapping `" << keyJsonValPair.first << "`:";
+                    appendMsgToTextParseError(exc, ss.str(), jsonVal.loc());
+                    throw;
+                }
+            }
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid integer type mappings:", jsonVal.loc());
+            throw;
+        }
+    }
+
+private:
+    JsonIntRangeSetValReqBase<JsonIntValReqT> _rangeSetReq;
+};
+
+/*
+ * Returns the pair (suitable for insertion into a
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 integer type
+ * mappings object property requirement.
+ */
+template <typename JsonIntValReqT>
+JsonObjValReq::PropReqsEntry intTypeMappingsPropReqEntry()
+{
+    return {strs::MAPPINGS, {JsonIntTypeMappingsValReq<JsonIntValReqT>::shared()}};
+}
+
+/*
+ * CTF 2 JSON fixed-length unsigned integer type value requirement.
+ */
+class JsonFlUIntTypeValReq final :
+    public JsonFlIntTypeValReq
+{
 public:
     explicit JsonFlUIntTypeValReq() :
-        JsonFlUIntTypeValReq {this->typeStr()}
+        JsonFlIntTypeValReq {
+            this->typeStr(),
+            {
+                rolesPropReqEntry(),
+                intTypeMappingsPropReqEntry<JsonUIntValReq>(),
+            },
+        }
     {
     }
 
@@ -676,16 +737,10 @@ public:
     }
 
 private:
-    static PropReqs _buildPropReqs(PropReqs&& propReqs)
-    {
-        propReqs.insert(rolesPropReqEntry());
-        return std::move(propReqs);
-    }
-
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonFlIntTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid fixed-length unsigned integer type:",
                                       jsonVal.loc());
@@ -697,18 +752,12 @@ private:
 /*
  * CTF 2 JSON fixed-length signed integer type value requirement.
  */
-class JsonFlSIntTypeValReq :
+class JsonFlSIntTypeValReq final :
     public JsonFlIntTypeValReq
 {
-protected:
-    explicit JsonFlSIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
-        JsonFlIntTypeValReq {std::move(type), std::move(propReqs)}
-    {
-    }
-
 public:
     explicit JsonFlSIntTypeValReq() :
-        JsonFlIntTypeValReq {this->typeStr()}
+        JsonFlIntTypeValReq {this->typeStr(), {intTypeMappingsPropReqEntry<JsonSIntValReq>()}}
     {
     }
 
@@ -726,145 +775,9 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonFlIntTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid fixed-length signed integer type:",
-                                      jsonVal.loc());
-            throw;
-        }
-    }
-};
-
-/*
- * CTF 2 JSON enumeration type mappings value requirement,
- *
- * An instance of this class validates that a given JSON value is
- * a CTF 2 enumeration type mappings object, each integer value within
- * the integer ranges satisfying an instance of `JsonIntValReqT`.
- */
-template <typename JsonIntValReqT>
-class JsonEnumTypeMappingsValReq final :
-    public JsonObjValReq
-{
-public:
-    explicit JsonEnumTypeMappingsValReq() :
-        JsonObjValReq {{}, true}
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonEnumTypeMappingsValReq>();
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonObjValReq::_validate(jsonVal);
-
-            if (jsonVal.asObj().size() < 1) {
-                throwTextParseError("Expecting at least one mapping.", jsonVal.loc());
-            }
-
-            for (auto& keyJsonValPair : jsonVal.asObj()) {
-                try {
-                    _rangeSetReq.validate(*keyJsonValPair.second);
-                } catch (TextParseError& exc) {
-                    std::ostringstream ss;
-
-                    ss << "In mapping `" << keyJsonValPair.first << "`:";
-                    appendMsgToTextParseError(exc, ss.str(), jsonVal.loc());
-                    throw;
-                }
-            }
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid enumeration type mappings:", jsonVal.loc());
-            throw;
-        }
-    }
-
-private:
-    JsonIntRangeSetValReqBase<JsonIntValReqT> _rangeSetReq;
-};
-
-/*
- * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 enumeration type
- * mappings object property requirement.
- */
-template <typename JsonIntValReqT>
-JsonObjValReq::PropReqsEntry enumTypeMappingsPropReqEntry()
-{
-    return {strs::MAPPINGS, {JsonEnumTypeMappingsValReq<JsonIntValReqT>::shared(), true}};
-}
-
-/*
- * CTF 2 JSON fixed-length unsigned enumeration type value requirement.
- */
-class JsonFlUEnumTypeValReq final :
-    public JsonFlUIntTypeValReq
-{
-public:
-    explicit JsonFlUEnumTypeValReq() :
-        JsonFlUIntTypeValReq {
-            this->typeStr(), {enumTypeMappingsPropReqEntry<JsonUIntValReq>()}
-        }
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonFlUEnumTypeValReq>();
-    }
-
-    static constexpr const char *typeStr() noexcept
-    {
-        return strs::FL_UENUM;
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonDtValReq::_validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid fixed-length unsigned enumeration type:",
-                                      jsonVal.loc());
-            throw;
-        }
-    }
-};
-
-/*
- * CTF 2 JSON fixed-length signed enumeration type value requirement.
- */
-class JsonFlSEnumTypeValReq final :
-    public JsonFlSIntTypeValReq
-{
-public:
-    explicit JsonFlSEnumTypeValReq() :
-        JsonFlSIntTypeValReq {this->typeStr(), {enumTypeMappingsPropReqEntry<JsonSIntValReq>()}}
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonFlSEnumTypeValReq>();
-    }
-
-    static constexpr const char *typeStr() noexcept
-    {
-        return strs::FL_SENUM;
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonDtValReq::_validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid fixed-length signed enumeration type:",
                                       jsonVal.loc());
             throw;
         }
@@ -940,18 +853,18 @@ private:
 /*
  * CTF 2 JSON variable-length unsigned integer type value requirement.
  */
-class JsonVlUIntTypeValReq :
+class JsonVlUIntTypeValReq final :
     public JsonVlIntTypeValReq
 {
-protected:
-    explicit JsonVlUIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
-        JsonVlIntTypeValReq {std::move(type), this->_buildPropReqs(std::move(propReqs))}
-    {
-    }
-
 public:
     explicit JsonVlUIntTypeValReq() :
-        JsonVlUIntTypeValReq {this->typeStr()}
+        JsonVlIntTypeValReq {
+            this->typeStr(),
+            {
+                rolesPropReqEntry(),
+                intTypeMappingsPropReqEntry<JsonUIntValReq>(),
+            },
+        }
     {
     }
 
@@ -966,16 +879,10 @@ public:
     }
 
 private:
-    static PropReqs _buildPropReqs(PropReqs&& propReqs)
-    {
-        propReqs.insert(rolesPropReqEntry());
-        return std::move(propReqs);
-    }
-
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonVlIntTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid variable-length unsigned integer type:",
                                       jsonVal.loc());
@@ -987,18 +894,12 @@ private:
 /*
  * CTF 2 JSON variable-length signed integer type value requirement.
  */
-class JsonVlSIntTypeValReq :
+class JsonVlSIntTypeValReq final :
     public JsonVlIntTypeValReq
 {
-protected:
-    explicit JsonVlSIntTypeValReq(std::string&& type, PropReqs&& propReqs = {}) :
-        JsonVlIntTypeValReq {std::move(type), std::move(propReqs)}
-    {
-    }
-
 public:
     explicit JsonVlSIntTypeValReq() :
-        JsonVlSIntTypeValReq {this->typeStr()}
+        JsonVlIntTypeValReq {this->typeStr(), {intTypeMappingsPropReqEntry<JsonSIntValReq>()}}
     {
     }
 
@@ -1016,82 +917,9 @@ private:
     void _validate(const JsonVal& jsonVal) const override
     {
         try {
-            JsonDtValReq::_validate(jsonVal);
+            JsonVlIntTypeValReq::_validate(jsonVal);
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid variable-length signed integer type:",
-                                      jsonVal.loc());
-            throw;
-        }
-    }
-};
-
-/*
- * CTF 2 JSON variable-length unsigned enumeration type value
- * requirement.
- */
-class JsonVlUEnumTypeValReq final :
-    public JsonVlUIntTypeValReq
-{
-public:
-    explicit JsonVlUEnumTypeValReq() :
-        JsonVlUIntTypeValReq {
-            this->typeStr(), {enumTypeMappingsPropReqEntry<JsonUIntValReq>()}
-        }
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonVlUEnumTypeValReq>();
-    }
-
-    static constexpr const char *typeStr() noexcept
-    {
-        return strs::VL_UENUM;
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonDtValReq::_validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid variable-length unsigned enumeration type:",
-                                      jsonVal.loc());
-            throw;
-        }
-    }
-};
-
-/*
- * CTF 2 JSON variable-length signed enumeration type value requirement.
- */
-class JsonVlSEnumTypeValReq final :
-    public JsonVlSIntTypeValReq
-{
-public:
-    explicit JsonVlSEnumTypeValReq() :
-        JsonVlSIntTypeValReq {this->typeStr(), {enumTypeMappingsPropReqEntry<JsonSIntValReq>()}}
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonVlSEnumTypeValReq>();
-    }
-
-    static constexpr const char *typeStr() noexcept
-    {
-        return strs::VL_SENUM;
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonDtValReq::_validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid variable-length signed enumeration type:",
                                       jsonVal.loc());
             throw;
         }
@@ -1773,13 +1601,9 @@ public:
                     JsonFlBoolTypeValReq::typeStr(),
                     JsonFlUIntTypeValReq::typeStr(),
                     JsonFlSIntTypeValReq::typeStr(),
-                    JsonFlUEnumTypeValReq::typeStr(),
-                    JsonFlSEnumTypeValReq::typeStr(),
                     JsonFlFloatTypeValReq::typeStr(),
                     JsonVlUIntTypeValReq::typeStr(),
                     JsonVlSIntTypeValReq::typeStr(),
-                    JsonVlUEnumTypeValReq::typeStr(),
-                    JsonVlSEnumTypeValReq::typeStr(),
                     JsonNtStrTypeValReq::typeStr(),
                     JsonSlStrTypeValReq::typeStr(),
                     JsonDlStrTypeValReq::typeStr(),
@@ -1804,13 +1628,9 @@ public:
         this->_addToDtValReqs(_flBoolTypeValReq);
         this->_addToDtValReqs(_flUIntTypeValReq);
         this->_addToDtValReqs(_flSIntTypeValReq);
-        this->_addToDtValReqs(_flUEnumTypeValReq);
-        this->_addToDtValReqs(_flSEnumTypeValReq);
         this->_addToDtValReqs(_flFloatTypeValReq);
         this->_addToDtValReqs(_vlUIntTypeValReq);
         this->_addToDtValReqs(_vlSIntTypeValReq);
-        this->_addToDtValReqs(_vlUEnumTypeValReq);
-        this->_addToDtValReqs(_vlSEnumTypeValReq);
         this->_addToDtValReqs(_ntStrTypeValReq);
         this->_addToDtValReqs(_slStrTypeValReq);
         this->_addToDtValReqs(_dlStrTypeValReq);
@@ -1863,13 +1683,9 @@ private:
     JsonFlBoolTypeValReq _flBoolTypeValReq;
     JsonFlUIntTypeValReq _flUIntTypeValReq;
     JsonFlSIntTypeValReq _flSIntTypeValReq;
-    JsonFlUEnumTypeValReq _flUEnumTypeValReq;
-    JsonFlSEnumTypeValReq _flSEnumTypeValReq;
     JsonFlFloatTypeValReq _flFloatTypeValReq;
     JsonVlUIntTypeValReq _vlUIntTypeValReq;
     JsonVlSIntTypeValReq _vlSIntTypeValReq;
-    JsonVlUEnumTypeValReq _vlUEnumTypeValReq;
-    JsonVlSEnumTypeValReq _vlSEnumTypeValReq;
     JsonNtStrTypeValReq _ntStrTypeValReq;
     JsonSlStrTypeValReq _slStrTypeValReq;
     JsonDlStrTypeValReq _dlStrTypeValReq;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -46,26 +46,17 @@ protected:
         _KIND_INT                   = (1 << 6) | _KIND_BIT_ARRAY,
         _KIND_UINT                  = _KIND_U | _KIND_INT,
         _KIND_SINT                  = _KIND_S | _KIND_INT,
-        _KIND_ENUM                  = (1 << 7) | _KIND_INT,
-        _KIND_UENUM                 = _KIND_U | _KIND_ENUM,
-        _KIND_SENUM                 = _KIND_S | _KIND_ENUM,
         _KIND_FL_BIT_ARRAY          = _KIND_FL | _KIND_BIT_ARRAY,
         _KIND_FL_BOOL               = (1 << 8) | _KIND_FL_BIT_ARRAY,
         _KIND_FL_INT                = _KIND_FL_BIT_ARRAY | _KIND_INT,
         _KIND_FL_SINT               = _KIND_FL_INT | _KIND_SINT,
         _KIND_FL_UINT               = _KIND_FL_INT | _KIND_UINT,
-        _KIND_FL_ENUM               = _KIND_FL_INT | _KIND_ENUM,
-        _KIND_FL_SENUM              = _KIND_FL_SINT | _KIND_SENUM,
-        _KIND_FL_UENUM              = _KIND_FL_UINT | _KIND_UENUM,
         _KIND_FL_FLOAT              = (1 << 9) | _KIND_FL_BIT_ARRAY,
         _KIND_VL                    = (1 << 10) | _KIND_SCALAR,
         _KIND_VL_BIT_ARRAY          = _KIND_VL | _KIND_BIT_ARRAY,
         _KIND_VL_INT                = _KIND_VL_BIT_ARRAY | _KIND_INT,
         _KIND_VL_SINT               = _KIND_VL_INT | _KIND_SINT,
         _KIND_VL_UINT               = _KIND_VL_INT | _KIND_UINT,
-        _KIND_VL_ENUM               = _KIND_VL_INT | _KIND_ENUM,
-        _KIND_VL_SENUM              = _KIND_VL_SINT | _KIND_SENUM,
-        _KIND_VL_UENUM              = _KIND_VL_UINT | _KIND_UENUM,
         _KIND_NT_STR                = (1 << 11) | _KIND_SCALAR,
         _KIND_COMPOUND              = 1 << 12,
         _KIND_STRUCT                = (1 << 13) | _KIND_COMPOUND,
@@ -144,24 +135,6 @@ public:
         return this->_isKind(_KIND_UINT);
     }
 
-    /// \c true if this type is an enumeration type.
-    bool isEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_ENUM);
-    }
-
-    /// \c true if this type is a signed enumeration type.
-    bool isSignedEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_SENUM);
-    }
-
-    /// \c true if this type is an unsigned enumeration type.
-    bool isUnsignedEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_UENUM);
-    }
-
     /// \c true if this type is a fixed-length bit array type.
     bool isFixedLengthBitArrayType() const noexcept
     {
@@ -202,28 +175,6 @@ public:
         return this->_isKind(_KIND_FL_FLOAT);
     }
 
-    /// \c true if this type is a fixed-length enumeration type.
-    bool isFixedLengthEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_FL_ENUM);
-    }
-
-    /// \c true if this type is a fixed-length signed enumeration type.
-    bool isFixedLengthSignedEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_FL_SENUM);
-    }
-
-    /*!
-    @brief
-        \c true if this type is a fixed-length unsigned enumeration
-        type.
-    */
-    bool isFixedLengthUnsignedEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_FL_UENUM);
-    }
-
     /// \c true if this type is a variable-length integer type.
     bool isVariableLengthIntegerType() const noexcept
     {
@@ -240,32 +191,6 @@ public:
     bool isVariableLengthUnsignedIntegerType() const noexcept
     {
         return this->_isKind(_KIND_VL_UINT);
-    }
-
-    /// \c true if this type is a variable-length enumeration type.
-    bool isVariableLengthEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_VL_ENUM);
-    }
-
-    /*!
-    @brief
-        \c true if this type is a variable-length signed enumeration
-        type.
-    */
-    bool isVariableLengthSignedEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_VL_SENUM);
-    }
-
-    /*!
-    @brief
-        \c true if this type is a variable-length unsigned enumeration
-        type.
-    */
-    bool isVariableLengthUnsignedEnumerationType() const noexcept
-    {
-        return this->_isKind(_KIND_VL_UENUM);
     }
 
     /// \c true if this type is a null-terminated string type.
@@ -450,15 +375,6 @@ public:
 
     /*!
     @brief
-        Returns this type as a fixed-length integer type.
-
-    @pre
-        This type is a fixed-length integer type.
-    */
-    const FixedLengthIntegerType& asFixedLengthIntegerType() const noexcept;
-
-    /*!
-    @brief
         Returns this type as a fixed-length signed integer type.
 
     @pre
@@ -486,33 +402,6 @@ public:
 
     /*!
     @brief
-        Returns this type as a fixed-length signed enumeration type.
-
-    @pre
-        This type is a fixed-length signed enumeration type.
-    */
-    const FixedLengthSignedEnumerationType& asFixedLengthSignedEnumerationType() const noexcept;
-
-    /*!
-    @brief
-        Returns this type as a fixed-length unsigned enumeration type.
-
-    @pre
-        This type is a fixed-length unsigned enumeration type.
-    */
-    const FixedLengthUnsignedEnumerationType& asFixedLengthUnsignedEnumerationType() const noexcept;
-
-    /*!
-    @brief
-        Returns this type as a variable-length integer type.
-
-    @pre
-        This type is a variable-length integer type.
-    */
-    const VariableLengthIntegerType& asVariableLengthIntegerType() const noexcept;
-
-    /*!
-    @brief
         Returns this type as a variable-length signed integer type.
 
     @pre
@@ -528,25 +417,6 @@ public:
         This type is a variable-length unsigned integer type.
     */
     const VariableLengthUnsignedIntegerType& asVariableLengthUnsignedIntegerType() const noexcept;
-
-    /*!
-    @brief
-        Returns this type as a variable-length signed enumeration type.
-
-    @pre
-        This type is a variable-length signed enumeration type.
-    */
-    const VariableLengthSignedEnumerationType& asVariableLengthSignedEnumerationType() const noexcept;
-
-    /*!
-    @brief
-        Returns this type as a variable-length unsigned enumeration
-        type.
-
-    @pre
-        This type is a variable-length unsigned enumeration type.
-    */
-    const VariableLengthUnsignedEnumerationType& asVariableLengthUnsignedEnumerationType() const noexcept;
 
     /*!
     @brief

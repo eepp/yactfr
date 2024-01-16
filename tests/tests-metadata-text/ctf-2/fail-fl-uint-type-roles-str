@@ -26,5 +26,6 @@
 [7:9] Invalid structure member type:
 [9:26] In object property `field-class`:
 [9:26] Invalid fixed-length unsigned integer type:
+[9:26] Invalid fixed-length bit array type:
 [13:22] In object property `roles`:
 [13:22] Expecting an array.

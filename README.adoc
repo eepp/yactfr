@@ -132,11 +132,10 @@ functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 `madvise()`.
 
 * Decodes up to, and including, 64-bit signed/unsigned CTF fixed-length
-  bit arrays, integers, and enumerations (no "`big integers`").
+  bit arrays and integers (no "`big integers`").
 
 * Decodes up to, and including, 63-bit (effective, which means
-  72{nbsp}total) signed/unsigned CTF variable-length integers
-  and enumerations.
+  72{nbsp}total) signed/unsigned CTF variable-length integers.
 
 * Only decodes 32-bit and 64-bit CTF fixed-length floating point
   numbers.

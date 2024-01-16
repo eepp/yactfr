@@ -38,7 +38,7 @@
                 ]
               ]
             },
-            "type": "fixed-length-unsigned-enumeration"
+            "type": "fixed-length-unsigned-integer"
           },
           "name": "tag"
         },
@@ -117,7 +117,7 @@
      0       ERI:T0:#test
      0       SC:5 {
      0         ST {
-     0           FLUE:tag:1
+     0           FLUI:tag:1
      8           VU:v:1 {
      8             NTS {
      8               RD:6:blabli

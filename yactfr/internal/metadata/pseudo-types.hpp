@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,7 +21,7 @@
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/int-range-set.hpp>
-#include <yactfr/metadata/fl-enum-type.hpp>
+#include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/str-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
@@ -141,7 +141,6 @@ public:
     {
         SCALAR_DT_WRAPPER,
         FL_UINT,
-        FL_UENUM,
         SL_ARRAY,
         DL_ARRAY,
         DL_BLOB,
@@ -211,7 +210,7 @@ using ConstPseudoDtSet = std::unordered_set<const PseudoDt *>;
 
 /*
  * This is a wrapper for any yactfr scalar type, except unsigned integer
- * and enumeration types.
+ * types.
  *
  * Scalar types are final and don't need to be modified during the
  * parsing process, so we can simply create them directly, wrap them
@@ -301,6 +300,7 @@ class PseudoFlUIntType :
 public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
                               DisplayBase prefDispBase,
+                              FixedLengthUnsignedIntegerType::Mappings mappings,
                               boost::optional<StringEncoding> encoding = boost::none,
                               boost::optional<std::string> mappedClkTypeId = boost::none,
                               MapItem::UP attrs = nullptr,
@@ -369,48 +369,20 @@ public:
         return _roles.find(role) != _roles.end();
     }
 
-private:
-    unsigned int _align;
-    unsigned int _len;
-    ByteOrder _bo;
-    DisplayBase _prefDispBase;
-    boost::optional<StringEncoding> _encoding;
-    boost::optional<std::string> _mappedClkTypeId;
-    UnsignedIntegerTypeRoleSet _roles;
-};
-
-/*
- * Pseudo fixed-length unsigned enumeration type.
- */
-class PseudoFlUEnumType final :
-    public PseudoFlUIntType
-{
-public:
-    explicit PseudoFlUEnumType(unsigned int align, unsigned int len, ByteOrder bo,
-                               DisplayBase prefDispBase,
-                               FixedLengthUnsignedEnumerationType::Mappings mappings,
-                               boost::optional<StringEncoding> encoding = boost::none,
-                               boost::optional<std::string> mappedClkTypeId = boost::none,
-                               MapItem::UP attrs = nullptr,
-                               UnsignedIntegerTypeRoleSet roles = {},
-                               TextLocation loc = TextLocation {});
-
-    PseudoDt::Kind kind() const noexcept override
-    {
-        return PseudoDt::Kind::FL_UENUM;
-    }
-
-    PseudoDt::UP clone() const override;
-    void accept(PseudoDtVisitor& visitor) override;
-    void accept(ConstPseudoDtVisitor& visitor) const override;
-
-    const FixedLengthUnsignedEnumerationType::Mappings& mappings() const noexcept
+    const FixedLengthUnsignedIntegerType::Mappings& mappings() const noexcept
     {
         return _mappings;
     }
 
 private:
-    FixedLengthUnsignedEnumerationType::Mappings _mappings;
+    unsigned int _align;
+    unsigned int _len;
+    ByteOrder _bo;
+    DisplayBase _prefDispBase;
+    FixedLengthUnsignedIntegerType::Mappings _mappings;
+    boost::optional<StringEncoding> _encoding;
+    boost::optional<std::string> _mappedClkTypeId;
+    UnsignedIntegerTypeRoleSet _roles;
 };
 
 /*

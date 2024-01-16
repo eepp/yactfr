@@ -75,7 +75,7 @@
                   ]
                 },
                 "preferred-display-base": 16,
-                "type": "fixed-length-unsigned-enumeration"
+                "type": "fixed-length-unsigned-integer"
               },
               "name": "tag"
             },
@@ -111,7 +111,7 @@
                               ]
                             },
                             "preferred-display-base": 16,
-                            "type": "fixed-length-unsigned-enumeration"
+                            "type": "fixed-length-unsigned-integer"
                           },
                           "name": "tag"
                         },
@@ -216,7 +216,7 @@
                               ]
                             },
                             "preferred-display-base": 16,
-                            "type": "fixed-length-unsigned-enumeration"
+                            "type": "fixed-length-unsigned-integer"
                           },
                           "name": "tag"
                         },
@@ -321,7 +321,7 @@
                               ]
                             },
                             "preferred-display-base": 16,
-                            "type": "fixed-length-unsigned-enumeration"
+                            "type": "fixed-length-unsigned-integer"
                           },
                           "name": "tag"
                         },

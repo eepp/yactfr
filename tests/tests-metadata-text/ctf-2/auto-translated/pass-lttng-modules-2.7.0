@@ -123,7 +123,7 @@
           "roles": [
             "event-record-class-id"
           ],
-          "type": "fixed-length-unsigned-enumeration"
+          "type": "fixed-length-unsigned-integer"
         },
         "name": "id"
       },
@@ -40264,7 +40264,7 @@
           "roles": [
             "event-record-class-id"
           ],
-          "type": "fixed-length-unsigned-enumeration"
+          "type": "fixed-length-unsigned-integer"
         },
         "name": "id"
       },

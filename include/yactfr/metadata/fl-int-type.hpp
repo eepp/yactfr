@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -29,7 +29,8 @@ class TraceTypeImpl;
 
 /*!
 @brief
-    Abstract fixed-length integer type.
+    Abstract fixed-length integer type having mapping values of type
+    `MappingValueT`.
 
 @ingroup metadata_dt
 
@@ -39,15 +40,26 @@ Use the concrete FixedLengthSignedIntegerType and
 FixedLengthUnsignedIntegerType depending on the signedness of the data
 stream fixed-length integers to describe.
 */
+template <typename MappingValueT>
 class FixedLengthIntegerType :
     public FixedLengthBitArrayType,
-    public IntegerTypeCommon
+    public IntegerTypeCommon<MappingValueT>
 {
     friend class internal::TraceTypeImpl;
 
+public:
+    using typename IntegerTypeCommon<MappingValueT>::Mappings;
+    using typename IntegerTypeCommon<MappingValueT>::MappingRangeSet;
+    using typename IntegerTypeCommon<MappingValueT>::MappingValue;
+
 protected:
     explicit FixedLengthIntegerType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
-                                    DisplayBase prefDispBase, MapItem::UP attrs);
+                                    DisplayBase prefDispBase, Mappings&& mappings,
+                                    MapItem::UP attrs) :
+        FixedLengthBitArrayType {kind, align, len, bo, std::move(attrs)},
+        IntegerTypeCommon<MappingValueT> {prefDispBase, std::move(mappings)}
+    {
+    }
 
 public:
     /*!
@@ -64,10 +76,33 @@ public:
         \c true if this type is less than \p other (respects total
         order).
     */
-    bool operator<(const FixedLengthIntegerType& other) const noexcept;
+    bool operator<(const FixedLengthIntegerType& other) const noexcept
+    {
+        if (this->mappings() < other.mappings()) {
+            return true;
+        }
+
+        if (other.mappings() < this->mappings()) {
+            return false;
+        }
+
+        if (this->preferredDisplayBase() < other.preferredDisplayBase()) {
+            return true;
+        }
+
+        if (other.preferredDisplayBase() < this->preferredDisplayBase()) {
+            return false;
+        }
+
+        return FixedLengthBitArrayType::operator<(other);
+    }
 
 protected:
-    bool _isEqual(const DataType& other) const noexcept override;
+    bool _isEqual(const DataType& other) const noexcept override
+    {
+        return FixedLengthBitArrayType::_isEqual(other) &&
+               IntegerTypeCommon<MappingValueT>::_isEqual(static_cast<const FixedLengthIntegerType&>(other));
+    }
 };
 
 /*!
@@ -79,17 +114,12 @@ protected:
 A signed fixed-length integer type describes data stream signed
 integers.
 */
-class FixedLengthSignedIntegerType :
-    public FixedLengthIntegerType
+class FixedLengthSignedIntegerType final :
+    public FixedLengthIntegerType<internal::SignedIntegerTypeMappingValue>
 {
 public:
     /// Unique pointer to constant fixed-length signed integer type.
     using UP = std::unique_ptr<const FixedLengthSignedIntegerType>;
-
-protected:
-    explicit FixedLengthSignedIntegerType(_Kind kind, unsigned int align, unsigned int len,
-                                          ByteOrder bo, DisplayBase prefDispBase,
-                                          MapItem::UP attrs);
 
 public:
     /*!
@@ -108,6 +138,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length signed integers
@@ -126,6 +158,7 @@ public:
     explicit FixedLengthSignedIntegerType(unsigned int alignment, unsigned int length,
                                           ByteOrder byteOrder,
                                           DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                          Mappings mappings = Mappings {},
                                           MapItem::UP attributes = nullptr);
 
     /*!
@@ -142,6 +175,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length signed integers
@@ -155,6 +190,7 @@ public:
     */
     explicit FixedLengthSignedIntegerType(unsigned int length, ByteOrder byteOrder,
                                           DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                          Mappings mappings = Mappings {},
                                           MapItem::UP attributes = nullptr);
 
     /*!
@@ -216,19 +252,13 @@ private:
 An fixed-length unsigned integer type describes data stream fixed-length
 unsigned integers.
 */
-class FixedLengthUnsignedIntegerType :
-    public FixedLengthIntegerType,
+class FixedLengthUnsignedIntegerType final :
+    public FixedLengthIntegerType<internal::UnsignedIntegerTypeMappingValue>,
     public UnsignedIntegerTypeCommon
 {
 public:
     /// Unique pointer to constant fixed-length unsigned integer type.
     using UP = std::unique_ptr<const FixedLengthUnsignedIntegerType>;
-
-protected:
-    explicit FixedLengthUnsignedIntegerType(_Kind kind, unsigned int align, unsigned int len,
-                                            ByteOrder bo, DisplayBase prefDispBase,
-                                            MapItem::UP attrs,
-                                            UnsignedIntegerTypeRoleSet roles);
 
 public:
     /*!
@@ -247,6 +277,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length unsigned integers
@@ -267,6 +299,7 @@ public:
     explicit FixedLengthUnsignedIntegerType(unsigned int alignment, unsigned int length,
                                             ByteOrder byteOrder,
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                            Mappings mappings = Mappings {},
                                             MapItem::UP attributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});
 
@@ -284,6 +317,8 @@ public:
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         integers described by this type.
+    @param[in] mappings
+        Mappings.
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length unsigned integers
@@ -299,6 +334,7 @@ public:
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int length, ByteOrder byteOrder,
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                            Mappings mappings = Mappings {},
                                             MapItem::UP attributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});
 
@@ -346,10 +382,8 @@ public:
     */
     bool operator<(const FixedLengthUnsignedIntegerType& other) const noexcept;
 
-protected:
-    bool _isEqual(const DataType& other) const noexcept override;
-
 private:
+    bool _isEqual(const DataType& other) const noexcept override;
     DataType::UP _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override

@@ -85,7 +85,7 @@
             ]
           },
           "preferred-display-base": 16,
-          "type": "fixed-length-signed-enumeration"
+          "type": "fixed-length-signed-integer"
         },
         "name": "field"
       }

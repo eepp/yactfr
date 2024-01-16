@@ -190,7 +190,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    248       ERI:T29:#coronin
    248       SC:3 {
    248         ST {
-   248           FLUE:ctx1:602918315
+   248           FLUI:ctx1:602918315
    280           NTS:ctx2 {
    280             RD:12:hello hello$00
    376           }
@@ -220,7 +220,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    504       ERI:T119:#keratin
    504       SC:3 {
    504         ST {
-   504           FLUE:ctx1:1
+   504           FLUI:ctx1:1
    536           NTS:ctx2 {
    536             RD:10:submarine$00
    616           }
@@ -243,7 +243,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
    664       ERI:T29:#coronin
    664       SC:3 {
    664         ST {
-   664           FLUE:ctx1:1147574528
+   664           FLUI:ctx1:1147574528
    696           NTS:ctx2 {
    696             RD:4:lel$00
    728           }
@@ -411,7 +411,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1776       ERI:T5:#the variant event
   1776       SC:3 {
   1776         ST {
-  1776           FLUE:ctx1:1146447479
+  1776           FLUI:ctx1:1146447479
   1808           NTS:ctx2 {
   1808             RD:8:mystery$00
   1872           }
@@ -419,7 +419,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   1872       }
   1872       SC:5 {
   1872         ST {
-  1872           FLUE:tag:192
+  1872           FLUI:tag:192
   1880           VU:vvv:1146447479 {
   1880             NTS {
   1880               RD:13:it's my life$00
@@ -442,7 +442,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2064       ERI:T5:#the variant event
   2064       SC:3 {
   2064         ST {
-  2064           FLUE:ctx1:1146447480
+  2064           FLUI:ctx1:1146447480
   2096           NTS:ctx2 {
   2096             RD:12:parenthesis$00
   2192           }
@@ -450,7 +450,7 @@ c1fc1fc1 4d86e02c-f527-4971-b960-971d26074bd4 23
   2192       }
   2192       SC:5 {
   2192         ST {
-  2192           FLUE:tag:69
+  2192           FLUI:tag:69
   2200           VU:vvv:1146447480 {
   2200             DLA {
   2200               FLUI:0

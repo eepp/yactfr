@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2017-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -121,6 +121,7 @@ WithAttrsMixin::WithAttrsMixin(MapItem::UP attrs) :
 
 PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
                                    const ByteOrder bo, const DisplayBase prefDispBase,
+                                   FixedLengthUnsignedIntegerType::Mappings mappings,
                                    boost::optional<StringEncoding> encoding,
                                    boost::optional<std::string> mappedClkTypeId,
                                    MapItem::UP attrs, UnsignedIntegerTypeRoleSet roles,
@@ -131,6 +132,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
     _len {len},
     _bo {bo},
     _prefDispBase {prefDispBase},
+    _mappings {mappings},
     _encoding {std::move(encoding)},
     _mappedClkTypeId {std::move(mappedClkTypeId)},
     _roles {std::move(roles)}
@@ -139,8 +141,8 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
 
 PseudoDt::UP PseudoFlUIntType::clone() const
 {
-    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _encoding,
-                                              _mappedClkTypeId,
+    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _mappings,
+                                              _encoding, _mappedClkTypeId,
                                               tryCloneAttrs(this->attrs()), this->roles(),
                                               this->loc());
 }
@@ -168,41 +170,6 @@ bool PseudoFlUIntType::isUInt() const noexcept
 bool PseudoFlUIntType::isFlUInt() const noexcept
 {
     return true;
-}
-
-PseudoFlUEnumType::PseudoFlUEnumType(const unsigned int align, const unsigned int len,
-                                     const ByteOrder bo, const DisplayBase prefDispBase,
-                                     FixedLengthUnsignedEnumerationType::Mappings mappings,
-                                     boost::optional<StringEncoding> encoding,
-                                     boost::optional<std::string> mappedClkTypeId,
-                                     MapItem::UP attrs, UnsignedIntegerTypeRoleSet roles,
-                                     TextLocation loc) :
-    PseudoFlUIntType {
-        align, len, bo, prefDispBase, std::move(encoding),
-        std::move(mappedClkTypeId), std::move(attrs),
-        std::move(roles), std::move(loc)
-    },
-    _mappings {std::move(mappings)}
-{
-}
-
-PseudoDt::UP PseudoFlUEnumType::clone() const
-{
-    return std::make_unique<PseudoFlUEnumType>(this->align(), this->len(), this->bo(),
-                                               this->prefDispBase(), _mappings,
-                                               this->encoding(), this->mappedClkTypeId(),
-                                               tryCloneAttrs(this->attrs()), this->roles(),
-                                               this->loc());
-}
-
-void PseudoFlUEnumType::accept(PseudoDtVisitor& visitor)
-{
-    visitor.visit(*this);
-}
-
-void PseudoFlUEnumType::accept(ConstPseudoDtVisitor& visitor) const
-{
-    visitor.visit(*this);
 }
 
 PseudoSlDtMixin::PseudoSlDtMixin(const Size len) :
@@ -610,8 +577,7 @@ void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
 
 static bool isFlUIntNotDtWrapper(const PseudoDt& pseudoDt) noexcept
 {
-    return pseudoDt.kind() == PseudoDt::Kind::FL_UINT ||
-           pseudoDt.kind() == PseudoDt::Kind::FL_UENUM;
+    return pseudoDt.kind() == PseudoDt::Kind::FL_UINT;
 }
 
 static auto validateNoMappedClkTypeId(const PseudoDt& basePseudoDt)

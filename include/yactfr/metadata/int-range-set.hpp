@@ -174,6 +174,26 @@ public:
         return !(*this == other);
     }
 
+    /*!
+    @brief
+        Less-than operator.
+
+    @param[in] other
+        Other integer range set to compare to.
+
+    @returns
+        \c true if this integer range set is less than \p other
+        (respects total order).
+    */
+    bool operator<(const IntegerRangeSet& other) const noexcept
+    {
+        if (_ranges < other._ranges) {
+            return true;
+        }
+
+        return false;
+    }
+
 private:
     std::set<Range> _ranges;
 };

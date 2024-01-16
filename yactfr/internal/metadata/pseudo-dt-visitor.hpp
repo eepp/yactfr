@@ -31,10 +31,6 @@ public:
     {
     }
 
-    virtual void visit(PseudoFlUEnumType&)
-    {
-    }
-
     virtual void visit(PseudoSlArrayType&)
     {
     }
@@ -83,10 +79,6 @@ public:
     }
 
     virtual void visit(const PseudoFlUIntType&)
-    {
-    }
-
-    virtual void visit(const PseudoFlUEnumType&)
     {
     }
 

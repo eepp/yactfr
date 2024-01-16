@@ -101,16 +101,6 @@ void ElementVisitor::visit(const FixedLengthUnsignedIntegerElement& elem)
     this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));
 }
 
-void ElementVisitor::visit(const FixedLengthSignedEnumerationElement& elem)
-{
-   this->visit(static_cast<const FixedLengthSignedIntegerElement&>(elem));
-}
-
-void ElementVisitor::visit(const FixedLengthUnsignedEnumerationElement& elem)
-{
-   this->visit(static_cast<const FixedLengthUnsignedIntegerElement&>(elem));
-}
-
 void ElementVisitor::visit(const FixedLengthFloatingPointNumberElement& elem)
 {
     this->visit(static_cast<const FixedLengthBitArrayElement&>(elem));
@@ -128,16 +118,6 @@ void ElementVisitor::visit(const VariableLengthSignedIntegerElement& elem)
 void ElementVisitor::visit(const VariableLengthUnsignedIntegerElement& elem)
 {
     this->visit(static_cast<const VariableLengthIntegerElement&>(elem));
-}
-
-void ElementVisitor::visit(const VariableLengthSignedEnumerationElement& elem)
-{
-   this->visit(static_cast<const VariableLengthSignedIntegerElement&>(elem));
-}
-
-void ElementVisitor::visit(const VariableLengthUnsignedEnumerationElement& elem)
-{
-   this->visit(static_cast<const VariableLengthUnsignedIntegerElement&>(elem));
 }
 
 void ElementVisitor::visit(const NullTerminatedStringBeginningElement& elem)
