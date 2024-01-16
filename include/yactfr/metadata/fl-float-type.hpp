@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -51,6 +51,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length floating point numbers
         described by this floating point number type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length floating point numbers
+        described by this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length floating point
@@ -68,6 +84,7 @@ public:
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int alignment, unsigned int length,
                                                 ByteOrder byteOrder,
+                                                const boost::optional<BitOrder>& bitOrder = boost::none,
                                                 MapItem::UP attributes = nullptr);
 
     /*!
@@ -81,6 +98,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length floating point numbers
         described by this floating point number type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length floating point numbers
+        described by this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length floating point
@@ -93,6 +126,7 @@ public:
         \p length is 32 or 64.
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int length, ByteOrder byteOrder,
+                                                const boost::optional<BitOrder>& bitOrder = boost::none,
                                                 MapItem::UP attributes = nullptr);
 
     /*!

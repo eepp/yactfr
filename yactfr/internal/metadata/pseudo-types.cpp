@@ -120,17 +120,18 @@ WithAttrsMixin::WithAttrsMixin(MapItem::UP attrs) :
 }
 
 PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int len,
-                                   const ByteOrder bo, const DisplayBase prefDispBase,
+                                   const ByteOrder bo, const BitOrder bio,
+                                   const DisplayBase prefDispBase,
                                    FixedLengthUnsignedIntegerType::Mappings mappings,
                                    boost::optional<StringEncoding> encoding,
-                                   boost::optional<std::string> mappedClkTypeId,
-                                   MapItem::UP attrs, UnsignedIntegerTypeRoleSet roles,
-                                   TextLocation loc) :
+                                   boost::optional<std::string> mappedClkTypeId, MapItem::UP attrs,
+                                   UnsignedIntegerTypeRoleSet roles, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _align {align},
     _len {len},
     _bo {bo},
+    _bio {bio},
     _prefDispBase {prefDispBase},
     _mappings {mappings},
     _encoding {std::move(encoding)},
@@ -141,7 +142,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
 
 PseudoDt::UP PseudoFlUIntType::clone() const
 {
-    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _prefDispBase, _mappings,
+    return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _bio, _prefDispBase, _mappings,
                                               _encoding, _mappedClkTypeId,
                                               tryCloneAttrs(this->attrs()), this->roles(),
                                               this->loc());

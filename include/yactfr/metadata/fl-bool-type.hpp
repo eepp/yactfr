@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2022-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -49,6 +49,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length booleans described by
         this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length booleans described by
+        this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length booleans described
@@ -65,7 +81,8 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBooleanType(unsigned int alignment, unsigned int length,
-                                    ByteOrder byteOrder, MapItem::UP attributes = nullptr);
+                                    ByteOrder byteOrder, const boost::optional<BitOrder>& bitOrder = boost::none,
+                                    MapItem::UP attributes = nullptr);
 
     /*!
     @brief
@@ -78,6 +95,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length booleans described by
         this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length booleans described by
+        this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length booleans described
@@ -90,6 +123,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBooleanType(unsigned int length, ByteOrder byteOrder,
+                                    const boost::optional<BitOrder>& bitOrder = boost::none,
                                     MapItem::UP attributes = nullptr);
 
     /*!

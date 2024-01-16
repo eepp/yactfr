@@ -1182,6 +1182,11 @@ PseudoDt::UP TsdlParser::_fastPseudoFlIntType(TextLocation loc)
     return nullptr;
 }
 
+static BitOrder bioFromBo(const ByteOrder bo) noexcept
+{
+    return bo == ByteOrder::BIG ? BitOrder::LAST_TO_FIRST : BitOrder::FIRST_TO_LAST;
+}
+
 PseudoDt::UP TsdlParser::_tryParseFlIntType()
 {
     _ss.skipCommentsAndWhitespaces();
@@ -1305,12 +1310,12 @@ PseudoDt::UP TsdlParser::_tryParseFlIntType()
                                 *mapAttrLoc);
         }
 
-        auto intType = FixedLengthSignedIntegerType::create(align, size, bo, dispBase);
+        auto intType = FixedLengthSignedIntegerType::create(align, size, bo, bioFromBo(bo), dispBase);
 
         pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), encoding,
                                                            beforeKwLoc);
     } else {
-        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, dispBase,
+        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, bioFromBo(bo), dispBase,
                                                       FixedLengthUnsignedIntegerType::Mappings {},
                                                       encoding, mappedClkTypeId, nullptr,
                                                       UnsignedIntegerTypeRoleSet {}, beforeKwLoc);
@@ -1404,7 +1409,8 @@ PseudoDt::UP TsdlParser::_tryParseFlFloatType()
         throwTextParseError(ss.str(), beginLoc);
     }
 
-    auto floatType = FixedLengthFloatingPointNumberType::create(align, expDig + mantDig, bo);
+    auto floatType = FixedLengthFloatingPointNumberType::create(align, expDig + mantDig, bo,
+                                                                bioFromBo(bo));
 
     return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), beginLoc);
 }
@@ -1566,7 +1572,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
             const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoDt);
 
             return std::make_unique<PseudoFlUIntType>(pseudoUIntType.align(), pseudoUIntType.len(),
-                                                      pseudoUIntType.bo(),
+                                                      pseudoUIntType.bo(), pseudoUIntType.bio(),
                                                       pseudoUIntType.prefDispBase(), mappings,
                                                       pseudoUIntType.encoding(),
                                                       pseudoUIntType.mappedClkTypeId(), nullptr,
@@ -1582,6 +1588,7 @@ PseudoDt::UP TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
             auto intType = FixedLengthSignedIntegerType::create(baseIntType.alignment(),
                                                                 baseIntType.length(),
                                                                 baseIntType.byteOrder(),
+                                                                baseIntType.bitOrder(),
                                                                 baseIntType.preferredDisplayBase(),
                                                                 mappings);
 

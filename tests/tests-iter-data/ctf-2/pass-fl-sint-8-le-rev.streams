@@ -1,0 +1,79 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 8,
+            "type": "fixed-length-signed-integer"
+          },
+          "name": "u8le-norm"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "length": 8,
+            "type": "fixed-length-signed-integer"
+          },
+          "name": "u8le-rev"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+[10011110] [10011110]
+[10000000] [10000000]
+[00110011] [00110011]
+----
+
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLSI:u8le-norm:-98
+     8           FLSI:u8le-rev:121
+    16         }
+    16       }
+    16     }
+    16     ER {
+    16       ERI:T0:#test
+    16       SC:5 {
+    16         ST {
+    16           FLSI:u8le-norm:-128
+    24           FLSI:u8le-rev:1
+    32         }
+    32       }
+    32     }
+    32     ER {
+    32       ERI:T0:#test
+    32       SC:5 {
+    32         ST {
+    32           FLSI:u8le-norm:51
+    40           FLSI:u8le-rev:-52
+    48         }
+    48       }
+    48     }
+    48   }
+    48 }

@@ -54,9 +54,9 @@ public:
 
 protected:
     explicit FixedLengthIntegerType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
-                                    DisplayBase prefDispBase, Mappings&& mappings,
-                                    MapItem::UP attrs) :
-        FixedLengthBitArrayType {kind, align, len, bo, std::move(attrs)},
+                                    const boost::optional<BitOrder>& bio, DisplayBase prefDispBase,
+                                    Mappings&& mappings, MapItem::UP attrs) :
+        FixedLengthBitArrayType {kind, align, len, bo, bio, std::move(attrs)},
         IntegerTypeCommon<MappingValueT> {prefDispBase, std::move(mappings)}
     {
     }
@@ -135,6 +135,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length signed integers described
         by this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length signed integers described
+        by this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         integers described by this type.
@@ -157,6 +173,7 @@ public:
     */
     explicit FixedLengthSignedIntegerType(unsigned int alignment, unsigned int length,
                                           ByteOrder byteOrder,
+                                          const boost::optional<BitOrder>& bitOrder = boost::none,
                                           DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                           Mappings mappings = Mappings {},
                                           MapItem::UP attributes = nullptr);
@@ -172,6 +189,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length signed integers described
         by this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length signed integers described
+        by this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length signed
         integers described by this type.
@@ -189,6 +222,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthSignedIntegerType(unsigned int length, ByteOrder byteOrder,
+                                          const boost::optional<BitOrder>& bitOrder = boost::none,
                                           DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                           Mappings mappings = Mappings {},
                                           MapItem::UP attributes = nullptr);
@@ -274,6 +308,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length unsigned integers
         described by this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length unsigned integers
+        described by this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         integers described by this type.
@@ -298,6 +348,7 @@ public:
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int alignment, unsigned int length,
                                             ByteOrder byteOrder,
+                                            const boost::optional<BitOrder>& bitOrder = boost::none,
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                             Mappings mappings = Mappings {},
                                             MapItem::UP attributes = nullptr,
@@ -314,6 +365,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length unsigned integers
         described by this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length unsigned integers
+        described by this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] preferredDisplayBase
         Preferred display base of data stream fixed-length unsigned
         integers described by this type.
@@ -333,6 +400,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int length, ByteOrder byteOrder,
+                                            const boost::optional<BitOrder>& bitOrder = boost::none,
                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
                                             Mappings mappings = Mappings {},
                                             MapItem::UP attributes = nullptr,

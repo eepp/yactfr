@@ -1,0 +1,58 @@
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "name": "test",
+    "payload-field-class": {
+      "member-classes": [
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "length": 64,
+            "type": "fixed-length-signed-integer"
+          },
+          "name": "u64le-norm"
+        },
+        {
+          "field-class": {
+            "alignment": 8,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "length": 64,
+            "type": "fixed-length-signed-integer"
+          },
+          "name": "u64le-rev"
+        }
+      ],
+      "type": "structure"
+    },
+    "type": "event-record-class"
+  }
+]
+----
+88776655 44332211    88776655 44332211
+----
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLSI:u64le-norm:1234605616436508552
+    64           FLSI:u64le-rev:1292083024016196744
+   128         }
+   128       }
+   128     }
+   128   }
+   128 }

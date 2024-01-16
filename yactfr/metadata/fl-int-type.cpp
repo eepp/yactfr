@@ -13,41 +13,46 @@ namespace yactfr {
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int align,
                                                            const unsigned int len,
                                                            const ByteOrder bo,
+                                                           const boost::optional<BitOrder>& bio,
                                                            const DisplayBase prefDispBase,
                                                            Mappings mappings,
                                                            MapItem::UP attrs) :
     FixedLengthIntegerType {
-        _KIND_FL_SINT, align, len, bo, prefDispBase, std::move(mappings), std::move(attrs)
+        _KIND_FL_SINT, align, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs)
     }
 {
 }
 
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int len,
                                                            const ByteOrder bo,
+                                                           const boost::optional<BitOrder>& bio,
                                                            const DisplayBase prefDispBase,
                                                            Mappings mappings,
                                                            MapItem::UP attrs) :
-    FixedLengthSignedIntegerType {1, len, bo, prefDispBase, std::move(mappings), std::move(attrs)}
+    FixedLengthSignedIntegerType {
+        1, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs)
+    }
 {
 }
 
 DataType::UP FixedLengthSignedIntegerType::_clone() const
 {
     return FixedLengthSignedIntegerType::create(this->alignment(), this->length(),
-                                                this->byteOrder(), this->preferredDisplayBase(),
-                                                this->mappings(),
+                                                this->byteOrder(), this->bitOrder(),
+                                                this->preferredDisplayBase(), this->mappings(),
                                                 internal::tryCloneAttrs(this->attributes()));
 }
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int align,
                                                                const unsigned int len,
                                                                const ByteOrder bo,
+                                                               const boost::optional<BitOrder>& bio,
                                                                const DisplayBase prefDispBase,
                                                                Mappings mappings,
                                                                MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthIntegerType {
-        _KIND_FL_UINT, align, len, bo, prefDispBase,
+        _KIND_FL_UINT, align, len, bo, bio, prefDispBase,
         std::move(mappings), std::move(attrs)
     },
     UnsignedIntegerTypeCommon {std::move(roles)}
@@ -56,12 +61,13 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int len,
                                                                const ByteOrder bo,
+                                                               const boost::optional<BitOrder>& bio,
                                                                const DisplayBase prefDispBase,
                                                                Mappings mappings,
                                                                MapItem::UP attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthUnsignedIntegerType {
-        1, len, bo, prefDispBase, std::move(mappings), std::move(attrs), std::move(roles)
+        1, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs), std::move(roles)
     }
 {
 }
@@ -69,7 +75,7 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const FixedLengthUnsignedIntegerType& other) :
     FixedLengthUnsignedIntegerType {
         other.alignment(), other.length(), other.byteOrder(),
-        other.preferredDisplayBase(), other.mappings(),
+        other.bitOrder(), other.preferredDisplayBase(), other.mappings(),
         internal::tryCloneAttrs(other.attributes()), other.roles()
     }
 {
@@ -78,8 +84,8 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const FixedLength
 DataType::UP FixedLengthUnsignedIntegerType::_clone() const
 {
     return FixedLengthUnsignedIntegerType::create(this->alignment(), this->length(),
-                                                  this->byteOrder(), this->preferredDisplayBase(),
-                                                  this->mappings(),
+                                                  this->byteOrder(), this->bitOrder(),
+                                                  this->preferredDisplayBase(), this->mappings(),
                                                   internal::tryCloneAttrs(this->attributes()),
                                                   this->roles());
 }

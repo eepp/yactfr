@@ -27,6 +27,7 @@
 
 #include "proc.hpp"
 #include "std-fl-int-reader.hpp"
+#include "fl-int-rev.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -829,7 +830,7 @@ private:
 
         auto& instr = **_pos.stackTop().it;
 
-        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8>(instr);
+        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8, false>(instr);
         _pos.metadataStreamUuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
         --_pos.stackTop().rem;
         return true;
@@ -1251,103 +1252,147 @@ private:
     }
 
     // instruction handlers
-    _ExecReaction _execReadFlBitArrayLe(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayBe(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA8(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA16Le(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA32Le(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA64Le(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA16Be(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA32Be(const Instr& instr);
-    _ExecReaction _execReadFlBitArrayA64Be(const Instr& instr);
-    _ExecReaction _execReadFlBoolLe(const Instr& instr);
-    _ExecReaction _execReadFlBoolBe(const Instr& instr);
-    _ExecReaction _execReadFlBoolA8(const Instr& instr);
-    _ExecReaction _execReadFlBoolA16Le(const Instr& instr);
-    _ExecReaction _execReadFlBoolA32Le(const Instr& instr);
-    _ExecReaction _execReadFlBoolA64Le(const Instr& instr);
-    _ExecReaction _execReadFlBoolA16Be(const Instr& instr);
-    _ExecReaction _execReadFlBoolA32Be(const Instr& instr);
-    _ExecReaction _execReadFlBoolA64Be(const Instr& instr);
-    _ExecReaction _execReadFlSIntLe(const Instr& instr);
-    _ExecReaction _execReadFlSIntBe(const Instr& instr);
-    _ExecReaction _execReadFlSIntA8(const Instr& instr);
-    _ExecReaction _execReadFlSIntA16Le(const Instr& instr);
-    _ExecReaction _execReadFlSIntA32Le(const Instr& instr);
-    _ExecReaction _execReadFlSIntA64Le(const Instr& instr);
-    _ExecReaction _execReadFlSIntA16Be(const Instr& instr);
-    _ExecReaction _execReadFlSIntA32Be(const Instr& instr);
-    _ExecReaction _execReadFlSIntA64Be(const Instr& instr);
-    _ExecReaction _execReadFlUIntLe(const Instr& instr);
-    _ExecReaction _execReadFlUIntBe(const Instr& instr);
-    _ExecReaction _execReadFlUIntA8(const Instr& instr);
-    _ExecReaction _execReadFlUIntA16Le(const Instr& instr);
-    _ExecReaction _execReadFlUIntA32Le(const Instr& instr);
-    _ExecReaction _execReadFlUIntA64Le(const Instr& instr);
-    _ExecReaction _execReadFlUIntA16Be(const Instr& instr);
-    _ExecReaction _execReadFlUIntA32Be(const Instr& instr);
-    _ExecReaction _execReadFlUIntA64Be(const Instr& instr);
-    _ExecReaction _execReadFlFloat32Le(const Instr& instr);
-    _ExecReaction _execReadFlFloat32Be(const Instr& instr);
-    _ExecReaction _execReadFlFloatA32Le(const Instr& instr);
-    _ExecReaction _execReadFlFloatA32Be(const Instr& instr);
-    _ExecReaction _execReadFlFloat64Le(const Instr& instr);
-    _ExecReaction _execReadFlFloat64Be(const Instr& instr);
-    _ExecReaction _execReadFlFloatA64Le(const Instr& instr);
-    _ExecReaction _execReadFlFloatA64Be(const Instr& instr);
-    _ExecReaction _execReadVlUInt(const Instr& instr);
-    _ExecReaction _execReadVlSInt(const Instr& instr);
-    _ExecReaction _execReadNtStrUtf8(const Instr& instr);
-    _ExecReaction _execReadNtStrUtf16(const Instr& instr);
-    _ExecReaction _execReadNtStrUtf32(const Instr& instr);
-    _ExecReaction _execBeginReadScope(const Instr& instr);
-    _ExecReaction _execEndReadScope(const Instr& instr);
-    _ExecReaction _execBeginReadStruct(const Instr& instr);
-    _ExecReaction _execEndReadStruct(const Instr& instr);
-    _ExecReaction _execBeginReadSlArray(const Instr& instr);
-    _ExecReaction _execEndReadSlArray(const Instr& instr);
-    _ExecReaction _execBeginReadSlUuidArray(const Instr& instr);
-    _ExecReaction _execBeginReadSlStr(const Instr& instr);
-    _ExecReaction _execEndReadSlStr(const Instr& instr);
     _ExecReaction _execBeginReadDlArray(const Instr& instr);
-    _ExecReaction _execEndReadDlArray(const Instr& instr);
-    _ExecReaction _execBeginReadDlStr(const Instr& instr);
-    _ExecReaction _execEndReadDlStr(const Instr& instr);
-    _ExecReaction _execBeginReadSlBlob(const Instr& instr);
-    _ExecReaction _execBeginReadSlUuidBlob(const Instr& instr);
-    _ExecReaction _execEndReadSlBlob(const Instr& instr);
     _ExecReaction _execBeginReadDlBlob(const Instr& instr);
-    _ExecReaction _execEndReadDlBlob(const Instr& instr);
-    _ExecReaction _execBeginReadVarSIntSel(const Instr& instr);
-    _ExecReaction _execBeginReadVarUIntSel(const Instr& instr);
+    _ExecReaction _execBeginReadDlStr(const Instr& instr);
     _ExecReaction _execBeginReadOptBoolSel(const Instr& instr);
     _ExecReaction _execBeginReadOptSIntSel(const Instr& instr);
     _ExecReaction _execBeginReadOptUIntSel(const Instr& instr);
-    _ExecReaction _execEndReadVarUIntSel(const Instr& instr);
-    _ExecReaction _execEndReadVarSIntSel(const Instr& instr);
-    _ExecReaction _execEndReadOptBoolSel(const Instr& instr);
-    _ExecReaction _execEndReadOptUIntSel(const Instr& instr);
-    _ExecReaction _execEndReadOptSIntSel(const Instr& instr);
-    _ExecReaction _execSaveVal(const Instr& instr);
-    _ExecReaction _execSetPktEndDefClkVal(const Instr& instr);
-    _ExecReaction _execUpdateDefClkValFl(const Instr& instr);
-    _ExecReaction _execUpdateDefClkVal(const Instr& instr);
-    _ExecReaction _execSetCurrentId(const Instr& instr);
-    _ExecReaction _execSetDst(const Instr& instr);
-    _ExecReaction _execSetErt(const Instr& instr);
-    _ExecReaction _execSetDsId(const Instr& instr);
-    _ExecReaction _execSetPktSeqNum(const Instr& instr);
-    _ExecReaction _execSetPktDiscErCounterSnap(const Instr& instr);
-    _ExecReaction _execSetPktTotalLen(const Instr& instr);
-    _ExecReaction _execSetPktContentLen(const Instr& instr);
-    _ExecReaction _execSetPktMagicNumber(const Instr& instr);
-    _ExecReaction _execEndPktPreambleProc(const Instr& instr);
-    _ExecReaction _execEndDsPktPreambleProc(const Instr& instr);
+    _ExecReaction _execBeginReadScope(const Instr& instr);
+    _ExecReaction _execBeginReadSlArray(const Instr& instr);
+    _ExecReaction _execBeginReadSlBlob(const Instr& instr);
+    _ExecReaction _execBeginReadSlStr(const Instr& instr);
+    _ExecReaction _execBeginReadSlUuidArray(const Instr& instr);
+    _ExecReaction _execBeginReadSlUuidBlob(const Instr& instr);
+    _ExecReaction _execBeginReadStruct(const Instr& instr);
+    _ExecReaction _execBeginReadVarSIntSel(const Instr& instr);
+    _ExecReaction _execBeginReadVarUIntSel(const Instr& instr);
     _ExecReaction _execEndDsErPreambleProc(const Instr& instr);
+    _ExecReaction _execEndDsPktPreambleProc(const Instr& instr);
     _ExecReaction _execEndErProc(const Instr& instr);
+    _ExecReaction _execEndPktPreambleProc(const Instr& instr);
+    _ExecReaction _execEndReadDlArray(const Instr& instr);
+    _ExecReaction _execEndReadDlBlob(const Instr& instr);
+    _ExecReaction _execEndReadDlStr(const Instr& instr);
+    _ExecReaction _execEndReadOptBoolSel(const Instr& instr);
+    _ExecReaction _execEndReadOptSIntSel(const Instr& instr);
+    _ExecReaction _execEndReadOptUIntSel(const Instr& instr);
+    _ExecReaction _execEndReadScope(const Instr& instr);
+    _ExecReaction _execEndReadSlArray(const Instr& instr);
+    _ExecReaction _execEndReadSlBlob(const Instr& instr);
+    _ExecReaction _execEndReadSlStr(const Instr& instr);
+    _ExecReaction _execEndReadStruct(const Instr& instr);
+    _ExecReaction _execEndReadVarSIntSel(const Instr& instr);
+    _ExecReaction _execEndReadVarUIntSel(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA16Be(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA16BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA16Le(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA16LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA32Be(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA32Le(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA64Be(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA64Le(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA8(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayA8Rev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayBe(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayBeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayLe(const Instr& instr);
+    _ExecReaction _execReadFlBitArrayLeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA16Be(const Instr& instr);
+    _ExecReaction _execReadFlBoolA16BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA16Le(const Instr& instr);
+    _ExecReaction _execReadFlBoolA16LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA32Be(const Instr& instr);
+    _ExecReaction _execReadFlBoolA32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA32Le(const Instr& instr);
+    _ExecReaction _execReadFlBoolA32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA64Be(const Instr& instr);
+    _ExecReaction _execReadFlBoolA64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA64Le(const Instr& instr);
+    _ExecReaction _execReadFlBoolA64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolA8(const Instr& instr);
+    _ExecReaction _execReadFlBoolA8Rev(const Instr& instr);
+    _ExecReaction _execReadFlBoolBe(const Instr& instr);
+    _ExecReaction _execReadFlBoolBeRev(const Instr& instr);
+    _ExecReaction _execReadFlBoolLe(const Instr& instr);
+    _ExecReaction _execReadFlBoolLeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloat32Be(const Instr& instr);
+    _ExecReaction _execReadFlFloat32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloat32Le(const Instr& instr);
+    _ExecReaction _execReadFlFloat32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloat64Be(const Instr& instr);
+    _ExecReaction _execReadFlFloat64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloat64Le(const Instr& instr);
+    _ExecReaction _execReadFlFloat64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloatA32Be(const Instr& instr);
+    _ExecReaction _execReadFlFloatA32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloatA32Le(const Instr& instr);
+    _ExecReaction _execReadFlFloatA32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloatA64Be(const Instr& instr);
+    _ExecReaction _execReadFlFloatA64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlFloatA64Le(const Instr& instr);
+    _ExecReaction _execReadFlFloatA64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA16Be(const Instr& instr);
+    _ExecReaction _execReadFlSIntA16BeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA16Le(const Instr& instr);
+    _ExecReaction _execReadFlSIntA16LeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA32Be(const Instr& instr);
+    _ExecReaction _execReadFlSIntA32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA32Le(const Instr& instr);
+    _ExecReaction _execReadFlSIntA32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA64Be(const Instr& instr);
+    _ExecReaction _execReadFlSIntA64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA64Le(const Instr& instr);
+    _ExecReaction _execReadFlSIntA64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntA8(const Instr& instr);
+    _ExecReaction _execReadFlSIntA8Rev(const Instr& instr);
+    _ExecReaction _execReadFlSIntBe(const Instr& instr);
+    _ExecReaction _execReadFlSIntBeRev(const Instr& instr);
+    _ExecReaction _execReadFlSIntLe(const Instr& instr);
+    _ExecReaction _execReadFlSIntLeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA16Be(const Instr& instr);
+    _ExecReaction _execReadFlUIntA16BeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA16Le(const Instr& instr);
+    _ExecReaction _execReadFlUIntA16LeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA32Be(const Instr& instr);
+    _ExecReaction _execReadFlUIntA32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA32Le(const Instr& instr);
+    _ExecReaction _execReadFlUIntA32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA64Be(const Instr& instr);
+    _ExecReaction _execReadFlUIntA64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA64Le(const Instr& instr);
+    _ExecReaction _execReadFlUIntA64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntA8(const Instr& instr);
+    _ExecReaction _execReadFlUIntA8Rev(const Instr& instr);
+    _ExecReaction _execReadFlUIntBe(const Instr& instr);
+    _ExecReaction _execReadFlUIntBeRev(const Instr& instr);
+    _ExecReaction _execReadFlUIntLe(const Instr& instr);
+    _ExecReaction _execReadFlUIntLeRev(const Instr& instr);
+    _ExecReaction _execReadNtStrUtf16(const Instr& instr);
+    _ExecReaction _execReadNtStrUtf32(const Instr& instr);
+    _ExecReaction _execReadNtStrUtf8(const Instr& instr);
+    _ExecReaction _execReadVlSInt(const Instr& instr);
+    _ExecReaction _execReadVlUInt(const Instr& instr);
+    _ExecReaction _execSaveVal(const Instr& instr);
+    _ExecReaction _execSetCurrentId(const Instr& instr);
+    _ExecReaction _execSetDsId(const Instr& instr);
     _ExecReaction _execSetDsInfo(const Instr& instr);
-    _ExecReaction _execSetPktInfo(const Instr& instr);
+    _ExecReaction _execSetDst(const Instr& instr);
     _ExecReaction _execSetErInfo(const Instr& instr);
+    _ExecReaction _execSetErt(const Instr& instr);
+    _ExecReaction _execSetPktContentLen(const Instr& instr);
+    _ExecReaction _execSetPktDiscErCounterSnap(const Instr& instr);
+    _ExecReaction _execSetPktEndDefClkVal(const Instr& instr);
+    _ExecReaction _execSetPktInfo(const Instr& instr);
+    _ExecReaction _execSetPktMagicNumber(const Instr& instr);
+    _ExecReaction _execSetPktSeqNum(const Instr& instr);
+    _ExecReaction _execSetPktTotalLen(const Instr& instr);
+    _ExecReaction _execUpdateDefClkVal(const Instr& instr);
+    _ExecReaction _execUpdateDefClkValFl(const Instr& instr);
 
     _ExecReaction _execReadNtStrCommon(const Instr& instr, const VmState state);
 
@@ -1412,44 +1457,51 @@ private:
         this->_requireContentBits(len);
     }
 
-    template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
+    template <typename RetT, Size LenBitsV, RetT (*FuncV)(const std::uint8_t *), bool RevV>
     RetT _readStdFlInt(const Instr& instr)
     {
         auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
-        this->_execReadFlBitArrayPreamble(instr, LenBits);
+        this->_execReadFlBitArrayPreamble(instr, LenBitsV);
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
-        return Func(this->_bufAtHead());
+
+        auto ret = FuncV(this->_bufAtHead());
+
+        if (RevV) {
+            ret = revFlIntBits(ret, LenBitsV);
+        }
+
+        return ret;
     }
 
-    template <Size LenBits, std::uint64_t (*Func)(const std::uint8_t *)>
+    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlBitArray(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, LenBits, Func>(instr);
+        const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
 
         this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
-        this->_consumeExistingBits(LenBits);
+        this->_consumeExistingBits(LenBitsV);
     }
 
-    template <Size LenBits, std::uint64_t (*Func)(const std::uint8_t *)>
+    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlBool(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, LenBits, Func>(instr);
+        const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
 
         this->_setBitArrayElemBase(val, instr, _pos.elems.flBool);
-        this->_consumeExistingBits(LenBits);
+        this->_consumeExistingBits(LenBitsV);
     }
 
-    template <typename RetT, Size LenBits, RetT (*Func)(const std::uint8_t *)>
+    template <typename RetT, Size LenBitsV, RetT (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlInt(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<RetT, LenBits, Func>(instr);
+        const auto val = this->_readStdFlInt<RetT, LenBitsV, FuncV, RevV>(instr);
 
         this->_setFlIntElem(val, instr);
-        this->_consumeExistingBits(LenBits);
+        this->_consumeExistingBits(LenBitsV);
     }
 
-    template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
+    template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
     RetT _readFlInt(const Instr& instr)
     {
         auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
@@ -1476,32 +1528,37 @@ private:
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
 
         const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
+        auto ret = FuncsV[index](this->_bufAtHead());
 
-        return Funcs[index](this->_bufAtHead());
+        if (RevV) {
+            ret = revFlIntBits(ret, readFlBitArrayInstr.len());
+        }
+
+        return ret;
     }
 
-    template <std::uint64_t (*Funcs[])(const std::uint8_t *)>
+    template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlBitArray(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
+        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
 
         this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
-    template <std::uint64_t (*Funcs[])(const std::uint8_t *)>
+    template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlBool(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
+        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
 
         this->_setBitArrayElemBase(val, instr, _pos.elems.flBool);
         this->_consumeExistingBits(static_cast<const ReadFlBoolInstr&>(instr).len());
     }
 
-    template <typename RetT, RetT (*Funcs[])(const std::uint8_t *)>
+    template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlInt(const Instr& instr)
     {
-        const auto val = this->_readFlInt<RetT, Funcs>(instr);
+        const auto val = this->_readFlInt<RetT, FuncsV, RevV>(instr);
 
         this->_setFlIntElem(val, instr);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
@@ -1529,18 +1586,18 @@ private:
         this->_consumeExistingBits(sizeof(FloatT) * 8);
     }
 
-    template <typename FloatT, std::uint64_t (*Funcs[])(const std::uint8_t *)>
+    template <typename FloatT, std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlFloat(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, Funcs>(instr);
+        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
 
         this->_execReadFlFloatPost<FloatT>(val, instr);
     }
 
-    template <typename FloatT, std::uint64_t (*Func)(const std::uint8_t *)>
+    template <typename FloatT, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlFloat(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, Func>(instr);
+        const auto val = this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, FuncV, RevV>(instr);
 
         this->_execReadFlFloatPost<FloatT>(val, instr);
     }
@@ -1707,7 +1764,7 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<ExecFunc, 128> _execFuncs;
+    std::array<ExecFunc, 150> _execFuncs;
 
     // position (whole state of the VM)
     VmPos _pos;

@@ -420,101 +420,145 @@ public:
     {
         UNSET,
         BEGIN_READ_DL_ARRAY,
-        BEGIN_READ_DL_STR,
         BEGIN_READ_DL_BLOB,
+        BEGIN_READ_DL_STR,
+        BEGIN_READ_OPT_BOOL_SEL,
+        BEGIN_READ_OPT_SINT_SEL,
+        BEGIN_READ_OPT_UINT_SEL,
         BEGIN_READ_SCOPE,
         BEGIN_READ_SL_ARRAY,
+        BEGIN_READ_SL_BLOB,
         BEGIN_READ_SL_STR,
         BEGIN_READ_SL_UUID_ARRAY,
-        BEGIN_READ_SL_BLOB,
         BEGIN_READ_SL_UUID_BLOB,
         BEGIN_READ_STRUCT,
         BEGIN_READ_VAR_SINT_SEL,
         BEGIN_READ_VAR_UINT_SEL,
-        BEGIN_READ_OPT_BOOL_SEL,
-        BEGIN_READ_OPT_SINT_SEL,
-        BEGIN_READ_OPT_UINT_SEL,
         DECR_REMAINING_ELEMS,
         END_DS_ER_PREAMBLE_PROC,
         END_DS_PKT_PREAMBLE_PROC,
         END_ER_PROC,
         END_PKT_PREAMBLE_PROC,
-        END_READ_SL_ARRAY,
         END_READ_DL_ARRAY,
-        END_READ_SCOPE,
-        END_READ_SL_STR,
-        END_READ_DL_STR,
-        END_READ_SL_BLOB,
         END_READ_DL_BLOB,
-        END_READ_STRUCT,
-        END_READ_VAR_SINT_SEL,
-        END_READ_VAR_UINT_SEL,
+        END_READ_DL_STR,
         END_READ_OPT_BOOL_SEL,
         END_READ_OPT_SINT_SEL,
         END_READ_OPT_UINT_SEL,
+        END_READ_SCOPE,
+        END_READ_SL_ARRAY,
+        END_READ_SL_BLOB,
+        END_READ_SL_STR,
+        END_READ_STRUCT,
+        END_READ_VAR_SINT_SEL,
+        END_READ_VAR_UINT_SEL,
         READ_FL_BIT_ARRAY_A16_BE,
+        READ_FL_BIT_ARRAY_A16_BE_REV,
         READ_FL_BIT_ARRAY_A16_LE,
+        READ_FL_BIT_ARRAY_A16_LE_REV,
         READ_FL_BIT_ARRAY_A32_BE,
+        READ_FL_BIT_ARRAY_A32_BE_REV,
         READ_FL_BIT_ARRAY_A32_LE,
+        READ_FL_BIT_ARRAY_A32_LE_REV,
         READ_FL_BIT_ARRAY_A64_BE,
+        READ_FL_BIT_ARRAY_A64_BE_REV,
         READ_FL_BIT_ARRAY_A64_LE,
+        READ_FL_BIT_ARRAY_A64_LE_REV,
         READ_FL_BIT_ARRAY_A8,
+        READ_FL_BIT_ARRAY_A8_REV,
         READ_FL_BIT_ARRAY_BE,
+        READ_FL_BIT_ARRAY_BE_REV,
         READ_FL_BIT_ARRAY_LE,
+        READ_FL_BIT_ARRAY_LE_REV,
+        READ_FL_BOOL_A16_BE,
+        READ_FL_BOOL_A16_BE_REV,
+        READ_FL_BOOL_A16_LE,
+        READ_FL_BOOL_A16_LE_REV,
+        READ_FL_BOOL_A32_BE,
+        READ_FL_BOOL_A32_BE_REV,
+        READ_FL_BOOL_A32_LE,
+        READ_FL_BOOL_A32_LE_REV,
+        READ_FL_BOOL_A64_BE,
+        READ_FL_BOOL_A64_BE_REV,
+        READ_FL_BOOL_A64_LE,
+        READ_FL_BOOL_A64_LE_REV,
+        READ_FL_BOOL_A8,
+        READ_FL_BOOL_A8_REV,
+        READ_FL_BOOL_BE,
+        READ_FL_BOOL_BE_REV,
+        READ_FL_BOOL_LE,
+        READ_FL_BOOL_LE_REV,
         READ_FL_FLOAT_32_BE,
+        READ_FL_FLOAT_32_BE_REV,
         READ_FL_FLOAT_32_LE,
+        READ_FL_FLOAT_32_LE_REV,
         READ_FL_FLOAT_64_BE,
+        READ_FL_FLOAT_64_BE_REV,
         READ_FL_FLOAT_64_LE,
+        READ_FL_FLOAT_64_LE_REV,
         READ_FL_FLOAT_A32_BE,
+        READ_FL_FLOAT_A32_BE_REV,
         READ_FL_FLOAT_A32_LE,
+        READ_FL_FLOAT_A32_LE_REV,
         READ_FL_FLOAT_A64_BE,
+        READ_FL_FLOAT_A64_BE_REV,
         READ_FL_FLOAT_A64_LE,
+        READ_FL_FLOAT_A64_LE_REV,
         READ_FL_SINT_A16_BE,
+        READ_FL_SINT_A16_BE_REV,
         READ_FL_SINT_A16_LE,
+        READ_FL_SINT_A16_LE_REV,
         READ_FL_SINT_A32_BE,
+        READ_FL_SINT_A32_BE_REV,
         READ_FL_SINT_A32_LE,
+        READ_FL_SINT_A32_LE_REV,
         READ_FL_SINT_A64_BE,
+        READ_FL_SINT_A64_BE_REV,
         READ_FL_SINT_A64_LE,
+        READ_FL_SINT_A64_LE_REV,
         READ_FL_SINT_A8,
+        READ_FL_SINT_A8_REV,
         READ_FL_SINT_BE,
+        READ_FL_SINT_BE_REV,
         READ_FL_SINT_LE,
-        READ_NT_STR_UTF_8,
+        READ_FL_SINT_LE_REV,
+        READ_FL_UINT_A16_BE,
+        READ_FL_UINT_A16_BE_REV,
+        READ_FL_UINT_A16_LE,
+        READ_FL_UINT_A16_LE_REV,
+        READ_FL_UINT_A32_BE,
+        READ_FL_UINT_A32_BE_REV,
+        READ_FL_UINT_A32_LE,
+        READ_FL_UINT_A32_LE_REV,
+        READ_FL_UINT_A64_BE,
+        READ_FL_UINT_A64_BE_REV,
+        READ_FL_UINT_A64_LE,
+        READ_FL_UINT_A64_LE_REV,
+        READ_FL_UINT_A8,
+        READ_FL_UINT_A8_REV,
+        READ_FL_UINT_BE,
+        READ_FL_UINT_BE_REV,
+        READ_FL_UINT_LE,
+        READ_FL_UINT_LE_REV,
         READ_NT_STR_UTF_16,
         READ_NT_STR_UTF_32,
-        READ_FL_UINT_A16_BE,
-        READ_FL_UINT_A16_LE,
-        READ_FL_UINT_A32_BE,
-        READ_FL_UINT_A32_LE,
-        READ_FL_UINT_A64_BE,
-        READ_FL_UINT_A64_LE,
-        READ_FL_UINT_A8,
-        READ_FL_UINT_BE,
-        READ_FL_UINT_LE,
-        READ_FL_BOOL_A16_BE,
-        READ_FL_BOOL_A16_LE,
-        READ_FL_BOOL_A32_BE,
-        READ_FL_BOOL_A32_LE,
-        READ_FL_BOOL_A64_BE,
-        READ_FL_BOOL_A64_LE,
-        READ_FL_BOOL_A8,
-        READ_FL_BOOL_BE,
-        READ_FL_BOOL_LE,
-        READ_VL_UINT,
+        READ_NT_STR_UTF_8,
         READ_VL_SINT,
+        READ_VL_UINT,
         SAVE_VAL,
         SET_CUR_ID,
         SET_DS_ID,
         SET_DS_INFO,
         SET_DST,
-        SET_ERT,
         SET_ER_INFO,
+        SET_ERT,
         SET_PKT_CONTENT_LEN,
+        SET_PKT_DISC_ER_COUNTER_SNAP,
         SET_PKT_END_DEF_CLK_VAL,
+        SET_PKT_INFO,
         SET_PKT_MAGIC_NUMBER,
         SET_PKT_SEQ_NUM,
-        SET_PKT_DISC_ER_COUNTER_SNAP,
         SET_PKT_TOTAL_LEN,
-        SET_PKT_INFO,
         UPDATE_DEF_CLK_VAL,
         UPDATE_DEF_CLK_VAL_FL,
     };
@@ -540,69 +584,113 @@ public:
     {
         switch (_theKind) {
         case Instr::Kind::BEGIN_READ_DL_ARRAY:
-        case Instr::Kind::BEGIN_READ_DL_STR:
         case Instr::Kind::BEGIN_READ_DL_BLOB:
+        case Instr::Kind::BEGIN_READ_DL_STR:
+        case Instr::Kind::BEGIN_READ_OPT_BOOL_SEL:
+        case Instr::Kind::BEGIN_READ_OPT_SINT_SEL:
+        case Instr::Kind::BEGIN_READ_OPT_UINT_SEL:
         case Instr::Kind::BEGIN_READ_SCOPE:
         case Instr::Kind::BEGIN_READ_SL_ARRAY:
+        case Instr::Kind::BEGIN_READ_SL_BLOB:
         case Instr::Kind::BEGIN_READ_SL_STR:
         case Instr::Kind::BEGIN_READ_SL_UUID_ARRAY:
-        case Instr::Kind::BEGIN_READ_SL_BLOB:
         case Instr::Kind::BEGIN_READ_SL_UUID_BLOB:
         case Instr::Kind::BEGIN_READ_STRUCT:
         case Instr::Kind::BEGIN_READ_VAR_SINT_SEL:
         case Instr::Kind::BEGIN_READ_VAR_UINT_SEL:
-        case Instr::Kind::BEGIN_READ_OPT_BOOL_SEL:
-        case Instr::Kind::BEGIN_READ_OPT_SINT_SEL:
-        case Instr::Kind::BEGIN_READ_OPT_UINT_SEL:
         case Instr::Kind::READ_FL_BIT_ARRAY_A16_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A16_BE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_A16_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A16_LE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_A32_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A32_BE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_A32_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A32_LE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_A64_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A64_BE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_A64_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A64_LE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_A8:
+        case Instr::Kind::READ_FL_BIT_ARRAY_A8_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_BE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_BE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_LE:
+        case Instr::Kind::READ_FL_BIT_ARRAY_LE_REV:
+        case Instr::Kind::READ_FL_BOOL_A16_BE:
+        case Instr::Kind::READ_FL_BOOL_A16_BE_REV:
+        case Instr::Kind::READ_FL_BOOL_A16_LE:
+        case Instr::Kind::READ_FL_BOOL_A16_LE_REV:
+        case Instr::Kind::READ_FL_BOOL_A32_BE:
+        case Instr::Kind::READ_FL_BOOL_A32_BE_REV:
+        case Instr::Kind::READ_FL_BOOL_A32_LE:
+        case Instr::Kind::READ_FL_BOOL_A32_LE_REV:
+        case Instr::Kind::READ_FL_BOOL_A64_BE:
+        case Instr::Kind::READ_FL_BOOL_A64_BE_REV:
+        case Instr::Kind::READ_FL_BOOL_A64_LE:
+        case Instr::Kind::READ_FL_BOOL_A64_LE_REV:
+        case Instr::Kind::READ_FL_BOOL_A8:
+        case Instr::Kind::READ_FL_BOOL_A8_REV:
+        case Instr::Kind::READ_FL_BOOL_BE:
+        case Instr::Kind::READ_FL_BOOL_BE_REV:
+        case Instr::Kind::READ_FL_BOOL_LE:
+        case Instr::Kind::READ_FL_BOOL_LE_REV:
         case Instr::Kind::READ_FL_FLOAT_32_BE:
+        case Instr::Kind::READ_FL_FLOAT_32_BE_REV:
         case Instr::Kind::READ_FL_FLOAT_32_LE:
+        case Instr::Kind::READ_FL_FLOAT_32_LE_REV:
         case Instr::Kind::READ_FL_FLOAT_64_BE:
+        case Instr::Kind::READ_FL_FLOAT_64_BE_REV:
         case Instr::Kind::READ_FL_FLOAT_64_LE:
+        case Instr::Kind::READ_FL_FLOAT_64_LE_REV:
         case Instr::Kind::READ_FL_FLOAT_A32_BE:
+        case Instr::Kind::READ_FL_FLOAT_A32_BE_REV:
         case Instr::Kind::READ_FL_FLOAT_A32_LE:
+        case Instr::Kind::READ_FL_FLOAT_A32_LE_REV:
         case Instr::Kind::READ_FL_FLOAT_A64_BE:
+        case Instr::Kind::READ_FL_FLOAT_A64_BE_REV:
         case Instr::Kind::READ_FL_FLOAT_A64_LE:
+        case Instr::Kind::READ_FL_FLOAT_A64_LE_REV:
         case Instr::Kind::READ_FL_SINT_A16_BE:
+        case Instr::Kind::READ_FL_SINT_A16_BE_REV:
         case Instr::Kind::READ_FL_SINT_A16_LE:
+        case Instr::Kind::READ_FL_SINT_A16_LE_REV:
         case Instr::Kind::READ_FL_SINT_A32_BE:
+        case Instr::Kind::READ_FL_SINT_A32_BE_REV:
         case Instr::Kind::READ_FL_SINT_A32_LE:
+        case Instr::Kind::READ_FL_SINT_A32_LE_REV:
         case Instr::Kind::READ_FL_SINT_A64_BE:
+        case Instr::Kind::READ_FL_SINT_A64_BE_REV:
         case Instr::Kind::READ_FL_SINT_A64_LE:
+        case Instr::Kind::READ_FL_SINT_A64_LE_REV:
         case Instr::Kind::READ_FL_SINT_A8:
+        case Instr::Kind::READ_FL_SINT_A8_REV:
         case Instr::Kind::READ_FL_SINT_BE:
+        case Instr::Kind::READ_FL_SINT_BE_REV:
         case Instr::Kind::READ_FL_SINT_LE:
-        case Instr::Kind::READ_NT_STR_UTF_8:
+        case Instr::Kind::READ_FL_SINT_LE_REV:
+        case Instr::Kind::READ_FL_UINT_A16_BE:
+        case Instr::Kind::READ_FL_UINT_A16_BE_REV:
+        case Instr::Kind::READ_FL_UINT_A16_LE:
+        case Instr::Kind::READ_FL_UINT_A16_LE_REV:
+        case Instr::Kind::READ_FL_UINT_A32_BE:
+        case Instr::Kind::READ_FL_UINT_A32_BE_REV:
+        case Instr::Kind::READ_FL_UINT_A32_LE:
+        case Instr::Kind::READ_FL_UINT_A32_LE_REV:
+        case Instr::Kind::READ_FL_UINT_A64_BE:
+        case Instr::Kind::READ_FL_UINT_A64_BE_REV:
+        case Instr::Kind::READ_FL_UINT_A64_LE:
+        case Instr::Kind::READ_FL_UINT_A64_LE_REV:
+        case Instr::Kind::READ_FL_UINT_A8:
+        case Instr::Kind::READ_FL_UINT_A8_REV:
+        case Instr::Kind::READ_FL_UINT_BE:
+        case Instr::Kind::READ_FL_UINT_BE_REV:
+        case Instr::Kind::READ_FL_UINT_LE:
+        case Instr::Kind::READ_FL_UINT_LE_REV:
         case Instr::Kind::READ_NT_STR_UTF_16:
         case Instr::Kind::READ_NT_STR_UTF_32:
-        case Instr::Kind::READ_FL_UINT_A16_BE:
-        case Instr::Kind::READ_FL_UINT_A16_LE:
-        case Instr::Kind::READ_FL_UINT_A32_BE:
-        case Instr::Kind::READ_FL_UINT_A32_LE:
-        case Instr::Kind::READ_FL_UINT_A64_BE:
-        case Instr::Kind::READ_FL_UINT_A64_LE:
-        case Instr::Kind::READ_FL_UINT_A8:
-        case Instr::Kind::READ_FL_UINT_BE:
-        case Instr::Kind::READ_FL_UINT_LE:
-        case Instr::Kind::READ_FL_BOOL_A16_BE:
-        case Instr::Kind::READ_FL_BOOL_A16_LE:
-        case Instr::Kind::READ_FL_BOOL_A32_BE:
-        case Instr::Kind::READ_FL_BOOL_A32_LE:
-        case Instr::Kind::READ_FL_BOOL_A64_BE:
-        case Instr::Kind::READ_FL_BOOL_A64_LE:
-        case Instr::Kind::READ_FL_BOOL_A8:
-        case Instr::Kind::READ_FL_BOOL_BE:
-        case Instr::Kind::READ_FL_BOOL_LE:
-        case Instr::Kind::READ_VL_UINT:
+        case Instr::Kind::READ_NT_STR_UTF_8:
         case Instr::Kind::READ_VL_SINT:
+        case Instr::Kind::READ_VL_UINT:
             return true;
 
         default:

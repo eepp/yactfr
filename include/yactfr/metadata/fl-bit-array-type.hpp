@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <utility>
+#include <boost/optional/optional.hpp>
 
 #include "bo.hpp"
 #include "scalar-dt.hpp"
@@ -35,7 +36,8 @@ public:
     using UP = std::unique_ptr<const FixedLengthBitArrayType>;
 
 protected:
-    explicit FixedLengthBitArrayType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
+    explicit FixedLengthBitArrayType(_Kind kind, unsigned int align, unsigned int len,
+                                     ByteOrder bo, const boost::optional<BitOrder>& bio,
                                      MapItem::UP attrs);
 
 public:
@@ -52,6 +54,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length bit arrays described by
         this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length bit arrays described by
+        this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length bit arrays described
@@ -69,6 +87,7 @@ public:
     */
     explicit FixedLengthBitArrayType(unsigned int alignment, unsigned int length,
                                      ByteOrder byteOrder,
+                                     const boost::optional<BitOrder>& bitOrder = boost::none,
                                      MapItem::UP attributes = nullptr);
 
     /*!
@@ -82,6 +101,22 @@ public:
     @param[in] byteOrder
         Byte order of data stream fixed-length bit arrays described by
         this type.
+    @param[in] bitOrder
+        @parblock
+        Bit order of data stream fixed-length bit arrays described by
+        this type.
+
+        If <code>boost::none</code>, then the value is, depending
+        on \p byteOrder:
+
+        <dl>
+          <dt>ByteOrder::BIG
+          <dd>BitOrder::LAST_TO_FIRST
+
+          <dt>ByteOrder::LITTLE
+          <dd>BitOrder::FIRST_TO_LAST
+        </dl>
+        @endparblock
     @param[in] attributes
         @parblock
         Attributes of data stream fixed-length bit arrays described
@@ -94,6 +129,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBitArrayType(unsigned int length, ByteOrder byteOrder,
+                                     const boost::optional<BitOrder>& bitOrder = boost::none,
                                      MapItem::UP attributes = nullptr);
 
     /*!
@@ -139,6 +175,16 @@ public:
 
     /*!
     @brief
+        Bit order of data stream fixed-length bit arrays described by
+        this type.
+    */
+    BitOrder bitOrder() const noexcept
+    {
+        return _bio;
+    }
+
+    /*!
+    @brief
         Less-than operator.
 
     @attention
@@ -167,6 +213,7 @@ private:
 private:
     const unsigned int _len;
     const ByteOrder _bo;
+    const BitOrder _bio;
 };
 
 } // namespace yactfr

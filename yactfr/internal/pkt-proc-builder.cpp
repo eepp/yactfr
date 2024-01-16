@@ -63,14 +63,23 @@ static bool isReadFlUInt(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
     case Instr::Kind::READ_FL_UINT_A16_BE:
+    case Instr::Kind::READ_FL_UINT_A16_BE_REV:
     case Instr::Kind::READ_FL_UINT_A16_LE:
+    case Instr::Kind::READ_FL_UINT_A16_LE_REV:
     case Instr::Kind::READ_FL_UINT_A32_BE:
+    case Instr::Kind::READ_FL_UINT_A32_BE_REV:
     case Instr::Kind::READ_FL_UINT_A32_LE:
+    case Instr::Kind::READ_FL_UINT_A32_LE_REV:
     case Instr::Kind::READ_FL_UINT_A64_BE:
+    case Instr::Kind::READ_FL_UINT_A64_BE_REV:
     case Instr::Kind::READ_FL_UINT_A64_LE:
+    case Instr::Kind::READ_FL_UINT_A64_LE_REV:
     case Instr::Kind::READ_FL_UINT_A8:
+    case Instr::Kind::READ_FL_UINT_A8_REV:
     case Instr::Kind::READ_FL_UINT_BE:
+    case Instr::Kind::READ_FL_UINT_BE_REV:
     case Instr::Kind::READ_FL_UINT_LE:
+    case Instr::Kind::READ_FL_UINT_LE_REV:
         return true;
 
     default:

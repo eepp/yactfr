@@ -25,6 +25,21 @@ enum class ByteOrder
     LITTLE,
 };
 
+/*!
+@brief
+    Bit order.
+
+@ingroup metadata
+*/
+enum class BitOrder
+{
+    /// First to last.
+    FIRST_TO_LAST,
+
+    /// Last to first.
+    LAST_TO_FIRST,
+};
+
 } // namespace yactfr
 
 #endif // _YACTFR_METADATA_BO_HPP

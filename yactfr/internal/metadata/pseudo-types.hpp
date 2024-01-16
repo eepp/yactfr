@@ -299,12 +299,11 @@ class PseudoFlUIntType :
 {
 public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
-                              DisplayBase prefDispBase,
+                              const BitOrder bio, DisplayBase prefDispBase,
                               FixedLengthUnsignedIntegerType::Mappings mappings,
                               boost::optional<StringEncoding> encoding = boost::none,
                               boost::optional<std::string> mappedClkTypeId = boost::none,
-                              MapItem::UP attrs = nullptr,
-                              UnsignedIntegerTypeRoleSet roles = {},
+                              MapItem::UP attrs = nullptr, UnsignedIntegerTypeRoleSet roles = {},
                               TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -332,6 +331,11 @@ public:
     ByteOrder bo() const noexcept
     {
         return _bo;
+    }
+
+    BitOrder bio() const noexcept
+    {
+        return _bio;
     }
 
     DisplayBase prefDispBase() const noexcept
@@ -378,6 +382,7 @@ private:
     unsigned int _align;
     unsigned int _len;
     ByteOrder _bo;
+    BitOrder _bio;
     DisplayBase _prefDispBase;
     FixedLengthUnsignedIntegerType::Mappings _mappings;
     boost::optional<StringEncoding> _encoding;

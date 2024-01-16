@@ -2039,7 +2039,13 @@ public:
         return this->dataType().asFixedLengthBitArrayType();
     }
 
-    /// Value as an unsigned integer.
+    /*!
+    @brief
+        Whole array value as an unsigned integer.
+
+    The LSB of the returned integral value is the value of the first
+    element (bit) of the array.
+    */
     unsigned long long unsignedIntegerValue() const noexcept
     {
         return _theVal.u;
@@ -2047,14 +2053,13 @@ public:
 
     /*!
     @brief
-        Returns the value of the bit at the index \p index, where
-        0 is the index of the least significant bit.
+        Returns the value of the element (bit) at the index \p index.
 
     @param[in] index
-        Index of the bit to return.
+        Index of the element (bit) to return.
 
     @returns
-        Bit at the index \p index.
+        Element (bit)it at the index \p index.
 
     @pre
         \p index < <code>type().length()</code>

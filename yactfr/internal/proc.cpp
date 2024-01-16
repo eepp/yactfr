@@ -130,180 +130,356 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "UNSET";
         break;
 
-    case Kind::READ_FL_BIT_ARRAY_LE:
-        kindStr = "READ_FL_BIT_ARRAY_LE";
-        break;
-
-    case Kind::READ_FL_BIT_ARRAY_BE:
-        kindStr = "READ_FL_BIT_ARRAY_BE";
-        break;
-
-    case Kind::READ_FL_BIT_ARRAY_A8:
-        kindStr = "READ_FL_BIT_ARRAY_A8";
-        break;
-
-    case Kind::READ_FL_BIT_ARRAY_A16_LE:
-        kindStr = "READ_FL_BIT_ARRAY_A16_LE";
-        break;
-
-    case Kind::READ_FL_BIT_ARRAY_A32_LE:
-        kindStr = "READ_FL_BIT_ARRAY_A32_LE";
-        break;
-
-    case Kind::READ_FL_BIT_ARRAY_A64_LE:
-        kindStr = "READ_FL_BIT_ARRAY_A64_LE";
+    case Kind::READ_FL_BIT_ARRAY_A16_BE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A16_BE_REV";
         break;
 
     case Kind::READ_FL_BIT_ARRAY_A16_BE:
         kindStr = "READ_FL_BIT_ARRAY_A16_BE";
         break;
 
+    case Kind::READ_FL_BIT_ARRAY_A16_LE:
+        kindStr = "READ_FL_BIT_ARRAY_A16_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A16_LE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A16_LE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A32_BE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A32_BE_REV";
+        break;
+
     case Kind::READ_FL_BIT_ARRAY_A32_BE:
         kindStr = "READ_FL_BIT_ARRAY_A32_BE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A32_LE:
+        kindStr = "READ_FL_BIT_ARRAY_A32_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A32_LE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A32_LE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_A64_BE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A64_BE_REV";
         break;
 
     case Kind::READ_FL_BIT_ARRAY_A64_BE:
         kindStr = "READ_FL_BIT_ARRAY_A64_BE";
         break;
 
-    case Kind::READ_FL_BOOL_LE:
-        kindStr = "READ_FL_BOOL_LE";
+    case Kind::READ_FL_BIT_ARRAY_A64_LE:
+        kindStr = "READ_FL_BIT_ARRAY_A64_LE";
         break;
 
-    case Kind::READ_FL_BOOL_BE:
-        kindStr = "READ_FL_BOOL_BE";
+    case Kind::READ_FL_BIT_ARRAY_A64_LE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A64_LE_REV";
         break;
 
-    case Kind::READ_FL_BOOL_A8:
-        kindStr = "READ_FL_BOOL_A8";
+    case Kind::READ_FL_BIT_ARRAY_A8:
+        kindStr = "READ_FL_BIT_ARRAY_A8";
         break;
 
-    case Kind::READ_FL_BOOL_A16_LE:
-        kindStr = "READ_FL_BOOL_A16_LE";
+    case Kind::READ_FL_BIT_ARRAY_A8_REV:
+        kindStr = "READ_FL_BIT_ARRAY_A8_REV";
         break;
 
-    case Kind::READ_FL_BOOL_A32_LE:
-        kindStr = "READ_FL_BOOL_A32_LE";
+    case Kind::READ_FL_BIT_ARRAY_BE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_BE_REV";
         break;
 
-    case Kind::READ_FL_BOOL_A64_LE:
-        kindStr = "READ_FL_BOOL_A64_LE";
+    case Kind::READ_FL_BIT_ARRAY_BE:
+        kindStr = "READ_FL_BIT_ARRAY_BE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_LE:
+        kindStr = "READ_FL_BIT_ARRAY_LE";
+        break;
+
+    case Kind::READ_FL_BIT_ARRAY_LE_REV:
+        kindStr = "READ_FL_BIT_ARRAY_LE_REV";
+        break;
+
+    case Kind::READ_FL_BOOL_A16_BE_REV:
+        kindStr = "READ_FL_BOOL_A16_BE_REV";
         break;
 
     case Kind::READ_FL_BOOL_A16_BE:
         kindStr = "READ_FL_BOOL_A16_BE";
         break;
 
+    case Kind::READ_FL_BOOL_A16_LE:
+        kindStr = "READ_FL_BOOL_A16_LE";
+        break;
+
+    case Kind::READ_FL_BOOL_A16_LE_REV:
+        kindStr = "READ_FL_BOOL_A16_LE_REV";
+        break;
+
+    case Kind::READ_FL_BOOL_A32_BE_REV:
+        kindStr = "READ_FL_BOOL_A32_BE_REV";
+        break;
+
     case Kind::READ_FL_BOOL_A32_BE:
         kindStr = "READ_FL_BOOL_A32_BE";
+        break;
+
+    case Kind::READ_FL_BOOL_A32_LE:
+        kindStr = "READ_FL_BOOL_A32_LE";
+        break;
+
+    case Kind::READ_FL_BOOL_A32_LE_REV:
+        kindStr = "READ_FL_BOOL_A32_LE_REV";
+        break;
+
+    case Kind::READ_FL_BOOL_A64_BE_REV:
+        kindStr = "READ_FL_BOOL_A64_BE_REV";
         break;
 
     case Kind::READ_FL_BOOL_A64_BE:
         kindStr = "READ_FL_BOOL_A64_BE";
         break;
 
-    case Kind::READ_FL_SINT_LE:
-        kindStr = "READ_FL_SINT_LE";
+    case Kind::READ_FL_BOOL_A64_LE:
+        kindStr = "READ_FL_BOOL_A64_LE";
         break;
 
-    case Kind::READ_FL_SINT_BE:
-        kindStr = "READ_FL_SINT_BE";
+    case Kind::READ_FL_BOOL_A64_LE_REV:
+        kindStr = "READ_FL_BOOL_A64_LE_REV";
         break;
 
-    case Kind::READ_FL_SINT_A8:
-        kindStr = "READ_FL_SINT_A8";
+    case Kind::READ_FL_BOOL_A8:
+        kindStr = "READ_FL_BOOL_A8";
         break;
 
-    case Kind::READ_FL_SINT_A16_LE:
-        kindStr = "READ_FL_SINT_A16_LE";
+    case Kind::READ_FL_BOOL_A8_REV:
+        kindStr = "READ_FL_BOOL_A8_REV";
         break;
 
-    case Kind::READ_FL_SINT_A32_LE:
-        kindStr = "READ_FL_SINT_A32_LE";
+    case Kind::READ_FL_BOOL_BE_REV:
+        kindStr = "READ_FL_BOOL_BE_REV";
         break;
 
-    case Kind::READ_FL_SINT_A64_LE:
-        kindStr = "READ_FL_SINT_A64_LE";
+    case Kind::READ_FL_BOOL_BE:
+        kindStr = "READ_FL_BOOL_BE";
         break;
 
-    case Kind::READ_FL_SINT_A16_BE:
-        kindStr = "READ_FL_SINT_A16_BE";
+    case Kind::READ_FL_BOOL_LE:
+        kindStr = "READ_FL_BOOL_LE";
         break;
 
-    case Kind::READ_FL_SINT_A32_BE:
-        kindStr = "READ_FL_SINT_A32_BE";
+    case Kind::READ_FL_BOOL_LE_REV:
+        kindStr = "READ_FL_BOOL_LE_REV";
         break;
 
-    case Kind::READ_FL_SINT_A64_BE:
-        kindStr = "READ_FL_SINT_A64_BE";
-        break;
-
-    case Kind::READ_FL_UINT_LE:
-        kindStr = "READ_FL_UINT_LE";
-        break;
-
-    case Kind::READ_FL_UINT_BE:
-        kindStr = "READ_FL_UINT_BE";
-        break;
-
-    case Kind::READ_FL_UINT_A8:
-        kindStr = "READ_FL_UINT_A8";
-        break;
-
-    case Kind::READ_FL_UINT_A16_LE:
-        kindStr = "READ_FL_UINT_A16_LE";
-        break;
-
-    case Kind::READ_FL_UINT_A32_LE:
-        kindStr = "READ_FL_UINT_A32_LE";
-        break;
-
-    case Kind::READ_FL_UINT_A64_LE:
-        kindStr = "READ_FL_UINT_A64_LE";
-        break;
-
-    case Kind::READ_FL_UINT_A16_BE:
-        kindStr = "READ_FL_UINT_A16_BE";
-        break;
-
-    case Kind::READ_FL_UINT_A32_BE:
-        kindStr = "READ_FL_UINT_A32_BE";
-        break;
-
-    case Kind::READ_FL_UINT_A64_BE:
-        kindStr = "READ_FL_UINT_A64_BE";
-        break;
-
-    case Kind::READ_FL_FLOAT_32_LE:
-        kindStr = "READ_FL_FLOAT_32_LE";
+    case Kind::READ_FL_FLOAT_32_BE_REV:
+        kindStr = "READ_FL_FLOAT_32_BE_REV";
         break;
 
     case Kind::READ_FL_FLOAT_32_BE:
         kindStr = "READ_FL_FLOAT_32_BE";
         break;
 
-    case Kind::READ_FL_FLOAT_A32_LE:
-        kindStr = "READ_FL_FLOAT_A32_LE";
+    case Kind::READ_FL_FLOAT_32_LE:
+        kindStr = "READ_FL_FLOAT_32_LE";
         break;
 
-    case Kind::READ_FL_FLOAT_A32_BE:
-        kindStr = "READ_FL_FLOAT_A32_BE";
+    case Kind::READ_FL_FLOAT_32_LE_REV:
+        kindStr = "READ_FL_FLOAT_32_LE_REV";
         break;
 
-    case Kind::READ_FL_FLOAT_64_LE:
-        kindStr = "READ_FL_FLOAT_64_LE";
+    case Kind::READ_FL_FLOAT_64_BE_REV:
+        kindStr = "READ_FL_FLOAT_64_BE_REV";
         break;
 
     case Kind::READ_FL_FLOAT_64_BE:
         kindStr = "READ_FL_FLOAT_64_BE";
         break;
 
-    case Kind::READ_FL_FLOAT_A64_LE:
-        kindStr = "READ_FL_FLOAT_A64_LE";
+    case Kind::READ_FL_FLOAT_64_LE:
+        kindStr = "READ_FL_FLOAT_64_LE";
+        break;
+
+    case Kind::READ_FL_FLOAT_64_LE_REV:
+        kindStr = "READ_FL_FLOAT_64_LE_REV";
+        break;
+
+    case Kind::READ_FL_FLOAT_A32_BE_REV:
+        kindStr = "READ_FL_FLOAT_A32_BE_REV";
+        break;
+
+    case Kind::READ_FL_FLOAT_A32_BE:
+        kindStr = "READ_FL_FLOAT_A32_BE";
+        break;
+
+    case Kind::READ_FL_FLOAT_A32_LE:
+        kindStr = "READ_FL_FLOAT_A32_LE";
+        break;
+
+    case Kind::READ_FL_FLOAT_A32_LE_REV:
+        kindStr = "READ_FL_FLOAT_A32_LE_REV";
+        break;
+
+    case Kind::READ_FL_FLOAT_A64_BE_REV:
+        kindStr = "READ_FL_FLOAT_A64_BE_REV";
         break;
 
     case Kind::READ_FL_FLOAT_A64_BE:
         kindStr = "READ_FL_FLOAT_A64_BE";
+        break;
+
+    case Kind::READ_FL_FLOAT_A64_LE:
+        kindStr = "READ_FL_FLOAT_A64_LE";
+        break;
+
+    case Kind::READ_FL_FLOAT_A64_LE_REV:
+        kindStr = "READ_FL_FLOAT_A64_LE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A16_BE_REV:
+        kindStr = "READ_FL_SINT_A16_BE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A16_BE:
+        kindStr = "READ_FL_SINT_A16_BE";
+        break;
+
+    case Kind::READ_FL_SINT_A16_LE:
+        kindStr = "READ_FL_SINT_A16_LE";
+        break;
+
+    case Kind::READ_FL_SINT_A16_LE_REV:
+        kindStr = "READ_FL_SINT_A16_LE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A32_BE_REV:
+        kindStr = "READ_FL_SINT_A32_BE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A32_BE:
+        kindStr = "READ_FL_SINT_A32_BE";
+        break;
+
+    case Kind::READ_FL_SINT_A32_LE:
+        kindStr = "READ_FL_SINT_A32_LE";
+        break;
+
+    case Kind::READ_FL_SINT_A32_LE_REV:
+        kindStr = "READ_FL_SINT_A32_LE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A64_BE_REV:
+        kindStr = "READ_FL_SINT_A64_BE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A64_BE:
+        kindStr = "READ_FL_SINT_A64_BE";
+        break;
+
+    case Kind::READ_FL_SINT_A64_LE:
+        kindStr = "READ_FL_SINT_A64_LE";
+        break;
+
+    case Kind::READ_FL_SINT_A64_LE_REV:
+        kindStr = "READ_FL_SINT_A64_LE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_A8:
+        kindStr = "READ_FL_SINT_A8";
+        break;
+
+    case Kind::READ_FL_SINT_A8_REV:
+        kindStr = "READ_FL_SINT_A8_REV";
+        break;
+
+    case Kind::READ_FL_SINT_BE_REV:
+        kindStr = "READ_FL_SINT_BE_REV";
+        break;
+
+    case Kind::READ_FL_SINT_BE:
+        kindStr = "READ_FL_SINT_BE";
+        break;
+
+    case Kind::READ_FL_SINT_LE:
+        kindStr = "READ_FL_SINT_LE";
+        break;
+
+    case Kind::READ_FL_SINT_LE_REV:
+        kindStr = "READ_FL_SINT_LE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A16_BE_REV:
+        kindStr = "READ_FL_UINT_A16_BE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A16_BE:
+        kindStr = "READ_FL_UINT_A16_BE";
+        break;
+
+    case Kind::READ_FL_UINT_A16_LE:
+        kindStr = "READ_FL_UINT_A16_LE";
+        break;
+
+    case Kind::READ_FL_UINT_A16_LE_REV:
+        kindStr = "READ_FL_UINT_A16_LE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A32_BE_REV:
+        kindStr = "READ_FL_UINT_A32_BE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A32_BE:
+        kindStr = "READ_FL_UINT_A32_BE";
+        break;
+
+    case Kind::READ_FL_UINT_A32_LE:
+        kindStr = "READ_FL_UINT_A32_LE";
+        break;
+
+    case Kind::READ_FL_UINT_A32_LE_REV:
+        kindStr = "READ_FL_UINT_A32_LE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A64_BE_REV:
+        kindStr = "READ_FL_UINT_A64_BE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A64_BE:
+        kindStr = "READ_FL_UINT_A64_BE";
+        break;
+
+    case Kind::READ_FL_UINT_A64_LE:
+        kindStr = "READ_FL_UINT_A64_LE";
+        break;
+
+    case Kind::READ_FL_UINT_A64_LE_REV:
+        kindStr = "READ_FL_UINT_A64_LE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_A8:
+        kindStr = "READ_FL_UINT_A8";
+        break;
+
+    case Kind::READ_FL_UINT_A8_REV:
+        kindStr = "READ_FL_UINT_A8_REV";
+        break;
+
+    case Kind::READ_FL_UINT_BE_REV:
+        kindStr = "READ_FL_UINT_BE_REV";
+        break;
+
+    case Kind::READ_FL_UINT_BE:
+        kindStr = "READ_FL_UINT_BE";
+        break;
+
+    case Kind::READ_FL_UINT_LE:
+        kindStr = "READ_FL_UINT_LE";
+        break;
+
+    case Kind::READ_FL_UINT_LE_REV:
+        kindStr = "READ_FL_UINT_LE_REV";
         break;
 
     case Kind::READ_VL_UINT:
@@ -599,45 +775,91 @@ static inline Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
     auto& bitArrayType = dt.asFixedLengthBitArrayType();
 
     if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
-        kind = Instr::Kind::READ_FL_BIT_ARRAY_LE;
+        if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            kind = Instr::Kind::READ_FL_BIT_ARRAY_LE;
 
-        if (dt.alignment() % 8 == 0) {
-            switch (bitArrayType.length()) {
-            case 8:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+            if (dt.alignment() % 8 == 0) {
+                switch (bitArrayType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A8;
 
-            case 16:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A16_LE;
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_LE;
 
-            case 32:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A32_LE;
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_LE;
 
-            case 64:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A64_LE;
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_LE;
 
-            default:
-                break;
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_FL_BIT_ARRAY_LE_REV;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (bitArrayType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A8_REV;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_LE_REV;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_LE_REV;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_LE_REV;
+
+                default:
+                    break;
+                }
             }
         }
     } else {
-        kind = Instr::Kind::READ_FL_BIT_ARRAY_BE;
+        if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            kind = Instr::Kind::READ_FL_BIT_ARRAY_BE_REV;
 
-        if (dt.alignment() % 8 == 0) {
-            switch (bitArrayType.length()) {
-            case 8:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+            if (dt.alignment() % 8 == 0) {
+                switch (bitArrayType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A8_REV;
 
-            case 16:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A16_BE;
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_BE_REV;
 
-            case 32:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A32_BE;
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_BE_REV;
 
-            case 64:
-                return Instr::Kind::READ_FL_BIT_ARRAY_A64_BE;
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_BE_REV;
 
-            default:
-                break;
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_FL_BIT_ARRAY_BE;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (bitArrayType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_BE;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_BE;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_BE;
+
+                default:
+                    break;
+                }
             }
         }
     }
@@ -685,45 +907,91 @@ static inline Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
     auto& boolType = dt.asFixedLengthBooleanType();
 
     if (boolType.byteOrder() == ByteOrder::LITTLE) {
-        kind = Instr::Kind::READ_FL_BOOL_LE;
+        if (boolType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            kind = Instr::Kind::READ_FL_BOOL_LE;
 
-        if (dt.alignment() % 8 == 0) {
-            switch (boolType.length()) {
-            case 8:
-                return Instr::Kind::READ_FL_BOOL_A8;
+            if (dt.alignment() % 8 == 0) {
+                switch (boolType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BOOL_A8;
 
-            case 16:
-                return Instr::Kind::READ_FL_BOOL_A16_LE;
+                case 16:
+                    return Instr::Kind::READ_FL_BOOL_A16_LE;
 
-            case 32:
-                return Instr::Kind::READ_FL_BOOL_A32_LE;
+                case 32:
+                    return Instr::Kind::READ_FL_BOOL_A32_LE;
 
-            case 64:
-                return Instr::Kind::READ_FL_BOOL_A64_LE;
+                case 64:
+                    return Instr::Kind::READ_FL_BOOL_A64_LE;
 
-            default:
-                break;
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_FL_BOOL_LE_REV;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (boolType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BOOL_A8_REV;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BOOL_A16_LE_REV;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BOOL_A32_LE_REV;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BOOL_A64_LE_REV;
+
+                default:
+                    break;
+                }
             }
         }
     } else {
-        kind = Instr::Kind::READ_FL_BOOL_BE;
+        if (boolType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            kind = Instr::Kind::READ_FL_BOOL_BE_REV;
 
-        if (dt.alignment() % 8 == 0) {
-            switch (boolType.length()) {
-            case 8:
-                return Instr::Kind::READ_FL_BOOL_A8;
+            if (dt.alignment() % 8 == 0) {
+                switch (boolType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BOOL_A8_REV;
 
-            case 16:
-                return Instr::Kind::READ_FL_BOOL_A16_BE;
+                case 16:
+                    return Instr::Kind::READ_FL_BOOL_A16_BE_REV;
 
-            case 32:
-                return Instr::Kind::READ_FL_BOOL_A32_BE;
+                case 32:
+                    return Instr::Kind::READ_FL_BOOL_A32_BE_REV;
 
-            case 64:
-                return Instr::Kind::READ_FL_BOOL_A64_BE;
+                case 64:
+                    return Instr::Kind::READ_FL_BOOL_A64_BE_REV;
 
-            default:
-                break;
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_FL_BOOL_BE;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (boolType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BOOL_A8;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BOOL_A16_BE;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BOOL_A32_BE;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BOOL_A64_BE;
+
+                default:
+                    break;
+                }
             }
         }
     }
@@ -754,89 +1022,181 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
 
     if (dt.isFixedLengthUnsignedIntegerType()) {
         if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
-            kind = Instr::Kind::READ_FL_UINT_LE;
+            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+                kind = Instr::Kind::READ_FL_UINT_LE;
 
-            if (dt.alignment() % 8 == 0) {
-                switch (bitArrayType.length()) {
-                case 8:
-                    return Instr::Kind::READ_FL_UINT_A8;
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_UINT_A8;
 
-                case 16:
-                    return Instr::Kind::READ_FL_UINT_A16_LE;
+                    case 16:
+                        return Instr::Kind::READ_FL_UINT_A16_LE;
 
-                case 32:
-                    return Instr::Kind::READ_FL_UINT_A32_LE;
+                    case 32:
+                        return Instr::Kind::READ_FL_UINT_A32_LE;
 
-                case 64:
-                    return Instr::Kind::READ_FL_UINT_A64_LE;
+                    case 64:
+                        return Instr::Kind::READ_FL_UINT_A64_LE;
 
-                default:
-                    break;
+                    default:
+                        break;
+                    }
+                }
+            } else {
+                kind = Instr::Kind::READ_FL_UINT_LE_REV;
+
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_UINT_A8_REV;
+
+                    case 16:
+                        return Instr::Kind::READ_FL_UINT_A16_LE_REV;
+
+                    case 32:
+                        return Instr::Kind::READ_FL_UINT_A32_LE_REV;
+
+                    case 64:
+                        return Instr::Kind::READ_FL_UINT_A64_LE_REV;
+
+                    default:
+                        break;
+                    }
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_UINT_BE;
+            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+                kind = Instr::Kind::READ_FL_UINT_BE_REV;
 
-            if (dt.alignment() % 8 == 0) {
-                switch (bitArrayType.length()) {
-                case 8:
-                    return Instr::Kind::READ_FL_UINT_A8;
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_UINT_A8_REV;
 
-                case 16:
-                    return Instr::Kind::READ_FL_UINT_A16_BE;
+                    case 16:
+                        return Instr::Kind::READ_FL_UINT_A16_BE_REV;
 
-                case 32:
-                    return Instr::Kind::READ_FL_UINT_A32_BE;
+                    case 32:
+                        return Instr::Kind::READ_FL_UINT_A32_BE_REV;
 
-                case 64:
-                    return Instr::Kind::READ_FL_UINT_A64_BE;
+                    case 64:
+                        return Instr::Kind::READ_FL_UINT_A64_BE_REV;
 
-                default:
-                    break;
+                    default:
+                        break;
+                    }
+                }
+            } else {
+                kind = Instr::Kind::READ_FL_UINT_BE;
+
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_UINT_A8;
+
+                    case 16:
+                        return Instr::Kind::READ_FL_UINT_A16_BE;
+
+                    case 32:
+                        return Instr::Kind::READ_FL_UINT_A32_BE;
+
+                    case 64:
+                        return Instr::Kind::READ_FL_UINT_A64_BE;
+
+                    default:
+                        break;
+                    }
                 }
             }
         }
     } else {
         if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
-            kind = Instr::Kind::READ_FL_SINT_LE;
+            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+                kind = Instr::Kind::READ_FL_SINT_LE;
 
-            if (dt.alignment() % 8 == 0) {
-                switch (bitArrayType.length()) {
-                case 8:
-                    return Instr::Kind::READ_FL_SINT_A8;
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_SINT_A8;
 
-                case 16:
-                    return Instr::Kind::READ_FL_SINT_A16_LE;
+                    case 16:
+                        return Instr::Kind::READ_FL_SINT_A16_LE;
 
-                case 32:
-                    return Instr::Kind::READ_FL_SINT_A32_LE;
+                    case 32:
+                        return Instr::Kind::READ_FL_SINT_A32_LE;
 
-                case 64:
-                    return Instr::Kind::READ_FL_SINT_A64_LE;
+                    case 64:
+                        return Instr::Kind::READ_FL_SINT_A64_LE;
 
-                default:
-                    break;
+                    default:
+                        break;
+                    }
+                }
+            } else {
+                kind = Instr::Kind::READ_FL_SINT_LE_REV;
+
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_SINT_A8_REV;
+
+                    case 16:
+                        return Instr::Kind::READ_FL_SINT_A16_LE_REV;
+
+                    case 32:
+                        return Instr::Kind::READ_FL_SINT_A32_LE_REV;
+
+                    case 64:
+                        return Instr::Kind::READ_FL_SINT_A64_LE_REV;
+
+                    default:
+                        break;
+                    }
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_SINT_BE;
+            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+                kind = Instr::Kind::READ_FL_SINT_BE_REV;
 
-            if (dt.alignment() % 8 == 0) {
-                switch (bitArrayType.length()) {
-                case 8:
-                    return Instr::Kind::READ_FL_SINT_A8;
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_SINT_A8_REV;
 
-                case 16:
-                    return Instr::Kind::READ_FL_SINT_A16_BE;
+                    case 16:
+                        return Instr::Kind::READ_FL_SINT_A16_BE_REV;
 
-                case 32:
-                    return Instr::Kind::READ_FL_SINT_A32_BE;
+                    case 32:
+                        return Instr::Kind::READ_FL_SINT_A32_BE_REV;
 
-                case 64:
-                    return Instr::Kind::READ_FL_SINT_A64_BE;
+                    case 64:
+                        return Instr::Kind::READ_FL_SINT_A64_BE_REV;
 
-                default:
-                    break;
+                    default:
+                        break;
+                    }
+                }
+            } else {
+                kind = Instr::Kind::READ_FL_SINT_BE;
+
+                if (dt.alignment() % 8 == 0) {
+                    switch (bitArrayType.length()) {
+                    case 8:
+                        return Instr::Kind::READ_FL_SINT_A8;
+
+                    case 16:
+                        return Instr::Kind::READ_FL_SINT_A16_BE;
+
+                    case 32:
+                        return Instr::Kind::READ_FL_SINT_A32_BE;
+
+                    case 64:
+                        return Instr::Kind::READ_FL_SINT_A64_BE;
+
+                    default:
+                        break;
+                    }
                 }
             }
         }
@@ -893,51 +1253,103 @@ static inline Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
     const auto& floatType = dt.asFixedLengthFloatingPointNumberType();
 
     if (floatType.byteOrder() == ByteOrder::LITTLE) {
-        if (dt.alignment() % 8 == 0) {
-            switch (floatType.length()) {
-            case 32:
-                return Instr::Kind::READ_FL_FLOAT_A32_LE;
+        if (floatType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            if (dt.alignment() % 8 == 0) {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_A32_LE;
 
-            case 64:
-                return Instr::Kind::READ_FL_FLOAT_A64_LE;
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_A64_LE;
 
-            default:
-                std::abort();
+                default:
+                    std::abort();
+                }
+            } else {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_32_LE;
+
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_64_LE;
+
+                default:
+                    std::abort();
+                }
             }
         } else {
-            switch (floatType.length()) {
-            case 32:
-                return Instr::Kind::READ_FL_FLOAT_32_LE;
+            if (dt.alignment() % 8 == 0) {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_A32_LE_REV;
 
-            case 64:
-                return Instr::Kind::READ_FL_FLOAT_64_LE;
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_A64_LE_REV;
 
-            default:
-                std::abort();
+                default:
+                    std::abort();
+                }
+            } else {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_32_LE_REV;
+
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_64_LE_REV;
+
+                default:
+                    std::abort();
+                }
             }
         }
     } else {
-        if (dt.alignment() % 8 == 0) {
-            switch (floatType.length()) {
-            case 32:
-                return Instr::Kind::READ_FL_FLOAT_A32_BE;
+        if (floatType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            if (dt.alignment() % 8 == 0) {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_A32_BE_REV;
 
-            case 64:
-                return Instr::Kind::READ_FL_FLOAT_A64_BE;
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_A64_BE_REV;
 
-            default:
-                std::abort();
+                default:
+                    std::abort();
+                }
+            } else {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_32_BE_REV;
+
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_64_BE_REV;
+
+                default:
+                    std::abort();
+                }
             }
         } else {
-            switch (floatType.length()) {
-            case 32:
-                return Instr::Kind::READ_FL_FLOAT_32_BE;
+            if (dt.alignment() % 8 == 0) {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_A32_BE;
 
-            case 64:
-                return Instr::Kind::READ_FL_FLOAT_64_BE;
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_A64_BE;
 
-            default:
-                std::abort();
+                default:
+                    std::abort();
+                }
+            } else {
+                switch (floatType.length()) {
+                case 32:
+                    return Instr::Kind::READ_FL_FLOAT_32_BE;
+
+                case 64:
+                    return Instr::Kind::READ_FL_FLOAT_64_BE;
+
+                default:
+                    std::abort();
+                }
             }
         }
     }

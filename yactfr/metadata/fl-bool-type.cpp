@@ -13,25 +13,29 @@
 namespace yactfr {
 
 FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int align, const unsigned int len,
-                                               const ByteOrder bo, MapItem::UP attrs) :
-    FixedLengthBitArrayType {_KIND_FL_BOOL, align, len, bo, std::move(attrs)}
+                                               const ByteOrder bo,
+                                               const boost::optional<BitOrder>& bio,
+                                               MapItem::UP attrs) :
+    FixedLengthBitArrayType {_KIND_FL_BOOL, align, len, bo, bio, std::move(attrs)}
 {
 }
 
 FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int len, const ByteOrder bo,
+                                               const boost::optional<BitOrder>& bio,
                                                MapItem::UP attrs) :
-    FixedLengthBooleanType {1, len, bo, std::move(attrs)}
+    FixedLengthBooleanType {1, len, bo, bio, std::move(attrs)}
 {
 }
 
 FixedLengthBooleanType::FixedLengthBooleanType(const FixedLengthBooleanType& other) :
-    FixedLengthBooleanType {other.alignment(), other.length(), other.byteOrder()}
+    FixedLengthBooleanType {other.alignment(), other.length(), other.byteOrder(), other.bitOrder()}
 {
 }
 
 DataType::UP FixedLengthBooleanType::_clone() const
 {
     return FixedLengthBooleanType::create(this->alignment(), this->length(), this->byteOrder(),
+                                          this->bitOrder(),
                                           internal::tryCloneAttrs(this->attributes()));
 }
 

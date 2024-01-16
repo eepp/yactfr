@@ -559,6 +559,7 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoFlUIntType(const PseudoDt
 
     return FixedLengthUnsignedIntegerType::create(pseudoUIntType.align(), pseudoUIntType.len(),
                                                   pseudoUIntType.bo(),
+                                                  pseudoUIntType.bio(),
                                                   pseudoUIntType.prefDispBase(),
                                                   pseudoUIntType.mappings(),
                                                   tryCloneAttrs(pseudoUIntType.attrs()),

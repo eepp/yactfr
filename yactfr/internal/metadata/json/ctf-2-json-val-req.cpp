@@ -47,6 +47,35 @@ private:
 };
 
 /*
+ * CTF 2 JSON bit order value requirement.
+ */
+class JsonBioValReq final :
+    public JsonStrValInSetReq
+{
+public:
+    explicit JsonBioValReq() :
+        JsonStrValInSetReq {JsonStrValInSetReq::Set {strs::FTL, strs::LTF}}
+    {
+    }
+
+    static SP shared()
+    {
+        return std::make_shared<JsonBioValReq>();
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonStrValInSetReq::_validate(jsonVal);
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid bit order:", jsonVal.loc());
+            throw;
+        }
+    }
+};
+
+/*
  * CTF 2 JSON UUID value requirement.
  */
 class JsonUuidValReq final :
@@ -568,6 +597,7 @@ private:
     {
         addToPropReqs(propReqs, strs::LEN, JsonUIntValInRangeReq::shared(1, 64), true);
         addToPropReqs(propReqs, strs::BO, JsonBoValReq::shared(), true);
+        addToPropReqs(propReqs, strs::BIO, JsonBioValReq::shared());
         addToPropReqs(propReqs, strs::ALIGN, JsonUIntValIsAlignReq::shared());
         return std::move(propReqs);
     }
