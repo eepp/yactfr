@@ -28,6 +28,7 @@ class EventRecordBeginningElement;
 class EventRecordEndElement;
 class EventRecordInfoElement;
 class FixedLengthBitArrayElement;
+class FixedLengthBitMapElement;
 class FixedLengthBooleanElement;
 class FixedLengthFloatingPointNumberElement;
 class FixedLengthSignedIntegerElement;
@@ -103,6 +104,7 @@ public:
     virtual void visit(const EventRecordEndElement&);
     virtual void visit(const EventRecordInfoElement&);
     virtual void visit(const FixedLengthBitArrayElement&);
+    virtual void visit(const FixedLengthBitMapElement&);
     virtual void visit(const FixedLengthBooleanElement&);
     virtual void visit(const FixedLengthFloatingPointNumberElement&);
     virtual void visit(const FixedLengthSignedIntegerElement&);

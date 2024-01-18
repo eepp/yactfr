@@ -40,4 +40,4 @@
 [21:36] In object property `element-field-class`:
 [21:36] Invalid data type:
 [22:23] In object property `type`:
-[22:23] Unexpected value `utf-16-string`: expecting `dynamic-length-array`, `dynamic-length-blob`, `dynamic-length-string`, `fixed-length-bit-array`, `fixed-length-boolean`, `fixed-length-floating-point-number`, `fixed-length-signed-integer`, `fixed-length-unsigned-integer`, `null-terminated-string`, `optional`, `static-length-array`, `static-length-blob`, `static-length-string`, `structure`, `variable-length-signed-integer`, `variable-length-unsigned-integer`, or `variant`.
+[22:23] Unexpected value `utf-16-string`: expecting `dynamic-length-array`, `dynamic-length-blob`, `dynamic-length-string`, `fixed-length-bit-array`, `fixed-length-bit-map`, `fixed-length-boolean`, `fixed-length-floating-point-number`, `fixed-length-signed-integer`, `fixed-length-unsigned-integer`, `null-terminated-string`, `optional`, `static-length-array`, `static-length-blob`, `static-length-string`, `structure`, `variable-length-signed-integer`, `variable-length-unsigned-integer`, or `variant`.

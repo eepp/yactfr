@@ -38,8 +38,8 @@ T swapBits(const T p) noexcept
  * For example, given an unsigned `val` with the value 0b111011010 and
  * `len` set to 9, the returned value is 0b010110111.
  *
- * Given a _signed_ `val` with the value 0b01011 and
- * `len` set to 5, the returned value is
+ * Given a _signed_ `val` with the value 0b01011 and `len` set to 5, the
+ * returned value is
  * 0b1111111111111111111111111111111111111111111111111111111111111010
  * (sign extended).
  */

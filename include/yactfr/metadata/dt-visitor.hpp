@@ -47,6 +47,17 @@ public:
 
     /*!
     @brief
+        Visits the fixed-length bit map type \p type.
+
+    @param[in] type
+        Data type to visit.
+    */
+    virtual void visit(const FixedLengthBitMapType& type)
+    {
+    }
+
+    /*!
+    @brief
         Visits the fixed-length boolean type \p type.
 
     @param[in] type

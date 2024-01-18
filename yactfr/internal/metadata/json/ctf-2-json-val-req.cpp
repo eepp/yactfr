@@ -604,6 +604,116 @@ private:
 };
 
 /*
+ * CTF 2 JSON integer type mappings or bit map flags value requirement.
+ *
+ * An instance of this class validates that a given JSON value is a
+ * CTF 2 integer type mappings object or a CTF 2 bit map flags object,
+ * each integer value within the integer ranges satisfying an instance
+ * of `JsonIntValReqT`.
+ */
+template <typename JsonIntValReqT>
+class JsonIntTypeMappingsFlagsValReq final :
+    public JsonObjValReq
+{
+public:
+    explicit JsonIntTypeMappingsFlagsValReq(const char * const propName,
+                                            const char * const objName,
+                                            const bool allowEmpty = true) :
+        JsonObjValReq {{}, true},
+        _propName {propName},
+        _objName {objName},
+        _allowEmpty {allowEmpty}
+    {
+    }
+
+    static SP shared(const char * const propName, const char * const objName,
+                     const bool allowEmpty = true)
+    {
+        return std::make_shared<JsonIntTypeMappingsFlagsValReq>(propName, objName, allowEmpty);
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonObjValReq::_validate(jsonVal);
+
+            if (!_allowEmpty && jsonVal.asObj().size() < 1) {
+                std::ostringstream ss;
+
+                ss << "Expecting at least one " << _propName << '.';
+                throwTextParseError(ss.str(), jsonVal.loc());
+            }
+
+            for (auto& keyJsonValPair : jsonVal.asObj()) {
+                try {
+                    _rangeSetReq.validate(*keyJsonValPair.second);
+                } catch (TextParseError& exc) {
+                    std::ostringstream ss;
+
+                    ss << "In " << _propName << " `" << keyJsonValPair.first << "`:";
+                    appendMsgToTextParseError(exc, ss.str(), jsonVal.loc());
+                    throw;
+                }
+            }
+        } catch (TextParseError& exc) {
+            std::ostringstream ss;
+
+            ss << "Invalid " << _objName << ":";
+            appendMsgToTextParseError(exc, ss.str(), jsonVal.loc());
+            throw;
+        }
+    }
+
+private:
+    JsonIntRangeSetValReqBase<JsonIntValReqT> _rangeSetReq;
+    const char *_propName;
+    const char *_objName;
+    bool _allowEmpty;
+};
+
+/*
+ * CTF 2 JSON fixed-length bit map type value requirement.
+ */
+class JsonFlBitMapTypeValReq final :
+    public JsonFlBitArrayTypeValReq
+{
+public:
+    explicit JsonFlBitMapTypeValReq() :
+        JsonFlBitArrayTypeValReq {this->typeStr(), {
+            {strs::FLAGS, {
+                JsonIntTypeMappingsFlagsValReq<JsonUIntValReq>::shared("flag",
+                                                                       "fixed-length bit map type flags",
+                                                                       false),
+                true,
+            }},
+        }}
+    {
+    }
+
+    static SP shared()
+    {
+        return std::make_shared<JsonFlBitMapTypeValReq>();
+    }
+
+    static constexpr const char *typeStr() noexcept
+    {
+        return strs::FL_BIT_MAP;
+    }
+
+private:
+    void _validate(const JsonVal& jsonVal) const override
+    {
+        try {
+            JsonDtValReq::_validate(jsonVal);
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, "Invalid fixed-length bit map type:", jsonVal.loc());
+            throw;
+        }
+    }
+};
+
+/*
  * CTF 2 JSON fixed-length boolean type value requirement.
  */
 class JsonFlBoolTypeValReq final :
@@ -677,56 +787,6 @@ static JsonObjValReq::PropReqsEntry rolesPropReqEntry()
     return {strs::ROLES, {JsonRolesValReq::shared()}};
 }
 
-
-/*
- * CTF 2 JSON integer type mappings value requirement,
- *
- * An instance of this class validates that a given JSON value is
- * a CTF 2 integer type mappings object, each integer value within
- * the integer ranges satisfying an instance of `JsonIntValReqT`.
- */
-template <typename JsonIntValReqT>
-class JsonIntTypeMappingsValReq final :
-    public JsonObjValReq
-{
-public:
-    explicit JsonIntTypeMappingsValReq() :
-        JsonObjValReq {{}, true}
-    {
-    }
-
-    static SP shared()
-    {
-        return std::make_shared<JsonIntTypeMappingsValReq>();
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonObjValReq::_validate(jsonVal);
-
-            for (auto& keyJsonValPair : jsonVal.asObj()) {
-                try {
-                    _rangeSetReq.validate(*keyJsonValPair.second);
-                } catch (TextParseError& exc) {
-                    std::ostringstream ss;
-
-                    ss << "In mapping `" << keyJsonValPair.first << "`:";
-                    appendMsgToTextParseError(exc, ss.str(), jsonVal.loc());
-                    throw;
-                }
-            }
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid integer type mappings:", jsonVal.loc());
-            throw;
-        }
-    }
-
-private:
-    JsonIntRangeSetValReqBase<JsonIntValReqT> _rangeSetReq;
-};
-
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 integer type
@@ -735,7 +795,8 @@ private:
 template <typename JsonIntValReqT>
 JsonObjValReq::PropReqsEntry intTypeMappingsPropReqEntry()
 {
-    return {strs::MAPPINGS, {JsonIntTypeMappingsValReq<JsonIntValReqT>::shared()}};
+    return {strs::MAPPINGS, {JsonIntTypeMappingsFlagsValReq<JsonIntValReqT>::shared("mapping",
+                                                                                    "integer type mappings")}};
 }
 
 /*
@@ -1628,6 +1689,7 @@ public:
             {strs::TYPE, {
                 JsonStrValInSetReq::shared({
                     JsonFlBitArrayTypeValReq::typeStr(),
+                    JsonFlBitMapTypeValReq::typeStr(),
                     JsonFlBoolTypeValReq::typeStr(),
                     JsonFlUIntTypeValReq::typeStr(),
                     JsonFlSIntTypeValReq::typeStr(),
@@ -1655,6 +1717,7 @@ public:
         _varTypeValReq {*this}
     {
         this->_addToDtValReqs(_flBitArrayTypeValReq);
+        this->_addToDtValReqs(_flBitMapTypeValReq);
         this->_addToDtValReqs(_flBoolTypeValReq);
         this->_addToDtValReqs(_flUIntTypeValReq);
         this->_addToDtValReqs(_flSIntTypeValReq);
@@ -1710,6 +1773,7 @@ private:
 
 private:
     JsonFlBitArrayTypeValReq _flBitArrayTypeValReq;
+    JsonFlBitMapTypeValReq _flBitMapTypeValReq;
     JsonFlBoolTypeValReq _flBoolTypeValReq;
     JsonFlUIntTypeValReq _flUIntTypeValReq;
     JsonFlSIntTypeValReq _flSIntTypeValReq;

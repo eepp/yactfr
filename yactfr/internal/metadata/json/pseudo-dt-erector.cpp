@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include <yactfr/metadata/fl-bit-array-type.hpp>
+#include <yactfr/metadata/fl-bit-map-type.hpp>
 #include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
@@ -61,22 +62,30 @@ IntegerRangeSet<ValT, ValidatePrecondsV> intRangesFromArray(const JsonArrayVal& 
     return Ranges {std::move(ranges)};
 }
 
+template <typename MappingsOrFlagsT>
+MappingsOrFlagsT intTypeMappingsOrFlagsOfDt(const JsonObjVal& jsonDt, const char * const propName)
+{
+    using RangeValueT = typename MappingsOrFlagsT::mapped_type::Value;
+
+    MappingsOrFlagsT mappingsOrFlags;
+    const auto jsonMappingsOrFlags = jsonDt[propName];
+
+    if (!jsonMappingsOrFlags) {
+        return mappingsOrFlags;
+    }
+
+    for (auto& keyJsonIntRangesPair : jsonMappingsOrFlags->asObj()) {
+        mappingsOrFlags.insert(std::make_pair(keyJsonIntRangesPair.first,
+                                              intRangesFromArray<RangeValueT>(keyJsonIntRangesPair.second->asArray())));
+    }
+
+    return mappingsOrFlags;
+}
+
 template <typename IntTypeT>
 typename IntTypeT::Mappings intTypeMappingsOfIntType(const JsonObjVal& jsonDt)
 {
-    typename IntTypeT::Mappings mappings;
-    const auto jsonMappings = jsonDt[strs::MAPPINGS];
-
-    if (!jsonMappings) {
-        return mappings;
-    }
-
-    for (auto& keyJsonIntRangesPair : jsonMappings->asObj()) {
-        mappings.insert(std::make_pair(keyJsonIntRangesPair.first,
-                                       intRangesFromArray<typename IntTypeT::MappingValue>(keyJsonIntRangesPair.second->asArray())));
-    }
-
-    return mappings;
+    return intTypeMappingsOrFlagsOfDt<typename IntTypeT::Mappings>(jsonDt, strs::MAPPINGS);
 }
 
 static UnsignedIntegerTypeRoleSet uIntTypeRolesOfUIntType(const JsonObjVal& jsonDt)
@@ -167,6 +176,17 @@ static PseudoDt::UP pseudoDtFromFlIntType(const JsonObjVal& jsonDt, const std::s
     }
 }
 
+static PseudoDt::UP pseudoDtFromFlBitMapType(const JsonObjVal& jsonDt, MapItem::UP attrs,
+                                             const unsigned int len, const ByteOrder bo,
+                                             const BitOrder bio, const unsigned int align)
+{
+    auto flags = intTypeMappingsOrFlagsOfDt<FixedLengthBitMapType::Flags>(jsonDt, strs::FLAGS);
+
+    return createPseudoScalarDtWrapper<FixedLengthBitMapType>(jsonDt, align, len, bo,
+                                                              std::move(flags), bio,
+                                                              std::move(attrs));
+}
+
 static PseudoDt::UP pseudoDtFromFlBoolType(const JsonObjVal& jsonDt, MapItem::UP attrs,
                                            const unsigned int len, const ByteOrder bo,
                                            const BitOrder bio, const unsigned int align)
@@ -211,6 +231,8 @@ static PseudoDt::UP pseudoDtFromFlBitArrayType(const JsonObjVal& jsonDt, const s
     if (type == strs::FL_BIT_ARRAY) {
         return createPseudoScalarDtWrapper<FixedLengthBitArrayType>(jsonDt, align, len, bo, bio,
                                                                     std::move(attrs));
+    } else if (type == strs::FL_BIT_MAP) {
+        return pseudoDtFromFlBitMapType(jsonDt, std::move(attrs), len, bo, bio, align);
     } else if (type == strs::FL_BOOL) {
         return pseudoDtFromFlBoolType(jsonDt, std::move(attrs), len, bo, bio, align);
     } else if (type == strs::FL_UINT || type == strs::FL_SINT) {
@@ -603,6 +625,7 @@ PseudoDt::UP PseudoDtErector::pseudoDtOfJsonObj(const JsonObjVal& jsonObjVal,
 
     // defer to specific method
     if (type == strs::FL_BIT_ARRAY ||
+            type == strs::FL_BIT_MAP ||
             type == strs::FL_BOOL ||
             type == strs::FL_UINT || type == strs::FL_SINT ||
             type == strs::FL_FLOAT) {

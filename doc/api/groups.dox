@@ -231,6 +231,7 @@ descriptions below easier to read and to allow recursion.
     [DefaultClockValueElement]
   ) |
   FixedLengthBitArrayElement |
+  FixedLengthBitMapElement |
   FixedLengthBooleanElement |
   FixedLengthSignedIntegerElement |
   FixedLengthFloatingPointNumberElement |

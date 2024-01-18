@@ -54,6 +54,7 @@ add_library (
     metadata/dt.cpp
     metadata/ert.cpp
     metadata/fl-bit-array-type.cpp
+    metadata/fl-bit-map-type.cpp
     metadata/fl-bool-type.cpp
     metadata/fl-float-type.cpp
     metadata/fl-int-type.cpp

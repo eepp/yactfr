@@ -202,6 +202,78 @@ std::string Instr::toStr(const Size indent) const
         kindStr = "READ_FL_BIT_ARRAY_LE_REV";
         break;
 
+    case Kind::READ_FL_BIT_MAP_A16_BE_REV:
+        kindStr = "READ_FL_BIT_MAP_A16_BE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A16_BE:
+        kindStr = "READ_FL_BIT_MAP_A16_BE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A16_LE:
+        kindStr = "READ_FL_BIT_MAP_A16_LE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A16_LE_REV:
+        kindStr = "READ_FL_BIT_MAP_A16_LE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A32_BE_REV:
+        kindStr = "READ_FL_BIT_MAP_A32_BE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A32_BE:
+        kindStr = "READ_FL_BIT_MAP_A32_BE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A32_LE:
+        kindStr = "READ_FL_BIT_MAP_A32_LE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A32_LE_REV:
+        kindStr = "READ_FL_BIT_MAP_A32_LE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A64_BE_REV:
+        kindStr = "READ_FL_BIT_MAP_A64_BE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A64_BE:
+        kindStr = "READ_FL_BIT_MAP_A64_BE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A64_LE:
+        kindStr = "READ_FL_BIT_MAP_A64_LE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A64_LE_REV:
+        kindStr = "READ_FL_BIT_MAP_A64_LE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A8:
+        kindStr = "READ_FL_BIT_MAP_A8";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_A8_REV:
+        kindStr = "READ_FL_BIT_MAP_A8_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_BE_REV:
+        kindStr = "READ_FL_BIT_MAP_BE_REV";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_BE:
+        kindStr = "READ_FL_BIT_MAP_BE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_LE:
+        kindStr = "READ_FL_BIT_MAP_LE";
+        break;
+
+    case Kind::READ_FL_BIT_MAP_LE_REV:
+        kindStr = "READ_FL_BIT_MAP_LE_REV";
+        break;
+
     case Kind::READ_FL_BOOL_A16_BE_REV:
         kindStr = "READ_FL_BOOL_A16_BE_REV";
         break;
@@ -897,6 +969,113 @@ std::string ReadFlBitArrayInstr::_commonToStr() const
     ss << ReadDataInstr::_commonToStr();
     ss << " " << _strProp("len") << _len;
     return ss.str();
+}
+
+static inline Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
+{
+    assert(dt.isFixedLengthBitMapType());
+
+    auto kind = Instr::Kind::UNSET;
+    auto& bitMapType = dt.asFixedLengthBitMapType();
+
+    if (bitMapType.byteOrder() == ByteOrder::LITTLE) {
+        if (bitMapType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            kind = Instr::Kind::READ_FL_BIT_MAP_LE;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (bitMapType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_MAP_A8;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_MAP_A16_LE;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_MAP_A32_LE;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_MAP_A64_LE;
+
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_FL_BIT_MAP_LE_REV;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (bitMapType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_MAP_A8_REV;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_MAP_A16_LE_REV;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_MAP_A32_LE_REV;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_MAP_A64_LE_REV;
+
+                default:
+                    break;
+                }
+            }
+        }
+    } else {
+        if (bitMapType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+            kind = Instr::Kind::READ_FL_BIT_MAP_BE_REV;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (bitMapType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_MAP_A8_REV;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_MAP_A16_BE_REV;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_MAP_A32_BE_REV;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_MAP_A64_BE_REV;
+
+                default:
+                    break;
+                }
+            }
+        } else {
+            kind = Instr::Kind::READ_FL_BIT_MAP_BE;
+
+            if (dt.alignment() % 8 == 0) {
+                switch (bitMapType.length()) {
+                case 8:
+                    return Instr::Kind::READ_FL_BIT_MAP_A8;
+
+                case 16:
+                    return Instr::Kind::READ_FL_BIT_MAP_A16_BE;
+
+                case 32:
+                    return Instr::Kind::READ_FL_BIT_MAP_A32_BE;
+
+                case 64:
+                    return Instr::Kind::READ_FL_BIT_MAP_A64_BE;
+
+                default:
+                    break;
+                }
+            }
+        }
+    }
+
+    assert(kind != Instr::Kind::UNSET);
+    return kind;
+}
+
+ReadFlBitMapInstr::ReadFlBitMapInstr(const StructureMemberType * const member, const DataType& dt) :
+    ReadFlBitArrayInstr {kindFromFlBitMapType(dt), member, dt}
+{
+    assert(dt.isFixedLengthBitMapType());
 }
 
 static inline Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept

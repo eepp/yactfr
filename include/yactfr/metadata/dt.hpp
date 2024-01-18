@@ -47,6 +47,7 @@ protected:
         _KIND_UINT                  = _KIND_U | _KIND_INT,
         _KIND_SINT                  = _KIND_S | _KIND_INT,
         _KIND_FL_BIT_ARRAY          = _KIND_FL | _KIND_BIT_ARRAY,
+        _KIND_FL_BIT_MAP            = (1 << 7) | _KIND_FL_BIT_ARRAY,
         _KIND_FL_BOOL               = (1 << 8) | _KIND_FL_BIT_ARRAY,
         _KIND_FL_INT                = _KIND_FL_BIT_ARRAY | _KIND_INT,
         _KIND_FL_SINT               = _KIND_FL_INT | _KIND_SINT,
@@ -139,6 +140,12 @@ public:
     bool isFixedLengthBitArrayType() const noexcept
     {
         return this->_isKind(_KIND_FL_BIT_ARRAY);
+    }
+
+    /// \c true if this type is a fixed-length bit map type.
+    bool isFixedLengthBitMapType() const noexcept
+    {
+        return this->_isKind(_KIND_FL_BIT_MAP);
     }
 
     /// \c true if this type is a fixed-length boolean type.
@@ -363,6 +370,15 @@ public:
         This type is a fixed-length bit array type.
     */
     const FixedLengthBitArrayType& asFixedLengthBitArrayType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a fixed-length bit map type.
+
+    @pre
+        This type is a fixed-length bit map type.
+    */
+    const FixedLengthBitMapType& asFixedLengthBitMapType() const noexcept;
 
     /*!
     @brief

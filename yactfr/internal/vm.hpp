@@ -297,6 +297,7 @@ public:
         EventRecordInfoElement erInfo;
         DefaultClockValueElement defClkVal;
         FixedLengthBitArrayElement flBitArray;
+        FixedLengthBitMapElement flBitMap;
         FixedLengthBooleanElement flBool;
         FixedLengthSignedIntegerElement flSInt;
         FixedLengthUnsignedIntegerElement flUInt;
@@ -1302,6 +1303,24 @@ private:
     _ExecReaction _execReadFlBitArrayBeRev(const Instr& instr);
     _ExecReaction _execReadFlBitArrayLe(const Instr& instr);
     _ExecReaction _execReadFlBitArrayLeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA16Be(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA16BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA16Le(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA16LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA32Be(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA32BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA32Le(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA32LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA64Be(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA64BeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA64Le(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA64LeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA8(const Instr& instr);
+    _ExecReaction _execReadFlBitMapA8Rev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapBe(const Instr& instr);
+    _ExecReaction _execReadFlBitMapBeRev(const Instr& instr);
+    _ExecReaction _execReadFlBitMapLe(const Instr& instr);
+    _ExecReaction _execReadFlBitMapLeRev(const Instr& instr);
     _ExecReaction _execReadFlBoolA16Be(const Instr& instr);
     _ExecReaction _execReadFlBoolA16BeRev(const Instr& instr);
     _ExecReaction _execReadFlBoolA16Le(const Instr& instr);
@@ -1484,6 +1503,15 @@ private:
     }
 
     template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
+    void _execReadStdFlBitMap(const Instr& instr)
+    {
+        const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
+
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitMap);
+        this->_consumeExistingBits(LenBitsV);
+    }
+
+    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlBool(const Instr& instr)
     {
         const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
@@ -1544,6 +1572,15 @@ private:
 
         this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
+    }
+
+    template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
+    void _execReadFlBitMap(const Instr& instr)
+    {
+        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
+
+        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitMap);
+        this->_consumeExistingBits(static_cast<const ReadFlBitMapInstr&>(instr).len());
     }
 
     template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
@@ -1764,7 +1801,7 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<ExecFunc, 150> _execFuncs;
+    std::array<ExecFunc, 256> _execFuncs;
 
     // position (whole state of the VM)
     VmPos _pos;

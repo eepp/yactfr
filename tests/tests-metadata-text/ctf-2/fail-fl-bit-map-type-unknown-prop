@@ -1,0 +1,33 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "byte-order": "big-endian",
+            "length": 32,
+            "covid": 19,
+            "flags": {
+              "meow": [[0, 0]]
+            }
+          }
+        }
+      ]
+    }
+  }
+----
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[7:9] In array element #1:
+[7:9] Invalid structure member type:
+[9:26] In object property `field-class`:
+[9:26] Invalid fixed-length bit map type:
+[13:22] Unknown object property `covid`.

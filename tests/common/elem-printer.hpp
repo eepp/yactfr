@@ -122,6 +122,34 @@ public:
         *_os << ':' << elem.unsignedIntegerValue() << '\n';
     }
 
+    void visit(const yactfr::FixedLengthBitMapElement& elem) override
+    {
+        this->_visitDataElem(elem, "FLBM");
+        *_os << ':' << elem.unsignedIntegerValue();
+
+        std::unordered_set<const std::string *> flagNames;
+
+        elem.activeFlagNames(flagNames);
+
+        if (!flagNames.empty()) {
+            *_os << ':';
+
+            std::set<std::string> sortedFlagNames;
+
+            for (const auto stringPtr : flagNames) {
+                sortedFlagNames.insert(*stringPtr);
+            }
+
+            *_os << *sortedFlagNames.begin();
+
+            for (auto it = std::next(sortedFlagNames.begin()); it != sortedFlagNames.end(); ++it) {
+                *_os << ',' <<  *it;
+            }
+        }
+
+        *_os << '\n';
+    }
+
     void visit(const yactfr::FixedLengthBooleanElement& elem) override
     {
         this->_visitDataElem(elem, "FLB");

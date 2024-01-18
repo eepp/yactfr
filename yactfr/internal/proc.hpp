@@ -71,6 +71,7 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
 #include <yactfr/metadata/fl-bit-array-type.hpp>
+#include <yactfr/metadata/fl-bit-map-type.hpp>
 #include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
@@ -120,6 +121,7 @@ class EndReadScopeInstr;
 class Instr;
 class ReadDataInstr;
 class ReadFlBitArrayInstr;
+class ReadFlBitMapInstr;
 class ReadFlBoolInstr;
 class ReadFlFloatInstr;
 class ReadFlSIntInstr;
@@ -156,6 +158,10 @@ public:
     virtual ~InstrVisitor() = default;
 
     virtual void visit(ReadFlBitArrayInstr&)
+    {
+    }
+
+    virtual void visit(ReadFlBitMapInstr&)
     {
     }
 
@@ -470,6 +476,24 @@ public:
         READ_FL_BIT_ARRAY_BE_REV,
         READ_FL_BIT_ARRAY_LE,
         READ_FL_BIT_ARRAY_LE_REV,
+        READ_FL_BIT_MAP_A16_BE,
+        READ_FL_BIT_MAP_A16_BE_REV,
+        READ_FL_BIT_MAP_A16_LE,
+        READ_FL_BIT_MAP_A16_LE_REV,
+        READ_FL_BIT_MAP_A32_BE,
+        READ_FL_BIT_MAP_A32_BE_REV,
+        READ_FL_BIT_MAP_A32_LE,
+        READ_FL_BIT_MAP_A32_LE_REV,
+        READ_FL_BIT_MAP_A64_BE,
+        READ_FL_BIT_MAP_A64_BE_REV,
+        READ_FL_BIT_MAP_A64_LE,
+        READ_FL_BIT_MAP_A64_LE_REV,
+        READ_FL_BIT_MAP_A8,
+        READ_FL_BIT_MAP_A8_REV,
+        READ_FL_BIT_MAP_BE,
+        READ_FL_BIT_MAP_BE_REV,
+        READ_FL_BIT_MAP_LE,
+        READ_FL_BIT_MAP_LE_REV,
         READ_FL_BOOL_A16_BE,
         READ_FL_BOOL_A16_BE_REV,
         READ_FL_BOOL_A16_LE,
@@ -616,6 +640,24 @@ public:
         case Instr::Kind::READ_FL_BIT_ARRAY_BE_REV:
         case Instr::Kind::READ_FL_BIT_ARRAY_LE:
         case Instr::Kind::READ_FL_BIT_ARRAY_LE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A16_BE:
+        case Instr::Kind::READ_FL_BIT_MAP_A16_BE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A16_LE:
+        case Instr::Kind::READ_FL_BIT_MAP_A16_LE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A32_BE:
+        case Instr::Kind::READ_FL_BIT_MAP_A32_BE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A32_LE:
+        case Instr::Kind::READ_FL_BIT_MAP_A32_LE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A64_BE:
+        case Instr::Kind::READ_FL_BIT_MAP_A64_BE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A64_LE:
+        case Instr::Kind::READ_FL_BIT_MAP_A64_LE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_A8:
+        case Instr::Kind::READ_FL_BIT_MAP_A8_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_BE:
+        case Instr::Kind::READ_FL_BIT_MAP_BE_REV:
+        case Instr::Kind::READ_FL_BIT_MAP_LE:
+        case Instr::Kind::READ_FL_BIT_MAP_LE_REV:
         case Instr::Kind::READ_FL_BOOL_A16_BE:
         case Instr::Kind::READ_FL_BOOL_A16_BE_REV:
         case Instr::Kind::READ_FL_BOOL_A16_LE:
@@ -870,6 +912,26 @@ private:
 private:
     const unsigned int _len;
     const ByteOrder _bo;
+};
+
+/*
+ * "Read fixed-length bit map" procedure instruction.
+ */
+class ReadFlBitMapInstr :
+    public ReadFlBitArrayInstr
+{
+public:
+    explicit ReadFlBitMapInstr(const StructureMemberType *memberType, const DataType& dt);
+
+    void accept(InstrVisitor& visitor) override
+    {
+        visitor.visit(*this);
+    }
+
+    const FixedLengthBitMapType& bitMapType() const noexcept
+    {
+        return static_cast<const FixedLengthBitMapType&>(this->dt());
+    }
 };
 
 /*

@@ -43,6 +43,7 @@
 #include "metadata/dt.hpp"
 #include "metadata/ert.hpp"
 #include "metadata/fl-bit-array-type.hpp"
+#include "metadata/fl-bit-map-type.hpp"
 #include "metadata/fl-float-type.hpp"
 #include "metadata/fl-int-type.hpp"
 #include "metadata/from-metadata-text.hpp"

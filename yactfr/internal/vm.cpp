@@ -241,6 +241,24 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_BE_REV>(&Vm::_execReadFlBitArrayBeRev);
     this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_LE>(&Vm::_execReadFlBitArrayLe);
     this->_initExecFunc<Instr::Kind::READ_FL_BIT_ARRAY_LE_REV>(&Vm::_execReadFlBitArrayLeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A16_BE>(&Vm::_execReadFlBitMapA16Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A16_BE_REV>(&Vm::_execReadFlBitMapA16BeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A16_LE>(&Vm::_execReadFlBitMapA16Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A16_LE_REV>(&Vm::_execReadFlBitMapA16LeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A32_BE>(&Vm::_execReadFlBitMapA32Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A32_BE_REV>(&Vm::_execReadFlBitMapA32BeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A32_LE>(&Vm::_execReadFlBitMapA32Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A32_LE_REV>(&Vm::_execReadFlBitMapA32LeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A64_BE>(&Vm::_execReadFlBitMapA64Be);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A64_BE_REV>(&Vm::_execReadFlBitMapA64BeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A64_LE>(&Vm::_execReadFlBitMapA64Le);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A64_LE_REV>(&Vm::_execReadFlBitMapA64LeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A8>(&Vm::_execReadFlBitMapA8);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_A8_REV>(&Vm::_execReadFlBitMapA8Rev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_BE>(&Vm::_execReadFlBitMapBe);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_BE_REV>(&Vm::_execReadFlBitMapBeRev);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_LE>(&Vm::_execReadFlBitMapLe);
+    this->_initExecFunc<Instr::Kind::READ_FL_BIT_MAP_LE_REV>(&Vm::_execReadFlBitMapLeRev);
     this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A16_BE>(&Vm::_execReadFlBoolA16Be);
     this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A16_BE_REV>(&Vm::_execReadFlBoolA16BeRev);
     this->_initExecFunc<Instr::Kind::READ_FL_BOOL_A16_LE>(&Vm::_execReadFlBoolA16Le);
@@ -448,6 +466,60 @@ Vm::_ExecReaction Vm::_execReadFlBitArrayA32Be(const Instr& instr)
 Vm::_ExecReaction Vm::_execReadFlBitArrayA64Be(const Instr& instr)
 {
     this->_execReadStdFlBitArray<64, readFlUIntBe64, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapLe(const Instr& instr)
+{
+    this->_execReadFlBitMap<readFlUIntLeFuncs, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapBe(const Instr& instr)
+{
+    this->_execReadFlBitMap<readFlUIntBeFuncs, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA8(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<8, readFlUInt8, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA16Le(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<16, readFlUIntLe16, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA32Le(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<32, readFlUIntLe32, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA64Le(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<64, readFlUIntLe64, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA16Be(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<16, readFlUIntBe16, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA32Be(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<32, readFlUIntBe32, false>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA64Be(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<64, readFlUIntBe64, false>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 
@@ -724,6 +796,60 @@ Vm::_ExecReaction Vm::_execReadFlBoolLeRev(const Instr& instr)
 Vm::_ExecReaction Vm::_execReadFlBoolBeRev(const Instr& instr)
 {
     this->_execReadFlBool<readFlUIntBeFuncs, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA8Rev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<8, readFlUInt8, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA16LeRev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<16, readFlUIntLe16, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA32LeRev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<32, readFlUIntLe32, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA64LeRev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<64, readFlUIntLe64, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA16BeRev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<16, readFlUIntBe16, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA32BeRev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<32, readFlUIntBe32, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapA64BeRev(const Instr& instr)
+{
+    this->_execReadStdFlBitMap<64, readFlUIntBe64, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapLeRev(const Instr& instr)
+{
+    this->_execReadFlBitMap<readFlUIntLeFuncs, true>(instr);
+    return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
+}
+
+Vm::_ExecReaction Vm::_execReadFlBitMapBeRev(const Instr& instr)
+{
+    this->_execReadFlBitMap<readFlUIntBeFuncs, true>(instr);
     return _ExecReaction::FETCH_NEXT_INSTR_AND_STOP;
 }
 

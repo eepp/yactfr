@@ -70,6 +70,9 @@ private:
     void _buildReadFlBitArrayInstr(const StructureMemberType *memberType, const DataType& dt,
                                    Proc& baseProc);
 
+    void _buildReadFlBitMapInstr(const StructureMemberType *memberType, const DataType& dt,
+                                 Proc& baseProc);
+
     void _buildReadFlBoolInstr(const StructureMemberType *memberType, const DataType& dt,
                                Proc& baseProc);
 

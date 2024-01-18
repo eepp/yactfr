@@ -11,12 +11,14 @@
 #include <cstdint>
 #include <string>
 #include <algorithm>
+#include <unordered_set>
 #include <boost/uuid/uuid.hpp>
 #include <boost/optional/optional.hpp>
 
 #include "metadata/fwd.hpp"
 #include "metadata/dt.hpp"
 #include "metadata/fl-bit-array-type.hpp"
+#include "metadata/fl-bit-map-type.hpp"
 #include "metadata/fl-bool-type.hpp"
 #include "metadata/fl-float-type.hpp"
 #include "metadata/fl-int-type.hpp"
@@ -71,24 +73,25 @@ private:
         _KIND_INFO                              = 1 << 9,
         _KIND_DEF_CLK_VAL                       = 1 << 10,
         _KIND_FL_BIT_ARRAY                      = 1 << 11,
-        _KIND_BOOL_DATA                         = 1 << 12,
-        _KIND_INT_DATA                          = 1 << 13,
-        _KIND_SIGNED                            = 1 << 14,
-        _KIND_UNSIGNED                          = 1 << 15,
-        _KIND_FLOAT_DATA                        = 1 << 16,
-        _KIND_VL_INT                            = _KIND_INT_DATA | (1 << 18),
-        _KIND_NT_STR                            = 1 << 19,
-        _KIND_RAW_DATA                          = 1 << 20,
-        _KIND_STRUCT                            = 1 << 21,
-        _KIND_SL_DATA                           = 1 << 22,
-        _KIND_DL_DATA                           = 1 << 23,
-        _KIND_ARRAY                             = 1 << 24,
-        _KIND_NON_NT_STR                        = 1 << 25,
-        _KIND_BLOB                              = 1 << 26,
-        _KIND_VAR                               = 1 << 27,
-        _KIND_INT_SEL                           = 1 << 28,
-        _KIND_BOOL_SEL                          = 1 << 29,
-        _KIND_OPT                               = 1 << 30,
+        _KIND_BIT_MAP_DATA                      = 1 << 12,
+        _KIND_BOOL_DATA                         = 1 << 13,
+        _KIND_INT_DATA                          = 1 << 14,
+        _KIND_SIGNED                            = 1 << 15,
+        _KIND_UNSIGNED                          = 1 << 16,
+        _KIND_FLOAT_DATA                        = 1 << 17,
+        _KIND_VL_INT                            = _KIND_INT_DATA | (1 << 19),
+        _KIND_NT_STR                            = 1 << 20,
+        _KIND_RAW_DATA                          = 1 << 21,
+        _KIND_STRUCT                            = 1 << 22,
+        _KIND_SL_DATA                           = 1 << 23,
+        _KIND_DL_DATA                           = 1 << 24,
+        _KIND_ARRAY                             = 1 << 25,
+        _KIND_NON_NT_STR                        = 1 << 26,
+        _KIND_BLOB                              = 1 << 27,
+        _KIND_VAR                               = 1 << 28,
+        _KIND_INT_SEL                           = 1 << 29,
+        _KIND_BOOL_SEL                          = 1 << 30,
+        _KIND_OPT                               = 1 << 31,
     };
 
     using _U = unsigned long long;
@@ -141,6 +144,9 @@ public:
 
         /// FixedLengthBitArrayElement
         FIXED_LENGTH_BIT_ARRAY                              = static_cast<_U>(_KIND_FL_BIT_ARRAY),
+
+        /// FixedLengthBitMapElement
+        FIXED_LENGTH_BIT_MAP                                = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_BIT_MAP_DATA),
 
         /// FixedLengthBooleanElement
         FIXED_LENGTH_BOOLEAN                                = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_BOOL_DATA),
@@ -403,6 +409,12 @@ public:
     bool isFixedLengthBitArrayElement() const noexcept
     {
         return this->_isKind(_KIND_FL_BIT_ARRAY);
+    }
+
+    /// \c true if this element is a fixed-length bit map element.
+    bool isFixedLengthBitMapElement() const noexcept
+    {
+        return _kind == Kind::FIXED_LENGTH_BIT_MAP;
     }
 
     /// \c true if this element is a fixed-length boolean element.
@@ -892,6 +904,15 @@ public:
         This type is a fixed-length bit array element.
     */
     const FixedLengthBitArrayElement& asFixedLengthBitArrayElement() const noexcept;
+
+    /*!
+    @brief
+        Returns this element as a fixed-length bit map element.
+
+    @pre
+        This type is a fixed-length bit map element.
+    */
+    const FixedLengthBitMapElement& asFixedLengthBitMapElement() const noexcept;
 
     /*!
     @brief
@@ -2073,6 +2094,55 @@ public:
     void accept(ElementVisitor& visitor) const override
     {
         visitor.visit(*this);
+    }
+};
+
+/*!
+@brief
+    Fixed-length bit map element.
+
+@ingroup elems
+*/
+class FixedLengthBitMapElement final :
+    public FixedLengthBitArrayElement
+{
+    friend class internal::Vm;
+    friend class internal::VmPos;
+
+private:
+    explicit FixedLengthBitMapElement() :
+        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_BIT_MAP}
+    {
+    }
+
+public:
+    /// Fixed-length bit map type.
+    const FixedLengthBitMapType& type() const noexcept
+    {
+        return this->dataType().asFixedLengthBitMapType();
+    }
+
+    void accept(ElementVisitor& visitor) const override
+    {
+        visitor.visit(*this);
+    }
+
+    /*!
+    @brief
+        Adds to \p names the names of the active flags for the active
+        bits of this element.
+
+    @param[out] names
+        @parblock
+        Set of the names of active flags for this element.
+
+        The pointed strings remain valid as long as what type() returns
+        exists.
+        @endparblock
+    */
+    void activeFlagNames(std::unordered_set<const std::string *>& names) const
+    {
+        this->type().activeFlagNamesForUnsignedIntegerValue(this->unsignedIntegerValue(), names);
     }
 };
 
@@ -3989,6 +4059,11 @@ inline const EventRecordInfoElement& Element::asEventRecordInfoElement() const n
 inline const FixedLengthBitArrayElement& Element::asFixedLengthBitArrayElement() const noexcept
 {
     return static_cast<const FixedLengthBitArrayElement&>(*this);
+}
+
+inline const FixedLengthBitMapElement& Element::asFixedLengthBitMapElement() const noexcept
+{
+    return static_cast<const FixedLengthBitMapElement&>(*this);
 }
 
 inline const FixedLengthBooleanElement& Element::asFixedLengthBooleanElement() const noexcept
