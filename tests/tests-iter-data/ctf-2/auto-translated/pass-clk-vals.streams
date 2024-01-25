@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -159,19 +160,44 @@
     "type": "data-stream-class"
   }
 ]
-----
-02 00000098 00142513 0fabcdef
+---
+!be
 
-    3517 ff
+# first packet
+<pkt1_beg>
+  02                                # data stream type ID
+  [(pkt1_end - pkt1_beg) * 8 : 32]  # packet total size
+  [1320211 : 32]                    # packet beginning timestamp
+  [262917615 : 32]                  # packet end timestamp
 
-    2222 21
+  # event record
+  [13591 : 16]                      # `a`
+  $255                              # `c`
 
-02 00000080 00abcdef ffabcdef
+  # event record
+  [8738 : 16]                       # `a`
+  $33                               # `c`
+<pkt1_end>
 
-    cdef ff
+# second packet
+<pkt2_beg>
+  02                                # data stream type ID
+  [(pkt2_end - pkt2_beg) * 8 : 32]  # packet total size
+  [11259375 : 32]                   # packet beginning timestamp
+  [4289449455 : 32]                 # packet end timestamp
 
-05 7850cdeb9284a0da 304c7cf61933dec6
-----
+  # event record
+  [52719 : 16]                      # `a`
+  $255                              # `c`
+<pkt2_end>
+
+# third packet
+(
+  05                          # data stream type ID
+  [8669655694347378906 : 64]  # `clk1`
+  [3480294008477179590 : 64]  # `clk2`
+)
+---
      0 P {
      0   PC {
      0     SC:0 {

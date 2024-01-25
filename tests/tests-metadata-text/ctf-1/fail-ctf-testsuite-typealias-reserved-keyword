@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
@@ -13,6 +14,6 @@ trace {
 		uint32_t magic;
 	};
 };
-----
+---
 [6:1] In data type alias:
 [6:63] Invalid keyword `trace` in type alias name.

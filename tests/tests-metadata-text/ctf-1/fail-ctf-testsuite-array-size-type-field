@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 16; align = 8; signed = false; base = 10; } := uint16_t;
@@ -23,7 +24,7 @@ event {
 			uint32_t A[uint32_t];
 	};
 };
-----
+---
 [20:1] In `event` root block:
 [22:2] In the `fields` scope:
 [22:12] In `struct` block:

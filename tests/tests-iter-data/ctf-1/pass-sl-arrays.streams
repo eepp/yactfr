@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -14,14 +15,13 @@ event {
         u8 arr0[0];
     };
 };
-----
-"copper" 00 "explain" 00 "truck" 00
-"neat" 00 00 "decisive" 00
-"notice" 00 "hum" 00 "nerve" 00
-"" 00 "blood" 00 "calm" 00
-
-11 22 33 44 55 66
-----
+---
+"copper\0" "explain\0" "truck\0"  # `arr[0]`
+"neat\0" 00 "decisive\0"          # `arr[1]`
+"notice\0" "hum\0" "nerve\0"      # `arr[2]`
+"\0" "blood\0" "calm\0"           # `arr[3]`
+$17 $34 $51 $68 $85 $102          # `arr3`
+---
      0 P {
      0   PC {
      0     DSI:T0

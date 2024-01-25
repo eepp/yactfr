@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -10,6 +11,6 @@ event {
 	name = "test";
 	id = struct {};
 };
-----
+---
 [9:1] In `event` root block:
 [11:14] Expecting `;`.

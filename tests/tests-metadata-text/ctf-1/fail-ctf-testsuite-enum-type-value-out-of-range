@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
@@ -17,6 +18,6 @@ trace {
 };
 
 
-----
+---
 [7:1] In `enum` block:
 [7:1] In mapping `x` of enumeration type: at least one value of the range [1024, 1024] doesn't fit the range [0, 255] (with a length of 8 bits).

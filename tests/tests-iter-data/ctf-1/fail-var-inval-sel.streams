@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -19,9 +20,10 @@ event {
         } v;
     };
 };
-----
-03 "hello" 00
-----
+---
+03          # `tag`
+"hello\0"
+---
      0 P {
      0   PC {
      0     DSI:T0

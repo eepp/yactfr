@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -44,6 +45,6 @@ event {
     } var[tag];
   };
 };
-----
+---
 [40:20] Invalid data location (event record payload: `var`/`outer`/`inner`):
 [31:15] Length type isn't an unsigned integer type.

@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
@@ -21,6 +22,6 @@ trace {
 		uint32_t magic;
 	};
 };
-----
+---
 [6:1] In `struct` block:
 [8:2] Expecting member type with known data type or data type alias.

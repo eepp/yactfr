@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
@@ -32,6 +33,6 @@ event {
 	id = 42;
 	stream_id = 0;
 };
-----
+---
 [30:1] In `event` root block:
 [30:1] Duplicate `event` block with ID 42 and data stream type ID 0.

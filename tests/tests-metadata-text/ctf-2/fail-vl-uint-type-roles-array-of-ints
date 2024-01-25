@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 
   {
@@ -15,7 +16,7 @@
       ]
     }
   }
-----
+---
 [2:3] Invalid trace type fragment:
 [4:34] In object property `packet-header-field-class`:
 [4:34] Invalid structure type:

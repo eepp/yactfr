@@ -28,6 +28,7 @@ import subprocess
 import pathlib
 import tempfile
 import yactfrutils
+import moultipart
 
 
 class _MetadataTextItem(pytest.Item):
@@ -49,10 +50,11 @@ class _MetadataTextItem(pytest.Item):
             tmp_dir = tempfile.TemporaryDirectory(prefix='pytest-yactfr')
 
             # get the metadata stream file and expected output lines
-            blocks = yactfrutils.split_text_blocks(self._path)
+            with open(self._path) as f:
+                parts = moultipart.parse(f)
 
             # create the metadata stream file
-            yactfrutils.create_file_from_lines('metadata', blocks[0], tmp_dir.name)
+            yactfrutils.create_text_file('metadata', parts[0].content, tmp_dir.name)
             metadata_stream_path = os.path.join(tmp_dir.name, 'metadata')
 
         # run the tester, keeping the output on success
@@ -66,7 +68,7 @@ class _MetadataTextItem(pytest.Item):
         if expect_to_pass:
             expect = ''
         else:
-            expect = '\n'.join(blocks[1]).strip('\n')
+            expect = parts[1].content.strip('\n')
 
         if output != expect:
             raise yactfrutils.UnexpectedOutput(output, expect)

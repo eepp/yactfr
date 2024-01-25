@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -34,6 +35,6 @@ event {
     } var2;
   };
 };
-----
+---
 [29:5] Invalid data location (event record payload: `tag2`):
 [29:5] Selector type of variant type targets more than one data type.

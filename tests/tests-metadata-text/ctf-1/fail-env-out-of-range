@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -21,6 +22,6 @@ event {
     string a;
   };
 };
-----
+---
 [9:1] In `env` root block:
 [10:10] Expecting valid constant integer, literal string, or identifier.

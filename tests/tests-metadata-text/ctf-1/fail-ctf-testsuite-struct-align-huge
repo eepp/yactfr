@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 32; align = 32; signed = false; base = hex; } := uint32_t;
@@ -21,6 +22,6 @@ struct Dummy2 {
  uint8_t x;
 } align(0xFFFFFFFFFFFFFFFFULL);
 
-----
+---
 [16:1] In `struct` block:
 [18:19] Invalid minimum alignment for `struct` block (must be a power of two): 4294967295.

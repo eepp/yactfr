@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -25,9 +26,9 @@
     "type": "event-record-class"
   }
 ]
-----
-"meow" 00
-----
+---
+"meow\0"
+---
      0 P {
      0   PC {
      0     DSI:T0

@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -903,32 +904,40 @@
     "type": "event-record-class"
   }
 ]
-----
-TAG       0b
-V         "ethereal" 00
-PH_TAG    02
-V_REL     fe
+---
+!be
 
-PC_TAG    00
-V_REL     "faded" 00
-V_ABS     88
+# packet header
+$11                 # `tag`
+"ethereal\0"        # `v`
+$2                  # `ph_tag`
+$254                # `v_rel`
 
-EH_TAG    01
-V_REL     12345678
-V_ABS     "wing" 00
+# packet context
+$0                  # `pc_tag`
+"faded\0"           # `v_rel`
+$136                # `v_abs`
 
-EC_TAG    00
-V_REL     "cultured" 00
-V_ABS     deadbeef
+# event record header
+$1                  # `eh_tag`
+[305419896 : 32]    # `v_rel`
+"wing\0"            # `v_abs`
 
-EC_TAG    02
-V_REL     17
-V_ABS     "nest" 00
+# event record common context
+$0                  # `e1c_tag`
+"cultured\0"        # `v_rel`
+[3735928559 : 32]   # `v_abs`
 
-EP_TAG    01
-V_REL     baaaaaad
-V_ABS     cd
-----
+# event record specific context
+$2                  # `e2c_tag`
+$23                 # `v_rel`
+"nest\0"            # `v_abs`
+
+# event record payload
+$1                  # `ep_tag`
+[3131746989 : 32]   # `v_rel`
+$205                # `v_abs`
+---
      0 P {
      0   PC {
      0     SC:0 {

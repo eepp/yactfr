@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -127,15 +128,21 @@
     "type": "event-record-class"
   }
 ]
-----
-43
-01 02 03
-04 05 06
+---
+# `hope[0]`
+(
+  $67                     # `tag`
+    01 02 03              # `v[0]`
+    04 05 06              # `v[1]`
+)
 
-42
-"purple" 00 "unit" 00
-"planes" 00 "hate" 00
-----
+# `hope[1]`
+(
+  $66                     # `tag`
+    "purple\0" "unit\0"   # `v[0]`
+    "planes\0" "hate\0"   # `v[1]`
+)
+---
      0 P {
      0   PC {
      0     DSI:T0

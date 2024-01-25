@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -120,45 +121,39 @@
     }
   }
 ]
-----
-EV  00
-  SEL   00
+---
+!macro er_beg(id, sel)
+  [id : 8]    # event record type ID
+  [sel : 8]   # `sel`
+!end
 
-EV  00
-  SEL   55
-  OPT   "fallen leaves" 00
+m:er_beg(0, 0)
 
-EV  00
-  SEL   00
+m:er_beg(0, 85)
+"fallen leaves\0"         # `opt`
 
-EV  01
-  SEL   20
+m:er_beg(0, 0)
 
-EV  01
-  SEL   21
-  OPT   "pins and needles" 00
+m:er_beg(1, 32)
 
-EV  01
-  SEL   38
+m:er_beg(1, 33)
+"pins and needles\0"      # `opt`
 
-EV  01
-  SEL   2d
-  OPT   "river below" 00
+m:er_beg(1, 56)
 
-EV  02
-  SEL   e8
+m:er_beg(1, 45)
+"river below\0"           # `opt`
 
-EV  02
-  SEL   e9
-  OPT   "surrender" 00
+m:er_beg(2, 232)
 
-EV  02
-  SEL   10
-  OPT   "rusted from the rain" 00
+m:er_beg(2, 233)
+"surrender\0"             # `opt`
 
-EV  02
-  SEL   12
-----
+m:er_beg(2, 16)
+"rusted from the rain\0"  # `opt`
+
+m:er_beg(2, 18)
+---
      0 P {
      0   PC {
      0     DSI:T0

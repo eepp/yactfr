@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -8,9 +9,10 @@ trace {
         u8 uuid[16];
     };
 };
-----
-c1fc1fc1 1225a44c-b439-4f03-912b-577de11d44d3
-----
+---
+c1fc1fc1                              # packet magic number
+1225a44c-b439-4f03-912b-577de11d44d3  # metadata stream UUID
+---
      0 P {
      0   PC {
      0     SC:0 {

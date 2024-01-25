@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -17,11 +18,31 @@ event {
         string str;
     };
 };
-----
-48 02 "coucou" 00
-40 17 "salut" 00
-58 b4 "meow mix" 00
-----
+---
+# first packet
+<pkt1_beg>
+  [(pkt1_end - pkt1_beg) * 8 : 8]   # packet total size
+  $2                                # discarded event record counter snapshot
+
+  "coucou\0"                        # `str` (event record)
+<pkt1_end>
+
+# second packet
+<pkt2_beg>
+  [(pkt2_end - pkt2_beg) * 8 : 8]   # packet total size
+  $23                               # discarded event record counter snapshot
+
+  "salut\0"                         # `str` (event record)
+<pkt2_end>
+
+# third packet
+<pkt3_beg>
+  [(pkt3_end - pkt3_beg) * 8 : 8]   # packet total size
+  $180                              # discarded event record counter snapshot
+
+  "meow mix\0"                      # `str` (event record)
+<pkt3_end>
+---
      0 P {
      0   PC {
      0     DSI:T0

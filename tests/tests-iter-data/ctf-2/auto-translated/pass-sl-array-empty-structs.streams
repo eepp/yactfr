@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -35,10 +36,10 @@
     "type": "event-record-class"
   }
 ]
-----
-"heille salut" 00
-"autre event" 00
-----
+---
+"heille salut\0"  # `salut`
+"autre event\0"   # `salut`
+---
      0 P {
      0   PC {
      0     DSI:T0

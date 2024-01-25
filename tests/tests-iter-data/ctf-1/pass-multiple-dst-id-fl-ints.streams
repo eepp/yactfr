@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -34,11 +35,12 @@ event {
         u32 hi;
     };
 };
-----
-43 "paste" 00 42
-
-    "the string" 00
-----
+---
+$67             # data stream type ID
+"paste\0"       # `s.aaa`
+$66             # data stream type ID
+"the string\0"  # `salut` (event record `test42`)
+---
      0 P {
      0   PC {
      0     SC:0 {

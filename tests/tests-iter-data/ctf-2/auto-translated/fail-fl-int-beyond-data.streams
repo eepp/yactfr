@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -34,11 +35,18 @@
     "type": "event-record-class"
   }
 ]
-----
-"salut les mecs" 00 deadbeef
-"tomatoes" 00 deadc0de
-"madly" 00 baaaad
-----
+---
+!be
+
+"salut les mecs\0"  # `salut`
+[3735928559 : 32]   # `meow`
+
+"tomatoes\0"        # `salut`
+[3735929054 : 32]   # `meow`
+
+"madly\0"           # `salut`
+baaaad              # `meow` (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

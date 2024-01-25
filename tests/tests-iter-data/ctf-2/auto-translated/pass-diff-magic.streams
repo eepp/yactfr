@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -24,9 +25,9 @@
     "type": "trace-class"
   }
 ]
-----
+---
 c1fc1fc1
-----
+---
      0 P {
      0   PC {
      0     SC:0 {

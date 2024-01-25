@@ -1,6 +1,7 @@
+---
 /* CTF 1.8 */
 typealias integer { size =
-----
+---
 [2:1] In data type alias:
 [2:11] In `integer` block:
 [3:1] Expecting valid constant integer, literal string, or identifier.

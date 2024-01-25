@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -10,6 +11,6 @@ event {
         string lel;
     };
 };
-----
+---
 
-----
+---

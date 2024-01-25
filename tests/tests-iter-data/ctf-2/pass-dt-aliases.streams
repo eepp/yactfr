@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -142,23 +143,24 @@
     "payload-field-class": "er-payload-fc"
   }
 ]
-----
-MAGIC
-  c1 fc 1f c1
-SEQ NUM
-  05
-ER
-  ID 00
-  CC 23
-  SC ab
-  PL "salut" 00 01 02 03
-ER
-  ID 00
-  CC 42
-  SC cd
-  PL "meow mix" 00 04 05 06
-----
+---
+c1fc1fc1      # packet magic number
+05            # packet sequence number
 
+# event record
+00            # type ID
+$35           # common context
+$171          # specific context
+"salut\0"     # payload: `zoom`
+01 02 03      # payload: `mini`
+
+# event record
+00            # type ID
+$66           # common context
+$205          # specific context
+"meow mix\0"  # payload: `zoom`
+04 05 06      # payload: `mini`
+---
      0 P {
      0   PC {
      0     SC:0 {

@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -24,17 +25,21 @@ event {
         string seq[outer.len];
     };
 };
-----
-00
-03 "salut" 00
-"pad" 00
-"un" 00 "deux" 00 "trois" 00
+---
+# event record
+00                          # `tag`
+03                          # `outer.len`
+"salut\0"                   # `outer.s`
+"pad\0"                     # `z`
+"un\0" "deux\0" "trois\0"   # `seq`
 
-01
-"coucou" 00 00 05
-"pad" 00
-"un" 00 "deux" 00 "trois" 00 "quatre" 00 "cinq" 00
-----
+# event record
+01                                # `tag`
+"coucou\0"                        # `outer.s`
+[5 : 16be]                        # `outer.len`
+"pad\0"                           # `z`
+"un\0deux\0trois\0quatre\0cinq\0" # `seq`
+---
      0 P {
      0   PC {
      0     DSI:T0

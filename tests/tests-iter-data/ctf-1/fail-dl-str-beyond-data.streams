@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -12,11 +13,19 @@ event {
         integer { size = 8; encoding = UTF8; } meow[len];
     };
 };
-----
-03 "salut les mecs" 00 "sel"
-06 "tomatoes" 00 "poi" 00 "re"
-04 "madly" 00 "ca"
-----
+---
+03                  # `len`
+"salut les mecs\0"  # `salut`
+"sel"               # `meow`
+
+06                  # `len`
+"tomatoes\0"        # `salut`
+"poi\0re"           # `meow`
+
+04                  # `len`
+"madly\0"           # `salut`
+"ca"                # `meow` (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

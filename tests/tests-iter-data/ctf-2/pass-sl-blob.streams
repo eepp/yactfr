@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -65,21 +66,20 @@
     "type": "event-record-class"
   }
 ]
-----
-SL BLOB
+---
+# `blob`
+(
   00 11 22 33 44 55 66 77
   88 99 aa bb cc dd ee ff
   ff ee dd cc bb aa 99 88
   77 66 55 44 33 22 11 00
-ALTER ALIGN
-  ff
-SL BLOB
-  "meowmix"
-ALTER ALIGN
-  aa
-LAST INT
-  cc
-----
+)
+
+ff          # `alter alignment`
+"meowmix"   # `other blob`
+aa          # `alter alignment again`
+$204        # `last int`
+---
      0 P {
      0   PC {
      0     DSI:T0

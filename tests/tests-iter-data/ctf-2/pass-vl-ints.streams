@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -169,35 +170,33 @@
     "type": "event-record-class"
   }
 ]
-----
-UNSIGNED
-  00
-  4d
-  b1 01
-  f3 d0 02
-  86 ae b4 0a
-  86 d4 a3 8a 13
-  86 dc cf ad e2 02
-  86 fc b3 ae b3 94 03
-  c3 c8 e6 d0 ec e5 cf 01
-  d5 aa 85 e9 e8 9c 8f d0 04
-  ff ff ff ff ff ff ff ff ff 01
-SIGNED
-  00
-  7f
-  17
-  e4 7e
-  ec c2 00
-  f7 a8 a2 50
-  af b2 a1 f0 1e
-  fb cb ef a6 80 7b
-  b1 cd e4 af 88 89 1c
-  c6 f2 d0 94 f0 87 81 7e
-  ff ff a7 ec 85 af d1 b1 01
-  bf fb c2 ff ff ff ff ff ff 00
-  ff ff ff ff ff ff ff ff ff 00
-  80 80 80 80 80 80 80 80 80 7f
-----
+---
+[0 : uleb128]                     # `vu1a`
+[77 : uleb128]                    # `vu1b`
+[177 : uleb128]                   # `vu2`
+[43123 : uleb128]                 # `vu3`
+[21829382 : uleb128]              # `vu4`
+[5121829382 : uleb128]            # `vu5`
+[95121829382 : uleb128]           # `vu6`
+[13895121829382 : uleb128]        # `vu7`
+[913895121855555 : uleb128]       # `vu8`
+[333333333333333333 : uleb128]    # `vu9`
+[18446744073709551615 : uleb128]  # `vu10`
+[0 : sleb128]                     # `vi1a`
+[-1 : sleb128]                    # `vi1b`
+[23 : sleb128]                    # `vi1c`
+[-156 : sleb128]                  # `vi2`
+[8556 : sleb128]                  # `vi3`
+[-100101001 : sleb128]            # `vi4`
+[8288491823 : sleb128]            # `vi5`
+[-171717171717 : sleb128]         # `vi6`
+[123456787654321 : sleb128]       # `vi7`
+[-1121231234123450 : sleb128]     # `vi8`
+[99999999999999999 : sleb128]     # `vi9`
+[9223372036853775807 : sleb128]   # `vi10a`
+[9223372036854775807 : sleb128]   # `vi10b`
+[-9223372036854775808 : sleb128]  # `vi10c`
+---
      0 P {
      0   PC {
      0     DSI:T0

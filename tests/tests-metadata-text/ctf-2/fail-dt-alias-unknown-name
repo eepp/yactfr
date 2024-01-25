@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 {"type": "data-stream-class"}
 
@@ -21,7 +22,7 @@
       ]
     }
   }
-----
+---
 [2:3] In event record type fragment:
 [7:9] In structure member type `test`:
 [9:26] In object property `field-class`:

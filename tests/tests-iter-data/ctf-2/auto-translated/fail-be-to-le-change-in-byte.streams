@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -53,9 +54,9 @@
     "type": "event-record-class"
   }
 ]
-----
+---
 01 12 f8
-----
+---
      0 P {
      0   PC {
      0     DSI:T0

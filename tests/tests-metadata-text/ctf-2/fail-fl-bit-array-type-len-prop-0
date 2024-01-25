@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 {"type": "data-stream-class"}
 
@@ -17,7 +18,7 @@
       ]
     }
   }
-----
+---
 [2:3] Invalid event record type fragment:
 [4:28] In object property `payload-field-class`:
 [4:28] Invalid structure type:

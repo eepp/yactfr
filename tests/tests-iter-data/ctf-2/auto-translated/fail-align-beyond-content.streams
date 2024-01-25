@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -54,12 +55,15 @@
     "type": "event-record-class"
   }
 ]
-----
-50
+---
+$80       # content size
 
-    22 <11 22 33> deadbeef
-    33 <aa bb cc> feedface
-----
+aa bb cc  # padding
+$51       # `xx`
+dd ee ff  # padding
+$239      # `yy`
+44        # padding (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

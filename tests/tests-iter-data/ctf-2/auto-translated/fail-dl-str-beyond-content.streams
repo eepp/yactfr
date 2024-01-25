@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -55,11 +56,12 @@
     "type": "event-record-class"
   }
 ]
-----
-37
-    0e
-    "restez techno!"
-----
+---
+$55                                       # packet content size
+
+[after_str - before_str : 8]              # `len`
+<before_str> "restez techno!" <after_str> # `text`
+---
      0 P {
      0   PC {
      0     DSI:T0

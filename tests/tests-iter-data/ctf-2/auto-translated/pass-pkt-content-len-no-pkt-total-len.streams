@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -42,15 +43,13 @@
     "type": "event-record-class"
   }
 ]
-----
-00000158
-
-    "salut tout le monde" 00
-
-    "diet cola" 00
-
-    "learning" 00
-----
+---
+[end * 8 : 32be]          # packet content size
+"salut tout le monde\0"   # `str`
+"diet cola\0"             # `str`
+"learning\0"              # `str`
+<end>
+---
      0 P {
      0   PC {
      0     DSI:T0

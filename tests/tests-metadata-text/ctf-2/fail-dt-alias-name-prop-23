@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 {"type": "data-stream-class"}
 
@@ -21,7 +22,7 @@
       ]
     }
   }
-----
+---
 [2:3] Invalid data type alias fragment:
 [4:13] In object property `name`:
 [4:13] Expecting a string.

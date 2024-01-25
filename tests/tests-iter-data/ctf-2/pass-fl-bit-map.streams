@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -31,9 +32,9 @@
     "type": "event-record-class"
   }
 ]
-----
-abcd
-----
+---
+[52651 : 16le]
+---
      0 P {
      0   PC {
      0     DSI:T0

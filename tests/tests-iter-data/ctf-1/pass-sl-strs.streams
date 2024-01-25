@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -14,10 +15,10 @@ event {
         chr text3[11];
     };
 };
-----
-"I've tasted both the fantasy" 00 " and the deed"
-"dan boucher"
-----
+---
+"I've tasted both the fantasy\0 and the deed"   # `text1`
+"dan boucher"                                   # `text2`
+---
      0 P {
      0   PC {
      0     DSI:T0

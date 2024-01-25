@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
@@ -15,6 +16,6 @@ trace {
 		uint32_t magic;
 	};
 };
-----
+---
 [8:1] In data type alias:
 [8:24] Duplicate data type alias named `myint`.

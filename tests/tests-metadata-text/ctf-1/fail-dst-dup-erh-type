@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -22,6 +23,6 @@ event {
     string a;
   };
 };
-----
+---
 [9:1] In `stream` root block:
 [15:29] Duplicate `event.header` scope.

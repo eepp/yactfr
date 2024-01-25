@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -356,7 +357,7 @@
         {
           "field-class": {
             "alignment": 8,
-            "byte-order": "big-endian",
+            "byte-order": "little-endian",
             "length": 32,
             "type": "fixed-length-floating-point-number"
           },
@@ -446,50 +447,144 @@
     "type": "event-record-class"
   }
 ]
-----
-c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
-6003 5803 004d 0090
+---
+!macro pkt_header(dst_id)
+  [0xc1fc1fc1 : 32]                     # packet magic number
+  4d86e02c-f527-4971-b960-971d26074bd4  # metadata stream UUID
+  [dst_id : 8]                          # data stream type ID
+!end
 
-    1d 00
-    abcdef23 "hello hello" 00 <19>
-    89674523
-    "meow mix" 00
+!macro evt_record_header(ert_id, ts)
+  [ert_id : 8]  # type ID
+  [ts : 8]      # timestamp
+!end
 
-    77 05
-    01000000 "submarine" 00
-    402df84d
+!le
 
-    1d 04
-    00996644 "lel" 00 <00 11 22 33 44>
-    deadbeef
-    "KANADA" 00
+# first packet
+<pkt1_beg>
+  m:pkt_header(35)                          # packet header
+  [(pkt1_end - pkt1_beg) * 8 : 16]          # packet total size
+  [(pkt1_content_end - pkt1_beg) * 8 : 16]  # packet content size
+  [19712 : 16]                              # packet beginning timestamp
+  [36864 : 16]                              # packet end timestamp
 
-    <99>
+  # event record (29)
+  (
+    # header
+    m:evt_record_header(29, 0)
 
-c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 ff
-98020000 0700
+    # common context
+    [602918315 : 32]      # `ctx1`
+    "hello hello\0"       # `ctx2`
 
-    03000000
-    (01 02 03 04 05 06 07)
-    "yes" 00 "sir" 00 "miller" 00
+    # specific context
+    @64 [591751049 : 32]  # `a`
 
-    04000000
-    (aa bb cc dd ee ff 00)
-    "a" 00 "whole" 00 "lotta" 00 "love" 00
+    # payload
+    "meow mix\0"          # `z`
+  )
 
-c11ffcc1 4d86e02c-f527-4971-b960-971d26074bd4 23
-6003 5003 002f 0090
+  # event record (119)
+  (
+    # header
+    m:evt_record_header(119, 5)
 
-    05 03
-    77665544 "mystery" 00
-    c0 "it's my life" 00 2a806ffc:8c78e23f
+    # common context
+    [1 : 32]              # `ctx1`
+    "submarine\0"         # `ctx2`
 
-    05 09
-    78665544 "parenthesis" 00
-    45 (00000000 11111111 22222222 33333333 44444444) fe ff
+    # payload
+    [2.71828 : 32]        # `fff`
+  )
 
-    <ff 02>
-----
+  # event record (29)
+  (
+    # header
+    m:evt_record_header(29, 4)
+
+    # common context
+    [1147574528 : 32]     # `ctx1`
+    "lel\0"               # `ctx2`
+
+    # specific context
+    @64 [4022250974 : 32] # `a`
+
+    # payload
+    "KANADA\0"            # `z`
+  )
+<pkt1_content_end>
+  99  # padding
+<pkt1_end>
+
+# second packet
+<pkt2_beg>
+  m:pkt_header(255)                 # packet header
+  [(pkt2_end - pkt2_beg) * 8 : 32]  # packet total size
+  [7 : 16]                          # `len`
+
+  # event record
+  (
+    # payload
+    [3 : 32]                            # `len`
+    01 02 03 04 05 06 07                # `seq1`
+    "yes\0" "sir\0" "miller\0"          # `seq2`
+  )
+
+  # event record
+  (
+    # payload
+    [4 : 32]                            # `len`
+    $170 $187 $204 $221 $238 $255 $0    # `seq1`
+    "a\0" "whole\0" "lotta\0" "love\0"  # `seq2`
+  )
+<pkt2_end>
+
+# third packet
+<pkt3_beg>
+  m:pkt_header(35)                          # packet header
+  [(pkt3_end - pkt3_beg) * 8 : 16]          # packet total size
+  [(pkt3_content_end - pkt3_beg) * 8 : 16]  # packet content size
+  [12032 : 16]                              # packet beginning timestamp
+  [36864 : 16]                              # packet end timestamp
+
+  # event record (5)
+  (
+    # header
+    m:evt_record_header(5, 3)
+
+    # common context
+    [1146447479 : 32]     # `ctx1`
+    "mystery\0"           # `ctx2`
+
+    # payload
+    $192                  # `tag`
+    "it's my life\0"      # `vvv`
+    [0.577216 : 64]       # `zigzag`
+  )
+
+  # event record (5)
+  (
+    # header
+    m:evt_record_header(5, 9)
+
+    # common context
+    [1146447480 : 32]     # `ctx1`
+    "parenthesis\0"       # `ctx2`
+
+    # payload
+    $69                   # `tag`
+    [0 : 32]              # `vvv[0]`
+    [286331153 : 32]      # `vvv[1]`
+    [572662306 : 32]      # `vvv[2]`
+    [858993459 : 32]      # `vvv[3]`
+    [1145324612 : 32]     # `vvv[4]`
+    [-2 : 16]             # `zigzag`
+  )
+<pkt3_content_end>
+  ff 02   # padding
+<pkt3_end>
+---
      0 P {
      0   PC {
      0     SC:0 {

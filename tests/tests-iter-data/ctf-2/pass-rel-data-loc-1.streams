@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -36,12 +37,13 @@
     "type": "event-record-class"
   }
 ]
-----
-LEN
-  08
-DL STR
-  "meow mix"
-----
+---
+[end - beg : 8]   # `len`
+
+<beg>
+  "meow mix"      # `str`
+<end>
+---
      0 P {
      0   PC {
      0     DSI:T0

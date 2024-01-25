@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -37,11 +38,33 @@ event {
         string str;
     };
 };
-----
-00 50 02 "coucou" 00
-01 40 "salut" 00
-00 60 17 "meow mix" 00
-----
+---
+# first packet
+<pkt1_beg>
+  00                                # data stream type ID
+  [(pkt1_end - pkt1_beg) * 8 : 8]   # packet total size
+  $2                                # packet sequence number
+
+  "coucou\0"                        # `str` (event record)
+<pkt1_end>
+
+# second packet
+<pkt2_beg>
+  01                                # data stream type ID
+  [(pkt2_end - pkt2_beg) * 8 : 8]   # packet total size
+
+  "salut\0"                         # `str` (event record)
+<pkt2_end>
+
+# third packet
+<pkt3_beg>
+  00                                # data stream type ID
+  [(pkt3_end - pkt3_beg) * 8 : 8]   # packet total size
+  $23                               # packet sequence number
+
+  "meow mix\0"                      # `str` (event record)
+<pkt3_end>
+---
      0 P {
      0   PC {
      0     SC:0 {

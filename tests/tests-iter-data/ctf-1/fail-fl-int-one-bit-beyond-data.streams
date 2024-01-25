@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -12,11 +13,22 @@ event {
         integer { size = 1; } extra;
     } align(8);
 };
-----
-"salut les mecs" 00 deadbeef ff
-"tomatoes" 00 deadc0de ff
-"madly" 00 feedface
-----
+---
+!be
+
+"salut les mecs\0"  # `salut`
+[3735928559 : 32]   # `meow`
+%1                  # `extra`
+  0010100           # padding
+
+"tomatoes\0"        # `salut`
+[3735929054 : 32]   # `meow`
+%1                  # `extra`
+  1111111           # padding
+
+"madly\0"           # `salut`
+[4277009102 : 32]   # `meow`
+---
      0 P {
      0   PC {
      0     DSI:T0

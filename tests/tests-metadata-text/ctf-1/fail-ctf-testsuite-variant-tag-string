@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 16; align = 8; signed = false; base = 10; } := uint16_t;
@@ -25,7 +26,7 @@ variant <"tag"> {
 } field;
 
 };
-----
+---
 [17:1] In `struct` block:
 [21:1] While parsing body of `struct` block:
 [21:1] In `variant` block:

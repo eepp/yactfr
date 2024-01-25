@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -17,9 +18,14 @@ event {
         u8 lel;
     };
 };
-----
-f218 f219 01 02 03
-----
+---
+!be
+
+[61976 : 16]  # packet total size
+[61977 : 16]  # packet content size
+
+01 02 03
+---
      0 P {
      0   PC {
      0     DSI:T0

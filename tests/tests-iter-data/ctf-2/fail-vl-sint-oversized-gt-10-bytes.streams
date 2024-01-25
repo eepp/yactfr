@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -25,10 +26,9 @@
     "type": "event-record-class"
   }
 ]
-----
-UNSIGNED
-  bc f7 fa 8a f4 ff ff ff ff 81 00
-----
+---
+bc f7 fa 8a f4 ff ff ff ff 81 00
+---
      0 P {
      0   PC {
      0     DSI:T0

@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -28,5 +29,5 @@ event {
     } var;
   };
 };
-----
+---
 [17:5] Data location [event record payload: `zop`/`meow`]: cannot find `meow` (last element).

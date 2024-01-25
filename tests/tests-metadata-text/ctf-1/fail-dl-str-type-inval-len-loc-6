@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -32,6 +33,6 @@ event {
     integer { size = 8; encoding = utf8; } seq[len1.len2];
   };
 };
-----
+---
 [32:48] Invalid data location (event record payload: `len1`/`len2`):
 [26:11] Length type isn't an unsigned integer type.

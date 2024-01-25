@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -16,12 +17,19 @@ event {
         u32 yy[3];
     };
 };
-----
-a8
+---
+!be
 
-    deadbeef feedface baaaaaad
-    fadedead cdcdcdcd cafefeed
-----
+$168                # packet content size
+
+[3735928559 : 32]   # `yy[0]`
+[4277009102 : 32]   # `yy[1]`
+[3131746989 : 32]   # `yy[2]`
+
+[4208909997 : 32]   # `yy[0]`
+[3452816845 : 32]   # `yy[1]`
+cafefeed            # `yy[2]`
+---
      0 P {
      0   PC {
      0     DSI:T0

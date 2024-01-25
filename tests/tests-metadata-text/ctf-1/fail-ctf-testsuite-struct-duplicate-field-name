@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
@@ -18,6 +19,6 @@ trace {
 };
 
 
-----
+---
 [6:1] In `struct` block:
 [6:1] Duplicate identifier (member type or option name) `xxx`.

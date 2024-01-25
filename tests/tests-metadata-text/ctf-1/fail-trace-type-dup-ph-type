@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -25,6 +26,6 @@ event {
     string a;
   };
 };
-----
+---
 [3:1] In `trace` root block:
 [10:5] Duplicate `packet.header` scope.

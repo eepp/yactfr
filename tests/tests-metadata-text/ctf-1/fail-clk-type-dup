@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -30,6 +31,6 @@ clock {
   name = salut;
   freq = 1000;
 };
-----
+---
 [29:1] In `clock` root block:
 [29:1] Duplicate `clock` block named `salut`.

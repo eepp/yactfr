@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -46,9 +47,11 @@
     "type": "event-record-class"
   }
 ]
-----
-43 01 42 02
-----
+---
+$67   # event record type ID
+
+01 42 02
+---
      0 P {
      0   PC {
      0     DSI:T0

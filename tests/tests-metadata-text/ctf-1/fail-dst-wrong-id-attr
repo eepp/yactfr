@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -15,6 +16,6 @@ event {
     string a;
   };
 };
-----
+---
 [9:1] In `stream` root block:
 [10:8] Attribute `id`: expecting constant unsigned integer.

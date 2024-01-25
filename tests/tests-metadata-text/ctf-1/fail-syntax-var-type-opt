@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -20,7 +21,7 @@ event {
     }
   };
 };
-----
+---
 [13:1] In `event` root block:
 [16:3] In the `fields` scope:
 [16:13] In `struct` block:

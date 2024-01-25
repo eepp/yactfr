@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -13,9 +14,9 @@ event {
         integer { size = 5; byte_order = be; } ule;
     };
 };
-----
+---
 01 12 f8
-----
+---
      0 P {
      0   PC {
      0     DSI:T0

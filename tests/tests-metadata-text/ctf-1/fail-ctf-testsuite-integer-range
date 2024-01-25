@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
 typealias integer { size = 32; align = 32; signed = false; } := uint32_t;
@@ -29,6 +30,6 @@ event {
 	name = string;
 	fields := struct { string str; };
 };
-----
+---
 [17:1] In `env` root block:
 [18:10] Expecting valid constant integer, literal string, or identifier.

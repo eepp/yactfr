@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -106,9 +107,10 @@
     "type": "event-record-class"
   }
 ]
-----
-01 "blabli"
-----
+---
+01        # `tag`
+"blabli"  # `v` (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

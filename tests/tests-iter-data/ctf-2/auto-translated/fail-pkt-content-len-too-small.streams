@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -45,9 +46,11 @@
     "type": "event-record-class"
   }
 ]
-----
-0008 01 02 03
-----
+---
+[8 : 16be]  # packet content size
+
+01 02 03
+---
      0 P {
      0   PC {
      0     DSI:T0

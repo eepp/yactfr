@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -47,9 +48,11 @@
     "type": "event-record-class"
   }
 ]
-----
-24 01 02 03
-----
+---
+$36   # data stream type ID
+
+01 02 03
+---
      0 P {
      0   PC {
      0     SC:0 {

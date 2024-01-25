@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -11,10 +12,14 @@ event {
         integer { size = 8; align = 32; } yy;
     };
 };
-----
-22 <11 22 33> deadbeef
-33 <11 22>
-----
+---
+$34       # `xx`
+11 22 33  # padding
+$222      # `yy`
+44 55 66  # padding
+$51       # `xx`
+aa bb     # padding (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

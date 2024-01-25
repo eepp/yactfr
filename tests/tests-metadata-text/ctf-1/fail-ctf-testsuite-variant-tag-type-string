@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 16; align = 8; signed = false; base = 10; } := uint16_t;
@@ -25,6 +26,6 @@ trace {
 		struct Mystruct ms;
 	};
 };
-----
+---
 [11:1] Invalid data location (packet header: `ms`/`tag`):
 [9:1] Selector type of variant type isn't an integer type.

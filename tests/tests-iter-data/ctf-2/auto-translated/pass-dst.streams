@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -59,11 +60,19 @@
     "type": "event-record-class"
   }
 ]
-----
-02 78 "heille Marie" 00
-05 78 "heille Serge" 00
-ff 78 "heille Lynda" 00
-----
+---
+02                # data stream ID
+$120              # packet total size
+"heille Marie\0"  # `str`
+
+05                # data stream ID
+$120              # packet total size
+"heille Serge\0"  # `str`
+
+$255              # data stream ID
+$120              # packet total size
+"heille Lynda\0"  # `str`
+---
      0 P {
      0   PC {
      0     SC:0 {

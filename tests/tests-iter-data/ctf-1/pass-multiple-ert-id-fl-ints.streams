@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -29,13 +30,17 @@ event {
         u32 salut;
     };
 };
-----
-43 "paste" 00 42
-"la lampe" 00
+---
+$67                   # event record type ID
+"paste\0"             # `s.aaa`
+$66                   # event record type ID
+"la lampe\0"          # `salut` (event record 66)
 
-42 "paste" 00 43
-deadbeef
-----
+$66                   # data stream type ID
+"paste\0"             # `s.aaa`
+$67                   # data stream type ID
+[4022250974 : 32le]   # `salut` (event record 67)
+---
      0 P {
      0   PC {
      0     DSI:T0

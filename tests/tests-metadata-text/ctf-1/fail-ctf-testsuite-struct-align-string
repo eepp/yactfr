@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 32; align = 32; signed = false; base = hex; } := uint32_t;
@@ -16,6 +17,6 @@ trace {
 struct Dummy1 {
  uint8_t x;
 } align("duh");
-----
+---
 [16:1] In `struct` block:
 [18:9] Expecting valid constant unsigned integer.

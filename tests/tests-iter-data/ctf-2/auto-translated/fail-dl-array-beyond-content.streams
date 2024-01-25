@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -61,12 +62,19 @@
     "type": "event-record-class"
   }
 ]
-----
-88
+---
+!be
 
-    03 deadbeef feedface baaaaaad
-    02 fadedead cdcdcdcd
-----
+88                    # packet content size
+
+03                    # `len`
+  [3735928559 : 32]   # `yy[0]`
+  [4277009102 : 32]   # `yy[1]`
+  [3131746989 : 32]   # `yy[2]`
+02                    # `len`
+  fadedead            # `yy[0]`
+  cdcdcdcd            # `yy[1]`
+---
      0 P {
      0   PC {
      0     DSI:T0

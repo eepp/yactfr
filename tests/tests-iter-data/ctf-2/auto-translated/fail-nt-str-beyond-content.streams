@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -51,12 +52,17 @@
     "type": "event-record-class"
   }
 ]
-----
-90
+---
+!be
 
-    deadbeef "salut" 00
-    feedface "fasten" 00
-----
+$144                # packet content size
+
+[3735928559 : 32]   # `yy`
+"salut\0"           # `str`
+
+[4277009102 : 32]   # `yy`
+"fasten\0"          # `str`
+---
      0 P {
      0   PC {
      0     DSI:T0

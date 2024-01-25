@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -11,11 +12,18 @@ event {
         floating_point { exp_dig = 8; mant_dig = 24; } meow;
     };
 };
-----
-"salut les mecs" 00 00000000
-"tomatoes" 00 c1b80000
-"madly" 00 40
-----
+---
+!be
+
+"salut les mecs\0"  # `salut`
+[0. : 32]           # `meow`
+
+"tomatoes\0"        # `salut`
+[-23. : 32]         # `meow`
+
+"madly\0"           # `salut`
+40                  # `meow` (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

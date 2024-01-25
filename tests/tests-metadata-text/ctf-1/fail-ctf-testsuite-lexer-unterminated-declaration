@@ -1,5 +1,6 @@
+---
 /* CTF 1.8 */
 typealias
-----
+---
 [2:1] In data type alias:
 [3:1] Expecting explicit data type block (`integer`, `floating_point`, `enum`, `string`, `struct`, or `variant`) or existing data type alias name.

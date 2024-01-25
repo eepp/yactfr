@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -37,10 +38,14 @@
     "type": "event-record-class"
   }
 ]
-----
-22 <11 22 33> deadbeef
-33 <11 22>
-----
+---
+$34       # `xx`
+11 22 33  # padding
+$222      # `yy`
+44 55 66  # padding
+$51       # `xx`
+aa bb     # padding (partial)
+---
      0 P {
      0   PC {
      0     DSI:T0

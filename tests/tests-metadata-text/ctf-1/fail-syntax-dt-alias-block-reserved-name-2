@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -15,6 +16,6 @@ event {
     string allo;
   };
 };
-----
+---
 [9:1] In data type alias:
 [9:21] Invalid keyword `floating_point` in type alias name.

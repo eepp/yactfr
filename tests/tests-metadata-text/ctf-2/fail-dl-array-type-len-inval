@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 {"type": "data-stream-class"}
 
@@ -35,5 +36,5 @@
       ]
     }
   }
-----
+---
 [9:26] Data location [event record payload: `zzz`]: length/selector must not be a structure.

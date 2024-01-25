@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -28,5 +29,5 @@ event {
     } var2;
   };
 };
-----
+---
 [21:10] Data location [event record payload: `st`]: unreachable array element.

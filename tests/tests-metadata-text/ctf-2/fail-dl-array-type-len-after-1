@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 {"type": "data-stream-class"}
 
@@ -27,5 +28,5 @@
       ]
     }
   }
-----
+---
 [9:26] Data location [event record payload: `len`]: a length/selector wouldn't be decoded yet to decode the datum which needs it.

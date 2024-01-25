@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -54,11 +55,31 @@
     "type": "event-record-class"
   }
 ]
-----
-48 02 "coucou" 00
-40 b4 "salut" 00
-58 17 "meow mix" 00
-----
+---
+# first packet
+<pkt1_beg>
+  [(pkt1_end - pkt1_beg) * 8 : 8]   # packet total size
+  $2                                # packet sequence number
+
+  "coucou\0"                        # `str` (event record)
+<pkt1_end>
+
+# second packet
+<pkt2_beg>
+  [(pkt2_end - pkt2_beg) * 8 : 8]   # packet total size
+  $180                              # packet sequence number
+
+  "salut\0"                         # `str` (event record)
+<pkt2_end>
+
+# third packet
+<pkt3_beg>
+  [(pkt3_end - pkt3_beg) * 8 : 8]   # packet total size
+  $23                               # packet sequence number
+
+  "meow mix\0"                      # `str` (event record)
+<pkt3_end>
+---
      0 P {
      0   PC {
      0     DSI:T0

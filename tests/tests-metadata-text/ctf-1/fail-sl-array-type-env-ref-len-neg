@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -21,7 +22,7 @@ event {
     string a[env.thelen];
   };
 };
-----
+---
 [17:1] In `event` root block:
 [20:3] In the `fields` scope:
 [20:13] In `struct` block:

@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -18,7 +19,7 @@ stream {
 event {
   name = event;
 };
-----
+---
 [1:1] In the data stream type with ID 0:
 [10:19] In the event record header type:
 [11:5] `lol` doesn't identify an existing clock type.

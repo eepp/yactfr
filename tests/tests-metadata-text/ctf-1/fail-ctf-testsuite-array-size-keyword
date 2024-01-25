@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 16; align = 8; signed = false; base = 10; } := uint16_t;
@@ -15,7 +16,7 @@ trace {
 };
 
 typedef uint32_t A[typedef];
-----
+---
 [17:1] In data type alias:
 [17:20] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
 [17:20] First element of data location, `typedef`, refers to an identifier which crosses a data type alias (or named structure/variant type) boundary. CTF 1.8 allows this, but this version of yactfr doesn't support it.

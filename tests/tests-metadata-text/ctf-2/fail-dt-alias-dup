@@ -1,3 +1,4 @@
+---
 {"type": "preamble", "version": 2}
 {"type": "data-stream-class"}
 
@@ -29,7 +30,7 @@
       ]
     }
   }
-----
+---
 [2:3] In data type alias fragment:
 [4:13] Duplicate data type alias named `joujou`.
 

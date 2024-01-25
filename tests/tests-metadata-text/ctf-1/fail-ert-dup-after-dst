@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 
 trace {
@@ -31,6 +32,6 @@ event {
     string a;
   };
 };
-----
+---
 [26:1] In `event` root block:
 [26:1] Duplicate `event` block with ID 24 and data stream type ID 11.

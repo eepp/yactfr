@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -45,13 +46,14 @@
     "type": "event-record-class"
   }
 ]
-----
-50
+---
+!be
 
-    deadbeef
-    feedface
-    "mein"
-----
+$80                 # packet content size
+[3735928559 : 32]   # `yy`
+[4277009102 : 32]   # `yy`
+"mein"
+---
      0 P {
      0   PC {
      0     DSI:T0

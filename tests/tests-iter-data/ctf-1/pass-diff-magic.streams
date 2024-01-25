@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -6,9 +7,9 @@ trace {
         u32 magic;
     };
 };
-----
+---
 c1fc1fc1
-----
+---
      0 P {
      0   PC {
      0     SC:0 {

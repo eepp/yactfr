@@ -29,25 +29,28 @@ import pathlib
 import subprocess
 import tempfile
 import sys
+import moultipart
+import normand
+import difflib
 
 
 def _join_lines(lines):
     return '\n'.join(lines)
 
 
-def metadata_lines(lines):
-    if lines[0].strip().startswith('['):
+def _metadata(orig_metadata):
+    if orig_metadata.strip().startswith('['):
         # CTF 2: convert to JSON text sequence
-        frags = json.loads(_join_lines(lines))
+        frags = json.loads(orig_metadata)
         json_seq_lines = []
 
         for frag in frags:
             json_seq_lines.append('\x1e' + json.dumps(frag, ensure_ascii=False))
 
-        lines = json_seq_lines
+        return _join_lines(json_seq_lines)
     else:
         # CTF 1: add preamble
-        lines.insert(0, '''/* CTF 1.8 */
+        return '''/* CTF 1.8 */
 
 typealias integer { size = 8; } := u8;
 typealias integer { size = 16; } := u16;
@@ -73,149 +76,24 @@ typealias integer { signed = true; size = 8; byte_order = be; } := i8be;
 typealias integer { signed = true; size = 16; byte_order = be; } := i16be;
 typealias integer { signed = true; size = 32; byte_order = be; } := i32be;
 typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
-''')
-
-    return lines
+''' + orig_metadata
 
 
-def split_text_blocks(path):
-    with open(path) as f:
-        lines = f.read().split('\n')
-
-    sep_indexes = []
-
-    for line_index, line in enumerate(lines):
-        if line.strip() == '----':
-            sep_indexes.append(line_index)
-
-    if len(sep_indexes) == 0:
-        # no separator: single block
-        return [lines]
-
-    # start with first block
-    blocks = [lines[0:sep_indexes[0]]]
-
-    # append middle blocks
-    if len(sep_indexes) >= 2:
-        for i in range(0, len(sep_indexes) - 1):
-            blocks.append(lines[sep_indexes[i] + 1:sep_indexes[i + 1]])
-
-    # append last block
-    blocks.append(lines[sep_indexes[-1] + 1:])
-    return blocks
-
-
-def _split(path):
-    blocks = split_text_blocks(path)
-    return metadata_lines(blocks[0]), blocks[1], blocks[2]
-
-
-def create_file_from_lines(filename, lines, out_dir_path):
+def create_text_file(filename, contents, out_dir_path):
     with open(os.path.join(out_dir_path, filename), 'w') as f:
-        f.write(_join_lines(lines))
-        f.write('\n')
-
-
-def _read_bin_bytes(tbytes, index):
-    content = bytearray()
-    cur_byte = []
-
-    while True:
-        if index == len(tbytes):
-            raise RuntimeError('Missing `]` at the end.')
-
-        ch = tbytes[index]
-
-        if ch in '01':
-            cur_byte.append(ch)
-
-            if len(cur_byte) == 8:
-                cur_byte_str = ''.join(cur_byte)
-                byte = int(cur_byte_str, 2)
-                content.append(byte)
-                cur_byte = []
-
-            index += 1
-        elif ch == ']':
-            if len(cur_byte) > 0:
-                raise RuntimeError('Missing bits before `]`.')
-
-            index += 1
-            return index, content
-        else:
-            index += 1
-
-    if len(cur_byte) > 0:
-        raise RuntimeError('Missing bits at the end.')
-
-
-def _read_str_bytes(tbytes, index):
-    content = bytearray()
-
-    while True:
-        if index == len(tbytes):
-            raise RuntimeError('Missing `"` at the end.')
-
-        ch = tbytes[index]
-
-        if ch == '"':
-            index += 1
-            return index, content
-        else:
-            content.append(ord(ch))
-            index += 1
-
-
-def _create_data_stream(lines, out_dir_path):
-    content = bytearray()
-    tbytes = ''.join(lines)
-    last_nibble = None
-    index = 0
-
-    while True:
-        if index == len(tbytes):
-            break
-
-        ch = tbytes[index]
-
-        if ch in '0123456789abcdef':
-            if last_nibble is None:
-                last_nibble = ch
-            else:
-                byte = last_nibble + ch
-                content.append(int(byte, 16))
-                last_nibble = None
-
-            index += 1
-        elif ch == '[':
-            if last_nibble is not None:
-                raise RuntimeError('Missing nibble before `[`.')
-
-            index += 1
-            index, bytes = _read_bin_bytes(tbytes, index)
-            content += bytes
-        elif ch == '"':
-            if last_nibble is not None:
-                raise RuntimeError('Missing nibble before `"`.')
-
-            index += 1
-            index, bytes = _read_str_bytes(tbytes, index)
-            content += bytes
-        else:
-            index += 1
-
-    if last_nibble is not None:
-        raise RuntimeError('Missing nibble at the end.')
-
-    with open(os.path.join(out_dir_path, 'stream'), 'wb') as f:
-        f.write(content)
+        f.write(contents)
 
 
 def _create_streams(descr_path, out_dir_path):
-    metadata_lines, data_lines, expect_lines = _split(descr_path)
-    create_file_from_lines('metadata', metadata_lines, out_dir_path)
-    _create_data_stream(data_lines, out_dir_path)
-    return '\n'.join(expect_lines)
+    with open(descr_path) as f:
+        metadata_part, data_part, expect_part = moultipart.parse(f)
+
+    create_text_file('metadata', _metadata(metadata_part.content), out_dir_path)
+
+    with open(os.path.join(out_dir_path, 'stream'), 'wb') as f:
+        f.write(normand.parse(data_part.content).data)
+
+    return expect_part.content
 
 
 class UnexpectedOutput(RuntimeError):
@@ -250,8 +128,8 @@ class _StreamsItem(pytest.Item):
         output = subprocess.check_output([self._tester_path, trace_tmp_dir.name], text=True)
 
         # compare to the expected lines
-        output = output.strip('\n')
-        expect = expect.strip('\n')
+        output = output.strip('\n') + '\n'
+        expect = expect.strip('\n') + '\n'
 
         if output != expect:
             raise UnexpectedOutput(output, expect)
@@ -263,7 +141,12 @@ class _StreamsItem(pytest.Item):
         exc = excinfo.value
 
         if type(exc) is UnexpectedOutput:
-            msg = f'; got:\n\n{exc.output}\n\nExpecting:\n\n{exc.expected}'
+            msg = f'; got:\n\n{exc.output}\n\n'
+            msg += f'Expecting:\n\n{exc.expected}\n\n'
+            msg += f'Diff:\n\n'
+            msg += ''.join(difflib.unified_diff(exc.output.splitlines(keepends=True),
+                                                exc.expected.splitlines(keepends=True),
+                                                fromfile='got', tofile='expected'))
         else:
             msg = f': {exc}'
 

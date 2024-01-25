@@ -1,3 +1,4 @@
+---
 /* CTF 1.8 */
 typealias integer { size = 8; align = 8; signed = false; base = 10; } := uint8_t;
 typealias integer { size = 32; align = 32; signed = false; base = hex; } := uint32_t;
@@ -5,6 +6,6 @@ typealias integer { size = 32; align = 32; signed = false; base = hex; } := uint
 typealias integer { size = 32; align = 32; signed = false; base = hex; } := int;
 
 trace {
-----
+---
 [7:1] In `trace` root block:
 [8:1] Expecting attribute name.

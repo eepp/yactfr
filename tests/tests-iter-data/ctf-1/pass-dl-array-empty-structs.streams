@@ -1,3 +1,4 @@
+---
 trace {
     major = 1;
     minor = 8;
@@ -11,9 +12,10 @@ event {
         struct {} yes[len];
     };
 };
-----
-32 14
-----
+---
+$50   # `len`
+$20   # `len`
+---
      0 P {
      0   PC {
      0     DSI:T0

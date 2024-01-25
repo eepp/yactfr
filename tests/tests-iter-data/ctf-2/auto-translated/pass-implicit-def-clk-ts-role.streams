@@ -1,3 +1,4 @@
+---
 [
   {
     "type": "preamble",
@@ -68,13 +69,16 @@
     "type": "event-record-class"
   }
 ]
-----
-aabbccdd aabbeeff
+---
+!be
 
-    aabbccee
-    aabbccff
-    aabbddaa
-----
+[2864434397 : 32]   # packet beginning timestamp
+[2864443135 : 32]   # packet end timestamp
+
+[2864434414 : 32]   # `timestamp`
+[2864434431 : 32]   # `timestamp`
+[2864438698 : 32]   # `timestamp`
+---
      0 P {
      0   PC {
      0     DSI:T0
