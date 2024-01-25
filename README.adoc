@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-18 January 2024
+25 January 2024
 :toc: left
 
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
@@ -236,13 +236,13 @@ Make sure you have the build time requirements:
 
 .Build and install yactfr from source
 ----
-git clone https://github.com/eepp/yactfr
-cd yactfr
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=release ..
-make
-make install
+$ git clone https://github.com/eepp/yactfr
+$ cd yactfr
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=release ..
+$ make
+# make install
 ----
 
 You can specify your favorite C and pass:[C++] compilers with the usual
@@ -261,13 +261,15 @@ directory.
 For example, this is how I run `cmake` for development:
 
 ----
-CC=clang CXX=clang++ CXXFLAGS='-Wextra -Wall -pedantic' cmake .. -DCMAKE_BUILD_TYPE=debug -DOPT_BUILD_DOC=ON
+$ CC=clang CXX=clang++ CXXFLAGS='-Wextra -Wall -pedantic' \
+  cmake .. -DCMAKE_BUILD_TYPE=debug -DOPT_BUILD_DOC=ON
 ----
 
 For production, you should make a release build:
 
 ----
-CC=clang CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=release -DOPT_BUILD_DOC=ON
+$ CC=clang CXX=clang++ \
+  cmake .. -DCMAKE_BUILD_TYPE=release -DOPT_BUILD_DOC=ON
 ----
 
 == Run the tests
@@ -278,7 +280,7 @@ https://pytest.org/[pytest].
 
 .Run the yactfr tests from the build directory.
 ----
-make check
+$ make check
 ----
 
 If you're in a hurry and you have the
@@ -287,10 +289,10 @@ parallelize the testing process. You need to set the `YACTFR_BINARY_DIR`
 environment variable to the build directory (absolute path), for
 example:
 
-.Run the yactfr tests in parallel (eight processes) from the build directory.
+.Run the yactfr tests in parallel from the build directory.
 ----
-make tests
-YACTFR_BINARY_DIR=$(pwd) py.test -n8 ../tests
+$ make tests
+$ YACTFR_BINARY_DIR=$(pwd) pytest -n logical
 ----
 
 == Usage examples
