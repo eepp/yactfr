@@ -90,6 +90,7 @@ set_target_properties (
 )
 target_include_directories (
     yactfr PRIVATE
+    .
     ${CMAKE_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIRS}
 )
@@ -116,6 +117,18 @@ else ()
         yactfr PRIVATE
         -DZF_LOG_LEVEL=ZF_LOG_NONE
     )
+endif ()
+
+# include-what-you-use
+option (
+    OPT_ENABLE_IWYU
+    "Enable include-what-you-use"
+    OFF
+)
+
+if (OPT_ENABLE_IWYU)
+    find_program (IWYU_PATH NAMES include-what-you-use iwyu REQUIRED)
+    set_property (TARGET yactfr PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${IWYU_PATH})
 endif ()
 
 # library installation rules
