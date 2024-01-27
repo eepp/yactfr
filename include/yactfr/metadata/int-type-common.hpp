@@ -12,6 +12,7 @@
 #include <set>
 #include <map>
 #include <string>
+#include <unordered_set>
 #include <type_traits>
 #include <boost/optional/optional.hpp>
 
@@ -142,6 +143,30 @@ public:
         }
 
         return false;
+    }
+
+    /*!
+    @brief
+        Adds to \p names the names of the mappings for the integer
+        value \p value.
+
+    @param[in] value
+        Integer value to check.
+    @param[out] names
+        @parblock
+        Set of the names of mappings for the integer value \p value.
+
+        The pointed strings remain valid as long as this type exists.
+        @endparblock
+    */
+    void mappingNamesForValue(const MappingValueT value,
+                              std::unordered_set<const std::string *>& names) const
+    {
+        for (auto& nameRangesPair : _mappings) {
+            if (nameRangesPair.second.contains(value)) {
+                names.insert(&nameRangesPair.first);
+            }
+        }
     }
 
 protected:

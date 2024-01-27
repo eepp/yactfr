@@ -1999,7 +1999,7 @@ class NumberElement :
     friend class internal::VmPos;
 
 public:
-    explicit NumberElement(const Kind kind) :
+    explicit NumberElement(const Kind kind) : //-V730
         Element {kind}
     {
     }
@@ -2185,12 +2185,47 @@ public:
 
 /*!
 @brief
+    Common integer element (mixin).
+
+@ingroup elems
+*/
+template <typename ElemT>
+class IntegerElement
+{
+protected:
+    IntegerElement() = default;
+
+public:
+    /*!
+    @brief
+        Adds to \p names the names of the mappings for value of this
+        element.
+
+    @param[out] names
+        @parblock
+        Set of the names of mappings for the value of this element.
+
+        The pointed strings remain valid as long as the integer type of
+        this element exists.
+        @endparblock
+    */
+    void mappingNames(std::unordered_set<const std::string *>& names) const
+    {
+        auto& elem = static_cast<const ElemT&>(*this);
+
+        elem.type().mappingNamesForValue(elem.value(), names);
+    }
+};
+
+/*!
+@brief
     Fixed-length signed integer element.
 
 @ingroup elems
 */
 class FixedLengthSignedIntegerElement final :
-    public FixedLengthBitArrayElement
+    public FixedLengthBitArrayElement,
+    public IntegerElement<FixedLengthSignedIntegerElement>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -2233,7 +2268,8 @@ public:
 @ingroup elems
 */
 class FixedLengthUnsignedIntegerElement final :
-    public FixedLengthBitArrayElement
+    public FixedLengthBitArrayElement,
+    public IntegerElement<FixedLengthUnsignedIntegerElement>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -2363,7 +2399,8 @@ private:
 @ingroup elems
 */
 class VariableLengthSignedIntegerElement final :
-    public VariableLengthIntegerElement
+    public VariableLengthIntegerElement,
+    public IntegerElement<VariableLengthSignedIntegerElement>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -2406,7 +2443,8 @@ public:
 @ingroup elems
 */
 class VariableLengthUnsignedIntegerElement final :
-    public VariableLengthIntegerElement
+    public VariableLengthIntegerElement,
+    public IntegerElement<VariableLengthUnsignedIntegerElement>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
