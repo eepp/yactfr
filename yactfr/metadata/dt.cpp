@@ -105,6 +105,12 @@ const VariableLengthUnsignedIntegerType& DataType::asVariableLengthUnsignedInteg
     return static_cast<const VariableLengthUnsignedIntegerType&>(*this);
 }
 
+const StringType& DataType::asStringType() const noexcept
+{
+    assert(this->isStringType());
+    return static_cast<const StringType&>(*this);
+}
+
 const NullTerminatedStringType& DataType::asNullTerminatedStringType() const noexcept
 {
     assert(this->isNullTerminatedStringType());

@@ -58,27 +58,28 @@ protected:
         _KIND_VL_INT                = _KIND_VL_BIT_ARRAY | _KIND_INT,
         _KIND_VL_SINT               = _KIND_VL_INT | _KIND_SINT,
         _KIND_VL_UINT               = _KIND_VL_INT | _KIND_UINT,
-        _KIND_NT_STR                = (1 << 11) | _KIND_SCALAR,
-        _KIND_COMPOUND              = 1 << 12,
-        _KIND_STRUCT                = (1 << 13) | _KIND_COMPOUND,
-        _KIND_ARRAY                 = (1 << 14) | _KIND_COMPOUND,
-        _KIND_SL                    = 1 << 15,
-        _KIND_DL                    = 1 << 16,
+        _KIND_STR                   = (1 << 11) | _KIND_SCALAR,
+        _KIND_NT_STR                = (1 << 12) | _KIND_STR,
+        _KIND_COMPOUND              = 1 << 13,
+        _KIND_STRUCT                = (1 << 14) | _KIND_COMPOUND,
+        _KIND_ARRAY                 = (1 << 15) | _KIND_COMPOUND,
+        _KIND_SL                    = 1 << 16,
+        _KIND_DL                    = 1 << 17,
         _KIND_SL_ARRAY              = _KIND_SL | _KIND_ARRAY,
         _KIND_DL_ARRAY              = _KIND_DL | _KIND_ARRAY,
-        _KIND_NON_NT_STR            = (1 << 17) | _KIND_SCALAR,
+        _KIND_NON_NT_STR            = (1 << 18) | _KIND_STR,
         _KIND_SL_STR                = _KIND_SL | _KIND_NON_NT_STR,
         _KIND_DL_STR                = _KIND_DL | _KIND_NON_NT_STR,
-        _KIND_BLOB                  = (1 << 18) | _KIND_SCALAR,
+        _KIND_BLOB                  = (1 << 19) | _KIND_SCALAR,
         _KIND_SL_BLOB               = _KIND_SL | _KIND_BLOB,
         _KIND_DL_BLOB               = _KIND_DL | _KIND_BLOB,
-        _KIND_VAR                   = (1 << 19) | _KIND_COMPOUND,
-        _KIND_UINT_SEL              = 1 << 20,
-        _KIND_SINT_SEL              = 1 << 21,
-        _KIND_BOOL_SEL              = 1 << 22,
+        _KIND_VAR                   = (1 << 20) | _KIND_COMPOUND,
+        _KIND_UINT_SEL              = 1 << 21,
+        _KIND_SINT_SEL              = 1 << 22,
+        _KIND_BOOL_SEL              = 1 << 23,
         _KIND_VAR_UINT_SEL          = _KIND_VAR | _KIND_UINT_SEL,
         _KIND_VAR_SINT_SEL          = _KIND_VAR | _KIND_SINT_SEL,
-        _KIND_OPT                   = (1 << 23) | _KIND_COMPOUND,
+        _KIND_OPT                   = (1 << 24) | _KIND_COMPOUND,
         _KIND_OPT_UINT_SEL          = _KIND_OPT | _KIND_UINT_SEL,
         _KIND_OPT_SINT_SEL          = _KIND_OPT | _KIND_SINT_SEL,
         _KIND_OPT_INT_SEL           = _KIND_OPT_UINT_SEL | _KIND_OPT_SINT_SEL,
@@ -198,6 +199,12 @@ public:
     bool isVariableLengthUnsignedIntegerType() const noexcept
     {
         return this->_isKind(_KIND_VL_UINT);
+    }
+
+    /// \c true if this type is a string type.
+    bool isStringType() const noexcept
+    {
+        return this->_isKind(_KIND_STR);
     }
 
     /// \c true if this type is a null-terminated string type.
@@ -469,6 +476,15 @@ public:
         This type is a dynamic-length array type.
     */
     const DynamicLengthArrayType& asDynamicLengthArrayType() const noexcept;
+
+    /*!
+    @brief
+        Returns this type as a string type.
+
+    @pre
+        This type is a string type.
+    */
+    const StringType& asStringType() const noexcept;
 
     /*!
     @brief

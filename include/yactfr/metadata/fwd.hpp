@@ -49,6 +49,7 @@ class ScalarDataType;
 class StaticLengthArrayType;
 class StaticLengthBlobType;
 class StaticLengthStringType;
+class StringType;
 class StructureMemberType;
 class StructureType;
 class TraceType;
