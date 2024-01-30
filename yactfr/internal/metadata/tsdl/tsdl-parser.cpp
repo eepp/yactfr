@@ -10,6 +10,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "tsdl-parser.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
@@ -1965,7 +1966,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     boost::optional<Cycles> prec;
     auto offsetSecs = 0LL;
     Cycles offsetCycles = 0;
-    auto origIsUnixEpoch = false;
+    auto isAbs = false;
 
     // check attributes
     for (const auto& attr : attrs) {
@@ -2032,7 +2033,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
             attr.checkKind(TsdlAttr::Kind::UINT);
             offsetCycles = static_cast<Cycles>(attr.uintVal);
         } else if (attr.name == "absolute") {
-            origIsUnixEpoch = attr.boolEquiv();
+            isAbs = attr.boolEquiv();
         } else {
             attr.throwUnknown();
         }
@@ -2064,9 +2065,42 @@ bool TsdlParser::_tryParseClkTypeBlock()
     offsetSecs += completeSecsInOffsetCycles;
 
     // create origin
-    auto origin = [&origIsUnixEpoch]() -> boost::optional<ClockOrigin> {
-        if (origIsUnixEpoch) {
+    auto origin = [&isAbs, this]() -> boost::optional<ClockOrigin> {
+        if (isAbs) {
+            /*
+             * CTF 1.8 says:
+             *
+             * > The field `absolute` is `TRUE` if the clock is a global
+             * > reference across different clock UUID (e.g. NTP time).
+             *
+             * Although that sentence doesn't indicate that the
+             * `absolute` property means Unix epoch, in practice many
+             * tools do because there's no other way to specify a clock
+             * origin with CTF 1.8. Therefore, follow that de facto
+             * convention.
+             */
             return ClockOrigin {};
+        }
+
+        /*
+         * Special case for LTTng: its intention is to have a Unix epoch
+         * origin, but an unknown precision/accuracy. This is possible
+         * to communicate with CTF 2, but not with CTF 1.8.
+         *
+         * This means that two LTTng data streams are correlated because
+         * they share the same origin, albeit with an unknown accuracy,
+         * meaning it's not 100% safe to assume so.
+         */
+        {
+            const auto entry = _pseudoTraceType->env()["tracer_name"];
+
+            if (entry) {
+                if (const auto entryVal = boost::get<std::string>(entry)) {
+                    if (boost::algorithm::starts_with(*entryVal, "lttng-")) {
+                        return ClockOrigin {};
+                    }
+                }
+            }
         }
 
         return boost::none;
