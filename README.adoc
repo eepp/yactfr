@@ -485,12 +485,11 @@ int main(const int argc, const char * const argv[])
 This is a faster version of the previous example.
 
 Instead of decoding the whole packet to find its length, we use the
-"`expected packet total length`" element. This element is available
-after the decoder reads the expected packet total length fixed-length
-unsigned integer from the packet context. Then, we make the iterator
-seek the next packet directly.
+expected packet total length property of the "`packet info`" element.
+This element is available after the decoder reads the packet context.
+Then, we make the iterator seek the next packet directly.
 
-Note that this example doesn't work if the packet context type does not
+Note that this example doesn't work if the packet context type doesn't
 contain an expected packet total length fixed-length unsigned integer,
 in which case the data stream _must_ contain a single packet. This could
 be detected by inspecting the metadata (trace type) and using the size
