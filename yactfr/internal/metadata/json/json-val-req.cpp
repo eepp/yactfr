@@ -15,7 +15,7 @@ namespace internal {
 
 JsonValReq::JsonValReq(boost::optional<JsonVal::Kind> kind, const bool allowNull) :
     _kind {std::move(kind)},
-    _allowNull {(kind && *kind == JsonVal::Kind::NUL) ? false : allowNull}
+    _allowNull {(_kind && *_kind == JsonVal::Kind::NUL) ? false : allowNull}
 {
 }
 
