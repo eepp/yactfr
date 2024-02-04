@@ -19,7 +19,7 @@ auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeN
 {
     return findPseudoDts(basePseudoDt, [&memberTypeName, &predFunc](auto& pseudoDt,
                                                                     const auto name) {
-        return name && memberTypeName == *name && std::forward<PredFuncT>(predFunc)(pseudoDt);
+        return name && memberTypeName == *name && predFunc(pseudoDt);
     });
 }
 
@@ -35,8 +35,7 @@ template <typename PseudoDtT, typename PredFuncT>
 auto findPseudoUIntTypes(PseudoDtT& basePseudoDt, PredFuncT&& predFunc)
 {
     return findPseudoDts(basePseudoDt, [&predFunc](auto& pseudoDt, const auto name) {
-        return pseudoDt.isUInt() &&
-            std::forward<PredFuncT>(predFunc)(pseudoDt, name);
+        return pseudoDt.isUInt() && predFunc(pseudoDt, name);
     });
 }
 

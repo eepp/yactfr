@@ -2281,12 +2281,12 @@ public:
     {
         for (auto& erProc : _erProcsVec) {
             if (erProc) {
-                std::forward<FuncT>(func)(*erProc);
+                func(*erProc);
             }
         }
 
         for (auto& idErProcUpPair : _erProcsMap) {
-            std::forward<FuncT>(func)(*idErProcUpPair.second);
+            func(*idErProcUpPair.second);
         }
     }
 

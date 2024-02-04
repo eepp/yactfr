@@ -85,7 +85,7 @@ public:
     }
 
 private:
-    Index _offset;
+    Index _offset = 0;
     Index _lineNumber = 0;
     Index _colNumber = 0;
 };

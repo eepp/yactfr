@@ -38,7 +38,7 @@ static void pseudoDataLocPathElemsToPathElems(const PseudoDataLoc::PathElems& ps
 {
     std::transform(pseudoDataLocPathElems.begin(), pseudoDataLocPathElems.end(),
                    std::back_inserter(pathElems),
-                   [](const auto& pathElem) {
+                   [](const auto& pathElem) -> const std::string& {
         assert(pathElem.has_value());
         return *pathElem;
     });

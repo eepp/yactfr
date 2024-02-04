@@ -1879,7 +1879,7 @@ bool TsdlParser::_tryParseEnvBlock()
             entry = attr.strVal;
         }
 
-        entries[attr.name] = entry;
+        entries[attr.name] = std::move(entry);
     }
 
     assert(_pseudoTraceType);
@@ -2617,7 +2617,7 @@ PseudoDt::UP TsdlParser::_tryParseScopeDt(const _StackFrame::Kind scopeDtStackFr
         }
 
         line += "` scope:";
-        appendMsgToTextParseError(exc, line, beginLoc);
+        appendMsgToTextParseError(exc, std::move(line), beginLoc);
         throw;
     }
 }

@@ -41,7 +41,7 @@ private:
 };
 
 MemoryMappedFileView::MemoryMappedFileView(std::shared_ptr<internal::MmapFileViewFactoryImpl> mmapFileViewFactoryImpl) :
-    _mmapFileViewFactoryImpl {mmapFileViewFactoryImpl}
+    _mmapFileViewFactoryImpl {std::move(mmapFileViewFactoryImpl)}
 {
 }
 

@@ -133,7 +133,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
     _bo {bo},
     _bio {bio},
     _prefDispBase {prefDispBase},
-    _mappings {mappings},
+    _mappings {std::move(mappings)},
     _encoding {std::move(encoding)},
     _mappedClkTypeId {std::move(mappedClkTypeId)},
     _roles {std::move(roles)}

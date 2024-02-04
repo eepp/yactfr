@@ -443,7 +443,7 @@ DataType::UP DtFromPseudoRootDtConverter::_whileVisitingPseudoDt(const PseudoDtT
 {
     _current[&pseudoCompoundDt] = 0;
 
-    auto pseudoDt = std::forward<FuncT>(func)(pseudoCompoundDt);
+    auto pseudoDt = func(pseudoCompoundDt);
 
     _current.erase(&pseudoCompoundDt);
     return pseudoDt;
