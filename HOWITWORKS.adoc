@@ -2,7 +2,7 @@
 
 = How yactfr works
 Philippe Proulx
-15 March 2022
+4 February 2024
 :toc: left
 :nofooter:
 
@@ -86,6 +86,7 @@ documented uses unabbreviated names.
 |Pos |Position
 |Pow |Power
 |Prec |Precision
+|Pref |Preferred
 |Proc |Procedure
 |Rec |Recursive
 |Ref |Reference
@@ -121,13 +122,13 @@ documented uses unabbreviated names.
 
 Combination examples:
 
-* `convCtx` means "`conversion context`"
-* `locIt` means "`location iterator`"
-* `pseudoDts` means "`pseudo data types`"
+* `convCtx` means "`conversion context`".
+* `locIt` means "`location iterator`".
+* `pseudoDts` means "`pseudo data types`".
 * `isPseudoVarTypeWithoutSelLocRec` means "`is pseudo variant type
-  without selector location (recursive)`"
-* `uIntVal` means "`unsigned integer value`"
-* `flSEnum` means "`fixed-length signed enumeration`"
+  without selector location (recursive)`".
+* `uIntVal` means "`unsigned integer value`".
+* `flSInt` means "`fixed-length signed integer`".
 
 == {cpp} namespaces
 
@@ -140,11 +141,12 @@ The yactfr library lives in two namespaces:
     Internal API.
 +
 Some internal classes and declarations are exposed to the user in public
-headers (needed for templating), like `yactfr::internal::TsdlParser`,
-but those headers are placed in subdirectories named `internal`, and
-their content is not publicly documented.
+headers (needed for templating), like
+`yactfr::internal::tryCloneAttrs()`, but those headers are placed in a
+subdirectory named `internal`, and their content is not publicly
+documented.
 +
-This namespace is similar to the `details` namespace commonly found in
+This namespace is similar to the `detail` namespace commonly found in
 the Boost libraries, for example.
 
 == Metadata objects
@@ -156,22 +158,22 @@ This hierarchy, once complete, is as follows:
 
 ----
 Trace type
-  Packet header type (optional)
-  Clock types (0 or more)
-  Data stream types (0 or more)
-    Packet context type (optional)
-    Event record header type (optional)
-    Event record common context type (optional)
-    Event record types (0 or more)
-      Specific context type (optional)
-      Payload type (optional)
+  Packet header type                    (optional)
+  Clock types                           (zero or more)
+  Data stream types                     (zero or more)
+    Packet context type                 (optional)
+    Event record header type            (optional)
+    Event record common context type    (optional)
+    Event record types                  (zero or more)
+      Specific context type             (optional)
+      Payload type                      (optional)
 ----
 
 The concept of a _type_ here is that it represents a set of possible
 values. For example:
 
 * A 4-bit fixed-length unsigned integer data type is the set of the
-  integer values from 0 to 31.
+  fixed-length integer values from 0 to 31.
 
 * A clock type is a set of possible clocks.
 
@@ -211,19 +213,13 @@ mutable const DataStreamType *_dst;
 == Metadata text parsing
 
 While you can build a trace type object manually, the most interesting
-use case is probably to get one out of a standard TSDL metadata document
+use case is probably to get one out of a standard TSDL document
 (CTF{nbsp}1.8) or JSON text sequence document (CTF{nbsp}2).
 
 The `fromMetadataText()` functions do exactly that. Those functions
 accept either two character pointers (beginning and end) or an
-`std::string` object to synthesize a pair of trace type and trace
-environment objects out of the parsed text.
-
-Although the environment entries are part of a TSDL document, they
-conceptually belong to a single trace, which is why they're not part of
-a yactfr trace type object. It's just a convenience to have an `env`
-block in the `metadata` file of a CTF{nbsp}1.8 trace as each trace has
-its own `metadata` file.
+`std::string` object to synthesize a pair of trace type object and
+metadata stream UUID out of the parsed text.
 
 `fromMetadataText()` requires a _textual_ (non-packetized) version of
 the document (for CTF{nbsp}1.8). If the TSDL content is packetized, you
@@ -233,7 +229,7 @@ contains a metadata plain text accessor.
 A metadata stream object decodes all the contents on construction and
 keeps it, so it can get heavy with a heavy metadata stream. That being
 said, note that a fairly large https://lttng.org/[LTTng] kernel trace
-metadata stream is about 500{nbsp}kib: not the end of the world.
+metadata stream is about 500{nbsp}Kib: not the end of the world.
 
 The TSDL parser is of the non-predictive recursive descent type. There's
 one method for each construct, and the parser can sometimes backtrack if
@@ -292,11 +288,11 @@ the VM.
 
 Other instructions are related to the last decoded integer, for example:
 
-* `internal::SetDsIdInstr` follows a "`read fixed-length integer`" (or
-  "`read fixed-length enumeration`") instruction and indicates to the VM
+* `internal::SetDsIdInstr` follows a "`read fixed-length integer`" or
+  "`read variable-length integer`" instruction and indicates to the VM
   to set the current data stream ID to the last decoded integer value.
 
-* `internal::SetPktTotalLenInstr` indicates to the VM to set the
+* `internal::SetExpectedPktTotalLenInstr` indicates to the VM to set the
   expected total length of the current packet to the last decoded
   integer value.
 
@@ -342,9 +338,10 @@ the VM to save the value of the last decoded integer to a specific
 position (index) within an array of saved values.
 
 This is how the VM knows where to dynamically find the length of a
-dynamic-length array/string, or the selector of a variant/optional, as
-the `internal::BeginReadDlArrayInstr`, `internal::BeginReadDlStrInstr`,
-`internal::BeginReadDlBlobInstr`, `internal::BeginReadVarUIntSelInstr`,
+dynamic-length array/string/BLOB, or the selector of a variant/optional,
+as the `internal::BeginReadDlArrayInstr`,
+`internal::BeginReadDlStrInstr`, `internal::BeginReadDlBlobInstr`,
+`internal::BeginReadVarUIntSelInstr`,
 `internal::BeginReadVarSIntSelInstr`,
 `internal::BeginReadOptBoolSelInstr`,
 `internal::BeginReadOptUIntSelInstr`, and
@@ -356,8 +353,8 @@ or selector value.
 `internal::SaveValInstr` instructions at specific locations within the
 procedures and to assign appropriate positions to link "`begin read
 dynamic-length array`", "`begin read dynamic-length string`", "`begin
-read variant`", and "`begin read optional`" instructions to their
-length/selector values.
+read dynamic-length BLOB`", "`begin read variant`", and "`begin read
+optional`" instructions to their length/selector values.
 
 [[data-src-factory]]
 == Data source factory
