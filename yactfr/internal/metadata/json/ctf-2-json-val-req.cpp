@@ -1877,7 +1877,7 @@ public:
     explicit JsonDtAliasFragValReq() :
         JsonFragValReq {this->typeStr(), {
             namePropReqEntry(true),
-            anyDtPropReqEntry(strs::FC, _anyFullDtValReq, true),
+            anyDtPropReqEntry(strs::FC, _anyFullDtValReq, true), //-V1050
         }}
     {
     }
@@ -2171,7 +2171,7 @@ public:
             nsPropReqEntry(),
             namePropReqEntry(false),
             uidPropReqEntry(false),
-            anyDtPropReqEntry(strs::PKT_HEADER_FC, _anyFullDtValReq),
+            anyDtPropReqEntry(strs::PKT_HEADER_FC, _anyFullDtValReq), //-V1050
             {strs::ENV, {JsonTraceEnvValReq::shared()}},
         }}
     {
@@ -2216,9 +2216,9 @@ public:
             uidPropReqEntry(false),
             idPropReqEntry(),
             {strs::DEF_CC_ID, {JsonValReq::shared(JsonVal::Kind::STR)}},
-            anyDtPropReqEntry(strs::PKT_CTX_FC, _anyFullDtValReq),
-            anyDtPropReqEntry(strs::ER_HEADER_FC, _anyFullDtValReq),
-            anyDtPropReqEntry(strs::ER_COMMON_CTX_FC, _anyFullDtValReq),
+            anyDtPropReqEntry(strs::PKT_CTX_FC, _anyFullDtValReq), //-V1050
+            anyDtPropReqEntry(strs::ER_HEADER_FC, _anyFullDtValReq), //-V1050
+            anyDtPropReqEntry(strs::ER_COMMON_CTX_FC, _anyFullDtValReq), //-V1050
         }}
     {
     }
@@ -2262,8 +2262,8 @@ public:
             uidPropReqEntry(false),
             idPropReqEntry(),
             {strs::DSC_ID, {JsonValReq::shared(JsonVal::Kind::UINT)}},
-            anyDtPropReqEntry(strs::SPEC_CTX_FC, _anyFullDtValReq),
-            anyDtPropReqEntry(strs::PAYLOAD_FC, _anyFullDtValReq),
+            anyDtPropReqEntry(strs::SPEC_CTX_FC, _anyFullDtValReq), //-V1050
+            anyDtPropReqEntry(strs::PAYLOAD_FC, _anyFullDtValReq), //-V1050
         }}
     {
     }
