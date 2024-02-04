@@ -686,7 +686,7 @@ boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
     }
 
     char *strEnd = nullptr;
-    const auto ullVal = std::strtoull(&(*_at), &strEnd, BaseV);
+    const auto ullVal = std::strtoull(_at, &strEnd, BaseV);
 
     if ((ullVal == 0 && &(*_at) == strEnd) || errno == ERANGE) {
         // could not parse
@@ -795,7 +795,7 @@ boost::optional<double> StrScanner::tryScanConstReal()
 
     // parse
     char *strEnd = nullptr;
-    const auto val = std::strtod(&(*_at), &strEnd);
+    const auto val = std::strtod(_at, &strEnd);
 
     if (val == HUGE_VAL || (val == 0 && &(*_at) == strEnd) || errno == ERANGE) {
         // could not parse
