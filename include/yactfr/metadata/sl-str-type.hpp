@@ -41,8 +41,8 @@ public:
         Alignment of data stream static-length strings described by this
         type.
     @param[in] maximumLength
-        Maximum length (UTF-8 bytes) of data stream static-length
-        strings described by this type.
+        Maximum length (bytes) of data stream static-length strings
+        described by this type.
     @param[in] encoding
         Encoding of data stream static-length strings described by this
         type.
@@ -69,8 +69,8 @@ public:
         property (8).
 
     @param[in] maximumLength
-        Maximum length (UTF-8 bytes) of data stream static-length
-        strings described by this type.
+        Maximum length (bytes) of data stream static-length strings
+        described by this type.
     @param[in] encoding
         Encoding of data stream static-length strings described by this
         type.
@@ -109,8 +109,8 @@ public:
 
     /*!
     @brief
-        Maximum length (UTF-8 bytes) of data stream static-length
-        strings described by this type.
+        Maximum length (bytes) of data stream static-length strings
+        described by this type.
     */
     Size maximumLength() const noexcept
     {

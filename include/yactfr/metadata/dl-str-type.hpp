@@ -49,7 +49,7 @@ public:
         Alignment of data stream dynamic-length strings described by
         this type.
     @param[in] maximumLengthLocation
-        Location of maximum lengths (UTF-8 bytes) of data stream
+        Location of maximum lengths (bytes) of data stream
         dynamic-length strings described by this type.
     @param[in] encoding
         Encoding of data stream dynamic-length strings described by this
@@ -78,7 +78,7 @@ public:
         alignment property (8).
 
     @param[in] maximumLengthLocation
-        Location of maximum lengths (UTF-8 bytes) of data stream
+        Location of maximum lengths (bytes) of data stream
         dynamic-length strings described by this type.
     @param[in] encoding
         Encoding of data stream dynamic-length strings described by this
@@ -118,7 +118,7 @@ public:
 
     /*!
     @brief
-        Location of maximum lengths (UTF-8 bytes) of data stream
+        Location of maximum lengths (bytes) of data stream
         dynamic-length strings described by this type.
     */
     const DataLocation& maximumLengthLocation() const noexcept
