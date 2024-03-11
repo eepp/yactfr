@@ -16,7 +16,7 @@
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/metadata/item.hpp>
 
-#include "../proc.hpp"
+#include "../pgm.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -87,7 +87,7 @@ public:
      * It is safe to keep a pointer to the returned object as long as
      * this trace type lives.
      */
-    const PktProc& pktProc() const;
+    const PktPgm& pktPgm() const;
 
     static DataTypeSet& dlArrayTypeLenTypes(const DynamicLengthArrayType& dt) noexcept
     {
@@ -148,7 +148,7 @@ private:
     const TraceType *_traceType;
 
     // packet procedure cache; created the first time we need it
-    mutable std::unique_ptr<const PktProc> _pktProc;
+    mutable std::unique_ptr<const PktPgm> _pktPgm;
 };
 
 } // namespace internal

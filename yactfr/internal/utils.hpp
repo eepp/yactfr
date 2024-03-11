@@ -16,7 +16,11 @@
 namespace yactfr {
 namespace internal {
 
-std::string indent(Size indent);
+inline std::string indent2(Size)
+{
+    return {};
+}
+
 std::string strError();
 
 inline bool isPowOfTwo(const unsigned long long x)

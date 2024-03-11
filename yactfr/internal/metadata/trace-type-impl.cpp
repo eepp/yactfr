@@ -13,9 +13,8 @@
 #include <yactfr/aliases.hpp>
 
 #include "trace-type-impl.hpp"
-#include "../proc.hpp"
-#include "../pkt-proc-builder.hpp"
 #include "../utils.hpp"
+#include "../build-pkt-pgm.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -436,13 +435,13 @@ void TraceTypeImpl::_setDispNames() const
     }
 }
 
-const PktProc& TraceTypeImpl::pktProc() const
+const PktPgm& TraceTypeImpl::pktPgm() const
 {
-    if (!_pktProc) {
-        _pktProc = internal::PktProcBuilder {*_traceType}.releasePktProc();
+    if (!_pktPgm) {
+        _pktPgm = buildPktPgm(*_traceType);
     }
 
-    return *_pktProc;
+    return *_pktPgm;
 }
 
 } // namespace internal

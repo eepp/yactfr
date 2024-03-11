@@ -9,8 +9,8 @@ if (NOT UNIX)
 endif ()
 
 # yactfr shared library
-add_library (
-    yactfr SHARED
+set (
+    YACTFR_SOURCES
     data-blk.cpp
     data-src-factory.cpp
     data-src.cpp
@@ -38,7 +38,9 @@ add_library (
     internal/metadata/tsdl/tsdl-attr.cpp
     internal/metadata/tsdl/tsdl-parser.cpp
     internal/mmap-file-view-factory-impl.cpp
+    internal/build-pkt-pgm.cpp
     internal/pkt-proc-builder.cpp
+    internal/pgm.cpp
     internal/proc.cpp
     internal/utils.cpp
     internal/vm.cpp
@@ -82,6 +84,14 @@ add_library (
     text-loc.cpp
     text-parse-error.cpp
 )
+
+string (TOLOWER ${CMAKE_BUILD_TYPE} YACTFR_BUILD_TYPE)
+
+if (YACTFR_BUILD_TYPE STREQUAL debug)
+    set (YACTFR_SOURCES ${YACTFR_SOURCES} internal/pgm-io.cpp)
+endif ()
+
+add_library (yactfr SHARED ${YACTFR_SOURCES})
 set_target_properties (
     yactfr
     PROPERTIES

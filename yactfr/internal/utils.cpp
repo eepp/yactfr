@@ -14,19 +14,6 @@
 namespace yactfr {
 namespace internal {
 
-std::string indent(const Size indent)
-{
-    std::string ind;
-
-    ind.reserve(indent * 2);
-
-    for (Index i = 0; i < indent; ++i) {
-        ind.append("  ");
-    }
-
-    return ind;
-}
-
 std::string strError()
 {
         std::vector<char> buf;

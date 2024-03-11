@@ -238,7 +238,7 @@ descriptions below easier to read and to allow recursion.
   VariableLengthSignedIntegerElement |
   (
     NullTerminatedStringBeginningElement
-    RawDataElement *
+    RawDataElement RawDataElement *
     NullTerminatedStringEndElement
   ) |
   (

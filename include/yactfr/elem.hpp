@@ -2599,7 +2599,7 @@ This element can occur zero or more times:
 
 begin() points to the first byte of the raw data and end() points to
 the byte \em after the last byte of the raw data. Use size() to compute
-the size of the raw data \em in bytes.
+the size of the raw data in \em bytes.
 
 The pointed raw data is actually part of a \link DataBlock data
 block\endlink which the \link DataSource data source\endlink provided
@@ -2637,9 +2637,9 @@ string/BLOB beginning and end elements forms:
     44 52 00 00 bd cc 4e
     @endcode
 
-    The encoded string is "hello world 🌻" (everything before the first
-    encoded U+0000 codepoint, which is two zero bytes in UTF-16) while
-    the bytes
+    The encoded string is <code>hello&nbsp;world&nbsp;🌻</code>
+    (everything before the first encoded U+0000 codepoint, which is two
+    zero bytes in UTF-16) while the bytes
 
     @code
     00 00 dd ff 44 52 00 00 bd cc 4e

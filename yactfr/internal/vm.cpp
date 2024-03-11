@@ -16,10 +16,10 @@ namespace internal {
 constexpr Size sizeUnset = std::numeric_limits<Size>::max();
 constexpr std::uint64_t savedValUnset = std::numeric_limits<std::uint64_t>::max();
 
-VmPos::VmPos(const PktProc& pktProc) :
-    pktProc {&pktProc}
+VmPos::VmPos(const PktPgm& pktPgm) :
+    pktPgm {&pktPgm}
 {
-    this->_initVectorsFromPktProc();
+    this->_initVectorsFromPktPgm();
 }
 
 VmPos::VmPos(const VmPos& other)
@@ -29,14 +29,14 @@ VmPos::VmPos(const VmPos& other)
 
 VmPos& VmPos::operator=(const VmPos& other)
 {
-    assert(pktProc == other.pktProc);
+    assert(pktPgm == other.pktPgm);
     this->_setFromOther(other);
     return *this;
 }
 
-void VmPos::_initVectorsFromPktProc()
+void VmPos::_initVectorsFromPktPgm()
 {
-    savedVals.resize(pktProc->savedValsCount(), sizeUnset);
+    savedVals.resize(pktPgm->savedValsCount(), sizeUnset);
 }
 
 void VmPos::_setSimpleFromOther(const VmPos& other)
@@ -53,9 +53,9 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     curVlIntElem = &this->elemFromOther(other, *other.curVlIntElem);
     curId = other.curId;
     ntStrCuBuf = other.ntStrCuBuf;
-    pktProc = other.pktProc;
-    curDsPktProc = other.curDsPktProc;
-    curErProc = other.curErProc;
+    pktPgm = other.pktPgm;
+    curDsPktPgm = other.curDsPktPgm;
+    curErPgm = other.curErPgm;
     metadataStreamUuid = other.metadataStreamUuid;
     curExpectedPktTotalLenBits = other.curExpectedPktTotalLenBits;
     curExpectedPktContentLenBits = other.curExpectedPktContentLenBits;
@@ -165,11 +165,11 @@ bool ElementSequenceIteratorPosition::operator>=(const ElementSequenceIteratorPo
 
 namespace internal {
 
-Vm::Vm(DataSourceFactory& dataSrcFactory, const PktProc& pktProc, ElementSequenceIterator& it) :
+Vm::Vm(DataSourceFactory& dataSrcFactory, const PktPgm& pktPgm, ElementSequenceIterator& it) :
     _dataSrcFactory {&dataSrcFactory},
     _dataSrc {dataSrcFactory.createDataSource()},
     _it {&it},
-    _pos {pktProc}
+    _pos {pktPgm}
 {
     this->_initExecFuncs();
 }
@@ -194,165 +194,171 @@ void Vm::setFromOther(const Vm& other, ElementSequenceIterator& it)
 
 void Vm::_initExecFuncs() noexcept
 {
-    this->_initExecFunc<Instr::Kind::BeginReadDlArray>(&Vm::_execBeginReadDlArray);
-    this->_initExecFunc<Instr::Kind::BeginReadDlBlob>(&Vm::_execBeginReadDlBlob);
-    this->_initExecFunc<Instr::Kind::BeginReadDlStr>(&Vm::_execBeginReadDlStr);
-    this->_initExecFunc<Instr::Kind::BeginReadOptBoolSel>(&Vm::_execBeginReadOptBoolSel);
-    this->_initExecFunc<Instr::Kind::BeginReadOptSIntSel>(&Vm::_execBeginReadOptSIntSel);
-    this->_initExecFunc<Instr::Kind::BeginReadOptUIntSel>(&Vm::_execBeginReadOptUIntSel);
-    this->_initExecFunc<Instr::Kind::BeginReadScope>(&Vm::_execBeginReadScope);
-    this->_initExecFunc<Instr::Kind::BeginReadSlArray>(&Vm::_execBeginReadSlArray);
-    this->_initExecFunc<Instr::Kind::BeginReadSlBlob>(&Vm::_execBeginReadSlBlob);
-    this->_initExecFunc<Instr::Kind::BeginReadSlStr>(&Vm::_execBeginReadSlStr);
-    this->_initExecFunc<Instr::Kind::BeginReadSlUuidArray>(&Vm::_execBeginReadSlUuidArray);
-    this->_initExecFunc<Instr::Kind::BeginReadSlUuidBlob>(&Vm::_execBeginReadSlUuidBlob);
-    this->_initExecFunc<Instr::Kind::BeginReadStruct>(&Vm::_execBeginReadStruct);
-    this->_initExecFunc<Instr::Kind::BeginReadVarSIntSel>(&Vm::_execBeginReadVarSIntSel);
-    this->_initExecFunc<Instr::Kind::BeginReadVarUIntSel>(&Vm::_execBeginReadVarUIntSel);
-    this->_initExecFunc<Instr::Kind::EndDsErPreambleProc>(&Vm::_execEndDsErPreambleProc);
-    this->_initExecFunc<Instr::Kind::EndDsPktPreambleProc>(&Vm::_execEndDsPktPreambleProc);
-    this->_initExecFunc<Instr::Kind::EndErProc>(&Vm::_execEndErProc);
-    this->_initExecFunc<Instr::Kind::EndPktPreambleProc>(&Vm::_execEndPktPreambleProc);
-    this->_initExecFunc<Instr::Kind::EndReadDlArray>(&Vm::_execEndReadDlArray);
-    this->_initExecFunc<Instr::Kind::EndReadDlBlob>(&Vm::_execEndReadDlBlob);
-    this->_initExecFunc<Instr::Kind::EndReadDlStr>(&Vm::_execEndReadDlStr);
-    this->_initExecFunc<Instr::Kind::EndReadOptBoolSel>(&Vm::_execEndReadOptBoolSel);
-    this->_initExecFunc<Instr::Kind::EndReadOptSIntSel>(&Vm::_execEndReadOptSIntSel);
-    this->_initExecFunc<Instr::Kind::EndReadOptUIntSel>(&Vm::_execEndReadOptUIntSel);
-    this->_initExecFunc<Instr::Kind::EndReadScope>(&Vm::_execEndReadScope);
-    this->_initExecFunc<Instr::Kind::EndReadSlArray>(&Vm::_execEndReadSlArray);
-    this->_initExecFunc<Instr::Kind::EndReadSlBlob>(&Vm::_execEndReadSlBlob);
-    this->_initExecFunc<Instr::Kind::EndReadSlStr>(&Vm::_execEndReadSlStr);
-    this->_initExecFunc<Instr::Kind::EndReadStruct>(&Vm::_execEndReadStruct);
-    this->_initExecFunc<Instr::Kind::EndReadVarSIntSel>(&Vm::_execEndReadVarSIntSel);
-    this->_initExecFunc<Instr::Kind::EndReadVarUIntSel>(&Vm::_execEndReadVarUIntSel);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA16Be>(&Vm::_execReadFlBitArrayA16Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA16BeRev>(&Vm::_execReadFlBitArrayA16BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA16Le>(&Vm::_execReadFlBitArrayA16Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA16LeRev>(&Vm::_execReadFlBitArrayA16LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA32Be>(&Vm::_execReadFlBitArrayA32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA32BeRev>(&Vm::_execReadFlBitArrayA32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA32Le>(&Vm::_execReadFlBitArrayA32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA32LeRev>(&Vm::_execReadFlBitArrayA32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA64Be>(&Vm::_execReadFlBitArrayA64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA64BeRev>(&Vm::_execReadFlBitArrayA64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA64Le>(&Vm::_execReadFlBitArrayA64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA64LeRev>(&Vm::_execReadFlBitArrayA64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA8>(&Vm::_execReadFlBitArrayA8);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayA8Rev>(&Vm::_execReadFlBitArrayA8Rev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayBe>(&Vm::_execReadFlBitArrayBe);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayBeRev>(&Vm::_execReadFlBitArrayBeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayLe>(&Vm::_execReadFlBitArrayLe);
-    this->_initExecFunc<Instr::Kind::ReadFlBitArrayLeRev>(&Vm::_execReadFlBitArrayLeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA16Be>(&Vm::_execReadFlBitMapA16Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA16BeRev>(&Vm::_execReadFlBitMapA16BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA16Le>(&Vm::_execReadFlBitMapA16Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA16LeRev>(&Vm::_execReadFlBitMapA16LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA32Be>(&Vm::_execReadFlBitMapA32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA32BeRev>(&Vm::_execReadFlBitMapA32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA32Le>(&Vm::_execReadFlBitMapA32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA32LeRev>(&Vm::_execReadFlBitMapA32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA64Be>(&Vm::_execReadFlBitMapA64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA64BeRev>(&Vm::_execReadFlBitMapA64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA64Le>(&Vm::_execReadFlBitMapA64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA64LeRev>(&Vm::_execReadFlBitMapA64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA8>(&Vm::_execReadFlBitMapA8);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapA8Rev>(&Vm::_execReadFlBitMapA8Rev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapBe>(&Vm::_execReadFlBitMapBe);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapBeRev>(&Vm::_execReadFlBitMapBeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapLe>(&Vm::_execReadFlBitMapLe);
-    this->_initExecFunc<Instr::Kind::ReadFlBitMapLeRev>(&Vm::_execReadFlBitMapLeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA16Be>(&Vm::_execReadFlBoolA16Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA16BeRev>(&Vm::_execReadFlBoolA16BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA16Le>(&Vm::_execReadFlBoolA16Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA16LeRev>(&Vm::_execReadFlBoolA16LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA32Be>(&Vm::_execReadFlBoolA32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA32BeRev>(&Vm::_execReadFlBoolA32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA32Le>(&Vm::_execReadFlBoolA32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA32LeRev>(&Vm::_execReadFlBoolA32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA64Be>(&Vm::_execReadFlBoolA64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA64BeRev>(&Vm::_execReadFlBoolA64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA64Le>(&Vm::_execReadFlBoolA64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA64LeRev>(&Vm::_execReadFlBoolA64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA8>(&Vm::_execReadFlBoolA8);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolA8Rev>(&Vm::_execReadFlBoolA8Rev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolBe>(&Vm::_execReadFlBoolBe);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolBeRev>(&Vm::_execReadFlBoolBeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolLe>(&Vm::_execReadFlBoolLe);
-    this->_initExecFunc<Instr::Kind::ReadFlBoolLeRev>(&Vm::_execReadFlBoolLeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat32Be>(&Vm::_execReadFlFloat32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat32BeRev>(&Vm::_execReadFlFloat32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat32Le>(&Vm::_execReadFlFloat32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat32LeRev>(&Vm::_execReadFlFloat32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat64Be>(&Vm::_execReadFlFloat64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat64BeRev>(&Vm::_execReadFlFloat64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat64Le>(&Vm::_execReadFlFloat64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlFloat64LeRev>(&Vm::_execReadFlFloat64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA32Be>(&Vm::_execReadFlFloatA32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA32BeRev>(&Vm::_execReadFlFloatA32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA32Le>(&Vm::_execReadFlFloatA32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA32LeRev>(&Vm::_execReadFlFloatA32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA64Be>(&Vm::_execReadFlFloatA64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA64BeRev>(&Vm::_execReadFlFloatA64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA64Le>(&Vm::_execReadFlFloatA64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlFloatA64LeRev>(&Vm::_execReadFlFloatA64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA16Be>(&Vm::_execReadFlSIntA16Be);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA16BeRev>(&Vm::_execReadFlSIntA16BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA16Le>(&Vm::_execReadFlSIntA16Le);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA16LeRev>(&Vm::_execReadFlSIntA16LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA32Be>(&Vm::_execReadFlSIntA32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA32BeRev>(&Vm::_execReadFlSIntA32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA32Le>(&Vm::_execReadFlSIntA32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA32LeRev>(&Vm::_execReadFlSIntA32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA64Be>(&Vm::_execReadFlSIntA64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA64BeRev>(&Vm::_execReadFlSIntA64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA64Le>(&Vm::_execReadFlSIntA64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA64LeRev>(&Vm::_execReadFlSIntA64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA8>(&Vm::_execReadFlSIntA8);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntA8Rev>(&Vm::_execReadFlSIntA8Rev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntBe>(&Vm::_execReadFlSIntBe);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntBeRev>(&Vm::_execReadFlSIntBeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntLe>(&Vm::_execReadFlSIntLe);
-    this->_initExecFunc<Instr::Kind::ReadFlSIntLeRev>(&Vm::_execReadFlSIntLeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA16Be>(&Vm::_execReadFlUIntA16Be);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA16BeRev>(&Vm::_execReadFlUIntA16BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA16Le>(&Vm::_execReadFlUIntA16Le);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA16LeRev>(&Vm::_execReadFlUIntA16LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA32Be>(&Vm::_execReadFlUIntA32Be);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA32BeRev>(&Vm::_execReadFlUIntA32BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA32Le>(&Vm::_execReadFlUIntA32Le);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA32LeRev>(&Vm::_execReadFlUIntA32LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA64Be>(&Vm::_execReadFlUIntA64Be);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA64BeRev>(&Vm::_execReadFlUIntA64BeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA64Le>(&Vm::_execReadFlUIntA64Le);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA64LeRev>(&Vm::_execReadFlUIntA64LeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA8>(&Vm::_execReadFlUIntA8);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntA8Rev>(&Vm::_execReadFlUIntA8Rev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntBe>(&Vm::_execReadFlUIntBe);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntBeRev>(&Vm::_execReadFlUIntBeRev);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntLe>(&Vm::_execReadFlUIntLe);
-    this->_initExecFunc<Instr::Kind::ReadFlUIntLeRev>(&Vm::_execReadFlUIntLeRev);
-    this->_initExecFunc<Instr::Kind::ReadNtStrUtf16>(&Vm::_execReadNtStrUtf16);
-    this->_initExecFunc<Instr::Kind::ReadNtStrUtf32>(&Vm::_execReadNtStrUtf32);
-    this->_initExecFunc<Instr::Kind::ReadNtStrUtf8>(&Vm::_execReadNtStrUtf8);
-    this->_initExecFunc<Instr::Kind::ReadVlSInt>(&Vm::_execReadVlSInt);
-    this->_initExecFunc<Instr::Kind::ReadVlUInt>(&Vm::_execReadVlUInt);
-    this->_initExecFunc<Instr::Kind::SaveVal>(&Vm::_execSaveVal);
-    this->_initExecFunc<Instr::Kind::SetCurId>(&Vm::_execSetCurrentId);
-    this->_initExecFunc<Instr::Kind::SetDsId>(&Vm::_execSetDsId);
-    this->_initExecFunc<Instr::Kind::SetDsInfo>(&Vm::_execSetDsInfo);
-    this->_initExecFunc<Instr::Kind::SetDst>(&Vm::_execSetDst);
-    this->_initExecFunc<Instr::Kind::SetErInfo>(&Vm::_execSetErInfo);
-    this->_initExecFunc<Instr::Kind::SetErt>(&Vm::_execSetErt);
-    this->_initExecFunc<Instr::Kind::SetPktContentLen>(&Vm::_execSetPktContentLen);
-    this->_initExecFunc<Instr::Kind::SetPktDiscErCounterSnap>(&Vm::_execSetPktDiscErCounterSnap);
-    this->_initExecFunc<Instr::Kind::SetPktEndDefClkVal>(&Vm::_execSetPktEndDefClkVal);
-    this->_initExecFunc<Instr::Kind::SetPktInfo>(&Vm::_execSetPktInfo);
-    this->_initExecFunc<Instr::Kind::SetPktMagicNumber>(&Vm::_execSetPktMagicNumber);
-    this->_initExecFunc<Instr::Kind::SetPktSeqNum>(&Vm::_execSetPktSeqNum);
-    this->_initExecFunc<Instr::Kind::SetPktTotalLen>(&Vm::_execSetPktTotalLen);
-    this->_initExecFunc<Instr::Kind::UpdateDefClkVal>(&Vm::_execUpdateDefClkVal);
-    this->_initExecFunc<Instr::Kind::UpdateDefClkValFl>(&Vm::_execUpdateDefClkValFl);
+    this->_initExecFunc<InstrBase::Opcode::EndReadArrayElem>(&Vm::_execEndReadArrayElem);
+    this->_initExecFunc<InstrBase::Opcode::EndReadDlArray>(&Vm::_execEndReadDlArray);
+    this->_initExecFunc<InstrBase::Opcode::EndReadDlBlob>(&Vm::_execEndReadDlBlob);
+    this->_initExecFunc<InstrBase::Opcode::EndReadDlStr>(&Vm::_execEndReadDlStr);
+    this->_initExecFunc<InstrBase::Opcode::EndReadDsErPreamble>(&Vm::_execEndReadDsErPreamble);
+    this->_initExecFunc<InstrBase::Opcode::EndReadDsPktPreamble>(&Vm::_execEndReadDsPktPreamble);
+    this->_initExecFunc<InstrBase::Opcode::EndReadEr>(&Vm::_execEndReadEr);
+    this->_initExecFunc<InstrBase::Opcode::EndReadOptWithBoolSel>(&Vm::_execEndReadOptWithBoolSel);
+    this->_initExecFunc<InstrBase::Opcode::EndReadOptWithSIntSel>(&Vm::_execEndReadOptWithSIntSel);
+    this->_initExecFunc<InstrBase::Opcode::EndReadOptWithUIntSel>(&Vm::_execEndReadOptWithUIntSel);
+    this->_initExecFunc<InstrBase::Opcode::EndReadPktPreamble>(&Vm::_execEndReadPktPreamble);
+    this->_initExecFunc<InstrBase::Opcode::EndReadScope>(&Vm::_execEndReadScope);
+    this->_initExecFunc<InstrBase::Opcode::EndReadSlArray>(&Vm::_execEndReadSlArray);
+    this->_initExecFunc<InstrBase::Opcode::EndReadSlBlob>(&Vm::_execEndReadSlBlob);
+    this->_initExecFunc<InstrBase::Opcode::EndReadSlStr>(&Vm::_execEndReadSlStr);
+    this->_initExecFunc<InstrBase::Opcode::EndReadSlUuidArray>(&Vm::_execEndReadSlUuidArray);
+    this->_initExecFunc<InstrBase::Opcode::EndReadSlUuidBlob>(&Vm::_execEndReadSlUuidBlob);
+    this->_initExecFunc<InstrBase::Opcode::EndReadStruct>(&Vm::_execEndReadStruct);
+    this->_initExecFunc<InstrBase::Opcode::EndReadVarOpt>(&Vm::_execEndReadVarOpt);
+    this->_initExecFunc<InstrBase::Opcode::EndReadVarWithSIntSel>(&Vm::_execEndReadVarWithSIntSel);
+    this->_initExecFunc<InstrBase::Opcode::EndReadVarWithUIntSel>(&Vm::_execEndReadVarWithUIntSel);
+    this->_initExecFunc<InstrBase::Opcode::ReadDlArray>(&Vm::_execReadDlArray);
+    this->_initExecFunc<InstrBase::Opcode::ReadDlBlob>(&Vm::_execReadDlBlob);
+    this->_initExecFunc<InstrBase::Opcode::ReadDlStr>(&Vm::_execReadDlStr);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA16Be>(&Vm::_execReadFlBitArrayA16Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA16BeRev>(&Vm::_execReadFlBitArrayA16BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA16Le>(&Vm::_execReadFlBitArrayA16Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA16LeRev>(&Vm::_execReadFlBitArrayA16LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA32Be>(&Vm::_execReadFlBitArrayA32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA32BeRev>(&Vm::_execReadFlBitArrayA32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA32Le>(&Vm::_execReadFlBitArrayA32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA32LeRev>(&Vm::_execReadFlBitArrayA32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA64Be>(&Vm::_execReadFlBitArrayA64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA64BeRev>(&Vm::_execReadFlBitArrayA64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA64Le>(&Vm::_execReadFlBitArrayA64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA64LeRev>(&Vm::_execReadFlBitArrayA64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA8>(&Vm::_execReadFlBitArrayA8);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayA8Rev>(&Vm::_execReadFlBitArrayA8Rev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayBe>(&Vm::_execReadFlBitArrayBe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayBeRev>(&Vm::_execReadFlBitArrayBeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayLe>(&Vm::_execReadFlBitArrayLe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitArrayLeRev>(&Vm::_execReadFlBitArrayLeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA16Be>(&Vm::_execReadFlBitMapA16Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA16BeRev>(&Vm::_execReadFlBitMapA16BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA16Le>(&Vm::_execReadFlBitMapA16Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA16LeRev>(&Vm::_execReadFlBitMapA16LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA32Be>(&Vm::_execReadFlBitMapA32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA32BeRev>(&Vm::_execReadFlBitMapA32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA32Le>(&Vm::_execReadFlBitMapA32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA32LeRev>(&Vm::_execReadFlBitMapA32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA64Be>(&Vm::_execReadFlBitMapA64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA64BeRev>(&Vm::_execReadFlBitMapA64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA64Le>(&Vm::_execReadFlBitMapA64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA64LeRev>(&Vm::_execReadFlBitMapA64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA8>(&Vm::_execReadFlBitMapA8);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapA8Rev>(&Vm::_execReadFlBitMapA8Rev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapBe>(&Vm::_execReadFlBitMapBe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapBeRev>(&Vm::_execReadFlBitMapBeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapLe>(&Vm::_execReadFlBitMapLe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBitMapLeRev>(&Vm::_execReadFlBitMapLeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA16Be>(&Vm::_execReadFlBoolA16Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA16BeRev>(&Vm::_execReadFlBoolA16BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA16Le>(&Vm::_execReadFlBoolA16Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA16LeRev>(&Vm::_execReadFlBoolA16LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA32Be>(&Vm::_execReadFlBoolA32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA32BeRev>(&Vm::_execReadFlBoolA32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA32Le>(&Vm::_execReadFlBoolA32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA32LeRev>(&Vm::_execReadFlBoolA32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA64Be>(&Vm::_execReadFlBoolA64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA64BeRev>(&Vm::_execReadFlBoolA64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA64Le>(&Vm::_execReadFlBoolA64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA64LeRev>(&Vm::_execReadFlBoolA64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA8>(&Vm::_execReadFlBoolA8);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolA8Rev>(&Vm::_execReadFlBoolA8Rev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolBe>(&Vm::_execReadFlBoolBe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolBeRev>(&Vm::_execReadFlBoolBeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolLe>(&Vm::_execReadFlBoolLe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlBoolLeRev>(&Vm::_execReadFlBoolLeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat32Be>(&Vm::_execReadFlFloat32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat32BeRev>(&Vm::_execReadFlFloat32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat32Le>(&Vm::_execReadFlFloat32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat32LeRev>(&Vm::_execReadFlFloat32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat64Be>(&Vm::_execReadFlFloat64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat64BeRev>(&Vm::_execReadFlFloat64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat64Le>(&Vm::_execReadFlFloat64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloat64LeRev>(&Vm::_execReadFlFloat64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA32Be>(&Vm::_execReadFlFloatA32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA32BeRev>(&Vm::_execReadFlFloatA32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA32Le>(&Vm::_execReadFlFloatA32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA32LeRev>(&Vm::_execReadFlFloatA32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA64Be>(&Vm::_execReadFlFloatA64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA64BeRev>(&Vm::_execReadFlFloatA64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA64Le>(&Vm::_execReadFlFloatA64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlFloatA64LeRev>(&Vm::_execReadFlFloatA64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA16Be>(&Vm::_execReadFlSIntA16Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA16BeRev>(&Vm::_execReadFlSIntA16BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA16Le>(&Vm::_execReadFlSIntA16Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA16LeRev>(&Vm::_execReadFlSIntA16LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA32Be>(&Vm::_execReadFlSIntA32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA32BeRev>(&Vm::_execReadFlSIntA32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA32Le>(&Vm::_execReadFlSIntA32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA32LeRev>(&Vm::_execReadFlSIntA32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA64Be>(&Vm::_execReadFlSIntA64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA64BeRev>(&Vm::_execReadFlSIntA64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA64Le>(&Vm::_execReadFlSIntA64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA64LeRev>(&Vm::_execReadFlSIntA64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA8>(&Vm::_execReadFlSIntA8);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntA8Rev>(&Vm::_execReadFlSIntA8Rev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntBe>(&Vm::_execReadFlSIntBe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntBeRev>(&Vm::_execReadFlSIntBeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntLe>(&Vm::_execReadFlSIntLe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlSIntLeRev>(&Vm::_execReadFlSIntLeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA16Be>(&Vm::_execReadFlUIntA16Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA16BeRev>(&Vm::_execReadFlUIntA16BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA16Le>(&Vm::_execReadFlUIntA16Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA16LeRev>(&Vm::_execReadFlUIntA16LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA32Be>(&Vm::_execReadFlUIntA32Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA32BeRev>(&Vm::_execReadFlUIntA32BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA32Le>(&Vm::_execReadFlUIntA32Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA32LeRev>(&Vm::_execReadFlUIntA32LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA64Be>(&Vm::_execReadFlUIntA64Be);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA64BeRev>(&Vm::_execReadFlUIntA64BeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA64Le>(&Vm::_execReadFlUIntA64Le);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA64LeRev>(&Vm::_execReadFlUIntA64LeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA8>(&Vm::_execReadFlUIntA8);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntA8Rev>(&Vm::_execReadFlUIntA8Rev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntBe>(&Vm::_execReadFlUIntBe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntBeRev>(&Vm::_execReadFlUIntBeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntLe>(&Vm::_execReadFlUIntLe);
+    this->_initExecFunc<InstrBase::Opcode::ReadFlUIntLeRev>(&Vm::_execReadFlUIntLeRev);
+    this->_initExecFunc<InstrBase::Opcode::ReadNtStrUtf16>(&Vm::_execReadNtStrUtf16);
+    this->_initExecFunc<InstrBase::Opcode::ReadNtStrUtf32>(&Vm::_execReadNtStrUtf32);
+    this->_initExecFunc<InstrBase::Opcode::ReadNtStrUtf8>(&Vm::_execReadNtStrUtf8);
+    this->_initExecFunc<InstrBase::Opcode::ReadOptWithBoolSel>(&Vm::_execReadOptWithBoolSel);
+    this->_initExecFunc<InstrBase::Opcode::ReadOptWithSIntSel>(&Vm::_execReadOptWithSIntSel);
+    this->_initExecFunc<InstrBase::Opcode::ReadOptWithUIntSel>(&Vm::_execReadOptWithUIntSel);
+    this->_initExecFunc<InstrBase::Opcode::ReadScope>(&Vm::_execReadScope);
+    this->_initExecFunc<InstrBase::Opcode::ReadSlArray>(&Vm::_execReadSlArray);
+    this->_initExecFunc<InstrBase::Opcode::ReadSlBlob>(&Vm::_execReadSlBlob);
+    this->_initExecFunc<InstrBase::Opcode::ReadSlStr>(&Vm::_execReadSlStr);
+    this->_initExecFunc<InstrBase::Opcode::ReadSlUuidArray>(&Vm::_execReadSlUuidArray);
+    this->_initExecFunc<InstrBase::Opcode::ReadSlUuidBlob>(&Vm::_execReadSlUuidBlob);
+    this->_initExecFunc<InstrBase::Opcode::ReadStruct>(&Vm::_execReadStruct);
+    this->_initExecFunc<InstrBase::Opcode::ReadVarWithSIntSel>(&Vm::_execReadVarWithSIntSel);
+    this->_initExecFunc<InstrBase::Opcode::ReadVarWithUIntSel>(&Vm::_execReadVarWithUIntSel);
+    this->_initExecFunc<InstrBase::Opcode::ReadVlSInt>(&Vm::_execReadVlSInt);
+    this->_initExecFunc<InstrBase::Opcode::ReadVlUInt>(&Vm::_execReadVlUInt);
+    this->_initExecFunc<InstrBase::Opcode::SaveCurInt>(&Vm::_execSaveCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetCurTypeIdFromCurInt>(&Vm::_execSetCurTypeIdFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetDsIdFromCurInt>(&Vm::_execSetDsIdFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetDsInfo>(&Vm::_execSetDsInfo);
+    this->_initExecFunc<InstrBase::Opcode::SetDstFromCurTypeId>(&Vm::_execSetDstFromCurTypeId);
+    this->_initExecFunc<InstrBase::Opcode::SetDstFromUnique>(&Vm::_execSetDstFromUnique);
+    this->_initExecFunc<InstrBase::Opcode::SetErInfo>(&Vm::_execSetErInfo);
+    this->_initExecFunc<InstrBase::Opcode::SetErtFromCurTypeId>(&Vm::_execSetErtFromCurTypeId);
+    this->_initExecFunc<InstrBase::Opcode::SetErtFromUnique>(&Vm::_execSetErtFromUnique);
+    this->_initExecFunc<InstrBase::Opcode::SetPktContentLenFromCurInt>(&Vm::_execSetPktContentLenFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetPktDiscErCounterSnapFromCurInt>(&Vm::_execSetPktDiscErCounterSnapFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetPktEndDefClkValFromCurInt>(&Vm::_execSetPktEndDefClkValFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetPktInfo>(&Vm::_execSetPktInfo);
+    this->_initExecFunc<InstrBase::Opcode::SetPktMagicNumberFromCurInt>(&Vm::_execSetPktMagicNumberFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetPktSeqNumFromCurInt>(&Vm::_execSetPktSeqNumFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::SetPktTotalLenFromCurInt>(&Vm::_execSetPktTotalLenFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::UpdateDefClkValFlFromCurInt>(&Vm::_execUpdateDefClkValFlFromCurInt);
+    this->_initExecFunc<InstrBase::Opcode::UpdateDefClkValVlFromCurInt>(&Vm::_execUpdateDefClkValVlFromCurInt);
 }
 
 void Vm::seekPkt(const Index offsetBytes)

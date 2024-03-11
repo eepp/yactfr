@@ -22,7 +22,7 @@
 #include <yactfr/elem-seq-it.hpp>
 #include <yactfr/decoding-errors.hpp>
 
-#include "proc.hpp"
+#include "pgm.hpp"
 #include "std-fl-int-reader.hpp"
 #include "fl-int-rev.hpp"
 #include "utils.hpp"
@@ -60,28 +60,17 @@ enum class VmState {
 // VM stack frame
 struct VmStackFrame final
 {
-    explicit VmStackFrame(const Proc * const proc, const VmState parentState) :
-        proc {proc ? &proc->rawProc() : nullptr},
-        parentState {parentState}
+    explicit VmStackFrame(const VmState parentState, const PgmNucleo * const nucleo) :
+        parentState {parentState},
+        curNucleo {nucleo}
     {
-        if (proc) {
-            it = proc->rawProc().begin();
-        }
     }
 
-    /*
-     * Base procedure (container of `it` below).
-     *
-     * May be `nullptr`.
-     */
-    const Proc::Raw *proc;
+    // current instruction nucleotide.
+    const PgmNucleo *curNucleo;
 
-    /*
-     * _Next_ instruction to execute (part of `*proc` above).
-     *
-     * Not needed if `proc` is `nullptr`.
-     */
-    Proc::RawIt it;
+    // size of current instruction (if available)
+    Size curInstrSize;
 
     // state when this frame was created
     VmState parentState;
@@ -106,7 +95,7 @@ struct VmStackFrame final
 class VmPos final
 {
 public:
-    explicit VmPos(const PktProc& pktProc);
+    explicit VmPos(const PktPgm& pktPgm);
     VmPos(const VmPos& other);
     VmPos& operator=(const VmPos& other);
 
@@ -120,9 +109,14 @@ public:
         return theState;
     }
 
-    void stackPush(const Proc * const proc = nullptr)
+    void stackPush(const PgmNucleo * const nucleo)
     {
-        stack.push_back(VmStackFrame {proc, theState});
+        stack.push_back(VmStackFrame {theState, nucleo});
+    }
+
+    void stackPush(const PgmView& pgm)
+    {
+        stack.push_back(VmStackFrame {theState, pgm.begin()});
     }
 
     VmStackFrame& stackTop() noexcept
@@ -146,9 +140,10 @@ public:
 
     void gotoNextInstr()
     {
-        ++this->stackTop().it;
+        this->stackTop().curNucleo += this->stackTop().curInstrSize;
     }
 
+#if 0
     void gotoNextArrayElemInstr()
     {
         auto& stackTop = this->stackTop();
@@ -161,16 +156,17 @@ public:
             stackTop.it = stackTop.proc->begin();
         }
     }
+#endif
 
-    void loadNewProc(const Proc& proc)
+    void loadNewPgm(const PgmView& pgm)
     {
         assert(stack.empty());
-        this->stackPush(&proc);
+        this->stackPush(pgm);
     }
 
-    const Instr& nextInstr() noexcept
+    const InstrBase& curInstr() noexcept
     {
-        return **this->stackTop().it;
+        return InstrBase::fromNucleo(this->stackTop().curNucleo);
     }
 
     void saveVal(const Index pos) noexcept
@@ -239,8 +235,8 @@ public:
         headOffsetInCurPktBits = 0;
         theState = VmState::BeginPkt;
         lastFlBitArrayBo = boost::none;
-        curDsPktProc = nullptr;
-        curErProc = nullptr;
+        curDsPktPgm = nullptr;
+        curErPgm = nullptr;
         curExpectedPktTotalLenBits = sizeUnset;
         curExpectedPktContentLenBits = sizeUnset;
         stack.clear();
@@ -270,7 +266,7 @@ public:
     }
 
 private:
-    void _initVectorsFromPktProc();
+    void _initVectorsFromPktPgm();
     void _setSimpleFromOther(const VmPos& other);
     void _setFromOther(const VmPos& other);
 
@@ -394,14 +390,14 @@ public:
     // current ID (event record or data stream type)
     TypeId curId;
 
-    // packet procedure
-    const PktProc *pktProc = nullptr;
+    // packet program
+    const PktPgm *pktPgm = nullptr;
 
-    // current data stream type packet procedure
-    const DsPktProc *curDsPktProc = nullptr;
+    // current data stream type packet program
+    const DsPktPgm *curDsPktPgm = nullptr;
 
-    // current event record type procedure
-    const ErProc *curErProc = nullptr;
+    // current event record type program
+    const ErPgm *curErPgm = nullptr;
 
     // metadata stream UUID
     boost::uuids::uuid metadataStreamUuid;
@@ -474,7 +470,7 @@ public:
 class Vm final
 {
 public:
-    explicit Vm(DataSourceFactory& dataSrcFactory, const PktProc& pktProc,
+    explicit Vm(DataSourceFactory& dataSrcFactory, const PktPgm& pktPgm,
                 ElementSequenceIterator& it);
     Vm(const Vm& vm, ElementSequenceIterator& it);
     void setFromOther(const Vm& vm, ElementSequenceIterator& it);
@@ -519,19 +515,22 @@ public:
 private:
     // instruction handler reaction
     enum class _tExecReaction {
-        ExecNextInstr,
-        FetchNextInstrAndStop,
-        ChangeState,
-        ExecCurInstr,
+        Continue,
         Stop,
+        ChangeState,
     };
 
-private:
-    template <Instr::Kind InstrKindV>
-    void _initExecFunc(_tExecReaction (Vm::*)(const Instr&)) noexcept;
+    using _tExecFunc = _tExecReaction (Vm::*)(const InstrBase&);
 
+private:
     void _initExecFuncs() noexcept;
     bool _newDataBlock(Index offsetInElemSeqBytes, Size sizeBytes);
+
+    template <InstrBase::Opcode OpcodeV>
+    void _initExecFunc(_tExecFunc execFunc) noexcept
+    {
+        _execFuncs[static_cast<unsigned int>(OpcodeV)] = execFunc;
+    }
 
     bool _handleState()
     {
@@ -604,20 +603,12 @@ private:
     bool _stateExecInstr()
     {
         while (true) {
-            switch (this->_exec(_pos.nextInstr())) {
-            case _tExecReaction::FetchNextInstrAndStop:
-                _pos.gotoNextInstr();
-                return true;
+            switch (this->_exec(_pos.curInstr())) {
+            case _tExecReaction::Continue:
+                break;
 
             case _tExecReaction::Stop:
                 return true;
-
-            case _tExecReaction::ExecNextInstr:
-                _pos.gotoNextInstr();
-                break;
-
-            case _tExecReaction::ExecCurInstr:
-                break;
 
             case _tExecReaction::ChangeState:
                 // the handler changed the state: return `false` to continue
@@ -627,8 +618,6 @@ private:
                 std::abort();
             }
         }
-
-        return true;
     }
 
     bool _stateExecArrayInstr()
@@ -703,7 +692,7 @@ private:
         }
 
         this->_updateItForUser(_pos.elems.pktBeginning);
-        _pos.loadNewProc(_pos.pktProc->preambleProc());
+        _pos.loadNewPgm(_pos.pktPgm->preamblePgm());
         _pos.state(VmState::BeginPktContent);
         return true;
     }
@@ -775,7 +764,7 @@ private:
 
     bool _stateBeginEr()
     {
-        assert(_pos.curDsPktProc);
+        assert(_pos.curDsPktPgm);
 
         if (_pos.curExpectedPktContentLenBits == sizeUnset) {
             if (this->_remBitsInBuf() == 0) {
@@ -802,14 +791,14 @@ private:
         this->_alignHead(_pos.curDsPktProc->erAlign());
 
         this->_updateItForUser(_pos.elems.erBeginning);
-        _pos.loadNewProc(_pos.curDsPktProc->erPreambleProc());
+        _pos.loadNewPgm(_pos.curDsPktPgm()->erPreamblePgm());
         _pos.state(VmState::ExecInstr);
         return true;
     }
 
     bool _stateEndEr()
     {
-        assert(_pos.curErProc);
+        assert(_pos.curErPgm);
         _pos.curErProc = nullptr;
         this->_updateItForUser(_pos.elems.erEnd);
         _pos.state(VmState::BeginEr);
@@ -1107,9 +1096,9 @@ private:
         return true;
     }
 
-    _tExecReaction _exec(const Instr& instr)
+    _tExecReaction _exec(const InstrBase& instr)
     {
-        return (this->*_execFuncs[static_cast<Index>(instr.kind())])(instr);
+        return (this->*_execFuncs[static_cast<Index>(instr.opcode())])(instr);
     }
 
     void _updateItForUser(const Element& elem, const Index offset) noexcept
@@ -1164,9 +1153,9 @@ private:
         this->_continueSkipPaddingBits(true);
     }
 
-    void _alignHead(const Instr& instr)
+    void _alignHead(const InstrBase& instr)
     {
-        this->_alignHead(static_cast<const ReadDataInstr&>(instr).align());
+        this->_alignHead(instr.asReadData().align());
     }
 
     void _continueSkipPaddingBits(const bool contentBits)
@@ -1258,167 +1247,173 @@ private:
     }
 
     // instruction handlers
-    _tExecReaction _execBeginReadDlArray(const Instr& instr);
-    _tExecReaction _execBeginReadDlBlob(const Instr& instr);
-    _tExecReaction _execBeginReadDlStr(const Instr& instr);
-    _tExecReaction _execBeginReadOptBoolSel(const Instr& instr);
-    _tExecReaction _execBeginReadOptSIntSel(const Instr& instr);
-    _tExecReaction _execBeginReadOptUIntSel(const Instr& instr);
-    _tExecReaction _execBeginReadScope(const Instr& instr);
-    _tExecReaction _execBeginReadSlArray(const Instr& instr);
-    _tExecReaction _execBeginReadSlBlob(const Instr& instr);
-    _tExecReaction _execBeginReadSlStr(const Instr& instr);
-    _tExecReaction _execBeginReadSlUuidArray(const Instr& instr);
-    _tExecReaction _execBeginReadSlUuidBlob(const Instr& instr);
-    _tExecReaction _execBeginReadStruct(const Instr& instr);
-    _tExecReaction _execBeginReadVarSIntSel(const Instr& instr);
-    _tExecReaction _execBeginReadVarUIntSel(const Instr& instr);
-    _tExecReaction _execEndDsErPreambleProc(const Instr& instr);
-    _tExecReaction _execEndDsPktPreambleProc(const Instr& instr);
-    _tExecReaction _execEndErProc(const Instr& instr);
-    _tExecReaction _execEndPktPreambleProc(const Instr& instr);
-    _tExecReaction _execEndReadDlArray(const Instr& instr);
-    _tExecReaction _execEndReadDlBlob(const Instr& instr);
-    _tExecReaction _execEndReadDlStr(const Instr& instr);
-    _tExecReaction _execEndReadOptBoolSel(const Instr& instr);
-    _tExecReaction _execEndReadOptSIntSel(const Instr& instr);
-    _tExecReaction _execEndReadOptUIntSel(const Instr& instr);
-    _tExecReaction _execEndReadScope(const Instr& instr);
-    _tExecReaction _execEndReadSlArray(const Instr& instr);
-    _tExecReaction _execEndReadSlBlob(const Instr& instr);
-    _tExecReaction _execEndReadSlStr(const Instr& instr);
-    _tExecReaction _execEndReadStruct(const Instr& instr);
-    _tExecReaction _execEndReadVarSIntSel(const Instr& instr);
-    _tExecReaction _execEndReadVarUIntSel(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA16Be(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA16BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA16Le(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA16LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA32Be(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA32Le(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA64Be(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA64Le(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA8(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayA8Rev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayBe(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayBeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayLe(const Instr& instr);
-    _tExecReaction _execReadFlBitArrayLeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA16Be(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA16BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA16Le(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA16LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA32Be(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA32Le(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA64Be(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA64Le(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA8(const Instr& instr);
-    _tExecReaction _execReadFlBitMapA8Rev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapBe(const Instr& instr);
-    _tExecReaction _execReadFlBitMapBeRev(const Instr& instr);
-    _tExecReaction _execReadFlBitMapLe(const Instr& instr);
-    _tExecReaction _execReadFlBitMapLeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA16Be(const Instr& instr);
-    _tExecReaction _execReadFlBoolA16BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA16Le(const Instr& instr);
-    _tExecReaction _execReadFlBoolA16LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA32Be(const Instr& instr);
-    _tExecReaction _execReadFlBoolA32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA32Le(const Instr& instr);
-    _tExecReaction _execReadFlBoolA32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA64Be(const Instr& instr);
-    _tExecReaction _execReadFlBoolA64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA64Le(const Instr& instr);
-    _tExecReaction _execReadFlBoolA64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolA8(const Instr& instr);
-    _tExecReaction _execReadFlBoolA8Rev(const Instr& instr);
-    _tExecReaction _execReadFlBoolBe(const Instr& instr);
-    _tExecReaction _execReadFlBoolBeRev(const Instr& instr);
-    _tExecReaction _execReadFlBoolLe(const Instr& instr);
-    _tExecReaction _execReadFlBoolLeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloat32Be(const Instr& instr);
-    _tExecReaction _execReadFlFloat32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloat32Le(const Instr& instr);
-    _tExecReaction _execReadFlFloat32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloat64Be(const Instr& instr);
-    _tExecReaction _execReadFlFloat64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloat64Le(const Instr& instr);
-    _tExecReaction _execReadFlFloat64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloatA32Be(const Instr& instr);
-    _tExecReaction _execReadFlFloatA32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloatA32Le(const Instr& instr);
-    _tExecReaction _execReadFlFloatA32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloatA64Be(const Instr& instr);
-    _tExecReaction _execReadFlFloatA64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlFloatA64Le(const Instr& instr);
-    _tExecReaction _execReadFlFloatA64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA16Be(const Instr& instr);
-    _tExecReaction _execReadFlSIntA16BeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA16Le(const Instr& instr);
-    _tExecReaction _execReadFlSIntA16LeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA32Be(const Instr& instr);
-    _tExecReaction _execReadFlSIntA32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA32Le(const Instr& instr);
-    _tExecReaction _execReadFlSIntA32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA64Be(const Instr& instr);
-    _tExecReaction _execReadFlSIntA64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA64Le(const Instr& instr);
-    _tExecReaction _execReadFlSIntA64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntA8(const Instr& instr);
-    _tExecReaction _execReadFlSIntA8Rev(const Instr& instr);
-    _tExecReaction _execReadFlSIntBe(const Instr& instr);
-    _tExecReaction _execReadFlSIntBeRev(const Instr& instr);
-    _tExecReaction _execReadFlSIntLe(const Instr& instr);
-    _tExecReaction _execReadFlSIntLeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA16Be(const Instr& instr);
-    _tExecReaction _execReadFlUIntA16BeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA16Le(const Instr& instr);
-    _tExecReaction _execReadFlUIntA16LeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA32Be(const Instr& instr);
-    _tExecReaction _execReadFlUIntA32BeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA32Le(const Instr& instr);
-    _tExecReaction _execReadFlUIntA32LeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA64Be(const Instr& instr);
-    _tExecReaction _execReadFlUIntA64BeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA64Le(const Instr& instr);
-    _tExecReaction _execReadFlUIntA64LeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntA8(const Instr& instr);
-    _tExecReaction _execReadFlUIntA8Rev(const Instr& instr);
-    _tExecReaction _execReadFlUIntBe(const Instr& instr);
-    _tExecReaction _execReadFlUIntBeRev(const Instr& instr);
-    _tExecReaction _execReadFlUIntLe(const Instr& instr);
-    _tExecReaction _execReadFlUIntLeRev(const Instr& instr);
-    _tExecReaction _execReadNtStrUtf16(const Instr& instr);
-    _tExecReaction _execReadNtStrUtf32(const Instr& instr);
-    _tExecReaction _execReadNtStrUtf8(const Instr& instr);
-    _tExecReaction _execReadVlSInt(const Instr& instr);
-    _tExecReaction _execReadVlUInt(const Instr& instr);
-    _tExecReaction _execSaveVal(const Instr& instr);
-    _tExecReaction _execSetCurrentId(const Instr& instr);
-    _tExecReaction _execSetDsId(const Instr& instr);
-    _tExecReaction _execSetDsInfo(const Instr& instr);
-    _tExecReaction _execSetDst(const Instr& instr);
-    _tExecReaction _execSetErInfo(const Instr& instr);
-    _tExecReaction _execSetErt(const Instr& instr);
-    _tExecReaction _execSetPktContentLen(const Instr& instr);
-    _tExecReaction _execSetPktDiscErCounterSnap(const Instr& instr);
-    _tExecReaction _execSetPktEndDefClkVal(const Instr& instr);
-    _tExecReaction _execSetPktInfo(const Instr& instr);
-    _tExecReaction _execSetPktMagicNumber(const Instr& instr);
-    _tExecReaction _execSetPktSeqNum(const Instr& instr);
-    _tExecReaction _execSetPktTotalLen(const Instr& instr);
-    _tExecReaction _execUpdateDefClkVal(const Instr& instr);
-    _tExecReaction _execUpdateDefClkValFl(const Instr& instr);
+    _tExecReaction _execEndReadArrayElem(const InstrBase& instr);
+    _tExecReaction _execEndReadDlArray(const InstrBase& instr);
+    _tExecReaction _execEndReadDlBlob(const InstrBase& instr);
+    _tExecReaction _execEndReadDlStr(const InstrBase& instr);
+    _tExecReaction _execEndReadDsErPreamble(const InstrBase& instr);
+    _tExecReaction _execEndReadDsPktPreamble(const InstrBase& instr);
+    _tExecReaction _execEndReadEr(const InstrBase& instr);
+    _tExecReaction _execEndReadOptWithBoolSel(const InstrBase& instr);
+    _tExecReaction _execEndReadOptWithSIntSel(const InstrBase& instr);
+    _tExecReaction _execEndReadOptWithUIntSel(const InstrBase& instr);
+    _tExecReaction _execEndReadPktPreamble(const InstrBase& instr);
+    _tExecReaction _execEndReadScope(const InstrBase& instr);
+    _tExecReaction _execEndReadSlArray(const InstrBase& instr);
+    _tExecReaction _execEndReadSlBlob(const InstrBase& instr);
+    _tExecReaction _execEndReadSlStr(const InstrBase& instr);
+    _tExecReaction _execEndReadSlUuidArray(const InstrBase& instr);
+    _tExecReaction _execEndReadSlUuidBlob(const InstrBase& instr);
+    _tExecReaction _execEndReadStruct(const InstrBase& instr);
+    _tExecReaction _execEndReadVarOpt(const InstrBase& instr);
+    _tExecReaction _execEndReadVarWithSIntSel(const InstrBase& instr);
+    _tExecReaction _execEndReadVarWithUIntSel(const InstrBase& instr);
+    _tExecReaction _execReadDlArray(const InstrBase& instr);
+    _tExecReaction _execReadDlBlob(const InstrBase& instr);
+    _tExecReaction _execReadDlStr(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA16Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA16BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA16Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA16LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA8(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayA8Rev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayBe(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayBeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayLe(const InstrBase& instr);
+    _tExecReaction _execReadFlBitArrayLeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA16Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA16BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA16Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA16LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA8(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapA8Rev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapBe(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapBeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapLe(const InstrBase& instr);
+    _tExecReaction _execReadFlBitMapLeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA16Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA16BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA16Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA16LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA8(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolA8Rev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolBe(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolBeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolLe(const InstrBase& instr);
+    _tExecReaction _execReadFlBoolLeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlFloat64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlFloatA64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA16Be(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA16BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA16Le(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA16LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA8(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntA8Rev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntBe(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntBeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntLe(const InstrBase& instr);
+    _tExecReaction _execReadFlSIntLeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA16Be(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA16BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA16Le(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA16LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA32Be(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA32BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA32Le(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA32LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA64Be(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA64BeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA64Le(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA64LeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA8(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntA8Rev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntBe(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntBeRev(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntLe(const InstrBase& instr);
+    _tExecReaction _execReadFlUIntLeRev(const InstrBase& instr);
+    _tExecReaction _execReadNtStrUtf16(const InstrBase& instr);
+    _tExecReaction _execReadNtStrUtf32(const InstrBase& instr);
+    _tExecReaction _execReadNtStrUtf8(const InstrBase& instr);
+    _tExecReaction _execReadOptWithBoolSel(const InstrBase& instr);
+    _tExecReaction _execReadOptWithSIntSel(const InstrBase& instr);
+    _tExecReaction _execReadOptWithUIntSel(const InstrBase& instr);
+    _tExecReaction _execReadScope(const InstrBase& instr);
+    _tExecReaction _execReadSlArray(const InstrBase& instr);
+    _tExecReaction _execReadSlBlob(const InstrBase& instr);
+    _tExecReaction _execReadSlStr(const InstrBase& instr);
+    _tExecReaction _execReadSlUuidArray(const InstrBase& instr);
+    _tExecReaction _execReadSlUuidBlob(const InstrBase& instr);
+    _tExecReaction _execReadStruct(const InstrBase& instr);
+    _tExecReaction _execReadVarWithSIntSel(const InstrBase& instr);
+    _tExecReaction _execReadVarWithUIntSel(const InstrBase& instr);
+    _tExecReaction _execReadVlSInt(const InstrBase& instr);
+    _tExecReaction _execReadVlUInt(const InstrBase& instr);
+    _tExecReaction _execSaveCurInt(const InstrBase& instr);
+    _tExecReaction _execSetCurTypeIdFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetDsIdFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetDsInfo(const InstrBase& instr);
+    _tExecReaction _execSetDstFromCurTypeId(const InstrBase& instr);
+    _tExecReaction _execSetDstFromUnique(const InstrBase& instr);
+    _tExecReaction _execSetErInfo(const InstrBase& instr);
+    _tExecReaction _execSetErtFromCurTypeId(const InstrBase& instr);
+    _tExecReaction _execSetErtFromUnique(const InstrBase& instr);
+    _tExecReaction _execSetPktContentLenFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetPktDiscErCounterSnapFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetPktEndDefClkValFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetPktInfo(const InstrBase& instr);
+    _tExecReaction _execSetPktMagicNumberFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetPktSeqNumFromCurInt(const InstrBase& instr);
+    _tExecReaction _execSetPktTotalLenFromCurInt(const InstrBase& instr);
+    _tExecReaction _execUpdateDefClkValFlFromCurInt(const InstrBase& instr);
+    _tExecReaction _execUpdateDefClkValVlFromCurInt(const InstrBase& instr);
 
-    _tExecReaction _execReadNtStrCommon(const Instr& instr, const VmState state);
+    _tExecReaction _execReadNtStrCommon(const InstrBase& instr, const VmState state);
 
     template <typename ElemT>
     static void _setDataElemFromInstr(ElemT& elem, const Instr& instr) noexcept
@@ -1774,9 +1769,6 @@ private:
     }
 
 private:
-    using ExecFunc = _tExecReaction (Vm::*)(const Instr&);
-
-private:
     DataSourceFactory *_dataSrcFactory;
     DataSource::Up _dataSrc;
 
@@ -1793,17 +1785,11 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<ExecFunc, wise_enum::size<Instr::Kind>> _execFuncs;
+    std::array<_tExecFunc, wise_enum::size<InstrBase::Opcode>> _execFuncs;
 
     // position (whole state of the VM)
     VmPos _pos;
 };
-
-template <Instr::Kind InstrKindV>
-void Vm::_initExecFunc(const ExecFunc execFunc) noexcept
-{
-    _execFuncs[static_cast<unsigned int>(InstrKindV)] = execFunc;
-}
 
 } // namespace internal
 } // namespace yactfr

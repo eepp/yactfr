@@ -21,6 +21,11 @@
 #include "../internal/metadata/trace-type-impl.hpp"
 #include "../internal/proc.hpp"
 
+#ifndef NDEBUG
+# include "../internal/build-pkt-pgm.hpp"
+# include "../internal/pgm-io.hpp"
+#endif
+
 namespace yactfr {
 
 TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
@@ -36,12 +41,16 @@ TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVe
     }
 {
 #ifndef NDEBUG
-    const auto var = std::getenv("YACTFR_DEBUG_PRINT_PROC");
+    const auto var = std::getenv("YACTFR_DEBUG_PRINT_PGM");
 
     if (var && std::strcmp(var, "1") == 0) {
         auto& pktProc = _pimpl->pktProc();
         std::cout << pktProc.toStr(0) << std::endl;
     }
+
+    auto pgm = internal2::buildPktPgm(*this);
+
+    std::cout << pgm;
 #endif
 }
 
