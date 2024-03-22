@@ -41,7 +41,6 @@ add_library (
     internal/proc.cpp
     internal/utils.cpp
     internal/vm.cpp
-    logging/zf_log.c
     metadata/array-type.cpp
     metadata/blob-type.cpp
     metadata/clk-type.cpp
@@ -94,30 +93,6 @@ target_include_directories (
     ${CMAKE_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIRS}
 )
-
-# configure logging
-option (
-    OPT_ENABLE_LOGGING
-    "Enable logging (when in debug mode)"
-    OFF
-)
-target_compile_definitions (
-    yactfr PRIVATE
-    -DZF_LOG_DEF_SRCLOC=ZF_LOG_SRCLOC_NONE
-)
-
-if (OPT_ENABLE_LOGGING)
-    message (STATUS "Enabling logging")
-    target_compile_definitions (
-        yactfr PRIVATE
-        -DZF_LOG_LEVEL=ZF_LOG_DEBUG
-    )
-else ()
-    target_compile_definitions (
-        yactfr PRIVATE
-        -DZF_LOG_LEVEL=ZF_LOG_NONE
-    )
-endif ()
 
 # include-what-you-use
 option (
