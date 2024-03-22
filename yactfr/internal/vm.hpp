@@ -1801,7 +1801,7 @@ private:
     ElementSequenceIterator *_it;
 
     // array of instruction handler functions
-    std::array<ExecFunc, 256> _execFuncs;
+    std::array<ExecFunc, wise_enum::size<Instr::Kind>> _execFuncs;
 
     // position (whole state of the VM)
     VmPos _pos;
@@ -1810,12 +1810,7 @@ private:
 template <Instr::Kind InstrKindV>
 void Vm::_initExecFunc(const ExecFunc execFunc) noexcept
 {
-    constexpr auto index = static_cast<unsigned int>(InstrKindV);
-
-    static_assert(index < std::tuple_size<decltype(this->_execFuncs)>::value,
-                  "Instruction handler array is large enough.");
-
-    _execFuncs[index] = execFunc;
+    _execFuncs[static_cast<unsigned int>(InstrKindV)] = execFunc;
 }
 
 } // namespace internal

@@ -93,6 +93,10 @@ target_include_directories (
     ${CMAKE_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIRS}
 )
+target_compile_definitions(
+    yactfr PRIVATE
+    -DWISE_ENUM_OPTIONAL_TYPE=boost::optional
+)
 
 # include-what-you-use
 option (

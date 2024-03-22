@@ -92,6 +92,7 @@
 #include <yactfr/metadata/trace-type.hpp>
 
 #include "utils.hpp"
+#include "vendor/wise-enum/wise_enum.h"
 
 namespace yactfr {
 namespace internal {
@@ -422,8 +423,7 @@ class Instr
 {
 public:
     // kind of instruction (opcode)
-    enum class Kind : unsigned int
-    {
+    WISE_ENUM_CLASS_MEMBER((Kind, unsigned int),
         UNSET,
         BEGIN_READ_DL_ARRAY,
         BEGIN_READ_DL_BLOB,
@@ -584,8 +584,8 @@ public:
         SET_PKT_SEQ_NUM,
         SET_PKT_TOTAL_LEN,
         UPDATE_DEF_CLK_VAL,
-        UPDATE_DEF_CLK_VAL_FL,
-    };
+        UPDATE_DEF_CLK_VAL_FL
+    )
 
 public:
     using SP = std::shared_ptr<Instr>;
