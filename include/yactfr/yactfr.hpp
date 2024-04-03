@@ -66,6 +66,7 @@
 #include "metadata/struct-type.hpp"
 #include "metadata/trace-env.hpp"
 #include "metadata/trace-type.hpp"
+#include "metadata/utils.hpp"
 #include "metadata/var-type-opt.hpp"
 #include "metadata/var-type.hpp"
 #include "metadata/vl-int-type.hpp"
