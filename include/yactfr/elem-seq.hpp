@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_ELEM_SEQ_HPP
-#define _YACTFR_ELEM_SEQ_HPP
+#ifndef YACTFR_ELEM_SEQ_HPP
+#define YACTFR_ELEM_SEQ_HPP
 
 #include <memory>
 
@@ -138,4 +138,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_ELEM_SEQ_HPP
+#endif // YACTFR_ELEM_SEQ_HPP

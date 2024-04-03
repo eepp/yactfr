@@ -26,7 +26,7 @@
 namespace yactfr {
 namespace internal {
 
-TraceType::UP traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType)
+TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType)
 {
     return TraceTypeFromPseudoTraceTypeConverter {pseudoTraceType}.releaseTraceType();
 }
@@ -37,7 +37,7 @@ TraceTypeFromPseudoTraceTypeConverter::TraceTypeFromPseudoTraceTypeConverter(Pse
     _traceType = this->_traceTypeFromPseudoTraceType();
 }
 
-TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceType()
+TraceType::Up TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceType()
 {
     // validate first
     _pseudoTraceType->validate();
@@ -49,7 +49,7 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
     }
 
     auto pktHeaderType = this->_scopeStructTypeFromPseudoDt(_pseudoTraceType->pseudoPktHeaderType(),
-                                                            Scope::PACKET_HEADER);
+                                                            Scope::PacketHeader);
 
     // create yactfr trace type
     return TraceType::create(_pseudoTraceType->majorVersion(), _pseudoTraceType->minorVersion(),
@@ -59,7 +59,7 @@ TraceType::UP TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
                              std::move(dstSet), tryCloneAttrs(_pseudoTraceType->attrs()));
 }
 
-StructureType::UP TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(PseudoDt * const pseudoDt,
+StructureType::Up TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(PseudoDt * const pseudoDt,
                                                                                       const Scope scope,
                                                                                       const PseudoDst * const pseudoDst,
                                                                                       const PseudoErt * const pseudoErt) const
@@ -95,11 +95,11 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
 
     // convert pseudo scope data types
     auto pseudoPktCtxType = this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoPktCtxType(),
-                                                               Scope::PACKET_CONTEXT, &pseudoDst);
+                                                               Scope::PacketContext, &pseudoDst);
     auto erHeaderType = this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoErHeaderType(),
-                                                           Scope::EVENT_RECORD_HEADER, &pseudoDst);
+                                                           Scope::EventRecordHeader, &pseudoDst);
     auto erCommonCtxType = this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoErCommonCtxType(),
-                                                              Scope::EVENT_RECORD_COMMON_CONTEXT,
+                                                              Scope::EventRecordCommonContext,
                                                               &pseudoDst);
 
     // create yactfr data stream type
@@ -117,10 +117,10 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
 
     // convert pseudo scope data types
     auto specCtxType = this->_scopeStructTypeFromPseudoDt(pseudoErt.pseudoSpecCtxType(),
-                                                          Scope::EVENT_RECORD_SPECIFIC_CONTEXT,
+                                                          Scope::EventRecordSpecificContext,
                                                           &curPseudoDst, &pseudoErt);
     auto payloadType = this->_scopeStructTypeFromPseudoDt(pseudoErt.pseudoPayloadType(),
-                                                          Scope::EVENT_RECORD_PAYLOAD,
+                                                          Scope::EventRecordPayload,
                                                           &curPseudoDst, &pseudoErt);
 
     // create yactfr event record type

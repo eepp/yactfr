@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_IO_ERROR_HPP
-#define _YACTFR_IO_ERROR_HPP
+#ifndef YACTFR_IO_ERROR_HPP
+#define YACTFR_IO_ERROR_HPP
 
 #include <stdexcept>
 #include <string>
@@ -31,4 +31,4 @@ public:
 
 } // namespace yactfr
 
-#endif // _YACTFR_IO_ERROR_HPP
+#endif // YACTFR_IO_ERROR_HPP

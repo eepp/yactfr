@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_DATA_SRC_HPP
-#define _YACTFR_DATA_SRC_HPP
+#ifndef YACTFR_DATA_SRC_HPP
+#define YACTFR_DATA_SRC_HPP
 
 #include <memory>
 #include <stdexcept>
@@ -46,7 +46,7 @@ class DataSource
 {
 public:
     /// Unique pointer to data source.
-    using UP = std::unique_ptr<DataSource>;
+    using Up = std::unique_ptr<DataSource>;
 
 public:
     virtual ~DataSource() = 0;
@@ -153,4 +153,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_DATA_SRC_HPP
+#endif // YACTFR_DATA_SRC_HPP

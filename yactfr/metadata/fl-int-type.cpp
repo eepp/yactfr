@@ -16,9 +16,9 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int al
                                                            const boost::optional<BitOrder>& bio,
                                                            const DisplayBase prefDispBase,
                                                            Mappings mappings,
-                                                           MapItem::UP attrs) :
+                                                           MapItem::Up attrs) :
     FixedLengthIntegerType {
-        _KIND_FL_SINT, align, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs)
+        _kindFlSInt, align, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs)
     }
 {
 }
@@ -28,14 +28,14 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int le
                                                            const boost::optional<BitOrder>& bio,
                                                            const DisplayBase prefDispBase,
                                                            Mappings mappings,
-                                                           MapItem::UP attrs) :
+                                                           MapItem::Up attrs) :
     FixedLengthSignedIntegerType {
         1, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs)
     }
 {
 }
 
-DataType::UP FixedLengthSignedIntegerType::_clone() const
+DataType::Up FixedLengthSignedIntegerType::_clone() const
 {
     return FixedLengthSignedIntegerType::create(this->alignment(), this->length(),
                                                 this->byteOrder(), this->bitOrder(),
@@ -49,10 +49,10 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
                                                                const boost::optional<BitOrder>& bio,
                                                                const DisplayBase prefDispBase,
                                                                Mappings mappings,
-                                                               MapItem::UP attrs,
+                                                               MapItem::Up attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthIntegerType {
-        _KIND_FL_UINT, align, len, bo, bio, prefDispBase,
+        _kindFlUInt, align, len, bo, bio, prefDispBase,
         std::move(mappings), std::move(attrs)
     },
     UnsignedIntegerTypeCommon {std::move(roles)}
@@ -64,7 +64,7 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
                                                                const boost::optional<BitOrder>& bio,
                                                                const DisplayBase prefDispBase,
                                                                Mappings mappings,
-                                                               MapItem::UP attrs,
+                                                               MapItem::Up attrs,
                                                                UnsignedIntegerTypeRoleSet roles) :
     FixedLengthUnsignedIntegerType {
         1, len, bo, bio, prefDispBase, std::move(mappings), std::move(attrs), std::move(roles)
@@ -81,7 +81,7 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const FixedLength
 {
 }
 
-DataType::UP FixedLengthUnsignedIntegerType::_clone() const
+DataType::Up FixedLengthUnsignedIntegerType::_clone() const
 {
     return FixedLengthUnsignedIntegerType::create(this->alignment(), this->length(),
                                                   this->byteOrder(), this->bitOrder(),

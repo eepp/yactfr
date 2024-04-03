@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_TEXT_PARSE_ERROR_HPP
-#define _YACTFR_TEXT_PARSE_ERROR_HPP
+#ifndef YACTFR_TEXT_PARSE_ERROR_HPP
+#define YACTFR_TEXT_PARSE_ERROR_HPP
 
 #include <string>
 #include <vector>
@@ -106,4 +106,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_TEXT_PARSE_ERROR_HPP
+#endif // YACTFR_TEXT_PARSE_ERROR_HPP

@@ -108,7 +108,7 @@ void MemoryMappedFileView::_doMmap(const Index offset)
     _mmapOffset = offset & ~(_mmapFileViewFactoryImpl->mmapOffsetGranularity() - 1);
     _mmapLength = std::min(_mmapFileViewFactoryImpl->fileSize() - _mmapOffset,
                            _mmapFileViewFactoryImpl->mmapSize());
-    _mmapAddr = mmap(NULL, static_cast<size_t>(_mmapLength), PROT_READ,
+    _mmapAddr = mmap(nullptr, static_cast<size_t>(_mmapLength), PROT_READ,
                      MAP_PRIVATE, _mmapFileViewFactoryImpl->fd(),
                      static_cast<off_t>(_mmapOffset));
 
@@ -124,13 +124,13 @@ void MemoryMappedFileView::_doMmap(const Index offset)
     }
 
     switch (_mmapFileViewFactoryImpl->accessPattern()) {
-    case MemoryMappedFileViewFactory::AccessPattern::NORMAL:
+    case MemoryMappedFileViewFactory::AccessPattern::Normal:
         (void) madvise(_mmapAddr, static_cast<size_t>(_mmapLength), MADV_NORMAL);
         break;
-    case MemoryMappedFileViewFactory::AccessPattern::SEQUENTIAL:
+    case MemoryMappedFileViewFactory::AccessPattern::Sequential:
         (void) madvise(_mmapAddr, static_cast<size_t>(_mmapLength), MADV_SEQUENTIAL);
         break;
-    case MemoryMappedFileViewFactory::AccessPattern::RANDOM:
+    case MemoryMappedFileViewFactory::AccessPattern::Random:
         (void) madvise(_mmapAddr, static_cast<size_t>(_mmapLength), MADV_RANDOM);
         break;
     }
@@ -158,7 +158,7 @@ void MemoryMappedFileViewFactory::expectedAccessPattern(const AccessPattern expe
     _pimpl->accessPattern(expectedAccessPattern);
 }
 
-DataSource::UP MemoryMappedFileViewFactory::_createDataSource()
+DataSource::Up MemoryMappedFileViewFactory::_createDataSource()
 {
     return std::make_unique<internal::MemoryMappedFileView>(_pimpl);
 }

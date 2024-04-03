@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_MMAP_FILE_VIEW_FACTORY_HPP
-#define _YACTFR_MMAP_FILE_VIEW_FACTORY_HPP
+#ifndef YACTFR_MMAP_FILE_VIEW_FACTORY_HPP
+#define YACTFR_MMAP_FILE_VIEW_FACTORY_HPP
 
 #include <memory>
 #include <boost/noncopyable.hpp>
@@ -45,13 +45,13 @@ public:
     */
     enum class AccessPattern {
         /// No special treatment.
-        NORMAL,
+        Normal,
 
         /// Expect page references in sequential order (more read ahead).
-        SEQUENTIAL,
+        Sequential,
 
         /// Expect page references in random order (less read ahead).
-        RANDOM,
+        Random,
     };
 
 public:
@@ -69,8 +69,8 @@ public:
 
     \p expectedAccessPattern controls how the memory maps which the
     data sources of this factory are optimized. Prefer
-    AccessPattern::SEQUENTIAL if you're going to iterate whole packets
-    in order. Prefer AccessPattern::RANDOM if you're going to skip many
+    AccessPattern::Sequential if you're going to iterate whole packets
+    in order. Prefer AccessPattern::Random if you're going to skip many
     elements and seek packets.
 
     This factory can throw IOError on construction and when creating a
@@ -91,7 +91,7 @@ public:
     */
     explicit MemoryMappedFileViewFactory(std::string path,
                                          const boost::optional<Size>& preferredMmapSize = boost::none,
-                                         AccessPattern expectedAccessPattern = AccessPattern::NORMAL);
+                                         AccessPattern expectedAccessPattern = AccessPattern::Normal);
 
     /// Current expected access pattern for future memory maps.
     AccessPattern expectedAccessPattern() const noexcept;
@@ -112,7 +112,7 @@ public:
     void expectedAccessPattern(AccessPattern expectedAccessPattern) noexcept;
 
 private:
-    DataSource::UP _createDataSource() override;
+    DataSource::Up _createDataSource() override;
 
 private:
     /*
@@ -124,4 +124,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_MMAP_FILE_VIEW_FACTORY_HPP
+#endif // YACTFR_MMAP_FILE_VIEW_FACTORY_HPP

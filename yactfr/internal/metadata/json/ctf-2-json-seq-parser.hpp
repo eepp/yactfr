@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
-#define _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
+#ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
+#define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
 
 #include <cassert>
 #include <array>
@@ -53,7 +53,7 @@ public:
     /*
      * Releases and returns the parsed trace type.
      */
-    TraceType::UP releaseTraceType()
+    TraceType::Up releaseTraceType()
     {
         return std::move(_traceType);
     }
@@ -136,7 +136,7 @@ private:
      * Calls `_pseudoDtErector.pseudoDtOfJsonObj()`, also validating
      * that the returned value is a pseudo structure type.
      */
-    PseudoDt::UP _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
+    PseudoDt::Up _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
 
 private:
     // beginning and end metadata string pointers
@@ -150,10 +150,10 @@ private:
     PseudoDtErector _pseudoDtErector;
 
     // default clock offset JSON value
-    JsonObjVal::UP _defClkOffsetVal;
+    JsonObjVal::Up _defClkOffsetVal;
 
     // final trace type
-    TraceType::UP _traceType;
+    TraceType::Up _traceType;
 
     // metadata stream UUID
     boost::optional<boost::uuids::uuid> _metadataStreamUuid;
@@ -165,4 +165,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
+#endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP

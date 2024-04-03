@@ -11,37 +11,37 @@
 namespace yactfr {
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
-                                           std::string mediaType, MapItem::UP attrs,
+                                           std::string mediaType, MapItem::Up attrs,
                                            const bool hasMetadataStreamUuidRole) :
-    BlobType {_KIND_SL_BLOB, align, std::move(attrs), std::move(mediaType)},
+    BlobType {_kindSlBlob, align, std::move(attrs), std::move(mediaType)},
     _len {len},
     _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const Size len, std::string mediaType,
-                                           MapItem::UP attrs,
+                                           MapItem::Up attrs,
                                            const bool hasMetadataStreamUuidRole) :
     StaticLengthBlobType {8, len, std::move(mediaType), std::move(attrs), hasMetadataStreamUuidRole}
 {
 }
 
 StaticLengthBlobType::StaticLengthBlobType(const unsigned int align, const Size len,
-                                           MapItem::UP attrs,
+                                           MapItem::Up attrs,
                                            const bool hasMetadataStreamUuidRole) :
-    BlobType {_KIND_SL_BLOB, align, std::move(attrs)},
+    BlobType {_kindSlBlob, align, std::move(attrs)},
     _len {len},
     _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
-StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::UP attrs,
+StaticLengthBlobType::StaticLengthBlobType(const Size len, MapItem::Up attrs,
                                            const bool hasMetadataStreamUuidRole) :
     StaticLengthBlobType {8, len, std::move(attrs), hasMetadataStreamUuidRole}
 {
 }
 
-DataType::UP StaticLengthBlobType::_clone() const
+DataType::Up StaticLengthBlobType::_clone() const
 {
     return StaticLengthBlobType::create(this->alignment(), _len, this->mediaType(),
                                         internal::tryCloneAttrs(this->attributes()),

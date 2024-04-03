@@ -12,7 +12,7 @@
 
 namespace yactfr {
 
-StructureMemberType::StructureMemberType(std::string name, DataType::UP dt, MapItem::UP attrs) :
+StructureMemberType::StructureMemberType(std::string name, DataType::Up dt, MapItem::Up attrs) :
     _name {std::move(name)},
     _dt {std::move(dt)},
     _attrs {std::move(attrs)}

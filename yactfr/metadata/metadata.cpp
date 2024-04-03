@@ -62,9 +62,9 @@ public:
     ByteOrder bo() const noexcept
     {
         if (_bo == bendian::order::little) {
-            return ByteOrder::LITTLE;
+            return ByteOrder::Little;
         } else if (_bo == bendian::order::big) {
-            return ByteOrder::BIG;
+            return ByteOrder::Big;
         }
 
         std::abort();
@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    struct _PktHeader
+    struct _tPktHeader
     {
         std::uint32_t magic;
         std::uint8_t uuid[16];
@@ -91,7 +91,7 @@ private:
     };
 
 private:
-    boost::optional<_PktHeader> _readPktHeader(const bool readMagic);
+    boost::optional<_tPktHeader> _readPktHeader(const bool readMagic);
     void _readPacketized();
     void _readText();
 
@@ -287,12 +287,12 @@ void MetadataStreamDecoder::_expectItem(T& item)
     }
 }
 
-boost::optional<MetadataStreamDecoder::_PktHeader> MetadataStreamDecoder::_readPktHeader(const bool readMagic)
+boost::optional<MetadataStreamDecoder::_tPktHeader> MetadataStreamDecoder::_readPktHeader(const bool readMagic)
 {
-    _PktHeader header;
+    _tPktHeader header;
 
     /*
-     * Do not assume the alignment of `_PktHeader` fields. Any of the
+     * Do not assume the alignment of `_tPktHeader` fields. Any of the
      * reading operations below may throw `IOError` or
      * `InvalidMetadataStream`: this must be catched by the caller.
      */

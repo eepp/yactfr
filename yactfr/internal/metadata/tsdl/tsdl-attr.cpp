@@ -28,9 +28,9 @@ namespace internal {
 boost::optional<ByteOrder> TsdlAttr::_toBo() const
 {
     if (strVal == "be" || strVal == "network") {
-        return ByteOrder::BIG;
+        return ByteOrder::Big;
     } else if (strVal == "le") {
-        return ByteOrder::LITTLE;
+        return ByteOrder::Little;
     } else if (strVal == "native") {
         return boost::none;
     }
@@ -43,7 +43,7 @@ boost::optional<ByteOrder> TsdlAttr::_toBo() const
 
 DisplayBase TsdlAttr::dispBase() const
 {
-    if (kind != Kind::UINT && kind != Kind::IDENT) {
+    if (kind != Kind::UInt && kind != Kind::Ident) {
         std::ostringstream ss;
 
         ss << "Attribute `" << name <<
@@ -51,7 +51,7 @@ DisplayBase TsdlAttr::dispBase() const
         throwTextParseError(ss.str(), this->valTextLoc());
     }
 
-    if (kind == Kind::UINT) {
+    if (kind == Kind::UInt) {
         if (uintVal != 2 && uintVal != 8 && uintVal != 10 && uintVal != 16) {
             std::ostringstream ss;
 
@@ -63,14 +63,14 @@ DisplayBase TsdlAttr::dispBase() const
     }
 
     if (strVal == "decimal" || strVal == "dec" || strVal == "d" || strVal == "i" || strVal == "u") {
-        return DisplayBase::DECIMAL;
+        return DisplayBase::Decimal;
     } else if (strVal == "hexadecimal" || strVal == "hex" ||
             strVal == "x" || strVal == "X" || strVal == "p") {
-        return DisplayBase::HEXADECIMAL;
+        return DisplayBase::Hexadecimal;
     } else if (strVal == "octal" || strVal == "oct" || strVal == "o") {
-        return DisplayBase::OCTAL;
+        return DisplayBase::Octal;
     } else if (strVal == "binary" || strVal == "bin" || strVal == "b") {
-        return DisplayBase::BINARY;
+        return DisplayBase::Binary;
     }
 
     std::ostringstream ss;
@@ -87,23 +87,23 @@ void TsdlAttr::checkKind(const Kind expectedKind) const
         ss << "Attribute `" << name << "`: expecting ";
 
         switch (expectedKind) {
-        case Kind::STR:
+        case Kind::Str:
             ss << "literal string";
             break;
 
-        case Kind::UINT:
+        case Kind::UInt:
             ss << "constant unsigned integer.";
             break;
 
-        case Kind::SINT:
+        case Kind::SInt:
             ss << "constant signed integer.";
             break;
 
-        case Kind::IDENT:
+        case Kind::Ident:
             ss << "identifier.";
             break;
 
-        case Kind::CLK_NAME_VALUE:
+        case Kind::ClkNameValue:
             ss << "`clock.NAME.value`.";
             break;
 
@@ -125,7 +125,7 @@ void TsdlAttr::throwUnknown() const
 
 unsigned int TsdlAttr::align() const
 {
-    this->checkKind(Kind::UINT);
+    this->checkKind(Kind::UInt);
 
     if (!isPowOfTwo(uintVal)) {
         std::ostringstream ss;
@@ -139,13 +139,13 @@ unsigned int TsdlAttr::align() const
 
 boost::optional<ByteOrder> TsdlAttr::bo() const
 {
-    this->checkKind(Kind::IDENT);
+    this->checkKind(Kind::Ident);
     return this->_toBo();
 }
 
 bool TsdlAttr::hasEncoding() const
 {
-    this->checkKind(Kind::IDENT);
+    this->checkKind(Kind::Ident);
 
     if (strVal == "NONE" || strVal == "none") {
         return false;
@@ -162,7 +162,7 @@ bool TsdlAttr::hasEncoding() const
 bool TsdlAttr::boolEquiv() const
 {
     switch (kind) {
-    case Kind::UINT:
+    case Kind::UInt:
         if (uintVal == 1) {
             return true;
         } else if (uintVal == 0) {
@@ -170,7 +170,7 @@ bool TsdlAttr::boolEquiv() const
         }
         break;
 
-    case Kind::IDENT:
+    case Kind::Ident:
         if (strVal == "true" || strVal == "TRUE") {
             return true;
         } else if (strVal == "false" || strVal == "FALSE") {

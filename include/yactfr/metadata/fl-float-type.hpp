@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_FL_FLOAT_TYPE_HPP
-#define _YACTFR_METADATA_FL_FLOAT_TYPE_HPP
+#ifndef YACTFR_METADATA_FL_FLOAT_TYPE_HPP
+#define YACTFR_METADATA_FL_FLOAT_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -35,7 +35,7 @@ class FixedLengthFloatingPointNumberType final :
 {
 public:
     /// Unique pointer to constant fixed-length floating point number type.
-    using UP = std::unique_ptr<const FixedLengthFloatingPointNumberType>;
+    using Up = std::unique_ptr<const FixedLengthFloatingPointNumberType>;
 
 public:
     /*!
@@ -60,11 +60,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] attributes
@@ -85,7 +85,7 @@ public:
     explicit FixedLengthFloatingPointNumberType(unsigned int alignment, unsigned int length,
                                                 ByteOrder byteOrder,
                                                 const boost::optional<BitOrder>& bitOrder = boost::none,
-                                                MapItem::UP attributes = nullptr);
+                                                MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -107,11 +107,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] attributes
@@ -127,7 +127,7 @@ public:
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int length, ByteOrder byteOrder,
                                                 const boost::optional<BitOrder>& bitOrder = boost::none,
-                                                MapItem::UP attributes = nullptr);
+                                                MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -146,9 +146,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -161,7 +161,7 @@ public:
     FixedLengthFloatingPointNumberType(const FixedLengthFloatingPointNumberType& other);
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -171,4 +171,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_FL_FLOAT_TYPE_HPP
+#endif // YACTFR_METADATA_FL_FLOAT_TYPE_HPP

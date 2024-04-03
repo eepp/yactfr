@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_TEXT_LOC_HPP
-#define _YACTFR_TEXT_LOC_HPP
+#ifndef YACTFR_TEXT_LOC_HPP
+#define YACTFR_TEXT_LOC_HPP
 
 #include "aliases.hpp"
 
@@ -92,4 +92,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_TEXT_LOC_HPP
+#endif // YACTFR_TEXT_LOC_HPP

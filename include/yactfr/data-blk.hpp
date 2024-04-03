@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_DATA_BLK_HPP
-#define _YACTFR_DATA_BLK_HPP
+#ifndef YACTFR_DATA_BLK_HPP
+#define YACTFR_DATA_BLK_HPP
 
 #include "aliases.hpp"
 
@@ -59,4 +59,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_DATA_BLK_HPP
+#endif // YACTFR_DATA_BLK_HPP

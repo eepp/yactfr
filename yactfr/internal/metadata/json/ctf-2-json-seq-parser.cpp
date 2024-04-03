@@ -18,7 +18,7 @@ namespace yactfr {
 namespace internal {
 namespace {
 
-JsonObjVal::UP createDefClkOffsetJsonObjVal()
+JsonObjVal::Up createDefClkOffsetJsonObjVal()
 {
     JsonObjVal::Container entries;
 
@@ -371,7 +371,7 @@ void Ctf2JsonSeqParser::_ensureExistingPseudoTraceType()
     _pseudoTraceType = PseudoTraceType {2, 0};
 }
 
-PseudoDt::UP Ctf2JsonSeqParser::_pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal,
+PseudoDt::Up Ctf2JsonSeqParser::_pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal,
                                                         const std::string& propName)
 {
     auto pseudoDt = _pseudoDtErector.pseudoDtOfJsonObj(jsonObjVal, propName);
@@ -380,7 +380,7 @@ PseudoDt::UP Ctf2JsonSeqParser::_pseudoScopeDtOfJsonObj(const JsonObjVal& jsonOb
         return nullptr;
     }
 
-    if (pseudoDt->kind() != PseudoDt::Kind::STRUCT) {
+    if (pseudoDt->kind() != PseudoDt::Kind::Struct) {
         throwTextParseError("Root data type of scope must be structure type.", pseudoDt->loc());
     }
 

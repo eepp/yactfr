@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
-#define _YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
+#ifndef YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
+#define YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
 
 #include <type_traits>
 #include <unordered_set>
@@ -24,14 +24,14 @@ class PseudoDtFinder :
     public ParentVisitorT
 {
 private:
-    using _IsConst = std::is_same<ParentVisitorT, ConstPseudoDtVisitor>;
+    using _tIsConst = std::is_same<ParentVisitorT, ConstPseudoDtVisitor>;
 
     template <typename PseudoDtT>
-    using _PseudoDt = std::conditional_t<_IsConst::value, const PseudoDtT, PseudoDtT>;
+    using _tPseudoDt = std::conditional_t<_tIsConst::value, const PseudoDtT, PseudoDtT>;
 
 public:
     using PredFunc = std::function<bool (const PseudoDt&, const std::string *)>;
-    using Set = std::conditional_t<_IsConst::value, ConstPseudoDtSet, PseudoDtSet>;
+    using Set = std::conditional_t<_tIsConst::value, ConstPseudoDtSet, PseudoDtSet>;
 
 public:
     explicit PseudoDtFinder(PredFunc predFunc) :
@@ -44,32 +44,32 @@ public:
         return _set;
     }
 
-    void visit(_PseudoDt<PseudoScalarDtWrapper>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoScalarDtWrapper>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoFlUIntType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoFlUIntType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoSlArrayType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoSlArrayType>& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoDlArrayType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoDlArrayType>& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoDlBlobType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoDlBlobType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoStructType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoStructType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
 
@@ -80,7 +80,7 @@ public:
         }
     }
 
-    void visit(_PseudoDt<PseudoVarType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoVarType>& pseudoDt) override
     {
         this->_tryAdd(pseudoDt);
 
@@ -90,37 +90,37 @@ public:
         }
     }
 
-    void visit(_PseudoDt<PseudoVarWithIntRangesType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoVarWithIntRangesType>& pseudoDt) override
     {
-        this->visit(static_cast<_PseudoDt<PseudoVarType>&>(pseudoDt));
+        this->visit(static_cast<_tPseudoDt<PseudoVarType>&>(pseudoDt));
     }
 
-    void visit(_PseudoDt<PseudoOptWithBoolSelType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoOptWithBoolSelType>& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
-    void visit(_PseudoDt<PseudoOptWithIntSelType>& pseudoDt) override
+    void visit(_tPseudoDt<PseudoOptWithIntSelType>& pseudoDt) override
     {
         this->_visit(pseudoDt);
     }
 
 private:
-    void _visit(_PseudoDt<PseudoArrayType>& pseudoDt)
+    void _visit(_tPseudoDt<PseudoArrayType>& pseudoDt)
     {
         this->_tryAdd(pseudoDt);
         _curMemberTypeName = nullptr;
         pseudoDt.pseudoElemType().accept(*this);
     }
 
-    void _visit(_PseudoDt<PseudoOptType>& pseudoDt)
+    void _visit(_tPseudoDt<PseudoOptType>& pseudoDt)
     {
         this->_tryAdd(pseudoDt);
         _curMemberTypeName = nullptr;
         pseudoDt.pseudoDt().accept(*this);
     }
 
-    void _tryAdd(_PseudoDt<PseudoDt>& pseudoDt)
+    void _tryAdd(_tPseudoDt<PseudoDt>& pseudoDt)
     {
         if (_predFunc(pseudoDt, _curMemberTypeName)) {
             _set.insert(&pseudoDt);
@@ -156,4 +156,4 @@ inline auto findPseudoDts(const PseudoDt& pseudoDt,
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
+#endif // YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP

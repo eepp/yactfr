@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_DST_HPP
-#define _YACTFR_METADATA_DST_HPP
+#ifndef YACTFR_METADATA_DST_HPP
+#define YACTFR_METADATA_DST_HPP
 
 #include <memory>
 #include <utility>
@@ -63,7 +63,7 @@ class DataStreamType final :
 
 public:
     /// Unique pointer to constant data stream type.
-    using UP = std::unique_ptr<const DataStreamType>;
+    using Up = std::unique_ptr<const DataStreamType>;
 
 public:
     /*!
@@ -114,32 +114,32 @@ public:
         If set, any unsigned integer type within \p packetContextType,
         recursively, may only have the following roles:
 
-        - UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH
-        - UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH
-        - UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT
-        - UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER
+        - UnsignedIntegerTypeRole::PacketTotalLength
+        - UnsignedIntegerTypeRole::PacketContentLength
+        - UnsignedIntegerTypeRole::DiscardedEventRecordCounterSnapshot
+        - UnsignedIntegerTypeRole::PacketSequenceNumber
         - When \p defaultClockType is not \c nullptr:
-          - UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP
-          - UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP
+          - UnsignedIntegerTypeRole::DefaultClockTimestamp
+          - UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp
 
         If set, any unsigned integer type within
         \p eventRecordHeaderType, recursively, may only have the
         following roles:
 
-        - UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID
+        - UnsignedIntegerTypeRole::EventRecordTypeId
         - When \p defaultClockType is not \c nullptr:
-          UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP
+          UnsignedIntegerTypeRole::DefaultClockTimestamp
         @endparblock
     */
     explicit DataStreamType(TypeId id, boost::optional<std::string> nameSpace,
                             boost::optional<std::string> name,
                             boost::optional<std::string> uid,
                             EventRecordTypeSet&& eventRecordTypes,
-                            StructureType::UP packetContextType,
-                            StructureType::UP eventRecordHeaderType,
-                            StructureType::UP eventRecordCommonContextType,
+                            StructureType::Up packetContextType,
+                            StructureType::Up eventRecordHeaderType,
+                            StructureType::Up eventRecordCommonContextType,
                             const ClockType *defaultClockType = nullptr,
-                            MapItem::UP attributes = nullptr);
+                            MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -184,29 +184,29 @@ public:
         If set, any unsigned integer type within \p packetContextType,
         recursively, may only have the following roles:
 
-        - UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH
-        - UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH
-        - UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT
-        - UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER
+        - UnsignedIntegerTypeRole::PacketTotalLength
+        - UnsignedIntegerTypeRole::PacketContentLength
+        - UnsignedIntegerTypeRole::DiscardedEventRecordCounterSnapshot
+        - UnsignedIntegerTypeRole::PacketSequenceNumber
         - When \p defaultClockType is not \c nullptr:
-          - UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP
-          - UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP
+          - UnsignedIntegerTypeRole::DefaultClockTimestamp
+          - UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp
 
         If set, any unsigned integer type within
         \p eventRecordHeaderType, recursively, may only have the
         following roles:
 
-        - UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID
+        - UnsignedIntegerTypeRole::EventRecordTypeId
         - When \p defaultClockType is not \c nullptr:
-          UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP
+          UnsignedIntegerTypeRole::DefaultClockTimestamp
         @endparblock
     */
     explicit DataStreamType(TypeId id, EventRecordTypeSet&& eventRecordTypes,
-                            StructureType::UP packetContextType,
-                            StructureType::UP eventRecordHeaderType,
-                            StructureType::UP eventRecordCommonContextType,
+                            StructureType::Up packetContextType,
+                            StructureType::Up eventRecordHeaderType,
+                            StructureType::Up eventRecordCommonContextType,
                             const ClockType *defaultClockType = nullptr,
-                            MapItem::UP attributes = nullptr);
+                            MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -223,9 +223,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -388,14 +388,14 @@ private:
     const boost::optional<std::string> _uid;
     const EventRecordTypeSet _erts;
     std::unordered_map<TypeId, const EventRecordType *> _idsToErts;
-    StructureType::UP _pktCtxType;
-    StructureType::UP _erHeaderType;
-    StructureType::UP _erCommonCtxType;
+    StructureType::Up _pktCtxType;
+    StructureType::Up _erHeaderType;
+    StructureType::Up _erCommonCtxType;
     const ClockType * const _defClkType;
-    const MapItem::UP _attrs;
+    const MapItem::Up _attrs;
     mutable const TraceType *_traceType = nullptr;
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_DST_HPP
+#endif // YACTFR_METADATA_DST_HPP

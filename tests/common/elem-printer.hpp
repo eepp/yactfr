@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_TESTS_ELEM_PRINTER_HPP
-#define _YACTFR_TESTS_ELEM_PRINTER_HPP
+#ifndef YACTFR_TESTS_ELEM_PRINTER_HPP
+#define YACTFR_TESTS_ELEM_PRINTER_HPP
 
 #include <cstdint>
 #include <cstdlib>
@@ -359,4 +359,4 @@ private:
     bool _inBlob = false;
 };
 
-#endif // _YACTFR_TESTS_ELEM_PRINTER_HPP
+#endif // YACTFR_TESTS_ELEM_PRINTER_HPP

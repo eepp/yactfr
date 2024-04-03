@@ -11,8 +11,8 @@
 
 namespace yactfr {
 
-StringType::StringType(const _Kind kind, const unsigned int align, const StringEncoding encoding,
-                       MapItem::UP attrs) :
+StringType::StringType(const _tKind kind, const unsigned int align, const StringEncoding encoding,
+                       MapItem::Up attrs) :
     ScalarDataType {kind, align, std::move(attrs)},
     _encoding {encoding}
 {

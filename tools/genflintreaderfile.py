@@ -136,8 +136,8 @@ if __name__ == '__main__':
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_FL_INT_READER_HPP
-#define _YACTFR_INTERNAL_FL_INT_READER_HPP
+#ifndef YACTFR_INTERNAL_FL_INT_READER_HPP
+#define YACTFR_INTERNAL_FL_INT_READER_HPP
 
 #include <cstdint>
 #include <cassert>
@@ -156,4 +156,4 @@ namespace {
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_FL_INT_READER_HPP''')
+#endif // YACTFR_INTERNAL_FL_INT_READER_HPP''')

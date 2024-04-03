@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_TRACE_TYPE_HPP
-#define _YACTFR_METADATA_TRACE_TYPE_HPP
+#ifndef YACTFR_METADATA_TRACE_TYPE_HPP
+#define YACTFR_METADATA_TRACE_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -79,7 +79,7 @@ class TraceType final :
 
 public:
     /// Unique pointer to constant trace type.
-    using UP = std::unique_ptr<const TraceType>;
+    using Up = std::unique_ptr<const TraceType>;
 
 public:
     /*!
@@ -120,9 +120,9 @@ public:
         If set, any unsigned integer type within \p packetHeaderType,
         recursively, may only have the following roles:
 
-        - UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER
-        - UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID
-        - UnsignedIntegerTypeRole::DATA_STREAM_ID
+        - UnsignedIntegerTypeRole::PacketMagicNumber
+        - UnsignedIntegerTypeRole::DataStreamTypeId
+        - UnsignedIntegerTypeRole::DataStreamId
 
         For each \link DataStreamType data stream type\endlink \em DST
         of \p dataStreamTypes, if \em DST has a default clock type, it
@@ -191,8 +191,8 @@ public:
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
                        boost::optional<std::string> nameSpace, boost::optional<std::string> name,
                        boost::optional<std::string> uid, TraceEnvironment environment,
-                       StructureType::UP packetHeaderType, ClockTypeSet&& clockTypes,
-                       DataStreamTypeSet&& dataStreamTypes, MapItem::UP attributes = nullptr);
+                       StructureType::Up packetHeaderType, ClockTypeSet&& clockTypes,
+                       DataStreamTypeSet&& dataStreamTypes, MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -209,9 +209,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*
@@ -303,4 +303,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_TRACE_TYPE_HPP
+#endif // YACTFR_METADATA_TRACE_TYPE_HPP

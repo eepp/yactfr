@@ -29,7 +29,7 @@ unsigned long long maskFromBitRanges(const FixedLengthBitMapType::FlagRangeSet& 
 
 } // namespace
 
-FixedLengthBitMapType::_FlagMask::_FlagMask(const std::string& name, const FlagRangeSet& bitRanges) :
+FixedLengthBitMapType::_tFlagMask::_tFlagMask(const std::string& name, const FlagRangeSet& bitRanges) :
     _name {&name},
     _mask {maskFromBitRanges(bitRanges)}
 {
@@ -38,8 +38,8 @@ FixedLengthBitMapType::_FlagMask::_FlagMask(const std::string& name, const FlagR
 FixedLengthBitMapType::FixedLengthBitMapType(const unsigned int align, const unsigned int len,
                                              const ByteOrder bo, Flags flags,
                                              const boost::optional<BitOrder>& bio,
-                                             MapItem::UP attrs) :
-    FixedLengthBitArrayType {_KIND_FL_BIT_MAP, align, len, bo, bio, std::move(attrs)},
+                                             MapItem::Up attrs) :
+    FixedLengthBitArrayType {_kindFlBitMap, align, len, bo, bio, std::move(attrs)},
     _flags {std::move(flags)},
     _flagMasks {this->_flagMasksFromFlags(_flags)}
 {
@@ -47,14 +47,14 @@ FixedLengthBitMapType::FixedLengthBitMapType(const unsigned int align, const uns
 
 FixedLengthBitMapType::FixedLengthBitMapType(const unsigned int len, const ByteOrder bo,
                                              Flags flags, const boost::optional<BitOrder>& bio,
-                                             MapItem::UP attrs) :
+                                             MapItem::Up attrs) :
     FixedLengthBitMapType {1, len, bo, std::move(flags), bio, std::move(attrs)}
 {
 }
 
-std::vector<FixedLengthBitMapType::_FlagMask> FixedLengthBitMapType::_flagMasksFromFlags(const Flags& flags)
+std::vector<FixedLengthBitMapType::_tFlagMask> FixedLengthBitMapType::_flagMasksFromFlags(const Flags& flags)
 {
-    std::vector<_FlagMask> flagMasks;
+    std::vector<_tFlagMask> flagMasks;
 
     for (auto& flag : flags) {
         flagMasks.emplace_back(flag.first, flag.second);
@@ -95,7 +95,7 @@ void FixedLengthBitMapType::activeFlagNamesForUnsignedIntegerValue(const unsigne
     }
 }
 
-DataType::UP FixedLengthBitMapType::_clone() const
+DataType::Up FixedLengthBitMapType::_clone() const
 {
     return FixedLengthBitMapType::create(this->alignment(), this->length(), this->byteOrder(),
                                          _flags, this->bitOrder(),

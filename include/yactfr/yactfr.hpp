@@ -11,8 +11,8 @@
     Master header.
 */
 
-#ifndef _YACTFR_YACTFR_HPP
-#define _YACTFR_YACTFR_HPP
+#ifndef YACTFR_YACTFR_HPP
+#define YACTFR_YACTFR_HPP
 
 #include "aliases.hpp"
 #include "data-blk.hpp"
@@ -72,4 +72,4 @@
 #include "mmap-file-view-factory.hpp"
 #include "text-parse-error.hpp"
 
-#endif // _YACTFR_YACTFR_HPP
+#endif // YACTFR_YACTFR_HPP

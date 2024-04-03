@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_ARRAY_TYPE_HPP
-#define _YACTFR_METADATA_ARRAY_TYPE_HPP
+#ifndef YACTFR_METADATA_ARRAY_TYPE_HPP
+#define YACTFR_METADATA_ARRAY_TYPE_HPP
 
 #include "compound-dt.hpp"
 #include "dt.hpp"
@@ -23,8 +23,8 @@ class ArrayType :
     public CompoundDataType
 {
 protected:
-    explicit ArrayType(_Kind kind, unsigned int minAlign, DataType::UP elemType,
-                       MapItem::UP attrs);
+    explicit ArrayType(_tKind kind, unsigned int minAlign, DataType::Up elemType,
+                       MapItem::Up attrs);
 
 public:
     /*!
@@ -41,9 +41,9 @@ protected:
     bool _isEqual(const DataType& other) const noexcept override;
 
 private:
-    const DataType::UP _elemType;
+    const DataType::Up _elemType;
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_ARRAY_TYPE_HPP
+#endif // YACTFR_METADATA_ARRAY_TYPE_HPP

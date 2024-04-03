@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
-#define _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
+#ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
+#define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
 
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -29,7 +29,7 @@ boost::optional<boost::uuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal);
  * Returns the attributes of the JSON object value `jsonObjVal`, or an
  * empty map item there's no such property.
  */
-MapItem::UP attrsOfObj(const JsonObjVal& jsonObjVal);
+MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal);
 
 /*
  * Returns the raw integer value from the JSON unsigned or signed
@@ -80,4 +80,4 @@ inline boost::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonOb
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
+#endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP

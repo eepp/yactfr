@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_INT_TYPE_COMMON_HPP
-#define _YACTFR_METADATA_INT_TYPE_COMMON_HPP
+#ifndef YACTFR_METADATA_INT_TYPE_COMMON_HPP
+#define YACTFR_METADATA_INT_TYPE_COMMON_HPP
 
 #include <cassert>
 #include <set>
@@ -31,16 +31,16 @@ namespace yactfr {
 enum class DisplayBase
 {
     /// Binary.
-    BINARY = 2,
+    Binary = 2,
 
     /// Octal.
-    OCTAL = 8,
+    Octal = 8,
 
     /// Decimal.
-    DECIMAL = 10,
+    Decimal = 10,
 
     /// Hexadecimal.
-    HEXADECIMAL = 16,
+    Hexadecimal = 16,
 };
 
 /*!
@@ -209,34 +209,34 @@ using UnsignedIntegerTypeMappingValue = std::make_unsigned_t<SignedIntegerTypeMa
 enum class UnsignedIntegerTypeRole
 {
     /// Packet magic number.
-    PACKET_MAGIC_NUMBER,
+    PacketMagicNumber,
 
     /// \link DataStreamType Data stream type\endlink ID.
-    DATA_STREAM_TYPE_ID,
+    DataStreamTypeId,
 
     /// Data stream ID.
-    DATA_STREAM_ID,
+    DataStreamId,
 
     /// Packet total length.
-    PACKET_TOTAL_LENGTH,
+    PacketTotalLength,
 
     /// Packet content length.
-    PACKET_CONTENT_LENGTH,
+    PacketContentLength,
 
     /// Default clock timestamp.
-    DEFAULT_CLOCK_TIMESTAMP,
+    DefaultClockTimestamp,
 
     /// Packet end default clock timestamp.
-    PACKET_END_DEFAULT_CLOCK_TIMESTAMP,
+    PacketEndDefaultClockTimestamp,
 
     /// Discarded event record counter snapshot.
-    DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT,
+    DiscardedEventRecordCounterSnapshot,
 
     /// Packet sequence number.
-    PACKET_SEQUENCE_NUMBER,
+    PacketSequenceNumber,
 
     /// \link EventRecordType Event record type\endlink ID.
-    EVENT_RECORD_TYPE_ID,
+    EventRecordTypeId,
 };
 
 /*!
@@ -292,4 +292,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_INT_TYPE_COMMON_HPP
+#endif // YACTFR_METADATA_INT_TYPE_COMMON_HPP

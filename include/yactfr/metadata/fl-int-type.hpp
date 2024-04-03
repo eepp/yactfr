@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_FL_INT_TYPE_HPP
-#define _YACTFR_METADATA_FL_INT_TYPE_HPP
+#ifndef YACTFR_METADATA_FL_INT_TYPE_HPP
+#define YACTFR_METADATA_FL_INT_TYPE_HPP
 
 #include <string>
 #include <boost/optional.hpp>
@@ -53,9 +53,9 @@ public:
     using typename IntegerTypeCommon<MappingValueT>::MappingValue;
 
 protected:
-    explicit FixedLengthIntegerType(_Kind kind, unsigned int align, unsigned int len, ByteOrder bo,
+    explicit FixedLengthIntegerType(_tKind kind, unsigned int align, unsigned int len, ByteOrder bo,
                                     const boost::optional<BitOrder>& bio, DisplayBase prefDispBase,
-                                    Mappings&& mappings, MapItem::UP attrs) :
+                                    Mappings&& mappings, MapItem::Up attrs) :
         FixedLengthBitArrayType {kind, align, len, bo, bio, std::move(attrs)},
         IntegerTypeCommon<MappingValueT> {prefDispBase, std::move(mappings)}
     {
@@ -119,7 +119,7 @@ class FixedLengthSignedIntegerType final :
 {
 public:
     /// Unique pointer to constant fixed-length signed integer type.
-    using UP = std::unique_ptr<const FixedLengthSignedIntegerType>;
+    using Up = std::unique_ptr<const FixedLengthSignedIntegerType>;
 
 public:
     /*!
@@ -144,11 +144,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] preferredDisplayBase
@@ -174,9 +174,9 @@ public:
     explicit FixedLengthSignedIntegerType(unsigned int alignment, unsigned int length,
                                           ByteOrder byteOrder,
                                           const boost::optional<BitOrder>& bitOrder = boost::none,
-                                          DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                          DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                           Mappings mappings = Mappings {},
-                                          MapItem::UP attributes = nullptr);
+                                          MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -198,11 +198,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] preferredDisplayBase
@@ -223,9 +223,9 @@ public:
     */
     explicit FixedLengthSignedIntegerType(unsigned int length, ByteOrder byteOrder,
                                           const boost::optional<BitOrder>& bitOrder = boost::none,
-                                          DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                          DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                           Mappings mappings = Mappings {},
-                                          MapItem::UP attributes = nullptr);
+                                          MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -244,9 +244,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -269,7 +269,7 @@ public:
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -292,7 +292,7 @@ class FixedLengthUnsignedIntegerType final :
 {
 public:
     /// Unique pointer to constant fixed-length unsigned integer type.
-    using UP = std::unique_ptr<const FixedLengthUnsignedIntegerType>;
+    using Up = std::unique_ptr<const FixedLengthUnsignedIntegerType>;
 
 public:
     /*!
@@ -317,11 +317,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] preferredDisplayBase
@@ -349,9 +349,9 @@ public:
     explicit FixedLengthUnsignedIntegerType(unsigned int alignment, unsigned int length,
                                             ByteOrder byteOrder,
                                             const boost::optional<BitOrder>& bitOrder = boost::none,
-                                            DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                            DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                             Mappings mappings = Mappings {},
-                                            MapItem::UP attributes = nullptr,
+                                            MapItem::Up attributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
@@ -374,11 +374,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] preferredDisplayBase
@@ -401,9 +401,9 @@ public:
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int length, ByteOrder byteOrder,
                                             const boost::optional<BitOrder>& bitOrder = boost::none,
-                                            DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                            DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                             Mappings mappings = Mappings {},
-                                            MapItem::UP attributes = nullptr,
+                                            MapItem::Up attributes = nullptr,
                                             UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
@@ -423,9 +423,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -452,7 +452,7 @@ public:
 
 private:
     bool _isEqual(const DataType& other) const noexcept override;
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -462,4 +462,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_FL_INT_TYPE_HPP
+#endif // YACTFR_METADATA_FL_INT_TYPE_HPP

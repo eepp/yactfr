@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
-#define _YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
+#ifndef YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
+#define YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
 
 #include <cassert>
 #include <string>
@@ -39,7 +39,7 @@ class JsonValReq :
 {
 public:
     // shared pointer to constant JSON value requirement
-    using SP = std::shared_ptr<const JsonValReq>;
+    using Sp = std::shared_ptr<const JsonValReq>;
 
 public:
     /*
@@ -59,7 +59,7 @@ public:
      * Returns a shared pointer to JSON value requirement, forwarding
      * the parameter to the constructor.
      */
-    static SP shared(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
+    static Sp shared(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
 
 protected:
     /*
@@ -90,7 +90,7 @@ class JsonIntValInRangeReq :
 {
 private:
     // raw value type
-    using _Val = typename JsonValT::Val;
+    using _tVal = typename JsonValT::Val;
 
 public:
     /*
@@ -100,11 +100,11 @@ public:
      * * If `minVal` is set: greater than or equal to `*minVal`.
      * * If `maxVal` is set: less than or equal to `*maxVal`.
      */
-    explicit JsonIntValInRangeReq(const boost::optional<_Val>& minVal,
-                                  const boost::optional<_Val>& maxVal) :
+    explicit JsonIntValInRangeReq(const boost::optional<_tVal>& minVal,
+                                  const boost::optional<_tVal>& maxVal) :
         JsonValReq {KindV},
-        _minVal {minVal ? *minVal : std::numeric_limits<_Val>::min()},
-        _maxVal {maxVal ? *maxVal : std::numeric_limits<_Val>::max()}
+        _minVal {minVal ? *minVal : std::numeric_limits<_tVal>::min()},
+        _maxVal {maxVal ? *maxVal : std::numeric_limits<_tVal>::max()}
     {
     }
 
@@ -113,7 +113,7 @@ public:
      * validates that the raw value of the JSON integer value is exactly
      * `exactVal`.
      */
-    explicit JsonIntValInRangeReq(const _Val exactVal) :
+    explicit JsonIntValInRangeReq(const _tVal exactVal) :
         JsonIntValInRangeReq {exactVal, exactVal}
     {
     }
@@ -122,7 +122,7 @@ public:
      * Returns a shared pointer to JSON integer value in range
      * requirement, forwarding the parameters to the constructor.
      */
-    static SP shared(const boost::optional<_Val>& minVal, const boost::optional<_Val>& maxVal)
+    static Sp shared(const boost::optional<_tVal>& minVal, const boost::optional<_tVal>& maxVal)
     {
         return std::make_shared<JsonIntValInRangeReq>(minVal, maxVal);
     }
@@ -131,7 +131,7 @@ public:
      * Returns a shared pointer to JSON integer value in range
      * requirement, forwarding the parameter to the constructor.
      */
-    static SP shared(const _Val exactVal)
+    static Sp shared(const _tVal exactVal)
     {
         return std::make_shared<JsonIntValInRangeReq>(exactVal);
     }
@@ -160,21 +160,21 @@ protected:
 
 private:
     // minimum raw value
-    _Val _minVal;
+    _tVal _minVal;
 
     // maximum raw value
-    _Val _maxVal;
+    _tVal _maxVal;
 };
 
 /*
  * JSON unsigned integer value in range requirement.
  */
-using JsonUIntValInRangeReq = JsonIntValInRangeReq<JsonUIntVal, JsonVal::Kind::UINT>;
+using JsonUIntValInRangeReq = JsonIntValInRangeReq<JsonUIntVal, JsonVal::Kind::UInt>;
 
 /*
  * JSON signed integer value in range requirement.
  */
-using JsonSIntValInRangeReq = JsonIntValInRangeReq<JsonSIntVal, JsonVal::Kind::SINT>;
+using JsonSIntValInRangeReq = JsonIntValInRangeReq<JsonSIntVal, JsonVal::Kind::SInt>;
 
 template <typename ValT>
 void writeRawVal(std::ostringstream& ss, const ValT& val)
@@ -209,11 +209,11 @@ class JsonScalarValInSetReq :
 {
 private:
     // raw value type
-    using _Val = typename JsonValT::Val;
+    using _tVal = typename JsonValT::Val;
 
 public:
     // raw value set type
-    using Set = std::set<_Val>;
+    using Set = std::set<_tVal>;
 
 public:
     /*
@@ -231,7 +231,7 @@ public:
      * Builds a JSON scalar value set requirement: _validate() validates
      * that the raw value of the JSON scalar value is exactly `val`.
      */
-    explicit JsonScalarValInSetReq(_Val val) :
+    explicit JsonScalarValInSetReq(_tVal val) :
         JsonScalarValInSetReq {Set {std::move(val)}}
     {
     }
@@ -240,7 +240,7 @@ public:
      * Returns a shared pointer to JSON scalar value in set requirement,
      * forwarding the parameter to the constructor.
      */
-    static SP shared(Set set)
+    static Sp shared(Set set)
     {
         return std::make_shared<JsonScalarValInSetReq>(std::move(set));
     }
@@ -249,7 +249,7 @@ public:
      * Returns a shared pointer to JSON scalar value in set requirement,
      * forwarding the parameter to the constructor.
      */
-    static SP shared(_Val val)
+    static Sp shared(_tVal val)
     {
         return std::make_shared<JsonScalarValInSetReq>(std::move(val));
     }
@@ -310,22 +310,22 @@ private:
 /*
  * JSON boolean value in set requirement template.
  */
-using JsonBoolValInSetReq = JsonScalarValInSetReq<JsonBoolVal, JsonVal::Kind::BOOL>;
+using JsonBoolValInSetReq = JsonScalarValInSetReq<JsonBoolVal, JsonVal::Kind::Bool>;
 
 /*
  * JSON unsigned integer value in set requirement template.
  */
-using JsonUIntValInSetReq = JsonScalarValInSetReq<JsonUIntVal, JsonVal::Kind::UINT>;
+using JsonUIntValInSetReq = JsonScalarValInSetReq<JsonUIntVal, JsonVal::Kind::UInt>;
 
 /*
  * JSON signed integer value in set requirement template.
  */
-using JsonSIntValInSetReq = JsonScalarValInSetReq<JsonSIntVal, JsonVal::Kind::SINT>;
+using JsonSIntValInSetReq = JsonScalarValInSetReq<JsonSIntVal, JsonVal::Kind::SInt>;
 
 /*
  * JSON string value in set requirement template.
  */
-using JsonStrValInSetReq = JsonScalarValInSetReq<JsonStrVal, JsonVal::Kind::STR>;
+using JsonStrValInSetReq = JsonScalarValInSetReq<JsonStrVal, JsonVal::Kind::Str>;
 
 /*
  * JSON unsigned integer value is alignment requirement.
@@ -352,7 +352,7 @@ public:
      * Returns a shared pointer to JSON unsigned integer value alignment
      * requirement.
      */
-    static SP shared();
+    static Sp shared();
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -390,14 +390,14 @@ public:
      * expression requirement, forwarding the parameter to the
      * constructor.
      */
-    static SP shared(std::regex regex);
+    static Sp shared(std::regex regex);
 
     /*
      * Returns a shared pointer to JSON string value matches regular
      * expression requirement, forwarding the parameter to the
      * constructor.
      */
-    static SP shared(const char *regex);
+    static Sp shared(const char *regex);
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -434,7 +434,7 @@ public:
      */
     explicit JsonArrayValReq(const boost::optional<Size>& minSize,
                              const boost::optional<Size>& maxSize,
-                             JsonValReq::SP elemValReq = nullptr);
+                             JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Builds a JSON array value requirement: _validate() validates
@@ -445,33 +445,33 @@ public:
      * * If `elemValReq` is not `nullptr`: all the elements of V satisfy
      *   `*elemValReq`.
      */
-    explicit JsonArrayValReq(Size exactSize, JsonValReq::SP elemValReq = nullptr);
+    explicit JsonArrayValReq(Size exactSize, JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Builds a JSON array value requirement: _validate() validates
      * that, if `elemValReq` is not `nullptr`, all the elements of a
      * given JSON array value satisfy `*elemValReq`.
      */
-    explicit JsonArrayValReq(JsonValReq::SP elemValReq = nullptr);
+    explicit JsonArrayValReq(JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameters to the constructor.
      */
-    static SP shared(const boost::optional<Size>& minSize, const boost::optional<Size>& maxSize,
-                     JsonValReq::SP elemValReq = nullptr);
+    static Sp shared(const boost::optional<Size>& minSize, const boost::optional<Size>& maxSize,
+                     JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameters to the constructor.
      */
-    static SP shared(Size exactSize, JsonValReq::SP elemValReq = nullptr);
+    static Sp shared(Size exactSize, JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameter to the constructor.
      */
-    static SP shared(JsonValReq::SP elemValReq = nullptr);
+    static Sp shared(JsonValReq::Sp elemValReq = nullptr);
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -479,7 +479,7 @@ protected:
 private:
     Size _minSize;
     Size _maxSize;
-    JsonValReq::SP _elemValReq;
+    JsonValReq::Sp _elemValReq;
 };
 
 /*
@@ -501,7 +501,7 @@ public:
      *
      * Not `explicit` to make building `JsonObjValReq` lighter.
      */
-    JsonObjValPropReq(JsonValReq::SP valReq = nullptr, bool isRequired = false);
+    JsonObjValPropReq(JsonValReq::Sp valReq = nullptr, bool isRequired = false);
 
     // default copy/move operations
     JsonObjValPropReq(const JsonObjValPropReq&) = default;
@@ -527,7 +527,7 @@ private:
     bool _isRequired = false;
 
     // requirement of the JSON value
-    JsonValReq::SP _valReq;
+    JsonValReq::Sp _valReq;
 };
 
 /*
@@ -571,7 +571,7 @@ public:
      * Returns a shared pointer to JSON object value requirement,
      * forwarding the parameters to the constructor.
      */
-    static SP shared(PropReqs propReqs, bool allowUnknownProps = false);
+    static Sp shared(PropReqs propReqs, bool allowUnknownProps = false);
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -584,4 +584,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP
+#endif // YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP

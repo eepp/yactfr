@@ -20,14 +20,14 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
     ++nextPos;
 
     switch (pseudoDt.kind()) {
-    case PseudoDt::Kind::SL_ARRAY:
-    case PseudoDt::Kind::DL_ARRAY:
+    case PseudoDt::Kind::SlArray:
+    case PseudoDt::Kind::DlArray:
     {
         setPseudoDtPosInScope(static_cast<PseudoArrayType&>(pseudoDt).pseudoElemType(), nextPos);
         break;
     }
 
-    case PseudoDt::Kind::STRUCT:
+    case PseudoDt::Kind::Struct:
     {
         auto& pseudoStructType = static_cast<PseudoStructType&>(pseudoDt);
 
@@ -38,8 +38,8 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
         break;
     }
 
-    case PseudoDt::Kind::VAR:
-    case PseudoDt::Kind::VAR_WITH_INT_RANGES:
+    case PseudoDt::Kind::Var:
+    case PseudoDt::Kind::VarWithIntRanges:
     {
         auto& pseudoVarType = static_cast<PseudoVarType&>(pseudoDt);
         Index maxNextPos = 0;
@@ -55,8 +55,8 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
         break;
     }
 
-    case PseudoDt::Kind::OPT_WITH_BOOL_SEL:
-    case PseudoDt::Kind::OPT_WITH_INT_SEL:
+    case PseudoDt::Kind::OptWithBoolSel:
+    case PseudoDt::Kind::OptWithIntSel:
     {
         auto& pseudoOptType = static_cast<PseudoOptType&>(pseudoDt);
 

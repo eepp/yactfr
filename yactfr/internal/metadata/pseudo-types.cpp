@@ -37,7 +37,7 @@ PseudoDataLoc::PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems 
     _pathElems {std::move(pathElems)},
     _loc {std::move(loc)}
 {
-    assert(_scope || _kind != Kind::ABS);
+    assert(_scope || _kind != Kind::Abs);
 }
 
 PseudoDt::PseudoDt(TextLocation loc) :
@@ -65,7 +65,7 @@ bool PseudoDt::isFlUInt() const noexcept
     return false;
 }
 
-PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt,
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::Up dt,
                                              boost::optional<StringEncoding> encoding,
                                              TextLocation loc) :
     PseudoDt {std::move(loc)},
@@ -74,12 +74,12 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt,
 {
 }
 
-PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc) :
+PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::Up dt, TextLocation loc) :
     PseudoScalarDtWrapper {std::move(dt), boost::none, std::move(loc)}
 {
 }
 
-PseudoDt::UP PseudoScalarDtWrapper::clone() const
+PseudoDt::Up PseudoScalarDtWrapper::clone() const
 {
     return std::make_unique<PseudoScalarDtWrapper>(_dt->clone(), _encoding, this->loc());
 }
@@ -114,7 +114,7 @@ bool PseudoScalarDtWrapper::isFlUInt() const noexcept
     return _dt->isFixedLengthUnsignedIntegerType();
 }
 
-WithAttrsMixin::WithAttrsMixin(MapItem::UP attrs) :
+WithAttrsMixin::WithAttrsMixin(MapItem::Up attrs) :
     _attrs {std::move(attrs)}
 {
 }
@@ -124,7 +124,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
                                    const DisplayBase prefDispBase,
                                    FixedLengthUnsignedIntegerType::Mappings mappings,
                                    boost::optional<StringEncoding> encoding,
-                                   boost::optional<std::string> mappedClkTypeId, MapItem::UP attrs,
+                                   boost::optional<std::string> mappedClkTypeId, MapItem::Up attrs,
                                    UnsignedIntegerTypeRoleSet roles, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
@@ -140,7 +140,7 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
 {
 }
 
-PseudoDt::UP PseudoFlUIntType::clone() const
+PseudoDt::Up PseudoFlUIntType::clone() const
 {
     return std::make_unique<PseudoFlUIntType>(_align, _len, _bo, _bio, _prefDispBase, _mappings,
                                               _encoding, _mappedClkTypeId,
@@ -183,8 +183,8 @@ PseudoDlDtMixin::PseudoDlDtMixin(PseudoDataLoc pseudoLenLoc) :
 {
 }
 
-PseudoArrayType::PseudoArrayType(const unsigned int minAlign, PseudoDt::UP pseudoElemType,
-                                 MapItem::UP attrs, TextLocation loc) :
+PseudoArrayType::PseudoArrayType(const unsigned int minAlign, PseudoDt::Up pseudoElemType,
+                                 MapItem::Up attrs, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _minAlign {minAlign},
@@ -193,21 +193,21 @@ PseudoArrayType::PseudoArrayType(const unsigned int minAlign, PseudoDt::UP pseud
 }
 
 PseudoSlArrayType::PseudoSlArrayType(const unsigned int minAlign, const Size len,
-                                     PseudoDt::UP pseudoElemType, MapItem::UP attrs,
+                                     PseudoDt::Up pseudoElemType, MapItem::Up attrs,
                                      TextLocation loc) :
     PseudoArrayType {minAlign, std::move(pseudoElemType), std::move(attrs), std::move(loc)},
     PseudoSlDtMixin {len}
 {
 }
 
-PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::UP pseudoElemType,
-                                     MapItem::UP attrs, TextLocation loc) :
+PseudoSlArrayType::PseudoSlArrayType(const Size len, PseudoDt::Up pseudoElemType,
+                                     MapItem::Up attrs, TextLocation loc) :
     PseudoSlArrayType {1, len, std::move(pseudoElemType), std::move(attrs), std::move(loc)}
 
 {
 }
 
-PseudoDt::UP PseudoSlArrayType::clone() const
+PseudoDt::Up PseudoSlArrayType::clone() const
 {
     auto pseudoDt = std::make_unique<PseudoSlArrayType>(this->minAlign(), _len,
                                                         this->pseudoElemType().clone(),
@@ -237,22 +237,22 @@ void PseudoSlArrayType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoDlArrayType::PseudoDlArrayType(const unsigned int minAlign, PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                                     MapItem::UP attrs, TextLocation loc) :
+PseudoDlArrayType::PseudoDlArrayType(const unsigned int minAlign, PseudoDataLoc pseudoLenLoc, PseudoDt::Up pseudoElemType,
+                                     MapItem::Up attrs, TextLocation loc) :
     PseudoArrayType {minAlign, std::move(pseudoElemType), std::move(attrs), std::move(loc)},
     PseudoDlDtMixin {std::move(pseudoLenLoc)}
 {
 }
 
-PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                                     MapItem::UP attrs, TextLocation loc) :
+PseudoDlArrayType::PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::Up pseudoElemType,
+                                     MapItem::Up attrs, TextLocation loc) :
     PseudoDlArrayType {
         1, std::move(pseudoLenLoc), std::move(pseudoElemType), std::move(attrs), std::move(loc)
     }
 {
 }
 
-PseudoDt::UP PseudoDlArrayType::clone() const
+PseudoDt::Up PseudoDlArrayType::clone() const
 {
     return std::make_unique<PseudoDlArrayType>(this->minAlign(), _pseudoLenLoc,
                                                this->pseudoElemType().clone(),
@@ -274,7 +274,7 @@ void PseudoDlArrayType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::UP attrs,
+PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::Up attrs,
                                TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
@@ -283,14 +283,14 @@ PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::
 }
 
 PseudoDlBlobType::PseudoDlBlobType(PseudoDataLoc pseudoLenLoc,
-                                   boost::optional<std::string> mediaType, MapItem::UP attrs,
+                                   boost::optional<std::string> mediaType, MapItem::Up attrs,
                                    TextLocation loc) :
     PseudoBlobType {std::move(mediaType), std::move(attrs), std::move(loc)},
     PseudoDlDtMixin {std::move(pseudoLenLoc)}
 {
 }
 
-PseudoDt::UP PseudoDlBlobType::clone() const
+PseudoDt::Up PseudoDlBlobType::clone() const
 {
     return std::make_unique<PseudoDlBlobType>(_pseudoLenLoc, this->mediaType(),
                                               tryCloneAttrs(this->attrs()), this->loc());
@@ -306,8 +306,8 @@ void PseudoDlBlobType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::UP pseudoDt,
-                             MapItem::UP attrs) :
+PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::Up pseudoDt,
+                             MapItem::Up attrs) :
     WithAttrsMixin {std::move(attrs)},
     _name {std::move(name)},
     _pseudoDt {std::move(pseudoDt)}
@@ -315,7 +315,7 @@ PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::UP pse
 }
 
 PseudoStructType::PseudoStructType(const unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                                   MapItem::UP attrs, TextLocation loc) :
+                                   MapItem::Up attrs, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _minAlign {minAlign},
@@ -323,7 +323,7 @@ PseudoStructType::PseudoStructType(const unsigned int minAlign, PseudoNamedDts&&
 {
 }
 
-PseudoDt::UP PseudoStructType::clone() const
+PseudoDt::Up PseudoStructType::clone() const
 {
     PseudoNamedDts newPseudoMembers;
 
@@ -379,7 +379,7 @@ const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const
 }
 
 PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
-                             PseudoNamedDts&& pseudoOpts, MapItem::UP attrs, TextLocation loc) :
+                             PseudoNamedDts&& pseudoOpts, MapItem::Up attrs, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _pseudoOpts {std::move(pseudoOpts)},
@@ -402,7 +402,7 @@ PseudoNamedDts PseudoVarType::_clonePseudoOpts() const
     return newPseudoOpts;
 }
 
-PseudoDt::UP PseudoVarType::clone() const
+PseudoDt::Up PseudoVarType::clone() const
 {
    return std::make_unique<PseudoVarType>(_pseudoSelLoc, this->_clonePseudoOpts(),
                                           tryCloneAttrs(this->attrs()), this->loc());
@@ -432,7 +432,7 @@ void PseudoVarType::accept(ConstPseudoDtVisitor& visitor) const
 PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                                                        PseudoNamedDts&& pseudoOpts,
                                                        RangeSets&& rangeSets,
-                                                       MapItem::UP attrs, TextLocation loc) :
+                                                       MapItem::Up attrs, TextLocation loc) :
     PseudoVarType {
         std::move(pseudoSelLoc), std::move(pseudoOpts), std::move(attrs), std::move(loc)
     },
@@ -441,7 +441,7 @@ PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(boost::optional<PseudoDat
     assert(this->pseudoOpts().size() == _rangeSets.size());
 }
 
-PseudoDt::UP PseudoVarWithIntRangesType::clone() const
+PseudoDt::Up PseudoVarWithIntRangesType::clone() const
 {
     return std::make_unique<PseudoVarWithIntRangesType>(this->pseudoSelLoc(),
                                                         this->_clonePseudoOpts(),
@@ -460,8 +460,8 @@ void PseudoVarWithIntRangesType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoOptType::PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
-                             MapItem::UP attrs, TextLocation&& loc) :
+PseudoOptType::PseudoOptType(PseudoDt::Up pseudoDt, PseudoDataLoc&& pseudoSelLoc,
+                             MapItem::Up attrs, TextLocation&& loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _pseudoDt {std::move(pseudoDt)},
@@ -474,9 +474,9 @@ bool PseudoOptType::isEmpty() const
     return _pseudoDt->isEmpty();
 }
 
-PseudoOptWithBoolSelType::PseudoOptWithBoolSelType(PseudoDt::UP pseudoDt,
+PseudoOptWithBoolSelType::PseudoOptWithBoolSelType(PseudoDt::Up pseudoDt,
                                                    PseudoDataLoc pseudoSelLoc,
-                                                   MapItem::UP attrs, TextLocation loc) :
+                                                   MapItem::Up attrs, TextLocation loc) :
     PseudoOptType {
         std::move(pseudoDt), std::move(pseudoSelLoc),
         std::move(attrs), std::move(loc)
@@ -484,7 +484,7 @@ PseudoOptWithBoolSelType::PseudoOptWithBoolSelType(PseudoDt::UP pseudoDt,
 {
 }
 
-PseudoDt::UP PseudoOptWithBoolSelType::clone() const
+PseudoDt::Up PseudoOptWithBoolSelType::clone() const
 {
     return std::make_unique<PseudoOptWithBoolSelType>(this->pseudoDt().clone(),
                                                       this->pseudoSelLoc(),
@@ -502,8 +502,8 @@ void PseudoOptWithBoolSelType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoOptWithIntSelType::PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
-                                                 RangeSet&& selRanges, MapItem::UP attrs,
+PseudoOptWithIntSelType::PseudoOptWithIntSelType(PseudoDt::Up pseudoDt, PseudoDataLoc pseudoSelLoc,
+                                                 RangeSet&& selRanges, MapItem::Up attrs,
                                                  TextLocation loc) :
     PseudoOptType {
         std::move(pseudoDt), std::move(pseudoSelLoc),
@@ -513,7 +513,7 @@ PseudoOptWithIntSelType::PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDa
 {
 }
 
-PseudoDt::UP PseudoOptWithIntSelType::clone() const
+PseudoDt::Up PseudoOptWithIntSelType::clone() const
 {
     return std::make_unique<PseudoOptWithIntSelType>(this->pseudoDt().clone(),
                                                      this->pseudoSelLoc(), RangeSet {_selRanges},
@@ -534,8 +534,8 @@ void PseudoOptWithIntSelType::accept(ConstPseudoDtVisitor& visitor) const
 PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, boost::optional<std::string> uid,
                      boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
-                     PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType,
-                     MapItem::UP attrs) :
+                     PseudoDt::Up pseudoSpecCtxType, PseudoDt::Up pseudoPayloadType,
+                     MapItem::Up attrs) :
     WithAttrsMixin {std::move(attrs)},
     _id {id},
     _ns {std::move(ns)},
@@ -580,7 +580,7 @@ namespace {
 
 bool isFlUIntNotDtWrapper(const PseudoDt& pseudoDt) noexcept
 {
-    return pseudoDt.kind() == PseudoDt::Kind::FL_UINT;
+    return pseudoDt.kind() == PseudoDt::Kind::FlUInt;
 }
 
 auto validateNoMappedClkTypeId(const PseudoDt& basePseudoDt)
@@ -662,7 +662,7 @@ namespace {
 auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudoDt)
 {
     return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
-        return pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
+        return pseudoDt.kind() == PseudoDt::Kind::SlArray &&
             static_cast<const PseudoSlArrayType&>(pseudoDt).hasMetadataStreamUuidRole();
     });
 }
@@ -673,7 +673,7 @@ auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt, const UnsignedInteg
         if (isFlUIntNotDtWrapper(pseudoIntType)) {
             return static_cast<const PseudoFlUIntType&>(pseudoIntType).hasRole(role);
         } else {
-            assert(pseudoIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+            assert(pseudoIntType.kind() == PseudoDt::Kind::ScalarDtWrapper);
 
             auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoIntType).dt();
 
@@ -694,12 +694,12 @@ void validateNoMetadataStreamUuidRole(const PseudoDt * const pseudoDt)
     }
 
     const auto set = findPseudoDts(*pseudoDt, [](auto& pseudoDt, auto) {
-        if (pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
+        if (pseudoDt.kind() == PseudoDt::Kind::SlArray &&
                 static_cast<const PseudoSlArrayType&>(pseudoDt).hasMetadataStreamUuidRole()) {
             return true;
         }
 
-        if (pseudoDt.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
+        if (pseudoDt.kind() == PseudoDt::Kind::ScalarDtWrapper) {
             auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt();
 
             if (dt.isStaticLengthBlobType() && dt.asStaticLengthBlobType().hasMetadataStreamUuidRole()) {
@@ -737,7 +737,7 @@ void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
             if (isFlUIntNotDtWrapper(pseudoUIntType)) {
                 return static_cast<const PseudoFlUIntType&>(pseudoUIntType).roles();
             } else {
-                assert(pseudoUIntType.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+                assert(pseudoUIntType.kind() == PseudoDt::Kind::ScalarDtWrapper);
 
                 auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoUIntType).dt();
 
@@ -769,8 +769,8 @@ void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
 /*
  * Validates that, for any pseudo unsigned integer types T within
  * `*pseudoDt` (if `pseudoDt` is set), T has no
- * `UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP` or
- * `UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP` role.
+ * `UnsignedIntegerTypeRole::DefaultClockTimestamp` or
+ * `UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp` role.
  *
  * Throws `TextParseError` on error.
  */
@@ -782,9 +782,9 @@ void validatePseudoUIntTypeNoClkTsRole(const PseudoDt * const pseudoDt)
 
     // find _invalid_ pseudo unsigned integer types
     auto set = findPseudoUIntTypesByRole(*pseudoDt,
-                                         UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP);
+                                         UnsignedIntegerTypeRole::DefaultClockTimestamp);
     const auto otherSet = findPseudoUIntTypesByRole(*pseudoDt,
-                                                    UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP);
+                                                    UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp);
 
     std::copy(otherSet.begin(), otherSet.end(), std::inserter(set, set.end()));
 
@@ -841,9 +841,9 @@ PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
 
 PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, boost::optional<std::string> uid,
-                     PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
-                     PseudoDt::UP pseudoErCommonCtxType, const ClockType * const defClkType,
-                     MapItem::UP attrs) :
+                     PseudoDt::Up pseudoPktCtxType, PseudoDt::Up pseudoErHeaderType,
+                     PseudoDt::Up pseudoErCommonCtxType, const ClockType * const defClkType,
+                     MapItem::Up attrs) :
     WithAttrsMixin {std::move(attrs)},
     _id {id},
     _ns {std::move(ns)},
@@ -865,7 +865,7 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
              * record type ID" role.
              */
             const auto idPseudoDts = findPseudoUIntTypesByRole(*_pseudoErHeaderType,
-                                                               UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID);
+                                                               UnsignedIntegerTypeRole::EventRecordTypeId);
 
             /*
              * Without any pseudo unsigned integer type with an "event
@@ -882,8 +882,8 @@ void PseudoDst::_validateErHeaderType(const PseudoErtSet& pseudoErts) const
 
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoErHeaderType.get(), {
-                UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
-                UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID,
+                UnsignedIntegerTypeRole::DefaultClockTimestamp,
+                UnsignedIntegerTypeRole::EventRecordTypeId,
             });
 
             // no "metadata stream UUID" role
@@ -907,12 +907,12 @@ void PseudoDst::_validatePktCtxType() const
         try {
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoPktCtxType.get(), {
-                UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH,
-                UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH,
-                UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
-                UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP,
-                UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT,
-                UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER,
+                UnsignedIntegerTypeRole::PacketTotalLength,
+                UnsignedIntegerTypeRole::PacketContentLength,
+                UnsignedIntegerTypeRole::DefaultClockTimestamp,
+                UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp,
+                UnsignedIntegerTypeRole::DiscardedEventRecordCounterSnapshot,
+                UnsignedIntegerTypeRole::PacketSequenceNumber,
             });
 
             // no "metadata stream UUID" role
@@ -982,7 +982,7 @@ PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned
                                  boost::optional<std::string> ns,
                                  boost::optional<std::string> name,
                                  boost::optional<std::string> uid, TraceEnvironment env,
-                                 PseudoDt::UP pseudoPktHeaderType, MapItem::UP attrs) :
+                                 PseudoDt::Up pseudoPktHeaderType, MapItem::Up attrs) :
     WithAttrsMixin {std::move(attrs)},
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
@@ -1039,7 +1039,7 @@ Size flUIntTypeLen(const PseudoDt& pseudoDt) noexcept
     if (isFlUIntNotDtWrapper(pseudoDt)) {
         return static_cast<const PseudoFlUIntType&>(pseudoDt).len();
     } else {
-        assert(pseudoDt.kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER);
+        assert(pseudoDt.kind() == PseudoDt::Kind::ScalarDtWrapper);
 
         auto& dt = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt();
 
@@ -1110,7 +1110,7 @@ void PseudoTraceType::validate() const
              * magic number" role.
              */
             const auto pseudoMagicDts = findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
-                                                                    UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER);
+                                                                    UnsignedIntegerTypeRole::PacketMagicNumber);
 
             if (pseudoMagicDts.size() == 1) {
                 auto& firstPseudoDt = **pseudoMagicDts.begin();
@@ -1150,7 +1150,7 @@ void PseudoTraceType::validate() const
              */
             if (_pseudoDsts.size() > 1 &&
                     findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
-                                              UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID).empty()) {
+                                              UnsignedIntegerTypeRole::DataStreamTypeId).empty()) {
                 throwTextParseError("No structure member type with the "
                                     "\"data stream type ID\" role, "
                                     "but the trace type contains "
@@ -1163,9 +1163,9 @@ void PseudoTraceType::validate() const
 
             // validate unsigned integer type roles
             validatePseudoUIntTypeRoles(_pseudoPktHeaderType.get(), {
-                UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER,
-                UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID,
-                UnsignedIntegerTypeRole::DATA_STREAM_ID,
+                UnsignedIntegerTypeRole::PacketMagicNumber,
+                UnsignedIntegerTypeRole::DataStreamTypeId,
+                UnsignedIntegerTypeRole::DataStreamId,
             });
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the packet header type:",

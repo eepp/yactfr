@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_FROM_METADATA_TEXT_HPP
-#define _YACTFR_METADATA_FROM_METADATA_TEXT_HPP
+#ifndef YACTFR_METADATA_FROM_METADATA_TEXT_HPP
+#define YACTFR_METADATA_FROM_METADATA_TEXT_HPP
 
 #include <utility>
 #include <string>
@@ -27,7 +27,7 @@ Pair of:
 -# \link TraceType Trace type\endlink
 -# Optional metadata stream UUID
 */
-using FromMetadataTextReturn = std::pair<TraceType::UP, boost::optional<boost::uuids::uuid>>;
+using FromMetadataTextReturn = std::pair<TraceType::Up, boost::optional<boost::uuids::uuid>>;
 
 /*!
 @brief
@@ -132,4 +132,4 @@ inline FromMetadataTextReturn fromMetadataText(const std::string& text)
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_FROM_METADATA_TEXT_HPP
+#endif // YACTFR_METADATA_FROM_METADATA_TEXT_HPP

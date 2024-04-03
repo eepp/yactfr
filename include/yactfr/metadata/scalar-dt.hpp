@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_SCALAR_DT_HPP
-#define _YACTFR_METADATA_SCALAR_DT_HPP
+#ifndef YACTFR_METADATA_SCALAR_DT_HPP
+#define YACTFR_METADATA_SCALAR_DT_HPP
 
 #include "dt.hpp"
 
@@ -24,9 +24,9 @@ class ScalarDataType :
     public DataType
 {
 protected:
-    explicit ScalarDataType(_Kind kind, unsigned int align, MapItem::UP attrs);
+    explicit ScalarDataType(_tKind kind, unsigned int align, MapItem::Up attrs);
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_SCALAR_DT_HPP
+#endif // YACTFR_METADATA_SCALAR_DT_HPP

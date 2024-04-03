@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_SL_STR_TYPE_HPP
-#define _YACTFR_METADATA_SL_STR_TYPE_HPP
+#ifndef YACTFR_METADATA_SL_STR_TYPE_HPP
+#define YACTFR_METADATA_SL_STR_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -30,7 +30,7 @@ class StaticLengthStringType final :
 {
 public:
     /// Unique pointer to constant static-length string type.
-    using UP = std::unique_ptr<const StaticLengthStringType>;
+    using Up = std::unique_ptr<const StaticLengthStringType>;
 
 public:
     /*!
@@ -60,8 +60,8 @@ public:
         \p alignment is a power of two.
     */
     explicit StaticLengthStringType(unsigned int alignment, Size maximumLength,
-                                    StringEncoding encoding = StringEncoding::UTF_8,
-                                    MapItem::UP attributes = nullptr);
+                                    StringEncoding encoding = StringEncoding::Utf8,
+                                    MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -83,8 +83,8 @@ public:
         @endparblock
     */
     explicit StaticLengthStringType(Size maximumLength,
-                                    StringEncoding encoding = StringEncoding::UTF_8,
-                                    MapItem::UP attributes = nullptr);
+                                    StringEncoding encoding = StringEncoding::Utf8,
+                                    MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -102,9 +102,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -118,7 +118,7 @@ public:
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -133,4 +133,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_SL_STR_TYPE_HPP
+#endif // YACTFR_METADATA_SL_STR_TYPE_HPP

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
-#define _YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
+#ifndef YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
+#define YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
 
 #include <yactfr/metadata/struct-type.hpp>
 
@@ -23,7 +23,7 @@ namespace internal {
  * * If not `nullptr`: the pseudo data stream type `curPseudoDst`.
  * * The pseudo trace type `pseudoTraceType`.
  */
-StructureType::UP dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
+StructureType::Up dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
                                      const PseudoTraceType& pseudoTraceType,
                                      const PseudoDst *curPseudoDst = nullptr,
                                      const PseudoErt *curPseudoErt = nullptr);
@@ -31,4 +31,4 @@ StructureType::UP dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP
+#endif // YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP

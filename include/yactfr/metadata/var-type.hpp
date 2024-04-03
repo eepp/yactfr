@@ -1,12 +1,12 @@
-/*
+    /*
  * Copyright (C) 2015-2018 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_VAR_TYPE_HPP
-#define _YACTFR_METADATA_VAR_TYPE_HPP
+#ifndef YACTFR_METADATA_VAR_TYPE_HPP
+#define YACTFR_METADATA_VAR_TYPE_HPP
 
 #include <algorithm>
 #include <string>
@@ -41,8 +41,8 @@ class VariantType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit VariantType(_Kind kind, unsigned int minAlign, DataLocation&& selLoc,
-                         MapItem::UP attrs);
+    explicit VariantType(_tKind kind, unsigned int minAlign, DataLocation&& selLoc,
+                         MapItem::Up attrs);
 
 public:
     /*!
@@ -105,9 +105,9 @@ public:
     using Options = std::vector<std::unique_ptr<const Option>>;
 
 protected:
-    explicit VariantWithIntegerSelectorType(const _Kind kind, const unsigned int minAlign,
+    explicit VariantWithIntegerSelectorType(const _tKind kind, const unsigned int minAlign,
                                             Options&& opts, DataLocation&& selLoc,
-                                            MapItem::UP attrs) :
+                                            MapItem::Up attrs) :
         VariantType {kind, minAlign, std::move(selLoc), std::move(attrs)},
         _opts {std::move(opts)}
     {
@@ -243,7 +243,7 @@ public:
         Unique pointer to constant type of data stream variants
         with an unsigned integer selector.
     */
-    using UP = std::unique_ptr<const VariantWithUnsignedIntegerSelectorType>;
+    using Up = std::unique_ptr<const VariantWithUnsignedIntegerSelectorType>;
 
 public:
     /*!
@@ -281,7 +281,7 @@ public:
     explicit VariantWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
                                                     Options&& options,
                                                     DataLocation selectorLocation,
-                                                    MapItem::UP attributes);
+                                                    MapItem::Up attributes);
 
     /*!
     @brief
@@ -310,7 +310,7 @@ public:
     */
     explicit VariantWithUnsignedIntegerSelectorType(Options&& options,
                                                     DataLocation selectorLocation,
-                                                    MapItem::UP attributes);
+                                                    MapItem::Up attributes);
 
     /*!
     @brief
@@ -330,13 +330,13 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -359,7 +359,7 @@ public:
         Unique pointer to constant type of data stream variants
         with a signed integer selector.
     */
-    using UP = std::unique_ptr<const VariantWithSignedIntegerSelectorType>;
+    using Up = std::unique_ptr<const VariantWithSignedIntegerSelectorType>;
 
 public:
     /*!
@@ -396,7 +396,7 @@ public:
     */
     explicit VariantWithSignedIntegerSelectorType(unsigned int minimumAlignment, Options&& options,
                                                   DataLocation selectorLocation,
-                                                  MapItem::UP attributes);
+                                                  MapItem::Up attributes);
 
     /*!
     @brief
@@ -424,7 +424,7 @@ public:
         ranges between them.
     */
     explicit VariantWithSignedIntegerSelectorType(Options&& options, DataLocation selectorLocation,
-                                                  MapItem::UP attributes);
+                                                  MapItem::Up attributes);
 
     /*!
     @brief
@@ -444,13 +444,13 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -460,4 +460,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_VAR_TYPE_HPP
+#endif // YACTFR_METADATA_VAR_TYPE_HPP

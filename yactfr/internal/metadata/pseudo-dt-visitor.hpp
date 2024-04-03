@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP
-#define _YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP
+#ifndef YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP
+#define YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP
 
 #include "pseudo-types.hpp"
 
@@ -118,4 +118,4 @@ public:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP
+#endif // YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP

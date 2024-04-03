@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_TESTS_MEM_DATA_SRC_FACTORY_HPP
-#define _YACTFR_TESTS_MEM_DATA_SRC_FACTORY_HPP
+#ifndef YACTFR_TESTS_MEM_DATA_SRC_FACTORY_HPP
+#define YACTFR_TESTS_MEM_DATA_SRC_FACTORY_HPP
 
 #include <cstdint>
 #include <cstdlib>
@@ -65,9 +65,9 @@ public:
     }
 
 private:
-    yactfr::DataSource::UP _createDataSource() override
+    yactfr::DataSource::Up _createDataSource() override
     {
-        return yactfr::DataSource::UP {
+        return yactfr::DataSource::Up {
             new MemDataSrc {_addr, _size, _maxDataBlkSize}
         };
     }
@@ -78,4 +78,4 @@ private:
     const std::size_t _maxDataBlkSize;
 };
 
-#endif // _YACTFR_TESTS_MEM_DATA_SRC_FACTORY_HPP
+#endif // YACTFR_TESTS_MEM_DATA_SRC_FACTORY_HPP

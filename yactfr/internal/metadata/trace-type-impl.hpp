@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP
-#define _YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP
+#ifndef YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP
+#define YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP
 
 #include <unordered_map>
 #include <unordered_set>
@@ -31,8 +31,8 @@ public:
     explicit TraceTypeImpl(unsigned int majorVersion, unsigned int minorVersion,
                            boost::optional<std::string>&& ns, boost::optional<std::string>&& name,
                            boost::optional<std::string>&& uid, TraceEnvironment&& env,
-                           StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                           DataStreamTypeSet&& dsts, MapItem::UP attrs,
+                           StructureType::Up pktHeaderType, ClockTypeSet&& clkTypes,
+                           DataStreamTypeSet&& dsts, MapItem::Up attrs,
                            const TraceType& traceType);
 
     unsigned int majorVersion() const noexcept
@@ -125,7 +125,7 @@ public:
     }
 
 private:
-    struct _StackFrame final
+    struct _tStackFrame final
     {
         const DataType *parentType;
         Index curChildIndex;
@@ -144,11 +144,11 @@ private:
     const boost::optional<std::string> _name;
     const boost::optional<std::string> _uid;
     const TraceEnvironment _env;
-    const StructureType::UP _pktHeaderType;
+    const StructureType::Up _pktHeaderType;
     const ClockTypeSet _clkTypes;
     const DataStreamTypeSet _dsts;
     std::unordered_map<TypeId, const DataStreamType *> _idsToDsts;
-    const MapItem::UP _attrs;
+    const MapItem::Up _attrs;
     const TraceType *_traceType;
 
     // packet procedure cache; created the first time we need it
@@ -158,4 +158,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP
+#endif // YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP

@@ -34,7 +34,7 @@ boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
     return uuid;
 }
 
-MapItem::UP attrsOfObj(const JsonObjVal& jsonObjVal)
+MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal)
 {
     const auto jsonAttrsVal = jsonObjVal[strs::attrs];
 
@@ -42,7 +42,7 @@ MapItem::UP attrsOfObj(const JsonObjVal& jsonObjVal)
         return createItem(MapItem::Container {});
     }
 
-    return MapItem::UP {static_cast<const MapItem *>(itemFromJsonVal(*jsonAttrsVal).release())};
+    return MapItem::Up {static_cast<const MapItem *>(itemFromJsonVal(*jsonAttrsVal).release())};
 }
 
 } // namespace internal

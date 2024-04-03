@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_FL_BIT_MAP_TYPE_HPP
-#define _YACTFR_METADATA_FL_BIT_MAP_TYPE_HPP
+#ifndef YACTFR_METADATA_FL_BIT_MAP_TYPE_HPP
+#define YACTFR_METADATA_FL_BIT_MAP_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -36,7 +36,7 @@ class FixedLengthBitMapType final :
 {
 public:
     /// Unique pointer to constant fixed-length boolean type.
-    using UP = std::unique_ptr<const FixedLengthBitMapType>;
+    using Up = std::unique_ptr<const FixedLengthBitMapType>;
 
     /// Type of a bit range set within a mapping.
     using FlagRangeSet = IntegerRangeSet<Index>;
@@ -45,10 +45,10 @@ public:
     using Flags = std::map<std::string, FlagRangeSet>;
 
 private:
-    class _FlagMask final
+    class _tFlagMask final
     {
     public:
-        explicit _FlagMask(const std::string& name, const FlagRangeSet& bitRanges);
+        explicit _tFlagMask(const std::string& name, const FlagRangeSet& bitRanges);
 
         const std::string& name() const noexcept
         {
@@ -95,11 +95,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] attributes
@@ -125,7 +125,7 @@ public:
     explicit FixedLengthBitMapType(unsigned int alignment, unsigned int length,
                                    ByteOrder byteOrder, Flags flags,
                                    const boost::optional<BitOrder>& bitOrder = boost::none,
-                                   MapItem::UP attributes = nullptr);
+                                   MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -149,11 +149,11 @@ public:
         on \p byteOrder:
 
         <dl>
-          <dt>ByteOrder::BIG
-          <dd>BitOrder::LAST_TO_FIRST
+          <dt>ByteOrder::Big
+          <dd>BitOrder::LastToFirst
 
-          <dt>ByteOrder::LITTLE
-          <dd>BitOrder::FIRST_TO_LAST
+          <dt>ByteOrder::Little
+          <dd>BitOrder::FirstToLast
         </dl>
         @endparblock
     @param[in] attributes
@@ -174,7 +174,7 @@ public:
     */
     explicit FixedLengthBitMapType(unsigned int length, ByteOrder byteOrder, Flags flags,
                                    const boost::optional<BitOrder>& bitOrder = boost::none,
-                                   MapItem::UP attributes = nullptr);
+                                   MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -192,9 +192,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /// Flags.
@@ -265,8 +265,8 @@ public:
                                                 std::unordered_set<const std::string *>& names) const;
 
 private:
-    DataType::UP _clone() const override;
-    static std::vector<_FlagMask> _flagMasksFromFlags(const Flags& flags);
+    DataType::Up _clone() const override;
+    static std::vector<_tFlagMask> _flagMasksFromFlags(const Flags& flags);
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -275,9 +275,9 @@ private:
 
 private:
     Flags _flags;
-    std::vector<_FlagMask> _flagMasks;
+    std::vector<_tFlagMask> _flagMasks;
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_FL_BIT_MAP_TYPE_HPP
+#endif // YACTFR_METADATA_FL_BIT_MAP_TYPE_HPP

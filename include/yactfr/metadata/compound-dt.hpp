@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_COMPOUND_DT_HPP
-#define _YACTFR_METADATA_COMPOUND_DT_HPP
+#ifndef YACTFR_METADATA_COMPOUND_DT_HPP
+#define YACTFR_METADATA_COMPOUND_DT_HPP
 
 #include "dt.hpp"
 
@@ -24,8 +24,8 @@ class CompoundDataType :
     public DataType
 {
 protected:
-    explicit CompoundDataType(_Kind kind, unsigned int minAlign, unsigned int align,
-                              MapItem::UP attrs);
+    explicit CompoundDataType(_tKind kind, unsigned int minAlign, unsigned int align,
+                              MapItem::Up attrs);
 
 public:
     /*!
@@ -47,5 +47,5 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_COMPOUND_DT_HPP
+#endif // YACTFR_METADATA_COMPOUND_DT_HPP
 

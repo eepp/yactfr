@@ -41,7 +41,7 @@ public:
 
     void onArrayBegin(const TextLocation&)
     {
-        _stack.push_back(_StackFrame {_State::IN_ARRAY});
+        _stack.push_back(_tStackFrame {_tState::InArray});
     }
 
     void onArrayEnd(const TextLocation& loc)
@@ -54,7 +54,7 @@ public:
 
     void onObjBegin(const TextLocation&)
     {
-        _stack.push_back(_StackFrame {_State::IN_OBJ});
+        _stack.push_back(_tStackFrame {_tState::InObj});
     }
 
     void onObjKey(const std::string& key, const TextLocation&)
@@ -70,33 +70,33 @@ public:
         this->_handleVal(loc, std::move(objValCont));
     }
 
-    JsonVal::UP releaseVal() noexcept
+    JsonVal::Up releaseVal() noexcept
     {
         return std::move(_jsonVal);
     }
 
 private:
-    enum class _State
+    enum class _tState
     {
-        IN_ARRAY,
-        IN_OBJ,
+        InArray,
+        InObj,
     };
 
-    struct _StackFrame
+    struct _tStackFrame
     {
-        explicit _StackFrame(const _State stateParam) :
+        explicit _tStackFrame(const _tState stateParam) :
             state {stateParam}
         {
         }
 
-        _State state;
+        _tState state;
         JsonArrayVal::Container arrayValCont;
         JsonObjVal::Container objValCont;
         std::string lastObjKey;
     };
 
 private:
-    _StackFrame& _stackTop() noexcept
+    _tStackFrame& _stackTop() noexcept
     {
         return _stack.back();
     }
@@ -114,11 +114,11 @@ private:
         }
 
         switch (_stack.back().state) {
-        case _State::IN_ARRAY:
+        case _tState::InArray:
             this->_stackTop().arrayValCont.push_back(std::move(jsonVal));
             break;
 
-        case _State::IN_OBJ:
+        case _tState::InObj:
              // safe to move `lastObjKey`: only used once
             this->_stackTop().objValCont.insert(std::make_pair(std::move(this->_stackTop().lastObjKey),
                                                                std::move(jsonVal)));
@@ -131,11 +131,11 @@ private:
 
 private:
     Size _baseOffset;
-    std::vector<_StackFrame> _stack;
-    JsonVal::UP _jsonVal;
+    std::vector<_tStackFrame> _stack;
+    JsonVal::Up _jsonVal;
 };
 
-JsonVal::UP parseJson(const char * const begin, const char * const end, const Size baseOffset)
+JsonVal::Up parseJson(const char * const begin, const char * const end, const Size baseOffset)
 {
     JsonValBuilder builder {baseOffset};
 

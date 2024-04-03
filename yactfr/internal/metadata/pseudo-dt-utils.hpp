@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
-#define _YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
+#ifndef YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
+#define YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
 
 #include "pseudo-types.hpp"
 #include "pseudo-dt-finder.hpp"
@@ -50,4 +50,4 @@ auto findPseudoUIntTypesByName(PseudoDtT& basePseudoDt, const std::string& membe
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
+#endif // YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP

@@ -25,8 +25,8 @@ TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int
                              boost::optional<std::string>&& ns,
                              boost::optional<std::string>&& name,
                              boost::optional<std::string>&& uid, TraceEnvironment&& env,
-                             StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                             DataStreamTypeSet&& dsts, MapItem::UP attrs,
+                             StructureType::Up pktHeaderType, ClockTypeSet&& clkTypes,
+                             DataStreamTypeSet&& dsts, MapItem::Up attrs,
                              const TraceType& traceType) :
     _majorVersion {majorVersion},
     _minorVersion {minorVersion},
@@ -233,31 +233,31 @@ private:
         const DataType *dt = nullptr;
 
         switch (loc.scope()) {
-        case Scope::PACKET_HEADER:
+        case Scope::PacketHeader:
             dt = _traceType->pktHeaderType();
             break;
 
-        case Scope::PACKET_CONTEXT:
+        case Scope::PacketContext:
             assert(_curDst);
             dt = _curDst->packetContextType();
             break;
 
-        case Scope::EVENT_RECORD_HEADER:
+        case Scope::EventRecordHeader:
             assert(_curDst);
             dt = _curDst->eventRecordHeaderType();
             break;
 
-        case Scope::EVENT_RECORD_COMMON_CONTEXT:
+        case Scope::EventRecordCommonContext:
             assert(_curDst);
             dt = _curDst->eventRecordCommonContextType();
             break;
 
-        case Scope::EVENT_RECORD_SPECIFIC_CONTEXT:
+        case Scope::EventRecordSpecificContext:
             assert(_curErt);
             dt = _curErt->specificContextType();
             break;
 
-        case Scope::EVENT_RECORD_PAYLOAD:
+        case Scope::EventRecordPayload:
             assert(_curErt);
             dt = _curErt->payloadType();
             break;

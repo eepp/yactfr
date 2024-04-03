@@ -14,19 +14,19 @@ namespace yactfr {
 
 StaticLengthStringType::StaticLengthStringType(const unsigned int align, const Size maxLen,
                                                const StringEncoding encoding,
-                                               MapItem::UP attrs) :
-    NonNullTerminatedStringType {_KIND_SL_STR, align, encoding, std::move(attrs)},
+                                               MapItem::Up attrs) :
+    NonNullTerminatedStringType {_kindSlStr, align, encoding, std::move(attrs)},
     _maxLen {maxLen}
 {
 }
 
 StaticLengthStringType::StaticLengthStringType(const Size maxLen, const StringEncoding encoding,
-                                               MapItem::UP attrs) :
+                                               MapItem::Up attrs) :
     StaticLengthStringType {8, maxLen, encoding, std::move(attrs)}
 {
 }
 
-DataType::UP StaticLengthStringType::_clone() const
+DataType::Up StaticLengthStringType::_clone() const
 {
     return StaticLengthStringType::create(this->alignment(), _maxLen, this->encoding(),
                                           internal::tryCloneAttrs(this->attributes()));

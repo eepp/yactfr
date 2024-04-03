@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_FWD_HPP
-#define _YACTFR_METADATA_FWD_HPP
+#ifndef YACTFR_METADATA_FWD_HPP
+#define YACTFR_METADATA_FWD_HPP
 
 #include "aliases.hpp"
 #include "scope.hpp"
@@ -61,4 +61,4 @@ class VariantWithUnsignedIntegerSelectorType;
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_FWD_HPP
+#endif // YACTFR_METADATA_FWD_HPP

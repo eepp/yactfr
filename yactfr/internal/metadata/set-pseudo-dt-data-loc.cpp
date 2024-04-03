@@ -64,26 +64,26 @@ public:
 
 private:
     /*
-     * An entry of `_MemberNames`.
+     * An entry of `_tMemberNames`.
      */
-    using _MemberNamesEntry = std::vector<const std::string *>;
+    using _tMemberNamesEntry = std::vector<const std::string *>;
 
     /*
-     * A vector of `_MemberNamesEntry`, used temporarily by _set() and
+     * A vector of `_tMemberNamesEntry`, used temporarily by _set() and
      * _dataLocFromPseudoDataLoc() to convert pseudo data locations to
      * yactfr data locations.
      */
-    using _MemberNames = std::vector<_MemberNamesEntry>;
+    using _tMemberNames = std::vector<_tMemberNamesEntry>;
 
     // return type of _getPathElemsSuffixRel*()
-    using _GetPathElemsSuffixRelRet = std::pair<DataLocation::PathElements,
-                                                _MemberNames::const_iterator>;
+    using _tGetPathElemsSuffixRelRet = std::pair<DataLocation::PathElements,
+                                                 _tMemberNames::const_iterator>;
 
 private:
-    _GetPathElemsSuffixRelRet _getPathElemsSuffixRel1(const PseudoDataLoc& pseudoDataLoc,
-                                                       _MemberNames::const_iterator searchEntryIt) const
+    _tGetPathElemsSuffixRelRet _getPathElemsSuffixRel1(const PseudoDataLoc& pseudoDataLoc,
+                                                       _tMemberNames::const_iterator searchEntryIt) const
     {
-        assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::REL_1);
+        assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel1);
 
         DataLocation::PathElements pathElemsSuffix;
 
@@ -116,10 +116,10 @@ private:
         return {pathElemsSuffix, searchEntryIt};
     }
 
-    _GetPathElemsSuffixRelRet _getPathElemsSuffixRel2(const PseudoDataLoc& pseudoDataLoc,
-                                                      _MemberNames::const_iterator searchEntryIt) const
+    _tGetPathElemsSuffixRelRet _getPathElemsSuffixRel2(const PseudoDataLoc& pseudoDataLoc,
+                                                       _tMemberNames::const_iterator searchEntryIt) const
     {
-        assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::REL_2);
+        assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel2);
 
         // normalize the path (remove any unnecessary "parent" item)
         PseudoDataLoc::PathElems normPathElems;
@@ -168,15 +168,15 @@ private:
     DataLocation _dataLocFromPseudoDataLoc(const PseudoDataLoc& pseudoDataLoc) const
     {
         /*
-         * The `PseudoDataLoc::Kind::ENV` is a temporary kind, which the
+         * The `PseudoDataLoc::Kind::Env` is a temporary kind, which the
          * TSDL parser uses, leading to a `PseudoSlArrayType` instance
          * in TsdlParser::_parseArraySubscripts().
          *
          * Therefore it mustn't exist at this point.
          */
-        assert(pseudoDataLoc.kind() != PseudoDataLoc::Kind::ENV);
+        assert(pseudoDataLoc.kind() != PseudoDataLoc::Kind::Env);
 
-        if (pseudoDataLoc.kind() == PseudoDataLoc::Kind::ABS) {
+        if (pseudoDataLoc.kind() == PseudoDataLoc::Kind::Abs) {
             // already absolute
             DataLocation::PathElements pathElems;
 
@@ -194,7 +194,7 @@ private:
         // relative data location path elements to append at the end
         DataLocation::PathElements pathElemsSuffix;
 
-        if (pseudoDataLoc.kind() == PseudoDataLoc::Kind::REL_1) {
+        if (pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel1) {
             std::tie(pathElemsSuffix, searchEntryIt) = this->_getPathElemsSuffixRel1(pseudoDataLoc,
                                                                                      searchEntryIt);
         } else {
@@ -226,7 +226,7 @@ private:
     void _set(PseudoDt& pseudoDt)
     {
         switch (pseudoDt.kind()) {
-        case PseudoDt::Kind::SL_ARRAY:
+        case PseudoDt::Kind::SlArray:
         {
             auto& pseudoArrayType = static_cast<PseudoSlArrayType&>(pseudoDt);
 
@@ -234,7 +234,7 @@ private:
             break;
         }
 
-        case PseudoDt::Kind::DL_ARRAY:
+        case PseudoDt::Kind::DlArray:
         {
             auto& pseudoArrayType = static_cast<PseudoDlArrayType&>(pseudoDt);
 
@@ -243,7 +243,7 @@ private:
             break;
         }
 
-        case PseudoDt::Kind::DL_BLOB:
+        case PseudoDt::Kind::DlBlob:
         {
             auto& pseudoBlobType = static_cast<PseudoDlBlobType&>(pseudoDt);
 
@@ -251,7 +251,7 @@ private:
             break;
         }
 
-        case PseudoDt::Kind::STRUCT:
+        case PseudoDt::Kind::Struct:
         {
             auto& pseudoStructType = static_cast<PseudoStructType&>(pseudoDt);
 
@@ -272,8 +272,8 @@ private:
             break;
         }
 
-        case PseudoDt::Kind::VAR:
-        case PseudoDt::Kind::VAR_WITH_INT_RANGES:
+        case PseudoDt::Kind::Var:
+        case PseudoDt::Kind::VarWithIntRanges:
         {
             auto& pseudoVarType = static_cast<PseudoVarType&>(pseudoDt);
 
@@ -287,8 +287,8 @@ private:
             break;
         }
 
-        case PseudoDt::Kind::OPT_WITH_BOOL_SEL:
-        case PseudoDt::Kind::OPT_WITH_INT_SEL:
+        case PseudoDt::Kind::OptWithBoolSel:
+        case PseudoDt::Kind::OptWithIntSel:
         {
             auto& pseudoOptType = static_cast<PseudoOptType&>(pseudoDt);
 
@@ -304,7 +304,7 @@ private:
 
 private:
     Scope _scope;
-    _MemberNames _memberNames;
+    _tMemberNames _memberNames;
 };
 
 void setPseudoDtDataLoc(PseudoDt& pseudoDt, const Scope scope)

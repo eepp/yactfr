@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
-#define _YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
+#ifndef YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
+#define YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -32,7 +32,7 @@
 namespace yactfr {
 namespace internal {
 
-TraceType::UP traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
+TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
 
 /*
  * Converter of root pseudo data type to yactfr data type.
@@ -40,7 +40,7 @@ TraceType::UP traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
 class TraceTypeFromPseudoTraceTypeConverter :
     boost::noncopyable
 {
-    friend TraceType::UP traceTypeFromPseudoTraceType(PseudoTraceType&);
+    friend TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType&);
 
 private:
     explicit TraceTypeFromPseudoTraceTypeConverter(PseudoTraceType& pseudoTraceType);
@@ -48,7 +48,7 @@ private:
     /*
      * Releases and returns the resulting yactfr trace type.
      */
-    TraceType::UP releaseTraceType()
+    TraceType::Up releaseTraceType()
     {
         return std::move(_traceType);
     }
@@ -57,7 +57,7 @@ private:
      * Converts the pseudo trace type `*_pseudoTraceType` to a yactr
      * trace type.
      */
-    TraceType::UP _traceTypeFromPseudoTraceType();
+    TraceType::Up _traceTypeFromPseudoTraceType();
 
     /*
      * Converts the pseudo data stream type `pseudoDst` to a yactfr data
@@ -79,14 +79,14 @@ private:
      * If `pseudoDt` is `nullptr`, then this method returns an empty
      * pointer immediately.
      */
-    StructureType::UP _scopeStructTypeFromPseudoDt(PseudoDt *pseudoDt, Scope scope,
+    StructureType::Up _scopeStructTypeFromPseudoDt(PseudoDt *pseudoDt, Scope scope,
                                                    const PseudoDst *curPseudoDst = nullptr,
                                                    const PseudoErt *curPseudoErt = nullptr) const;
 
 
 private:
     // final yactfr trace type
-    TraceType::UP _traceType;
+    TraceType::Up _traceType;
 
     // pseudo trace type
     PseudoTraceType *_pseudoTraceType;
@@ -95,4 +95,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
+#endif // YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP

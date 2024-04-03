@@ -15,8 +15,8 @@
  * least.
  */
 
-#ifndef _YACTFR_INTERNAL_STD_FL_INT_READER_HPP
-#define _YACTFR_INTERNAL_STD_FL_INT_READER_HPP
+#ifndef YACTFR_INTERNAL_STD_FL_INT_READER_HPP
+#define YACTFR_INTERNAL_STD_FL_INT_READER_HPP
 
 #include <boost/endian/conversion.hpp>
 #include <cstdint>
@@ -124,4 +124,4 @@ inline auto readFlSIntBe64(const std::uint8_t * const buf)
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_STD_FL_INT_READER_HPP
+#endif // YACTFR_INTERNAL_STD_FL_INT_READER_HPP

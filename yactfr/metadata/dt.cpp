@@ -29,7 +29,7 @@
 
 namespace yactfr {
 
-DataType::DataType(const _Kind kind, const unsigned int align, MapItem::UP attrs) :
+DataType::DataType(const _tKind kind, const unsigned int align, MapItem::Up attrs) :
     _theKind {kind},
     _align {align},
     _attrs {std::move(attrs)}
@@ -47,7 +47,7 @@ bool DataType::operator!=(const DataType& other) const noexcept
     return !(*this == other);
 }
 
-DataType::UP DataType::clone() const
+DataType::Up DataType::clone() const
 {
     return this->_clone();
 }

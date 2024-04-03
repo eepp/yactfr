@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
-#define _YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
+#ifndef YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
+#define YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
 
 #include <sstream>
 #include <vector>
@@ -443,4 +443,4 @@ void parseJson(const std::string& str, ListenerT& listener)
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
+#endif // YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP

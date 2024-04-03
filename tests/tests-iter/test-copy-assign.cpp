@@ -107,7 +107,7 @@ int main()
         return 1;
     }
 
-    if (itCopy->kind() != yactfr::Element::Kind::PACKET_BEGINNING) {
+    if (itCopy->kind() != yactfr::Element::Kind::PacketBeginning) {
         std::cerr << "Invalid current element in copy of beginning element sequence iterator.\n";
         return 1;
     }

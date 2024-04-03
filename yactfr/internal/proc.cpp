@@ -115,10 +115,10 @@ namespace {
 bool isEndProc(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
-    case Instr::Kind::END_DS_ER_PREAMBLE_PROC:
-    case Instr::Kind::END_DS_PKT_PREAMBLE_PROC:
-    case Instr::Kind::END_ER_PROC:
-    case Instr::Kind::END_PKT_PREAMBLE_PROC:
+    case Instr::Kind::EndDsErPreambleProc:
+    case Instr::Kind::EndDsPktPreambleProc:
+    case Instr::Kind::EndErProc:
+    case Instr::Kind::EndPktPreambleProc:
         return true;
 
     default:
@@ -135,9 +135,9 @@ std::string Instr::toStr(const Size indent) const
 
     ss << internal::indent(indent);
 
-    if (this->isBeginReadData() || _theKind == Instr::Kind::BEGIN_READ_SCOPE) {
+    if (this->isBeginReadData() || _theKind == Instr::Kind::BeginReadScope) {
         ss << _strName(kindStr);
-    } else if (this->isEndReadData() || _theKind == Kind::END_READ_SCOPE || isEndProc(*this)) {
+    } else if (this->isEndReadData() || _theKind == Kind::EndReadScope || isEndProc(*this)) {
         ss << _strEndName(kindStr);
     } else {
         ss << _strSpecName(kindStr);
@@ -178,7 +178,7 @@ std::string ReadDataInstr::_commonToStr() const
 }
 
 SaveValInstr::SaveValInstr(const Index pos) :
-    Instr {Kind::SAVE_VAL},
+    Instr {Kind::SaveVal},
     _pos {pos}
 {
 }
@@ -192,7 +192,7 @@ std::string SaveValInstr::_toStr(Size) const
 }
 
 SetPktEndDefClkValInstr::SetPktEndDefClkValInstr() :
-    Instr {Kind::SET_PKT_END_DEF_CLK_VAL}
+    Instr {Kind::SetPktEndDefClkVal}
 {
 }
 
@@ -202,47 +202,47 @@ Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitArrayType());
 
-    auto kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::Unset;
     auto& bitArrayType = dt.asFixedLengthBitArrayType();
 
-    if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
-        if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-            kind = Instr::Kind::READ_FL_BIT_ARRAY_LE;
+    if (bitArrayType.byteOrder() == ByteOrder::Little) {
+        if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
+            kind = Instr::Kind::ReadFlBitArrayLe;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitArrayType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+                    return Instr::Kind::ReadFlBitArrayA8;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_LE;
+                    return Instr::Kind::ReadFlBitArrayA16Le;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_LE;
+                    return Instr::Kind::ReadFlBitArrayA32Le;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_LE;
+                    return Instr::Kind::ReadFlBitArrayA64Le;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_BIT_ARRAY_LE_REV;
+            kind = Instr::Kind::ReadFlBitArrayLeRev;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitArrayType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A8_REV;
+                    return Instr::Kind::ReadFlBitArrayA8Rev;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_LE_REV;
+                    return Instr::Kind::ReadFlBitArrayA16LeRev;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_LE_REV;
+                    return Instr::Kind::ReadFlBitArrayA32LeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_LE_REV;
+                    return Instr::Kind::ReadFlBitArrayA64LeRev;
 
                 default:
                     break;
@@ -250,43 +250,43 @@ Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
             }
         }
     } else {
-        if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-            kind = Instr::Kind::READ_FL_BIT_ARRAY_BE_REV;
+        if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
+            kind = Instr::Kind::ReadFlBitArrayBeRev;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitArrayType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A8_REV;
+                    return Instr::Kind::ReadFlBitArrayA8Rev;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_BE_REV;
+                    return Instr::Kind::ReadFlBitArrayA16BeRev;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_BE_REV;
+                    return Instr::Kind::ReadFlBitArrayA32BeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_BE_REV;
+                    return Instr::Kind::ReadFlBitArrayA64BeRev;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_BIT_ARRAY_BE;
+            kind = Instr::Kind::ReadFlBitArrayBe;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitArrayType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A8;
+                    return Instr::Kind::ReadFlBitArrayA8;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A16_BE;
+                    return Instr::Kind::ReadFlBitArrayA16Be;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A32_BE;
+                    return Instr::Kind::ReadFlBitArrayA32Be;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_ARRAY_A64_BE;
+                    return Instr::Kind::ReadFlBitArrayA64Be;
 
                 default:
                     break;
@@ -295,7 +295,7 @@ Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
         }
     }
 
-    assert(kind != Instr::Kind::UNSET);
+    assert(kind != Instr::Kind::Unset);
     return kind;
 }
 
@@ -338,47 +338,47 @@ Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitMapType());
 
-    auto kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::Unset;
     auto& bitMapType = dt.asFixedLengthBitMapType();
 
-    if (bitMapType.byteOrder() == ByteOrder::LITTLE) {
-        if (bitMapType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-            kind = Instr::Kind::READ_FL_BIT_MAP_LE;
+    if (bitMapType.byteOrder() == ByteOrder::Little) {
+        if (bitMapType.bitOrder() == BitOrder::FirstToLast) {
+            kind = Instr::Kind::ReadFlBitMapLe;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitMapType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_MAP_A8;
+                    return Instr::Kind::ReadFlBitMapA8;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_MAP_A16_LE;
+                    return Instr::Kind::ReadFlBitMapA16Le;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_MAP_A32_LE;
+                    return Instr::Kind::ReadFlBitMapA32Le;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_MAP_A64_LE;
+                    return Instr::Kind::ReadFlBitMapA64Le;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_BIT_MAP_LE_REV;
+            kind = Instr::Kind::ReadFlBitMapLeRev;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitMapType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_MAP_A8_REV;
+                    return Instr::Kind::ReadFlBitMapA8Rev;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_MAP_A16_LE_REV;
+                    return Instr::Kind::ReadFlBitMapA16LeRev;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_MAP_A32_LE_REV;
+                    return Instr::Kind::ReadFlBitMapA32LeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_MAP_A64_LE_REV;
+                    return Instr::Kind::ReadFlBitMapA64LeRev;
 
                 default:
                     break;
@@ -386,43 +386,43 @@ Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
             }
         }
     } else {
-        if (bitMapType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-            kind = Instr::Kind::READ_FL_BIT_MAP_BE_REV;
+        if (bitMapType.bitOrder() == BitOrder::FirstToLast) {
+            kind = Instr::Kind::ReadFlBitMapBeRev;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitMapType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_MAP_A8_REV;
+                    return Instr::Kind::ReadFlBitMapA8Rev;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_MAP_A16_BE_REV;
+                    return Instr::Kind::ReadFlBitMapA16BeRev;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_MAP_A32_BE_REV;
+                    return Instr::Kind::ReadFlBitMapA32BeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_MAP_A64_BE_REV;
+                    return Instr::Kind::ReadFlBitMapA64BeRev;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_BIT_MAP_BE;
+            kind = Instr::Kind::ReadFlBitMapBe;
 
             if (dt.alignment() % 8 == 0) {
                 switch (bitMapType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BIT_MAP_A8;
+                    return Instr::Kind::ReadFlBitMapA8;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BIT_MAP_A16_BE;
+                    return Instr::Kind::ReadFlBitMapA16Be;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BIT_MAP_A32_BE;
+                    return Instr::Kind::ReadFlBitMapA32Be;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BIT_MAP_A64_BE;
+                    return Instr::Kind::ReadFlBitMapA64Be;
 
                 default:
                     break;
@@ -431,7 +431,7 @@ Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
         }
     }
 
-    assert(kind != Instr::Kind::UNSET);
+    assert(kind != Instr::Kind::Unset);
     return kind;
 }
 
@@ -449,47 +449,47 @@ Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBooleanType());
 
-    auto kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::Unset;
     auto& boolType = dt.asFixedLengthBooleanType();
 
-    if (boolType.byteOrder() == ByteOrder::LITTLE) {
-        if (boolType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-            kind = Instr::Kind::READ_FL_BOOL_LE;
+    if (boolType.byteOrder() == ByteOrder::Little) {
+        if (boolType.bitOrder() == BitOrder::FirstToLast) {
+            kind = Instr::Kind::ReadFlBoolLe;
 
             if (dt.alignment() % 8 == 0) {
                 switch (boolType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BOOL_A8;
+                    return Instr::Kind::ReadFlBoolA8;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BOOL_A16_LE;
+                    return Instr::Kind::ReadFlBoolA16Le;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BOOL_A32_LE;
+                    return Instr::Kind::ReadFlBoolA32Le;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BOOL_A64_LE;
+                    return Instr::Kind::ReadFlBoolA64Le;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_BOOL_LE_REV;
+            kind = Instr::Kind::ReadFlBoolLeRev;
 
             if (dt.alignment() % 8 == 0) {
                 switch (boolType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BOOL_A8_REV;
+                    return Instr::Kind::ReadFlBoolA8Rev;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BOOL_A16_LE_REV;
+                    return Instr::Kind::ReadFlBoolA16LeRev;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BOOL_A32_LE_REV;
+                    return Instr::Kind::ReadFlBoolA32LeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BOOL_A64_LE_REV;
+                    return Instr::Kind::ReadFlBoolA64LeRev;
 
                 default:
                     break;
@@ -497,43 +497,43 @@ Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
             }
         }
     } else {
-        if (boolType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-            kind = Instr::Kind::READ_FL_BOOL_BE_REV;
+        if (boolType.bitOrder() == BitOrder::FirstToLast) {
+            kind = Instr::Kind::ReadFlBoolBeRev;
 
             if (dt.alignment() % 8 == 0) {
                 switch (boolType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BOOL_A8_REV;
+                    return Instr::Kind::ReadFlBoolA8Rev;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BOOL_A16_BE_REV;
+                    return Instr::Kind::ReadFlBoolA16BeRev;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BOOL_A32_BE_REV;
+                    return Instr::Kind::ReadFlBoolA32BeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BOOL_A64_BE_REV;
+                    return Instr::Kind::ReadFlBoolA64BeRev;
 
                 default:
                     break;
                 }
             }
         } else {
-            kind = Instr::Kind::READ_FL_BOOL_BE;
+            kind = Instr::Kind::ReadFlBoolBe;
 
             if (dt.alignment() % 8 == 0) {
                 switch (boolType.length()) {
                 case 8:
-                    return Instr::Kind::READ_FL_BOOL_A8;
+                    return Instr::Kind::ReadFlBoolA8;
 
                 case 16:
-                    return Instr::Kind::READ_FL_BOOL_A16_BE;
+                    return Instr::Kind::ReadFlBoolA16Be;
 
                 case 32:
-                    return Instr::Kind::READ_FL_BOOL_A32_BE;
+                    return Instr::Kind::ReadFlBoolA32Be;
 
                 case 64:
-                    return Instr::Kind::READ_FL_BOOL_A64_BE;
+                    return Instr::Kind::ReadFlBoolA64Be;
 
                 default:
                     break;
@@ -542,7 +542,7 @@ Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
         }
     }
 
-    assert(kind != Instr::Kind::UNSET);
+    assert(kind != Instr::Kind::Unset);
     return kind;
 }
 
@@ -567,48 +567,48 @@ Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthIntegerType());
 
-    auto kind = Instr::Kind::UNSET;
+    auto kind = Instr::Kind::Unset;
     const auto& bitArrayType = dt.asFixedLengthBitArrayType();
 
     if (dt.isFixedLengthUnsignedIntegerType()) {
-        if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
-            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-                kind = Instr::Kind::READ_FL_UINT_LE;
+        if (bitArrayType.byteOrder() == ByteOrder::Little) {
+            if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
+                kind = Instr::Kind::ReadFlUIntLe;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_UINT_A8;
+                        return Instr::Kind::ReadFlUIntA8;
 
                     case 16:
-                        return Instr::Kind::READ_FL_UINT_A16_LE;
+                        return Instr::Kind::ReadFlUIntA16Le;
 
                     case 32:
-                        return Instr::Kind::READ_FL_UINT_A32_LE;
+                        return Instr::Kind::ReadFlUIntA32Le;
 
                     case 64:
-                        return Instr::Kind::READ_FL_UINT_A64_LE;
+                        return Instr::Kind::ReadFlUIntA64Le;
 
                     default:
                         break;
                     }
                 }
             } else {
-                kind = Instr::Kind::READ_FL_UINT_LE_REV;
+                kind = Instr::Kind::ReadFlUIntLeRev;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_UINT_A8_REV;
+                        return Instr::Kind::ReadFlUIntA8Rev;
 
                     case 16:
-                        return Instr::Kind::READ_FL_UINT_A16_LE_REV;
+                        return Instr::Kind::ReadFlUIntA16LeRev;
 
                     case 32:
-                        return Instr::Kind::READ_FL_UINT_A32_LE_REV;
+                        return Instr::Kind::ReadFlUIntA32LeRev;
 
                     case 64:
-                        return Instr::Kind::READ_FL_UINT_A64_LE_REV;
+                        return Instr::Kind::ReadFlUIntA64LeRev;
 
                     default:
                         break;
@@ -616,43 +616,43 @@ Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
                 }
             }
         } else {
-            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-                kind = Instr::Kind::READ_FL_UINT_BE_REV;
+            if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
+                kind = Instr::Kind::ReadFlUIntBeRev;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_UINT_A8_REV;
+                        return Instr::Kind::ReadFlUIntA8Rev;
 
                     case 16:
-                        return Instr::Kind::READ_FL_UINT_A16_BE_REV;
+                        return Instr::Kind::ReadFlUIntA16BeRev;
 
                     case 32:
-                        return Instr::Kind::READ_FL_UINT_A32_BE_REV;
+                        return Instr::Kind::ReadFlUIntA32BeRev;
 
                     case 64:
-                        return Instr::Kind::READ_FL_UINT_A64_BE_REV;
+                        return Instr::Kind::ReadFlUIntA64BeRev;
 
                     default:
                         break;
                     }
                 }
             } else {
-                kind = Instr::Kind::READ_FL_UINT_BE;
+                kind = Instr::Kind::ReadFlUIntBe;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_UINT_A8;
+                        return Instr::Kind::ReadFlUIntA8;
 
                     case 16:
-                        return Instr::Kind::READ_FL_UINT_A16_BE;
+                        return Instr::Kind::ReadFlUIntA16Be;
 
                     case 32:
-                        return Instr::Kind::READ_FL_UINT_A32_BE;
+                        return Instr::Kind::ReadFlUIntA32Be;
 
                     case 64:
-                        return Instr::Kind::READ_FL_UINT_A64_BE;
+                        return Instr::Kind::ReadFlUIntA64Be;
 
                     default:
                         break;
@@ -661,44 +661,44 @@ Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
             }
         }
     } else {
-        if (bitArrayType.byteOrder() == ByteOrder::LITTLE) {
-            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-                kind = Instr::Kind::READ_FL_SINT_LE;
+        if (bitArrayType.byteOrder() == ByteOrder::Little) {
+            if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
+                kind = Instr::Kind::ReadFlSIntLe;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_SINT_A8;
+                        return Instr::Kind::ReadFlSIntA8;
 
                     case 16:
-                        return Instr::Kind::READ_FL_SINT_A16_LE;
+                        return Instr::Kind::ReadFlSIntA16Le;
 
                     case 32:
-                        return Instr::Kind::READ_FL_SINT_A32_LE;
+                        return Instr::Kind::ReadFlSIntA32Le;
 
                     case 64:
-                        return Instr::Kind::READ_FL_SINT_A64_LE;
+                        return Instr::Kind::ReadFlSIntA64Le;
 
                     default:
                         break;
                     }
                 }
             } else {
-                kind = Instr::Kind::READ_FL_SINT_LE_REV;
+                kind = Instr::Kind::ReadFlSIntLeRev;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_SINT_A8_REV;
+                        return Instr::Kind::ReadFlSIntA8Rev;
 
                     case 16:
-                        return Instr::Kind::READ_FL_SINT_A16_LE_REV;
+                        return Instr::Kind::ReadFlSIntA16LeRev;
 
                     case 32:
-                        return Instr::Kind::READ_FL_SINT_A32_LE_REV;
+                        return Instr::Kind::ReadFlSIntA32LeRev;
 
                     case 64:
-                        return Instr::Kind::READ_FL_SINT_A64_LE_REV;
+                        return Instr::Kind::ReadFlSIntA64LeRev;
 
                     default:
                         break;
@@ -706,43 +706,43 @@ Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
                 }
             }
         } else {
-            if (bitArrayType.bitOrder() == BitOrder::FIRST_TO_LAST) {
-                kind = Instr::Kind::READ_FL_SINT_BE_REV;
+            if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
+                kind = Instr::Kind::ReadFlSIntBeRev;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_SINT_A8_REV;
+                        return Instr::Kind::ReadFlSIntA8Rev;
 
                     case 16:
-                        return Instr::Kind::READ_FL_SINT_A16_BE_REV;
+                        return Instr::Kind::ReadFlSIntA16BeRev;
 
                     case 32:
-                        return Instr::Kind::READ_FL_SINT_A32_BE_REV;
+                        return Instr::Kind::ReadFlSIntA32BeRev;
 
                     case 64:
-                        return Instr::Kind::READ_FL_SINT_A64_BE_REV;
+                        return Instr::Kind::ReadFlSIntA64BeRev;
 
                     default:
                         break;
                     }
                 }
             } else {
-                kind = Instr::Kind::READ_FL_SINT_BE;
+                kind = Instr::Kind::ReadFlSIntBe;
 
                 if (dt.alignment() % 8 == 0) {
                     switch (bitArrayType.length()) {
                     case 8:
-                        return Instr::Kind::READ_FL_SINT_A8;
+                        return Instr::Kind::ReadFlSIntA8;
 
                     case 16:
-                        return Instr::Kind::READ_FL_SINT_A16_BE;
+                        return Instr::Kind::ReadFlSIntA16Be;
 
                     case 32:
-                        return Instr::Kind::READ_FL_SINT_A32_BE;
+                        return Instr::Kind::ReadFlSIntA32Be;
 
                     case 64:
-                        return Instr::Kind::READ_FL_SINT_A64_BE;
+                        return Instr::Kind::ReadFlSIntA64Be;
 
                     default:
                         break;
@@ -752,7 +752,7 @@ Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
         }
     }
 
-    assert(kind != Instr::Kind::UNSET);
+    assert(kind != Instr::Kind::Unset);
     return kind;
 }
 
@@ -806,15 +806,15 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
 
     const auto& floatType = dt.asFixedLengthFloatingPointNumberType();
 
-    if (floatType.byteOrder() == ByteOrder::LITTLE) {
-        if (floatType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+    if (floatType.byteOrder() == ByteOrder::Little) {
+        if (floatType.bitOrder() == BitOrder::FirstToLast) {
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_A32_LE;
+                    return Instr::Kind::ReadFlFloatA32Le;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_A64_LE;
+                    return Instr::Kind::ReadFlFloatA64Le;
 
                 default:
                     std::abort();
@@ -822,10 +822,10 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             } else {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_32_LE;
+                    return Instr::Kind::ReadFlFloat32Le;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_64_LE;
+                    return Instr::Kind::ReadFlFloat64Le;
 
                 default:
                     std::abort();
@@ -835,10 +835,10 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_A32_LE_REV;
+                    return Instr::Kind::ReadFlFloatA32LeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_A64_LE_REV;
+                    return Instr::Kind::ReadFlFloatA64LeRev;
 
                 default:
                     std::abort();
@@ -846,10 +846,10 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             } else {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_32_LE_REV;
+                    return Instr::Kind::ReadFlFloat32LeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_64_LE_REV;
+                    return Instr::Kind::ReadFlFloat64LeRev;
 
                 default:
                     std::abort();
@@ -857,14 +857,14 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             }
         }
     } else {
-        if (floatType.bitOrder() == BitOrder::FIRST_TO_LAST) {
+        if (floatType.bitOrder() == BitOrder::FirstToLast) {
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_A32_BE_REV;
+                    return Instr::Kind::ReadFlFloatA32BeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_A64_BE_REV;
+                    return Instr::Kind::ReadFlFloatA64BeRev;
 
                 default:
                     std::abort();
@@ -872,10 +872,10 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             } else {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_32_BE_REV;
+                    return Instr::Kind::ReadFlFloat32BeRev;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_64_BE_REV;
+                    return Instr::Kind::ReadFlFloat64BeRev;
 
                 default:
                     std::abort();
@@ -885,10 +885,10 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_A32_BE;
+                    return Instr::Kind::ReadFlFloatA32Be;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_A64_BE;
+                    return Instr::Kind::ReadFlFloatA64Be;
 
                 default:
                     std::abort();
@@ -896,10 +896,10 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
             } else {
                 switch (floatType.length()) {
                 case 32:
-                    return Instr::Kind::READ_FL_FLOAT_32_BE;
+                    return Instr::Kind::ReadFlFloat32Be;
 
                 case 64:
-                    return Instr::Kind::READ_FL_FLOAT_64_BE;
+                    return Instr::Kind::ReadFlFloat64Be;
 
                 default:
                     std::abort();
@@ -924,10 +924,10 @@ Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
     assert(dt.isVariableLengthIntegerType());
 
     if (dt.isVariableLengthUnsignedIntegerType()) {
-        return Instr::Kind::READ_VL_UINT;
+        return Instr::Kind::ReadVlUInt;
     } else {
         assert(dt.isVariableLengthSignedIntegerType());
-        return Instr::Kind::READ_VL_SINT;
+        return Instr::Kind::ReadVlSInt;
     }
 }
 
@@ -952,16 +952,16 @@ namespace {
 Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) noexcept
 {
     switch (dt.encoding()) {
-    case StringEncoding::UTF_8:
-        return Instr::Kind::READ_NT_STR_UTF_8;
+    case StringEncoding::Utf8:
+        return Instr::Kind::ReadNtStrUtf8;
 
-    case StringEncoding::UTF_16BE:
-    case StringEncoding::UTF_16LE:
-        return Instr::Kind::READ_NT_STR_UTF_16;
+    case StringEncoding::Utf16Be:
+    case StringEncoding::Utf16Le:
+        return Instr::Kind::ReadNtStrUtf16;
 
-    case StringEncoding::UTF_32BE:
-    case StringEncoding::UTF_32LE:
-        return Instr::Kind::READ_NT_STR_UTF_32;
+    case StringEncoding::Utf32Be:
+    case StringEncoding::Utf32Le:
+        return Instr::Kind::ReadNtStrUtf32;
     }
 
     std::abort();
@@ -998,18 +998,18 @@ EndReadDataInstr::EndReadDataInstr(const Kind kind, const StructureMemberType * 
                                    const DataType& dt) :
     ReadDataInstr {kind, member, dt}
 {
-    assert(kind == Kind::END_READ_STRUCT ||
-           kind == Kind::END_READ_SL_ARRAY ||
-           kind == Kind::END_READ_DL_ARRAY ||
-           kind == Kind::END_READ_SL_STR ||
-           kind == Kind::END_READ_DL_STR ||
-           kind == Kind::END_READ_SL_BLOB ||
-           kind == Kind::END_READ_DL_BLOB ||
-           kind == Kind::END_READ_VAR_UINT_SEL ||
-           kind == Kind::END_READ_VAR_SINT_SEL ||
-           kind == Kind::END_READ_OPT_BOOL_SEL ||
-           kind == Kind::END_READ_OPT_UINT_SEL ||
-           kind == Kind::END_READ_OPT_SINT_SEL);
+    assert(kind == Kind::EndReadStruct ||
+           kind == Kind::EndReadSlArray ||
+           kind == Kind::EndReadDlArray ||
+           kind == Kind::EndReadSlStr ||
+           kind == Kind::EndReadDlStr ||
+           kind == Kind::EndReadSlBlob ||
+           kind == Kind::EndReadDlBlob ||
+           kind == Kind::EndReadVarUIntSel ||
+           kind == Kind::EndReadVarSIntSel ||
+           kind == Kind::EndReadOptBoolSel ||
+           kind == Kind::EndReadOptUIntSel ||
+           kind == Kind::EndReadOptSIntSel);
 }
 
 std::string EndReadDataInstr::_toStr(Size) const
@@ -1022,7 +1022,7 @@ std::string EndReadDataInstr::_toStr(Size) const
 
 BeginReadStructInstr::BeginReadStructInstr(const StructureMemberType * const member,
                                            const DataType& dt) :
-    BeginReadCompoundInstr {Kind::BEGIN_READ_STRUCT, member, dt}
+    BeginReadCompoundInstr {Kind::BeginReadStruct, member, dt}
 {
     assert(dt.isStructureType());
 }
@@ -1065,7 +1065,7 @@ std::string BeginReadOptInstr::_toStr(const Size indent) const
 
 BeginReadOptBoolSelInstr::BeginReadOptBoolSelInstr(const StructureMemberType * const memberType,
                                                    const DataType& dt) :
-    BeginReadOptInstr {Kind::BEGIN_READ_OPT_BOOL_SEL, memberType, dt}
+    BeginReadOptInstr {Kind::BeginReadOptBoolSel, memberType, dt}
 {
 }
 
@@ -1086,22 +1086,22 @@ namespace {
 std::string scopeStr(const Scope scope)
 {
     switch (scope) {
-    case Scope::PACKET_HEADER:
+    case Scope::PacketHeader:
         return "PH";
 
-    case Scope::PACKET_CONTEXT:
+    case Scope::PacketContext:
         return "PC";
 
-    case Scope::EVENT_RECORD_HEADER:
+    case Scope::EventRecordHeader:
         return "ERH";
 
-    case Scope::EVENT_RECORD_COMMON_CONTEXT:
+    case Scope::EventRecordCommonContext:
         return "ERCC";
 
-    case Scope::EVENT_RECORD_SPECIFIC_CONTEXT:
+    case Scope::EventRecordSpecificContext:
         return "ERSC";
 
-    case Scope::EVENT_RECORD_PAYLOAD:
+    case Scope::EventRecordPayload:
         return "ERP";
 
     default:
@@ -1112,7 +1112,7 @@ std::string scopeStr(const Scope scope)
 } // namespace
 
 BeginReadScopeInstr::BeginReadScopeInstr(const Scope scope, const unsigned int align) :
-    Instr {Kind::BEGIN_READ_SCOPE},
+    Instr {Kind::BeginReadScope},
     _scope {scope},
     _align {align}
 {
@@ -1134,7 +1134,7 @@ void BeginReadScopeInstr::buildRawProcFromShared()
 }
 
 EndReadScopeInstr::EndReadScopeInstr(const Scope scope) :
-    Instr {Kind::END_READ_SCOPE},
+    Instr {Kind::EndReadScope},
     _scope {scope}
 {
 }
@@ -1157,7 +1157,7 @@ BeginReadSlArrayInstr::BeginReadSlArrayInstr(const Kind kind,
 
 BeginReadSlArrayInstr::BeginReadSlArrayInstr(const StructureMemberType * const member,
                                              const DataType& dt) :
-    BeginReadSlArrayInstr {Kind::BEGIN_READ_SL_ARRAY, member, dt}
+    BeginReadSlArrayInstr {Kind::BeginReadSlArray, member, dt}
 {
 }
 
@@ -1172,7 +1172,7 @@ std::string BeginReadSlArrayInstr::_toStr(const Size indent) const
 
 BeginReadSlStrInstr::BeginReadSlStrInstr(const StructureMemberType * const member,
                                          const DataType& dt) :
-    ReadDataInstr {Kind::BEGIN_READ_SL_STR, member, dt},
+    ReadDataInstr {Kind::BeginReadSlStr, member, dt},
     _maxLen {dt.asStaticLengthStringType().maximumLength()}
 {
 }
@@ -1187,13 +1187,13 @@ std::string BeginReadSlStrInstr::_toStr(Size) const
 
 BeginReadSlUuidArrayInstr::BeginReadSlUuidArrayInstr(const StructureMemberType * const member,
                                                      const DataType& dt) :
-    BeginReadSlArrayInstr {Kind::BEGIN_READ_SL_UUID_ARRAY, member, dt}
+    BeginReadSlArrayInstr {Kind::BeginReadSlUuidArray, member, dt}
 {
 }
 
 BeginReadDlArrayInstr::BeginReadDlArrayInstr(const StructureMemberType * const member,
                                              const DataType& dt) :
-    BeginReadCompoundInstr {Kind::BEGIN_READ_DL_ARRAY, member, dt}
+    BeginReadCompoundInstr {Kind::BeginReadDlArray, member, dt}
 {
 }
 
@@ -1208,7 +1208,7 @@ std::string BeginReadDlArrayInstr::_toStr(const Size indent) const
 
 BeginReadDlStrInstr::BeginReadDlStrInstr(const StructureMemberType * const member,
                                          const DataType& dt) :
-    ReadDataInstr {Kind::BEGIN_READ_DL_STR, member, dt}
+    ReadDataInstr {Kind::BeginReadDlStr, member, dt}
 {
 }
 
@@ -1229,7 +1229,7 @@ BeginReadSlBlobInstr::BeginReadSlBlobInstr(const Kind kind, const StructureMembe
 
 BeginReadSlBlobInstr::BeginReadSlBlobInstr(const StructureMemberType * const member,
                                            const DataType& dt) :
-    BeginReadSlBlobInstr {Kind::BEGIN_READ_SL_BLOB, member, dt}
+    BeginReadSlBlobInstr {Kind::BeginReadSlBlob, member, dt}
 {
 }
 
@@ -1243,13 +1243,13 @@ std::string BeginReadSlBlobInstr::_toStr(Size) const
 
 BeginReadSlUuidBlobInstr::BeginReadSlUuidBlobInstr(const StructureMemberType * const member,
                                                      const DataType& dt) :
-    BeginReadSlBlobInstr {Kind::BEGIN_READ_SL_UUID_BLOB, member, dt}
+    BeginReadSlBlobInstr {Kind::BeginReadSlUuidBlob, member, dt}
 {
 }
 
 BeginReadDlBlobInstr::BeginReadDlBlobInstr(const StructureMemberType * const member,
                                            const DataType& dt) :
-    ReadDataInstr {Kind::BEGIN_READ_DL_BLOB, member, dt}
+    ReadDataInstr {Kind::BeginReadDlBlob, member, dt}
 {
 }
 
@@ -1262,7 +1262,7 @@ std::string BeginReadDlBlobInstr::_toStr(Size) const
 }
 
 SetCurIdInstr::SetCurIdInstr() :
-    Instr {Kind::SET_CUR_ID}
+    Instr {Kind::SetCurId}
 {
 }
 
@@ -1285,57 +1285,57 @@ std::string SetTypeInstr::_toStr(Size) const
 }
 
 SetDstInstr::SetDstInstr(boost::optional<TypeId> fixedId) :
-    SetTypeInstr {Kind::SET_DST, std::move(fixedId)}
+    SetTypeInstr {Kind::SetDst, std::move(fixedId)}
 {
 }
 
 SetErtInstr::SetErtInstr(boost::optional<TypeId> fixedId) :
-    SetTypeInstr {Kind::SET_ERT, std::move(fixedId)}
+    SetTypeInstr {Kind::SetErt, std::move(fixedId)}
 {
 }
 
 SetPktSeqNumInstr::SetPktSeqNumInstr() :
-    Instr {Kind::SET_PKT_SEQ_NUM}
+    Instr {Kind::SetPktSeqNum}
 {
 }
 
 SetPktDiscErCounterSnapInstr::SetPktDiscErCounterSnapInstr() :
-    Instr {Kind::SET_PKT_DISC_ER_COUNTER_SNAP}
+    Instr {Kind::SetPktDiscErCounterSnap}
 {
 }
 
 SetDsIdInstr::SetDsIdInstr() :
-    Instr {Kind::SET_DS_ID}
+    Instr {Kind::SetDsId}
 {
 }
 
 SetDsInfoInstr::SetDsInfoInstr() :
-    Instr {Kind::SET_DS_INFO}
+    Instr {Kind::SetDsInfo}
 {
 }
 
 SetPktInfoInstr::SetPktInfoInstr() :
-    Instr {Kind::SET_PKT_INFO}
+    Instr {Kind::SetPktInfo}
 {
 }
 
 SetErInfoInstr::SetErInfoInstr() :
-    Instr {Kind::SET_ER_INFO}
+    Instr {Kind::SetErInfo}
 {
 }
 
 SetExpectedPktTotalLenInstr::SetExpectedPktTotalLenInstr() :
-    Instr {Kind::SET_PKT_TOTAL_LEN}
+    Instr {Kind::SetPktTotalLen}
 {
 }
 
 SetExpectedPktContentLenInstr::SetExpectedPktContentLenInstr() :
-    Instr {Kind::SET_PKT_CONTENT_LEN}
+    Instr {Kind::SetPktContentLen}
 {
 }
 
 UpdateDefClkValInstr::UpdateDefClkValInstr() :
-    Instr {Kind::UPDATE_DEF_CLK_VAL}
+    Instr {Kind::UpdateDefClkVal}
 {
 }
 
@@ -1346,7 +1346,7 @@ UpdateDefClkValInstr::UpdateDefClkValInstr(const Instr::Kind kind) :
 
 
 UpdateDefClkValFlInstr::UpdateDefClkValFlInstr(const Size len) :
-    UpdateDefClkValInstr {Kind::UPDATE_DEF_CLK_VAL_FL},
+    UpdateDefClkValInstr {Kind::UpdateDefClkValFl},
     _len {len}
 {
     assert(len <= 64);
@@ -1361,32 +1361,32 @@ std::string UpdateDefClkValFlInstr::_toStr(Size) const
 }
 
 SetPktMagicNumberInstr::SetPktMagicNumberInstr() :
-    Instr {Kind::SET_PKT_MAGIC_NUMBER}
+    Instr {Kind::SetPktMagicNumber}
 {
 }
 
 EndPktPreambleProcInstr::EndPktPreambleProcInstr() :
-    Instr {Kind::END_PKT_PREAMBLE_PROC}
+    Instr {Kind::EndPktPreambleProc}
 {
 }
 
 EndDsPktPreambleProcInstr::EndDsPktPreambleProcInstr() :
-    Instr {Kind::END_DS_PKT_PREAMBLE_PROC}
+    Instr {Kind::EndDsPktPreambleProc}
 {
 }
 
 EndDsErPreambleProcInstr::EndDsErPreambleProcInstr() :
-    Instr {Kind::END_DS_ER_PREAMBLE_PROC}
+    Instr {Kind::EndDsErPreambleProc}
 {
 }
 
 EndErProcInstr::EndErProcInstr() :
-    Instr {Kind::END_ER_PROC}
+    Instr {Kind::EndErProc}
 {
 }
 
 DecrRemainingElemsInstr::DecrRemainingElemsInstr() :
-    Instr {Kind::DECR_REMAINING_ELEMS}
+    Instr {Kind::DecrRemainingElems}
 {
 }
 

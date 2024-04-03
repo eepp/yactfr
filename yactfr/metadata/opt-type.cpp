@@ -13,8 +13,8 @@
 
 namespace yactfr {
 
-OptionalType::OptionalType(const _Kind kind, const unsigned int minAlign, DataType::UP dt,
-                           DataLocation&& selLoc, MapItem::UP attrs) :
+OptionalType::OptionalType(const _tKind kind, const unsigned int minAlign, DataType::Up dt,
+                           DataLocation&& selLoc, MapItem::Up attrs) :
     CompoundDataType {kind, minAlign, 1, std::move(attrs)},
     _dt {std::move(dt)},
     _selLoc {std::move(selLoc)}
@@ -30,24 +30,24 @@ bool OptionalType::_isEqual(const DataType& other) const noexcept
 }
 
 OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(const unsigned int minAlign,
-                                                                 DataType::UP dt,
+                                                                 DataType::Up dt,
                                                                  DataLocation selLoc,
-                                                                 MapItem::UP attrs) :
+                                                                 MapItem::Up attrs) :
     OptionalType {
-        DataType::_KIND_OPT_UINT_SEL, minAlign, std::move(dt),
+        _kindOptUIntSel, minAlign, std::move(dt),
         std::move(selLoc), std::move(attrs)
     }
 {
 }
 
-OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(DataType::UP dt,
+OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(DataType::Up dt,
                                                                  DataLocation selLoc,
-                                                                 MapItem::UP attrs) :
+                                                                 MapItem::Up attrs) :
     OptionalWithBooleanSelectorType {1, std::move(dt), std::move(selLoc), std::move(attrs)}
 {
 }
 
-DataType::UP OptionalWithBooleanSelectorType::_clone() const
+DataType::Up OptionalWithBooleanSelectorType::_clone() const
 {
     return OptionalWithBooleanSelectorType::create(this->minimumAlignment(),
                                                    this->dataType().clone(),
@@ -56,28 +56,28 @@ DataType::UP OptionalWithBooleanSelectorType::_clone() const
 }
 
 OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(const unsigned int minAlign,
-                                                                                 DataType::UP dt,
+                                                                                 DataType::Up dt,
                                                                                  DataLocation selLoc,
                                                                                  SelectorRangeSet selRanges,
-                                                                                 MapItem::UP attrs) :
+                                                                                 MapItem::Up attrs) :
     OptionalWithIntegerSelectorType<unsigned long long> {
-        DataType::_KIND_OPT_UINT_SEL, minAlign, std::move(dt),
+        _kindOptUIntSel, minAlign, std::move(dt),
         std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
 
-OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(DataType::UP dt,
+OptionalWithUnsignedIntegerSelectorType::OptionalWithUnsignedIntegerSelectorType(DataType::Up dt,
                                                                                  DataLocation selLoc,
                                                                                  SelectorRangeSet selRanges,
-                                                                                 MapItem::UP attrs) :
+                                                                                 MapItem::Up attrs) :
     OptionalWithUnsignedIntegerSelectorType {
         1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
 
-DataType::UP OptionalWithUnsignedIntegerSelectorType::_clone() const
+DataType::Up OptionalWithUnsignedIntegerSelectorType::_clone() const
 {
     return OptionalWithUnsignedIntegerSelectorType::create(this->minimumAlignment(),
                                                            this->dataType().clone(),
@@ -87,28 +87,28 @@ DataType::UP OptionalWithUnsignedIntegerSelectorType::_clone() const
 }
 
 OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(const unsigned int minAlign,
-                                                                             DataType::UP dt,
+                                                                             DataType::Up dt,
                                                                              DataLocation selLoc,
                                                                              SelectorRangeSet selRanges,
-                                                                             MapItem::UP attrs) :
+                                                                             MapItem::Up attrs) :
     OptionalWithIntegerSelectorType<long long> {
-        DataType::_KIND_OPT_SINT_SEL, minAlign, std::move(dt),
+        _kindOptSIntSel, minAlign, std::move(dt),
         std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
 
-OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(DataType::UP dt,
+OptionalWithSignedIntegerSelectorType::OptionalWithSignedIntegerSelectorType(DataType::Up dt,
                                                                              DataLocation selLoc,
                                                                              SelectorRangeSet selRanges,
-                                                                             MapItem::UP attrs) :
+                                                                             MapItem::Up attrs) :
     OptionalWithSignedIntegerSelectorType {
         1, std::move(dt), std::move(selLoc), std::move(selRanges), std::move(attrs)
     }
 {
 }
 
-DataType::UP OptionalWithSignedIntegerSelectorType::_clone() const
+DataType::Up OptionalWithSignedIntegerSelectorType::_clone() const
 {
     return OptionalWithSignedIntegerSelectorType::create(this->minimumAlignment(),
                                                          this->dataType().clone(),

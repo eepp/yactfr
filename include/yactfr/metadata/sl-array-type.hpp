@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
-#define _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
+#ifndef YACTFR_METADATA_SL_ARRAY_TYPE_HPP
+#define YACTFR_METADATA_SL_ARRAY_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -31,7 +31,7 @@ class StaticLengthArrayType final :
 {
 public:
     /// Unique pointer to constant static-length array type.
-    using UP = std::unique_ptr<const StaticLengthArrayType>;
+    using Up = std::unique_ptr<const StaticLengthArrayType>;
 
 public:
     /*!
@@ -73,8 +73,8 @@ public:
         - <code>elementType->%asFixedLengthUnsignedIntegerType().%alignment() == 8</code>
         @endparblock
     */
-    explicit StaticLengthArrayType(unsigned int minimumAlignment, DataType::UP elementType,
-                                   Size length, MapItem::UP attributes = nullptr,
+    explicit StaticLengthArrayType(unsigned int minimumAlignment, DataType::Up elementType,
+                                   Size length, MapItem::Up attributes = nullptr,
                                    bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -110,8 +110,8 @@ public:
         - <code>elementType->%asFixedLengthUnsignedIntegerType().%alignment() == 8</code>
         @endparblock
     */
-    explicit StaticLengthArrayType(DataType::UP elementType, Size length,
-                                   MapItem::UP attributes = nullptr,
+    explicit StaticLengthArrayType(DataType::Up elementType, Size length,
+                                   MapItem::Up attributes = nullptr,
                                    bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -130,9 +130,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -156,7 +156,7 @@ public:
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -172,4 +172,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_SL_ARRAY_TYPE_HPP
+#endif // YACTFR_METADATA_SL_ARRAY_TYPE_HPP

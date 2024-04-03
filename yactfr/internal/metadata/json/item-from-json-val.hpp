@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
-#define _YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
+#ifndef YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
+#define YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
 
 #include <string>
 
@@ -19,9 +19,9 @@ namespace internal {
  * Converts the JSON value `jsonVal` to an equivalent yactfr item and
  * returns it.
  */
-Item::UP itemFromJsonVal(const JsonVal& jsonVal);
+Item::Up itemFromJsonVal(const JsonVal& jsonVal);
 
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
+#endif // YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP

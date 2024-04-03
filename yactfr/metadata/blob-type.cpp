@@ -12,7 +12,7 @@
 
 namespace yactfr {
 
-BlobType::BlobType(const _Kind kind, const unsigned int align, MapItem::UP attrs,
+BlobType::BlobType(const _tKind kind, const unsigned int align, MapItem::Up attrs,
                    std::string&& mediaType) :
     ScalarDataType {kind, align, std::move(attrs)},
     _mediaType {std::move(mediaType)}

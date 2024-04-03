@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
-#define _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
+#ifndef YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
+#define YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
 
 #include <cstdlib>
 #include <cassert>
@@ -373,7 +373,7 @@ private:
     /*
      * A frame of the character pointer stack.
      */
-    struct _StackFrame final
+    struct _tStackFrame final
     {
         // position when save() was called
         const char *at;
@@ -420,7 +420,7 @@ private:
         return c;
     }
 
-    _StackFrame& _stackTop()
+    _tStackFrame& _stackTop()
     {
         return _stack.back();
     }
@@ -450,7 +450,7 @@ private:
     Size _nbLines = 0;
 
     // character pointer stack
-    std::vector<_StackFrame> _stack;
+    std::vector<_tStackFrame> _stack;
 
     // conversion buffer used to scan constant integers
     std::array<char, 72> _convBuf;
@@ -876,4 +876,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
+#endif // YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP
-#define _YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP
+#ifndef YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP
+#define YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP
 
 #include <memory>
 #include <vector>
@@ -47,32 +47,32 @@ namespace internal {
  *
  * The kinds of pseudo data locations are:
  *
- * `Kind::ENV`:
+ * `Kind::Env`:
  *     The parsed data location (TSDL) was `env.SOMETHING`, where
  *     `SOMETHING` must be an existing environment key (for
  *     static-length array types). The first element of `pathElems` is
  *     `SOMETHING` in this case.
  *
- * `Kind::ABS`:
+ * `Kind::Abs`:
  *     Absolute (has a scope).
  *
  *     `scope` indicates the root scope, and `pathElems` contains
  *     everything else (`stream.packet.context` and so forth are
  *     stripped for TSDL).
  *
- * `Kind::REL_1`::
+ * `Kind::Rel1`::
  *     Relative from CTF 1.8.
  *
  *     All path elements have values.
  *
- * `Kind::REL_2`::
+ * `Kind::Rel2`::
  *     Relative from CTF 2.
  *
  *     A path element may be `boost::none` to indicate "parent".
  *
- * The distinction between `Kind::REL_1` and `Kind::REL_2` is important
- * because `Kind::REL_2` allows no-value path elements (`boost::none`)
- * to explicitly indicate "parent", whereas `Kind::REL_1` indicates
+ * The distinction between `Kind::Rel1` and `Kind::Rel2` is important
+ * because `Kind::Rel2` allows no-value path elements (`boost::none`)
+ * to explicitly indicate "parent", whereas `Kind::Rel1` indicates
  * "parent" implicitly.
  */
 class PseudoDataLoc final
@@ -82,10 +82,10 @@ public:
     using PathElems = std::vector<boost::optional<std::string>>;
 
     enum class Kind {
-        ENV,    // environment (CTF 1.8)
-        ABS,    // absolute
-        REL_1,  // relative from CTF 1.8
-        REL_2,  // relative from CTF 2
+        Env,    // environment (CTF 1.8)
+        Abs,    // absolute
+        Rel1,   // relative from CTF 1.8
+        Rel2,   // relative from CTF 2
     };
 
 public:
@@ -135,21 +135,21 @@ class PseudoDt :
     boost::noncopyable
 {
 public:
-    using UP = std::unique_ptr<PseudoDt>;
+    using Up = std::unique_ptr<PseudoDt>;
 
     enum class Kind
     {
-        SCALAR_DT_WRAPPER,
-        FL_UINT,
-        SL_ARRAY,
-        DL_ARRAY,
-        DL_BLOB,
-        STRUCT,
-        VAR,
-        VAR_WITH_INT_RANGES,
-        OPT,
-        OPT_WITH_BOOL_SEL,
-        OPT_WITH_INT_SEL,
+        ScalarDtWrapper,
+        FlUInt,
+        SlArray,
+        DlArray,
+        DlBlob,
+        Struct,
+        Var,
+        VarWithIntRanges,
+        Opt,
+        OptWithBoolSel,
+        OptWithIntSel,
     };
 
 protected:
@@ -169,7 +169,7 @@ public:
      * Fully clones this pseudo data type, meaning the returned object
      * is completely independent from this one.
      */
-    virtual PseudoDt::UP clone() const = 0;
+    virtual PseudoDt::Up clone() const = 0;
 
     const TextLocation& loc() const noexcept
     {
@@ -222,20 +222,20 @@ class PseudoScalarDtWrapper :
     public PseudoDt
 {
 public:
-    explicit PseudoScalarDtWrapper(DataType::UP dt,
+    explicit PseudoScalarDtWrapper(DataType::Up dt,
                                    boost::optional<StringEncoding> encoding = boost::none,
                                    TextLocation loc = TextLocation {});
 
-    explicit PseudoScalarDtWrapper(DataType::UP dt, TextLocation loc = TextLocation {});
+    explicit PseudoScalarDtWrapper(DataType::Up dt, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::SCALAR_DT_WRAPPER;
+        return PseudoDt::Kind::ScalarDtWrapper;
     }
 
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     bool isInt() const noexcept override;
     bool isUInt() const noexcept override;
     bool isFlUInt() const noexcept override;
@@ -252,7 +252,7 @@ public:
     }
 
 private:
-    DataType::UP _dt;
+    DataType::Up _dt;
     boost::optional<StringEncoding> _encoding;
 };
 
@@ -263,7 +263,7 @@ class WithAttrsMixin
 {
 public:
     explicit WithAttrsMixin() = default;
-    explicit WithAttrsMixin(MapItem::UP attrs);
+    explicit WithAttrsMixin(MapItem::Up attrs);
 
     const MapItem *attrs() const noexcept
     {
@@ -271,7 +271,7 @@ public:
     }
 
 private:
-    MapItem::UP _attrs;
+    MapItem::Up _attrs;
 };
 
 /*
@@ -303,15 +303,15 @@ public:
                               FixedLengthUnsignedIntegerType::Mappings mappings,
                               boost::optional<StringEncoding> encoding = boost::none,
                               boost::optional<std::string> mappedClkTypeId = boost::none,
-                              MapItem::UP attrs = nullptr, UnsignedIntegerTypeRoleSet roles = {},
+                              MapItem::Up attrs = nullptr, UnsignedIntegerTypeRoleSet roles = {},
                               TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::FL_UINT;
+        return PseudoDt::Kind::FlUInt;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
     bool isInt() const noexcept override;
@@ -447,8 +447,8 @@ struct PseudoArrayType :
     public WithAttrsMixin
 {
 protected:
-    explicit PseudoArrayType(unsigned int minAlign, PseudoDt::UP pseudoElemType,
-                             MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+    explicit PseudoArrayType(unsigned int minAlign, PseudoDt::Up pseudoElemType,
+                             MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
     PseudoDt& pseudoElemType() noexcept
@@ -468,7 +468,7 @@ public:
 
 private:
     unsigned int _minAlign;
-    PseudoDt::UP _pseudoElemType;
+    PseudoDt::Up _pseudoElemType;
 };
 
 /*
@@ -479,18 +479,18 @@ class PseudoSlArrayType final :
     public PseudoSlDtMixin
 {
 public:
-    explicit PseudoSlArrayType(unsigned int minAlign, Size len, PseudoDt::UP pseudoElemType,
-                               MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+    explicit PseudoSlArrayType(unsigned int minAlign, Size len, PseudoDt::Up pseudoElemType,
+                               MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
-    explicit PseudoSlArrayType(Size len, PseudoDt::UP pseudoElemType,
-                               MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+    explicit PseudoSlArrayType(Size len, PseudoDt::Up pseudoElemType,
+                               MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::SL_ARRAY;
+        return PseudoDt::Kind::SlArray;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -520,18 +520,18 @@ class PseudoDlArrayType final :
 {
 public:
     explicit PseudoDlArrayType(unsigned int minAlign, PseudoDataLoc pseudoLenLoc,
-                               PseudoDt::UP pseudoElemType, MapItem::UP attrs = nullptr,
+                               PseudoDt::Up pseudoElemType, MapItem::Up attrs = nullptr,
                                TextLocation loc = TextLocation {});
 
-    explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::UP pseudoElemType,
-                               MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+    explicit PseudoDlArrayType(PseudoDataLoc pseudoLenLoc, PseudoDt::Up pseudoElemType,
+                               MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::DL_ARRAY;
+        return PseudoDt::Kind::DlArray;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -546,7 +546,7 @@ struct PseudoBlobType :
 {
 protected:
     explicit PseudoBlobType(boost::optional<std::string> mediaType,
-                            MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+                            MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
     const boost::optional<std::string>& mediaType() const noexcept
@@ -556,7 +556,7 @@ public:
 
 private:
     boost::optional<std::string> _mediaType;
-    PseudoDt::UP _pseudoElemType;
+    PseudoDt::Up _pseudoElemType;
 };
 
 /*
@@ -570,14 +570,14 @@ class PseudoDlBlobType final :
 {
 public:
     explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, boost::optional<std::string> mediaType,
-                              MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+                              MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::DL_BLOB;
+        return PseudoDt::Kind::DlBlob;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 };
@@ -589,13 +589,13 @@ class PseudoNamedDt final :
     public WithAttrsMixin
 {
 public:
-    using UP = std::unique_ptr<PseudoNamedDt>;
+    using Up = std::unique_ptr<PseudoNamedDt>;
 
 public:
     explicit PseudoNamedDt() = default;
 
-    explicit PseudoNamedDt(boost::optional<std::string> name, PseudoDt::UP pseudoDt,
-                           MapItem::UP attrs = nullptr);
+    explicit PseudoNamedDt(boost::optional<std::string> name, PseudoDt::Up pseudoDt,
+                           MapItem::Up attrs = nullptr);
 
     const boost::optional<std::string>& name() const noexcept
     {
@@ -614,10 +614,10 @@ public:
 
 private:
     boost::optional<std::string> _name;
-    PseudoDt::UP _pseudoDt;
+    PseudoDt::Up _pseudoDt;
 };
 
-using PseudoNamedDts = std::vector<PseudoNamedDt::UP>;
+using PseudoNamedDts = std::vector<PseudoNamedDt::Up>;
 
 /*
  * Pseudo structure type.
@@ -628,14 +628,14 @@ class PseudoStructType final :
 {
 public:
     explicit PseudoStructType(unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                              MapItem::UP attrs = nullptr, TextLocation loc = TextLocation {});
+                              MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::STRUCT;
+        return PseudoDt::Kind::Struct;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -676,15 +676,15 @@ class PseudoVarType :
 {
 public:
     explicit PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
-                           PseudoNamedDts&& pseudoOpts, MapItem::UP attrs = nullptr,
+                           PseudoNamedDts&& pseudoOpts, MapItem::Up attrs = nullptr,
                            TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::VAR;
+        return PseudoDt::Kind::Var;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -757,15 +757,15 @@ public:
      */
     explicit PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
                                         PseudoNamedDts&& pseudoOpts, RangeSets&& rangeSets,
-                                        MapItem::UP attrs = nullptr,
+                                        MapItem::Up attrs = nullptr,
                                         TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::VAR_WITH_INT_RANGES;
+        return PseudoDt::Kind::VarWithIntRanges;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
@@ -788,8 +788,8 @@ class PseudoOptType :
     public WithAttrsMixin
 {
 protected:
-    explicit PseudoOptType(PseudoDt::UP pseudoDt, PseudoDataLoc&& pseudoSelLoc,
-                           MapItem::UP attrs, TextLocation&& loc);
+    explicit PseudoOptType(PseudoDt::Up pseudoDt, PseudoDataLoc&& pseudoSelLoc,
+                           MapItem::Up attrs, TextLocation&& loc);
 
 public:
     bool isEmpty() const override;
@@ -820,7 +820,7 @@ public:
     }
 
 private:
-    PseudoDt::UP _pseudoDt;
+    PseudoDt::Up _pseudoDt;
     PseudoDataLoc _pseudoSelLoc;
 
     // set by setPseudoDtDataLoc() from `_pseudoSelLoc`
@@ -836,16 +836,16 @@ class PseudoOptWithBoolSelType :
     public PseudoOptType
 {
 public:
-    explicit PseudoOptWithBoolSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
-                                      MapItem::UP attrs = nullptr,
+    explicit PseudoOptWithBoolSelType(PseudoDt::Up pseudoDt, PseudoDataLoc pseudoSelLoc,
+                                      MapItem::Up attrs = nullptr,
                                       TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::OPT_WITH_BOOL_SEL;
+        return PseudoDt::Kind::OptWithBoolSel;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 };
@@ -871,8 +871,8 @@ public:
     using RangeSet = IntegerRangeSet<unsigned long long, false>;
 
 public:
-    explicit PseudoOptWithIntSelType(PseudoDt::UP pseudoDt, PseudoDataLoc pseudoSelLoc,
-                                     RangeSet&& selRanges, MapItem::UP attrs = nullptr,
+    explicit PseudoOptWithIntSelType(PseudoDt::Up pseudoDt, PseudoDataLoc pseudoSelLoc,
+                                     RangeSet&& selRanges, MapItem::Up attrs = nullptr,
                                      TextLocation loc = TextLocation {});
 
     const RangeSet& selRanges() const noexcept
@@ -882,10 +882,10 @@ public:
 
     PseudoDt::Kind kind() const noexcept override
     {
-        return PseudoDt::Kind::OPT_WITH_INT_SEL;
+        return PseudoDt::Kind::OptWithIntSel;
     }
 
-    PseudoDt::UP clone() const override;
+    PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
@@ -905,8 +905,8 @@ public:
     explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
                        boost::optional<std::string> name, boost::optional<std::string> uid,
                        boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
-                       PseudoDt::UP pseudoSpecCtxType, PseudoDt::UP pseudoPayloadType,
-                       MapItem::UP attrs = nullptr);
+                       PseudoDt::Up pseudoSpecCtxType, PseudoDt::Up pseudoPayloadType,
+                       MapItem::Up attrs = nullptr);
 
     PseudoErt(const PseudoErt&) = delete;
     PseudoErt(PseudoErt&&) = default;
@@ -980,8 +980,8 @@ private:
     boost::optional<std::string> _uid;
     boost::optional<LogLevel> _logLevel;
     boost::optional<std::string> _emfUri;
-    PseudoDt::UP _pseudoSpecCtxType;
-    PseudoDt::UP _pseudoPayloadType;
+    PseudoDt::Up _pseudoSpecCtxType;
+    PseudoDt::Up _pseudoPayloadType;
 };
 
 /*
@@ -999,9 +999,9 @@ public:
     explicit PseudoDst() = default;
     explicit PseudoDst(TypeId id, boost::optional<std::string> ns,
                        boost::optional<std::string> name, boost::optional<std::string> uid,
-                       PseudoDt::UP pseudoPktCtxType, PseudoDt::UP pseudoErHeaderType,
-                       PseudoDt::UP pseudoErCommonCtxType, const ClockType *defClkType = nullptr,
-                       MapItem::UP attrs = nullptr);
+                       PseudoDt::Up pseudoPktCtxType, PseudoDt::Up pseudoErHeaderType,
+                       PseudoDt::Up pseudoErCommonCtxType, const ClockType *defClkType = nullptr,
+                       MapItem::Up attrs = nullptr);
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -1086,9 +1086,9 @@ private:
     boost::optional<std::string> _ns;
     boost::optional<std::string> _name;
     boost::optional<std::string> _uid;
-    PseudoDt::UP _pseudoPktCtxType;
-    PseudoDt::UP _pseudoErHeaderType;
-    PseudoDt::UP _pseudoErCommonCtxType;
+    PseudoDt::Up _pseudoPktCtxType;
+    PseudoDt::Up _pseudoErHeaderType;
+    PseudoDt::Up _pseudoErCommonCtxType;
     const ClockType *_defClkType = nullptr;
 };
 
@@ -1140,8 +1140,8 @@ public:
                              boost::optional<std::string> name = boost::none,
                              boost::optional<std::string> uid = boost::none,
                              TraceEnvironment env = TraceEnvironment {},
-                             PseudoDt::UP pseudoPktHeaderType = nullptr,
-                             MapItem::UP attrs = nullptr);
+                             PseudoDt::Up pseudoPktHeaderType = nullptr,
+                             MapItem::Up attrs = nullptr);
 
     /*
      * Validates this pseudo trace type, throwing `TextParseError`
@@ -1238,7 +1238,7 @@ private:
     boost::optional<std::string> _name;
     boost::optional<std::string> _uid;
     TraceEnvironment _env;
-    PseudoDt::UP _pseudoPktHeaderType;
+    PseudoDt::Up _pseudoPktHeaderType;
     ClockTypeSet _clkTypes;
     PseudoDsts _pseudoDsts;
     PseudoOrphanErts _pseudoOrphanErts;
@@ -1247,4 +1247,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP
+#endif // YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP

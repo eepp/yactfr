@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
-#define _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
+#ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
+#define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
 
 #include <cassert>
 #include <unordered_map>
@@ -120,4 +120,4 @@ extern const char * const vlUInt;
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
+#endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP

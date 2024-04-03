@@ -64,24 +64,24 @@ namespace {
 bool isReadFlUInt(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
-    case Instr::Kind::READ_FL_UINT_A16_BE:
-    case Instr::Kind::READ_FL_UINT_A16_BE_REV:
-    case Instr::Kind::READ_FL_UINT_A16_LE:
-    case Instr::Kind::READ_FL_UINT_A16_LE_REV:
-    case Instr::Kind::READ_FL_UINT_A32_BE:
-    case Instr::Kind::READ_FL_UINT_A32_BE_REV:
-    case Instr::Kind::READ_FL_UINT_A32_LE:
-    case Instr::Kind::READ_FL_UINT_A32_LE_REV:
-    case Instr::Kind::READ_FL_UINT_A64_BE:
-    case Instr::Kind::READ_FL_UINT_A64_BE_REV:
-    case Instr::Kind::READ_FL_UINT_A64_LE:
-    case Instr::Kind::READ_FL_UINT_A64_LE_REV:
-    case Instr::Kind::READ_FL_UINT_A8:
-    case Instr::Kind::READ_FL_UINT_A8_REV:
-    case Instr::Kind::READ_FL_UINT_BE:
-    case Instr::Kind::READ_FL_UINT_BE_REV:
-    case Instr::Kind::READ_FL_UINT_LE:
-    case Instr::Kind::READ_FL_UINT_LE_REV:
+    case Instr::Kind::ReadFlUIntA16Be:
+    case Instr::Kind::ReadFlUIntA16BeRev:
+    case Instr::Kind::ReadFlUIntA16Le:
+    case Instr::Kind::ReadFlUIntA16LeRev:
+    case Instr::Kind::ReadFlUIntA32Be:
+    case Instr::Kind::ReadFlUIntA32BeRev:
+    case Instr::Kind::ReadFlUIntA32Le:
+    case Instr::Kind::ReadFlUIntA32LeRev:
+    case Instr::Kind::ReadFlUIntA64Be:
+    case Instr::Kind::ReadFlUIntA64BeRev:
+    case Instr::Kind::ReadFlUIntA64Le:
+    case Instr::Kind::ReadFlUIntA64LeRev:
+    case Instr::Kind::ReadFlUIntA8:
+    case Instr::Kind::ReadFlUIntA8Rev:
+    case Instr::Kind::ReadFlUIntBe:
+    case Instr::Kind::ReadFlUIntBeRev:
+    case Instr::Kind::ReadFlUIntLe:
+    case Instr::Kind::ReadFlUIntLeRev:
         return true;
 
     default:
@@ -93,7 +93,7 @@ bool isReadFlUInt(const Instr& instr) noexcept
 
 bool isReadUInt(const Instr& instr) noexcept
 {
-    return isReadFlUInt(instr) || instr.kind() == Instr::Kind::READ_VL_UINT;
+    return isReadFlUInt(instr) || instr.kind() == Instr::Kind::ReadVlUInt;
 }
 
 #endif // NDEBUG
@@ -152,7 +152,7 @@ namespace {
 
 bool instrIsSpecScope(const Instr& instr, const Scope scope) noexcept
 {
-    if (instr.kind() != Instr::Kind::BEGIN_READ_SCOPE) {
+    if (instr.kind() != Instr::Kind::BeginReadScope) {
         return false;
     }
 
@@ -211,7 +211,7 @@ public:
 
     void visit(ReadVlIntInstr& instr) override
     {
-        if (_uIntTypeRole && instr.kind() == Instr::Kind::READ_VL_UINT &&
+        if (_uIntTypeRole && instr.kind() == Instr::Kind::ReadVlUInt &&
                 instr.dt().asVariableLengthUnsignedIntegerType().hasRole(*_uIntTypeRole)) {
             _func(_curInstrLoc);
         }
@@ -301,7 +301,7 @@ private:
 void PktProcBuilder::_subUuidInstr()
 {
     const auto readScopeInstrIt = firstBeginReadScopeInstr(_pktProc->preambleProc(),
-                                                           Scope::PACKET_HEADER);
+                                                           Scope::PacketHeader);
 
     if (readScopeInstrIt == _pktProc->preambleProc().end()) {
         return;
@@ -324,7 +324,7 @@ void PktProcBuilder::_subUuidInstr()
     for (auto& instrLoc : instrLocs) {
         const auto& origInstr = static_cast<const ReadDataInstr&>(**instrLoc.it);
 
-        if (origInstr.kind() == Instr::Kind::BEGIN_READ_SL_ARRAY) {
+        if (origInstr.kind() == Instr::Kind::BeginReadSlArray) {
             auto& origBeginReadArrayInstr = static_cast<const BeginReadSlArrayInstr&>(**instrLoc.it);
 
             // replace instruction
@@ -337,7 +337,7 @@ void PktProcBuilder::_subUuidInstr()
             this->_buildReadInstr(nullptr, beginReadUuidArrayInstr.slArrayType().elementType(),
                                   beginReadUuidArrayInstr.proc());
         } else {
-            assert(origInstr.kind() == Instr::Kind::BEGIN_READ_SL_BLOB);
+            assert(origInstr.kind() == Instr::Kind::BeginReadSlBlob);
 
             // replace instruction
             *instrLoc.it = std::make_shared<BeginReadSlUuidBlobInstr>(origInstr.memberType(),
@@ -359,13 +359,13 @@ void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
 {
     auto hasDstId = false;
     auto readScopeInstrIt = firstBeginReadScopeInstr(_pktProc->preambleProc(),
-                                                     Scope::PACKET_HEADER);
+                                                     Scope::PacketHeader);
 
     if (readScopeInstrIt != _pktProc->preambleProc().end()) {
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_MAGIC_NUMBER,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PacketMagicNumber,
             [](InstrLoc& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetPktMagicNumberInstr>());
@@ -373,7 +373,7 @@ void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
         };
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::DATA_STREAM_TYPE_ID,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::DataStreamTypeId,
             [&hasDstId](InstrLoc& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SetCurIdInstr>());
                 hasDstId = true;
@@ -381,7 +381,7 @@ void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
         };
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::DATA_STREAM_ID,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::DataStreamId,
             [](InstrLoc& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SetDsIdInstr>());
             }
@@ -410,7 +410,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 {
     auto hasErtIdRole = false;
     auto readScopeInstrIt = firstBeginReadScopeInstr(dsPktProc.pktPreambleProc(),
-                                                     Scope::PACKET_CONTEXT);
+                                                     Scope::PacketContext);
 
     const auto insertUpdateDefClkValInstr = [&dsPktProc](auto& instrLoc) {
         assert(dsPktProc.dst().defaultClockType());
@@ -425,7 +425,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
             instrLoc.proc->insert(std::next(instrLoc.it),
                                   std::make_shared<UpdateDefClkValFlInstr>(readFlBitArrayInstr.len()));
         } else {
-            assert(readUIntInstr.kind() == Instr::Kind::READ_VL_UINT);
+            assert(readUIntInstr.kind() == Instr::Kind::ReadVlUInt);
             instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<UpdateDefClkValInstr>());
         }
     };
@@ -434,7 +434,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_TOTAL_LENGTH,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PacketTotalLength,
             [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetExpectedPktTotalLenInstr>());
@@ -442,7 +442,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_CONTENT_LENGTH,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PacketContentLength,
             [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetExpectedPktContentLenInstr>());
@@ -450,7 +450,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::PACKET_SEQUENCE_NUMBER,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::PacketSequenceNumber,
             [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetPktSeqNumInstr>());
@@ -458,7 +458,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         };
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::DISCARDED_EVENT_RECORD_COUNTER_SNAPSHOT,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::DiscardedEventRecordCounterSnapshot,
             [](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetPktDiscErCounterSnapInstr>());
@@ -467,13 +467,13 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 
         InstrFinder {
             readScopeInstr.proc(),
-            UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
+            UnsignedIntegerTypeRole::DefaultClockTimestamp,
             insertUpdateDefClkValInstr
         };
 
         InstrFinder {
             readScopeInstr.proc(),
-            UnsignedIntegerTypeRole::PACKET_END_DEFAULT_CLOCK_TIMESTAMP,
+            UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp,
             [&dsPktProc](auto& instrLoc) {
                 assert(dsPktProc.dst().defaultClockType());
                 instrLoc.proc->insert(std::next(instrLoc.it),
@@ -485,13 +485,13 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
     dsPktProc.pktPreambleProc().insert(dsPktProc.pktPreambleProc().end(),
                                        std::make_shared<SetPktInfoInstr>());
     readScopeInstrIt = firstBeginReadScopeInstr(dsPktProc.erPreambleProc(),
-                                                Scope::EVENT_RECORD_HEADER);
+                                                Scope::EventRecordHeader);
 
     if (readScopeInstrIt != dsPktProc.erPreambleProc().end()) {
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
         InstrFinder {
-            readScopeInstr.proc(), UnsignedIntegerTypeRole::EVENT_RECORD_TYPE_ID,
+            readScopeInstr.proc(), UnsignedIntegerTypeRole::EventRecordTypeId,
             [&hasErtIdRole](auto& instrLoc) {
                 instrLoc.proc->insert(std::next(instrLoc.it), std::make_shared<SetCurIdInstr>());
                 hasErtIdRole = true;
@@ -500,7 +500,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
 
         InstrFinder {
             readScopeInstr.proc(),
-            UnsignedIntegerTypeRole::DEFAULT_CLOCK_TIMESTAMP,
+            UnsignedIntegerTypeRole::DefaultClockTimestamp,
             insertUpdateDefClkValInstr
         };
     }
@@ -626,9 +626,9 @@ private:
     const Func _func;
 };
 
-PktProcBuilder::_DtReadLenSelInstrMap PktProcBuilder::_createDtReadLenSelInstrMap() const
+PktProcBuilder::_tDtReadLenSelInstrMap PktProcBuilder::_createDtReadLenSelInstrMap() const
 {
-    _DtReadLenSelInstrMap map;
+    _tDtReadLenSelInstrMap map;
 
     const auto insertFunc = [&map](InstrLoc& instrLoc) {
         auto& readDataInstr = static_cast<const ReadDataInstr&>(**instrLoc.it);
@@ -838,7 +838,7 @@ void PktProcBuilder::_buildBasePktProc()
 {
     _pktProc = std::make_unique<PktProc>(*_traceType);
 
-    this->_buildReadScopeInstr(Scope::PACKET_HEADER, _traceType->packetHeaderType(),
+    this->_buildReadScopeInstr(Scope::PacketHeader, _traceType->packetHeaderType(),
                                _pktProc->preambleProc());
 
     for (auto& dst : _traceType->dataStreamTypes()) {
@@ -853,11 +853,11 @@ std::unique_ptr<DsPktProc> PktProcBuilder::_buildDsPktProc(const DataStreamType&
 {
     auto dsPktProc = std::make_unique<DsPktProc>(dst);
 
-    this->_buildReadScopeInstr(Scope::PACKET_CONTEXT, dst.packetContextType(),
+    this->_buildReadScopeInstr(Scope::PacketContext, dst.packetContextType(),
                                dsPktProc->pktPreambleProc());
-    this->_buildReadScopeInstr(Scope::EVENT_RECORD_HEADER, dst.eventRecordHeaderType(),
+    this->_buildReadScopeInstr(Scope::EventRecordHeader, dst.eventRecordHeaderType(),
                                dsPktProc->erPreambleProc());
-    this->_buildReadScopeInstr(Scope::EVENT_RECORD_COMMON_CONTEXT,
+    this->_buildReadScopeInstr(Scope::EventRecordCommonContext,
                                dst.eventRecordCommonContextType(), dsPktProc->erPreambleProc());
 
     for (auto& ert : dst.eventRecordTypes()) {
@@ -874,9 +874,9 @@ std::unique_ptr<ErProc> PktProcBuilder::_buildErProc(const EventRecordType& ert)
 {
     auto erProc = std::make_unique<ErProc>(ert);
 
-    this->_buildReadScopeInstr(Scope::EVENT_RECORD_SPECIFIC_CONTEXT, ert.specificContextType(),
+    this->_buildReadScopeInstr(Scope::EventRecordSpecificContext, ert.specificContextType(),
                                erProc->proc());
-    this->_buildReadScopeInstr(Scope::EVENT_RECORD_PAYLOAD, ert.payloadType(), erProc->proc());
+    this->_buildReadScopeInstr(Scope::EventRecordPayload, ert.payloadType(), erProc->proc());
     return erProc;
 }
 
@@ -1104,7 +1104,7 @@ void PktProcBuilder::_buildReadStructInstr(const StructureMemberType * const mem
         this->_buildReadInstr(innerMemberType.get(), innerMemberType->dataType(), instr->proc());
     }
 
-    auto endInstr = std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_STRUCT, memberType,
+    auto endInstr = std::make_shared<EndReadDataInstr>(Instr::Kind::EndReadStruct, memberType,
                                                        dt);
 
     instr->proc().pushBack(std::move(endInstr));
@@ -1116,7 +1116,7 @@ void PktProcBuilder::_buildReadSlArrayInstr(const StructureMemberType * const me
 {
     assert(dt.isStaticLengthArrayType());
     this->_buildReadInstrWithLen<BeginReadSlArrayInstr,
-                                 Instr::Kind::END_READ_SL_ARRAY>(memberType, dt, baseProc);
+                                 Instr::Kind::EndReadSlArray>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadSlStrInstr(const StructureMemberType * const memberType,
@@ -1124,7 +1124,7 @@ void PktProcBuilder::_buildReadSlStrInstr(const StructureMemberType * const memb
 {
     assert(dt.isStaticLengthStringType());
     this->_buildReadInstrWithLen<BeginReadSlStrInstr,
-                                 Instr::Kind::END_READ_SL_STR>(memberType, dt, baseProc);
+                                 Instr::Kind::EndReadSlStr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadDlArrayInstr(const StructureMemberType * const memberType,
@@ -1132,7 +1132,7 @@ void PktProcBuilder::_buildReadDlArrayInstr(const StructureMemberType * const me
 {
     assert(dt.isDynamicLengthArrayType());
     this->_buildReadInstrWithLen<BeginReadDlArrayInstr,
-                                 Instr::Kind::END_READ_DL_ARRAY>(memberType, dt, baseProc);
+                                 Instr::Kind::EndReadDlArray>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadDlStrInstr(const StructureMemberType * const memberType,
@@ -1140,7 +1140,7 @@ void PktProcBuilder::_buildReadDlStrInstr(const StructureMemberType * const memb
 {
     assert(dt.isDynamicLengthStringType());
     this->_buildReadInstrWithLen<BeginReadDlStrInstr,
-                                 Instr::Kind::END_READ_DL_STR>(memberType, dt, baseProc);
+                                 Instr::Kind::EndReadDlStr>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadSlBlobInstr(const StructureMemberType * const memberType,
@@ -1148,7 +1148,7 @@ void PktProcBuilder::_buildReadSlBlobInstr(const StructureMemberType * const mem
 {
     assert(dt.isStaticLengthBlobType());
     this->_buildReadInstrWithLen<BeginReadSlBlobInstr,
-                                 Instr::Kind::END_READ_SL_BLOB>(memberType, dt, baseProc);
+                                 Instr::Kind::EndReadSlBlob>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadDlBlobInstr(const StructureMemberType * const memberType,
@@ -1156,7 +1156,7 @@ void PktProcBuilder::_buildReadDlBlobInstr(const StructureMemberType * const mem
 {
     assert(dt.isDynamicLengthBlobType());
     this->_buildReadInstrWithLen<BeginReadDlBlobInstr,
-                                 Instr::Kind::END_READ_DL_BLOB>(memberType, dt, baseProc);
+                                 Instr::Kind::EndReadDlBlob>(memberType, dt, baseProc);
 }
 
 void PktProcBuilder::_buildReadVarUIntSelInstr(const StructureMemberType * const memberType,
@@ -1165,7 +1165,7 @@ void PktProcBuilder::_buildReadVarUIntSelInstr(const StructureMemberType * const
     this->_buildReadVarInstr<BeginReadVarUIntSelInstr>(memberType,
                                                        dt.asVariantWithUnsignedIntegerSelectorType(),
                                                        baseProc,
-                                                       Instr::Kind::END_READ_VAR_UINT_SEL);
+                                                       Instr::Kind::EndReadVarUIntSel);
 }
 
 void PktProcBuilder::_buildReadVarSIntSelInstr(const StructureMemberType * const memberType,
@@ -1174,7 +1174,7 @@ void PktProcBuilder::_buildReadVarSIntSelInstr(const StructureMemberType * const
     this->_buildReadVarInstr<BeginReadVarSIntSelInstr>(memberType,
                                                        dt.asVariantWithSignedIntegerSelectorType(),
                                                        baseProc,
-                                                       Instr::Kind::END_READ_VAR_SINT_SEL);
+                                                       Instr::Kind::EndReadVarSIntSel);
 }
 
 void PktProcBuilder::_buildReadOptBoolSelInstr(const StructureMemberType * const memberType,
@@ -1183,7 +1183,7 @@ void PktProcBuilder::_buildReadOptBoolSelInstr(const StructureMemberType * const
     auto instr = std::make_shared<BeginReadOptBoolSelInstr>(memberType, dt);
 
     this->_buildReadInstr(nullptr, dt.asOptionalType().dataType(), instr->proc());
-    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::END_READ_OPT_BOOL_SEL,
+    instr->proc().pushBack(std::make_shared<EndReadDataInstr>(Instr::Kind::EndReadOptBoolSel,
                                                               memberType, dt));
     baseProc.pushBack(std::move(instr));
 }
@@ -1194,7 +1194,7 @@ void PktProcBuilder::_buildReadOptUIntSelInstr(const StructureMemberType * const
     this->_buildReadOptIntSelInstr<BeginReadOptUIntSelInstr>(memberType,
                                                              dt.asOptionalWithUnsignedIntegerSelectorType(),
                                                              baseProc,
-                                                             Instr::Kind::END_READ_OPT_UINT_SEL);
+                                                             Instr::Kind::EndReadOptUIntSel);
 }
 
 void PktProcBuilder::_buildReadOptSIntSelInstr(const StructureMemberType * const memberType,
@@ -1203,7 +1203,7 @@ void PktProcBuilder::_buildReadOptSIntSelInstr(const StructureMemberType * const
     this->_buildReadOptIntSelInstr<BeginReadOptSIntSelInstr>(memberType,
                                                              dt.asOptionalWithSignedIntegerSelectorType(),
                                                              baseProc,
-                                                             Instr::Kind::END_READ_OPT_SINT_SEL);
+                                                             Instr::Kind::EndReadOptSIntSel);
 }
 
 } // namespace internal

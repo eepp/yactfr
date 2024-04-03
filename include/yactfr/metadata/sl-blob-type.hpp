@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_SL_BLOB_TYPE_HPP
-#define _YACTFR_METADATA_SL_BLOB_TYPE_HPP
+#ifndef YACTFR_METADATA_SL_BLOB_TYPE_HPP
+#define YACTFR_METADATA_SL_BLOB_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -31,7 +31,7 @@ class StaticLengthBlobType final :
 {
 public:
     /// Unique pointer to constant static-length BLOB type.
-    using UP = std::unique_ptr<const StaticLengthBlobType>;
+    using Up = std::unique_ptr<const StaticLengthBlobType>;
 
 public:
     /*!
@@ -64,7 +64,7 @@ public:
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length,
-                                  MapItem::UP attributes = nullptr,
+                                  MapItem::Up attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -90,7 +90,7 @@ public:
     @pre
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
-    explicit StaticLengthBlobType(Size length, MapItem::UP attributes = nullptr,
+    explicit StaticLengthBlobType(Size length, MapItem::Up attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -125,7 +125,7 @@ public:
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(unsigned int alignment, Size length, std::string mediaType,
-                                  MapItem::UP attributes = nullptr,
+                                  MapItem::Up attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -154,7 +154,7 @@ public:
         If \p hasMetadataStreamUuidRole is true, then \p length is 16.
     */
     explicit StaticLengthBlobType(Size length, std::string mediaType,
-                                  MapItem::UP attributes = nullptr,
+                                  MapItem::Up attributes = nullptr,
                                   bool hasMetadataStreamUuidRole = false);
 
     /*!
@@ -173,9 +173,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -199,7 +199,7 @@ public:
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -215,4 +215,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_SL_BLOB_TYPE_HPP
+#endif // YACTFR_METADATA_SL_BLOB_TYPE_HPP

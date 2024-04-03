@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_SCOPE_HPP
-#define _YACTFR_METADATA_SCOPE_HPP
+#ifndef YACTFR_METADATA_SCOPE_HPP
+#define YACTFR_METADATA_SCOPE_HPP
 
 namespace yactfr {
 
@@ -19,24 +19,24 @@ namespace yactfr {
 enum class Scope
 {
     /// Packet header.
-    PACKET_HEADER,
+    PacketHeader,
 
     /// Packet context.
-    PACKET_CONTEXT,
+    PacketContext,
 
     /// Event record header.
-    EVENT_RECORD_HEADER,
+    EventRecordHeader,
 
     /// Event record common context.
-    EVENT_RECORD_COMMON_CONTEXT,
+    EventRecordCommonContext,
 
     /// Event record specific context.
-    EVENT_RECORD_SPECIFIC_CONTEXT,
+    EventRecordSpecificContext,
 
     /// Event record payload.
-    EVENT_RECORD_PAYLOAD,
+    EventRecordPayload,
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_SCOPE_HPP
+#endif // YACTFR_METADATA_SCOPE_HPP

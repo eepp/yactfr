@@ -161,7 +161,7 @@ namespace {
 
 const char *byteOrderString(const ByteOrder bo)
 {
-    return bo == ByteOrder::BIG ? "big" : "little";
+    return bo == ByteOrder::Big ? "big" : "little";
 }
 
 } // namespace

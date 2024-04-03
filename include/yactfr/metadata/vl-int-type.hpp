@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_VL_INT_TYPE_HPP
-#define _YACTFR_METADATA_VL_INT_TYPE_HPP
+#ifndef YACTFR_METADATA_VL_INT_TYPE_HPP
+#define YACTFR_METADATA_VL_INT_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -44,9 +44,9 @@ public:
     using typename IntegerTypeCommon<MappingValueT>::MappingValue;
 
 protected:
-    explicit VariableLengthIntegerType(_Kind kind, unsigned int align, DisplayBase prefDispBase,
+    explicit VariableLengthIntegerType(_tKind kind, unsigned int align, DisplayBase prefDispBase,
                                        Mappings&& mappings,
-                                       MapItem::UP attrs) :
+                                       MapItem::Up attrs) :
         ScalarDataType {kind, align, std::move(attrs)},
         IntegerTypeCommon<MappingValueT> {prefDispBase, std::move(mappings)}
     {
@@ -73,7 +73,7 @@ class VariableLengthUnsignedIntegerType final :
 {
 public:
     /// Unique pointer to constant variable-length unsigned integer type.
-    using UP = std::unique_ptr<const VariableLengthUnsignedIntegerType>;
+    using Up = std::unique_ptr<const VariableLengthUnsignedIntegerType>;
 
 public:
     /*!
@@ -105,9 +105,9 @@ public:
         \p alignment is a power of two.
     */
     explicit VariableLengthUnsignedIntegerType(unsigned int alignment,
-                                               DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                               DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                                Mappings mappings = Mappings {},
-                                               MapItem::UP attributes = nullptr,
+                                               MapItem::Up attributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
@@ -131,9 +131,9 @@ public:
         Roles of variable-length unsigned integers described by this
         type.
     */
-    explicit VariableLengthUnsignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+    explicit VariableLengthUnsignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                                Mappings mappings = Mappings {},
-                                               MapItem::UP attributes = nullptr,
+                                               MapItem::Up attributes = nullptr,
                                                UnsignedIntegerTypeRoleSet roles = {});
 
     /*!
@@ -153,14 +153,14 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
     bool _isEqual(const DataType& other) const noexcept override;
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -182,7 +182,7 @@ class VariableLengthSignedIntegerType final :
 {
 public:
     /// Unique pointer to constant variable-length signed integer type.
-    using UP = std::unique_ptr<const VariableLengthSignedIntegerType>;
+    using Up = std::unique_ptr<const VariableLengthSignedIntegerType>;
 
 public:
     /*!
@@ -211,9 +211,9 @@ public:
         \p alignment is a power of two.
     */
     explicit VariableLengthSignedIntegerType(unsigned int alignment,
-                                             DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+                                             DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                              Mappings mappings = Mappings {},
-                                             MapItem::UP attributes = nullptr);
+                                             MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -233,9 +233,9 @@ public:
         If set, each key of \p *attributes is a namespace.
         @endparblock
     */
-    explicit VariableLengthSignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::DECIMAL,
+    explicit VariableLengthSignedIntegerType(DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                              Mappings mappings = Mappings {},
-                                             MapItem::UP attributes = nullptr);
+                                             MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -254,13 +254,13 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -270,4 +270,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_VL_INT_TYPE_HPP
+#endif // YACTFR_METADATA_VL_INT_TYPE_HPP

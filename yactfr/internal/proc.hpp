@@ -55,8 +55,8 @@
  * the implementation of the VM.
  */
 
-#ifndef _YACTFR_INTERNAL_PROC_HPP
-#define _YACTFR_INTERNAL_PROC_HPP
+#ifndef YACTFR_INTERNAL_PROC_HPP
+#define YACTFR_INTERNAL_PROC_HPP
 
 #include <cstdlib>
 #include <cassert>
@@ -424,171 +424,171 @@ class Instr
 public:
     // kind of instruction (opcode)
     WISE_ENUM_CLASS_MEMBER((Kind, unsigned int),
-        UNSET,
-        BEGIN_READ_DL_ARRAY,
-        BEGIN_READ_DL_BLOB,
-        BEGIN_READ_DL_STR,
-        BEGIN_READ_OPT_BOOL_SEL,
-        BEGIN_READ_OPT_SINT_SEL,
-        BEGIN_READ_OPT_UINT_SEL,
-        BEGIN_READ_SCOPE,
-        BEGIN_READ_SL_ARRAY,
-        BEGIN_READ_SL_BLOB,
-        BEGIN_READ_SL_STR,
-        BEGIN_READ_SL_UUID_ARRAY,
-        BEGIN_READ_SL_UUID_BLOB,
-        BEGIN_READ_STRUCT,
-        BEGIN_READ_VAR_SINT_SEL,
-        BEGIN_READ_VAR_UINT_SEL,
-        DECR_REMAINING_ELEMS,
-        END_DS_ER_PREAMBLE_PROC,
-        END_DS_PKT_PREAMBLE_PROC,
-        END_ER_PROC,
-        END_PKT_PREAMBLE_PROC,
-        END_READ_DL_ARRAY,
-        END_READ_DL_BLOB,
-        END_READ_DL_STR,
-        END_READ_OPT_BOOL_SEL,
-        END_READ_OPT_SINT_SEL,
-        END_READ_OPT_UINT_SEL,
-        END_READ_SCOPE,
-        END_READ_SL_ARRAY,
-        END_READ_SL_BLOB,
-        END_READ_SL_STR,
-        END_READ_STRUCT,
-        END_READ_VAR_SINT_SEL,
-        END_READ_VAR_UINT_SEL,
-        READ_FL_BIT_ARRAY_A16_BE,
-        READ_FL_BIT_ARRAY_A16_BE_REV,
-        READ_FL_BIT_ARRAY_A16_LE,
-        READ_FL_BIT_ARRAY_A16_LE_REV,
-        READ_FL_BIT_ARRAY_A32_BE,
-        READ_FL_BIT_ARRAY_A32_BE_REV,
-        READ_FL_BIT_ARRAY_A32_LE,
-        READ_FL_BIT_ARRAY_A32_LE_REV,
-        READ_FL_BIT_ARRAY_A64_BE,
-        READ_FL_BIT_ARRAY_A64_BE_REV,
-        READ_FL_BIT_ARRAY_A64_LE,
-        READ_FL_BIT_ARRAY_A64_LE_REV,
-        READ_FL_BIT_ARRAY_A8,
-        READ_FL_BIT_ARRAY_A8_REV,
-        READ_FL_BIT_ARRAY_BE,
-        READ_FL_BIT_ARRAY_BE_REV,
-        READ_FL_BIT_ARRAY_LE,
-        READ_FL_BIT_ARRAY_LE_REV,
-        READ_FL_BIT_MAP_A16_BE,
-        READ_FL_BIT_MAP_A16_BE_REV,
-        READ_FL_BIT_MAP_A16_LE,
-        READ_FL_BIT_MAP_A16_LE_REV,
-        READ_FL_BIT_MAP_A32_BE,
-        READ_FL_BIT_MAP_A32_BE_REV,
-        READ_FL_BIT_MAP_A32_LE,
-        READ_FL_BIT_MAP_A32_LE_REV,
-        READ_FL_BIT_MAP_A64_BE,
-        READ_FL_BIT_MAP_A64_BE_REV,
-        READ_FL_BIT_MAP_A64_LE,
-        READ_FL_BIT_MAP_A64_LE_REV,
-        READ_FL_BIT_MAP_A8,
-        READ_FL_BIT_MAP_A8_REV,
-        READ_FL_BIT_MAP_BE,
-        READ_FL_BIT_MAP_BE_REV,
-        READ_FL_BIT_MAP_LE,
-        READ_FL_BIT_MAP_LE_REV,
-        READ_FL_BOOL_A16_BE,
-        READ_FL_BOOL_A16_BE_REV,
-        READ_FL_BOOL_A16_LE,
-        READ_FL_BOOL_A16_LE_REV,
-        READ_FL_BOOL_A32_BE,
-        READ_FL_BOOL_A32_BE_REV,
-        READ_FL_BOOL_A32_LE,
-        READ_FL_BOOL_A32_LE_REV,
-        READ_FL_BOOL_A64_BE,
-        READ_FL_BOOL_A64_BE_REV,
-        READ_FL_BOOL_A64_LE,
-        READ_FL_BOOL_A64_LE_REV,
-        READ_FL_BOOL_A8,
-        READ_FL_BOOL_A8_REV,
-        READ_FL_BOOL_BE,
-        READ_FL_BOOL_BE_REV,
-        READ_FL_BOOL_LE,
-        READ_FL_BOOL_LE_REV,
-        READ_FL_FLOAT_32_BE,
-        READ_FL_FLOAT_32_BE_REV,
-        READ_FL_FLOAT_32_LE,
-        READ_FL_FLOAT_32_LE_REV,
-        READ_FL_FLOAT_64_BE,
-        READ_FL_FLOAT_64_BE_REV,
-        READ_FL_FLOAT_64_LE,
-        READ_FL_FLOAT_64_LE_REV,
-        READ_FL_FLOAT_A32_BE,
-        READ_FL_FLOAT_A32_BE_REV,
-        READ_FL_FLOAT_A32_LE,
-        READ_FL_FLOAT_A32_LE_REV,
-        READ_FL_FLOAT_A64_BE,
-        READ_FL_FLOAT_A64_BE_REV,
-        READ_FL_FLOAT_A64_LE,
-        READ_FL_FLOAT_A64_LE_REV,
-        READ_FL_SINT_A16_BE,
-        READ_FL_SINT_A16_BE_REV,
-        READ_FL_SINT_A16_LE,
-        READ_FL_SINT_A16_LE_REV,
-        READ_FL_SINT_A32_BE,
-        READ_FL_SINT_A32_BE_REV,
-        READ_FL_SINT_A32_LE,
-        READ_FL_SINT_A32_LE_REV,
-        READ_FL_SINT_A64_BE,
-        READ_FL_SINT_A64_BE_REV,
-        READ_FL_SINT_A64_LE,
-        READ_FL_SINT_A64_LE_REV,
-        READ_FL_SINT_A8,
-        READ_FL_SINT_A8_REV,
-        READ_FL_SINT_BE,
-        READ_FL_SINT_BE_REV,
-        READ_FL_SINT_LE,
-        READ_FL_SINT_LE_REV,
-        READ_FL_UINT_A16_BE,
-        READ_FL_UINT_A16_BE_REV,
-        READ_FL_UINT_A16_LE,
-        READ_FL_UINT_A16_LE_REV,
-        READ_FL_UINT_A32_BE,
-        READ_FL_UINT_A32_BE_REV,
-        READ_FL_UINT_A32_LE,
-        READ_FL_UINT_A32_LE_REV,
-        READ_FL_UINT_A64_BE,
-        READ_FL_UINT_A64_BE_REV,
-        READ_FL_UINT_A64_LE,
-        READ_FL_UINT_A64_LE_REV,
-        READ_FL_UINT_A8,
-        READ_FL_UINT_A8_REV,
-        READ_FL_UINT_BE,
-        READ_FL_UINT_BE_REV,
-        READ_FL_UINT_LE,
-        READ_FL_UINT_LE_REV,
-        READ_NT_STR_UTF_16,
-        READ_NT_STR_UTF_32,
-        READ_NT_STR_UTF_8,
-        READ_VL_SINT,
-        READ_VL_UINT,
-        SAVE_VAL,
-        SET_CUR_ID,
-        SET_DS_ID,
-        SET_DS_INFO,
-        SET_DST,
-        SET_ER_INFO,
-        SET_ERT,
-        SET_PKT_CONTENT_LEN,
-        SET_PKT_DISC_ER_COUNTER_SNAP,
-        SET_PKT_END_DEF_CLK_VAL,
-        SET_PKT_INFO,
-        SET_PKT_MAGIC_NUMBER,
-        SET_PKT_SEQ_NUM,
-        SET_PKT_TOTAL_LEN,
-        UPDATE_DEF_CLK_VAL,
-        UPDATE_DEF_CLK_VAL_FL
+        Unset,
+        BeginReadDlArray,
+        BeginReadDlBlob,
+        BeginReadDlStr,
+        BeginReadOptBoolSel,
+        BeginReadOptSIntSel,
+        BeginReadOptUIntSel,
+        BeginReadScope,
+        BeginReadSlArray,
+        BeginReadSlBlob,
+        BeginReadSlStr,
+        BeginReadSlUuidArray,
+        BeginReadSlUuidBlob,
+        BeginReadStruct,
+        BeginReadVarSIntSel,
+        BeginReadVarUIntSel,
+        DecrRemainingElems,
+        EndDsErPreambleProc,
+        EndDsPktPreambleProc,
+        EndErProc,
+        EndPktPreambleProc,
+        EndReadDlArray,
+        EndReadDlBlob,
+        EndReadDlStr,
+        EndReadOptBoolSel,
+        EndReadOptSIntSel,
+        EndReadOptUIntSel,
+        EndReadScope,
+        EndReadSlArray,
+        EndReadSlBlob,
+        EndReadSlStr,
+        EndReadStruct,
+        EndReadVarSIntSel,
+        EndReadVarUIntSel,
+        ReadFlBitArrayA16Be,
+        ReadFlBitArrayA16BeRev,
+        ReadFlBitArrayA16Le,
+        ReadFlBitArrayA16LeRev,
+        ReadFlBitArrayA32Be,
+        ReadFlBitArrayA32BeRev,
+        ReadFlBitArrayA32Le,
+        ReadFlBitArrayA32LeRev,
+        ReadFlBitArrayA64Be,
+        ReadFlBitArrayA64BeRev,
+        ReadFlBitArrayA64Le,
+        ReadFlBitArrayA64LeRev,
+        ReadFlBitArrayA8,
+        ReadFlBitArrayA8Rev,
+        ReadFlBitArrayBe,
+        ReadFlBitArrayBeRev,
+        ReadFlBitArrayLe,
+        ReadFlBitArrayLeRev,
+        ReadFlBitMapA16Be,
+        ReadFlBitMapA16BeRev,
+        ReadFlBitMapA16Le,
+        ReadFlBitMapA16LeRev,
+        ReadFlBitMapA32Be,
+        ReadFlBitMapA32BeRev,
+        ReadFlBitMapA32Le,
+        ReadFlBitMapA32LeRev,
+        ReadFlBitMapA64Be,
+        ReadFlBitMapA64BeRev,
+        ReadFlBitMapA64Le,
+        ReadFlBitMapA64LeRev,
+        ReadFlBitMapA8,
+        ReadFlBitMapA8Rev,
+        ReadFlBitMapBe,
+        ReadFlBitMapBeRev,
+        ReadFlBitMapLe,
+        ReadFlBitMapLeRev,
+        ReadFlBoolA16Be,
+        ReadFlBoolA16BeRev,
+        ReadFlBoolA16Le,
+        ReadFlBoolA16LeRev,
+        ReadFlBoolA32Be,
+        ReadFlBoolA32BeRev,
+        ReadFlBoolA32Le,
+        ReadFlBoolA32LeRev,
+        ReadFlBoolA64Be,
+        ReadFlBoolA64BeRev,
+        ReadFlBoolA64Le,
+        ReadFlBoolA64LeRev,
+        ReadFlBoolA8,
+        ReadFlBoolA8Rev,
+        ReadFlBoolBe,
+        ReadFlBoolBeRev,
+        ReadFlBoolLe,
+        ReadFlBoolLeRev,
+        ReadFlFloat32Be,
+        ReadFlFloat32BeRev,
+        ReadFlFloat32Le,
+        ReadFlFloat32LeRev,
+        ReadFlFloat64Be,
+        ReadFlFloat64BeRev,
+        ReadFlFloat64Le,
+        ReadFlFloat64LeRev,
+        ReadFlFloatA32Be,
+        ReadFlFloatA32BeRev,
+        ReadFlFloatA32Le,
+        ReadFlFloatA32LeRev,
+        ReadFlFloatA64Be,
+        ReadFlFloatA64BeRev,
+        ReadFlFloatA64Le,
+        ReadFlFloatA64LeRev,
+        ReadFlSIntA16Be,
+        ReadFlSIntA16BeRev,
+        ReadFlSIntA16Le,
+        ReadFlSIntA16LeRev,
+        ReadFlSIntA32Be,
+        ReadFlSIntA32BeRev,
+        ReadFlSIntA32Le,
+        ReadFlSIntA32LeRev,
+        ReadFlSIntA64Be,
+        ReadFlSIntA64BeRev,
+        ReadFlSIntA64Le,
+        ReadFlSIntA64LeRev,
+        ReadFlSIntA8,
+        ReadFlSIntA8Rev,
+        ReadFlSIntBe,
+        ReadFlSIntBeRev,
+        ReadFlSIntLe,
+        ReadFlSIntLeRev,
+        ReadFlUIntA16Be,
+        ReadFlUIntA16BeRev,
+        ReadFlUIntA16Le,
+        ReadFlUIntA16LeRev,
+        ReadFlUIntA32Be,
+        ReadFlUIntA32BeRev,
+        ReadFlUIntA32Le,
+        ReadFlUIntA32LeRev,
+        ReadFlUIntA64Be,
+        ReadFlUIntA64BeRev,
+        ReadFlUIntA64Le,
+        ReadFlUIntA64LeRev,
+        ReadFlUIntA8,
+        ReadFlUIntA8Rev,
+        ReadFlUIntBe,
+        ReadFlUIntBeRev,
+        ReadFlUIntLe,
+        ReadFlUIntLeRev,
+        ReadNtStrUtf16,
+        ReadNtStrUtf32,
+        ReadNtStrUtf8,
+        ReadVlSInt,
+        ReadVlUInt,
+        SaveVal,
+        SetCurId,
+        SetDsId,
+        SetDsInfo,
+        SetDst,
+        SetErInfo,
+        SetErt,
+        SetPktContentLen,
+        SetPktDiscErCounterSnap,
+        SetPktEndDefClkVal,
+        SetPktInfo,
+        SetPktMagicNumber,
+        SetPktSeqNum,
+        SetPktTotalLen,
+        UpdateDefClkVal,
+        UpdateDefClkValFl
     )
 
 public:
-    using SP = std::shared_ptr<Instr>;
+    using Sp = std::shared_ptr<Instr>;
     using FindInstrsCurrent = std::unordered_map<const Instr *, Index>;
 
 protected:
@@ -607,132 +607,132 @@ public:
     bool isBeginReadData() const noexcept
     {
         switch (_theKind) {
-        case Instr::Kind::BEGIN_READ_DL_ARRAY:
-        case Instr::Kind::BEGIN_READ_DL_BLOB:
-        case Instr::Kind::BEGIN_READ_DL_STR:
-        case Instr::Kind::BEGIN_READ_OPT_BOOL_SEL:
-        case Instr::Kind::BEGIN_READ_OPT_SINT_SEL:
-        case Instr::Kind::BEGIN_READ_OPT_UINT_SEL:
-        case Instr::Kind::BEGIN_READ_SCOPE:
-        case Instr::Kind::BEGIN_READ_SL_ARRAY:
-        case Instr::Kind::BEGIN_READ_SL_BLOB:
-        case Instr::Kind::BEGIN_READ_SL_STR:
-        case Instr::Kind::BEGIN_READ_SL_UUID_ARRAY:
-        case Instr::Kind::BEGIN_READ_SL_UUID_BLOB:
-        case Instr::Kind::BEGIN_READ_STRUCT:
-        case Instr::Kind::BEGIN_READ_VAR_SINT_SEL:
-        case Instr::Kind::BEGIN_READ_VAR_UINT_SEL:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A16_BE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A16_BE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A16_LE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A16_LE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A32_BE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A32_BE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A32_LE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A32_LE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A64_BE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A64_BE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A64_LE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A64_LE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A8:
-        case Instr::Kind::READ_FL_BIT_ARRAY_A8_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_BE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_BE_REV:
-        case Instr::Kind::READ_FL_BIT_ARRAY_LE:
-        case Instr::Kind::READ_FL_BIT_ARRAY_LE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A16_BE:
-        case Instr::Kind::READ_FL_BIT_MAP_A16_BE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A16_LE:
-        case Instr::Kind::READ_FL_BIT_MAP_A16_LE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A32_BE:
-        case Instr::Kind::READ_FL_BIT_MAP_A32_BE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A32_LE:
-        case Instr::Kind::READ_FL_BIT_MAP_A32_LE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A64_BE:
-        case Instr::Kind::READ_FL_BIT_MAP_A64_BE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A64_LE:
-        case Instr::Kind::READ_FL_BIT_MAP_A64_LE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_A8:
-        case Instr::Kind::READ_FL_BIT_MAP_A8_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_BE:
-        case Instr::Kind::READ_FL_BIT_MAP_BE_REV:
-        case Instr::Kind::READ_FL_BIT_MAP_LE:
-        case Instr::Kind::READ_FL_BIT_MAP_LE_REV:
-        case Instr::Kind::READ_FL_BOOL_A16_BE:
-        case Instr::Kind::READ_FL_BOOL_A16_BE_REV:
-        case Instr::Kind::READ_FL_BOOL_A16_LE:
-        case Instr::Kind::READ_FL_BOOL_A16_LE_REV:
-        case Instr::Kind::READ_FL_BOOL_A32_BE:
-        case Instr::Kind::READ_FL_BOOL_A32_BE_REV:
-        case Instr::Kind::READ_FL_BOOL_A32_LE:
-        case Instr::Kind::READ_FL_BOOL_A32_LE_REV:
-        case Instr::Kind::READ_FL_BOOL_A64_BE:
-        case Instr::Kind::READ_FL_BOOL_A64_BE_REV:
-        case Instr::Kind::READ_FL_BOOL_A64_LE:
-        case Instr::Kind::READ_FL_BOOL_A64_LE_REV:
-        case Instr::Kind::READ_FL_BOOL_A8:
-        case Instr::Kind::READ_FL_BOOL_A8_REV:
-        case Instr::Kind::READ_FL_BOOL_BE:
-        case Instr::Kind::READ_FL_BOOL_BE_REV:
-        case Instr::Kind::READ_FL_BOOL_LE:
-        case Instr::Kind::READ_FL_BOOL_LE_REV:
-        case Instr::Kind::READ_FL_FLOAT_32_BE:
-        case Instr::Kind::READ_FL_FLOAT_32_BE_REV:
-        case Instr::Kind::READ_FL_FLOAT_32_LE:
-        case Instr::Kind::READ_FL_FLOAT_32_LE_REV:
-        case Instr::Kind::READ_FL_FLOAT_64_BE:
-        case Instr::Kind::READ_FL_FLOAT_64_BE_REV:
-        case Instr::Kind::READ_FL_FLOAT_64_LE:
-        case Instr::Kind::READ_FL_FLOAT_64_LE_REV:
-        case Instr::Kind::READ_FL_FLOAT_A32_BE:
-        case Instr::Kind::READ_FL_FLOAT_A32_BE_REV:
-        case Instr::Kind::READ_FL_FLOAT_A32_LE:
-        case Instr::Kind::READ_FL_FLOAT_A32_LE_REV:
-        case Instr::Kind::READ_FL_FLOAT_A64_BE:
-        case Instr::Kind::READ_FL_FLOAT_A64_BE_REV:
-        case Instr::Kind::READ_FL_FLOAT_A64_LE:
-        case Instr::Kind::READ_FL_FLOAT_A64_LE_REV:
-        case Instr::Kind::READ_FL_SINT_A16_BE:
-        case Instr::Kind::READ_FL_SINT_A16_BE_REV:
-        case Instr::Kind::READ_FL_SINT_A16_LE:
-        case Instr::Kind::READ_FL_SINT_A16_LE_REV:
-        case Instr::Kind::READ_FL_SINT_A32_BE:
-        case Instr::Kind::READ_FL_SINT_A32_BE_REV:
-        case Instr::Kind::READ_FL_SINT_A32_LE:
-        case Instr::Kind::READ_FL_SINT_A32_LE_REV:
-        case Instr::Kind::READ_FL_SINT_A64_BE:
-        case Instr::Kind::READ_FL_SINT_A64_BE_REV:
-        case Instr::Kind::READ_FL_SINT_A64_LE:
-        case Instr::Kind::READ_FL_SINT_A64_LE_REV:
-        case Instr::Kind::READ_FL_SINT_A8:
-        case Instr::Kind::READ_FL_SINT_A8_REV:
-        case Instr::Kind::READ_FL_SINT_BE:
-        case Instr::Kind::READ_FL_SINT_BE_REV:
-        case Instr::Kind::READ_FL_SINT_LE:
-        case Instr::Kind::READ_FL_SINT_LE_REV:
-        case Instr::Kind::READ_FL_UINT_A16_BE:
-        case Instr::Kind::READ_FL_UINT_A16_BE_REV:
-        case Instr::Kind::READ_FL_UINT_A16_LE:
-        case Instr::Kind::READ_FL_UINT_A16_LE_REV:
-        case Instr::Kind::READ_FL_UINT_A32_BE:
-        case Instr::Kind::READ_FL_UINT_A32_BE_REV:
-        case Instr::Kind::READ_FL_UINT_A32_LE:
-        case Instr::Kind::READ_FL_UINT_A32_LE_REV:
-        case Instr::Kind::READ_FL_UINT_A64_BE:
-        case Instr::Kind::READ_FL_UINT_A64_BE_REV:
-        case Instr::Kind::READ_FL_UINT_A64_LE:
-        case Instr::Kind::READ_FL_UINT_A64_LE_REV:
-        case Instr::Kind::READ_FL_UINT_A8:
-        case Instr::Kind::READ_FL_UINT_A8_REV:
-        case Instr::Kind::READ_FL_UINT_BE:
-        case Instr::Kind::READ_FL_UINT_BE_REV:
-        case Instr::Kind::READ_FL_UINT_LE:
-        case Instr::Kind::READ_FL_UINT_LE_REV:
-        case Instr::Kind::READ_NT_STR_UTF_16:
-        case Instr::Kind::READ_NT_STR_UTF_32:
-        case Instr::Kind::READ_NT_STR_UTF_8:
-        case Instr::Kind::READ_VL_SINT:
-        case Instr::Kind::READ_VL_UINT:
+        case Instr::Kind::BeginReadDlArray:
+        case Instr::Kind::BeginReadDlBlob:
+        case Instr::Kind::BeginReadDlStr:
+        case Instr::Kind::BeginReadOptBoolSel:
+        case Instr::Kind::BeginReadOptSIntSel:
+        case Instr::Kind::BeginReadOptUIntSel:
+        case Instr::Kind::BeginReadScope:
+        case Instr::Kind::BeginReadSlArray:
+        case Instr::Kind::BeginReadSlBlob:
+        case Instr::Kind::BeginReadSlStr:
+        case Instr::Kind::BeginReadSlUuidArray:
+        case Instr::Kind::BeginReadSlUuidBlob:
+        case Instr::Kind::BeginReadStruct:
+        case Instr::Kind::BeginReadVarSIntSel:
+        case Instr::Kind::BeginReadVarUIntSel:
+        case Instr::Kind::ReadFlBitArrayA16Be:
+        case Instr::Kind::ReadFlBitArrayA16BeRev:
+        case Instr::Kind::ReadFlBitArrayA16Le:
+        case Instr::Kind::ReadFlBitArrayA16LeRev:
+        case Instr::Kind::ReadFlBitArrayA32Be:
+        case Instr::Kind::ReadFlBitArrayA32BeRev:
+        case Instr::Kind::ReadFlBitArrayA32Le:
+        case Instr::Kind::ReadFlBitArrayA32LeRev:
+        case Instr::Kind::ReadFlBitArrayA64Be:
+        case Instr::Kind::ReadFlBitArrayA64BeRev:
+        case Instr::Kind::ReadFlBitArrayA64Le:
+        case Instr::Kind::ReadFlBitArrayA64LeRev:
+        case Instr::Kind::ReadFlBitArrayA8:
+        case Instr::Kind::ReadFlBitArrayA8Rev:
+        case Instr::Kind::ReadFlBitArrayBe:
+        case Instr::Kind::ReadFlBitArrayBeRev:
+        case Instr::Kind::ReadFlBitArrayLe:
+        case Instr::Kind::ReadFlBitArrayLeRev:
+        case Instr::Kind::ReadFlBitMapA16Be:
+        case Instr::Kind::ReadFlBitMapA16BeRev:
+        case Instr::Kind::ReadFlBitMapA16Le:
+        case Instr::Kind::ReadFlBitMapA16LeRev:
+        case Instr::Kind::ReadFlBitMapA32Be:
+        case Instr::Kind::ReadFlBitMapA32BeRev:
+        case Instr::Kind::ReadFlBitMapA32Le:
+        case Instr::Kind::ReadFlBitMapA32LeRev:
+        case Instr::Kind::ReadFlBitMapA64Be:
+        case Instr::Kind::ReadFlBitMapA64BeRev:
+        case Instr::Kind::ReadFlBitMapA64Le:
+        case Instr::Kind::ReadFlBitMapA64LeRev:
+        case Instr::Kind::ReadFlBitMapA8:
+        case Instr::Kind::ReadFlBitMapA8Rev:
+        case Instr::Kind::ReadFlBitMapBe:
+        case Instr::Kind::ReadFlBitMapBeRev:
+        case Instr::Kind::ReadFlBitMapLe:
+        case Instr::Kind::ReadFlBitMapLeRev:
+        case Instr::Kind::ReadFlBoolA16Be:
+        case Instr::Kind::ReadFlBoolA16BeRev:
+        case Instr::Kind::ReadFlBoolA16Le:
+        case Instr::Kind::ReadFlBoolA16LeRev:
+        case Instr::Kind::ReadFlBoolA32Be:
+        case Instr::Kind::ReadFlBoolA32BeRev:
+        case Instr::Kind::ReadFlBoolA32Le:
+        case Instr::Kind::ReadFlBoolA32LeRev:
+        case Instr::Kind::ReadFlBoolA64Be:
+        case Instr::Kind::ReadFlBoolA64BeRev:
+        case Instr::Kind::ReadFlBoolA64Le:
+        case Instr::Kind::ReadFlBoolA64LeRev:
+        case Instr::Kind::ReadFlBoolA8:
+        case Instr::Kind::ReadFlBoolA8Rev:
+        case Instr::Kind::ReadFlBoolBe:
+        case Instr::Kind::ReadFlBoolBeRev:
+        case Instr::Kind::ReadFlBoolLe:
+        case Instr::Kind::ReadFlBoolLeRev:
+        case Instr::Kind::ReadFlFloat32Be:
+        case Instr::Kind::ReadFlFloat32BeRev:
+        case Instr::Kind::ReadFlFloat32Le:
+        case Instr::Kind::ReadFlFloat32LeRev:
+        case Instr::Kind::ReadFlFloat64Be:
+        case Instr::Kind::ReadFlFloat64BeRev:
+        case Instr::Kind::ReadFlFloat64Le:
+        case Instr::Kind::ReadFlFloat64LeRev:
+        case Instr::Kind::ReadFlFloatA32Be:
+        case Instr::Kind::ReadFlFloatA32BeRev:
+        case Instr::Kind::ReadFlFloatA32Le:
+        case Instr::Kind::ReadFlFloatA32LeRev:
+        case Instr::Kind::ReadFlFloatA64Be:
+        case Instr::Kind::ReadFlFloatA64BeRev:
+        case Instr::Kind::ReadFlFloatA64Le:
+        case Instr::Kind::ReadFlFloatA64LeRev:
+        case Instr::Kind::ReadFlSIntA16Be:
+        case Instr::Kind::ReadFlSIntA16BeRev:
+        case Instr::Kind::ReadFlSIntA16Le:
+        case Instr::Kind::ReadFlSIntA16LeRev:
+        case Instr::Kind::ReadFlSIntA32Be:
+        case Instr::Kind::ReadFlSIntA32BeRev:
+        case Instr::Kind::ReadFlSIntA32Le:
+        case Instr::Kind::ReadFlSIntA32LeRev:
+        case Instr::Kind::ReadFlSIntA64Be:
+        case Instr::Kind::ReadFlSIntA64BeRev:
+        case Instr::Kind::ReadFlSIntA64Le:
+        case Instr::Kind::ReadFlSIntA64LeRev:
+        case Instr::Kind::ReadFlSIntA8:
+        case Instr::Kind::ReadFlSIntA8Rev:
+        case Instr::Kind::ReadFlSIntBe:
+        case Instr::Kind::ReadFlSIntBeRev:
+        case Instr::Kind::ReadFlSIntLe:
+        case Instr::Kind::ReadFlSIntLeRev:
+        case Instr::Kind::ReadFlUIntA16Be:
+        case Instr::Kind::ReadFlUIntA16BeRev:
+        case Instr::Kind::ReadFlUIntA16Le:
+        case Instr::Kind::ReadFlUIntA16LeRev:
+        case Instr::Kind::ReadFlUIntA32Be:
+        case Instr::Kind::ReadFlUIntA32BeRev:
+        case Instr::Kind::ReadFlUIntA32Le:
+        case Instr::Kind::ReadFlUIntA32LeRev:
+        case Instr::Kind::ReadFlUIntA64Be:
+        case Instr::Kind::ReadFlUIntA64BeRev:
+        case Instr::Kind::ReadFlUIntA64Le:
+        case Instr::Kind::ReadFlUIntA64LeRev:
+        case Instr::Kind::ReadFlUIntA8:
+        case Instr::Kind::ReadFlUIntA8Rev:
+        case Instr::Kind::ReadFlUIntBe:
+        case Instr::Kind::ReadFlUIntBeRev:
+        case Instr::Kind::ReadFlUIntLe:
+        case Instr::Kind::ReadFlUIntLeRev:
+        case Instr::Kind::ReadNtStrUtf16:
+        case Instr::Kind::ReadNtStrUtf32:
+        case Instr::Kind::ReadNtStrUtf8:
+        case Instr::Kind::ReadVlSInt:
+        case Instr::Kind::ReadVlUInt:
             return true;
 
         default:
@@ -744,18 +744,18 @@ public:
     bool isEndReadData() const noexcept
     {
         switch (_theKind) {
-        case Instr::Kind::END_READ_SL_ARRAY:
-        case Instr::Kind::END_READ_DL_ARRAY:
-        case Instr::Kind::END_READ_SL_STR:
-        case Instr::Kind::END_READ_DL_STR:
-        case Instr::Kind::END_READ_SL_BLOB:
-        case Instr::Kind::END_READ_DL_BLOB:
-        case Instr::Kind::END_READ_STRUCT:
-        case Instr::Kind::END_READ_VAR_SINT_SEL:
-        case Instr::Kind::END_READ_VAR_UINT_SEL:
-        case Instr::Kind::END_READ_OPT_BOOL_SEL:
-        case Instr::Kind::END_READ_OPT_SINT_SEL:
-        case Instr::Kind::END_READ_OPT_UINT_SEL:
+        case Instr::Kind::EndReadSlArray:
+        case Instr::Kind::EndReadDlArray:
+        case Instr::Kind::EndReadSlStr:
+        case Instr::Kind::EndReadDlStr:
+        case Instr::Kind::EndReadSlBlob:
+        case Instr::Kind::EndReadDlBlob:
+        case Instr::Kind::EndReadStruct:
+        case Instr::Kind::EndReadVarSIntSel:
+        case Instr::Kind::EndReadVarUIntSel:
+        case Instr::Kind::EndReadOptBoolSel:
+        case Instr::Kind::EndReadOptSIntSel:
+        case Instr::Kind::EndReadOptUIntSel:
             return true;
 
         default:
@@ -765,7 +765,7 @@ public:
 
     Kind kind() const noexcept
     {
-        assert(_theKind != Kind::UNSET);
+        assert(_theKind != Kind::Unset);
         return _theKind;
     }
 
@@ -773,7 +773,7 @@ private:
     virtual std::string _toStr(Size indent = 0) const;
 
 private:
-    const Kind _theKind = Kind::UNSET;
+    const Kind _theKind = Kind::Unset;
 };
 
 /*
@@ -1118,8 +1118,8 @@ private:
 /*
  * "End reading data" procedure instruction.
  *
- * If the kind of this instruction is `END_READ_STRUCT`, then the VM
- * must stop executing the current procedure and continue executing the
+ * If the kind of this instruction is `EndReadStruct`, then the VM must
+ * stop executing the current procedure and continue executing the
  * parent procedure.
  *
  * For all instruction kinds, this instruction requires the VM to set an
@@ -1679,7 +1679,7 @@ private:
 
 class BeginReadVarUIntSelInstr final :
     public BeginReadVarInstr<VariantWithUnsignedIntegerSelectorType,
-                             Instr::Kind::BEGIN_READ_VAR_UINT_SEL>
+                             Instr::Kind::BeginReadVarUIntSel>
 {
 public:
     explicit BeginReadVarUIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
@@ -1692,7 +1692,7 @@ public:
 
 class BeginReadVarSIntSelInstr final :
     public BeginReadVarInstr<VariantWithSignedIntegerSelectorType,
-                             Instr::Kind::BEGIN_READ_VAR_SINT_SEL>
+                             Instr::Kind::BeginReadVarSIntSel>
 {
 public:
     explicit BeginReadVarSIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
@@ -1810,7 +1810,7 @@ private:
  */
 class BeginReadOptUIntSelInstr :
     public BeginReadOptIntSelInstr<OptionalWithUnsignedIntegerSelectorType,
-                                   Instr::Kind::BEGIN_READ_OPT_UINT_SEL>
+                                   Instr::Kind::BeginReadOptUIntSel>
 {
 public:
     explicit BeginReadOptUIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
@@ -1827,7 +1827,7 @@ public:
  */
 class BeginReadOptSIntSelInstr :
     public BeginReadOptIntSelInstr<OptionalWithSignedIntegerSelectorType,
-                                   Instr::Kind::BEGIN_READ_OPT_SINT_SEL>
+                                   Instr::Kind::BeginReadOptSIntSel>
 {
 public:
     explicit BeginReadOptSIntSelInstr(const StructureMemberType *memberType, const DataType& dt);
@@ -2443,4 +2443,4 @@ inline BeginReadStructInstr& instrAsBeginReadStruct(Instr& instr) noexcept
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_PROC_HPP
+#endif // YACTFR_INTERNAL_PROC_HPP

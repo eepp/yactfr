@@ -28,14 +28,14 @@ unsigned int realMinAlign(const StructureType::MemberTypes& memberTypes) noexcep
 } // namespace
 
 StructureType::StructureType(const unsigned int minAlign, StructureType::MemberTypes&& memberTypes,
-                             MapItem::UP attrs) :
-    CompoundDataType {_KIND_STRUCT, minAlign, realMinAlign(memberTypes), std::move(attrs)},
+                             MapItem::Up attrs) :
+    CompoundDataType {_kindStruct, minAlign, realMinAlign(memberTypes), std::move(attrs)},
     _memberTypes {std::move(memberTypes)}
 {
     this->_initNamesToMemberTypes();
 }
 
-StructureType::StructureType(StructureType::MemberTypes&& memberTypes, MapItem::UP attrs) :
+StructureType::StructureType(StructureType::MemberTypes&& memberTypes, MapItem::Up attrs) :
     StructureType {1, std::move(memberTypes), std::move(attrs)}
 {
 }
@@ -48,7 +48,7 @@ void StructureType::_initNamesToMemberTypes()
     }
 }
 
-DataType::UP StructureType::_clone() const
+DataType::Up StructureType::_clone() const
 {
     MemberTypes memberTypes;
 

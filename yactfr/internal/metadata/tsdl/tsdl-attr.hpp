@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
-#define _YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
+#ifndef YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
+#define YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -46,12 +46,12 @@ class TsdlAttr final
 {
 public:
     enum class Kind {
-        UNSET,
-        STR,
-        SINT,
-        UINT,
-        IDENT,
-        CLK_NAME_VALUE,
+        Unset,
+        Str,
+        SInt,
+        UInt,
+        Ident,
+        ClkNameValue,
     };
 
 public:
@@ -122,7 +122,7 @@ public:
 
 public:
     // kind of attribute
-    Kind kind = Kind::UNSET;
+    Kind kind = Kind::Unset;
 
     // name of attribute
     std::string name;
@@ -160,4 +160,4 @@ private:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
+#endif // YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP

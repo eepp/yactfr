@@ -11,10 +11,10 @@
 
 namespace yactfr {
 
-NonNullTerminatedStringType::NonNullTerminatedStringType(const _Kind kind,
+NonNullTerminatedStringType::NonNullTerminatedStringType(const _tKind kind,
                                                          const unsigned int align,
                                                          const StringEncoding encoding,
-                                                         MapItem::UP attrs) :
+                                                         MapItem::Up attrs) :
     StringType {kind, align, encoding, std::move(attrs)}
 {
 }

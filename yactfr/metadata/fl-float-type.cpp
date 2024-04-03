@@ -16,8 +16,8 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const uns
                                                                        const unsigned int len,
                                                                        const ByteOrder bo,
                                                                        const boost::optional<BitOrder>& bio,
-                                                                       MapItem::UP attrs) :
-    FixedLengthBitArrayType {_KIND_FL_FLOAT, align, len, bo, bio, std::move(attrs)}
+                                                                       MapItem::Up attrs) :
+    FixedLengthBitArrayType {_kindFlFloat, align, len, bo, bio, std::move(attrs)}
 {
     assert(len == 32 || len == 64);
 }
@@ -25,7 +25,7 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const uns
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int len,
                                                                        const ByteOrder bo,
                                                                        const boost::optional<BitOrder>& bio,
-                                                                       MapItem::UP attrs) :
+                                                                       MapItem::Up attrs) :
     FixedLengthFloatingPointNumberType {1, len, bo, bio, std::move(attrs)}
 {
 }
@@ -35,7 +35,7 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const Fix
 {
 }
 
-DataType::UP FixedLengthFloatingPointNumberType::_clone() const
+DataType::Up FixedLengthFloatingPointNumberType::_clone() const
 {
     return FixedLengthFloatingPointNumberType::create(this->alignment(), this->length(),
                                                       this->byteOrder(), this->bitOrder(),

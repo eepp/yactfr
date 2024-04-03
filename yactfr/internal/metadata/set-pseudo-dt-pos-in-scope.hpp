@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP
-#define _YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP
+#ifndef YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP
+#define YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP
 
 #include "pseudo-types.hpp"
 
@@ -25,4 +25,4 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt);
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP
+#endif // YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP

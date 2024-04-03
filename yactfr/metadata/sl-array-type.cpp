@@ -10,23 +10,23 @@
 
 namespace yactfr {
 
-StaticLengthArrayType::StaticLengthArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                             const Size len, MapItem::UP attrs,
+StaticLengthArrayType::StaticLengthArrayType(const unsigned int minAlign, DataType::Up elemType,
+                                             const Size len, MapItem::Up attrs,
                                              const bool hasMetadataStreamUuidRole) :
-    ArrayType {_KIND_SL_ARRAY, minAlign, std::move(elemType), std::move(attrs)},
+    ArrayType {_kindSlArray, minAlign, std::move(elemType), std::move(attrs)},
     _len {len},
     _hasMetadataStreamUuidRole {hasMetadataStreamUuidRole}
 {
 }
 
-StaticLengthArrayType::StaticLengthArrayType(DataType::UP elemType, const Size len,
-                                             MapItem::UP attrs,
+StaticLengthArrayType::StaticLengthArrayType(DataType::Up elemType, const Size len,
+                                             MapItem::Up attrs,
                                              const bool hasMetadataStreamUuidRole) :
     StaticLengthArrayType {1, std::move(elemType), len, std::move(attrs), hasMetadataStreamUuidRole}
 {
 }
 
-DataType::UP StaticLengthArrayType::_clone() const
+DataType::Up StaticLengthArrayType::_clone() const
 {
     return StaticLengthArrayType::create(this->minimumAlignment(), this->elementType().clone(),
                                          _len, internal::tryCloneAttrs(this->attributes()),

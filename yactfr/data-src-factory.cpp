@@ -14,7 +14,7 @@ DataSourceFactory::~DataSourceFactory()
 {
 }
 
-DataSource::UP DataSourceFactory::createDataSource()
+DataSource::Up DataSourceFactory::createDataSource()
 {
     auto dataSourceUp = this->_createDataSource();
 

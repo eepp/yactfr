@@ -10,20 +10,20 @@
 
 namespace yactfr {
 
-DynamicLengthArrayType::DynamicLengthArrayType(const unsigned int minAlign, DataType::UP elemType,
-                                               DataLocation lenLoc, MapItem::UP attrs) :
-    ArrayType {_KIND_DL_ARRAY, minAlign, std::move(elemType), std::move(attrs)},
+DynamicLengthArrayType::DynamicLengthArrayType(const unsigned int minAlign, DataType::Up elemType,
+                                               DataLocation lenLoc, MapItem::Up attrs) :
+    ArrayType {_kindDlArray, minAlign, std::move(elemType), std::move(attrs)},
     _lenLoc {std::move(lenLoc)}
 {
 }
 
-DynamicLengthArrayType::DynamicLengthArrayType(DataType::UP elemType, DataLocation lenLoc,
-                                               MapItem::UP attrs) :
+DynamicLengthArrayType::DynamicLengthArrayType(DataType::Up elemType, DataLocation lenLoc,
+                                               MapItem::Up attrs) :
     DynamicLengthArrayType {1, std::move(elemType), std::move(lenLoc), std::move(attrs)}
 {
 }
 
-DataType::UP DynamicLengthArrayType::_clone() const
+DataType::Up DynamicLengthArrayType::_clone() const
 {
     return DynamicLengthArrayType::create(this->alignment(), this->elementType().clone(), _lenLoc,
                                           internal::tryCloneAttrs(this->attributes()));

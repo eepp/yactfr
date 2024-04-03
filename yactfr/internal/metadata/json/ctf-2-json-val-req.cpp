@@ -29,7 +29,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonBoValReq>();
     }
@@ -58,7 +58,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonBioValReq>();
     }
@@ -87,7 +87,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonUuidValReq>();
     }
@@ -123,14 +123,14 @@ public:
             })}},
             {strs::path, {
                 JsonArrayValReq::shared(1, boost::none,
-                                        JsonValReq::shared(JsonVal::Kind::STR, true)),
+                                        JsonValReq::shared(JsonVal::Kind::Str, true)),
                 true
             }},
         }}
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonDataLocValReq>();
     }
@@ -165,7 +165,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonAttrsValReq>();
     }
@@ -194,7 +194,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonExtValReq>();
     }
@@ -223,7 +223,7 @@ class JsonIntValReq :
     public JsonValReq
 {
 public:
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonIntValReq>();
     }
@@ -245,11 +245,11 @@ class JsonUIntValReq final :
 {
 public:
     explicit JsonUIntValReq() :
-        JsonValReq {JsonVal::Kind::UINT}
+        JsonValReq {JsonVal::Kind::UInt}
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonUIntValReq>();
     }
@@ -283,7 +283,7 @@ class JsonSIntValReq final :
     public JsonIntValReq
 {
 public:
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonSIntValReq>();
     }
@@ -313,7 +313,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonIntRangeValReqBase>();
     }
@@ -431,7 +431,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonIntRangeSetValReqBase>();
     }
@@ -471,11 +471,11 @@ class JsonRolesValReq final :
 {
 public:
     explicit JsonRolesValReq() :
-        JsonArrayValReq {JsonValReq::shared(JsonVal::Kind::STR)}
+        JsonArrayValReq {JsonValReq::shared(JsonVal::Kind::Str)}
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonRolesValReq>();
     }
@@ -500,7 +500,7 @@ namespace {
  * constructor.
  */
 void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
-                          JsonValReq::SP valReq, const bool isRequired = false)
+                          JsonValReq::Sp valReq, const bool isRequired = false)
 {
     propReqs.emplace(std::make_pair(std::move(key),
                                     JsonObjValPropReq {std::move(valReq), isRequired}));
@@ -578,7 +578,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonFlBitArrayTypeValReq>();
     }
@@ -634,7 +634,7 @@ public:
     {
     }
 
-    static SP shared(const char * const propName, const char * const objName,
+    static Sp shared(const char * const propName, const char * const objName,
                      const bool allowEmpty = true)
     {
         return std::make_shared<JsonIntTypeMappingsFlagsValReq>(propName, objName, allowEmpty);
@@ -699,7 +699,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonFlBitMapTypeValReq>();
     }
@@ -733,7 +733,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonFlBoolTypeValReq>();
     }
@@ -833,7 +833,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonFlUIntTypeValReq>();
     }
@@ -868,7 +868,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonFlSIntTypeValReq>();
     }
@@ -903,7 +903,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonFlFloatTypeValReq>();
     }
@@ -975,7 +975,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonVlUIntTypeValReq>();
     }
@@ -1010,7 +1010,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonVlSIntTypeValReq>();
     }
@@ -1071,7 +1071,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonNtStrTypeValReq>();
     }
@@ -1102,7 +1102,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry slDtLenPropReqEntry()
 {
-    return {strs::len, {JsonValReq::shared(JsonVal::Kind::UINT), true}};
+    return {strs::len, {JsonValReq::shared(JsonVal::Kind::UInt), true}};
 }
 
 /*
@@ -1129,7 +1129,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonSlStrTypeValReq>();
     }
@@ -1163,7 +1163,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonDlStrTypeValReq>();
     }
@@ -1200,7 +1200,7 @@ protected:
 private:
     static PropReqs _buildPropReqs(PropReqs&& propReqs)
     {
-        addToPropReqs(propReqs, strs::mediaType, JsonValReq::shared(JsonVal::Kind::STR));
+        addToPropReqs(propReqs, strs::mediaType, JsonValReq::shared(JsonVal::Kind::Str));
         return std::move(propReqs);
     }
 };
@@ -1217,7 +1217,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonSlBlobTypeValReq>();
     }
@@ -1260,7 +1260,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonDlBlobTypeValReq>();
     }
@@ -1296,7 +1296,7 @@ class JsonAnyFullDtValReq;
  * type using it exists.
  *
  * Because JSON value requirements work with shared pointers to
- * `JsonValReq` (`JsonValReq::SP`), this `JsonAnyDtValReqWrapper` class
+ * `JsonValReq` (`JsonValReq::Sp`), this `JsonAnyDtValReqWrapper` class
  * simply wraps such a `const JsonAnyFullDtValReq *` value: its
  * _validate() method forwards the call. A `JsonAnyDtValReqWrapper`
  * instance doesn't own the raw pointer.
@@ -1310,7 +1310,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonAnyDtValReqWrapper>(anyFullDtValReq);
     }
@@ -1343,7 +1343,7 @@ JsonObjValReq::PropReqsEntry anyDtPropReqEntry(std::string&& key,
  */
 JsonObjValReq::PropReqsEntry namePropReqEntry(const bool isRequired)
 {
-    return {strs::name, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
+    return {strs::name, {JsonValReq::shared(JsonVal::Kind::Str), isRequired}};
 }
 
 } // namespace
@@ -1365,7 +1365,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonStructMemberTypeValReq>(anyFullDtValReq);
     }
@@ -1445,7 +1445,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonStructTypeValReq>(anyFullDtValReq);
     }
@@ -1504,7 +1504,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonSlArrayTypeValReq>(anyFullDtValReq);
     }
@@ -1538,7 +1538,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonDlArrayTypeValReq>(anyFullDtValReq);
     }
@@ -1600,7 +1600,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonOptTypeValReq>(anyFullDtValReq);
     }
@@ -1640,7 +1640,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonVarTypeOptValReq>(anyFullDtValReq);
     }
@@ -1684,7 +1684,7 @@ public:
     {
     }
 
-    static SP shared(const JsonAnyFullDtValReq& anyFullDtValReq)
+    static Sp shared(const JsonAnyFullDtValReq& anyFullDtValReq)
     {
         return std::make_shared<JsonVarTypeValReq>(anyFullDtValReq);
     }
@@ -1768,7 +1768,7 @@ public:
         this->_addToDtValReqs(_varTypeValReq);
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonAnyFullDtValReq>();
     }
@@ -1877,7 +1877,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonPreFragValReq>();
     }
@@ -1914,7 +1914,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonDtAliasFragValReq>();
     }
@@ -1949,12 +1949,12 @@ public:
     explicit JsonClkOffsetValReq() :
         JsonObjValReq {{
             {strs::secs, {JsonSIntValReq::shared()}},
-            {strs::cycles, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::cycles, {JsonValReq::shared(JsonVal::Kind::UInt)}},
         }}
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonClkOffsetValReq>();
     }
@@ -1980,7 +1980,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry nsPropReqEntry()
 {
-    return {strs::ns, {JsonValReq::shared(JsonVal::Kind::STR)}};
+    return {strs::ns, {JsonValReq::shared(JsonVal::Kind::Str)}};
 }
 
 /*
@@ -1990,7 +1990,7 @@ JsonObjValReq::PropReqsEntry nsPropReqEntry()
  */
 JsonObjValReq::PropReqsEntry uidPropReqEntry(const bool isRequired)
 {
-    return {strs::uid, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
+    return {strs::uid, {JsonValReq::shared(JsonVal::Kind::Str), isRequired}};
 }
 
 } // namespace
@@ -2011,7 +2011,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonClkOrigValReq>();
     }
@@ -2037,7 +2037,7 @@ class JsonClkTypeOrigPropValReq final :
 public:
     JsonClkTypeOrigPropValReq() = default;
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonClkTypeOrigPropValReq>();
     }
@@ -2079,7 +2079,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry idPropReqEntry()
 {
-    return {strs::id, {JsonValReq::shared(JsonVal::Kind::UINT)}};
+    return {strs::id, {JsonValReq::shared(JsonVal::Kind::UInt)}};
 }
 
 } // namespace
@@ -2093,21 +2093,21 @@ class JsonClkTypeFragValReq final :
 public:
     explicit JsonClkTypeFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            {strs::id, {JsonValReq::shared(JsonVal::Kind::STR), true}},
+            {strs::id, {JsonValReq::shared(JsonVal::Kind::Str), true}},
             nsPropReqEntry(),
             namePropReqEntry(false),
             uidPropReqEntry(false),
             {strs::freq, {JsonUIntValInRangeReq::shared(1, boost::none), true}},
-            {strs::descr, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            {strs::descr, {JsonValReq::shared(JsonVal::Kind::Str)}},
             {strs::orig, {JsonClkTypeOrigPropValReq::shared()}},
             {strs::offsetFromOrig, {JsonClkOffsetValReq::shared()}},
-            {strs::prec, {JsonValReq::shared(JsonVal::Kind::UINT)}},
-            {strs::accuracy, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::prec, {JsonValReq::shared(JsonVal::Kind::UInt)}},
+            {strs::accuracy, {JsonValReq::shared(JsonVal::Kind::UInt)}},
         }}
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonClkTypeFragValReq>();
     }
@@ -2163,7 +2163,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonTraceEnvValReq>();
     }
@@ -2217,7 +2217,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonTraceTypeFragValReq>();
     }
@@ -2255,7 +2255,7 @@ public:
             namePropReqEntry(false),
             uidPropReqEntry(false),
             idPropReqEntry(),
-            {strs::defCcId, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            {strs::defCcId, {JsonValReq::shared(JsonVal::Kind::Str)}},
             anyDtPropReqEntry(strs::pktCtxFc, _anyFullDtValReq), //-V1050
             anyDtPropReqEntry(strs::erHeaderFc, _anyFullDtValReq), //-V1050
             anyDtPropReqEntry(strs::erCommonCtxFc, _anyFullDtValReq), //-V1050
@@ -2263,7 +2263,7 @@ public:
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonDstFragValReq>();
     }
@@ -2301,14 +2301,14 @@ public:
             namePropReqEntry(false),
             uidPropReqEntry(false),
             idPropReqEntry(),
-            {strs::dscId, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::dscId, {JsonValReq::shared(JsonVal::Kind::UInt)}},
             anyDtPropReqEntry(strs::specCtxFc, _anyFullDtValReq), //-V1050
             anyDtPropReqEntry(strs::payloadFc, _anyFullDtValReq), //-V1050
         }}
     {
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonErtFragValReq>();
     }
@@ -2363,7 +2363,7 @@ public:
         this->_addToFragValReqs(_ertFragValReq);
     }
 
-    static SP shared()
+    static Sp shared()
     {
         return std::make_shared<JsonAnyFragValReqImpl>();
     }

@@ -72,7 +72,7 @@ public:
         _item = createItem(std::move(items));
     }
 
-    Item::UP releaseItem() noexcept
+    Item::Up releaseItem() noexcept
     {
         return std::move(_item);
     }
@@ -85,10 +85,10 @@ private:
     }
 
 private:
-    Item::UP _item;
+    Item::Up _item;
 };
 
-Item::UP itemFromJsonVal(const JsonVal& val)
+Item::Up itemFromJsonVal(const JsonVal& val)
 {
     ItemFromJsonValConverter converter;
 

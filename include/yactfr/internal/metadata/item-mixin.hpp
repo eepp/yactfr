@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
-#define _YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
+#ifndef YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
+#define YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
 
 #include <cassert>
 #include <string>
@@ -67,7 +67,7 @@ template <typename ContainerT>
 class CompoundItemMixin
 {
 protected:
-    using _Container = ContainerT;
+    using _tContainer = ContainerT;
 
 protected:
     explicit CompoundItemMixin(ContainerT&& items) :
@@ -101,14 +101,14 @@ protected:
 
 template <typename ItemT>
 class ArrayItemMixin :
-    public CompoundItemMixin<std::vector<typename ItemT::UP>>
+    public CompoundItemMixin<std::vector<typename ItemT::Up>>
 {
 protected:
-    using typename CompoundItemMixin<std::vector<typename ItemT::UP>>::_Container;
+    using typename CompoundItemMixin<std::vector<typename ItemT::Up>>::_tContainer;
 
 protected:
-    explicit ArrayItemMixin(_Container&& items) :
-        CompoundItemMixin<std::vector<typename ItemT::UP>> {std::move(items)}
+    explicit ArrayItemMixin(_tContainer&& items) :
+        CompoundItemMixin<std::vector<typename ItemT::Up>> {std::move(items)}
     {
     }
 
@@ -147,14 +147,14 @@ protected:
 
 template <typename ItemT>
 class MapItemMixin :
-    public CompoundItemMixin<std::map<std::string, typename ItemT::UP>>
+    public CompoundItemMixin<std::map<std::string, typename ItemT::Up>>
 {
 protected:
-    using typename CompoundItemMixin<std::map<std::string, typename ItemT::UP>>::_Container;
+    using typename CompoundItemMixin<std::map<std::string, typename ItemT::Up>>::_tContainer;
 
 protected:
-    explicit MapItemMixin(_Container&& items) :
-        CompoundItemMixin<std::map<std::string, typename ItemT::UP>> {std::move(items)}
+    explicit MapItemMixin(_tContainer&& items) :
+        CompoundItemMixin<std::map<std::string, typename ItemT::Up>> {std::move(items)}
     {
     }
 
@@ -216,4 +216,4 @@ protected:
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
+#endif // YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP

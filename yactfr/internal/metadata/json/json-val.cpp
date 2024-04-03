@@ -75,7 +75,7 @@ bool JsonVal::operator==(const JsonVal& other) const noexcept
     return this->_isEqual(other);
 }
 
-JsonVal::UP JsonVal::clone() const
+JsonVal::Up JsonVal::clone() const
 {
     return this->_clone();
 }
@@ -86,11 +86,11 @@ void JsonVal::accept(JsonValVisitor& visitor) const
 }
 
 JsonNullVal::JsonNullVal(TextLocation loc) :
-    JsonVal {Kind::NUL, std::move(loc)}
+    JsonVal {Kind::Null, std::move(loc)}
 {
 }
 
-JsonVal::UP JsonNullVal::_clone() const
+JsonVal::Up JsonNullVal::_clone() const
 {
     return std::make_unique<const JsonNullVal>(this->loc());
 }
@@ -106,12 +106,12 @@ bool JsonNullVal::_isEqual(const JsonVal&) const noexcept
 }
 
 JsonArrayVal::JsonArrayVal(Container&& items, TextLocation loc) :
-    JsonVal {Kind::ARRAY, std::move(loc)},
+    JsonVal {Kind::Array, std::move(loc)},
     internal::ArrayItemMixin<JsonVal> {std::move(items)}
 {
 }
 
-JsonVal::UP JsonArrayVal::_clone() const
+JsonVal::Up JsonArrayVal::_clone() const
 {
     Container items;
 
@@ -133,12 +133,12 @@ bool JsonArrayVal::_isEqual(const JsonVal& other) const noexcept
 }
 
 JsonObjVal::JsonObjVal(Container&& items, TextLocation loc) :
-    JsonVal {Kind::OBJ, std::move(loc)},
+    JsonVal {Kind::Obj, std::move(loc)},
     internal::MapItemMixin<JsonVal> {std::move(items)}
 {
 }
 
-JsonVal::UP JsonObjVal::_clone() const
+JsonVal::Up JsonObjVal::_clone() const
 {
     Container items;
 
@@ -159,42 +159,42 @@ bool JsonObjVal::_isEqual(const JsonVal& other) const noexcept
     return internal::MapItemMixin<JsonVal>::_isEqual(other.asObj());
 }
 
-JsonNullVal::UP createJsonVal(TextLocation loc)
+JsonNullVal::Up createJsonVal(TextLocation loc)
 {
     return std::make_unique<const JsonNullVal>(std::move(loc));
 }
 
-JsonBoolVal::UP createJsonVal(const bool val, TextLocation loc)
+JsonBoolVal::Up createJsonVal(const bool val, TextLocation loc)
 {
     return std::make_unique<const JsonBoolVal>(val, std::move(loc));
 }
 
-JsonSIntVal::UP createJsonVal(const long long val, TextLocation loc)
+JsonSIntVal::Up createJsonVal(const long long val, TextLocation loc)
 {
     return std::make_unique<const JsonSIntVal>(val, std::move(loc));
 }
 
-JsonUIntVal::UP createJsonVal(const unsigned long long val, TextLocation loc)
+JsonUIntVal::Up createJsonVal(const unsigned long long val, TextLocation loc)
 {
     return std::make_unique<const JsonUIntVal>(val, std::move(loc));
 }
 
-JsonRealVal::UP createJsonVal(const double val, TextLocation loc)
+JsonRealVal::Up createJsonVal(const double val, TextLocation loc)
 {
     return std::make_unique<const JsonRealVal>(val, std::move(loc));
 }
 
-JsonStrVal::UP createJsonVal(std::string val, TextLocation loc)
+JsonStrVal::Up createJsonVal(std::string val, TextLocation loc)
 {
     return std::make_unique<const JsonStrVal>(std::move(val), std::move(loc));
 }
 
-JsonArrayVal::UP createJsonVal(JsonArrayVal::Container&& items, TextLocation loc)
+JsonArrayVal::Up createJsonVal(JsonArrayVal::Container&& items, TextLocation loc)
 {
     return std::make_unique<const JsonArrayVal>(std::move(items), std::move(loc));
 }
 
-JsonObjVal::UP createJsonVal(JsonObjVal::Container&& items, TextLocation loc)
+JsonObjVal::Up createJsonVal(JsonObjVal::Container&& items, TextLocation loc)
 {
     return std::make_unique<const JsonObjVal>(std::move(items), std::move(loc));
 }

@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_DL_BLOB_TYPE_HPP
-#define _YACTFR_METADATA_DL_BLOB_TYPE_HPP
+#ifndef YACTFR_METADATA_DL_BLOB_TYPE_HPP
+#define YACTFR_METADATA_DL_BLOB_TYPE_HPP
 
 #include <memory>
 #include <utility>
@@ -38,7 +38,7 @@ class DynamicLengthBlobType final :
 
 public:
     /// Unique pointer to constant dynamic-length BLOB type.
-    using UP = std::unique_ptr<const DynamicLengthBlobType>;
+    using Up = std::unique_ptr<const DynamicLengthBlobType>;
 
 public:
     /*!
@@ -68,7 +68,7 @@ public:
         \p alignment is a power of two.
     */
     explicit DynamicLengthBlobType(unsigned int alignment, DataLocation lengthLocation,
-                                   std::string mediaType, MapItem::UP attributes = nullptr);
+                                   std::string mediaType, MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -90,7 +90,7 @@ public:
         @endparblock
     */
     explicit DynamicLengthBlobType(DataLocation lengthLocation,
-                                   std::string mediaType, MapItem::UP attributes = nullptr);
+                                   std::string mediaType, MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -113,7 +113,7 @@ public:
         \p alignment is a power of two.
     */
     explicit DynamicLengthBlobType(unsigned int alignment, DataLocation lengthLocation,
-                                   MapItem::UP attributes = nullptr);
+                                   MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -129,7 +129,7 @@ public:
         by this type.
     */
     explicit DynamicLengthBlobType(DataLocation lengthLocation,
-                                   MapItem::UP attributes = nullptr);
+                                   MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -147,9 +147,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -174,7 +174,7 @@ public:
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
     bool _isEqual(const DataType& other) const noexcept override;
 
     void _accept(DataTypeVisitor& visitor) const override
@@ -194,4 +194,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_DL_BLOB_TYPE_HPP
+#endif // YACTFR_METADATA_DL_BLOB_TYPE_HPP

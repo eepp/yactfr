@@ -11,31 +11,31 @@
 namespace yactfr {
 
 DynamicLengthBlobType::DynamicLengthBlobType(const unsigned int align, DataLocation lenLoc,
-                                             std::string mediaType, MapItem::UP attrs) :
-    BlobType {_KIND_DL_BLOB, align, std::move(attrs), std::move(mediaType)},
+                                             std::string mediaType, MapItem::Up attrs) :
+    BlobType {_kindDlBlob, align, std::move(attrs), std::move(mediaType)},
     _lenLoc {std::move(lenLoc)}
 {
 }
 
 DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, std::string mediaType,
-                                             MapItem::UP attrs) :
+                                             MapItem::Up attrs) :
     DynamicLengthBlobType {8, std::move(lenLoc), std::move(mediaType), std::move(attrs)}
 {
 }
 
 DynamicLengthBlobType::DynamicLengthBlobType(const unsigned int align, DataLocation lenLoc,
-                                             MapItem::UP attrs) :
-    BlobType {_KIND_DL_BLOB, align, std::move(attrs)},
+                                             MapItem::Up attrs) :
+    BlobType {_kindDlBlob, align, std::move(attrs)},
     _lenLoc {std::move(lenLoc)}
 {
 }
 
-DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, MapItem::UP attrs) :
+DynamicLengthBlobType::DynamicLengthBlobType(DataLocation lenLoc, MapItem::Up attrs) :
     DynamicLengthBlobType {8, std::move(lenLoc), std::move(attrs)}
 {
 }
 
-DataType::UP DynamicLengthBlobType::_clone() const
+DataType::Up DynamicLengthBlobType::_clone() const
 {
     return DynamicLengthBlobType::create(this->alignment(), _lenLoc, this->mediaType(),
                                          internal::tryCloneAttrs(this->attributes()));

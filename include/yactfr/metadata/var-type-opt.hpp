@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_VAR_TYPE_OPT_HPP
-#define _YACTFR_METADATA_VAR_TYPE_OPT_HPP
+#ifndef YACTFR_METADATA_VAR_TYPE_OPT_HPP
+#define YACTFR_METADATA_VAR_TYPE_OPT_HPP
 
 #include <string>
 #include <vector>
@@ -42,7 +42,7 @@ class VariantTypeOption final :
 
 public:
     /// Unique pointer to constant variant type option.
-    using UP = std::unique_ptr<const VariantTypeOption>;
+    using Up = std::unique_ptr<const VariantTypeOption>;
 
     /// Type of the value of a selector.
     using SelectorValue = SelectorValueT;
@@ -74,9 +74,9 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(boost::optional<std::string> name, DataType::UP dataType,
+    explicit VariantTypeOption(boost::optional<std::string> name, DataType::Up dataType,
                                SelectorRangeSet selectorRanges,
-                               MapItem::UP attributes = nullptr) :
+                               MapItem::Up attributes = nullptr) :
         _name {std::move(name)},
         _dt {std::move(dataType)},
         _selRanges {std::move(selectorRanges)},
@@ -105,8 +105,8 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(DataType::UP dataType, SelectorRangeSet selectorRanges,
-                               MapItem::UP attributes = nullptr) :
+    explicit VariantTypeOption(DataType::Up dataType, SelectorRangeSet selectorRanges,
+                               MapItem::Up attributes = nullptr) :
         VariantTypeOption {
             boost::none, std::move(dataType), std::move(selectorRanges), std::move(attributes)
         }
@@ -128,9 +128,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<typename UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<typename Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /// Name of this variant type option.
@@ -189,7 +189,7 @@ public:
     }
 
     /// Clone (deep copy) of this variant type option.
-    UP clone() const
+    Up clone() const
     {
         return VariantTypeOption::create(_name, _dt->clone(), _selRanges,
                                          internal::tryCloneAttrs(this->attributes()));
@@ -228,9 +228,9 @@ public:
 private:
     const boost::optional<std::string> _name;
     mutable boost::optional<std::string> _dispName;
-    const DataType::UP _dt;
+    const DataType::Up _dt;
     const SelectorRangeSet _selRanges;
-    const MapItem::UP _attrs;
+    const MapItem::Up _attrs;
 };
 
 /*!
@@ -253,4 +253,4 @@ using VariantWithSignedIntegerSelectorTypeOption = VariantTypeOption<long long>;
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_VAR_TYPE_OPT_HPP
+#endif // YACTFR_METADATA_VAR_TYPE_OPT_HPP

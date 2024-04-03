@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_CLK_TYPE_HPP
-#define _YACTFR_METADATA_CLK_TYPE_HPP
+#ifndef YACTFR_METADATA_CLK_TYPE_HPP
+#define YACTFR_METADATA_CLK_TYPE_HPP
 
 #include <string>
 #include <memory>
@@ -36,7 +36,7 @@ class ClockType final :
 {
 public:
     /// Unique pointer to constant clock type.
-    using UP = std::unique_ptr<const ClockType>;
+    using Up = std::unique_ptr<const ClockType>;
 
 public:
     /*!
@@ -94,7 +94,7 @@ public:
                        unsigned long long frequency, boost::optional<std::string> description,
                        boost::optional<ClockOrigin> origin, boost::optional<Cycles> precision,
                        boost::optional<Cycles> accuracy, const ClockOffset& offsetFromOrigin,
-                       MapItem::UP attributes = nullptr);
+                       MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -111,9 +111,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /// ID internal to the trace type containing this type.
@@ -277,9 +277,9 @@ private:
     const boost::optional<Cycles> _prec;
     const boost::optional<Cycles> _accuracy;
     const ClockOffset _offsetFromOrig;
-    const MapItem::UP _attrs;
+    const MapItem::Up _attrs;
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_CLK_TYPE_HPP
+#endif // YACTFR_METADATA_CLK_TYPE_HPP

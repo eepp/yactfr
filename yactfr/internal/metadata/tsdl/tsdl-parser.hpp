@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
-#define _YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
+#ifndef YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
+#define YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -80,7 +80,7 @@ public:
     /*
      * Releases and returns the parsed trace type.
      */
-    TraceType::UP releaseTraceType()
+    TraceType::Up releaseTraceType()
     {
         return std::move(_traceType);
     }
@@ -116,57 +116,57 @@ private:
      * recommended to use an RAII `_LexicalScope` instead to
      * automatically push and pop scopes and avoid errors.
      */
-    struct _StackFrame final
+    struct _tStackFrame final
     {
         enum class Kind
         {
             // root
-            ROOT,
+            Root,
 
             // trace type
-            TRACE_TYPE,
+            TraceType,
 
             // packet header type
-            PKT_HEADER_TYPE,
+            PktHeaderType,
 
             // data stream type
-            DST,
+            Dst,
 
             // packet context type
-            PKT_CTX_TYPE,
+            PktCtxType,
 
             // event record header type
-            ER_HEADER_TYPE,
+            ErHeaderType,
 
             // event record common context type
-            ER_COMMON_CTX_TYPE,
+            ErCommonCtxType,
 
             // event record type
-            ERT,
+            Ert,
 
             // event record specific context type
-            ER_SPEC_CTX_TYPE,
+            ErSpecCtxType,
 
             // event record payload type
-            ER_PAYLOAD_TYPE,
+            ErPayloadType,
 
             // data type alias
-            DT_ALIAS,
+            DtAlias,
 
             // structure type
-            STRUCT_TYPE,
+            StructType,
 
             // variant type
-            VAR_TYPE,
+            VarType,
         };
 
-        explicit _StackFrame(Kind kind);
+        explicit _tStackFrame(Kind kind);
 
         // kind of this frame
         const Kind kind;
 
         // data type aliases of this frame
-        std::unordered_map<std::string, PseudoDt::UP> dtAliases;
+        std::unordered_map<std::string, PseudoDt::Up> dtAliases;
 
         // identifiers of this frame so far (member/option names)
         std::vector<std::string> idents;
@@ -185,11 +185,11 @@ private:
     public:
         _LexicalScope() noexcept :
             _parser {nullptr},
-            _frameKind {_StackFrame::Kind::ROOT}
+            _frameKind {_tStackFrame::Kind::Root}
         {
         }
 
-        explicit _LexicalScope(TsdlParser& mp, const _StackFrame::Kind frameKind) :
+        explicit _LexicalScope(TsdlParser& mp, const _tStackFrame::Kind frameKind) :
             _parser {&mp},
             _frameKind {frameKind}
         {
@@ -220,10 +220,10 @@ private:
 
     private:
         TsdlParser *_parser;
-        TsdlParser::_StackFrame::Kind _frameKind;
+        TsdlParser::_tStackFrame::Kind _frameKind;
     };
 
-    using _Attrs = std::vector<TsdlAttr>;
+    using _tAttrs = std::vector<TsdlAttr>;
 
     /*
      * A "fast" pseudo fixed-length integer type entry.
@@ -249,11 +249,11 @@ private:
      * Is it really worth it? I don't know! Is it a cool idea even
      * without benchmarks? I think so.
      */
-    struct _FastPseudoFlIntTypeEntry final
+    struct _tFastPseudoFlIntTypeEntry final
     {
         const char *begin;
         const char *end;
-        PseudoDt::UP pseudoDt;
+        PseudoDt::Up pseudoDt;
     };
 
 private:
@@ -389,7 +389,7 @@ private:
      *
      *     event.header := struct my_event_header;
      */
-    PseudoDt::UP _tryParseScopeDt(const _StackFrame::Kind scopeDtStackFrameKind,
+    PseudoDt::Up _tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
                                   const char *firstName, const char *secondName = nullptr,
                                   bool expect = true);
 
@@ -411,7 +411,7 @@ private:
      *
      *     my_field[event.context.some.location][23][len]
      */
-    PseudoDt::UP _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::UP innerPseudoDt);
+    PseudoDt::Up _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::Up innerPseudoDt);
 
     /*
      * Like _tryParseIdentArraySubscripts(), but without the identifier
@@ -425,7 +425,7 @@ private:
      *
      *     [event.context.some.location][23][len];
      */
-    PseudoDt::UP _parseArraySubscripts(PseudoDt::UP innerType);
+    PseudoDt::Up _parseArraySubscripts(PseudoDt::Up innerType);
 
     /*
      * Parses a data type alias name, without parsing an identifier name
@@ -489,7 +489,7 @@ private:
      *
      *     variant my_variant <my.tag>;
      */
-    PseudoDt::UP _tryParseDtAliasRef();
+    PseudoDt::Up _tryParseDtAliasRef();
 
     /*
      * Expects the specific token `token`, throwing `TextParseError` if
@@ -525,7 +525,7 @@ private:
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      */
-    PseudoDt::UP _tryParseDt();
+    PseudoDt::Up _tryParseDt();
 
     /*
      * Tries to parse a data type block (excludes data type alias
@@ -533,7 +533,7 @@ private:
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      */
-    PseudoDt::UP _tryParseFullDt();
+    PseudoDt::Up _tryParseFullDt();
 
     /*
      * Tries to parse a fixed-length integer type block.
@@ -549,7 +549,7 @@ private:
      *         byte_order = be;
      *     }
      */
-    PseudoDt::UP _tryParseFlIntType();
+    PseudoDt::Up _tryParseFlIntType();
 
     /*
      * Tries to parse a fixed-length floating point number type block.
@@ -564,7 +564,7 @@ private:
      *         byte_order = le;
      *     }
      */
-    PseudoDt::UP _tryParseFlFloatType();
+    PseudoDt::Up _tryParseFlFloatType();
 
     /*
      * Tries to parse a null-terminated string type block.
@@ -579,7 +579,7 @@ private:
      *         encoding = ascii;
      *     }
      */
-    PseudoDt::UP _tryParseNtStrType();
+    PseudoDt::Up _tryParseNtStrType();
 
     /*
      * Tries to parse a fixed-length enumeration type block.
@@ -601,10 +601,10 @@ private:
      *         "HAR TENVAR" = -17 ... 28,
      *     }
      */
-    PseudoDt::UP _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    PseudoDt::Up _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
-    PseudoDt::UP _finishParseFlEnumType(PseudoDt::UP pseudoDt, bool addDtAlias,
+    PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt, bool addDtAlias,
                                         std::string&& potDtAliasName,
                                         CreatePseudoDtFuncT&& createPseudoDtFunc);
 
@@ -633,7 +633,7 @@ private:
      *         } c;
      *     } align(64)
      */
-    PseudoDt::UP _tryParseStructType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    PseudoDt::Up _tryParseStructType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
      * Tries to parse a variant type block.
@@ -652,7 +652,7 @@ private:
      *         integer { size = 32; align = 32; } i;
      *     }
      */
-    PseudoDt::UP _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    PseudoDt::Up _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
      * Tries to parse a trace environment block and sets the trace
@@ -767,7 +767,7 @@ private:
      * fast pseudo fixed-length integer type cache, or `nullptr` if not
      * found.
      */
-    PseudoDt::UP _fastPseudoFlIntType(TextLocation loc);
+    PseudoDt::Up _fastPseudoFlIntType(TextLocation loc);
 
     /*
      * Inserts a clone of the pseudo fixed-length integer type
@@ -795,7 +795,7 @@ private:
     /*
      * Pushes a new frame of kind `kind` to the lexical scope stack.
      */
-    void _stackPush(_StackFrame::Kind kind);
+    void _stackPush(_tStackFrame::Kind kind);
 
     /*
      * Pops from the lexical scope stack.
@@ -805,7 +805,7 @@ private:
     /*
      * Returns the top frame of the lexical scope stack.
      */
-    _StackFrame& _stackTop()
+    _tStackFrame& _stackTop()
     {
         assert(!_stack.empty());
         return _stack.back();
@@ -848,7 +848,7 @@ private:
      * Returns a _cloned_ pseudo data type corresponding to a data type
      * alias name within the context of the current frame.
      */
-    PseudoDt::UP _aliasedPseudoDt(const std::string& name, TextLocation loc) const;
+    PseudoDt::Up _aliasedPseudoDt(const std::string& name, TextLocation loc) const;
 
     /*
      * Calls the other _addDtAlias() with the current frame.
@@ -860,7 +860,7 @@ private:
      * specific stack frame `frame`, cloning `pseudoDt`.
      */
     void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt, const TextLocation& curLoc,
-                     _StackFrame& frame);
+                     _tStackFrame& frame);
 
     /*
      * Returns the current native byte order, or a random one if
@@ -878,7 +878,7 @@ private:
      */
     ByteOrder _absNativeBo() const noexcept
     {
-        return _nativeBo ? *_nativeBo : ByteOrder::LITTLE;
+        return _nativeBo ? *_nativeBo : ByteOrder::Little;
     }
 
     /*
@@ -903,7 +903,7 @@ private:
      * Checks for duplicate attributes in `attrs`, throwing
      * `TextParseError` if any is found.
      */
-    static void _checkDupAttr(const _Attrs& attrs);
+    static void _checkDupAttr(const _tAttrs& attrs);
 
     /*
      * Returns a UUID object from the canonical textual representation
@@ -973,10 +973,10 @@ private:
     StrScanner _ss;
 
     // cache of TSDL substrings to pseudo fixed-length integer types
-    std::vector<_FastPseudoFlIntTypeEntry> _fastPseudoFlIntTypes;
+    std::vector<_tFastPseudoFlIntTypeEntry> _fastPseudoFlIntTypes;
 
     // final trace type
-    TraceType::UP _traceType;
+    TraceType::Up _traceType;
 
     // current native byte order
     boost::optional<ByteOrder> _nativeBo;
@@ -988,11 +988,11 @@ private:
     bool _envParsed = false;
 
     // lexical scope stack
-    std::vector<_StackFrame> _stack;
+    std::vector<_tStackFrame> _stack;
 };
 
 template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
-PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const bool addDtAlias,
+PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const bool addDtAlias,
                                                 std::string&& potDtAliasName,
                                                 CreatePseudoDtFuncT&& createPseudoDtFunc)
 {
@@ -1099,13 +1099,13 @@ PseudoDt::UP TsdlParser::_finishParseFlEnumType(PseudoDt::UP pseudoDt, const boo
     // validate mappings
     Size len;
 
-    if (pseudoDt->kind() == PseudoDt::Kind::SCALAR_DT_WRAPPER) {
+    if (pseudoDt->kind() == PseudoDt::Kind::ScalarDtWrapper) {
         const auto& pseudoDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoDt);
 
         assert(pseudoDtWrapper.dt().isFixedLengthSignedIntegerType());
         len = pseudoDtWrapper.dt().asFixedLengthBitArrayType().length();
     } else {
-        assert(pseudoDt->kind() == PseudoDt::Kind::FL_UINT);
+        assert(pseudoDt->kind() == PseudoDt::Kind::FlUInt);
 
         const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(*pseudoDt);
 
@@ -1206,4 +1206,4 @@ void TsdlParser::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
+#endif // YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP

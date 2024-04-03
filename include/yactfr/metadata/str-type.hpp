@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_STR_TYPE_HPP
-#define _YACTFR_METADATA_STR_TYPE_HPP
+#ifndef YACTFR_METADATA_STR_TYPE_HPP
+#define YACTFR_METADATA_STR_TYPE_HPP
 
 #include "dt.hpp"
 #include "scalar-dt.hpp"
@@ -22,19 +22,19 @@ namespace yactfr {
 enum class StringEncoding
 {
     /// UTF-8.
-    UTF_8,
+    Utf8,
 
     /// UTF-16BE.
-    UTF_16BE,
+    Utf16Be,
 
     /// UTF-16LE.
-    UTF_16LE,
+    Utf16Le,
 
     /// UTF-32BE.
-    UTF_32BE,
+    Utf32Be,
 
     /// UTF-32LE.
-    UTF_32LE,
+    Utf32Le,
 };
 
 /*!
@@ -48,8 +48,8 @@ class StringType :
     public ScalarDataType
 {
 protected:
-    explicit StringType(_Kind kind, unsigned int align, StringEncoding encoding,
-                        MapItem::UP attrs);
+    explicit StringType(_tKind kind, unsigned int align, StringEncoding encoding,
+                        MapItem::Up attrs);
 
 public:
     /// Encoding of a string described by this type.
@@ -67,4 +67,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_STR_TYPE_HPP
+#endif // YACTFR_METADATA_STR_TYPE_HPP

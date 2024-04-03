@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_TESTS_COMMON_TRACE_HPP
-#define _YACTFR_TESTS_COMMON_TRACE_HPP
+#ifndef YACTFR_TESTS_COMMON_TRACE_HPP
+#define YACTFR_TESTS_COMMON_TRACE_HPP
 
 #include <cstdint>
 
@@ -142,4 +142,4 @@ constexpr std::uint8_t stream[] = {
 
 } // namespace
 
-#endif // _YACTFR_TESTS_COMMON_TRACE_HPP
+#endif // YACTFR_TESTS_COMMON_TRACE_HPP

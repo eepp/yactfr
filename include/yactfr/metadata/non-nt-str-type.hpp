@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_NON_NT_STR_TYPE_HPP
-#define _YACTFR_METADATA_NON_NT_STR_TYPE_HPP
+#ifndef YACTFR_METADATA_NON_NT_STR_TYPE_HPP
+#define YACTFR_METADATA_NON_NT_STR_TYPE_HPP
 
 #include "str-type.hpp"
 #include "dt.hpp"
@@ -23,10 +23,10 @@ class NonNullTerminatedStringType :
     public StringType
 {
 protected:
-    explicit NonNullTerminatedStringType(_Kind kind, unsigned int align, StringEncoding encoding,
-                                         MapItem::UP attrs);
+    explicit NonNullTerminatedStringType(_tKind kind, unsigned int align, StringEncoding encoding,
+                                         MapItem::Up attrs);
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_NON_NT_STR_TYPE_HPP
+#endif // YACTFR_METADATA_NON_NT_STR_TYPE_HPP

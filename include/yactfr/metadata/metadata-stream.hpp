@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_METADATA_STREAM_HPP
-#define _YACTFR_METADATA_METADATA_STREAM_HPP
+#ifndef YACTFR_METADATA_METADATA_STREAM_HPP
+#define YACTFR_METADATA_METADATA_STREAM_HPP
 
 #include <stdexcept>
 #include <string>
@@ -73,4 +73,4 @@ std::unique_ptr<const MetadataStream> createMetadataStream(std::istream& stream)
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_METADATA_STREAM_HPP
+#endif // YACTFR_METADATA_METADATA_STREAM_HPP

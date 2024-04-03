@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_UTILS_HPP
-#define _YACTFR_INTERNAL_METADATA_UTILS_HPP
+#ifndef YACTFR_INTERNAL_METADATA_UTILS_HPP
+#define YACTFR_INTERNAL_METADATA_UTILS_HPP
 
 #include <cassert>
 #include <string>
@@ -19,16 +19,16 @@
 namespace yactfr {
 namespace internal {
 
-inline MapItem::UP tryCloneAttrs(const MapItem * const attrs)
+inline MapItem::Up tryCloneAttrs(const MapItem * const attrs)
 {
     if (!attrs) {
         return nullptr;
     }
 
-    return MapItem::UP {static_cast<const MapItem *>(attrs->clone().release())};
+    return MapItem::Up {static_cast<const MapItem *>(attrs->clone().release())};
 }
 
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_UTILS_HPP
+#endif // YACTFR_INTERNAL_METADATA_UTILS_HPP

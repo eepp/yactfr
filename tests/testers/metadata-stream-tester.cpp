@@ -42,7 +42,7 @@ int main(const int argc, const char * const argv[])
                          ",minor-version=" << pktMetadataStream->minorVersion() <<
                          ",bo=";
 
-            if (pktMetadataStream->byteOrder() == yactfr::ByteOrder::LITTLE) {
+            if (pktMetadataStream->byteOrder() == yactfr::ByteOrder::Little) {
                 std::cout << "le";
             } else {
                 std::cout << "be";

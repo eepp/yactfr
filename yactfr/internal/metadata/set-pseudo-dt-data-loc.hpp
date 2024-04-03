@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP
-#define _YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP
+#ifndef YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP
+#define YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP
 
 #include <yactfr/metadata/scope.hpp>
 
@@ -31,4 +31,4 @@ void setPseudoDtDataLoc(PseudoDt& pseudoDt, Scope scope);
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP
+#endif // YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP

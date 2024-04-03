@@ -12,14 +12,14 @@
 
 namespace yactfr {
 
-FixedLengthBitArrayType::FixedLengthBitArrayType(const _Kind kind, const unsigned int align,
+FixedLengthBitArrayType::FixedLengthBitArrayType(const _tKind kind, const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
                                                  const boost::optional<BitOrder>& bio,
-                                                 MapItem::UP attrs) :
+                                                 MapItem::Up attrs) :
     ScalarDataType {kind, align, std::move(attrs)},
     _len {len},
     _bo {bo},
-    _bio {bio ? *bio : (bo == ByteOrder::BIG ? BitOrder::LAST_TO_FIRST : BitOrder::FIRST_TO_LAST)}
+    _bio {bio ? *bio : (bo == ByteOrder::Big ? BitOrder::LastToFirst : BitOrder::FirstToLast)}
 {
     assert(_len > 0);
     assert(_len <= 64);
@@ -28,14 +28,14 @@ FixedLengthBitArrayType::FixedLengthBitArrayType(const _Kind kind, const unsigne
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
                                                  const boost::optional<BitOrder>& bio,
-                                                 MapItem::UP attrs) :
-    FixedLengthBitArrayType {_KIND_FL_BIT_ARRAY, align, len, bo, bio, std::move(attrs)}
+                                                 MapItem::Up attrs) :
+    FixedLengthBitArrayType {_kindFlBitArray, align, len, bo, bio, std::move(attrs)}
 {
 }
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int len, const ByteOrder bo,
                                                  const boost::optional<BitOrder>& bio,
-                                                 MapItem::UP attrs) :
+                                                 MapItem::Up attrs) :
     FixedLengthBitArrayType {1, len, bo, bio, std::move(attrs)}
 {
 }
@@ -81,7 +81,7 @@ bool FixedLengthBitArrayType::_isEqual(const DataType& other) const noexcept
            _bio == otherBitArrayType._bio;
 }
 
-DataType::UP FixedLengthBitArrayType::_clone() const
+DataType::Up FixedLengthBitArrayType::_clone() const
 {
     return FixedLengthBitArrayType::create(this->alignment(), _len, _bo, _bio,
                                            internal::tryCloneAttrs(this->attributes()));

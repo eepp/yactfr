@@ -13,8 +13,8 @@
 
 namespace yactfr {
 
-VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLocation&& selLoc,
-                         MapItem::UP attrs) :
+VariantType::VariantType(const _tKind kind, const unsigned int minAlign, DataLocation&& selLoc,
+                         MapItem::Up attrs) :
     CompoundDataType {kind, minAlign, 1, std::move(attrs)},
     _selLoc {std::move(selLoc)}
 {
@@ -23,9 +23,9 @@ VariantType::VariantType(const _Kind kind, const unsigned int minAlign, DataLoca
 VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(const unsigned int minAlign,
                                                                                Options&& opts,
                                                                                DataLocation selLoc,
-                                                                               MapItem::UP attrs) :
+                                                                               MapItem::Up attrs) :
     VariantWithIntegerSelectorType {
-        DataType::_KIND_VAR_UINT_SEL, minAlign, std::move(opts),
+        _kindVarUIntSel, minAlign, std::move(opts),
         std::move(selLoc), std::move(attrs)
     }
 {
@@ -33,14 +33,14 @@ VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(c
 
 VariantWithUnsignedIntegerSelectorType::VariantWithUnsignedIntegerSelectorType(Options&& opts,
                                                                                DataLocation selLoc,
-                                                                               MapItem::UP attrs) :
+                                                                               MapItem::Up attrs) :
     VariantWithUnsignedIntegerSelectorType {
         1, std::move(opts), std::move(selLoc), std::move(attrs)
     }
 {
 }
 
-DataType::UP VariantWithUnsignedIntegerSelectorType::_clone() const
+DataType::Up VariantWithUnsignedIntegerSelectorType::_clone() const
 {
     return VariantWithUnsignedIntegerSelectorType::create(this->minimumAlignment(),
                                                           this->_cloneOpts(),
@@ -51,9 +51,9 @@ DataType::UP VariantWithUnsignedIntegerSelectorType::_clone() const
 VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(const unsigned int minAlign,
                                                                            Options&& opts,
                                                                            DataLocation selLoc,
-                                                                           MapItem::UP attrs) :
+                                                                           MapItem::Up attrs) :
     VariantWithIntegerSelectorType {
-        DataType::_KIND_VAR_SINT_SEL, minAlign, std::move(opts),
+        _kindVarSIntSel, minAlign, std::move(opts),
         std::move(selLoc), std::move(attrs)
     }
 {
@@ -61,14 +61,14 @@ VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(const
 
 VariantWithSignedIntegerSelectorType::VariantWithSignedIntegerSelectorType(Options&& opts,
                                                                            DataLocation selLoc,
-                                                                           MapItem::UP attrs) :
+                                                                           MapItem::Up attrs) :
     VariantWithSignedIntegerSelectorType {
         1, std::move(opts), std::move(selLoc), std::move(attrs)
     }
 {
 }
 
-DataType::UP VariantWithSignedIntegerSelectorType::_clone() const
+DataType::Up VariantWithSignedIntegerSelectorType::_clone() const
 {
     return VariantWithSignedIntegerSelectorType::create(this->minimumAlignment(),
                                                         this->_cloneOpts(),

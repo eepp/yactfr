@@ -94,7 +94,6 @@ documented uses unabbreviated names.
 |Rel |Relative
 |Req |Requirement, required
 |Sel |Selector
-|SEnum |Signed enumeration
 |Seq |Sequence
 |SInt |Signed integer
 |SL |Static-length
@@ -110,7 +109,6 @@ documented uses unabbreviated names.
 |TC |Trace class (CTF{nbsp}2)
 |Tgt |Target
 |TS |Timestamp (CTF{nbsp}2)
-|UEnum |Unsigned enumeration
 |UInt |Unsigned integer
 |UP |Unique pointer
 |USel |Unsigned selector
@@ -429,7 +427,7 @@ static-length array reading instruction contains a subprocedure which
 only contains which instruction to execute to read a single array
 element. It doesn't contain register decrementation, comparison, and
 jump instructions like you would find in a typical assembly loop.
-Instead, the state of the VM is changed (to `VmState::EXEC_ARRAY_INSTR`)
+Instead, the state of the VM is changed (to `VmState::ExecArrayInstr`)
 so that it knows that it's currently decoding an array at this stack
 level, and the VM position contains the number of remaining elements.
 The decrementation, comparison, and stack popping when it's done are

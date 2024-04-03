@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_CLK_OFFSET_HPP
-#define _YACTFR_METADATA_CLK_OFFSET_HPP
+#ifndef YACTFR_METADATA_CLK_OFFSET_HPP
+#define YACTFR_METADATA_CLK_OFFSET_HPP
 
 #include <string>
 #include <boost/core/noncopyable.hpp>
@@ -70,4 +70,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_CLK_OFFSET_HPP
+#endif // YACTFR_METADATA_CLK_OFFSET_HPP

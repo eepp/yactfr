@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP
-#define _YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP
+#ifndef YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP
+#define YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP
 
 #include <string>
 #include <memory>
@@ -40,7 +40,7 @@ class StructureMemberType final :
 
 public:
     /// Unique pointer to constant structure member type.
-    using UP = std::unique_ptr<const StructureMemberType>;
+    using Up = std::unique_ptr<const StructureMemberType>;
 
 public:
     /*!
@@ -63,8 +63,8 @@ public:
     @pre
         \p dataType is set.
     */
-    explicit StructureMemberType(std::string name, DataType::UP dataType,
-                                 MapItem::UP attributes = nullptr);
+    explicit StructureMemberType(std::string name, DataType::Up dataType,
+                                 MapItem::Up attributes = nullptr);
 
     /// Name of data stream structure members described by this type.
     const std::string& name() const noexcept
@@ -88,9 +88,9 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
     /*!
@@ -179,10 +179,10 @@ public:
 private:
     mutable boost::optional<std::string> _dispName;
     const std::string _name;
-    const DataType::UP _dt;
-    const MapItem::UP _attrs;
+    const DataType::Up _dt;
+    const MapItem::Up _attrs;
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP
+#endif // YACTFR_METADATA_STRUCT_MEMBER_TYPE_HPP

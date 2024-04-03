@@ -31,8 +31,8 @@ namespace yactfr {
 TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
                      boost::optional<std::string> ns, boost::optional<std::string> name,
                      boost::optional<std::string> uid, TraceEnvironment env,
-                     StructureType::UP pktHeaderType, ClockTypeSet&& clkTypes,
-                     DataStreamTypeSet&& dsts, MapItem::UP attrs) :
+                     StructureType::Up pktHeaderType, ClockTypeSet&& clkTypes,
+                     DataStreamTypeSet&& dsts, MapItem::Up attrs) :
     _pimpl {
         std::make_unique<internal::TraceTypeImpl>(majorVersion, minorVersion, std::move(ns),
                                                   std::move(name), std::move(uid), std::move(env),

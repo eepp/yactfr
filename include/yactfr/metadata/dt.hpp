@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_DT_HPP
-#define _YACTFR_METADATA_DT_HPP
+#ifndef YACTFR_METADATA_DT_HPP
+#define YACTFR_METADATA_DT_HPP
 
 #include <memory>
 #include <unordered_set>
@@ -32,62 +32,62 @@ class DataType :
 {
 public:
     /// Unique pointer to constant data type.
-    using UP = std::unique_ptr<const DataType>;
+    using Up = std::unique_ptr<const DataType>;
 
 protected:
     // kind of data type
-    enum _Kind
+    enum _tKind
     {
-        _KIND_SCALAR                = 1 << 1,
-        _KIND_BIT_ARRAY             = (1 << 2) | _KIND_SCALAR,
-        _KIND_S                     = (1 << 3) | _KIND_SCALAR,
-        _KIND_U                     = (1 << 4) | _KIND_SCALAR,
-        _KIND_FL                    = (1 << 5) | _KIND_SCALAR,
-        _KIND_INT                   = (1 << 6) | _KIND_BIT_ARRAY,
-        _KIND_UINT                  = _KIND_U | _KIND_INT,
-        _KIND_SINT                  = _KIND_S | _KIND_INT,
-        _KIND_FL_BIT_ARRAY          = _KIND_FL | _KIND_BIT_ARRAY,
-        _KIND_FL_BIT_MAP            = (1 << 7) | _KIND_FL_BIT_ARRAY,
-        _KIND_FL_BOOL               = (1 << 8) | _KIND_FL_BIT_ARRAY,
-        _KIND_FL_INT                = _KIND_FL_BIT_ARRAY | _KIND_INT,
-        _KIND_FL_SINT               = _KIND_FL_INT | _KIND_SINT,
-        _KIND_FL_UINT               = _KIND_FL_INT | _KIND_UINT,
-        _KIND_FL_FLOAT              = (1 << 9) | _KIND_FL_BIT_ARRAY,
-        _KIND_VL                    = (1 << 10) | _KIND_SCALAR,
-        _KIND_VL_BIT_ARRAY          = _KIND_VL | _KIND_BIT_ARRAY,
-        _KIND_VL_INT                = _KIND_VL_BIT_ARRAY | _KIND_INT,
-        _KIND_VL_SINT               = _KIND_VL_INT | _KIND_SINT,
-        _KIND_VL_UINT               = _KIND_VL_INT | _KIND_UINT,
-        _KIND_STR                   = (1 << 11) | _KIND_SCALAR,
-        _KIND_NT_STR                = (1 << 12) | _KIND_STR,
-        _KIND_COMPOUND              = 1 << 13,
-        _KIND_STRUCT                = (1 << 14) | _KIND_COMPOUND,
-        _KIND_ARRAY                 = (1 << 15) | _KIND_COMPOUND,
-        _KIND_SL                    = 1 << 16,
-        _KIND_DL                    = 1 << 17,
-        _KIND_SL_ARRAY              = _KIND_SL | _KIND_ARRAY,
-        _KIND_DL_ARRAY              = _KIND_DL | _KIND_ARRAY,
-        _KIND_NON_NT_STR            = (1 << 18) | _KIND_STR,
-        _KIND_SL_STR                = _KIND_SL | _KIND_NON_NT_STR,
-        _KIND_DL_STR                = _KIND_DL | _KIND_NON_NT_STR,
-        _KIND_BLOB                  = (1 << 19) | _KIND_SCALAR,
-        _KIND_SL_BLOB               = _KIND_SL | _KIND_BLOB,
-        _KIND_DL_BLOB               = _KIND_DL | _KIND_BLOB,
-        _KIND_VAR                   = (1 << 20) | _KIND_COMPOUND,
-        _KIND_UINT_SEL              = 1 << 21,
-        _KIND_SINT_SEL              = 1 << 22,
-        _KIND_BOOL_SEL              = 1 << 23,
-        _KIND_VAR_UINT_SEL          = _KIND_VAR | _KIND_UINT_SEL,
-        _KIND_VAR_SINT_SEL          = _KIND_VAR | _KIND_SINT_SEL,
-        _KIND_OPT                   = (1 << 24) | _KIND_COMPOUND,
-        _KIND_OPT_UINT_SEL          = _KIND_OPT | _KIND_UINT_SEL,
-        _KIND_OPT_SINT_SEL          = _KIND_OPT | _KIND_SINT_SEL,
-        _KIND_OPT_INT_SEL           = _KIND_OPT_UINT_SEL | _KIND_OPT_SINT_SEL,
-        _KIND_OPT_BOOL_SEL          = _KIND_OPT | _KIND_BOOL_SEL,
+        _kindScalar     = 1 << 1,
+        _kindBitArray   = (1 << 2) | _kindScalar,
+        _kindS          = (1 << 3) | _kindScalar,
+        _kindU          = (1 << 4) | _kindScalar,
+        _kindFl         = (1 << 5) | _kindScalar,
+        _kindInt        = (1 << 6) | _kindBitArray,
+        _kindUInt       = _kindU | _kindInt,
+        _kindSInt       = _kindS | _kindInt,
+        _kindFlBitArray = _kindFl | _kindBitArray,
+        _kindFlBitMap   = (1 << 7) | _kindFlBitArray,
+        _kindFlBool     = (1 << 8) | _kindFlBitArray,
+        _kindFlInt      = _kindFlBitArray | _kindInt,
+        _kindFlSInt     = _kindFlInt | _kindSInt,
+        _kindFlUInt     = _kindFlInt | _kindUInt,
+        _kindFlFloat    = (1 << 9) | _kindFlBitArray,
+        _kindVl         = (1 << 10) | _kindScalar,
+        _kindVlBitArray = _kindVl | _kindBitArray,
+        _kindVlInt      = _kindVlBitArray | _kindInt,
+        _kindVlSInt     = _kindVlInt | _kindSInt,
+        _kindVlUInt     = _kindVlInt | _kindUInt,
+        _kindStr        = (1 << 11) | _kindScalar,
+        _kindNtStr      = (1 << 12) | _kindStr,
+        _kindCompound   = 1 << 13,
+        _kindStruct     = (1 << 14) | _kindCompound,
+        _kindArray      = (1 << 15) | _kindCompound,
+        _kindSl         = 1 << 16,
+        _kindDl         = 1 << 17,
+        _kindSlArray    = _kindSl | _kindArray,
+        _kindDlArray    = _kindDl | _kindArray,
+        _kindNonNtStr   = (1 << 18) | _kindStr,
+        _kindSlStr      = _kindSl | _kindNonNtStr,
+        _kindDlStr      = _kindDl | _kindNonNtStr,
+        _kindBlob       = (1 << 19) | _kindScalar,
+        _kindSlBlob     = _kindSl | _kindBlob,
+        _kindDlBlob     = _kindDl | _kindBlob,
+        _kindVar        = (1 << 20) | _kindCompound,
+        _kindUIntSel    = 1 << 21,
+        _kindSIntSel    = 1 << 22,
+        _kindBoolSel    = 1 << 23,
+        _kindVarUIntSel = _kindVar | _kindUIntSel,
+        _kindVarSIntSel = _kindVar | _kindSIntSel,
+        _kindOpt        = (1 << 24) | _kindCompound,
+        _kindOptUIntSel = _kindOpt | _kindUIntSel,
+        _kindOptSIntSel = _kindOpt | _kindSIntSel,
+        _kindOptIntSel  = _kindOptUIntSel | _kindOptSIntSel,
+        _kindOptBoolSel = _kindOpt | _kindBoolSel,
     };
 
 protected:
-    explicit DataType(_Kind kind, unsigned int align, MapItem::UP attrs);
+    explicit DataType(_tKind kind, unsigned int align, MapItem::Up attrs);
 
 public:
     virtual ~DataType() = default;
@@ -116,61 +116,61 @@ public:
     /// \c true if this type is a bit array type.
     bool isBitArrayType() const noexcept
     {
-        return this->_isKind(_KIND_BIT_ARRAY);
+        return this->_isKind(_kindBitArray);
     }
 
     /// \c true if this type is an integer type.
     bool isIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_INT);
+        return this->_isKind(_kindInt);
     }
 
     /// \c true if this type is a signed integer type.
     bool isSignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_SINT);
+        return this->_isKind(_kindSInt);
     }
 
     /// \c true if this type is an unsigned integer type.
     bool isUnsignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_UINT);
+        return this->_isKind(_kindUInt);
     }
 
     /// \c true if this type is a fixed-length bit array type.
     bool isFixedLengthBitArrayType() const noexcept
     {
-        return this->_isKind(_KIND_FL_BIT_ARRAY);
+        return this->_isKind(_kindFlBitArray);
     }
 
     /// \c true if this type is a fixed-length bit map type.
     bool isFixedLengthBitMapType() const noexcept
     {
-        return this->_isKind(_KIND_FL_BIT_MAP);
+        return this->_isKind(_kindFlBitMap);
     }
 
     /// \c true if this type is a fixed-length boolean type.
     bool isFixedLengthBooleanType() const noexcept
     {
-        return this->_isKind(_KIND_FL_BOOL);
+        return this->_isKind(_kindFlBool);
     }
 
     /// \c true if this type is a fixed-length integer type.
     bool isFixedLengthIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_FL_INT);
+        return this->_isKind(_kindFlInt);
     }
 
     /// \c true if this type is a fixed-length signed integer type.
     bool isFixedLengthSignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_FL_SINT);
+        return this->_isKind(_kindFlSInt);
     }
 
     /// \c true if this type is a fixed-length unsigned integer type.
     bool isFixedLengthUnsignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_FL_UINT);
+        return this->_isKind(_kindFlUInt);
     }
 
     /*!
@@ -180,55 +180,55 @@ public:
     */
     bool isFixedLengthFloatingPointNumberType() const noexcept
     {
-        return this->_isKind(_KIND_FL_FLOAT);
+        return this->_isKind(_kindFlFloat);
     }
 
     /// \c true if this type is a variable-length integer type.
     bool isVariableLengthIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_VL_INT);
+        return this->_isKind(_kindVlInt);
     }
 
     /// \c true if this type is a variable-length signed integer type.
     bool isVariableLengthSignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_VL_SINT);
+        return this->_isKind(_kindVlSInt);
     }
 
     /// \c true if this type is a variable-length unsigned integer type.
     bool isVariableLengthUnsignedIntegerType() const noexcept
     {
-        return this->_isKind(_KIND_VL_UINT);
+        return this->_isKind(_kindVlUInt);
     }
 
     /// \c true if this type is a string type.
     bool isStringType() const noexcept
     {
-        return this->_isKind(_KIND_STR);
+        return this->_isKind(_kindStr);
     }
 
     /// \c true if this type is a null-terminated string type.
     bool isNullTerminatedStringType() const noexcept
     {
-        return this->_isKind(_KIND_NT_STR);
+        return this->_isKind(_kindNtStr);
     }
 
     /// \c true if this type is an array type.
     bool isArrayType() const noexcept
     {
-        return this->_isKind(_KIND_ARRAY);
+        return this->_isKind(_kindArray);
     }
 
     /// \c true if this type is a static-length array type.
     bool isStaticLengthArrayType() const noexcept
     {
-        return this->_isKind(_KIND_SL_ARRAY);
+        return this->_isKind(_kindSlArray);
     }
 
     /// \c true if this type is a dynamic-length array type.
     bool isDynamicLengthArrayType() const noexcept
     {
-        return this->_isKind(_KIND_DL_ARRAY);
+        return this->_isKind(_kindDlArray);
     }
 
     /*!
@@ -238,49 +238,49 @@ public:
     */
     bool isNonNullTerminatedStringType() const noexcept
     {
-        return this->_isKind(_KIND_NON_NT_STR);
+        return this->_isKind(_kindNonNtStr);
     }
 
     /// \c true if this type is a static-length string type.
     bool isStaticLengthStringType() const noexcept
     {
-        return this->_isKind(_KIND_SL_STR);
+        return this->_isKind(_kindSlStr);
     }
 
     /// \c true if this type is a dynamic-length string type.
     bool isDynamicLengthStringType() const noexcept
     {
-        return this->_isKind(_KIND_DL_STR);
+        return this->_isKind(_kindDlStr);
     }
 
     /// \c true if this type is a BLOB type.
     bool isBlobType() const noexcept
     {
-        return this->_isKind(_KIND_BLOB);
+        return this->_isKind(_kindBlob);
     }
 
     /// \c true if this type is a static-length BLOB type.
     bool isStaticLengthBlobType() const noexcept
     {
-        return this->_isKind(_KIND_SL_BLOB);
+        return this->_isKind(_kindSlBlob);
     }
 
     /// \c true if this type is a dynamic-length BLOB type.
     bool isDynamicLengthBlobType() const noexcept
     {
-        return this->_isKind(_KIND_DL_BLOB);
+        return this->_isKind(_kindDlBlob);
     }
 
     /// \c true if this type is a structure type.
     bool isStructureType() const noexcept
     {
-        return this->_isKind(_KIND_STRUCT);
+        return this->_isKind(_kindStruct);
     }
 
     /// \c true if this type is a variant type.
     bool isVariantType() const noexcept
     {
-        return this->_isKind(_KIND_VAR);
+        return this->_isKind(_kindVar);
     }
 
     /*!
@@ -290,7 +290,7 @@ public:
     */
     bool isVariantWithUnsignedIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_VAR_UINT_SEL);
+        return this->_isKind(_kindVarUIntSel);
     }
 
     /*!
@@ -300,13 +300,13 @@ public:
     */
     bool isVariantWithSignedIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_VAR_SINT_SEL);
+        return this->_isKind(_kindVarSIntSel);
     }
 
     /// \c true if this type is a optional type.
     bool isOptionalType() const noexcept
     {
-        return this->_isKind(_KIND_OPT);
+        return this->_isKind(_kindOpt);
     }
 
     /*!
@@ -316,7 +316,7 @@ public:
     */
     bool isOptionalWithBooleanSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_OPT_BOOL_SEL);
+        return this->_isKind(_kindOptBoolSel);
     }
 
     /*!
@@ -326,7 +326,7 @@ public:
     */
     bool isOptionalWithIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_OPT_INT_SEL);
+        return this->_isKind(_kindOptIntSel);
     }
 
     /*!
@@ -336,7 +336,7 @@ public:
     */
     bool isOptionalWithUnsignedIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_OPT_UINT_SEL);
+        return this->_isKind(_kindOptUIntSel);
     }
 
     /*!
@@ -346,7 +346,7 @@ public:
     */
     bool isOptionalWithSignedIntegerSelectorType() const noexcept
     {
-        return this->_isKind(_KIND_OPT_SINT_SEL);
+        return this->_isKind(_kindOptSIntSel);
     }
 
     /*!
@@ -356,7 +356,7 @@ public:
     */
     bool isScalarDataType() const noexcept
     {
-        return this->_isKind(_KIND_SCALAR);
+        return this->_isKind(_kindScalar);
     }
 
     /*!
@@ -366,7 +366,7 @@ public:
     */
     bool isCompoundDataType() const noexcept
     {
-        return this->_isKind(_KIND_COMPOUND);
+        return this->_isKind(_kindCompound);
     }
 
     /*!
@@ -653,7 +653,7 @@ public:
     @returns
         Clone (deep copy) of this type.
     */
-    DataType::UP clone() const;
+    DataType::Up clone() const;
 
     /*!
     @brief
@@ -665,25 +665,25 @@ public:
     void accept(DataTypeVisitor& visitor) const;
 
 protected:
-    virtual DataType::UP _clone() const = 0;
+    virtual DataType::Up _clone() const = 0;
     virtual void _accept(DataTypeVisitor& visitor) const = 0;
     virtual bool _isEqual(const DataType& other) const noexcept = 0;
 
-    _Kind _kind() const noexcept
+    _tKind _kind() const noexcept
     {
         return _theKind;
     }
 
 private:
-    bool _isKind(const _Kind kind) const noexcept
+    bool _isKind(const _tKind kind) const noexcept
     {
         return (_theKind & kind) == kind;
     }
 
 private:
-    const _Kind _theKind;
+    const _tKind _theKind;
     unsigned int _align;
-    const MapItem::UP _attrs;
+    const MapItem::Up _attrs;
 };
 
 /*!
@@ -696,4 +696,4 @@ using DataTypeSet = std::unordered_set<const DataType *>;
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_DT_HPP
+#endif // YACTFR_METADATA_DT_HPP

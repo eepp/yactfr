@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_OPT_TYPE_HPP
-#define _YACTFR_METADATA_OPT_TYPE_HPP
+#ifndef YACTFR_METADATA_OPT_TYPE_HPP
+#define YACTFR_METADATA_OPT_TYPE_HPP
 
 #include <algorithm>
 #include <string>
@@ -41,8 +41,8 @@ class OptionalType :
     friend class internal::TraceTypeImpl;
 
 protected:
-    explicit OptionalType(_Kind kind, const unsigned int minAlign, DataType::UP dt,
-                          DataLocation&& selLoc, MapItem::UP attrs);
+    explicit OptionalType(_tKind kind, const unsigned int minAlign, DataType::Up dt,
+                          DataLocation&& selLoc, MapItem::Up attrs);
 
 public:
     /*!
@@ -85,7 +85,7 @@ private:
     }
 
 private:
-    const DataType::UP _dt;
+    const DataType::Up _dt;
     const DataLocation _selLoc;
     mutable DataTypeSet _theSelTypes;
 };
@@ -107,7 +107,7 @@ public:
         Unique pointer to constant type of data stream optionals
         with a boolean selector.
     */
-    using UP = std::unique_ptr<const OptionalWithBooleanSelectorType>;
+    using Up = std::unique_ptr<const OptionalWithBooleanSelectorType>;
 
 public:
     /*!
@@ -139,9 +139,9 @@ public:
     @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithBooleanSelectorType(unsigned int minimumAlignment, DataType::UP dataType,
+    explicit OptionalWithBooleanSelectorType(unsigned int minimumAlignment, DataType::Up dataType,
                                              DataLocation selectorLocation,
-                                             MapItem::UP attributes = nullptr);
+                                             MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -166,8 +166,8 @@ public:
     @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithBooleanSelectorType(DataType::UP dataType, DataLocation selectorLocation,
-                                             MapItem::UP attributes = nullptr);
+    explicit OptionalWithBooleanSelectorType(DataType::Up dataType, DataLocation selectorLocation,
+                                             MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -187,13 +187,13 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -221,9 +221,9 @@ public:
     using SelectorRangeSet = IntegerRangeSet<SelectorValueT>;
 
 protected:
-    explicit OptionalWithIntegerSelectorType(_Kind kind, unsigned int minAlign, DataType::UP dt,
+    explicit OptionalWithIntegerSelectorType(_tKind kind, unsigned int minAlign, DataType::Up dt,
                                              DataLocation&& selLoc, SelectorRangeSet&& selRanges,
-                                             MapItem::UP attrs) :
+                                             MapItem::Up attrs) :
         OptionalType {kind, minAlign, std::move(dt), std::move(selLoc), std::move(attrs)},
         _selRanges {std::move(selRanges)}
     {
@@ -257,7 +257,7 @@ public:
         Unique pointer to constant type of data stream optionals
         with an unsigned integer selector.
     */
-    using UP = std::unique_ptr<const OptionalWithUnsignedIntegerSelectorType>;
+    using Up = std::unique_ptr<const OptionalWithUnsignedIntegerSelectorType>;
 
 public:
     /*!
@@ -293,10 +293,10 @@ public:
         \p selectorLocation only locates booleans.
     */
     explicit OptionalWithUnsignedIntegerSelectorType(unsigned int minimumAlignment,
-                                                     DataType::UP dataType,
+                                                     DataType::Up dataType,
                                                      DataLocation selectorLocation,
                                                      SelectorRangeSet selectorRanges,
-                                                     MapItem::UP attributes = nullptr);
+                                                     MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -323,10 +323,10 @@ public:
     @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithUnsignedIntegerSelectorType(DataType::UP dataType,
+    explicit OptionalWithUnsignedIntegerSelectorType(DataType::Up dataType,
                                                      DataLocation selectorLocation,
                                                      SelectorRangeSet selectorRanges,
-                                                     MapItem::UP attributes = nullptr);
+                                                     MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -346,13 +346,13 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -377,7 +377,7 @@ public:
         Unique pointer to constant type of data stream optionals
         with a signed integer selector.
     */
-    using UP = std::unique_ptr<const OptionalWithSignedIntegerSelectorType>;
+    using Up = std::unique_ptr<const OptionalWithSignedIntegerSelectorType>;
 
 public:
     /*!
@@ -413,10 +413,10 @@ public:
         \p selectorLocation only locates booleans.
     */
     explicit OptionalWithSignedIntegerSelectorType(unsigned int minimumAlignment,
-                                                   DataType::UP dataType,
+                                                   DataType::Up dataType,
                                                    DataLocation selectorLocation,
                                                    SelectorRangeSet selectorRanges,
-                                                   MapItem::UP attributes = nullptr);
+                                                   MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -443,10 +443,10 @@ public:
     @pre
         \p selectorLocation only locates booleans.
     */
-    explicit OptionalWithSignedIntegerSelectorType(DataType::UP dataType,
+    explicit OptionalWithSignedIntegerSelectorType(DataType::Up dataType,
                                                    DataLocation selectorLocation,
                                                    SelectorRangeSet selectorRanges,
-                                                   MapItem::UP attributes = nullptr);
+                                                   MapItem::Up attributes = nullptr);
 
     /*!
     @brief
@@ -466,13 +466,13 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static UP create(ArgTs&&... args)
+    static Up create(ArgTs&&... args)
     {
-        return std::make_unique<UP::element_type>(std::forward<ArgTs>(args)...);
+        return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
 
 private:
-    DataType::UP _clone() const override;
+    DataType::Up _clone() const override;
 
     void _accept(DataTypeVisitor& visitor) const override
     {
@@ -482,4 +482,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_OPT_TYPE_HPP
+#endif // YACTFR_METADATA_OPT_TYPE_HPP

@@ -12,27 +12,27 @@
 
 namespace yactfr {
 
-NullTerminatedStringType::NullTerminatedStringType(const unsigned int align, const StringEncoding encoding, MapItem::UP attrs) :
-    StringType {_KIND_NT_STR, align, encoding, std::move(attrs)}
+NullTerminatedStringType::NullTerminatedStringType(const unsigned int align, const StringEncoding encoding, MapItem::Up attrs) :
+    StringType {_kindNtStr, align, encoding, std::move(attrs)}
 {
     assert(align >= 8);
 }
 
 NullTerminatedStringType::NullTerminatedStringType(const StringEncoding encoding,
-                                                   MapItem::UP attrs) :
+                                                   MapItem::Up attrs) :
     NullTerminatedStringType {8, encoding, std::move(attrs)}
 {
 }
 
 NullTerminatedStringType::NullTerminatedStringType(const NullTerminatedStringType& other) :
     StringType {
-        _KIND_NT_STR, other.alignment(), other.encoding(),
+        _kindNtStr, other.alignment(), other.encoding(),
         internal::tryCloneAttrs(other.attributes())
     }
 {
 }
 
-DataType::UP NullTerminatedStringType::_clone() const
+DataType::Up NullTerminatedStringType::_clone() const
 {
     return NullTerminatedStringType::create(this->alignment(), this->encoding(),
                                             internal::tryCloneAttrs(this->attributes()));

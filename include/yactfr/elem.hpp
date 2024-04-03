@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_ELEM_HPP
-#define _YACTFR_ELEM_HPP
+#ifndef YACTFR_ELEM_HPP
+#define YACTFR_ELEM_HPP
 
 #include <cstdint>
 #include <string>
@@ -59,193 +59,193 @@ class VmPos;
 class Element
 {
 private:
-    enum _Kind
+    enum _tKind
     {
-        _KIND_END                               = 1 << 0,
-        _KIND_BEG                               = 1 << 1,
-        _KIND_PKT                               = 1 << 2,
-        _KIND_SCOPE                             = 1 << 3,
-        _KIND_PKT_CONTENT                       = 1 << 4,
-        _KIND_ER                                = 1 << 5,
-        _KIND_PKT_MAGIC_NUMBER                  = 1 << 6,
-        _KIND_METADATA_STREAM_UUID              = 1 << 7,
-        _KIND_DS                                = 1 << 8,
-        _KIND_INFO                              = 1 << 9,
-        _KIND_DEF_CLK_VAL                       = 1 << 10,
-        _KIND_FL_BIT_ARRAY                      = 1 << 11,
-        _KIND_BIT_MAP_DATA                      = 1 << 12,
-        _KIND_BOOL_DATA                         = 1 << 13,
-        _KIND_INT_DATA                          = 1 << 14,
-        _KIND_SIGNED                            = 1 << 15,
-        _KIND_UNSIGNED                          = 1 << 16,
-        _KIND_FLOAT_DATA                        = 1 << 17,
-        _KIND_VL_INT                            = _KIND_INT_DATA | (1 << 19),
-        _KIND_NT_STR                            = 1 << 20,
-        _KIND_RAW_DATA                          = 1 << 21,
-        _KIND_STRUCT                            = 1 << 22,
-        _KIND_SL_DATA                           = 1 << 23,
-        _KIND_DL_DATA                           = 1 << 24,
-        _KIND_ARRAY                             = 1 << 25,
-        _KIND_NON_NT_STR                        = 1 << 26,
-        _KIND_BLOB                              = 1 << 27,
-        _KIND_VAR                               = 1 << 28,
-        _KIND_INT_SEL                           = 1 << 29,
-        _KIND_BOOL_SEL                          = 1 << 30,
-        _KIND_OPT                               = 1 << 31,
+        _kindEnd                = 1 << 0,
+        _kindBeg                = 1 << 1,
+        _kindPkt                = 1 << 2,
+        _kindScope              = 1 << 3,
+        _kindPktContent         = 1 << 4,
+        _kindEr                 = 1 << 5,
+        _kindPktMagicNumber     = 1 << 6,
+        _kindMetadataStreamUuid = 1 << 7,
+        _kindDs                 = 1 << 8,
+        _kindINFO               = 1 << 9,
+        _kindDefClkVal          = 1 << 10,
+        _kindFlBitArray         = 1 << 11,
+        _kindBitMapData         = 1 << 12,
+        _kindBoolData           = 1 << 13,
+        _kindIntData            = 1 << 14,
+        _kindSigned             = 1 << 15,
+        _kindUnsigned           = 1 << 16,
+        _kindFloatData          = 1 << 17,
+        _kindVlInt              = _kindIntData | (1 << 19),
+        _kindNtStr              = 1 << 20,
+        _kindRawData            = 1 << 21,
+        _kindStruct             = 1 << 22,
+        _kindSlData             = 1 << 23,
+        _kindDlData             = 1 << 24,
+        _kindArray              = 1 << 25,
+        _kindNonNtStr           = 1 << 26,
+        _kindBlob               = 1 << 27,
+        _kindVar                = 1 << 28,
+        _kindIntSel             = 1 << 29,
+        _kindBoolSel            = 1 << 30,
+        _kindOpt                = 1 << 31,
     };
 
-    using _U = unsigned long long;
+    using _tU = unsigned long long;
 
 public:
     /// %Kind of element.
-    enum class Kind : _U
+    enum class Kind : _tU
     {
         /// PacketBeginningElement
-        PACKET_BEGINNING                                    = static_cast<_U>(_KIND_PKT | _KIND_BEG),
+        PacketBeginning                             = static_cast<_tU>(_kindPkt | _kindBeg),
 
         /// PacketEndElement
-        PACKET_END                                          = static_cast<_U>(_KIND_PKT | _KIND_END),
+        PacketEnd                                   = static_cast<_tU>(_kindPkt | _kindEnd),
 
         /// ScopeBeginningElement
-        SCOPE_BEGINNING                                     = static_cast<_U>(_KIND_SCOPE | _KIND_BEG),
+        ScopeBeginning                              = static_cast<_tU>(_kindScope | _kindBeg),
 
         /// ScopeEndElement
-        SCOPE_END                                           = static_cast<_U>(_KIND_SCOPE | _KIND_END),
+        ScopeEnd                                    = static_cast<_tU>(_kindScope | _kindEnd),
 
         /// PacketContentBeginningElement
-        PACKET_CONTENT_BEGINNING                            = static_cast<_U>(_KIND_PKT_CONTENT | _KIND_BEG),
+        PacketContentBeginning                      = static_cast<_tU>(_kindPktContent | _kindBeg),
 
         /// PacketContentEndElement
-        PACKET_CONTENT_END                                  = static_cast<_U>(_KIND_PKT_CONTENT | _KIND_END),
+        PacketContentEnd                            = static_cast<_tU>(_kindPktContent | _kindEnd),
 
         /// EventRecordBeginningElement
-        EVENT_RECORD_BEGINNING                              = static_cast<_U>(_KIND_ER | _KIND_BEG),
+        EventRecordBeginning                        = static_cast<_tU>(_kindEr | _kindBeg),
 
         /// EventRecordEndElement
-        EVENT_RECORD_END                                    = static_cast<_U>(_KIND_ER | _KIND_END),
+        EventRecordEnd                              = static_cast<_tU>(_kindEr | _kindEnd),
 
         /// PacketMagicNumberElement
-        PACKET_MAGIC_NUMBER                                 = static_cast<_U>(_KIND_PKT_MAGIC_NUMBER),
+        PacketMagicNumber                           = static_cast<_tU>(_kindPktMagicNumber),
 
         /// MetadataStreamUuidElement
-        METADATA_STREAM_UUID                                = static_cast<_U>(_KIND_METADATA_STREAM_UUID),
+        MetadataStreamUuid                          = static_cast<_tU>(_kindMetadataStreamUuid),
 
         /// DataStreamInfoElement
-        DATA_STREAM_INFO                                    = static_cast<_U>(_KIND_DS | _KIND_INFO),
+        DataStreamInfo                              = static_cast<_tU>(_kindDs | _kindINFO),
 
         /// DefaultClockValueElement
-        DEFAULT_CLOCK_VALUE                                 = static_cast<_U>(_KIND_DEF_CLK_VAL),
+        DefaultClockValue                           = static_cast<_tU>(_kindDefClkVal),
 
         /// PacketInfoElement
-        PACKET_INFO                                         = static_cast<_U>(_KIND_PKT | _KIND_INFO),
+        PacketInfo                                  = static_cast<_tU>(_kindPkt | _kindINFO),
 
         /// EventRecordInfoElement
-        EVENT_RECORD_INFO                                   = static_cast<_U>(_KIND_ER | _KIND_INFO),
+        EventRecordInfo                             = static_cast<_tU>(_kindEr | _kindINFO),
 
         /// FixedLengthBitArrayElement
-        FIXED_LENGTH_BIT_ARRAY                              = static_cast<_U>(_KIND_FL_BIT_ARRAY),
+        FixedLengthBitArray                         = static_cast<_tU>(_kindFlBitArray),
 
         /// FixedLengthBitMapElement
-        FIXED_LENGTH_BIT_MAP                                = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_BIT_MAP_DATA),
+        FixedLengthBitMap                           = static_cast<_tU>(_kindFlBitArray | _kindBitMapData),
 
         /// FixedLengthBooleanElement
-        FIXED_LENGTH_BOOLEAN                                = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_BOOL_DATA),
+        FixedLengthBoolean                          = static_cast<_tU>(_kindFlBitArray | _kindBoolData),
 
         /// FixedLengthSignedIntegerElement
-        FIXED_LENGTH_SIGNED_INTEGER                         = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED),
+        FixedLengthSignedInteger                    = static_cast<_tU>(_kindFlBitArray | _kindIntData | _kindSigned),
 
         /// FixedLengthUnsignedIntegerElement
-        FIXED_LENGTH_UNSIGNED_INTEGER                       = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED),
+        FixedLengthUnsignedInteger                  = static_cast<_tU>(_kindFlBitArray | _kindIntData | _kindUnsigned),
 
         /// FixedLengthFloatingPointNumberElement
-        FIXED_LENGTH_FLOATING_POINT_NUMBER                  = static_cast<_U>(_KIND_FL_BIT_ARRAY | _KIND_FLOAT_DATA),
+        FixedLengthFloatingPointNumber              = static_cast<_tU>(_kindFlBitArray | _kindFloatData),
 
         /// VariableLengthSignedIntegerElement
-        VARIABLE_LENGTH_SIGNED_INTEGER                      = static_cast<_U>(_KIND_VL_INT | _KIND_SIGNED),
+        VariableLengthSignedInteger                 = static_cast<_tU>(_kindVlInt | _kindSigned),
 
         /// VariableLengthUnsignedIntegerElement
-        VARIABLE_LENGTH_UNSIGNED_INTEGER                    = static_cast<_U>(_KIND_VL_INT | _KIND_UNSIGNED),
+        VariableLengthUnsignedInteger               = static_cast<_tU>(_kindVlInt | _kindUnsigned),
 
         /// NullTerminatedStringBeginningElement
-        NULL_TERMINATED_STRING_BEGINNING                    = static_cast<_U>(_KIND_NT_STR | _KIND_BEG),
+        NullTerminatedStringBeginning               = static_cast<_tU>(_kindNtStr | _kindBeg),
 
         /// NullTerminatedStringEndElement
-        NULL_TERMINATED_STRING_END                          = static_cast<_U>(_KIND_NT_STR | _KIND_END),
+        NullTerminatedStringEnd                     = static_cast<_tU>(_kindNtStr | _kindEnd),
 
         /// RawDataElement
-        RAW_DATA                                            = static_cast<_U>(_KIND_RAW_DATA),
+        RawData                                     = static_cast<_tU>(_kindRawData),
 
         /// StructureBeginningElement
-        STRUCTURE_BEGINNING                                 = static_cast<_U>(_KIND_STRUCT | _KIND_BEG),
+        StructureBeginning                          = static_cast<_tU>(_kindStruct | _kindBeg),
 
         /// StructureEndElement
-        STRUCTURE_END                                       = static_cast<_U>(_KIND_STRUCT | _KIND_END),
+        StructureEnd                                = static_cast<_tU>(_kindStruct | _kindEnd),
 
         /// StaticLengthArrayBeginningElement
-        STATIC_LENGTH_ARRAY_BEGINNING                       = static_cast<_U>(_KIND_SL_DATA | _KIND_ARRAY | _KIND_BEG),
+        StaticLengthArrayBeginning                  = static_cast<_tU>(_kindSlData | _kindArray | _kindBeg),
 
         /// StaticLengthArrayEndElement
-        STATIC_LENGTH_ARRAY_END                             = static_cast<_U>(_KIND_SL_DATA | _KIND_ARRAY | _KIND_END),
+        StaticLengthArrayEnd                        = static_cast<_tU>(_kindSlData | _kindArray | _kindEnd),
 
         /// DynamicLengthArrayBeginningElement
-        DYNAMIC_LENGTH_ARRAY_BEGINNING                      = static_cast<_U>(_KIND_DL_DATA | _KIND_ARRAY | _KIND_BEG),
+        DynamicLengthArrayBeginning                 = static_cast<_tU>(_kindDlData | _kindArray | _kindBeg),
 
         /// DynamicLengthArrayEndElement
-        DYNAMIC_LENGTH_ARRAY_END                            = static_cast<_U>(_KIND_DL_DATA | _KIND_ARRAY | _KIND_END),
+        DynamicLengthArrayEnd                       = static_cast<_tU>(_kindDlData | _kindArray | _kindEnd),
 
         /// StaticLengthBlobBeginningElement
-        STATIC_LENGTH_BLOB_BEGINNING                        = static_cast<_U>(_KIND_SL_DATA | _KIND_BLOB | _KIND_BEG),
+        StaticLengthBlobBeginning                   = static_cast<_tU>(_kindSlData | _kindBlob | _kindBeg),
 
         /// StaticLengthBlobEndElement
-        STATIC_LENGTH_BLOB_END                              = static_cast<_U>(_KIND_SL_DATA | _KIND_BLOB | _KIND_END),
+        StaticLengthBlobEnd                         = static_cast<_tU>(_kindSlData | _kindBlob | _kindEnd),
 
         /// DynamicLengthBlobBeginningElement
-        DYNAMIC_LENGTH_BLOB_BEGINNING                       = static_cast<_U>(_KIND_DL_DATA | _KIND_BLOB | _KIND_BEG),
+        DynamicLengthBlobBeginning                  = static_cast<_tU>(_kindDlData | _kindBlob | _kindBeg),
 
         /// DynamicLengthBlobEndElement
-        DYNAMIC_LENGTH_BLOB_END                             = static_cast<_U>(_KIND_DL_DATA | _KIND_BLOB | _KIND_END),
+        DynamicLengthBlobEnd                        = static_cast<_tU>(_kindDlData | _kindBlob | _kindEnd),
 
         /// StaticLengthStringBeginningElement
-        STATIC_LENGTH_STRING_BEGINNING                      = static_cast<_U>(_KIND_SL_DATA | _KIND_NON_NT_STR | _KIND_BEG),
+        StaticLengthStringBeginning                 = static_cast<_tU>(_kindSlData | _kindNonNtStr | _kindBeg),
 
         /// StaticLengthStringEndElement
-        STATIC_LENGTH_STRING_END                            = static_cast<_U>(_KIND_SL_DATA | _KIND_NON_NT_STR | _KIND_END),
+        StaticLengthStringEnd                       = static_cast<_tU>(_kindSlData | _kindNonNtStr | _kindEnd),
 
         /// DynamicLengthStringBeginningElement
-        DYNAMIC_LENGTH_STRING_BEGINNING                     = static_cast<_U>(_KIND_DL_DATA | _KIND_NON_NT_STR | _KIND_BEG),
+        DynamicLengthStringBeginning                = static_cast<_tU>(_kindDlData | _kindNonNtStr | _kindBeg),
 
         /// DynamicLengthStringEndElement
-        DYNAMIC_LENGTH_STRING_END                           = static_cast<_U>(_KIND_DL_DATA | _KIND_NON_NT_STR | _KIND_END),
+        DynamicLengthStringEnd                      = static_cast<_tU>(_kindDlData | _kindNonNtStr | _kindEnd),
 
         /// VariantWithSignedIntegerSelectorBeginningElement
-        VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING      = static_cast<_U>(_KIND_VAR | _KIND_SIGNED | _KIND_BEG),
+        VariantWithSignedIntegerSelectorBeginning   = static_cast<_tU>(_kindVar | _kindSigned | _kindBeg),
 
         /// VariantWithSignedIntegerSelectorEndElement
-        VARIANT_WITH_SIGNED_INTEGER_SELECTOR_END            = static_cast<_U>(_KIND_VAR | _KIND_SIGNED | _KIND_END),
+        VariantWithSignedIntegerSelectorEnd         = static_cast<_tU>(_kindVar | _kindSigned | _kindEnd),
 
         /// VariantWithUnsignedIntegerSelectorBeginningElement
-        VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING    = static_cast<_U>(_KIND_VAR | _KIND_UNSIGNED | _KIND_BEG),
+        VariantWithUnsignedIntegerSelectorBeginning = static_cast<_tU>(_kindVar | _kindUnsigned | _kindBeg),
 
         /// VariantWithUnsignedIntegerSelectorEndElement
-        VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_END          = static_cast<_U>(_KIND_VAR | _KIND_UNSIGNED | _KIND_END),
+        VariantWithUnsignedIntegerSelectorEnd       = static_cast<_tU>(_kindVar | _kindUnsigned | _kindEnd),
 
         /// OptionalWithBooleanSelectorBeginningElement
-        OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING            = static_cast<_U>(_KIND_OPT | _KIND_BOOL_SEL | _KIND_BEG),
+        OptionalWithBooleanSelectorBeginning        = static_cast<_tU>(_kindOpt | _kindBoolSel | _kindBeg),
 
         /// OptionalWithBooleanSelectorEndElement
-        OPTIONAL_WITH_BOOLEAN_SELECTOR_END                  = static_cast<_U>(_KIND_OPT | _KIND_BOOL_SEL | _KIND_END),
+        OptionalWithBooleanSelectorEnd              = static_cast<_tU>(_kindOpt | _kindBoolSel | _kindEnd),
 
         /// OptionalWithSignedIntegerSelectorBeginningElement
-        OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING     = static_cast<_U>(_KIND_OPT | _KIND_SIGNED | _KIND_BEG),
+        OptionalWithSignedIntegerSelectorBeginning  = static_cast<_tU>(_kindOpt | _kindIntSel | _kindSigned | _kindBeg),
 
         /// OptionalWithSignedIntegerSelectorEndElement
-        OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_END           = static_cast<_U>(_KIND_OPT | _KIND_SIGNED | _KIND_END),
+        OptionalWithSignedIntegerSelectorEnd        = static_cast<_tU>(_kindOpt | _kindIntSel | _kindSigned | _kindEnd),
 
         /// OptionalWithUnsignedIntegerSelectorBeginningElement
-        OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING   = static_cast<_U>(_KIND_OPT | _KIND_UNSIGNED | _KIND_BEG),
+        OptionalWithUnsignedIntegerSelectorBeginning= static_cast<_tU>(_kindOpt | _kindIntSel | _kindUnsigned | _kindBeg),
 
         /// OptionalWithUnsignedIntegerSelectorEndElement
-        OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END         = static_cast<_U>(_KIND_OPT | _KIND_UNSIGNED | _KIND_END),
+        OptionalWithUnsignedIntegerSelectorEnd      = static_cast<_tU>(_kindOpt | _kindIntSel | _kindUnsigned | _kindEnd),
     };
 
 protected:
@@ -282,517 +282,517 @@ public:
     /// \c true if this element is a beginning element.
     bool isBeginningElement() const noexcept
     {
-        return this->_isKind(_KIND_BEG);
+        return this->_isKind(_kindBeg);
     }
 
     /// \c true if this element is an end element.
     bool isEndElement() const noexcept
     {
-        return this->_isKind(_KIND_END);
+        return this->_isKind(_kindEnd);
     }
 
     /// \c true if this element is a packet beginning/end element.
     bool isPacketElement() const noexcept
     {
-        return this->_isKind(_KIND_PKT);
+        return this->_isKind(_kindPkt);
     }
 
     /// \c true if this element is a packet beginning element.
     bool isPacketBeginningElement() const noexcept
     {
-        return _kind == Kind::PACKET_BEGINNING;
+        return _kind == Kind::PacketBeginning;
     }
 
     /// \c true if this element is a packet end element.
     bool isPacketEndElement() const noexcept
     {
-        return _kind == Kind::PACKET_END;
+        return _kind == Kind::PacketEnd;
     }
 
     /// \c true if this element is a scope beginning/end element.
     bool isScopeElement() const noexcept
     {
-        return this->_isKind(_KIND_SCOPE);
+        return this->_isKind(_kindScope);
     }
 
     /// \c true if this element is a scope beginning element.
     bool isScopeBeginningElement() const noexcept
     {
-        return _kind == Kind::SCOPE_BEGINNING;
+        return _kind == Kind::ScopeBeginning;
     }
 
     /// \c true if this element is a scope end element.
     bool isScopeEndElement() const noexcept
     {
-        return _kind == Kind::SCOPE_END;
+        return _kind == Kind::ScopeEnd;
     }
 
     /// \c true if this element is a packet content beginning/end element.
     bool isPacketContentElement() const noexcept
     {
-        return this->_isKind(_KIND_PKT_CONTENT);
+        return this->_isKind(_kindPktContent);
     }
 
     /// \c true if this element is a packet content beginning element.
     bool isPacketContentBeginningElement() const noexcept
     {
-        return _kind == Kind::PACKET_CONTENT_BEGINNING;
+        return _kind == Kind::PacketContentBeginning;
     }
 
     /// \c true if this element is a packet content end element.
     bool isPacketContentEndElement() const noexcept
     {
-        return _kind == Kind::PACKET_CONTENT_END;
+        return _kind == Kind::PacketContentEnd;
     }
 
     /// \c true if this element is an event record beginning/end element.
     bool isEventRecordElement() const noexcept
     {
-        return this->_isKind(_KIND_ER);
+        return this->_isKind(_kindEr);
     }
 
     /// \c true if this element is an event record beginning element.
     bool isEventRecordBeginningElement() const noexcept
     {
-        return _kind == Kind::EVENT_RECORD_BEGINNING;
+        return _kind == Kind::EventRecordBeginning;
     }
 
     /// \c true if this element is an event record end element.
     bool isEventRecordEndElement() const noexcept
     {
-        return _kind == Kind::EVENT_RECORD_END;
+        return _kind == Kind::EventRecordEnd;
     }
 
     /// \c true if this element is a packet magic number element.
     bool isPacketMagicNumberElement() const noexcept
     {
-        return _kind == Kind::PACKET_MAGIC_NUMBER;
+        return _kind == Kind::PacketMagicNumber;
     }
 
     /// \c true if this element is a metadata stream UUID element.
     bool isMetadataStreamUuidElement() const noexcept
     {
-        return _kind == Kind::METADATA_STREAM_UUID;
+        return _kind == Kind::MetadataStreamUuid;
     }
 
     /// \c true if this element is a data stream info element.
     bool isDataStreamInfoElement() const noexcept
     {
-        return _kind == Kind::DATA_STREAM_INFO;
+        return _kind == Kind::DataStreamInfo;
     }
 
     /// \c true if this element is a default clock value element.
     bool isDefaultClockValueElement() const noexcept
     {
-        return _kind == Kind::DEFAULT_CLOCK_VALUE;
+        return _kind == Kind::DefaultClockValue;
     }
 
     /// \c true if this element is an info element.
     bool isInfoElement() const noexcept
     {
-        return this->_isKind(_KIND_INFO);
+        return this->_isKind(_kindINFO);
     }
 
     /// \c true if this element is a packet info element.
     bool isPacketInfoElement() const noexcept
     {
-        return _kind == Kind::PACKET_INFO;
+        return _kind == Kind::PacketInfo;
     }
 
     /// \c true if this element is an event record info element.
     bool isEventRecordInfoElement() const noexcept
     {
-        return _kind == Kind::EVENT_RECORD_INFO;
+        return _kind == Kind::EventRecordInfo;
     }
 
     /// \c true if this element is a fixed-length bit array element.
     bool isFixedLengthBitArrayElement() const noexcept
     {
-        return this->_isKind(_KIND_FL_BIT_ARRAY);
+        return this->_isKind(_kindFlBitArray);
     }
 
     /// \c true if this element is a fixed-length bit map element.
     bool isFixedLengthBitMapElement() const noexcept
     {
-        return _kind == Kind::FIXED_LENGTH_BIT_MAP;
+        return _kind == Kind::FixedLengthBitMap;
     }
 
     /// \c true if this element is a fixed-length boolean element.
     bool isFixedLengthBooleanElement() const noexcept
     {
-        return _kind == Kind::FIXED_LENGTH_BOOLEAN;
+        return _kind == Kind::FixedLengthBoolean;
     }
 
     /// \c true if this element is an integer element.
     bool isIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_INT_DATA);
+        return this->_isKind(_kindIntData);
     }
 
     /// \c true if this element is a fixed-length integer element.
     bool isFixedLengthIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA);
+        return this->_isKind(_kindFlBitArray | _kindIntData);
     }
 
     /// \c true if this element is a signed integer element.
     bool isSignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_INT_DATA | _KIND_SIGNED);
+        return this->_isKind(_kindIntData | _kindSigned);
     }
 
     /// \c true if this element is an unsigned integer element.
     bool isUnsignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_INT_DATA | _KIND_UNSIGNED);
+        return this->_isKind(_kindIntData | _kindUnsigned);
     }
 
     /// \c true if this element is a fixed-length signed integer element.
     bool isFixedLengthSignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_SIGNED);
+        return this->_isKind(_kindFlBitArray | _kindIntData | _kindSigned);
     }
 
     /// \c true if this element is a fixed-length unsigned integer element.
     bool isFixedLengthUnsignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_FL_BIT_ARRAY | _KIND_INT_DATA | _KIND_UNSIGNED);
+        return this->_isKind(_kindFlBitArray | _kindIntData | _kindUnsigned);
     }
 
     /// \c true if this element is a fixed-length floating-point number element.
     bool isFixedLengthFloatingPointNumberElement() const noexcept
     {
-        return _kind == Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER;
+        return _kind == Kind::FixedLengthFloatingPointNumber;
     }
 
     /// \c true if this element is a variable-length integer element.
     bool isVariableLengthIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_INT);
+        return this->_isKind(_kindVlInt);
     }
 
     /// \c true if this element is a variable-length signed integer element.
     bool isVariableLengthSignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_INT | _KIND_SIGNED);
+        return this->_isKind(_kindVlInt | _kindSigned);
     }
 
     /// \c true if this element is a variable-length unsigned integer element.
     bool isVariableLengthUnsignedIntegerElement() const noexcept
     {
-        return this->_isKind(_KIND_VL_INT | _KIND_UNSIGNED);
+        return this->_isKind(_kindVlInt | _kindUnsigned);
     }
 
     /// \c true if this element is a null-terminated string beginning/end element.
     bool isNullTerminatedStringElement() const noexcept
     {
-        return this->_isKind(_KIND_NT_STR);
+        return this->_isKind(_kindNtStr);
     }
 
     /// \c true if this element is a null-terminated string beginning element.
     bool isNullTerminatedStringBeginningElement() const noexcept
     {
-        return _kind == Kind::NULL_TERMINATED_STRING_BEGINNING;
+        return _kind == Kind::NullTerminatedStringBeginning;
     }
 
     /// \c true if this element is a null-terminated string end element.
     bool isNullTerminatedStringEndElement() const noexcept
     {
-        return _kind == Kind::NULL_TERMINATED_STRING_END;
+        return _kind == Kind::NullTerminatedStringEnd;
     }
 
     /// \c true if this element is a raw data element.
     bool isRawDataElement() const noexcept
     {
-        return _kind == Kind::RAW_DATA;
+        return _kind == Kind::RawData;
     }
 
     /// \c true if this element is a structure beginning/end element.
     bool isStructureElement() const noexcept
     {
-        return this->_isKind(_KIND_STRUCT);
+        return this->_isKind(_kindStruct);
     }
 
     /// \c true if this element is a structure beginning element.
     bool isStructureBeginningElement() const noexcept
     {
-        return _kind == Kind::STRUCTURE_BEGINNING;
+        return _kind == Kind::StructureBeginning;
     }
 
     /// \c true if this element is a structure end element.
     bool isStructureEndElement() const noexcept
     {
-        return _kind == Kind::STRUCTURE_END;
+        return _kind == Kind::StructureEnd;
     }
 
     /// \c true if this element is an array beginning/end element.
     bool isArrayElement() const noexcept
     {
-        return this->_isKind(_KIND_ARRAY);
+        return this->_isKind(_kindArray);
     }
 
     /// \c true if this element is a static-length array beginning/end element.
     bool isStaticLengthArrayElement() const noexcept
     {
-        return this->_isKind(_KIND_SL_DATA | _KIND_ARRAY);
+        return this->_isKind(_kindSlData | _kindArray);
     }
 
     /// \c true if this element is a static-length array beginning element.
     bool isStaticLengthArrayBeginningElement() const noexcept
     {
-        return _kind == Kind::STATIC_LENGTH_ARRAY_BEGINNING;
+        return _kind == Kind::StaticLengthArrayBeginning;
     }
 
     /// \c true if this element is a static-length array end element.
     bool isStaticLengthArrayEndElement() const noexcept
     {
-        return _kind == Kind::STATIC_LENGTH_ARRAY_END;
+        return _kind == Kind::StaticLengthArrayEnd;
     }
 
     /// \c true if this element is a dynamic-length array beginning/end element.
     bool isDynamicLengthArrayElement() const noexcept
     {
-        return this->_isKind(_KIND_DL_DATA | _KIND_ARRAY);
+        return this->_isKind(_kindDlData | _kindArray);
     }
 
     /// \c true if this element is a dynamic-length array beginning element.
     bool isDynamicLengthArrayBeginningElement() const noexcept
     {
-        return _kind == Kind::DYNAMIC_LENGTH_ARRAY_BEGINNING;
+        return _kind == Kind::DynamicLengthArrayBeginning;
     }
 
     /// \c true if this element is a dynamic-length array end element.
     bool isDynamicLengthArrayEndElement() const noexcept
     {
-        return _kind == Kind::DYNAMIC_LENGTH_ARRAY_END;
+        return _kind == Kind::DynamicLengthArrayEnd;
     }
 
     /// \c true if this element is a BLOB beginning/end element.
     bool isBlobElement() const noexcept
     {
-        return this->_isKind(_KIND_BLOB);
+        return this->_isKind(_kindBlob);
     }
 
     /// \c true if this element is a static-length BLOB beginning/end element.
     bool isStaticLengthBlobElement() const noexcept
     {
-        return this->_isKind(_KIND_SL_DATA | _KIND_BLOB);
+        return this->_isKind(_kindSlData | _kindBlob);
     }
 
     /// \c true if this element is a static-length BLOB beginning element.
     bool isStaticLengthBlobBeginningElement() const noexcept
     {
-        return _kind == Kind::STATIC_LENGTH_BLOB_BEGINNING;
+        return _kind == Kind::StaticLengthBlobBeginning;
     }
 
     /// \c true if this element is a static-length BLOB end element.
     bool isStaticLengthBlobEndElement() const noexcept
     {
-        return _kind == Kind::STATIC_LENGTH_BLOB_END;
+        return _kind == Kind::StaticLengthBlobEnd;
     }
 
     /// \c true if this element is a dynamic-length BLOB beginning/end element.
     bool isDynamicLengthBlobElement() const noexcept
     {
-        return this->_isKind(_KIND_DL_DATA | _KIND_BLOB);
+        return this->_isKind(_kindDlData | _kindBlob);
     }
 
     /// \c true if this element is a dynamic-length BLOB beginning element.
     bool isDynamicLengthBlobBeginningElement() const noexcept
     {
-        return _kind == Kind::DYNAMIC_LENGTH_BLOB_BEGINNING;
+        return _kind == Kind::DynamicLengthBlobBeginning;
     }
 
     /// \c true if this element is a dynamic-length BLOB end element.
     bool isDynamicLengthBlobEndElement() const noexcept
     {
-        return _kind == Kind::DYNAMIC_LENGTH_BLOB_END;
+        return _kind == Kind::DynamicLengthBlobEnd;
     }
 
     /// \c true if this element is a non-null-terminated string beginning/end element.
     bool isNonNullTerminatedStringElement() const noexcept
     {
-        return this->_isKind(_KIND_NON_NT_STR);
+        return this->_isKind(_kindNonNtStr);
     }
 
     /// \c true if this element is a static-length string beginning/end element.
     bool isStaticLengthStringElement() const noexcept
     {
-        return this->_isKind(_KIND_SL_DATA | _KIND_NON_NT_STR);
+        return this->_isKind(_kindSlData | _kindNonNtStr);
     }
 
     /// \c true if this element is a static-length string beginning element.
     bool isStaticLengthStringBeginningElement() const noexcept
     {
-        return _kind == Kind::STATIC_LENGTH_STRING_BEGINNING;
+        return _kind == Kind::StaticLengthStringBeginning;
     }
 
     /// \c true if this element is a static-length string end element.
     bool isStaticLengthStringEndElement() const noexcept
     {
-        return _kind == Kind::STATIC_LENGTH_STRING_END;
+        return _kind == Kind::StaticLengthStringEnd;
     }
 
     /// \c true if this element is a dynamic-length string beginning/end element.
     bool isDynamicLengthStringElement() const noexcept
     {
-        return this->_isKind(_KIND_DL_DATA | _KIND_NON_NT_STR);
+        return this->_isKind(_kindDlData | _kindNonNtStr);
     }
 
     /// \c true if this element is a dynamic-length string beginning element.
     bool isDynamicLengthStringBeginningElement() const noexcept
     {
-        return _kind == Kind::DYNAMIC_LENGTH_STRING_BEGINNING;
+        return _kind == Kind::DynamicLengthStringBeginning;
     }
 
     /// \c true if this element is a dynamic-length string end element.
     bool isDynamicLengthStringEndElement() const noexcept
     {
-        return _kind == Kind::DYNAMIC_LENGTH_STRING_END;
+        return _kind == Kind::DynamicLengthStringEnd;
     }
 
     /// \c true if this element is a variant beginning/end element.
     bool isVariantElement() const noexcept
     {
-        return this->_isKind(_KIND_VAR);
+        return this->_isKind(_kindVar);
     }
 
     /// \c true if this element is a variant beginning element.
     bool isVariantBeginningElement() const noexcept
     {
-        return this->_isKind(_KIND_VAR | _KIND_BEG);
+        return this->_isKind(_kindVar | _kindBeg);
     }
 
     /// \c true if this element is a variant end element.
     bool isVariantEndElement() const noexcept
     {
-        return this->_isKind(_KIND_VAR | _KIND_END);
+        return this->_isKind(_kindVar | _kindEnd);
     }
 
     /// \c true if this element is a variant with a signed integer selector beginning/end element.
     bool isVariantWithSignedIntegerSelectorElement() const noexcept
     {
-        return this->_isKind(_KIND_VAR | _KIND_SIGNED);
+        return this->_isKind(_kindVar | _kindSigned);
     }
 
     /// \c true if this element is a variant with a signed integer selector beginning element.
     bool isVariantWithSignedIntegerSelectorBeginningElement() const noexcept
     {
-        return _kind == Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING;
+        return _kind == Kind::VariantWithSignedIntegerSelectorBeginning;
     }
 
     /// \c true if this element is a variant with a signed integer selector end element.
     bool isVariantWithSignedIntegerSelectorEndElement() const noexcept
     {
-        return _kind == Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_END;
+        return _kind == Kind::VariantWithSignedIntegerSelectorEnd;
     }
 
     /// \c true if this element is a variant with an unsigned integer selector beginning/end element.
     bool isVariantWithUnsignedIntegerSelectorElement() const noexcept
     {
-        return this->_isKind(_KIND_VAR | _KIND_UNSIGNED);
+        return this->_isKind(_kindVar | _kindUnsigned);
     }
 
     /// \c true if this element is a variant with an unsigned integer selector beginning element.
     bool isVariantWithUnsignedIntegerSelectorBeginningElement() const noexcept
     {
-        return _kind == Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING;
+        return _kind == Kind::VariantWithUnsignedIntegerSelectorBeginning;
     }
 
     /// \c true if this element is a variant with an unsigned integer selector end element.
     bool isVariantWithUnsignedIntegerSelectorEndElement() const noexcept
     {
-        return _kind == Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_END;
+        return _kind == Kind::VariantWithUnsignedIntegerSelectorEnd;
     }
 
     /// \c true if this element is an optional beginning/end element.
     bool isOptionalElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT);
+        return this->_isKind(_kindOpt);
     }
 
     /// \c true if this element is an optional beginning element.
     bool isOptionalBeginningElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_BEG);
+        return this->_isKind(_kindOpt | _kindBeg);
     }
 
     /// \c true if this element is an optional end element.
     bool isOptionalEndElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_END);
+        return this->_isKind(_kindOpt | _kindEnd);
     }
 
     /// \c true if this element is an optional with a boolean selector beginning/end element.
     bool isOptionalWithBooleanSelectorElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_BOOL_SEL);
+        return this->_isKind(_kindOpt | _kindBoolSel);
     }
 
     /// \c true if this element is an optional with a boolean selector beginning element.
     bool isOptionalWithBooleanSelectorBeginningElement() const noexcept
     {
-        return _kind == Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING;
+        return _kind == Kind::OptionalWithBooleanSelectorBeginning;
     }
 
     /// \c true if this element is an optional with a boolean selector end element.
     bool isOptionalWithBooleanSelectorEndElement() const noexcept
     {
-        return _kind == Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_END;
+        return _kind == Kind::OptionalWithBooleanSelectorEnd;
     }
 
     /// \c true if this element is an optional with an integer selector beginning/end element.
     bool isOptionalWithIntegerSelectorElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_SIGNED | _KIND_UNSIGNED);
+        return this->_isKind(_kindOpt | _kindSigned | _kindUnsigned);
     }
 
     /// \c true if this element is an optional with an integer selector beginning element.
     bool isOptionalWithIntegerSelectorBeginningElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_SIGNED | _KIND_UNSIGNED | _KIND_BEG);
+        return this->_isKind(_kindOpt | _kindSigned | _kindUnsigned | _kindBeg);
     }
 
     /// \c true if this element is an optional with an integer selector end element.
     bool isOptionalWithIntegerSelectorEndElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_SIGNED | _KIND_UNSIGNED | _KIND_END);
+        return this->_isKind(_kindOpt | _kindSigned | _kindUnsigned | _kindEnd);
     }
 
     /// \c true if this element is an optional with a signed integer selector beginning/end element.
     bool isOptionalWithSignedIntegerSelectorElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_SIGNED);
+        return this->_isKind(_kindOpt | _kindSigned);
     }
 
     /// \c true if this element is an optional with a signed integer selector beginning element.
     bool isOptionalWithSignedIntegerSelectorBeginningElement() const noexcept
     {
-        return _kind == Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING;
+        return _kind == Kind::OptionalWithSignedIntegerSelectorBeginning;
     }
 
     /// \c true if this element is an optional with a signed integer selector end element.
     bool isOptionalWithSignedIntegerSelectorEndElement() const noexcept
     {
-        return _kind == Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_END;
+        return _kind == Kind::OptionalWithSignedIntegerSelectorEnd;
     }
 
     /// \c true if this element is an optional with an unsigned integer selector beginning/end element.
     bool isOptionalWithUnsignedIntegerSelectorElement() const noexcept
     {
-        return this->_isKind(_KIND_OPT | _KIND_UNSIGNED);
+        return this->_isKind(_kindOpt | _kindUnsigned);
     }
 
     /// \c true if this element is an optional with an unsigned integer selector beginning element.
     bool isOptionalWithUnsignedIntegerSelectorBeginningElement() const noexcept
     {
-        return _kind == Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING;
+        return _kind == Kind::OptionalWithUnsignedIntegerSelectorBeginning;
     }
 
     /// \c true if this element is an optional with an unsigned integer selector end element.
     bool isOptionalWithUnsignedIntegerSelectorEndElement() const noexcept
     {
-        return _kind == Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END;
+        return _kind == Kind::OptionalWithUnsignedIntegerSelectorEnd;
     }
 
     /*!
@@ -1360,7 +1360,7 @@ class PacketBeginningElement final :
 
 private:
     explicit PacketBeginningElement() :
-        BeginningElement {Kind::PACKET_BEGINNING}
+        BeginningElement {Kind::PacketBeginning}
     {
     }
 
@@ -1387,7 +1387,7 @@ class PacketEndElement final :
 
 private:
     explicit PacketEndElement() :
-        EndElement {Kind::PACKET_END}
+        EndElement {Kind::PacketEnd}
     {
     }
 
@@ -1440,7 +1440,7 @@ class ScopeBeginningElement final :
 
 private:
     explicit ScopeBeginningElement() :
-        BeginningElement {Kind::SCOPE_BEGINNING}
+        BeginningElement {Kind::ScopeBeginning}
     {
     }
 
@@ -1468,7 +1468,7 @@ class ScopeEndElement final :
 
 private:
     explicit ScopeEndElement() :
-        EndElement {Kind::SCOPE_END}
+        EndElement {Kind::ScopeEnd}
     {
     }
 
@@ -1495,7 +1495,7 @@ class EventRecordBeginningElement final :
 
 private:
     explicit EventRecordBeginningElement() :
-        BeginningElement {Kind::EVENT_RECORD_BEGINNING}
+        BeginningElement {Kind::EventRecordBeginning}
     {
     }
 
@@ -1522,7 +1522,7 @@ class EventRecordEndElement final :
 
 private:
     explicit EventRecordEndElement() :
-        EndElement {Kind::EVENT_RECORD_END}
+        EndElement {Kind::EventRecordEnd}
     {
     }
 
@@ -1557,7 +1557,7 @@ class PacketContentBeginningElement final :
 
 private:
     explicit PacketContentBeginningElement() :
-        BeginningElement {Kind::PACKET_CONTENT_BEGINNING}
+        BeginningElement {Kind::PacketContentBeginning}
     {
     }
 
@@ -1586,7 +1586,7 @@ class PacketContentEndElement final :
 
 private:
     explicit PacketContentEndElement() :
-        EndElement {Kind::PACKET_CONTENT_END}
+        EndElement {Kind::PacketContentEnd}
     {
     }
 
@@ -1617,7 +1617,7 @@ class PacketMagicNumberElement final :
 
 private:
     explicit PacketMagicNumberElement() :
-        Element {Kind::PACKET_MAGIC_NUMBER}
+        Element {Kind::PacketMagicNumber}
     {
     }
 
@@ -1665,7 +1665,7 @@ class MetadataStreamUuidElement final :
 
 private:
     explicit MetadataStreamUuidElement() : //-V730
-        Element {Kind::METADATA_STREAM_UUID}
+        Element {Kind::MetadataStreamUuid}
     {
     }
 
@@ -1702,7 +1702,7 @@ class DataStreamInfoElement final :
 
 private:
     explicit DataStreamInfoElement() :
-        Element {Kind::DATA_STREAM_INFO}
+        Element {Kind::DataStreamInfo}
     {
     }
 
@@ -1764,7 +1764,7 @@ class DefaultClockValueElement final :
 
 private:
     explicit DefaultClockValueElement() :
-        Element {Kind::DEFAULT_CLOCK_VALUE}
+        Element {Kind::DefaultClockValue}
     {
     }
 
@@ -1816,7 +1816,7 @@ class PacketInfoElement final :
 
 private:
     explicit PacketInfoElement() :
-        Element {Kind::PACKET_INFO}
+        Element {Kind::PacketInfo}
     {
     }
 
@@ -1923,7 +1923,7 @@ class EventRecordInfoElement final :
 
 private:
     explicit EventRecordInfoElement() :
-        Element {Kind::EVENT_RECORD_INFO}
+        Element {Kind::EventRecordInfo}
     {
     }
 
@@ -2049,7 +2049,7 @@ protected:
 
 private:
     explicit FixedLengthBitArrayElement() :
-        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_BIT_ARRAY}
+        FixedLengthBitArrayElement {Kind::FixedLengthBitArray}
     {
     }
 
@@ -2111,7 +2111,7 @@ class FixedLengthBitMapElement final :
 
 private:
     explicit FixedLengthBitMapElement() :
-        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_BIT_MAP}
+        FixedLengthBitArrayElement {Kind::FixedLengthBitMap}
     {
     }
 
@@ -2160,7 +2160,7 @@ class FixedLengthBooleanElement final :
 
 private:
     explicit FixedLengthBooleanElement() :
-        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_BOOLEAN}
+        FixedLengthBitArrayElement {Kind::FixedLengthBoolean}
     {
     }
 
@@ -2238,7 +2238,7 @@ protected:
 
 private:
     explicit FixedLengthSignedIntegerElement() :
-        FixedLengthSignedIntegerElement {Kind::FIXED_LENGTH_SIGNED_INTEGER}
+        FixedLengthSignedIntegerElement {Kind::FixedLengthSignedInteger}
     {
     }
 
@@ -2282,7 +2282,7 @@ protected:
 
 private:
     explicit FixedLengthUnsignedIntegerElement() :
-        FixedLengthUnsignedIntegerElement {Kind::FIXED_LENGTH_UNSIGNED_INTEGER}
+        FixedLengthUnsignedIntegerElement {Kind::FixedLengthUnsignedInteger}
     {
     }
 
@@ -2319,7 +2319,7 @@ class FixedLengthFloatingPointNumberElement final :
 
 private:
     explicit FixedLengthFloatingPointNumberElement() :
-        FixedLengthBitArrayElement {Kind::FIXED_LENGTH_FLOATING_POINT_NUMBER}
+        FixedLengthBitArrayElement {Kind::FixedLengthFloatingPointNumber}
     {
     }
 
@@ -2413,7 +2413,7 @@ protected:
 
 private:
     explicit VariableLengthSignedIntegerElement() :
-        VariableLengthSignedIntegerElement {Kind::VARIABLE_LENGTH_SIGNED_INTEGER}
+        VariableLengthSignedIntegerElement {Kind::VariableLengthSignedInteger}
     {
     }
 
@@ -2457,7 +2457,7 @@ protected:
 
 private:
     explicit VariableLengthUnsignedIntegerElement() :
-        VariableLengthUnsignedIntegerElement {Kind::VARIABLE_LENGTH_UNSIGNED_INTEGER}
+        VariableLengthUnsignedIntegerElement {Kind::VariableLengthUnsignedInteger}
     {
     }
 
@@ -2505,7 +2505,7 @@ class NullTerminatedStringBeginningElement final :
 
 private:
     explicit NullTerminatedStringBeginningElement() :
-        BeginningElement {Kind::NULL_TERMINATED_STRING_BEGINNING}
+        BeginningElement {Kind::NullTerminatedStringBeginning}
     {
     }
 
@@ -2541,7 +2541,7 @@ class NullTerminatedStringEndElement final :
 
 private:
     explicit NullTerminatedStringEndElement() :
-        EndElement {Kind::NULL_TERMINATED_STRING_END}
+        EndElement {Kind::NullTerminatedStringEnd}
     {
     }
 
@@ -2663,7 +2663,7 @@ class RawDataElement final :
 
 private:
     explicit RawDataElement() :
-        Element {Kind::RAW_DATA}
+        Element {Kind::RawData}
     {
     }
 
@@ -2789,7 +2789,7 @@ class StaticLengthArrayBeginningElement final :
 
 private:
     explicit StaticLengthArrayBeginningElement() :
-        ArrayBeginningElement {Kind::STATIC_LENGTH_ARRAY_BEGINNING}
+        ArrayBeginningElement {Kind::StaticLengthArrayBeginning}
     {
     }
 
@@ -2824,7 +2824,7 @@ class StaticLengthArrayEndElement final :
 
 private:
     explicit StaticLengthArrayEndElement() :
-        ArrayEndElement {Kind::STATIC_LENGTH_ARRAY_END}
+        ArrayEndElement {Kind::StaticLengthArrayEnd}
     {
     }
 
@@ -2863,7 +2863,7 @@ class DynamicLengthArrayBeginningElement final :
 
 private:
     explicit DynamicLengthArrayBeginningElement() :
-        ArrayBeginningElement {Kind::DYNAMIC_LENGTH_ARRAY_BEGINNING}
+        ArrayBeginningElement {Kind::DynamicLengthArrayBeginning}
     {
     }
 
@@ -2898,7 +2898,7 @@ class DynamicLengthArrayEndElement final :
 
 private:
     explicit DynamicLengthArrayEndElement() :
-        ArrayEndElement {Kind::DYNAMIC_LENGTH_ARRAY_END}
+        ArrayEndElement {Kind::DynamicLengthArrayEnd}
     {
     }
 
@@ -3006,7 +3006,7 @@ class StaticLengthStringBeginningElement final :
 
 private:
     explicit StaticLengthStringBeginningElement() :
-        NonNullTerminatedStringBeginningElement {Kind::STATIC_LENGTH_STRING_BEGINNING}
+        NonNullTerminatedStringBeginningElement {Kind::StaticLengthStringBeginning}
     {
     }
 
@@ -3042,7 +3042,7 @@ class StaticLengthStringEndElement final :
 
 private:
     explicit StaticLengthStringEndElement() :
-        NonNullTerminatedStringEndElement {Kind::STATIC_LENGTH_STRING_END}
+        NonNullTerminatedStringEndElement {Kind::StaticLengthStringEnd}
     {
     }
 
@@ -3083,7 +3083,7 @@ class DynamicLengthStringBeginningElement final :
 
 private:
     explicit DynamicLengthStringBeginningElement() :
-        NonNullTerminatedStringBeginningElement {Kind::DYNAMIC_LENGTH_STRING_BEGINNING}
+        NonNullTerminatedStringBeginningElement {Kind::DynamicLengthStringBeginning}
     {
     }
 
@@ -3119,7 +3119,7 @@ class DynamicLengthStringEndElement final :
 
 private:
     explicit DynamicLengthStringEndElement() :
-        NonNullTerminatedStringEndElement {Kind::DYNAMIC_LENGTH_STRING_END}
+        NonNullTerminatedStringEndElement {Kind::DynamicLengthStringEnd}
     {
     }
 
@@ -3237,7 +3237,7 @@ class StaticLengthBlobBeginningElement final :
 
 private:
     explicit StaticLengthBlobBeginningElement() :
-        BlobBeginningElement {Kind::STATIC_LENGTH_BLOB_BEGINNING}
+        BlobBeginningElement {Kind::StaticLengthBlobBeginning}
     {
     }
 
@@ -3273,7 +3273,7 @@ class StaticLengthBlobEndElement final :
 
 private:
     explicit StaticLengthBlobEndElement() :
-        BlobEndElement {Kind::STATIC_LENGTH_BLOB_END}
+        BlobEndElement {Kind::StaticLengthBlobEnd}
     {
     }
 
@@ -3314,7 +3314,7 @@ class DynamicLengthBlobBeginningElement final :
 
 private:
     explicit DynamicLengthBlobBeginningElement() :
-        BlobBeginningElement {Kind::DYNAMIC_LENGTH_BLOB_BEGINNING}
+        BlobBeginningElement {Kind::DynamicLengthBlobBeginning}
     {
     }
 
@@ -3350,7 +3350,7 @@ class DynamicLengthBlobEndElement final :
 
 private:
     explicit DynamicLengthBlobEndElement() :
-        BlobEndElement {Kind::DYNAMIC_LENGTH_BLOB_END}
+        BlobEndElement {Kind::DynamicLengthBlobEnd}
     {
     }
 
@@ -3389,7 +3389,7 @@ class StructureBeginningElement final :
 
 private:
     explicit StructureBeginningElement() :
-        BeginningElement {Kind::STRUCTURE_BEGINNING}
+        BeginningElement {Kind::StructureBeginning}
     {
     }
 
@@ -3425,7 +3425,7 @@ class StructureEndElement final :
 
 private:
     explicit StructureEndElement() :
-        EndElement {Kind::STRUCTURE_END}
+        EndElement {Kind::StructureEnd}
     {
     }
 
@@ -3590,7 +3590,7 @@ the same level.
 */
 class VariantWithUnsignedIntegerSelectorBeginningElement final :
     public VariantWithIntegerSelectorBeginningElement<VariantWithUnsignedIntegerSelectorType, unsigned long long,
-                                                      Element::Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING>
+                                                      Element::Kind::VariantWithUnsignedIntegerSelectorBeginning>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -3618,7 +3618,7 @@ integer selector.
 */
 class VariantWithUnsignedIntegerSelectorEndElement final :
     public VariantWithIntegerSelectorEndElement<VariantWithUnsignedIntegerSelectorType,
-                                                Element::Kind::VARIANT_WITH_UNSIGNED_INTEGER_SELECTOR_END>
+                                                Element::Kind::VariantWithUnsignedIntegerSelectorEnd>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -3650,7 +3650,7 @@ the same level.
 */
 class VariantWithSignedIntegerSelectorBeginningElement final :
     public VariantWithIntegerSelectorBeginningElement<VariantWithSignedIntegerSelectorType, long long,
-                                                      Element::Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING>
+                                                      Element::Kind::VariantWithSignedIntegerSelectorBeginning>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -3678,7 +3678,7 @@ integer selector.
 */
 class VariantWithSignedIntegerSelectorEndElement final :
     public VariantWithIntegerSelectorEndElement<VariantWithSignedIntegerSelectorType,
-                                                Element::Kind::VARIANT_WITH_SIGNED_INTEGER_SELECTOR_END>
+                                                Element::Kind::VariantWithSignedIntegerSelectorEnd>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -3789,7 +3789,7 @@ class OptionalWithBooleanSelectorBeginningElement final :
 
 private:
     explicit OptionalWithBooleanSelectorBeginningElement() :
-        OptionalBeginningElement {Element::Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_BEGINNING}
+        OptionalBeginningElement {Element::Kind::OptionalWithBooleanSelectorBeginning}
     {
     }
 
@@ -3826,7 +3826,7 @@ class OptionalWithBooleanSelectorEndElement final :
 
 private:
     explicit OptionalWithBooleanSelectorEndElement() :
-        OptionalEndElement {Element::Kind::OPTIONAL_WITH_BOOLEAN_SELECTOR_END}
+        OptionalEndElement {Element::Kind::OptionalWithBooleanSelectorEnd}
     {
     }
 
@@ -3933,7 +3933,7 @@ level.
 */
 class OptionalWithUnsignedIntegerSelectorBeginningElement final :
     public OptionalWithIntegerSelectorBeginningElement<OptionalWithUnsignedIntegerSelectorType, unsigned long long,
-                                                       Element::Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_BEGINNING>
+                                                       Element::Kind::OptionalWithUnsignedIntegerSelectorBeginning>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -3961,7 +3961,7 @@ unsigned integer selector.
 */
 class OptionalWithUnsignedIntegerSelectorEndElement final :
     public OptionalWithIntegerSelectorEndElement<OptionalWithUnsignedIntegerSelectorType,
-                                                 Element::Kind::OPTIONAL_WITH_UNSIGNED_INTEGER_SELECTOR_END>
+                                                 Element::Kind::OptionalWithUnsignedIntegerSelectorEnd>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -3994,7 +3994,7 @@ level.
 */
 class OptionalWithSignedIntegerSelectorBeginningElement final :
     public OptionalWithIntegerSelectorBeginningElement<OptionalWithSignedIntegerSelectorType, long long,
-                                                       Element::Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_BEGINNING>
+                                                       Element::Kind::OptionalWithSignedIntegerSelectorBeginning>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -4024,7 +4024,7 @@ integer selector.
 */
 class OptionalWithSignedIntegerSelectorEndElement final :
     public OptionalWithIntegerSelectorEndElement<OptionalWithSignedIntegerSelectorType,
-                                                 Element::Kind::OPTIONAL_WITH_SIGNED_INTEGER_SELECTOR_END>
+                                                 Element::Kind::OptionalWithSignedIntegerSelectorEnd>
 {
     friend class internal::Vm;
     friend class internal::VmPos;
@@ -4306,4 +4306,4 @@ inline const VariantWithUnsignedIntegerSelectorEndElement& Element::asVariantWit
 
 } // namespace yactfr
 
-#endif // _YACTFR_ELEM_HPP
+#endif // YACTFR_ELEM_HPP

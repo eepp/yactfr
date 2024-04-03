@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_BLOB_TYPE_HPP
-#define _YACTFR_METADATA_BLOB_TYPE_HPP
+#ifndef YACTFR_METADATA_BLOB_TYPE_HPP
+#define YACTFR_METADATA_BLOB_TYPE_HPP
 
 #include <string>
 
@@ -25,7 +25,7 @@ class BlobType :
     public ScalarDataType
 {
 protected:
-    explicit BlobType(_Kind kind, unsigned int align, MapItem::UP attrs,
+    explicit BlobType(_tKind kind, unsigned int align, MapItem::Up attrs,
                       std::string&& mediaType = BlobType::defaultMediaType());
 
 public:
@@ -54,4 +54,4 @@ private:
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_BLOB_TYPE_HPP
+#endif // YACTFR_METADATA_BLOB_TYPE_HPP

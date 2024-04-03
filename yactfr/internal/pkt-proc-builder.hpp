@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
-#define _YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
+#ifndef YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
+#define YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
 
 #include <cstdlib>
 #include <cassert>
@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    using _DtReadLenSelInstrMap = std::unordered_map<const DataType *, InstrLoc>;
+    using _tDtReadLenSelInstrMap = std::unordered_map<const DataType *, InstrLoc>;
 
 private:
     void _buildPktProc();
@@ -59,7 +59,7 @@ private:
     void _insertSpecialPktProcPreambleProcInstrs();
     void _insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc);
     void _insertUpdateDefClkValInstrs();
-    _DtReadLenSelInstrMap _createDtReadLenSelInstrMap() const;
+    _tDtReadLenSelInstrMap _createDtReadLenSelInstrMap() const;
     void _setSavedValPoss();
     void _insertEndInstrs();
     std::unique_ptr<DsPktProc> _buildDsPktProc(const DataStreamType& dst);
@@ -211,4 +211,4 @@ void PktProcBuilder::_buildReadOptIntSelInstr(const StructureMemberType * const 
 } // namespace internal
 } // namespace yactfr
 
-#endif // _YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
+#endif // YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP

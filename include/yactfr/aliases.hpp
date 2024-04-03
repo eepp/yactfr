@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_ALIASES_HPP
-#define _YACTFR_ALIASES_HPP
+#ifndef YACTFR_ALIASES_HPP
+#define YACTFR_ALIASES_HPP
 
 namespace yactfr {
 
@@ -28,4 +28,4 @@ using Size = unsigned long long;
 
 } // namespace yactfr
 
-#endif // _YACTFR_ALIASES_HPP
+#endif // YACTFR_ALIASES_HPP

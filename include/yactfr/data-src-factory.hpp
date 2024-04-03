@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_DATA_SRC_FACTORY_HPP
-#define _YACTFR_DATA_SRC_FACTORY_HPP
+#ifndef YACTFR_DATA_SRC_FACTORY_HPP
+#define YACTFR_DATA_SRC_FACTORY_HPP
 
 #include "data-src.hpp"
 
@@ -33,7 +33,7 @@ public:
     @returns
         Unique pointer to new data source.
     */
-    DataSource::UP createDataSource();
+    DataSource::Up createDataSource();
 
 protected:
     /*!
@@ -44,9 +44,9 @@ protected:
     @returns
         Unique pointer to new data source.
     */
-    virtual DataSource::UP _createDataSource() = 0;
+    virtual DataSource::Up _createDataSource() = 0;
 };
 
 } // namespace yactfr
 
-#endif // _YACTFR_DATA_SRC_FACTORY_HPP
+#endif // YACTFR_DATA_SRC_FACTORY_HPP

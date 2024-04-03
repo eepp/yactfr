@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef _YACTFR_METADATA_ITEM_HPP
-#define _YACTFR_METADATA_ITEM_HPP
+#ifndef YACTFR_METADATA_ITEM_HPP
+#define YACTFR_METADATA_ITEM_HPP
 
 #include <cassert>
 #include <string>
@@ -29,25 +29,25 @@ Prefer the Item::Kind alias.
 enum class ItemKind
 {
     /// Boolean item (BooleanItem).
-    BOOLEAN,
+    Boolean,
 
     /// Signed integer item (SignedIntegerItem).
-    SIGNED_INTEGER,
+    SignedInteger,
 
     /// Unsigned integer item (UnsignedIntegerItem).
-    UNSIGNED_INTEGER,
+    UnsignedInteger,
 
     /// Real item (RealItem).
-    REAL,
+    Real,
 
     /// String item (StringItem).
-    STRING,
+    String,
 
     /// Array item (ArrayItem).
-    ARRAY,
+    Array,
 
     /// Map item (MapItem).
-    MAP,
+    Map,
 };
 
 template <typename, ItemKind>
@@ -59,7 +59,7 @@ class ScalarValueItem;
 
 @ingroup item
 */
-using BooleanItem = ScalarValueItem<bool, ItemKind::BOOLEAN>;
+using BooleanItem = ScalarValueItem<bool, ItemKind::Boolean>;
 
 /*!
 @brief
@@ -67,7 +67,7 @@ using BooleanItem = ScalarValueItem<bool, ItemKind::BOOLEAN>;
 
 @ingroup item
 */
-using SignedIntegerItem = ScalarValueItem<long long, ItemKind::SIGNED_INTEGER>;
+using SignedIntegerItem = ScalarValueItem<long long, ItemKind::SignedInteger>;
 
 /*!
 @brief
@@ -75,7 +75,7 @@ using SignedIntegerItem = ScalarValueItem<long long, ItemKind::SIGNED_INTEGER>;
 
 @ingroup item
 */
-using UnsignedIntegerItem = ScalarValueItem<unsigned long long, ItemKind::UNSIGNED_INTEGER>;
+using UnsignedIntegerItem = ScalarValueItem<unsigned long long, ItemKind::UnsignedInteger>;
 
 /*!
 @brief
@@ -83,7 +83,7 @@ using UnsignedIntegerItem = ScalarValueItem<unsigned long long, ItemKind::UNSIGN
 
 @ingroup item
 */
-using RealItem = ScalarValueItem<double, ItemKind::REAL>;
+using RealItem = ScalarValueItem<double, ItemKind::Real>;
 
 /*!
 @brief
@@ -91,7 +91,7 @@ using RealItem = ScalarValueItem<double, ItemKind::REAL>;
 
 @ingroup item
 */
-using StringItem = ScalarValueItem<std::string, ItemKind::STRING>;
+using StringItem = ScalarValueItem<std::string, ItemKind::String>;
 
 class ArrayItem;
 class MapItem;
@@ -110,7 +110,7 @@ class Item :
 {
 public:
     /// Unique pointer to constant item.
-    using UP = std::unique_ptr<const Item>;
+    using Up = std::unique_ptr<const Item>;
 
     /// Kind of item.
     using Kind = ItemKind;
@@ -130,43 +130,43 @@ public:
     /// \c true if this item is a boolean item.
     bool isBoolean() const noexcept
     {
-        return this->kind() == Kind::BOOLEAN;
+        return this->kind() == Kind::Boolean;
     }
 
     /// \c true if this item is a signed integer item.
     bool isSignedInteger() const noexcept
     {
-        return this->kind() == Kind::SIGNED_INTEGER;
+        return this->kind() == Kind::SignedInteger;
     }
 
     /// \c true if this item is an unsigned integer item.
     bool isUnsignedInteger() const noexcept
     {
-        return this->kind() == Kind::UNSIGNED_INTEGER;
+        return this->kind() == Kind::UnsignedInteger;
     }
 
     /// \c true if this item is a real item.
     bool isReal() const noexcept
     {
-        return this->kind() == Kind::REAL;
+        return this->kind() == Kind::Real;
     }
 
     /// \c true if this item is a string item.
     bool isString() const noexcept
     {
-        return this->kind() == Kind::STRING;
+        return this->kind() == Kind::String;
     }
 
     /// \c true if this item is an array item.
     bool isArray() const noexcept
     {
-        return this->kind() == Kind::ARRAY;
+        return this->kind() == Kind::Array;
     }
 
     /// \c true if this item is a map item.
     bool isMap() const noexcept
     {
-        return this->kind() == Kind::MAP;
+        return this->kind() == Kind::Map;
     }
 
     /*!
@@ -239,7 +239,7 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    UP clone() const;
+    Up clone() const;
 
     /*!
     @brief
@@ -269,7 +269,7 @@ public:
     }
 
 private:
-    virtual UP _clone() const = 0;
+    virtual Up _clone() const = 0;
     virtual bool _isEqual(const Item& other) const noexcept = 0;
 };
 
@@ -293,7 +293,7 @@ public:
     using Value = ValueT;
 
     /// Unique pointer to constant scalar value item.
-    using UP = std::unique_ptr<const ScalarValueItem<ValueT, KindV>>;
+    using Up = std::unique_ptr<const ScalarValueItem<ValueT, KindV>>;
 
 public:
     /*!
@@ -328,13 +328,13 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    UP clone() const
+    Up clone() const
     {
         return std::make_unique<const ScalarValueItem<ValueT, KindV>>(this->_val());
     }
 
 private:
-    Item::UP _clone() const override
+    Item::Up _clone() const override
     {
         return this->clone();
     }
@@ -357,10 +357,10 @@ class ArrayItem final :
 {
 public:
     /// Raw container.
-    using Container = typename internal::ArrayItemMixin<Item>::_Container;
+    using Container = typename internal::ArrayItemMixin<Item>::_tContainer;
 
     /// Unique pointer to constant array item.
-    using UP = std::unique_ptr<const ArrayItem>;
+    using Up = std::unique_ptr<const ArrayItem>;
 
 public:
     /*!
@@ -421,10 +421,10 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    UP clone() const;
+    Up clone() const;
 
 private:
-    Item::UP _clone() const override;
+    Item::Up _clone() const override;
     bool _isEqual(const Item& other) const noexcept override;
 };
 
@@ -440,10 +440,10 @@ class MapItem final :
 {
 public:
     /// Raw container.
-    using Container = typename internal::MapItemMixin<Item>::_Container;
+    using Container = typename internal::MapItemMixin<Item>::_tContainer;
 
     /// Unique pointer to constant map item.
-    using UP = std::unique_ptr<const MapItem>;
+    using Up = std::unique_ptr<const MapItem>;
 
 public:
     /*!
@@ -522,10 +522,10 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    UP clone() const;
+    Up clone() const;
 
 private:
-    Item::UP _clone() const override;
+    Item::Up _clone() const override;
     bool _isEqual(const Item& other) const noexcept override;
 };
 
@@ -541,7 +541,7 @@ private:
 @returns
     Created boolean item.
 */
-BooleanItem::UP createItem(bool value);
+BooleanItem::Up createItem(bool value);
 
 /*!
 @brief
@@ -555,7 +555,7 @@ BooleanItem::UP createItem(bool value);
 @returns
     Created signed integer item.
 */
-SignedIntegerItem::UP createItem(long long value);
+SignedIntegerItem::Up createItem(long long value);
 
 /*!
 @brief
@@ -570,7 +570,7 @@ SignedIntegerItem::UP createItem(long long value);
 @returns
     Created unsigned integer item.
 */
-UnsignedIntegerItem::UP createItem(unsigned long long value);
+UnsignedIntegerItem::Up createItem(unsigned long long value);
 
 /*!
 @brief
@@ -584,7 +584,7 @@ UnsignedIntegerItem::UP createItem(unsigned long long value);
 @returns
     Created real item.
 */
-RealItem::UP createItem(double value);
+RealItem::Up createItem(double value);
 
 /*!
 @brief
@@ -598,7 +598,7 @@ RealItem::UP createItem(double value);
 @returns
     Created string item.
 */
-StringItem::UP createItem(std::string value);
+StringItem::Up createItem(std::string value);
 
 /*!
 @brief
@@ -612,7 +612,7 @@ StringItem::UP createItem(std::string value);
 @returns
     Created array item.
 */
-ArrayItem::UP createItem(ArrayItem::Container&& items);
+ArrayItem::Up createItem(ArrayItem::Container&& items);
 
 /*!
 @brief
@@ -626,8 +626,8 @@ ArrayItem::UP createItem(ArrayItem::Container&& items);
 @returns
     Created map item.
 */
-MapItem::UP createItem(MapItem::Container&& items);
+MapItem::Up createItem(MapItem::Container&& items);
 
 } // namespace yactfr
 
-#endif // _YACTFR_METADATA_ITEM_HPP
+#endif // YACTFR_METADATA_ITEM_HPP

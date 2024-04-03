@@ -67,18 +67,18 @@ bool Item::operator==(const Item& other) const noexcept
     return this->_isEqual(other);
 }
 
-Item::UP Item::clone() const
+Item::Up Item::clone() const
 {
     return this->_clone();
 }
 
 ArrayItem::ArrayItem(Container&& items) :
-    Item {ItemKind::ARRAY},
+    Item {ItemKind::Array},
     internal::ArrayItemMixin<Item> {std::move(items)}
 {
 }
 
-ArrayItem::UP ArrayItem::clone() const
+ArrayItem::Up ArrayItem::clone() const
 {
     Container items;
 
@@ -89,7 +89,7 @@ ArrayItem::UP ArrayItem::clone() const
     return std::make_unique<const ArrayItem>(std::move(items));
 }
 
-Item::UP ArrayItem::_clone() const
+Item::Up ArrayItem::_clone() const
 {
     return this->clone();
 }
@@ -100,12 +100,12 @@ bool ArrayItem::_isEqual(const Item& other) const noexcept
 }
 
 MapItem::MapItem(Container&& items) :
-    Item {ItemKind::MAP},
+    Item {ItemKind::Map},
     internal::MapItemMixin<Item> {std::move(items)}
 {
 }
 
-MapItem::UP MapItem::clone() const
+MapItem::Up MapItem::clone() const
 {
     Container items;
 
@@ -116,7 +116,7 @@ MapItem::UP MapItem::clone() const
     return std::make_unique<const MapItem>(std::move(items));
 }
 
-Item::UP MapItem::_clone() const
+Item::Up MapItem::_clone() const
 {
     return this->clone();
 }
@@ -126,37 +126,37 @@ bool MapItem::_isEqual(const Item& other) const noexcept
     return internal::MapItemMixin<Item>::_isEqual(other.asMap());
 }
 
-BooleanItem::UP createItem(const bool value)
+BooleanItem::Up createItem(const bool value)
 {
     return std::make_unique<const BooleanItem>(value);
 }
 
-SignedIntegerItem::UP createItem(const long long value)
+SignedIntegerItem::Up createItem(const long long value)
 {
     return std::make_unique<const SignedIntegerItem>(value);
 }
 
-UnsignedIntegerItem::UP createItem(const unsigned long long value)
+UnsignedIntegerItem::Up createItem(const unsigned long long value)
 {
     return std::make_unique<const UnsignedIntegerItem>(value);
 }
 
-RealItem::UP createItem(const double value)
+RealItem::Up createItem(const double value)
 {
     return std::make_unique<const RealItem>(value);
 }
 
-StringItem::UP createItem(std::string value)
+StringItem::Up createItem(std::string value)
 {
     return std::make_unique<const StringItem>(std::move(value));
 }
 
-ArrayItem::UP createItem(ArrayItem::Container&& items)
+ArrayItem::Up createItem(ArrayItem::Container&& items)
 {
     return std::make_unique<const ArrayItem>(std::move(items));
 }
 
-MapItem::UP createItem(MapItem::Container&& items)
+MapItem::Up createItem(MapItem::Container&& items)
 {
     return std::make_unique<const MapItem>(std::move(items));
 }
