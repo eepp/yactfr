@@ -32,12 +32,13 @@ documented uses unabbreviated names.
 |Addr |Address
 |Align |Alignment
 |Attr |Attribute
-|BE |Big-endian
+|Be |Big-endian
 |Blk |Block
-|BO |Byte order
+|Bio |Bit order
+|Bo |Byte order
 |Bool |Boolean
 |Cand |Candidate
-|CC |Clock class (CTF{nbsp}2)
+|Cc |Clock class (CTF{nbsp}2)
 |Clk |Clock
 |Cls |Class (CTF{nbsp}2)
 |Col |Column
@@ -49,21 +50,21 @@ documented uses unabbreviated names.
 |Descr |Description
 |Disc |Discarded
 |Disp |Display
-|DL |Dynamic-length
-|DS |Data stream
-|DSC |Data stream class (CTF{nbsp}2)
-|DST |Data stream type
-|DT |Data type
+|Dl |Dynamic-length
+|Ds |Data stream
+|Dsc |Data stream class (CTF{nbsp}2)
+|Dst |Data stream type
+|Dt |Data type
 |Dup |Duplicate
 |Dyn |Dynamic
 |Elem |Element
-|Enum |Enumeration
-|ER |Event record
-|ERC |Event record class (CTF{nbsp}2)
-|ERT |Event record type
+|Enum |Enumeration (CTF{nbsp}1)
+|Er |Event record
+|Erc |Event record class (CTF{nbsp}2)
+|Ert |Event record type
 |Exc |Exception
-|FC |Field class (CTF{nbsp}2)
-|FL |Fixed-length
+|Fc |Field class (CTF{nbsp}2)
+|Fl |Fixed-length
 |Float |Floating point number
 |Freq |Frequency
 |Id |Identifier (numeric)
@@ -72,14 +73,14 @@ documented uses unabbreviated names.
 |Instr |Instruction
 |Int |Integer
 |It, Iter |Iterator
-|LE |Little-endian
+|Le |Little-endian
 |Len |Length
 |Lex |Lexical
 |Loc |Location
 |Max |Maximum
 |Min |Minimum
-|NS |Namespace
-|NT |Null-terminated
+|Ns |Namespace
+|Nt |Null-terminated
 |Opt |Option, optional
 |Orig |Origin
 |Pkt |Packet
@@ -96,26 +97,26 @@ documented uses unabbreviated names.
 |Sel |Selector
 |Seq |Sequence
 |SInt |Signed integer
-|SL |Static-length
+|Sl |Static-length
 |Snap |Snapshot
-|SP |Shared pointer
+|Sp |Shared pointer
 |Spec |Specific
 |Src |Source
-|SS |String stream, string scanner
+|Ss |String stream, string scanner
 |SSel |Signed selector
 |Std |Standard
 |Str |String
 |Struct |Structure
-|TC |Trace class (CTF{nbsp}2)
+|Tc |Trace class (CTF{nbsp}2)
 |Tgt |Target
-|TS |Timestamp (CTF{nbsp}2)
+|Ts |Timestamp (CTF{nbsp}2)
 |UInt |Unsigned integer
-|UP |Unique pointer
+|Up |Unique pointer
 |USel |Unsigned selector
 |Val |Value
 |Var |Variant
-|VL |Variable-length
-|VM |Virtual machine
+|Vl |Variable-length
+|Vm |Virtual machine
 |===
 
 Combination examples:
