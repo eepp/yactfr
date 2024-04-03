@@ -995,7 +995,9 @@ DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
                                                    tryCloneAttrs(pseudoOptType.attrs()));
 }
 
-static IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(const IntegerRangeSet<unsigned long long, false>& ranges)
+namespace {
+
+IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(const IntegerRangeSet<unsigned long long, false>& ranges)
 {
     using Ranges = IntegerRangeSet<unsigned long long>;
 
@@ -1007,6 +1009,8 @@ static IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPr
 
     return Ranges {std::move(newRanges)};
 }
+
+} // namespace
 
 DataType::UP DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt)
 {

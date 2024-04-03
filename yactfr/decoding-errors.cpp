@@ -157,10 +157,14 @@ PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index off
 {
 }
 
-static inline const char *byteOrderString(const ByteOrder bo)
+namespace {
+
+const char *byteOrderString(const ByteOrder bo)
 {
     return bo == ByteOrder::BIG ? "big" : "little";
 }
+
+} // namespace
 
 ByteOrderChangeWithinByteDecodingError::ByteOrderChangeWithinByteDecodingError(const Index offset,
                                                                                const ByteOrder previousBo,
@@ -182,7 +186,7 @@ ByteOrderChangeWithinByteDecodingError::ByteOrderChangeWithinByteDecodingError(c
 }
 
 template <typename SelValueT>
-static const std::string formatInvalidVarSelValueReason(const SelValueT selVal)
+const std::string formatInvalidVarSelValueReason(const SelValueT selVal)
 {
     std::ostringstream ss;
 

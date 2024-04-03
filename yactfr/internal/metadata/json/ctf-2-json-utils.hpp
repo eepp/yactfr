@@ -49,8 +49,8 @@ ValT rawIntValFromJsonIntVal(const JsonVal& jsonIntVal) noexcept
  * Returns the optional raw string value from the property named
  * `propName` within `jsonObjVal`.
  */
-static inline boost::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
-                                                       const std::string& propName)
+inline boost::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
+                                                const std::string& propName)
 {
     const auto jsonVal = jsonObjVal[propName];
 
@@ -65,8 +65,8 @@ static inline boost::optional<std::string> optStrOfObj(const JsonObjVal& jsonObj
  * Returns the optional unsigned integer value from the property named
  * `propName` within `jsonObjVal`.
  */
-static inline boost::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjVal,
-                                                               const std::string& propName)
+inline boost::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjVal,
+                                                        const std::string& propName)
 {
     const auto jsonVal = jsonObjVal[propName];
 

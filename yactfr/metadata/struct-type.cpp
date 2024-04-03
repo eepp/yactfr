@@ -12,8 +12,9 @@
 #include <yactfr/internal/metadata/utils.hpp>
 
 namespace yactfr {
+namespace {
 
-static inline unsigned int realMinAlign(const StructureType::MemberTypes& memberTypes) noexcept
+unsigned int realMinAlign(const StructureType::MemberTypes& memberTypes) noexcept
 {
     unsigned int align = 1;
 
@@ -23,6 +24,8 @@ static inline unsigned int realMinAlign(const StructureType::MemberTypes& member
 
     return align;
 }
+
+} // namespace
 
 StructureType::StructureType(const unsigned int minAlign, StructureType::MemberTypes&& memberTypes,
                              MapItem::UP attrs) :

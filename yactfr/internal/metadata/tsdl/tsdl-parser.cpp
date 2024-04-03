@@ -485,8 +485,10 @@ struct PseudoDataLocBase
     PseudoDataLoc::PathElems::const_iterator restPos;
 };
 
-static boost::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
-                                                            const TextLocation& loc)
+namespace {
+
+boost::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
+                                                     const TextLocation& loc)
 {
     const auto beginPos = allPathElems.begin();
 
@@ -549,6 +551,8 @@ static boost::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc:
 
     return boost::none;
 }
+
+} // namespace
 
 boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                              const TextLocation& loc)
@@ -1183,10 +1187,14 @@ PseudoDt::UP TsdlParser::_fastPseudoFlIntType(TextLocation loc)
     return nullptr;
 }
 
-static BitOrder bioFromBo(const ByteOrder bo) noexcept
+namespace {
+
+BitOrder bioFromBo(const ByteOrder bo) noexcept
 {
     return bo == ByteOrder::BIG ? BitOrder::LAST_TO_FIRST : BitOrder::FIRST_TO_LAST;
 }
+
+} // namespace
 
 PseudoDt::UP TsdlParser::_tryParseFlIntType()
 {

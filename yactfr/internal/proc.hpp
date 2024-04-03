@@ -1578,7 +1578,7 @@ private:
     Proc _proc;
 };
 
-static inline std::string _strProp(const std::string& prop)
+inline std::string _strProp(const std::string& prop)
 {
     std::string rProp;
 
@@ -2425,17 +2425,17 @@ private:
     Proc _preambleProc;
 };
 
-static inline ReadDataInstr& instrAsReadData(Instr& instr) noexcept
+inline ReadDataInstr& instrAsReadData(Instr& instr) noexcept
 {
     return static_cast<ReadDataInstr&>(instr);
 }
 
-static inline BeginReadScopeInstr& instrAsBeginReadScope(Instr& instr) noexcept
+inline BeginReadScopeInstr& instrAsBeginReadScope(Instr& instr) noexcept
 {
     return static_cast<BeginReadScopeInstr&>(instr);
 }
 
-static inline BeginReadStructInstr& instrAsBeginReadStruct(Instr& instr) noexcept
+inline BeginReadStructInstr& instrAsBeginReadStruct(Instr& instr) noexcept
 {
     return static_cast<BeginReadStructInstr&>(instr);
 }

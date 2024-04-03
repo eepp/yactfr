@@ -12,8 +12,9 @@
 
 namespace yactfr {
 namespace internal {
+namespace {
 
-static void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
+void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
 {
     pseudoDt.posInScope(nextPos);
     ++nextPos;
@@ -67,6 +68,8 @@ static void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
         break;
     }
 }
+
+} // namespace
 
 void setPseudoDtPosInScope(PseudoDt& pseudoDt)
 {

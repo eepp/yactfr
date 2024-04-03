@@ -142,14 +142,13 @@ auto commonFindPseudoDts(PseudoDtT& pseudoDt, typename VisitorT::PredFunc predFu
     return visitor.set();
 }
 
-static inline auto findPseudoDts(PseudoDt& pseudoDt,
-                                 PseudoDtFinder<PseudoDtVisitor>::PredFunc predFunc)
+inline auto findPseudoDts(PseudoDt& pseudoDt, PseudoDtFinder<PseudoDtVisitor>::PredFunc predFunc)
 {
     return commonFindPseudoDts<PseudoDtFinder<PseudoDtVisitor>>(pseudoDt, std::move(predFunc));
 }
 
-static inline auto findPseudoDts(const PseudoDt& pseudoDt,
-                                 PseudoDtFinder<ConstPseudoDtVisitor>::PredFunc predFunc)
+inline auto findPseudoDts(const PseudoDt& pseudoDt,
+                          PseudoDtFinder<ConstPseudoDtVisitor>::PredFunc predFunc)
 {
     return commonFindPseudoDts<PseudoDtFinder<ConstPseudoDtVisitor>>(pseudoDt, std::move(predFunc));
 }

@@ -59,7 +59,9 @@ protected:
     Index _curLevel = 0;
 };
 
-static bool isReadFlUInt(const Instr& instr) noexcept
+namespace {
+
+bool isReadFlUInt(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
     case Instr::Kind::READ_FL_UINT_A16_BE:
@@ -88,11 +90,15 @@ static bool isReadFlUInt(const Instr& instr) noexcept
 }
 
 #ifndef NDEBUG
-static bool isReadUInt(const Instr& instr) noexcept
+
+bool isReadUInt(const Instr& instr) noexcept
 {
     return isReadFlUInt(instr) || instr.kind() == Instr::Kind::READ_VL_UINT;
 }
+
 #endif // NDEBUG
+
+} // namespace
 
 PktProcBuilder::PktProcBuilder(const TraceType& traceType) :
     _traceType {&traceType}
@@ -142,7 +148,9 @@ void PktProcBuilder::_buildPktProc()
     this->_insertEndInstrs();
 }
 
-static bool instrIsSpecScope(const Instr& instr, const Scope scope) noexcept
+namespace {
+
+bool instrIsSpecScope(const Instr& instr, const Scope scope) noexcept
 {
     if (instr.kind() != Instr::Kind::BEGIN_READ_SCOPE) {
         return false;
@@ -151,7 +159,7 @@ static bool instrIsSpecScope(const Instr& instr, const Scope scope) noexcept
     return static_cast<const BeginReadScopeInstr&>(instr).scope() == scope;
 }
 
-static Proc::SharedIt firstBeginReadScopeInstr(Proc& proc, const Scope scope) noexcept
+Proc::SharedIt firstBeginReadScopeInstr(Proc& proc, const Scope scope) noexcept
 {
     for (auto it = proc.begin(); it != proc.end(); ++it) {
         auto& instr = *it;
@@ -163,6 +171,8 @@ static Proc::SharedIt firstBeginReadScopeInstr(Proc& proc, const Scope scope) no
 
     return proc.end();
 }
+
+} // namespace
 
 /*
  * This procedure instruction visitor takes a procedure, finds all the
@@ -1021,8 +1031,8 @@ void PktProcBuilder::_buildReadInstr(const StructureMemberType * const memberTyp
 }
 
 template <typename ReadInstrT>
-static void buildBasicReadInstr(const StructureMemberType * const memberType, const DataType& dt,
-                                Proc& baseProc)
+void buildBasicReadInstr(const StructureMemberType * const memberType, const DataType& dt,
+                         Proc& baseProc)
 {
     baseProc.pushBack(std::make_shared<ReadInstrT>(memberType, dt));
 }

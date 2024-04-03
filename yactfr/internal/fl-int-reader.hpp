@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2022-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,8 +14,9 @@
 
 namespace yactfr {
 namespace internal {
+namespace {
 
-static std::uint64_t readFlUIntBe1At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 7);
@@ -23,7 +24,7 @@ static std::uint64_t readFlUIntBe1At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -31,7 +32,7 @@ static std::uint64_t readFlUIntBe1At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -39,7 +40,7 @@ static std::uint64_t readFlUIntBe1At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -47,7 +48,7 @@ static std::uint64_t readFlUIntBe1At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -55,7 +56,7 @@ static std::uint64_t readFlUIntBe1At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -63,7 +64,7 @@ static std::uint64_t readFlUIntBe1At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -71,7 +72,7 @@ static std::uint64_t readFlUIntBe1At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe1At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe1At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -79,7 +80,7 @@ static std::uint64_t readFlUIntBe1At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -87,7 +88,7 @@ static std::uint64_t readFlUIntBe2At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -95,7 +96,7 @@ static std::uint64_t readFlUIntBe2At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -103,7 +104,7 @@ static std::uint64_t readFlUIntBe2At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -111,7 +112,7 @@ static std::uint64_t readFlUIntBe2At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -119,7 +120,7 @@ static std::uint64_t readFlUIntBe2At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -127,7 +128,7 @@ static std::uint64_t readFlUIntBe2At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -135,7 +136,7 @@ static std::uint64_t readFlUIntBe2At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe2At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe2At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -145,7 +146,7 @@ static std::uint64_t readFlUIntBe2At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -153,7 +154,7 @@ static std::uint64_t readFlUIntBe3At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -161,7 +162,7 @@ static std::uint64_t readFlUIntBe3At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -169,7 +170,7 @@ static std::uint64_t readFlUIntBe3At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -177,7 +178,7 @@ static std::uint64_t readFlUIntBe3At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -185,7 +186,7 @@ static std::uint64_t readFlUIntBe3At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -193,7 +194,7 @@ static std::uint64_t readFlUIntBe3At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -203,7 +204,7 @@ static std::uint64_t readFlUIntBe3At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe3At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe3At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -213,7 +214,7 @@ static std::uint64_t readFlUIntBe3At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -221,7 +222,7 @@ static std::uint64_t readFlUIntBe4At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -229,7 +230,7 @@ static std::uint64_t readFlUIntBe4At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -237,7 +238,7 @@ static std::uint64_t readFlUIntBe4At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -245,7 +246,7 @@ static std::uint64_t readFlUIntBe4At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -253,7 +254,7 @@ static std::uint64_t readFlUIntBe4At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -263,7 +264,7 @@ static std::uint64_t readFlUIntBe4At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -273,7 +274,7 @@ static std::uint64_t readFlUIntBe4At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe4At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe4At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -283,7 +284,7 @@ static std::uint64_t readFlUIntBe4At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -291,7 +292,7 @@ static std::uint64_t readFlUIntBe5At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -299,7 +300,7 @@ static std::uint64_t readFlUIntBe5At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -307,7 +308,7 @@ static std::uint64_t readFlUIntBe5At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -315,7 +316,7 @@ static std::uint64_t readFlUIntBe5At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -325,7 +326,7 @@ static std::uint64_t readFlUIntBe5At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -335,7 +336,7 @@ static std::uint64_t readFlUIntBe5At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -345,7 +346,7 @@ static std::uint64_t readFlUIntBe5At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe5At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe5At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -355,7 +356,7 @@ static std::uint64_t readFlUIntBe5At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -363,7 +364,7 @@ static std::uint64_t readFlUIntBe6At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -371,7 +372,7 @@ static std::uint64_t readFlUIntBe6At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -379,7 +380,7 @@ static std::uint64_t readFlUIntBe6At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -389,7 +390,7 @@ static std::uint64_t readFlUIntBe6At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -399,7 +400,7 @@ static std::uint64_t readFlUIntBe6At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -409,7 +410,7 @@ static std::uint64_t readFlUIntBe6At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -419,7 +420,7 @@ static std::uint64_t readFlUIntBe6At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe6At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe6At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -429,7 +430,7 @@ static std::uint64_t readFlUIntBe6At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -437,7 +438,7 @@ static std::uint64_t readFlUIntBe7At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -445,7 +446,7 @@ static std::uint64_t readFlUIntBe7At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -455,7 +456,7 @@ static std::uint64_t readFlUIntBe7At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -465,7 +466,7 @@ static std::uint64_t readFlUIntBe7At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -475,7 +476,7 @@ static std::uint64_t readFlUIntBe7At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -485,7 +486,7 @@ static std::uint64_t readFlUIntBe7At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -495,7 +496,7 @@ static std::uint64_t readFlUIntBe7At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe7At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe7At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -505,7 +506,7 @@ static std::uint64_t readFlUIntBe7At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -513,7 +514,7 @@ static std::uint64_t readFlUIntBe8At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -523,7 +524,7 @@ static std::uint64_t readFlUIntBe8At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -533,7 +534,7 @@ static std::uint64_t readFlUIntBe8At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -543,7 +544,7 @@ static std::uint64_t readFlUIntBe8At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -553,7 +554,7 @@ static std::uint64_t readFlUIntBe8At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -563,7 +564,7 @@ static std::uint64_t readFlUIntBe8At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -573,7 +574,7 @@ static std::uint64_t readFlUIntBe8At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe8At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe8At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -583,7 +584,7 @@ static std::uint64_t readFlUIntBe8At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -593,7 +594,7 @@ static std::uint64_t readFlUIntBe9At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -603,7 +604,7 @@ static std::uint64_t readFlUIntBe9At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -613,7 +614,7 @@ static std::uint64_t readFlUIntBe9At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -623,7 +624,7 @@ static std::uint64_t readFlUIntBe9At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -633,7 +634,7 @@ static std::uint64_t readFlUIntBe9At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -643,7 +644,7 @@ static std::uint64_t readFlUIntBe9At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -653,7 +654,7 @@ static std::uint64_t readFlUIntBe9At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe9At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe9At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -663,7 +664,7 @@ static std::uint64_t readFlUIntBe9At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -673,7 +674,7 @@ static std::uint64_t readFlUIntBe10At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -683,7 +684,7 @@ static std::uint64_t readFlUIntBe10At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -693,7 +694,7 @@ static std::uint64_t readFlUIntBe10At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -703,7 +704,7 @@ static std::uint64_t readFlUIntBe10At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -713,7 +714,7 @@ static std::uint64_t readFlUIntBe10At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -723,7 +724,7 @@ static std::uint64_t readFlUIntBe10At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -733,7 +734,7 @@ static std::uint64_t readFlUIntBe10At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe10At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe10At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -745,7 +746,7 @@ static std::uint64_t readFlUIntBe10At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -755,7 +756,7 @@ static std::uint64_t readFlUIntBe11At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -765,7 +766,7 @@ static std::uint64_t readFlUIntBe11At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -775,7 +776,7 @@ static std::uint64_t readFlUIntBe11At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -785,7 +786,7 @@ static std::uint64_t readFlUIntBe11At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -795,7 +796,7 @@ static std::uint64_t readFlUIntBe11At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -805,7 +806,7 @@ static std::uint64_t readFlUIntBe11At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -817,7 +818,7 @@ static std::uint64_t readFlUIntBe11At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe11At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe11At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -829,7 +830,7 @@ static std::uint64_t readFlUIntBe11At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -839,7 +840,7 @@ static std::uint64_t readFlUIntBe12At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -849,7 +850,7 @@ static std::uint64_t readFlUIntBe12At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -859,7 +860,7 @@ static std::uint64_t readFlUIntBe12At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -869,7 +870,7 @@ static std::uint64_t readFlUIntBe12At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -879,7 +880,7 @@ static std::uint64_t readFlUIntBe12At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -891,7 +892,7 @@ static std::uint64_t readFlUIntBe12At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -903,7 +904,7 @@ static std::uint64_t readFlUIntBe12At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe12At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe12At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -915,7 +916,7 @@ static std::uint64_t readFlUIntBe12At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -925,7 +926,7 @@ static std::uint64_t readFlUIntBe13At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -935,7 +936,7 @@ static std::uint64_t readFlUIntBe13At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -945,7 +946,7 @@ static std::uint64_t readFlUIntBe13At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -955,7 +956,7 @@ static std::uint64_t readFlUIntBe13At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -967,7 +968,7 @@ static std::uint64_t readFlUIntBe13At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -979,7 +980,7 @@ static std::uint64_t readFlUIntBe13At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -991,7 +992,7 @@ static std::uint64_t readFlUIntBe13At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe13At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe13At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1003,7 +1004,7 @@ static std::uint64_t readFlUIntBe13At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1013,7 +1014,7 @@ static std::uint64_t readFlUIntBe14At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1023,7 +1024,7 @@ static std::uint64_t readFlUIntBe14At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1033,7 +1034,7 @@ static std::uint64_t readFlUIntBe14At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1045,7 +1046,7 @@ static std::uint64_t readFlUIntBe14At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1057,7 +1058,7 @@ static std::uint64_t readFlUIntBe14At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1069,7 +1070,7 @@ static std::uint64_t readFlUIntBe14At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1081,7 +1082,7 @@ static std::uint64_t readFlUIntBe14At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe14At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe14At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1093,7 +1094,7 @@ static std::uint64_t readFlUIntBe14At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1103,7 +1104,7 @@ static std::uint64_t readFlUIntBe15At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1113,7 +1114,7 @@ static std::uint64_t readFlUIntBe15At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1125,7 +1126,7 @@ static std::uint64_t readFlUIntBe15At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1137,7 +1138,7 @@ static std::uint64_t readFlUIntBe15At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1149,7 +1150,7 @@ static std::uint64_t readFlUIntBe15At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1161,7 +1162,7 @@ static std::uint64_t readFlUIntBe15At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1173,7 +1174,7 @@ static std::uint64_t readFlUIntBe15At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe15At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe15At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1185,7 +1186,7 @@ static std::uint64_t readFlUIntBe15At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1195,7 +1196,7 @@ static std::uint64_t readFlUIntBe16At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1207,7 +1208,7 @@ static std::uint64_t readFlUIntBe16At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1219,7 +1220,7 @@ static std::uint64_t readFlUIntBe16At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1231,7 +1232,7 @@ static std::uint64_t readFlUIntBe16At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1243,7 +1244,7 @@ static std::uint64_t readFlUIntBe16At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1255,7 +1256,7 @@ static std::uint64_t readFlUIntBe16At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1267,7 +1268,7 @@ static std::uint64_t readFlUIntBe16At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe16At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe16At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1279,7 +1280,7 @@ static std::uint64_t readFlUIntBe16At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1291,7 +1292,7 @@ static std::uint64_t readFlUIntBe17At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1303,7 +1304,7 @@ static std::uint64_t readFlUIntBe17At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1315,7 +1316,7 @@ static std::uint64_t readFlUIntBe17At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1327,7 +1328,7 @@ static std::uint64_t readFlUIntBe17At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1339,7 +1340,7 @@ static std::uint64_t readFlUIntBe17At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1351,7 +1352,7 @@ static std::uint64_t readFlUIntBe17At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1363,7 +1364,7 @@ static std::uint64_t readFlUIntBe17At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe17At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe17At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1375,7 +1376,7 @@ static std::uint64_t readFlUIntBe17At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1387,7 +1388,7 @@ static std::uint64_t readFlUIntBe18At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1399,7 +1400,7 @@ static std::uint64_t readFlUIntBe18At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1411,7 +1412,7 @@ static std::uint64_t readFlUIntBe18At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1423,7 +1424,7 @@ static std::uint64_t readFlUIntBe18At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1435,7 +1436,7 @@ static std::uint64_t readFlUIntBe18At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1447,7 +1448,7 @@ static std::uint64_t readFlUIntBe18At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1459,7 +1460,7 @@ static std::uint64_t readFlUIntBe18At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe18At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe18At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1473,7 +1474,7 @@ static std::uint64_t readFlUIntBe18At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1485,7 +1486,7 @@ static std::uint64_t readFlUIntBe19At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1497,7 +1498,7 @@ static std::uint64_t readFlUIntBe19At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1509,7 +1510,7 @@ static std::uint64_t readFlUIntBe19At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1521,7 +1522,7 @@ static std::uint64_t readFlUIntBe19At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1533,7 +1534,7 @@ static std::uint64_t readFlUIntBe19At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1545,7 +1546,7 @@ static std::uint64_t readFlUIntBe19At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1559,7 +1560,7 @@ static std::uint64_t readFlUIntBe19At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe19At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe19At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1573,7 +1574,7 @@ static std::uint64_t readFlUIntBe19At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1585,7 +1586,7 @@ static std::uint64_t readFlUIntBe20At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1597,7 +1598,7 @@ static std::uint64_t readFlUIntBe20At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1609,7 +1610,7 @@ static std::uint64_t readFlUIntBe20At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1621,7 +1622,7 @@ static std::uint64_t readFlUIntBe20At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1633,7 +1634,7 @@ static std::uint64_t readFlUIntBe20At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1647,7 +1648,7 @@ static std::uint64_t readFlUIntBe20At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1661,7 +1662,7 @@ static std::uint64_t readFlUIntBe20At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe20At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe20At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1675,7 +1676,7 @@ static std::uint64_t readFlUIntBe20At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1687,7 +1688,7 @@ static std::uint64_t readFlUIntBe21At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1699,7 +1700,7 @@ static std::uint64_t readFlUIntBe21At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1711,7 +1712,7 @@ static std::uint64_t readFlUIntBe21At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1723,7 +1724,7 @@ static std::uint64_t readFlUIntBe21At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1737,7 +1738,7 @@ static std::uint64_t readFlUIntBe21At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1751,7 +1752,7 @@ static std::uint64_t readFlUIntBe21At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1765,7 +1766,7 @@ static std::uint64_t readFlUIntBe21At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe21At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe21At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1779,7 +1780,7 @@ static std::uint64_t readFlUIntBe21At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1791,7 +1792,7 @@ static std::uint64_t readFlUIntBe22At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1803,7 +1804,7 @@ static std::uint64_t readFlUIntBe22At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1815,7 +1816,7 @@ static std::uint64_t readFlUIntBe22At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1829,7 +1830,7 @@ static std::uint64_t readFlUIntBe22At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1843,7 +1844,7 @@ static std::uint64_t readFlUIntBe22At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1857,7 +1858,7 @@ static std::uint64_t readFlUIntBe22At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1871,7 +1872,7 @@ static std::uint64_t readFlUIntBe22At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe22At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe22At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1885,7 +1886,7 @@ static std::uint64_t readFlUIntBe22At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1897,7 +1898,7 @@ static std::uint64_t readFlUIntBe23At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1909,7 +1910,7 @@ static std::uint64_t readFlUIntBe23At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1923,7 +1924,7 @@ static std::uint64_t readFlUIntBe23At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1937,7 +1938,7 @@ static std::uint64_t readFlUIntBe23At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1951,7 +1952,7 @@ static std::uint64_t readFlUIntBe23At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1965,7 +1966,7 @@ static std::uint64_t readFlUIntBe23At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1979,7 +1980,7 @@ static std::uint64_t readFlUIntBe23At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe23At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe23At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -1993,7 +1994,7 @@ static std::uint64_t readFlUIntBe23At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2005,7 +2006,7 @@ static std::uint64_t readFlUIntBe24At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2019,7 +2020,7 @@ static std::uint64_t readFlUIntBe24At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2033,7 +2034,7 @@ static std::uint64_t readFlUIntBe24At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2047,7 +2048,7 @@ static std::uint64_t readFlUIntBe24At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2061,7 +2062,7 @@ static std::uint64_t readFlUIntBe24At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2075,7 +2076,7 @@ static std::uint64_t readFlUIntBe24At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2089,7 +2090,7 @@ static std::uint64_t readFlUIntBe24At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe24At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe24At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2103,7 +2104,7 @@ static std::uint64_t readFlUIntBe24At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2117,7 +2118,7 @@ static std::uint64_t readFlUIntBe25At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2131,7 +2132,7 @@ static std::uint64_t readFlUIntBe25At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2145,7 +2146,7 @@ static std::uint64_t readFlUIntBe25At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2159,7 +2160,7 @@ static std::uint64_t readFlUIntBe25At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2173,7 +2174,7 @@ static std::uint64_t readFlUIntBe25At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2187,7 +2188,7 @@ static std::uint64_t readFlUIntBe25At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2201,7 +2202,7 @@ static std::uint64_t readFlUIntBe25At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe25At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe25At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2215,7 +2216,7 @@ static std::uint64_t readFlUIntBe25At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2229,7 +2230,7 @@ static std::uint64_t readFlUIntBe26At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2243,7 +2244,7 @@ static std::uint64_t readFlUIntBe26At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2257,7 +2258,7 @@ static std::uint64_t readFlUIntBe26At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2271,7 +2272,7 @@ static std::uint64_t readFlUIntBe26At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2285,7 +2286,7 @@ static std::uint64_t readFlUIntBe26At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2299,7 +2300,7 @@ static std::uint64_t readFlUIntBe26At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2313,7 +2314,7 @@ static std::uint64_t readFlUIntBe26At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe26At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe26At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2329,7 +2330,7 @@ static std::uint64_t readFlUIntBe26At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2343,7 +2344,7 @@ static std::uint64_t readFlUIntBe27At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2357,7 +2358,7 @@ static std::uint64_t readFlUIntBe27At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2371,7 +2372,7 @@ static std::uint64_t readFlUIntBe27At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2385,7 +2386,7 @@ static std::uint64_t readFlUIntBe27At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2399,7 +2400,7 @@ static std::uint64_t readFlUIntBe27At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2413,7 +2414,7 @@ static std::uint64_t readFlUIntBe27At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2429,7 +2430,7 @@ static std::uint64_t readFlUIntBe27At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe27At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe27At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2445,7 +2446,7 @@ static std::uint64_t readFlUIntBe27At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2459,7 +2460,7 @@ static std::uint64_t readFlUIntBe28At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2473,7 +2474,7 @@ static std::uint64_t readFlUIntBe28At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2487,7 +2488,7 @@ static std::uint64_t readFlUIntBe28At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2501,7 +2502,7 @@ static std::uint64_t readFlUIntBe28At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2515,7 +2516,7 @@ static std::uint64_t readFlUIntBe28At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2531,7 +2532,7 @@ static std::uint64_t readFlUIntBe28At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2547,7 +2548,7 @@ static std::uint64_t readFlUIntBe28At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe28At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe28At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2563,7 +2564,7 @@ static std::uint64_t readFlUIntBe28At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2577,7 +2578,7 @@ static std::uint64_t readFlUIntBe29At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2591,7 +2592,7 @@ static std::uint64_t readFlUIntBe29At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2605,7 +2606,7 @@ static std::uint64_t readFlUIntBe29At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2619,7 +2620,7 @@ static std::uint64_t readFlUIntBe29At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2635,7 +2636,7 @@ static std::uint64_t readFlUIntBe29At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2651,7 +2652,7 @@ static std::uint64_t readFlUIntBe29At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2667,7 +2668,7 @@ static std::uint64_t readFlUIntBe29At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe29At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe29At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2683,7 +2684,7 @@ static std::uint64_t readFlUIntBe29At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2697,7 +2698,7 @@ static std::uint64_t readFlUIntBe30At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2711,7 +2712,7 @@ static std::uint64_t readFlUIntBe30At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2725,7 +2726,7 @@ static std::uint64_t readFlUIntBe30At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2741,7 +2742,7 @@ static std::uint64_t readFlUIntBe30At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2757,7 +2758,7 @@ static std::uint64_t readFlUIntBe30At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2773,7 +2774,7 @@ static std::uint64_t readFlUIntBe30At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2789,7 +2790,7 @@ static std::uint64_t readFlUIntBe30At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe30At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe30At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2805,7 +2806,7 @@ static std::uint64_t readFlUIntBe30At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2819,7 +2820,7 @@ static std::uint64_t readFlUIntBe31At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2833,7 +2834,7 @@ static std::uint64_t readFlUIntBe31At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2849,7 +2850,7 @@ static std::uint64_t readFlUIntBe31At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2865,7 +2866,7 @@ static std::uint64_t readFlUIntBe31At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2881,7 +2882,7 @@ static std::uint64_t readFlUIntBe31At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2897,7 +2898,7 @@ static std::uint64_t readFlUIntBe31At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2913,7 +2914,7 @@ static std::uint64_t readFlUIntBe31At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe31At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe31At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2929,7 +2930,7 @@ static std::uint64_t readFlUIntBe31At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2943,7 +2944,7 @@ static std::uint64_t readFlUIntBe32At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2959,7 +2960,7 @@ static std::uint64_t readFlUIntBe32At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2975,7 +2976,7 @@ static std::uint64_t readFlUIntBe32At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -2991,7 +2992,7 @@ static std::uint64_t readFlUIntBe32At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3007,7 +3008,7 @@ static std::uint64_t readFlUIntBe32At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3023,7 +3024,7 @@ static std::uint64_t readFlUIntBe32At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3039,7 +3040,7 @@ static std::uint64_t readFlUIntBe32At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe32At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe32At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3055,7 +3056,7 @@ static std::uint64_t readFlUIntBe32At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3071,7 +3072,7 @@ static std::uint64_t readFlUIntBe33At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3087,7 +3088,7 @@ static std::uint64_t readFlUIntBe33At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3103,7 +3104,7 @@ static std::uint64_t readFlUIntBe33At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3119,7 +3120,7 @@ static std::uint64_t readFlUIntBe33At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3135,7 +3136,7 @@ static std::uint64_t readFlUIntBe33At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3151,7 +3152,7 @@ static std::uint64_t readFlUIntBe33At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3167,7 +3168,7 @@ static std::uint64_t readFlUIntBe33At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe33At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe33At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3183,7 +3184,7 @@ static std::uint64_t readFlUIntBe33At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3199,7 +3200,7 @@ static std::uint64_t readFlUIntBe34At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3215,7 +3216,7 @@ static std::uint64_t readFlUIntBe34At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3231,7 +3232,7 @@ static std::uint64_t readFlUIntBe34At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3247,7 +3248,7 @@ static std::uint64_t readFlUIntBe34At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3263,7 +3264,7 @@ static std::uint64_t readFlUIntBe34At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3279,7 +3280,7 @@ static std::uint64_t readFlUIntBe34At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3295,7 +3296,7 @@ static std::uint64_t readFlUIntBe34At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe34At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe34At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3313,7 +3314,7 @@ static std::uint64_t readFlUIntBe34At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3329,7 +3330,7 @@ static std::uint64_t readFlUIntBe35At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3345,7 +3346,7 @@ static std::uint64_t readFlUIntBe35At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3361,7 +3362,7 @@ static std::uint64_t readFlUIntBe35At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3377,7 +3378,7 @@ static std::uint64_t readFlUIntBe35At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3393,7 +3394,7 @@ static std::uint64_t readFlUIntBe35At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3409,7 +3410,7 @@ static std::uint64_t readFlUIntBe35At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3427,7 +3428,7 @@ static std::uint64_t readFlUIntBe35At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe35At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe35At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3445,7 +3446,7 @@ static std::uint64_t readFlUIntBe35At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3461,7 +3462,7 @@ static std::uint64_t readFlUIntBe36At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3477,7 +3478,7 @@ static std::uint64_t readFlUIntBe36At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3493,7 +3494,7 @@ static std::uint64_t readFlUIntBe36At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3509,7 +3510,7 @@ static std::uint64_t readFlUIntBe36At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3525,7 +3526,7 @@ static std::uint64_t readFlUIntBe36At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3543,7 +3544,7 @@ static std::uint64_t readFlUIntBe36At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3561,7 +3562,7 @@ static std::uint64_t readFlUIntBe36At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe36At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe36At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3579,7 +3580,7 @@ static std::uint64_t readFlUIntBe36At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3595,7 +3596,7 @@ static std::uint64_t readFlUIntBe37At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3611,7 +3612,7 @@ static std::uint64_t readFlUIntBe37At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3627,7 +3628,7 @@ static std::uint64_t readFlUIntBe37At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3643,7 +3644,7 @@ static std::uint64_t readFlUIntBe37At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3661,7 +3662,7 @@ static std::uint64_t readFlUIntBe37At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3679,7 +3680,7 @@ static std::uint64_t readFlUIntBe37At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3697,7 +3698,7 @@ static std::uint64_t readFlUIntBe37At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe37At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe37At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3715,7 +3716,7 @@ static std::uint64_t readFlUIntBe37At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3731,7 +3732,7 @@ static std::uint64_t readFlUIntBe38At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3747,7 +3748,7 @@ static std::uint64_t readFlUIntBe38At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3763,7 +3764,7 @@ static std::uint64_t readFlUIntBe38At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3781,7 +3782,7 @@ static std::uint64_t readFlUIntBe38At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3799,7 +3800,7 @@ static std::uint64_t readFlUIntBe38At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3817,7 +3818,7 @@ static std::uint64_t readFlUIntBe38At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3835,7 +3836,7 @@ static std::uint64_t readFlUIntBe38At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe38At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe38At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3853,7 +3854,7 @@ static std::uint64_t readFlUIntBe38At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3869,7 +3870,7 @@ static std::uint64_t readFlUIntBe39At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3885,7 +3886,7 @@ static std::uint64_t readFlUIntBe39At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3903,7 +3904,7 @@ static std::uint64_t readFlUIntBe39At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3921,7 +3922,7 @@ static std::uint64_t readFlUIntBe39At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3939,7 +3940,7 @@ static std::uint64_t readFlUIntBe39At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3957,7 +3958,7 @@ static std::uint64_t readFlUIntBe39At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3975,7 +3976,7 @@ static std::uint64_t readFlUIntBe39At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe39At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe39At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -3993,7 +3994,7 @@ static std::uint64_t readFlUIntBe39At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4009,7 +4010,7 @@ static std::uint64_t readFlUIntBe40At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4027,7 +4028,7 @@ static std::uint64_t readFlUIntBe40At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4045,7 +4046,7 @@ static std::uint64_t readFlUIntBe40At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4063,7 +4064,7 @@ static std::uint64_t readFlUIntBe40At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4081,7 +4082,7 @@ static std::uint64_t readFlUIntBe40At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4099,7 +4100,7 @@ static std::uint64_t readFlUIntBe40At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4117,7 +4118,7 @@ static std::uint64_t readFlUIntBe40At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe40At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe40At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4135,7 +4136,7 @@ static std::uint64_t readFlUIntBe40At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4153,7 +4154,7 @@ static std::uint64_t readFlUIntBe41At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4171,7 +4172,7 @@ static std::uint64_t readFlUIntBe41At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4189,7 +4190,7 @@ static std::uint64_t readFlUIntBe41At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4207,7 +4208,7 @@ static std::uint64_t readFlUIntBe41At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4225,7 +4226,7 @@ static std::uint64_t readFlUIntBe41At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4243,7 +4244,7 @@ static std::uint64_t readFlUIntBe41At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4261,7 +4262,7 @@ static std::uint64_t readFlUIntBe41At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe41At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe41At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4279,7 +4280,7 @@ static std::uint64_t readFlUIntBe41At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4297,7 +4298,7 @@ static std::uint64_t readFlUIntBe42At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4315,7 +4316,7 @@ static std::uint64_t readFlUIntBe42At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4333,7 +4334,7 @@ static std::uint64_t readFlUIntBe42At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4351,7 +4352,7 @@ static std::uint64_t readFlUIntBe42At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4369,7 +4370,7 @@ static std::uint64_t readFlUIntBe42At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4387,7 +4388,7 @@ static std::uint64_t readFlUIntBe42At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4405,7 +4406,7 @@ static std::uint64_t readFlUIntBe42At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe42At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe42At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4425,7 +4426,7 @@ static std::uint64_t readFlUIntBe42At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4443,7 +4444,7 @@ static std::uint64_t readFlUIntBe43At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4461,7 +4462,7 @@ static std::uint64_t readFlUIntBe43At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4479,7 +4480,7 @@ static std::uint64_t readFlUIntBe43At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4497,7 +4498,7 @@ static std::uint64_t readFlUIntBe43At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4515,7 +4516,7 @@ static std::uint64_t readFlUIntBe43At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4533,7 +4534,7 @@ static std::uint64_t readFlUIntBe43At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4553,7 +4554,7 @@ static std::uint64_t readFlUIntBe43At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe43At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe43At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4573,7 +4574,7 @@ static std::uint64_t readFlUIntBe43At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4591,7 +4592,7 @@ static std::uint64_t readFlUIntBe44At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4609,7 +4610,7 @@ static std::uint64_t readFlUIntBe44At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4627,7 +4628,7 @@ static std::uint64_t readFlUIntBe44At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4645,7 +4646,7 @@ static std::uint64_t readFlUIntBe44At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4663,7 +4664,7 @@ static std::uint64_t readFlUIntBe44At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4683,7 +4684,7 @@ static std::uint64_t readFlUIntBe44At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4703,7 +4704,7 @@ static std::uint64_t readFlUIntBe44At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe44At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe44At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4723,7 +4724,7 @@ static std::uint64_t readFlUIntBe44At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4741,7 +4742,7 @@ static std::uint64_t readFlUIntBe45At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4759,7 +4760,7 @@ static std::uint64_t readFlUIntBe45At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4777,7 +4778,7 @@ static std::uint64_t readFlUIntBe45At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4795,7 +4796,7 @@ static std::uint64_t readFlUIntBe45At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4815,7 +4816,7 @@ static std::uint64_t readFlUIntBe45At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4835,7 +4836,7 @@ static std::uint64_t readFlUIntBe45At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4855,7 +4856,7 @@ static std::uint64_t readFlUIntBe45At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe45At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe45At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4875,7 +4876,7 @@ static std::uint64_t readFlUIntBe45At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4893,7 +4894,7 @@ static std::uint64_t readFlUIntBe46At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4911,7 +4912,7 @@ static std::uint64_t readFlUIntBe46At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4929,7 +4930,7 @@ static std::uint64_t readFlUIntBe46At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4949,7 +4950,7 @@ static std::uint64_t readFlUIntBe46At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4969,7 +4970,7 @@ static std::uint64_t readFlUIntBe46At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -4989,7 +4990,7 @@ static std::uint64_t readFlUIntBe46At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5009,7 +5010,7 @@ static std::uint64_t readFlUIntBe46At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe46At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe46At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5029,7 +5030,7 @@ static std::uint64_t readFlUIntBe46At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5047,7 +5048,7 @@ static std::uint64_t readFlUIntBe47At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5065,7 +5066,7 @@ static std::uint64_t readFlUIntBe47At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5085,7 +5086,7 @@ static std::uint64_t readFlUIntBe47At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5105,7 +5106,7 @@ static std::uint64_t readFlUIntBe47At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5125,7 +5126,7 @@ static std::uint64_t readFlUIntBe47At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5145,7 +5146,7 @@ static std::uint64_t readFlUIntBe47At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5165,7 +5166,7 @@ static std::uint64_t readFlUIntBe47At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe47At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe47At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5185,7 +5186,7 @@ static std::uint64_t readFlUIntBe47At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5203,7 +5204,7 @@ static std::uint64_t readFlUIntBe48At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5223,7 +5224,7 @@ static std::uint64_t readFlUIntBe48At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5243,7 +5244,7 @@ static std::uint64_t readFlUIntBe48At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5263,7 +5264,7 @@ static std::uint64_t readFlUIntBe48At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5283,7 +5284,7 @@ static std::uint64_t readFlUIntBe48At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5303,7 +5304,7 @@ static std::uint64_t readFlUIntBe48At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5323,7 +5324,7 @@ static std::uint64_t readFlUIntBe48At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe48At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe48At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5343,7 +5344,7 @@ static std::uint64_t readFlUIntBe48At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5363,7 +5364,7 @@ static std::uint64_t readFlUIntBe49At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5383,7 +5384,7 @@ static std::uint64_t readFlUIntBe49At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5403,7 +5404,7 @@ static std::uint64_t readFlUIntBe49At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5423,7 +5424,7 @@ static std::uint64_t readFlUIntBe49At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5443,7 +5444,7 @@ static std::uint64_t readFlUIntBe49At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5463,7 +5464,7 @@ static std::uint64_t readFlUIntBe49At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5483,7 +5484,7 @@ static std::uint64_t readFlUIntBe49At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe49At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe49At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5503,7 +5504,7 @@ static std::uint64_t readFlUIntBe49At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5523,7 +5524,7 @@ static std::uint64_t readFlUIntBe50At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5543,7 +5544,7 @@ static std::uint64_t readFlUIntBe50At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5563,7 +5564,7 @@ static std::uint64_t readFlUIntBe50At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5583,7 +5584,7 @@ static std::uint64_t readFlUIntBe50At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5603,7 +5604,7 @@ static std::uint64_t readFlUIntBe50At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5623,7 +5624,7 @@ static std::uint64_t readFlUIntBe50At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5643,7 +5644,7 @@ static std::uint64_t readFlUIntBe50At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe50At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe50At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5665,7 +5666,7 @@ static std::uint64_t readFlUIntBe50At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5685,7 +5686,7 @@ static std::uint64_t readFlUIntBe51At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5705,7 +5706,7 @@ static std::uint64_t readFlUIntBe51At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5725,7 +5726,7 @@ static std::uint64_t readFlUIntBe51At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5745,7 +5746,7 @@ static std::uint64_t readFlUIntBe51At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5765,7 +5766,7 @@ static std::uint64_t readFlUIntBe51At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5785,7 +5786,7 @@ static std::uint64_t readFlUIntBe51At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5807,7 +5808,7 @@ static std::uint64_t readFlUIntBe51At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe51At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe51At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5829,7 +5830,7 @@ static std::uint64_t readFlUIntBe51At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5849,7 +5850,7 @@ static std::uint64_t readFlUIntBe52At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5869,7 +5870,7 @@ static std::uint64_t readFlUIntBe52At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5889,7 +5890,7 @@ static std::uint64_t readFlUIntBe52At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5909,7 +5910,7 @@ static std::uint64_t readFlUIntBe52At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5929,7 +5930,7 @@ static std::uint64_t readFlUIntBe52At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5951,7 +5952,7 @@ static std::uint64_t readFlUIntBe52At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5973,7 +5974,7 @@ static std::uint64_t readFlUIntBe52At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe52At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe52At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -5995,7 +5996,7 @@ static std::uint64_t readFlUIntBe52At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6015,7 +6016,7 @@ static std::uint64_t readFlUIntBe53At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6035,7 +6036,7 @@ static std::uint64_t readFlUIntBe53At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6055,7 +6056,7 @@ static std::uint64_t readFlUIntBe53At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6075,7 +6076,7 @@ static std::uint64_t readFlUIntBe53At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6097,7 +6098,7 @@ static std::uint64_t readFlUIntBe53At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6119,7 +6120,7 @@ static std::uint64_t readFlUIntBe53At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6141,7 +6142,7 @@ static std::uint64_t readFlUIntBe53At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe53At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe53At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6163,7 +6164,7 @@ static std::uint64_t readFlUIntBe53At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6183,7 +6184,7 @@ static std::uint64_t readFlUIntBe54At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6203,7 +6204,7 @@ static std::uint64_t readFlUIntBe54At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6223,7 +6224,7 @@ static std::uint64_t readFlUIntBe54At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6245,7 +6246,7 @@ static std::uint64_t readFlUIntBe54At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6267,7 +6268,7 @@ static std::uint64_t readFlUIntBe54At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6289,7 +6290,7 @@ static std::uint64_t readFlUIntBe54At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6311,7 +6312,7 @@ static std::uint64_t readFlUIntBe54At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe54At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe54At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6333,7 +6334,7 @@ static std::uint64_t readFlUIntBe54At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6353,7 +6354,7 @@ static std::uint64_t readFlUIntBe55At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6373,7 +6374,7 @@ static std::uint64_t readFlUIntBe55At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6395,7 +6396,7 @@ static std::uint64_t readFlUIntBe55At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6417,7 +6418,7 @@ static std::uint64_t readFlUIntBe55At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6439,7 +6440,7 @@ static std::uint64_t readFlUIntBe55At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6461,7 +6462,7 @@ static std::uint64_t readFlUIntBe55At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6483,7 +6484,7 @@ static std::uint64_t readFlUIntBe55At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe55At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe55At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6505,7 +6506,7 @@ static std::uint64_t readFlUIntBe55At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6525,7 +6526,7 @@ static std::uint64_t readFlUIntBe56At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6547,7 +6548,7 @@ static std::uint64_t readFlUIntBe56At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6569,7 +6570,7 @@ static std::uint64_t readFlUIntBe56At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6591,7 +6592,7 @@ static std::uint64_t readFlUIntBe56At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6613,7 +6614,7 @@ static std::uint64_t readFlUIntBe56At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6635,7 +6636,7 @@ static std::uint64_t readFlUIntBe56At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6657,7 +6658,7 @@ static std::uint64_t readFlUIntBe56At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe56At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe56At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6679,7 +6680,7 @@ static std::uint64_t readFlUIntBe56At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6701,7 +6702,7 @@ static std::uint64_t readFlUIntBe57At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6723,7 +6724,7 @@ static std::uint64_t readFlUIntBe57At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6745,7 +6746,7 @@ static std::uint64_t readFlUIntBe57At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6767,7 +6768,7 @@ static std::uint64_t readFlUIntBe57At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6789,7 +6790,7 @@ static std::uint64_t readFlUIntBe57At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6811,7 +6812,7 @@ static std::uint64_t readFlUIntBe57At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6833,7 +6834,7 @@ static std::uint64_t readFlUIntBe57At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe57At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe57At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6855,7 +6856,7 @@ static std::uint64_t readFlUIntBe57At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6877,7 +6878,7 @@ static std::uint64_t readFlUIntBe58At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6899,7 +6900,7 @@ static std::uint64_t readFlUIntBe58At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6921,7 +6922,7 @@ static std::uint64_t readFlUIntBe58At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6943,7 +6944,7 @@ static std::uint64_t readFlUIntBe58At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6965,7 +6966,7 @@ static std::uint64_t readFlUIntBe58At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -6987,7 +6988,7 @@ static std::uint64_t readFlUIntBe58At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7009,7 +7010,7 @@ static std::uint64_t readFlUIntBe58At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe58At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe58At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7033,7 +7034,7 @@ static std::uint64_t readFlUIntBe58At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7055,7 +7056,7 @@ static std::uint64_t readFlUIntBe59At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7077,7 +7078,7 @@ static std::uint64_t readFlUIntBe59At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7099,7 +7100,7 @@ static std::uint64_t readFlUIntBe59At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7121,7 +7122,7 @@ static std::uint64_t readFlUIntBe59At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7143,7 +7144,7 @@ static std::uint64_t readFlUIntBe59At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7165,7 +7166,7 @@ static std::uint64_t readFlUIntBe59At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7189,7 +7190,7 @@ static std::uint64_t readFlUIntBe59At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe59At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe59At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7213,7 +7214,7 @@ static std::uint64_t readFlUIntBe59At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7235,7 +7236,7 @@ static std::uint64_t readFlUIntBe60At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7257,7 +7258,7 @@ static std::uint64_t readFlUIntBe60At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7279,7 +7280,7 @@ static std::uint64_t readFlUIntBe60At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7301,7 +7302,7 @@ static std::uint64_t readFlUIntBe60At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7323,7 +7324,7 @@ static std::uint64_t readFlUIntBe60At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7347,7 +7348,7 @@ static std::uint64_t readFlUIntBe60At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7371,7 +7372,7 @@ static std::uint64_t readFlUIntBe60At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe60At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe60At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7395,7 +7396,7 @@ static std::uint64_t readFlUIntBe60At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7417,7 +7418,7 @@ static std::uint64_t readFlUIntBe61At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7439,7 +7440,7 @@ static std::uint64_t readFlUIntBe61At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7461,7 +7462,7 @@ static std::uint64_t readFlUIntBe61At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7483,7 +7484,7 @@ static std::uint64_t readFlUIntBe61At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7507,7 +7508,7 @@ static std::uint64_t readFlUIntBe61At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7531,7 +7532,7 @@ static std::uint64_t readFlUIntBe61At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7555,7 +7556,7 @@ static std::uint64_t readFlUIntBe61At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe61At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe61At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7579,7 +7580,7 @@ static std::uint64_t readFlUIntBe61At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7601,7 +7602,7 @@ static std::uint64_t readFlUIntBe62At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7623,7 +7624,7 @@ static std::uint64_t readFlUIntBe62At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7645,7 +7646,7 @@ static std::uint64_t readFlUIntBe62At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7669,7 +7670,7 @@ static std::uint64_t readFlUIntBe62At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7693,7 +7694,7 @@ static std::uint64_t readFlUIntBe62At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7717,7 +7718,7 @@ static std::uint64_t readFlUIntBe62At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7741,7 +7742,7 @@ static std::uint64_t readFlUIntBe62At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe62At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe62At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7765,7 +7766,7 @@ static std::uint64_t readFlUIntBe62At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7787,7 +7788,7 @@ static std::uint64_t readFlUIntBe63At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7809,7 +7810,7 @@ static std::uint64_t readFlUIntBe63At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7833,7 +7834,7 @@ static std::uint64_t readFlUIntBe63At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7857,7 +7858,7 @@ static std::uint64_t readFlUIntBe63At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7881,7 +7882,7 @@ static std::uint64_t readFlUIntBe63At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7905,7 +7906,7 @@ static std::uint64_t readFlUIntBe63At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7929,7 +7930,7 @@ static std::uint64_t readFlUIntBe63At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe63At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe63At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7953,7 +7954,7 @@ static std::uint64_t readFlUIntBe63At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7974,7 +7975,7 @@ static std::uint64_t readFlUIntBe64At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -7997,7 +7998,7 @@ static std::uint64_t readFlUIntBe64At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8020,7 +8021,7 @@ static std::uint64_t readFlUIntBe64At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8043,7 +8044,7 @@ static std::uint64_t readFlUIntBe64At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8066,7 +8067,7 @@ static std::uint64_t readFlUIntBe64At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8089,7 +8090,7 @@ static std::uint64_t readFlUIntBe64At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8112,7 +8113,7 @@ static std::uint64_t readFlUIntBe64At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntBe64At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntBe64At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8135,7 +8136,7 @@ static std::uint64_t readFlUIntBe64At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::int64_t readFlSIntBe1At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 7);
@@ -8148,7 +8149,7 @@ static std::int64_t readFlSIntBe1At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -8161,7 +8162,7 @@ static std::int64_t readFlSIntBe1At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -8174,7 +8175,7 @@ static std::int64_t readFlSIntBe1At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -8187,7 +8188,7 @@ static std::int64_t readFlSIntBe1At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -8200,7 +8201,7 @@ static std::int64_t readFlSIntBe1At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -8213,7 +8214,7 @@ static std::int64_t readFlSIntBe1At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8226,7 +8227,7 @@ static std::int64_t readFlSIntBe1At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe1At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe1At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8239,7 +8240,7 @@ static std::int64_t readFlSIntBe1At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -8252,7 +8253,7 @@ static std::int64_t readFlSIntBe2At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -8265,7 +8266,7 @@ static std::int64_t readFlSIntBe2At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -8278,7 +8279,7 @@ static std::int64_t readFlSIntBe2At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -8291,7 +8292,7 @@ static std::int64_t readFlSIntBe2At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -8304,7 +8305,7 @@ static std::int64_t readFlSIntBe2At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8317,7 +8318,7 @@ static std::int64_t readFlSIntBe2At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8330,7 +8331,7 @@ static std::int64_t readFlSIntBe2At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe2At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe2At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8345,7 +8346,7 @@ static std::int64_t readFlSIntBe2At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -8358,7 +8359,7 @@ static std::int64_t readFlSIntBe3At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -8371,7 +8372,7 @@ static std::int64_t readFlSIntBe3At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -8384,7 +8385,7 @@ static std::int64_t readFlSIntBe3At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -8397,7 +8398,7 @@ static std::int64_t readFlSIntBe3At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8410,7 +8411,7 @@ static std::int64_t readFlSIntBe3At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8423,7 +8424,7 @@ static std::int64_t readFlSIntBe3At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8438,7 +8439,7 @@ static std::int64_t readFlSIntBe3At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe3At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe3At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8453,7 +8454,7 @@ static std::int64_t readFlSIntBe3At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -8466,7 +8467,7 @@ static std::int64_t readFlSIntBe4At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -8479,7 +8480,7 @@ static std::int64_t readFlSIntBe4At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -8492,7 +8493,7 @@ static std::int64_t readFlSIntBe4At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8505,7 +8506,7 @@ static std::int64_t readFlSIntBe4At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8518,7 +8519,7 @@ static std::int64_t readFlSIntBe4At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8533,7 +8534,7 @@ static std::int64_t readFlSIntBe4At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8548,7 +8549,7 @@ static std::int64_t readFlSIntBe4At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe4At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe4At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8563,7 +8564,7 @@ static std::int64_t readFlSIntBe4At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -8576,7 +8577,7 @@ static std::int64_t readFlSIntBe5At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -8589,7 +8590,7 @@ static std::int64_t readFlSIntBe5At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8602,7 +8603,7 @@ static std::int64_t readFlSIntBe5At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8615,7 +8616,7 @@ static std::int64_t readFlSIntBe5At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8630,7 +8631,7 @@ static std::int64_t readFlSIntBe5At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8645,7 +8646,7 @@ static std::int64_t readFlSIntBe5At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8660,7 +8661,7 @@ static std::int64_t readFlSIntBe5At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe5At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe5At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8675,7 +8676,7 @@ static std::int64_t readFlSIntBe5At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -8688,7 +8689,7 @@ static std::int64_t readFlSIntBe6At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8701,7 +8702,7 @@ static std::int64_t readFlSIntBe6At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8714,7 +8715,7 @@ static std::int64_t readFlSIntBe6At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8729,7 +8730,7 @@ static std::int64_t readFlSIntBe6At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8744,7 +8745,7 @@ static std::int64_t readFlSIntBe6At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8759,7 +8760,7 @@ static std::int64_t readFlSIntBe6At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8774,7 +8775,7 @@ static std::int64_t readFlSIntBe6At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe6At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe6At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8789,7 +8790,7 @@ static std::int64_t readFlSIntBe6At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -8802,7 +8803,7 @@ static std::int64_t readFlSIntBe7At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8815,7 +8816,7 @@ static std::int64_t readFlSIntBe7At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8830,7 +8831,7 @@ static std::int64_t readFlSIntBe7At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8845,7 +8846,7 @@ static std::int64_t readFlSIntBe7At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8860,7 +8861,7 @@ static std::int64_t readFlSIntBe7At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8875,7 +8876,7 @@ static std::int64_t readFlSIntBe7At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8890,7 +8891,7 @@ static std::int64_t readFlSIntBe7At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe7At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe7At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8905,7 +8906,7 @@ static std::int64_t readFlSIntBe7At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8918,7 +8919,7 @@ static std::int64_t readFlSIntBe8At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8933,7 +8934,7 @@ static std::int64_t readFlSIntBe8At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8948,7 +8949,7 @@ static std::int64_t readFlSIntBe8At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8963,7 +8964,7 @@ static std::int64_t readFlSIntBe8At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8978,7 +8979,7 @@ static std::int64_t readFlSIntBe8At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -8993,7 +8994,7 @@ static std::int64_t readFlSIntBe8At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9008,7 +9009,7 @@ static std::int64_t readFlSIntBe8At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe8At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe8At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9023,7 +9024,7 @@ static std::int64_t readFlSIntBe8At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9038,7 +9039,7 @@ static std::int64_t readFlSIntBe9At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9053,7 +9054,7 @@ static std::int64_t readFlSIntBe9At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9068,7 +9069,7 @@ static std::int64_t readFlSIntBe9At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9083,7 +9084,7 @@ static std::int64_t readFlSIntBe9At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9098,7 +9099,7 @@ static std::int64_t readFlSIntBe9At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9113,7 +9114,7 @@ static std::int64_t readFlSIntBe9At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9128,7 +9129,7 @@ static std::int64_t readFlSIntBe9At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe9At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe9At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9143,7 +9144,7 @@ static std::int64_t readFlSIntBe9At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9158,7 +9159,7 @@ static std::int64_t readFlSIntBe10At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9173,7 +9174,7 @@ static std::int64_t readFlSIntBe10At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9188,7 +9189,7 @@ static std::int64_t readFlSIntBe10At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9203,7 +9204,7 @@ static std::int64_t readFlSIntBe10At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9218,7 +9219,7 @@ static std::int64_t readFlSIntBe10At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9233,7 +9234,7 @@ static std::int64_t readFlSIntBe10At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9248,7 +9249,7 @@ static std::int64_t readFlSIntBe10At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe10At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe10At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9265,7 +9266,7 @@ static std::int64_t readFlSIntBe10At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9280,7 +9281,7 @@ static std::int64_t readFlSIntBe11At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9295,7 +9296,7 @@ static std::int64_t readFlSIntBe11At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9310,7 +9311,7 @@ static std::int64_t readFlSIntBe11At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9325,7 +9326,7 @@ static std::int64_t readFlSIntBe11At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9340,7 +9341,7 @@ static std::int64_t readFlSIntBe11At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9355,7 +9356,7 @@ static std::int64_t readFlSIntBe11At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9372,7 +9373,7 @@ static std::int64_t readFlSIntBe11At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe11At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe11At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9389,7 +9390,7 @@ static std::int64_t readFlSIntBe11At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9404,7 +9405,7 @@ static std::int64_t readFlSIntBe12At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9419,7 +9420,7 @@ static std::int64_t readFlSIntBe12At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9434,7 +9435,7 @@ static std::int64_t readFlSIntBe12At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9449,7 +9450,7 @@ static std::int64_t readFlSIntBe12At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9464,7 +9465,7 @@ static std::int64_t readFlSIntBe12At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9481,7 +9482,7 @@ static std::int64_t readFlSIntBe12At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9498,7 +9499,7 @@ static std::int64_t readFlSIntBe12At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe12At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe12At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9515,7 +9516,7 @@ static std::int64_t readFlSIntBe12At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9530,7 +9531,7 @@ static std::int64_t readFlSIntBe13At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9545,7 +9546,7 @@ static std::int64_t readFlSIntBe13At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9560,7 +9561,7 @@ static std::int64_t readFlSIntBe13At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9575,7 +9576,7 @@ static std::int64_t readFlSIntBe13At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9592,7 +9593,7 @@ static std::int64_t readFlSIntBe13At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9609,7 +9610,7 @@ static std::int64_t readFlSIntBe13At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9626,7 +9627,7 @@ static std::int64_t readFlSIntBe13At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe13At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe13At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9643,7 +9644,7 @@ static std::int64_t readFlSIntBe13At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9658,7 +9659,7 @@ static std::int64_t readFlSIntBe14At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9673,7 +9674,7 @@ static std::int64_t readFlSIntBe14At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9688,7 +9689,7 @@ static std::int64_t readFlSIntBe14At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9705,7 +9706,7 @@ static std::int64_t readFlSIntBe14At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9722,7 +9723,7 @@ static std::int64_t readFlSIntBe14At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9739,7 +9740,7 @@ static std::int64_t readFlSIntBe14At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9756,7 +9757,7 @@ static std::int64_t readFlSIntBe14At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe14At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe14At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9773,7 +9774,7 @@ static std::int64_t readFlSIntBe14At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9788,7 +9789,7 @@ static std::int64_t readFlSIntBe15At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9803,7 +9804,7 @@ static std::int64_t readFlSIntBe15At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9820,7 +9821,7 @@ static std::int64_t readFlSIntBe15At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9837,7 +9838,7 @@ static std::int64_t readFlSIntBe15At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9854,7 +9855,7 @@ static std::int64_t readFlSIntBe15At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9871,7 +9872,7 @@ static std::int64_t readFlSIntBe15At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9888,7 +9889,7 @@ static std::int64_t readFlSIntBe15At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe15At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe15At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9905,7 +9906,7 @@ static std::int64_t readFlSIntBe15At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9920,7 +9921,7 @@ static std::int64_t readFlSIntBe16At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9937,7 +9938,7 @@ static std::int64_t readFlSIntBe16At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9954,7 +9955,7 @@ static std::int64_t readFlSIntBe16At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9971,7 +9972,7 @@ static std::int64_t readFlSIntBe16At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -9988,7 +9989,7 @@ static std::int64_t readFlSIntBe16At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10005,7 +10006,7 @@ static std::int64_t readFlSIntBe16At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10022,7 +10023,7 @@ static std::int64_t readFlSIntBe16At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe16At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe16At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10039,7 +10040,7 @@ static std::int64_t readFlSIntBe16At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10056,7 +10057,7 @@ static std::int64_t readFlSIntBe17At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10073,7 +10074,7 @@ static std::int64_t readFlSIntBe17At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10090,7 +10091,7 @@ static std::int64_t readFlSIntBe17At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10107,7 +10108,7 @@ static std::int64_t readFlSIntBe17At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10124,7 +10125,7 @@ static std::int64_t readFlSIntBe17At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10141,7 +10142,7 @@ static std::int64_t readFlSIntBe17At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10158,7 +10159,7 @@ static std::int64_t readFlSIntBe17At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe17At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe17At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10175,7 +10176,7 @@ static std::int64_t readFlSIntBe17At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10192,7 +10193,7 @@ static std::int64_t readFlSIntBe18At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10209,7 +10210,7 @@ static std::int64_t readFlSIntBe18At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10226,7 +10227,7 @@ static std::int64_t readFlSIntBe18At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10243,7 +10244,7 @@ static std::int64_t readFlSIntBe18At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10260,7 +10261,7 @@ static std::int64_t readFlSIntBe18At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10277,7 +10278,7 @@ static std::int64_t readFlSIntBe18At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10294,7 +10295,7 @@ static std::int64_t readFlSIntBe18At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe18At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe18At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10313,7 +10314,7 @@ static std::int64_t readFlSIntBe18At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10330,7 +10331,7 @@ static std::int64_t readFlSIntBe19At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10347,7 +10348,7 @@ static std::int64_t readFlSIntBe19At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10364,7 +10365,7 @@ static std::int64_t readFlSIntBe19At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10381,7 +10382,7 @@ static std::int64_t readFlSIntBe19At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10398,7 +10399,7 @@ static std::int64_t readFlSIntBe19At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10415,7 +10416,7 @@ static std::int64_t readFlSIntBe19At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10434,7 +10435,7 @@ static std::int64_t readFlSIntBe19At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe19At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe19At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10453,7 +10454,7 @@ static std::int64_t readFlSIntBe19At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10470,7 +10471,7 @@ static std::int64_t readFlSIntBe20At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10487,7 +10488,7 @@ static std::int64_t readFlSIntBe20At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10504,7 +10505,7 @@ static std::int64_t readFlSIntBe20At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10521,7 +10522,7 @@ static std::int64_t readFlSIntBe20At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10538,7 +10539,7 @@ static std::int64_t readFlSIntBe20At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10557,7 +10558,7 @@ static std::int64_t readFlSIntBe20At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10576,7 +10577,7 @@ static std::int64_t readFlSIntBe20At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe20At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe20At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10595,7 +10596,7 @@ static std::int64_t readFlSIntBe20At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10612,7 +10613,7 @@ static std::int64_t readFlSIntBe21At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10629,7 +10630,7 @@ static std::int64_t readFlSIntBe21At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10646,7 +10647,7 @@ static std::int64_t readFlSIntBe21At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10663,7 +10664,7 @@ static std::int64_t readFlSIntBe21At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10682,7 +10683,7 @@ static std::int64_t readFlSIntBe21At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10701,7 +10702,7 @@ static std::int64_t readFlSIntBe21At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10720,7 +10721,7 @@ static std::int64_t readFlSIntBe21At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe21At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe21At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10739,7 +10740,7 @@ static std::int64_t readFlSIntBe21At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10756,7 +10757,7 @@ static std::int64_t readFlSIntBe22At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10773,7 +10774,7 @@ static std::int64_t readFlSIntBe22At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10790,7 +10791,7 @@ static std::int64_t readFlSIntBe22At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10809,7 +10810,7 @@ static std::int64_t readFlSIntBe22At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10828,7 +10829,7 @@ static std::int64_t readFlSIntBe22At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10847,7 +10848,7 @@ static std::int64_t readFlSIntBe22At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10866,7 +10867,7 @@ static std::int64_t readFlSIntBe22At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe22At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe22At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10885,7 +10886,7 @@ static std::int64_t readFlSIntBe22At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10902,7 +10903,7 @@ static std::int64_t readFlSIntBe23At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10919,7 +10920,7 @@ static std::int64_t readFlSIntBe23At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10938,7 +10939,7 @@ static std::int64_t readFlSIntBe23At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10957,7 +10958,7 @@ static std::int64_t readFlSIntBe23At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10976,7 +10977,7 @@ static std::int64_t readFlSIntBe23At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -10995,7 +10996,7 @@ static std::int64_t readFlSIntBe23At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11014,7 +11015,7 @@ static std::int64_t readFlSIntBe23At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe23At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe23At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11033,7 +11034,7 @@ static std::int64_t readFlSIntBe23At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11050,7 +11051,7 @@ static std::int64_t readFlSIntBe24At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11069,7 +11070,7 @@ static std::int64_t readFlSIntBe24At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11088,7 +11089,7 @@ static std::int64_t readFlSIntBe24At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11107,7 +11108,7 @@ static std::int64_t readFlSIntBe24At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11126,7 +11127,7 @@ static std::int64_t readFlSIntBe24At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11145,7 +11146,7 @@ static std::int64_t readFlSIntBe24At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11164,7 +11165,7 @@ static std::int64_t readFlSIntBe24At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe24At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe24At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11183,7 +11184,7 @@ static std::int64_t readFlSIntBe24At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11202,7 +11203,7 @@ static std::int64_t readFlSIntBe25At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11221,7 +11222,7 @@ static std::int64_t readFlSIntBe25At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11240,7 +11241,7 @@ static std::int64_t readFlSIntBe25At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11259,7 +11260,7 @@ static std::int64_t readFlSIntBe25At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11278,7 +11279,7 @@ static std::int64_t readFlSIntBe25At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11297,7 +11298,7 @@ static std::int64_t readFlSIntBe25At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11316,7 +11317,7 @@ static std::int64_t readFlSIntBe25At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe25At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe25At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11335,7 +11336,7 @@ static std::int64_t readFlSIntBe25At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11354,7 +11355,7 @@ static std::int64_t readFlSIntBe26At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11373,7 +11374,7 @@ static std::int64_t readFlSIntBe26At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11392,7 +11393,7 @@ static std::int64_t readFlSIntBe26At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11411,7 +11412,7 @@ static std::int64_t readFlSIntBe26At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11430,7 +11431,7 @@ static std::int64_t readFlSIntBe26At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11449,7 +11450,7 @@ static std::int64_t readFlSIntBe26At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11468,7 +11469,7 @@ static std::int64_t readFlSIntBe26At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe26At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe26At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11489,7 +11490,7 @@ static std::int64_t readFlSIntBe26At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11508,7 +11509,7 @@ static std::int64_t readFlSIntBe27At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11527,7 +11528,7 @@ static std::int64_t readFlSIntBe27At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11546,7 +11547,7 @@ static std::int64_t readFlSIntBe27At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11565,7 +11566,7 @@ static std::int64_t readFlSIntBe27At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11584,7 +11585,7 @@ static std::int64_t readFlSIntBe27At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11603,7 +11604,7 @@ static std::int64_t readFlSIntBe27At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11624,7 +11625,7 @@ static std::int64_t readFlSIntBe27At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe27At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe27At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11645,7 +11646,7 @@ static std::int64_t readFlSIntBe27At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11664,7 +11665,7 @@ static std::int64_t readFlSIntBe28At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11683,7 +11684,7 @@ static std::int64_t readFlSIntBe28At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11702,7 +11703,7 @@ static std::int64_t readFlSIntBe28At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11721,7 +11722,7 @@ static std::int64_t readFlSIntBe28At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11740,7 +11741,7 @@ static std::int64_t readFlSIntBe28At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11761,7 +11762,7 @@ static std::int64_t readFlSIntBe28At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11782,7 +11783,7 @@ static std::int64_t readFlSIntBe28At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe28At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe28At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11803,7 +11804,7 @@ static std::int64_t readFlSIntBe28At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11822,7 +11823,7 @@ static std::int64_t readFlSIntBe29At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11841,7 +11842,7 @@ static std::int64_t readFlSIntBe29At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11860,7 +11861,7 @@ static std::int64_t readFlSIntBe29At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11879,7 +11880,7 @@ static std::int64_t readFlSIntBe29At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11900,7 +11901,7 @@ static std::int64_t readFlSIntBe29At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11921,7 +11922,7 @@ static std::int64_t readFlSIntBe29At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11942,7 +11943,7 @@ static std::int64_t readFlSIntBe29At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe29At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe29At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11963,7 +11964,7 @@ static std::int64_t readFlSIntBe29At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -11982,7 +11983,7 @@ static std::int64_t readFlSIntBe30At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12001,7 +12002,7 @@ static std::int64_t readFlSIntBe30At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12020,7 +12021,7 @@ static std::int64_t readFlSIntBe30At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12041,7 +12042,7 @@ static std::int64_t readFlSIntBe30At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12062,7 +12063,7 @@ static std::int64_t readFlSIntBe30At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12083,7 +12084,7 @@ static std::int64_t readFlSIntBe30At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12104,7 +12105,7 @@ static std::int64_t readFlSIntBe30At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe30At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe30At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12125,7 +12126,7 @@ static std::int64_t readFlSIntBe30At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12144,7 +12145,7 @@ static std::int64_t readFlSIntBe31At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12163,7 +12164,7 @@ static std::int64_t readFlSIntBe31At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12184,7 +12185,7 @@ static std::int64_t readFlSIntBe31At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12205,7 +12206,7 @@ static std::int64_t readFlSIntBe31At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12226,7 +12227,7 @@ static std::int64_t readFlSIntBe31At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12247,7 +12248,7 @@ static std::int64_t readFlSIntBe31At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12268,7 +12269,7 @@ static std::int64_t readFlSIntBe31At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe31At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe31At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12289,7 +12290,7 @@ static std::int64_t readFlSIntBe31At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12308,7 +12309,7 @@ static std::int64_t readFlSIntBe32At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12329,7 +12330,7 @@ static std::int64_t readFlSIntBe32At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12350,7 +12351,7 @@ static std::int64_t readFlSIntBe32At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12371,7 +12372,7 @@ static std::int64_t readFlSIntBe32At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12392,7 +12393,7 @@ static std::int64_t readFlSIntBe32At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12413,7 +12414,7 @@ static std::int64_t readFlSIntBe32At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12434,7 +12435,7 @@ static std::int64_t readFlSIntBe32At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe32At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe32At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12455,7 +12456,7 @@ static std::int64_t readFlSIntBe32At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12476,7 +12477,7 @@ static std::int64_t readFlSIntBe33At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12497,7 +12498,7 @@ static std::int64_t readFlSIntBe33At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12518,7 +12519,7 @@ static std::int64_t readFlSIntBe33At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12539,7 +12540,7 @@ static std::int64_t readFlSIntBe33At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12560,7 +12561,7 @@ static std::int64_t readFlSIntBe33At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12581,7 +12582,7 @@ static std::int64_t readFlSIntBe33At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12602,7 +12603,7 @@ static std::int64_t readFlSIntBe33At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe33At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe33At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12623,7 +12624,7 @@ static std::int64_t readFlSIntBe33At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12644,7 +12645,7 @@ static std::int64_t readFlSIntBe34At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12665,7 +12666,7 @@ static std::int64_t readFlSIntBe34At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12686,7 +12687,7 @@ static std::int64_t readFlSIntBe34At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12707,7 +12708,7 @@ static std::int64_t readFlSIntBe34At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12728,7 +12729,7 @@ static std::int64_t readFlSIntBe34At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12749,7 +12750,7 @@ static std::int64_t readFlSIntBe34At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12770,7 +12771,7 @@ static std::int64_t readFlSIntBe34At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe34At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe34At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12793,7 +12794,7 @@ static std::int64_t readFlSIntBe34At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12814,7 +12815,7 @@ static std::int64_t readFlSIntBe35At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12835,7 +12836,7 @@ static std::int64_t readFlSIntBe35At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12856,7 +12857,7 @@ static std::int64_t readFlSIntBe35At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12877,7 +12878,7 @@ static std::int64_t readFlSIntBe35At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12898,7 +12899,7 @@ static std::int64_t readFlSIntBe35At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12919,7 +12920,7 @@ static std::int64_t readFlSIntBe35At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12942,7 +12943,7 @@ static std::int64_t readFlSIntBe35At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe35At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe35At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12965,7 +12966,7 @@ static std::int64_t readFlSIntBe35At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -12986,7 +12987,7 @@ static std::int64_t readFlSIntBe36At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13007,7 +13008,7 @@ static std::int64_t readFlSIntBe36At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13028,7 +13029,7 @@ static std::int64_t readFlSIntBe36At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13049,7 +13050,7 @@ static std::int64_t readFlSIntBe36At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13070,7 +13071,7 @@ static std::int64_t readFlSIntBe36At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13093,7 +13094,7 @@ static std::int64_t readFlSIntBe36At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13116,7 +13117,7 @@ static std::int64_t readFlSIntBe36At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe36At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe36At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13139,7 +13140,7 @@ static std::int64_t readFlSIntBe36At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13160,7 +13161,7 @@ static std::int64_t readFlSIntBe37At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13181,7 +13182,7 @@ static std::int64_t readFlSIntBe37At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13202,7 +13203,7 @@ static std::int64_t readFlSIntBe37At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13223,7 +13224,7 @@ static std::int64_t readFlSIntBe37At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13246,7 +13247,7 @@ static std::int64_t readFlSIntBe37At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13269,7 +13270,7 @@ static std::int64_t readFlSIntBe37At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13292,7 +13293,7 @@ static std::int64_t readFlSIntBe37At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe37At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe37At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13315,7 +13316,7 @@ static std::int64_t readFlSIntBe37At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13336,7 +13337,7 @@ static std::int64_t readFlSIntBe38At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13357,7 +13358,7 @@ static std::int64_t readFlSIntBe38At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13378,7 +13379,7 @@ static std::int64_t readFlSIntBe38At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13401,7 +13402,7 @@ static std::int64_t readFlSIntBe38At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13424,7 +13425,7 @@ static std::int64_t readFlSIntBe38At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13447,7 +13448,7 @@ static std::int64_t readFlSIntBe38At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13470,7 +13471,7 @@ static std::int64_t readFlSIntBe38At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe38At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe38At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13493,7 +13494,7 @@ static std::int64_t readFlSIntBe38At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13514,7 +13515,7 @@ static std::int64_t readFlSIntBe39At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13535,7 +13536,7 @@ static std::int64_t readFlSIntBe39At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13558,7 +13559,7 @@ static std::int64_t readFlSIntBe39At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13581,7 +13582,7 @@ static std::int64_t readFlSIntBe39At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13604,7 +13605,7 @@ static std::int64_t readFlSIntBe39At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13627,7 +13628,7 @@ static std::int64_t readFlSIntBe39At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13650,7 +13651,7 @@ static std::int64_t readFlSIntBe39At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe39At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe39At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13673,7 +13674,7 @@ static std::int64_t readFlSIntBe39At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13694,7 +13695,7 @@ static std::int64_t readFlSIntBe40At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13717,7 +13718,7 @@ static std::int64_t readFlSIntBe40At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13740,7 +13741,7 @@ static std::int64_t readFlSIntBe40At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13763,7 +13764,7 @@ static std::int64_t readFlSIntBe40At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13786,7 +13787,7 @@ static std::int64_t readFlSIntBe40At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13809,7 +13810,7 @@ static std::int64_t readFlSIntBe40At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13832,7 +13833,7 @@ static std::int64_t readFlSIntBe40At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe40At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe40At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13855,7 +13856,7 @@ static std::int64_t readFlSIntBe40At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13878,7 +13879,7 @@ static std::int64_t readFlSIntBe41At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13901,7 +13902,7 @@ static std::int64_t readFlSIntBe41At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13924,7 +13925,7 @@ static std::int64_t readFlSIntBe41At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13947,7 +13948,7 @@ static std::int64_t readFlSIntBe41At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13970,7 +13971,7 @@ static std::int64_t readFlSIntBe41At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -13993,7 +13994,7 @@ static std::int64_t readFlSIntBe41At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14016,7 +14017,7 @@ static std::int64_t readFlSIntBe41At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe41At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe41At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14039,7 +14040,7 @@ static std::int64_t readFlSIntBe41At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14062,7 +14063,7 @@ static std::int64_t readFlSIntBe42At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14085,7 +14086,7 @@ static std::int64_t readFlSIntBe42At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14108,7 +14109,7 @@ static std::int64_t readFlSIntBe42At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14131,7 +14132,7 @@ static std::int64_t readFlSIntBe42At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14154,7 +14155,7 @@ static std::int64_t readFlSIntBe42At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14177,7 +14178,7 @@ static std::int64_t readFlSIntBe42At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14200,7 +14201,7 @@ static std::int64_t readFlSIntBe42At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe42At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe42At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14225,7 +14226,7 @@ static std::int64_t readFlSIntBe42At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14248,7 +14249,7 @@ static std::int64_t readFlSIntBe43At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14271,7 +14272,7 @@ static std::int64_t readFlSIntBe43At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14294,7 +14295,7 @@ static std::int64_t readFlSIntBe43At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14317,7 +14318,7 @@ static std::int64_t readFlSIntBe43At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14340,7 +14341,7 @@ static std::int64_t readFlSIntBe43At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14363,7 +14364,7 @@ static std::int64_t readFlSIntBe43At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14388,7 +14389,7 @@ static std::int64_t readFlSIntBe43At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe43At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe43At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14413,7 +14414,7 @@ static std::int64_t readFlSIntBe43At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14436,7 +14437,7 @@ static std::int64_t readFlSIntBe44At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14459,7 +14460,7 @@ static std::int64_t readFlSIntBe44At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14482,7 +14483,7 @@ static std::int64_t readFlSIntBe44At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14505,7 +14506,7 @@ static std::int64_t readFlSIntBe44At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14528,7 +14529,7 @@ static std::int64_t readFlSIntBe44At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14553,7 +14554,7 @@ static std::int64_t readFlSIntBe44At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14578,7 +14579,7 @@ static std::int64_t readFlSIntBe44At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe44At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe44At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14603,7 +14604,7 @@ static std::int64_t readFlSIntBe44At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14626,7 +14627,7 @@ static std::int64_t readFlSIntBe45At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14649,7 +14650,7 @@ static std::int64_t readFlSIntBe45At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14672,7 +14673,7 @@ static std::int64_t readFlSIntBe45At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14695,7 +14696,7 @@ static std::int64_t readFlSIntBe45At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14720,7 +14721,7 @@ static std::int64_t readFlSIntBe45At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14745,7 +14746,7 @@ static std::int64_t readFlSIntBe45At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14770,7 +14771,7 @@ static std::int64_t readFlSIntBe45At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe45At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe45At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14795,7 +14796,7 @@ static std::int64_t readFlSIntBe45At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14818,7 +14819,7 @@ static std::int64_t readFlSIntBe46At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14841,7 +14842,7 @@ static std::int64_t readFlSIntBe46At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14864,7 +14865,7 @@ static std::int64_t readFlSIntBe46At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14889,7 +14890,7 @@ static std::int64_t readFlSIntBe46At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14914,7 +14915,7 @@ static std::int64_t readFlSIntBe46At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14939,7 +14940,7 @@ static std::int64_t readFlSIntBe46At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14964,7 +14965,7 @@ static std::int64_t readFlSIntBe46At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe46At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe46At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -14989,7 +14990,7 @@ static std::int64_t readFlSIntBe46At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15012,7 +15013,7 @@ static std::int64_t readFlSIntBe47At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15035,7 +15036,7 @@ static std::int64_t readFlSIntBe47At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15060,7 +15061,7 @@ static std::int64_t readFlSIntBe47At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15085,7 +15086,7 @@ static std::int64_t readFlSIntBe47At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15110,7 +15111,7 @@ static std::int64_t readFlSIntBe47At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15135,7 +15136,7 @@ static std::int64_t readFlSIntBe47At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15160,7 +15161,7 @@ static std::int64_t readFlSIntBe47At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe47At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe47At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15185,7 +15186,7 @@ static std::int64_t readFlSIntBe47At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15208,7 +15209,7 @@ static std::int64_t readFlSIntBe48At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15233,7 +15234,7 @@ static std::int64_t readFlSIntBe48At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15258,7 +15259,7 @@ static std::int64_t readFlSIntBe48At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15283,7 +15284,7 @@ static std::int64_t readFlSIntBe48At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15308,7 +15309,7 @@ static std::int64_t readFlSIntBe48At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15333,7 +15334,7 @@ static std::int64_t readFlSIntBe48At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15358,7 +15359,7 @@ static std::int64_t readFlSIntBe48At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe48At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe48At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15383,7 +15384,7 @@ static std::int64_t readFlSIntBe48At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15408,7 +15409,7 @@ static std::int64_t readFlSIntBe49At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15433,7 +15434,7 @@ static std::int64_t readFlSIntBe49At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15458,7 +15459,7 @@ static std::int64_t readFlSIntBe49At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15483,7 +15484,7 @@ static std::int64_t readFlSIntBe49At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15508,7 +15509,7 @@ static std::int64_t readFlSIntBe49At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15533,7 +15534,7 @@ static std::int64_t readFlSIntBe49At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15558,7 +15559,7 @@ static std::int64_t readFlSIntBe49At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe49At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe49At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15583,7 +15584,7 @@ static std::int64_t readFlSIntBe49At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15608,7 +15609,7 @@ static std::int64_t readFlSIntBe50At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15633,7 +15634,7 @@ static std::int64_t readFlSIntBe50At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15658,7 +15659,7 @@ static std::int64_t readFlSIntBe50At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15683,7 +15684,7 @@ static std::int64_t readFlSIntBe50At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15708,7 +15709,7 @@ static std::int64_t readFlSIntBe50At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15733,7 +15734,7 @@ static std::int64_t readFlSIntBe50At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15758,7 +15759,7 @@ static std::int64_t readFlSIntBe50At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe50At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe50At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15785,7 +15786,7 @@ static std::int64_t readFlSIntBe50At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15810,7 +15811,7 @@ static std::int64_t readFlSIntBe51At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15835,7 +15836,7 @@ static std::int64_t readFlSIntBe51At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15860,7 +15861,7 @@ static std::int64_t readFlSIntBe51At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15885,7 +15886,7 @@ static std::int64_t readFlSIntBe51At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15910,7 +15911,7 @@ static std::int64_t readFlSIntBe51At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15935,7 +15936,7 @@ static std::int64_t readFlSIntBe51At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15962,7 +15963,7 @@ static std::int64_t readFlSIntBe51At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe51At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe51At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -15989,7 +15990,7 @@ static std::int64_t readFlSIntBe51At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16014,7 +16015,7 @@ static std::int64_t readFlSIntBe52At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16039,7 +16040,7 @@ static std::int64_t readFlSIntBe52At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16064,7 +16065,7 @@ static std::int64_t readFlSIntBe52At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16089,7 +16090,7 @@ static std::int64_t readFlSIntBe52At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16114,7 +16115,7 @@ static std::int64_t readFlSIntBe52At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16141,7 +16142,7 @@ static std::int64_t readFlSIntBe52At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16168,7 +16169,7 @@ static std::int64_t readFlSIntBe52At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe52At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe52At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16195,7 +16196,7 @@ static std::int64_t readFlSIntBe52At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16220,7 +16221,7 @@ static std::int64_t readFlSIntBe53At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16245,7 +16246,7 @@ static std::int64_t readFlSIntBe53At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16270,7 +16271,7 @@ static std::int64_t readFlSIntBe53At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16295,7 +16296,7 @@ static std::int64_t readFlSIntBe53At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16322,7 +16323,7 @@ static std::int64_t readFlSIntBe53At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16349,7 +16350,7 @@ static std::int64_t readFlSIntBe53At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16376,7 +16377,7 @@ static std::int64_t readFlSIntBe53At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe53At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe53At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16403,7 +16404,7 @@ static std::int64_t readFlSIntBe53At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16428,7 +16429,7 @@ static std::int64_t readFlSIntBe54At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16453,7 +16454,7 @@ static std::int64_t readFlSIntBe54At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16478,7 +16479,7 @@ static std::int64_t readFlSIntBe54At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16505,7 +16506,7 @@ static std::int64_t readFlSIntBe54At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16532,7 +16533,7 @@ static std::int64_t readFlSIntBe54At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16559,7 +16560,7 @@ static std::int64_t readFlSIntBe54At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16586,7 +16587,7 @@ static std::int64_t readFlSIntBe54At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe54At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe54At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16613,7 +16614,7 @@ static std::int64_t readFlSIntBe54At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16638,7 +16639,7 @@ static std::int64_t readFlSIntBe55At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16663,7 +16664,7 @@ static std::int64_t readFlSIntBe55At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16690,7 +16691,7 @@ static std::int64_t readFlSIntBe55At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16717,7 +16718,7 @@ static std::int64_t readFlSIntBe55At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16744,7 +16745,7 @@ static std::int64_t readFlSIntBe55At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16771,7 +16772,7 @@ static std::int64_t readFlSIntBe55At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16798,7 +16799,7 @@ static std::int64_t readFlSIntBe55At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe55At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe55At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16825,7 +16826,7 @@ static std::int64_t readFlSIntBe55At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16850,7 +16851,7 @@ static std::int64_t readFlSIntBe56At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16877,7 +16878,7 @@ static std::int64_t readFlSIntBe56At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16904,7 +16905,7 @@ static std::int64_t readFlSIntBe56At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16931,7 +16932,7 @@ static std::int64_t readFlSIntBe56At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16958,7 +16959,7 @@ static std::int64_t readFlSIntBe56At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -16985,7 +16986,7 @@ static std::int64_t readFlSIntBe56At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17012,7 +17013,7 @@ static std::int64_t readFlSIntBe56At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe56At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe56At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17039,7 +17040,7 @@ static std::int64_t readFlSIntBe56At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17066,7 +17067,7 @@ static std::int64_t readFlSIntBe57At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17093,7 +17094,7 @@ static std::int64_t readFlSIntBe57At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17120,7 +17121,7 @@ static std::int64_t readFlSIntBe57At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17147,7 +17148,7 @@ static std::int64_t readFlSIntBe57At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17174,7 +17175,7 @@ static std::int64_t readFlSIntBe57At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17201,7 +17202,7 @@ static std::int64_t readFlSIntBe57At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17228,7 +17229,7 @@ static std::int64_t readFlSIntBe57At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe57At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe57At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17255,7 +17256,7 @@ static std::int64_t readFlSIntBe57At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17282,7 +17283,7 @@ static std::int64_t readFlSIntBe58At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17309,7 +17310,7 @@ static std::int64_t readFlSIntBe58At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17336,7 +17337,7 @@ static std::int64_t readFlSIntBe58At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17363,7 +17364,7 @@ static std::int64_t readFlSIntBe58At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17390,7 +17391,7 @@ static std::int64_t readFlSIntBe58At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17417,7 +17418,7 @@ static std::int64_t readFlSIntBe58At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17444,7 +17445,7 @@ static std::int64_t readFlSIntBe58At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe58At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe58At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17473,7 +17474,7 @@ static std::int64_t readFlSIntBe58At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17500,7 +17501,7 @@ static std::int64_t readFlSIntBe59At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17527,7 +17528,7 @@ static std::int64_t readFlSIntBe59At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17554,7 +17555,7 @@ static std::int64_t readFlSIntBe59At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17581,7 +17582,7 @@ static std::int64_t readFlSIntBe59At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17608,7 +17609,7 @@ static std::int64_t readFlSIntBe59At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17635,7 +17636,7 @@ static std::int64_t readFlSIntBe59At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17664,7 +17665,7 @@ static std::int64_t readFlSIntBe59At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe59At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe59At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17693,7 +17694,7 @@ static std::int64_t readFlSIntBe59At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17720,7 +17721,7 @@ static std::int64_t readFlSIntBe60At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17747,7 +17748,7 @@ static std::int64_t readFlSIntBe60At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17774,7 +17775,7 @@ static std::int64_t readFlSIntBe60At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17801,7 +17802,7 @@ static std::int64_t readFlSIntBe60At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17828,7 +17829,7 @@ static std::int64_t readFlSIntBe60At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17857,7 +17858,7 @@ static std::int64_t readFlSIntBe60At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17886,7 +17887,7 @@ static std::int64_t readFlSIntBe60At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe60At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe60At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17915,7 +17916,7 @@ static std::int64_t readFlSIntBe60At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17942,7 +17943,7 @@ static std::int64_t readFlSIntBe61At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17969,7 +17970,7 @@ static std::int64_t readFlSIntBe61At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -17996,7 +17997,7 @@ static std::int64_t readFlSIntBe61At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18023,7 +18024,7 @@ static std::int64_t readFlSIntBe61At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18052,7 +18053,7 @@ static std::int64_t readFlSIntBe61At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18081,7 +18082,7 @@ static std::int64_t readFlSIntBe61At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18110,7 +18111,7 @@ static std::int64_t readFlSIntBe61At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe61At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe61At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18139,7 +18140,7 @@ static std::int64_t readFlSIntBe61At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18166,7 +18167,7 @@ static std::int64_t readFlSIntBe62At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18193,7 +18194,7 @@ static std::int64_t readFlSIntBe62At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18220,7 +18221,7 @@ static std::int64_t readFlSIntBe62At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18249,7 +18250,7 @@ static std::int64_t readFlSIntBe62At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18278,7 +18279,7 @@ static std::int64_t readFlSIntBe62At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18307,7 +18308,7 @@ static std::int64_t readFlSIntBe62At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18336,7 +18337,7 @@ static std::int64_t readFlSIntBe62At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe62At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe62At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18365,7 +18366,7 @@ static std::int64_t readFlSIntBe62At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18392,7 +18393,7 @@ static std::int64_t readFlSIntBe63At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18419,7 +18420,7 @@ static std::int64_t readFlSIntBe63At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18448,7 +18449,7 @@ static std::int64_t readFlSIntBe63At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18477,7 +18478,7 @@ static std::int64_t readFlSIntBe63At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18506,7 +18507,7 @@ static std::int64_t readFlSIntBe63At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18535,7 +18536,7 @@ static std::int64_t readFlSIntBe63At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18564,7 +18565,7 @@ static std::int64_t readFlSIntBe63At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe63At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe63At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18593,7 +18594,7 @@ static std::int64_t readFlSIntBe63At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18614,7 +18615,7 @@ static std::int64_t readFlSIntBe64At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18637,7 +18638,7 @@ static std::int64_t readFlSIntBe64At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18660,7 +18661,7 @@ static std::int64_t readFlSIntBe64At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18683,7 +18684,7 @@ static std::int64_t readFlSIntBe64At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18706,7 +18707,7 @@ static std::int64_t readFlSIntBe64At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18729,7 +18730,7 @@ static std::int64_t readFlSIntBe64At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18752,7 +18753,7 @@ static std::int64_t readFlSIntBe64At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntBe64At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntBe64At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18775,7 +18776,7 @@ static std::int64_t readFlSIntBe64At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::uint64_t readFlUIntLe1At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18783,7 +18784,7 @@ static std::uint64_t readFlUIntLe1At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -18791,7 +18792,7 @@ static std::uint64_t readFlUIntLe1At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -18799,7 +18800,7 @@ static std::uint64_t readFlUIntLe1At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -18807,7 +18808,7 @@ static std::uint64_t readFlUIntLe1At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -18815,7 +18816,7 @@ static std::uint64_t readFlUIntLe1At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -18823,7 +18824,7 @@ static std::uint64_t readFlUIntLe1At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -18831,7 +18832,7 @@ static std::uint64_t readFlUIntLe1At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe1At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe1At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 7);
@@ -18839,7 +18840,7 @@ static std::uint64_t readFlUIntLe1At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18847,7 +18848,7 @@ static std::uint64_t readFlUIntLe2At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -18855,7 +18856,7 @@ static std::uint64_t readFlUIntLe2At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -18863,7 +18864,7 @@ static std::uint64_t readFlUIntLe2At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -18871,7 +18872,7 @@ static std::uint64_t readFlUIntLe2At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -18879,7 +18880,7 @@ static std::uint64_t readFlUIntLe2At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -18887,7 +18888,7 @@ static std::uint64_t readFlUIntLe2At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -18895,7 +18896,7 @@ static std::uint64_t readFlUIntLe2At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe2At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe2At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -18905,7 +18906,7 @@ static std::uint64_t readFlUIntLe2At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18913,7 +18914,7 @@ static std::uint64_t readFlUIntLe3At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -18921,7 +18922,7 @@ static std::uint64_t readFlUIntLe3At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -18929,7 +18930,7 @@ static std::uint64_t readFlUIntLe3At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -18937,7 +18938,7 @@ static std::uint64_t readFlUIntLe3At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -18945,7 +18946,7 @@ static std::uint64_t readFlUIntLe3At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -18953,7 +18954,7 @@ static std::uint64_t readFlUIntLe3At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -18963,7 +18964,7 @@ static std::uint64_t readFlUIntLe3At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe3At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe3At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -18973,7 +18974,7 @@ static std::uint64_t readFlUIntLe3At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -18981,7 +18982,7 @@ static std::uint64_t readFlUIntLe4At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -18989,7 +18990,7 @@ static std::uint64_t readFlUIntLe4At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -18997,7 +18998,7 @@ static std::uint64_t readFlUIntLe4At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -19005,7 +19006,7 @@ static std::uint64_t readFlUIntLe4At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -19013,7 +19014,7 @@ static std::uint64_t readFlUIntLe4At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19023,7 +19024,7 @@ static std::uint64_t readFlUIntLe4At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19033,7 +19034,7 @@ static std::uint64_t readFlUIntLe4At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe4At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe4At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19043,7 +19044,7 @@ static std::uint64_t readFlUIntLe4At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -19051,7 +19052,7 @@ static std::uint64_t readFlUIntLe5At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -19059,7 +19060,7 @@ static std::uint64_t readFlUIntLe5At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -19067,7 +19068,7 @@ static std::uint64_t readFlUIntLe5At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -19075,7 +19076,7 @@ static std::uint64_t readFlUIntLe5At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19085,7 +19086,7 @@ static std::uint64_t readFlUIntLe5At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19095,7 +19096,7 @@ static std::uint64_t readFlUIntLe5At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19105,7 +19106,7 @@ static std::uint64_t readFlUIntLe5At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe5At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe5At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19115,7 +19116,7 @@ static std::uint64_t readFlUIntLe5At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -19123,7 +19124,7 @@ static std::uint64_t readFlUIntLe6At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -19131,7 +19132,7 @@ static std::uint64_t readFlUIntLe6At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -19139,7 +19140,7 @@ static std::uint64_t readFlUIntLe6At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19149,7 +19150,7 @@ static std::uint64_t readFlUIntLe6At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19159,7 +19160,7 @@ static std::uint64_t readFlUIntLe6At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19169,7 +19170,7 @@ static std::uint64_t readFlUIntLe6At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19179,7 +19180,7 @@ static std::uint64_t readFlUIntLe6At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe6At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe6At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19189,7 +19190,7 @@ static std::uint64_t readFlUIntLe6At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -19197,7 +19198,7 @@ static std::uint64_t readFlUIntLe7At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -19205,7 +19206,7 @@ static std::uint64_t readFlUIntLe7At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19215,7 +19216,7 @@ static std::uint64_t readFlUIntLe7At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19225,7 +19226,7 @@ static std::uint64_t readFlUIntLe7At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19235,7 +19236,7 @@ static std::uint64_t readFlUIntLe7At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19245,7 +19246,7 @@ static std::uint64_t readFlUIntLe7At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19255,7 +19256,7 @@ static std::uint64_t readFlUIntLe7At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe7At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe7At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19265,7 +19266,7 @@ static std::uint64_t readFlUIntLe7At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -19273,7 +19274,7 @@ static std::uint64_t readFlUIntLe8At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19283,7 +19284,7 @@ static std::uint64_t readFlUIntLe8At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19293,7 +19294,7 @@ static std::uint64_t readFlUIntLe8At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19303,7 +19304,7 @@ static std::uint64_t readFlUIntLe8At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19313,7 +19314,7 @@ static std::uint64_t readFlUIntLe8At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19323,7 +19324,7 @@ static std::uint64_t readFlUIntLe8At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19333,7 +19334,7 @@ static std::uint64_t readFlUIntLe8At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe8At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe8At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19343,7 +19344,7 @@ static std::uint64_t readFlUIntLe8At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19353,7 +19354,7 @@ static std::uint64_t readFlUIntLe9At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19363,7 +19364,7 @@ static std::uint64_t readFlUIntLe9At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19373,7 +19374,7 @@ static std::uint64_t readFlUIntLe9At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19383,7 +19384,7 @@ static std::uint64_t readFlUIntLe9At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19393,7 +19394,7 @@ static std::uint64_t readFlUIntLe9At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19403,7 +19404,7 @@ static std::uint64_t readFlUIntLe9At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19413,7 +19414,7 @@ static std::uint64_t readFlUIntLe9At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe9At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe9At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19423,7 +19424,7 @@ static std::uint64_t readFlUIntLe9At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19433,7 +19434,7 @@ static std::uint64_t readFlUIntLe10At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19443,7 +19444,7 @@ static std::uint64_t readFlUIntLe10At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19453,7 +19454,7 @@ static std::uint64_t readFlUIntLe10At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19463,7 +19464,7 @@ static std::uint64_t readFlUIntLe10At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19473,7 +19474,7 @@ static std::uint64_t readFlUIntLe10At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19483,7 +19484,7 @@ static std::uint64_t readFlUIntLe10At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19493,7 +19494,7 @@ static std::uint64_t readFlUIntLe10At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe10At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe10At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19505,7 +19506,7 @@ static std::uint64_t readFlUIntLe10At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19515,7 +19516,7 @@ static std::uint64_t readFlUIntLe11At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19525,7 +19526,7 @@ static std::uint64_t readFlUIntLe11At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19535,7 +19536,7 @@ static std::uint64_t readFlUIntLe11At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19545,7 +19546,7 @@ static std::uint64_t readFlUIntLe11At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19555,7 +19556,7 @@ static std::uint64_t readFlUIntLe11At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19565,7 +19566,7 @@ static std::uint64_t readFlUIntLe11At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19577,7 +19578,7 @@ static std::uint64_t readFlUIntLe11At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe11At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe11At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19589,7 +19590,7 @@ static std::uint64_t readFlUIntLe11At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19599,7 +19600,7 @@ static std::uint64_t readFlUIntLe12At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19609,7 +19610,7 @@ static std::uint64_t readFlUIntLe12At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19619,7 +19620,7 @@ static std::uint64_t readFlUIntLe12At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19629,7 +19630,7 @@ static std::uint64_t readFlUIntLe12At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19639,7 +19640,7 @@ static std::uint64_t readFlUIntLe12At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19651,7 +19652,7 @@ static std::uint64_t readFlUIntLe12At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19663,7 +19664,7 @@ static std::uint64_t readFlUIntLe12At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe12At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe12At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19675,7 +19676,7 @@ static std::uint64_t readFlUIntLe12At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19685,7 +19686,7 @@ static std::uint64_t readFlUIntLe13At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19695,7 +19696,7 @@ static std::uint64_t readFlUIntLe13At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19705,7 +19706,7 @@ static std::uint64_t readFlUIntLe13At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19715,7 +19716,7 @@ static std::uint64_t readFlUIntLe13At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19727,7 +19728,7 @@ static std::uint64_t readFlUIntLe13At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19739,7 +19740,7 @@ static std::uint64_t readFlUIntLe13At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19751,7 +19752,7 @@ static std::uint64_t readFlUIntLe13At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe13At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe13At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19763,7 +19764,7 @@ static std::uint64_t readFlUIntLe13At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19773,7 +19774,7 @@ static std::uint64_t readFlUIntLe14At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19783,7 +19784,7 @@ static std::uint64_t readFlUIntLe14At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19793,7 +19794,7 @@ static std::uint64_t readFlUIntLe14At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19805,7 +19806,7 @@ static std::uint64_t readFlUIntLe14At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19817,7 +19818,7 @@ static std::uint64_t readFlUIntLe14At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19829,7 +19830,7 @@ static std::uint64_t readFlUIntLe14At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19841,7 +19842,7 @@ static std::uint64_t readFlUIntLe14At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe14At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe14At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19853,7 +19854,7 @@ static std::uint64_t readFlUIntLe14At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19863,7 +19864,7 @@ static std::uint64_t readFlUIntLe15At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19873,7 +19874,7 @@ static std::uint64_t readFlUIntLe15At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19885,7 +19886,7 @@ static std::uint64_t readFlUIntLe15At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19897,7 +19898,7 @@ static std::uint64_t readFlUIntLe15At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19909,7 +19910,7 @@ static std::uint64_t readFlUIntLe15At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19921,7 +19922,7 @@ static std::uint64_t readFlUIntLe15At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19933,7 +19934,7 @@ static std::uint64_t readFlUIntLe15At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe15At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe15At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19945,7 +19946,7 @@ static std::uint64_t readFlUIntLe15At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -19955,7 +19956,7 @@ static std::uint64_t readFlUIntLe16At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19967,7 +19968,7 @@ static std::uint64_t readFlUIntLe16At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19979,7 +19980,7 @@ static std::uint64_t readFlUIntLe16At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -19991,7 +19992,7 @@ static std::uint64_t readFlUIntLe16At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20003,7 +20004,7 @@ static std::uint64_t readFlUIntLe16At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20015,7 +20016,7 @@ static std::uint64_t readFlUIntLe16At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20027,7 +20028,7 @@ static std::uint64_t readFlUIntLe16At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe16At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe16At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20039,7 +20040,7 @@ static std::uint64_t readFlUIntLe16At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20051,7 +20052,7 @@ static std::uint64_t readFlUIntLe17At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20063,7 +20064,7 @@ static std::uint64_t readFlUIntLe17At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20075,7 +20076,7 @@ static std::uint64_t readFlUIntLe17At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20087,7 +20088,7 @@ static std::uint64_t readFlUIntLe17At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20099,7 +20100,7 @@ static std::uint64_t readFlUIntLe17At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20111,7 +20112,7 @@ static std::uint64_t readFlUIntLe17At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20123,7 +20124,7 @@ static std::uint64_t readFlUIntLe17At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe17At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe17At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20135,7 +20136,7 @@ static std::uint64_t readFlUIntLe17At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20147,7 +20148,7 @@ static std::uint64_t readFlUIntLe18At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20159,7 +20160,7 @@ static std::uint64_t readFlUIntLe18At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20171,7 +20172,7 @@ static std::uint64_t readFlUIntLe18At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20183,7 +20184,7 @@ static std::uint64_t readFlUIntLe18At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20195,7 +20196,7 @@ static std::uint64_t readFlUIntLe18At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20207,7 +20208,7 @@ static std::uint64_t readFlUIntLe18At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20219,7 +20220,7 @@ static std::uint64_t readFlUIntLe18At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe18At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe18At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20233,7 +20234,7 @@ static std::uint64_t readFlUIntLe18At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20245,7 +20246,7 @@ static std::uint64_t readFlUIntLe19At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20257,7 +20258,7 @@ static std::uint64_t readFlUIntLe19At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20269,7 +20270,7 @@ static std::uint64_t readFlUIntLe19At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20281,7 +20282,7 @@ static std::uint64_t readFlUIntLe19At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20293,7 +20294,7 @@ static std::uint64_t readFlUIntLe19At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20305,7 +20306,7 @@ static std::uint64_t readFlUIntLe19At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20319,7 +20320,7 @@ static std::uint64_t readFlUIntLe19At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe19At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe19At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20333,7 +20334,7 @@ static std::uint64_t readFlUIntLe19At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20345,7 +20346,7 @@ static std::uint64_t readFlUIntLe20At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20357,7 +20358,7 @@ static std::uint64_t readFlUIntLe20At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20369,7 +20370,7 @@ static std::uint64_t readFlUIntLe20At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20381,7 +20382,7 @@ static std::uint64_t readFlUIntLe20At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20393,7 +20394,7 @@ static std::uint64_t readFlUIntLe20At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20407,7 +20408,7 @@ static std::uint64_t readFlUIntLe20At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20421,7 +20422,7 @@ static std::uint64_t readFlUIntLe20At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe20At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe20At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20435,7 +20436,7 @@ static std::uint64_t readFlUIntLe20At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20447,7 +20448,7 @@ static std::uint64_t readFlUIntLe21At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20459,7 +20460,7 @@ static std::uint64_t readFlUIntLe21At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20471,7 +20472,7 @@ static std::uint64_t readFlUIntLe21At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20483,7 +20484,7 @@ static std::uint64_t readFlUIntLe21At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20497,7 +20498,7 @@ static std::uint64_t readFlUIntLe21At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20511,7 +20512,7 @@ static std::uint64_t readFlUIntLe21At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20525,7 +20526,7 @@ static std::uint64_t readFlUIntLe21At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe21At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe21At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20539,7 +20540,7 @@ static std::uint64_t readFlUIntLe21At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20551,7 +20552,7 @@ static std::uint64_t readFlUIntLe22At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20563,7 +20564,7 @@ static std::uint64_t readFlUIntLe22At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20575,7 +20576,7 @@ static std::uint64_t readFlUIntLe22At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20589,7 +20590,7 @@ static std::uint64_t readFlUIntLe22At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20603,7 +20604,7 @@ static std::uint64_t readFlUIntLe22At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20617,7 +20618,7 @@ static std::uint64_t readFlUIntLe22At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20631,7 +20632,7 @@ static std::uint64_t readFlUIntLe22At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe22At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe22At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20645,7 +20646,7 @@ static std::uint64_t readFlUIntLe22At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20657,7 +20658,7 @@ static std::uint64_t readFlUIntLe23At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20669,7 +20670,7 @@ static std::uint64_t readFlUIntLe23At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20683,7 +20684,7 @@ static std::uint64_t readFlUIntLe23At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20697,7 +20698,7 @@ static std::uint64_t readFlUIntLe23At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20711,7 +20712,7 @@ static std::uint64_t readFlUIntLe23At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20725,7 +20726,7 @@ static std::uint64_t readFlUIntLe23At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20739,7 +20740,7 @@ static std::uint64_t readFlUIntLe23At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe23At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe23At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20753,7 +20754,7 @@ static std::uint64_t readFlUIntLe23At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -20765,7 +20766,7 @@ static std::uint64_t readFlUIntLe24At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20779,7 +20780,7 @@ static std::uint64_t readFlUIntLe24At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20793,7 +20794,7 @@ static std::uint64_t readFlUIntLe24At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20807,7 +20808,7 @@ static std::uint64_t readFlUIntLe24At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20821,7 +20822,7 @@ static std::uint64_t readFlUIntLe24At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20835,7 +20836,7 @@ static std::uint64_t readFlUIntLe24At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20849,7 +20850,7 @@ static std::uint64_t readFlUIntLe24At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe24At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe24At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20863,7 +20864,7 @@ static std::uint64_t readFlUIntLe24At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20877,7 +20878,7 @@ static std::uint64_t readFlUIntLe25At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20891,7 +20892,7 @@ static std::uint64_t readFlUIntLe25At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20905,7 +20906,7 @@ static std::uint64_t readFlUIntLe25At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20919,7 +20920,7 @@ static std::uint64_t readFlUIntLe25At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20933,7 +20934,7 @@ static std::uint64_t readFlUIntLe25At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20947,7 +20948,7 @@ static std::uint64_t readFlUIntLe25At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20961,7 +20962,7 @@ static std::uint64_t readFlUIntLe25At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe25At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe25At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20975,7 +20976,7 @@ static std::uint64_t readFlUIntLe25At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -20989,7 +20990,7 @@ static std::uint64_t readFlUIntLe26At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21003,7 +21004,7 @@ static std::uint64_t readFlUIntLe26At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21017,7 +21018,7 @@ static std::uint64_t readFlUIntLe26At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21031,7 +21032,7 @@ static std::uint64_t readFlUIntLe26At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21045,7 +21046,7 @@ static std::uint64_t readFlUIntLe26At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21059,7 +21060,7 @@ static std::uint64_t readFlUIntLe26At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21073,7 +21074,7 @@ static std::uint64_t readFlUIntLe26At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe26At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe26At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21089,7 +21090,7 @@ static std::uint64_t readFlUIntLe26At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21103,7 +21104,7 @@ static std::uint64_t readFlUIntLe27At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21117,7 +21118,7 @@ static std::uint64_t readFlUIntLe27At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21131,7 +21132,7 @@ static std::uint64_t readFlUIntLe27At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21145,7 +21146,7 @@ static std::uint64_t readFlUIntLe27At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21159,7 +21160,7 @@ static std::uint64_t readFlUIntLe27At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21173,7 +21174,7 @@ static std::uint64_t readFlUIntLe27At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21189,7 +21190,7 @@ static std::uint64_t readFlUIntLe27At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe27At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe27At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21205,7 +21206,7 @@ static std::uint64_t readFlUIntLe27At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21219,7 +21220,7 @@ static std::uint64_t readFlUIntLe28At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21233,7 +21234,7 @@ static std::uint64_t readFlUIntLe28At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21247,7 +21248,7 @@ static std::uint64_t readFlUIntLe28At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21261,7 +21262,7 @@ static std::uint64_t readFlUIntLe28At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21275,7 +21276,7 @@ static std::uint64_t readFlUIntLe28At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21291,7 +21292,7 @@ static std::uint64_t readFlUIntLe28At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21307,7 +21308,7 @@ static std::uint64_t readFlUIntLe28At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe28At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe28At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21323,7 +21324,7 @@ static std::uint64_t readFlUIntLe28At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21337,7 +21338,7 @@ static std::uint64_t readFlUIntLe29At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21351,7 +21352,7 @@ static std::uint64_t readFlUIntLe29At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21365,7 +21366,7 @@ static std::uint64_t readFlUIntLe29At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21379,7 +21380,7 @@ static std::uint64_t readFlUIntLe29At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21395,7 +21396,7 @@ static std::uint64_t readFlUIntLe29At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21411,7 +21412,7 @@ static std::uint64_t readFlUIntLe29At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21427,7 +21428,7 @@ static std::uint64_t readFlUIntLe29At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe29At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe29At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21443,7 +21444,7 @@ static std::uint64_t readFlUIntLe29At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21457,7 +21458,7 @@ static std::uint64_t readFlUIntLe30At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21471,7 +21472,7 @@ static std::uint64_t readFlUIntLe30At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21485,7 +21486,7 @@ static std::uint64_t readFlUIntLe30At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21501,7 +21502,7 @@ static std::uint64_t readFlUIntLe30At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21517,7 +21518,7 @@ static std::uint64_t readFlUIntLe30At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21533,7 +21534,7 @@ static std::uint64_t readFlUIntLe30At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21549,7 +21550,7 @@ static std::uint64_t readFlUIntLe30At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe30At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe30At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21565,7 +21566,7 @@ static std::uint64_t readFlUIntLe30At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21579,7 +21580,7 @@ static std::uint64_t readFlUIntLe31At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21593,7 +21594,7 @@ static std::uint64_t readFlUIntLe31At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21609,7 +21610,7 @@ static std::uint64_t readFlUIntLe31At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21625,7 +21626,7 @@ static std::uint64_t readFlUIntLe31At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21641,7 +21642,7 @@ static std::uint64_t readFlUIntLe31At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21657,7 +21658,7 @@ static std::uint64_t readFlUIntLe31At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21673,7 +21674,7 @@ static std::uint64_t readFlUIntLe31At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe31At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe31At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21689,7 +21690,7 @@ static std::uint64_t readFlUIntLe31At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -21703,7 +21704,7 @@ static std::uint64_t readFlUIntLe32At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21719,7 +21720,7 @@ static std::uint64_t readFlUIntLe32At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21735,7 +21736,7 @@ static std::uint64_t readFlUIntLe32At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21751,7 +21752,7 @@ static std::uint64_t readFlUIntLe32At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21767,7 +21768,7 @@ static std::uint64_t readFlUIntLe32At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21783,7 +21784,7 @@ static std::uint64_t readFlUIntLe32At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21799,7 +21800,7 @@ static std::uint64_t readFlUIntLe32At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe32At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe32At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21815,7 +21816,7 @@ static std::uint64_t readFlUIntLe32At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21831,7 +21832,7 @@ static std::uint64_t readFlUIntLe33At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21847,7 +21848,7 @@ static std::uint64_t readFlUIntLe33At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21863,7 +21864,7 @@ static std::uint64_t readFlUIntLe33At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21879,7 +21880,7 @@ static std::uint64_t readFlUIntLe33At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21895,7 +21896,7 @@ static std::uint64_t readFlUIntLe33At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21911,7 +21912,7 @@ static std::uint64_t readFlUIntLe33At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21927,7 +21928,7 @@ static std::uint64_t readFlUIntLe33At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe33At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe33At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21943,7 +21944,7 @@ static std::uint64_t readFlUIntLe33At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21959,7 +21960,7 @@ static std::uint64_t readFlUIntLe34At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21975,7 +21976,7 @@ static std::uint64_t readFlUIntLe34At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -21991,7 +21992,7 @@ static std::uint64_t readFlUIntLe34At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22007,7 +22008,7 @@ static std::uint64_t readFlUIntLe34At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22023,7 +22024,7 @@ static std::uint64_t readFlUIntLe34At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22039,7 +22040,7 @@ static std::uint64_t readFlUIntLe34At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22055,7 +22056,7 @@ static std::uint64_t readFlUIntLe34At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe34At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe34At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22073,7 +22074,7 @@ static std::uint64_t readFlUIntLe34At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22089,7 +22090,7 @@ static std::uint64_t readFlUIntLe35At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22105,7 +22106,7 @@ static std::uint64_t readFlUIntLe35At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22121,7 +22122,7 @@ static std::uint64_t readFlUIntLe35At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22137,7 +22138,7 @@ static std::uint64_t readFlUIntLe35At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22153,7 +22154,7 @@ static std::uint64_t readFlUIntLe35At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22169,7 +22170,7 @@ static std::uint64_t readFlUIntLe35At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22187,7 +22188,7 @@ static std::uint64_t readFlUIntLe35At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe35At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe35At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22205,7 +22206,7 @@ static std::uint64_t readFlUIntLe35At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22221,7 +22222,7 @@ static std::uint64_t readFlUIntLe36At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22237,7 +22238,7 @@ static std::uint64_t readFlUIntLe36At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22253,7 +22254,7 @@ static std::uint64_t readFlUIntLe36At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22269,7 +22270,7 @@ static std::uint64_t readFlUIntLe36At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22285,7 +22286,7 @@ static std::uint64_t readFlUIntLe36At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22303,7 +22304,7 @@ static std::uint64_t readFlUIntLe36At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22321,7 +22322,7 @@ static std::uint64_t readFlUIntLe36At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe36At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe36At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22339,7 +22340,7 @@ static std::uint64_t readFlUIntLe36At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22355,7 +22356,7 @@ static std::uint64_t readFlUIntLe37At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22371,7 +22372,7 @@ static std::uint64_t readFlUIntLe37At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22387,7 +22388,7 @@ static std::uint64_t readFlUIntLe37At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22403,7 +22404,7 @@ static std::uint64_t readFlUIntLe37At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22421,7 +22422,7 @@ static std::uint64_t readFlUIntLe37At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22439,7 +22440,7 @@ static std::uint64_t readFlUIntLe37At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22457,7 +22458,7 @@ static std::uint64_t readFlUIntLe37At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe37At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe37At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22475,7 +22476,7 @@ static std::uint64_t readFlUIntLe37At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22491,7 +22492,7 @@ static std::uint64_t readFlUIntLe38At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22507,7 +22508,7 @@ static std::uint64_t readFlUIntLe38At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22523,7 +22524,7 @@ static std::uint64_t readFlUIntLe38At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22541,7 +22542,7 @@ static std::uint64_t readFlUIntLe38At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22559,7 +22560,7 @@ static std::uint64_t readFlUIntLe38At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22577,7 +22578,7 @@ static std::uint64_t readFlUIntLe38At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22595,7 +22596,7 @@ static std::uint64_t readFlUIntLe38At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe38At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe38At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22613,7 +22614,7 @@ static std::uint64_t readFlUIntLe38At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22629,7 +22630,7 @@ static std::uint64_t readFlUIntLe39At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22645,7 +22646,7 @@ static std::uint64_t readFlUIntLe39At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22663,7 +22664,7 @@ static std::uint64_t readFlUIntLe39At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22681,7 +22682,7 @@ static std::uint64_t readFlUIntLe39At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22699,7 +22700,7 @@ static std::uint64_t readFlUIntLe39At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22717,7 +22718,7 @@ static std::uint64_t readFlUIntLe39At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22735,7 +22736,7 @@ static std::uint64_t readFlUIntLe39At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe39At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe39At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22753,7 +22754,7 @@ static std::uint64_t readFlUIntLe39At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -22769,7 +22770,7 @@ static std::uint64_t readFlUIntLe40At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22787,7 +22788,7 @@ static std::uint64_t readFlUIntLe40At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22805,7 +22806,7 @@ static std::uint64_t readFlUIntLe40At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22823,7 +22824,7 @@ static std::uint64_t readFlUIntLe40At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22841,7 +22842,7 @@ static std::uint64_t readFlUIntLe40At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22859,7 +22860,7 @@ static std::uint64_t readFlUIntLe40At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22877,7 +22878,7 @@ static std::uint64_t readFlUIntLe40At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe40At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe40At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22895,7 +22896,7 @@ static std::uint64_t readFlUIntLe40At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22913,7 +22914,7 @@ static std::uint64_t readFlUIntLe41At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22931,7 +22932,7 @@ static std::uint64_t readFlUIntLe41At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22949,7 +22950,7 @@ static std::uint64_t readFlUIntLe41At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22967,7 +22968,7 @@ static std::uint64_t readFlUIntLe41At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -22985,7 +22986,7 @@ static std::uint64_t readFlUIntLe41At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23003,7 +23004,7 @@ static std::uint64_t readFlUIntLe41At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23021,7 +23022,7 @@ static std::uint64_t readFlUIntLe41At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe41At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe41At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23039,7 +23040,7 @@ static std::uint64_t readFlUIntLe41At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23057,7 +23058,7 @@ static std::uint64_t readFlUIntLe42At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23075,7 +23076,7 @@ static std::uint64_t readFlUIntLe42At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23093,7 +23094,7 @@ static std::uint64_t readFlUIntLe42At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23111,7 +23112,7 @@ static std::uint64_t readFlUIntLe42At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23129,7 +23130,7 @@ static std::uint64_t readFlUIntLe42At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23147,7 +23148,7 @@ static std::uint64_t readFlUIntLe42At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23165,7 +23166,7 @@ static std::uint64_t readFlUIntLe42At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe42At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe42At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23185,7 +23186,7 @@ static std::uint64_t readFlUIntLe42At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23203,7 +23204,7 @@ static std::uint64_t readFlUIntLe43At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23221,7 +23222,7 @@ static std::uint64_t readFlUIntLe43At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23239,7 +23240,7 @@ static std::uint64_t readFlUIntLe43At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23257,7 +23258,7 @@ static std::uint64_t readFlUIntLe43At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23275,7 +23276,7 @@ static std::uint64_t readFlUIntLe43At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23293,7 +23294,7 @@ static std::uint64_t readFlUIntLe43At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23313,7 +23314,7 @@ static std::uint64_t readFlUIntLe43At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe43At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe43At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23333,7 +23334,7 @@ static std::uint64_t readFlUIntLe43At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23351,7 +23352,7 @@ static std::uint64_t readFlUIntLe44At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23369,7 +23370,7 @@ static std::uint64_t readFlUIntLe44At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23387,7 +23388,7 @@ static std::uint64_t readFlUIntLe44At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23405,7 +23406,7 @@ static std::uint64_t readFlUIntLe44At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23423,7 +23424,7 @@ static std::uint64_t readFlUIntLe44At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23443,7 +23444,7 @@ static std::uint64_t readFlUIntLe44At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23463,7 +23464,7 @@ static std::uint64_t readFlUIntLe44At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe44At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe44At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23483,7 +23484,7 @@ static std::uint64_t readFlUIntLe44At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23501,7 +23502,7 @@ static std::uint64_t readFlUIntLe45At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23519,7 +23520,7 @@ static std::uint64_t readFlUIntLe45At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23537,7 +23538,7 @@ static std::uint64_t readFlUIntLe45At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23555,7 +23556,7 @@ static std::uint64_t readFlUIntLe45At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23575,7 +23576,7 @@ static std::uint64_t readFlUIntLe45At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23595,7 +23596,7 @@ static std::uint64_t readFlUIntLe45At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23615,7 +23616,7 @@ static std::uint64_t readFlUIntLe45At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe45At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe45At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23635,7 +23636,7 @@ static std::uint64_t readFlUIntLe45At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23653,7 +23654,7 @@ static std::uint64_t readFlUIntLe46At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23671,7 +23672,7 @@ static std::uint64_t readFlUIntLe46At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23689,7 +23690,7 @@ static std::uint64_t readFlUIntLe46At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23709,7 +23710,7 @@ static std::uint64_t readFlUIntLe46At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23729,7 +23730,7 @@ static std::uint64_t readFlUIntLe46At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23749,7 +23750,7 @@ static std::uint64_t readFlUIntLe46At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23769,7 +23770,7 @@ static std::uint64_t readFlUIntLe46At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe46At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe46At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23789,7 +23790,7 @@ static std::uint64_t readFlUIntLe46At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23807,7 +23808,7 @@ static std::uint64_t readFlUIntLe47At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23825,7 +23826,7 @@ static std::uint64_t readFlUIntLe47At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23845,7 +23846,7 @@ static std::uint64_t readFlUIntLe47At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23865,7 +23866,7 @@ static std::uint64_t readFlUIntLe47At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23885,7 +23886,7 @@ static std::uint64_t readFlUIntLe47At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23905,7 +23906,7 @@ static std::uint64_t readFlUIntLe47At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23925,7 +23926,7 @@ static std::uint64_t readFlUIntLe47At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe47At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe47At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23945,7 +23946,7 @@ static std::uint64_t readFlUIntLe47At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -23963,7 +23964,7 @@ static std::uint64_t readFlUIntLe48At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -23983,7 +23984,7 @@ static std::uint64_t readFlUIntLe48At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24003,7 +24004,7 @@ static std::uint64_t readFlUIntLe48At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24023,7 +24024,7 @@ static std::uint64_t readFlUIntLe48At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24043,7 +24044,7 @@ static std::uint64_t readFlUIntLe48At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24063,7 +24064,7 @@ static std::uint64_t readFlUIntLe48At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24083,7 +24084,7 @@ static std::uint64_t readFlUIntLe48At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe48At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe48At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24103,7 +24104,7 @@ static std::uint64_t readFlUIntLe48At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24123,7 +24124,7 @@ static std::uint64_t readFlUIntLe49At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24143,7 +24144,7 @@ static std::uint64_t readFlUIntLe49At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24163,7 +24164,7 @@ static std::uint64_t readFlUIntLe49At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24183,7 +24184,7 @@ static std::uint64_t readFlUIntLe49At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24203,7 +24204,7 @@ static std::uint64_t readFlUIntLe49At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24223,7 +24224,7 @@ static std::uint64_t readFlUIntLe49At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24243,7 +24244,7 @@ static std::uint64_t readFlUIntLe49At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe49At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe49At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24263,7 +24264,7 @@ static std::uint64_t readFlUIntLe49At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24283,7 +24284,7 @@ static std::uint64_t readFlUIntLe50At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24303,7 +24304,7 @@ static std::uint64_t readFlUIntLe50At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24323,7 +24324,7 @@ static std::uint64_t readFlUIntLe50At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24343,7 +24344,7 @@ static std::uint64_t readFlUIntLe50At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24363,7 +24364,7 @@ static std::uint64_t readFlUIntLe50At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24383,7 +24384,7 @@ static std::uint64_t readFlUIntLe50At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24403,7 +24404,7 @@ static std::uint64_t readFlUIntLe50At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe50At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe50At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24425,7 +24426,7 @@ static std::uint64_t readFlUIntLe50At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24445,7 +24446,7 @@ static std::uint64_t readFlUIntLe51At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24465,7 +24466,7 @@ static std::uint64_t readFlUIntLe51At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24485,7 +24486,7 @@ static std::uint64_t readFlUIntLe51At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24505,7 +24506,7 @@ static std::uint64_t readFlUIntLe51At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24525,7 +24526,7 @@ static std::uint64_t readFlUIntLe51At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24545,7 +24546,7 @@ static std::uint64_t readFlUIntLe51At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24567,7 +24568,7 @@ static std::uint64_t readFlUIntLe51At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe51At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe51At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24589,7 +24590,7 @@ static std::uint64_t readFlUIntLe51At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24609,7 +24610,7 @@ static std::uint64_t readFlUIntLe52At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24629,7 +24630,7 @@ static std::uint64_t readFlUIntLe52At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24649,7 +24650,7 @@ static std::uint64_t readFlUIntLe52At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24669,7 +24670,7 @@ static std::uint64_t readFlUIntLe52At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24689,7 +24690,7 @@ static std::uint64_t readFlUIntLe52At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24711,7 +24712,7 @@ static std::uint64_t readFlUIntLe52At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24733,7 +24734,7 @@ static std::uint64_t readFlUIntLe52At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe52At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe52At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24755,7 +24756,7 @@ static std::uint64_t readFlUIntLe52At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24775,7 +24776,7 @@ static std::uint64_t readFlUIntLe53At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24795,7 +24796,7 @@ static std::uint64_t readFlUIntLe53At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24815,7 +24816,7 @@ static std::uint64_t readFlUIntLe53At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24835,7 +24836,7 @@ static std::uint64_t readFlUIntLe53At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24857,7 +24858,7 @@ static std::uint64_t readFlUIntLe53At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24879,7 +24880,7 @@ static std::uint64_t readFlUIntLe53At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24901,7 +24902,7 @@ static std::uint64_t readFlUIntLe53At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe53At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe53At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -24923,7 +24924,7 @@ static std::uint64_t readFlUIntLe53At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24943,7 +24944,7 @@ static std::uint64_t readFlUIntLe54At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24963,7 +24964,7 @@ static std::uint64_t readFlUIntLe54At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -24983,7 +24984,7 @@ static std::uint64_t readFlUIntLe54At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25005,7 +25006,7 @@ static std::uint64_t readFlUIntLe54At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25027,7 +25028,7 @@ static std::uint64_t readFlUIntLe54At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25049,7 +25050,7 @@ static std::uint64_t readFlUIntLe54At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25071,7 +25072,7 @@ static std::uint64_t readFlUIntLe54At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe54At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe54At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25093,7 +25094,7 @@ static std::uint64_t readFlUIntLe54At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -25113,7 +25114,7 @@ static std::uint64_t readFlUIntLe55At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -25133,7 +25134,7 @@ static std::uint64_t readFlUIntLe55At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25155,7 +25156,7 @@ static std::uint64_t readFlUIntLe55At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25177,7 +25178,7 @@ static std::uint64_t readFlUIntLe55At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25199,7 +25200,7 @@ static std::uint64_t readFlUIntLe55At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25221,7 +25222,7 @@ static std::uint64_t readFlUIntLe55At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25243,7 +25244,7 @@ static std::uint64_t readFlUIntLe55At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe55At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe55At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25265,7 +25266,7 @@ static std::uint64_t readFlUIntLe55At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -25285,7 +25286,7 @@ static std::uint64_t readFlUIntLe56At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25307,7 +25308,7 @@ static std::uint64_t readFlUIntLe56At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25329,7 +25330,7 @@ static std::uint64_t readFlUIntLe56At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25351,7 +25352,7 @@ static std::uint64_t readFlUIntLe56At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25373,7 +25374,7 @@ static std::uint64_t readFlUIntLe56At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25395,7 +25396,7 @@ static std::uint64_t readFlUIntLe56At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25417,7 +25418,7 @@ static std::uint64_t readFlUIntLe56At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe56At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe56At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25439,7 +25440,7 @@ static std::uint64_t readFlUIntLe56At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25461,7 +25462,7 @@ static std::uint64_t readFlUIntLe57At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25483,7 +25484,7 @@ static std::uint64_t readFlUIntLe57At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25505,7 +25506,7 @@ static std::uint64_t readFlUIntLe57At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25527,7 +25528,7 @@ static std::uint64_t readFlUIntLe57At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25549,7 +25550,7 @@ static std::uint64_t readFlUIntLe57At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25571,7 +25572,7 @@ static std::uint64_t readFlUIntLe57At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25593,7 +25594,7 @@ static std::uint64_t readFlUIntLe57At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe57At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe57At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25615,7 +25616,7 @@ static std::uint64_t readFlUIntLe57At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25637,7 +25638,7 @@ static std::uint64_t readFlUIntLe58At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25659,7 +25660,7 @@ static std::uint64_t readFlUIntLe58At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25681,7 +25682,7 @@ static std::uint64_t readFlUIntLe58At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25703,7 +25704,7 @@ static std::uint64_t readFlUIntLe58At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25725,7 +25726,7 @@ static std::uint64_t readFlUIntLe58At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25747,7 +25748,7 @@ static std::uint64_t readFlUIntLe58At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25769,7 +25770,7 @@ static std::uint64_t readFlUIntLe58At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe58At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe58At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -25793,7 +25794,7 @@ static std::uint64_t readFlUIntLe58At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25815,7 +25816,7 @@ static std::uint64_t readFlUIntLe59At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25837,7 +25838,7 @@ static std::uint64_t readFlUIntLe59At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25859,7 +25860,7 @@ static std::uint64_t readFlUIntLe59At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25881,7 +25882,7 @@ static std::uint64_t readFlUIntLe59At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25903,7 +25904,7 @@ static std::uint64_t readFlUIntLe59At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25925,7 +25926,7 @@ static std::uint64_t readFlUIntLe59At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -25949,7 +25950,7 @@ static std::uint64_t readFlUIntLe59At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe59At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe59At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -25973,7 +25974,7 @@ static std::uint64_t readFlUIntLe59At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -25995,7 +25996,7 @@ static std::uint64_t readFlUIntLe60At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26017,7 +26018,7 @@ static std::uint64_t readFlUIntLe60At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26039,7 +26040,7 @@ static std::uint64_t readFlUIntLe60At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26061,7 +26062,7 @@ static std::uint64_t readFlUIntLe60At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26083,7 +26084,7 @@ static std::uint64_t readFlUIntLe60At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26107,7 +26108,7 @@ static std::uint64_t readFlUIntLe60At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26131,7 +26132,7 @@ static std::uint64_t readFlUIntLe60At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe60At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe60At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26155,7 +26156,7 @@ static std::uint64_t readFlUIntLe60At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26177,7 +26178,7 @@ static std::uint64_t readFlUIntLe61At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26199,7 +26200,7 @@ static std::uint64_t readFlUIntLe61At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26221,7 +26222,7 @@ static std::uint64_t readFlUIntLe61At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26243,7 +26244,7 @@ static std::uint64_t readFlUIntLe61At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26267,7 +26268,7 @@ static std::uint64_t readFlUIntLe61At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26291,7 +26292,7 @@ static std::uint64_t readFlUIntLe61At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26315,7 +26316,7 @@ static std::uint64_t readFlUIntLe61At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe61At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe61At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26339,7 +26340,7 @@ static std::uint64_t readFlUIntLe61At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26361,7 +26362,7 @@ static std::uint64_t readFlUIntLe62At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26383,7 +26384,7 @@ static std::uint64_t readFlUIntLe62At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26405,7 +26406,7 @@ static std::uint64_t readFlUIntLe62At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26429,7 +26430,7 @@ static std::uint64_t readFlUIntLe62At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26453,7 +26454,7 @@ static std::uint64_t readFlUIntLe62At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26477,7 +26478,7 @@ static std::uint64_t readFlUIntLe62At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26501,7 +26502,7 @@ static std::uint64_t readFlUIntLe62At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe62At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe62At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26525,7 +26526,7 @@ static std::uint64_t readFlUIntLe62At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26547,7 +26548,7 @@ static std::uint64_t readFlUIntLe63At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26569,7 +26570,7 @@ static std::uint64_t readFlUIntLe63At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26593,7 +26594,7 @@ static std::uint64_t readFlUIntLe63At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26617,7 +26618,7 @@ static std::uint64_t readFlUIntLe63At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26641,7 +26642,7 @@ static std::uint64_t readFlUIntLe63At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26665,7 +26666,7 @@ static std::uint64_t readFlUIntLe63At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26689,7 +26690,7 @@ static std::uint64_t readFlUIntLe63At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe63At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe63At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26713,7 +26714,7 @@ static std::uint64_t readFlUIntLe63At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At0(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -26734,7 +26735,7 @@ static std::uint64_t readFlUIntLe64At0(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At1(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26757,7 +26758,7 @@ static std::uint64_t readFlUIntLe64At1(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At2(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26780,7 +26781,7 @@ static std::uint64_t readFlUIntLe64At2(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At3(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26803,7 +26804,7 @@ static std::uint64_t readFlUIntLe64At3(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At4(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26826,7 +26827,7 @@ static std::uint64_t readFlUIntLe64At4(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At5(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26849,7 +26850,7 @@ static std::uint64_t readFlUIntLe64At5(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At6(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26872,7 +26873,7 @@ static std::uint64_t readFlUIntLe64At6(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::uint64_t readFlUIntLe64At7(const std::uint8_t * const buf) {
+std::uint64_t readFlUIntLe64At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -26895,7 +26896,7 @@ static std::uint64_t readFlUIntLe64At7(const std::uint8_t * const buf) {
     return res;
 }
 
-static std::int64_t readFlSIntLe1At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -26908,7 +26909,7 @@ static std::int64_t readFlSIntLe1At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -26921,7 +26922,7 @@ static std::int64_t readFlSIntLe1At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -26934,7 +26935,7 @@ static std::int64_t readFlSIntLe1At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -26947,7 +26948,7 @@ static std::int64_t readFlSIntLe1At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -26960,7 +26961,7 @@ static std::int64_t readFlSIntLe1At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -26973,7 +26974,7 @@ static std::int64_t readFlSIntLe1At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -26986,7 +26987,7 @@ static std::int64_t readFlSIntLe1At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe1At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe1At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 7);
@@ -26999,7 +27000,7 @@ static std::int64_t readFlSIntLe1At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27012,7 +27013,7 @@ static std::int64_t readFlSIntLe2At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -27025,7 +27026,7 @@ static std::int64_t readFlSIntLe2At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -27038,7 +27039,7 @@ static std::int64_t readFlSIntLe2At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -27051,7 +27052,7 @@ static std::int64_t readFlSIntLe2At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -27064,7 +27065,7 @@ static std::int64_t readFlSIntLe2At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -27077,7 +27078,7 @@ static std::int64_t readFlSIntLe2At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 6);
@@ -27090,7 +27091,7 @@ static std::int64_t readFlSIntLe2At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe2At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe2At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27105,7 +27106,7 @@ static std::int64_t readFlSIntLe2At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27118,7 +27119,7 @@ static std::int64_t readFlSIntLe3At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -27131,7 +27132,7 @@ static std::int64_t readFlSIntLe3At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -27144,7 +27145,7 @@ static std::int64_t readFlSIntLe3At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -27157,7 +27158,7 @@ static std::int64_t readFlSIntLe3At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -27170,7 +27171,7 @@ static std::int64_t readFlSIntLe3At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 5);
@@ -27183,7 +27184,7 @@ static std::int64_t readFlSIntLe3At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27198,7 +27199,7 @@ static std::int64_t readFlSIntLe3At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe3At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe3At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27213,7 +27214,7 @@ static std::int64_t readFlSIntLe3At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27226,7 +27227,7 @@ static std::int64_t readFlSIntLe4At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -27239,7 +27240,7 @@ static std::int64_t readFlSIntLe4At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -27252,7 +27253,7 @@ static std::int64_t readFlSIntLe4At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -27265,7 +27266,7 @@ static std::int64_t readFlSIntLe4At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 4);
@@ -27278,7 +27279,7 @@ static std::int64_t readFlSIntLe4At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27293,7 +27294,7 @@ static std::int64_t readFlSIntLe4At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27308,7 +27309,7 @@ static std::int64_t readFlSIntLe4At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe4At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe4At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27323,7 +27324,7 @@ static std::int64_t readFlSIntLe4At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27336,7 +27337,7 @@ static std::int64_t readFlSIntLe5At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -27349,7 +27350,7 @@ static std::int64_t readFlSIntLe5At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -27362,7 +27363,7 @@ static std::int64_t readFlSIntLe5At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 3);
@@ -27375,7 +27376,7 @@ static std::int64_t readFlSIntLe5At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27390,7 +27391,7 @@ static std::int64_t readFlSIntLe5At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27405,7 +27406,7 @@ static std::int64_t readFlSIntLe5At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27420,7 +27421,7 @@ static std::int64_t readFlSIntLe5At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe5At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe5At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27435,7 +27436,7 @@ static std::int64_t readFlSIntLe5At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27448,7 +27449,7 @@ static std::int64_t readFlSIntLe6At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -27461,7 +27462,7 @@ static std::int64_t readFlSIntLe6At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 2);
@@ -27474,7 +27475,7 @@ static std::int64_t readFlSIntLe6At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27489,7 +27490,7 @@ static std::int64_t readFlSIntLe6At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27504,7 +27505,7 @@ static std::int64_t readFlSIntLe6At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27519,7 +27520,7 @@ static std::int64_t readFlSIntLe6At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27534,7 +27535,7 @@ static std::int64_t readFlSIntLe6At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe6At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe6At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27549,7 +27550,7 @@ static std::int64_t readFlSIntLe6At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27562,7 +27563,7 @@ static std::int64_t readFlSIntLe7At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= (buf[0] >> 1);
@@ -27575,7 +27576,7 @@ static std::int64_t readFlSIntLe7At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27590,7 +27591,7 @@ static std::int64_t readFlSIntLe7At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27605,7 +27606,7 @@ static std::int64_t readFlSIntLe7At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27620,7 +27621,7 @@ static std::int64_t readFlSIntLe7At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27635,7 +27636,7 @@ static std::int64_t readFlSIntLe7At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27650,7 +27651,7 @@ static std::int64_t readFlSIntLe7At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe7At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe7At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27665,7 +27666,7 @@ static std::int64_t readFlSIntLe7At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[0];
@@ -27678,7 +27679,7 @@ static std::int64_t readFlSIntLe8At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27693,7 +27694,7 @@ static std::int64_t readFlSIntLe8At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27708,7 +27709,7 @@ static std::int64_t readFlSIntLe8At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27723,7 +27724,7 @@ static std::int64_t readFlSIntLe8At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27738,7 +27739,7 @@ static std::int64_t readFlSIntLe8At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27753,7 +27754,7 @@ static std::int64_t readFlSIntLe8At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27768,7 +27769,7 @@ static std::int64_t readFlSIntLe8At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe8At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe8At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27783,7 +27784,7 @@ static std::int64_t readFlSIntLe8At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27798,7 +27799,7 @@ static std::int64_t readFlSIntLe9At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27813,7 +27814,7 @@ static std::int64_t readFlSIntLe9At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27828,7 +27829,7 @@ static std::int64_t readFlSIntLe9At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27843,7 +27844,7 @@ static std::int64_t readFlSIntLe9At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27858,7 +27859,7 @@ static std::int64_t readFlSIntLe9At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27873,7 +27874,7 @@ static std::int64_t readFlSIntLe9At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27888,7 +27889,7 @@ static std::int64_t readFlSIntLe9At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe9At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe9At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27903,7 +27904,7 @@ static std::int64_t readFlSIntLe9At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27918,7 +27919,7 @@ static std::int64_t readFlSIntLe10At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27933,7 +27934,7 @@ static std::int64_t readFlSIntLe10At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27948,7 +27949,7 @@ static std::int64_t readFlSIntLe10At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27963,7 +27964,7 @@ static std::int64_t readFlSIntLe10At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27978,7 +27979,7 @@ static std::int64_t readFlSIntLe10At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -27993,7 +27994,7 @@ static std::int64_t readFlSIntLe10At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28008,7 +28009,7 @@ static std::int64_t readFlSIntLe10At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe10At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe10At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28025,7 +28026,7 @@ static std::int64_t readFlSIntLe10At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28040,7 +28041,7 @@ static std::int64_t readFlSIntLe11At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28055,7 +28056,7 @@ static std::int64_t readFlSIntLe11At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28070,7 +28071,7 @@ static std::int64_t readFlSIntLe11At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28085,7 +28086,7 @@ static std::int64_t readFlSIntLe11At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28100,7 +28101,7 @@ static std::int64_t readFlSIntLe11At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28115,7 +28116,7 @@ static std::int64_t readFlSIntLe11At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28132,7 +28133,7 @@ static std::int64_t readFlSIntLe11At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe11At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe11At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28149,7 +28150,7 @@ static std::int64_t readFlSIntLe11At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28164,7 +28165,7 @@ static std::int64_t readFlSIntLe12At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28179,7 +28180,7 @@ static std::int64_t readFlSIntLe12At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28194,7 +28195,7 @@ static std::int64_t readFlSIntLe12At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28209,7 +28210,7 @@ static std::int64_t readFlSIntLe12At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28224,7 +28225,7 @@ static std::int64_t readFlSIntLe12At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28241,7 +28242,7 @@ static std::int64_t readFlSIntLe12At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28258,7 +28259,7 @@ static std::int64_t readFlSIntLe12At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe12At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe12At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28275,7 +28276,7 @@ static std::int64_t readFlSIntLe12At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28290,7 +28291,7 @@ static std::int64_t readFlSIntLe13At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28305,7 +28306,7 @@ static std::int64_t readFlSIntLe13At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28320,7 +28321,7 @@ static std::int64_t readFlSIntLe13At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28335,7 +28336,7 @@ static std::int64_t readFlSIntLe13At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28352,7 +28353,7 @@ static std::int64_t readFlSIntLe13At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28369,7 +28370,7 @@ static std::int64_t readFlSIntLe13At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28386,7 +28387,7 @@ static std::int64_t readFlSIntLe13At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe13At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe13At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28403,7 +28404,7 @@ static std::int64_t readFlSIntLe13At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28418,7 +28419,7 @@ static std::int64_t readFlSIntLe14At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28433,7 +28434,7 @@ static std::int64_t readFlSIntLe14At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28448,7 +28449,7 @@ static std::int64_t readFlSIntLe14At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28465,7 +28466,7 @@ static std::int64_t readFlSIntLe14At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28482,7 +28483,7 @@ static std::int64_t readFlSIntLe14At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28499,7 +28500,7 @@ static std::int64_t readFlSIntLe14At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28516,7 +28517,7 @@ static std::int64_t readFlSIntLe14At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe14At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe14At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28533,7 +28534,7 @@ static std::int64_t readFlSIntLe14At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28548,7 +28549,7 @@ static std::int64_t readFlSIntLe15At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28563,7 +28564,7 @@ static std::int64_t readFlSIntLe15At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28580,7 +28581,7 @@ static std::int64_t readFlSIntLe15At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28597,7 +28598,7 @@ static std::int64_t readFlSIntLe15At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28614,7 +28615,7 @@ static std::int64_t readFlSIntLe15At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28631,7 +28632,7 @@ static std::int64_t readFlSIntLe15At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28648,7 +28649,7 @@ static std::int64_t readFlSIntLe15At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe15At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe15At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28665,7 +28666,7 @@ static std::int64_t readFlSIntLe15At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[1];
@@ -28680,7 +28681,7 @@ static std::int64_t readFlSIntLe16At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28697,7 +28698,7 @@ static std::int64_t readFlSIntLe16At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28714,7 +28715,7 @@ static std::int64_t readFlSIntLe16At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28731,7 +28732,7 @@ static std::int64_t readFlSIntLe16At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28748,7 +28749,7 @@ static std::int64_t readFlSIntLe16At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28765,7 +28766,7 @@ static std::int64_t readFlSIntLe16At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28782,7 +28783,7 @@ static std::int64_t readFlSIntLe16At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe16At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe16At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28799,7 +28800,7 @@ static std::int64_t readFlSIntLe16At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28816,7 +28817,7 @@ static std::int64_t readFlSIntLe17At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28833,7 +28834,7 @@ static std::int64_t readFlSIntLe17At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28850,7 +28851,7 @@ static std::int64_t readFlSIntLe17At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28867,7 +28868,7 @@ static std::int64_t readFlSIntLe17At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28884,7 +28885,7 @@ static std::int64_t readFlSIntLe17At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28901,7 +28902,7 @@ static std::int64_t readFlSIntLe17At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28918,7 +28919,7 @@ static std::int64_t readFlSIntLe17At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe17At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe17At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28935,7 +28936,7 @@ static std::int64_t readFlSIntLe17At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28952,7 +28953,7 @@ static std::int64_t readFlSIntLe18At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28969,7 +28970,7 @@ static std::int64_t readFlSIntLe18At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -28986,7 +28987,7 @@ static std::int64_t readFlSIntLe18At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29003,7 +29004,7 @@ static std::int64_t readFlSIntLe18At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29020,7 +29021,7 @@ static std::int64_t readFlSIntLe18At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29037,7 +29038,7 @@ static std::int64_t readFlSIntLe18At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29054,7 +29055,7 @@ static std::int64_t readFlSIntLe18At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe18At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe18At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29073,7 +29074,7 @@ static std::int64_t readFlSIntLe18At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29090,7 +29091,7 @@ static std::int64_t readFlSIntLe19At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29107,7 +29108,7 @@ static std::int64_t readFlSIntLe19At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29124,7 +29125,7 @@ static std::int64_t readFlSIntLe19At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29141,7 +29142,7 @@ static std::int64_t readFlSIntLe19At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29158,7 +29159,7 @@ static std::int64_t readFlSIntLe19At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29175,7 +29176,7 @@ static std::int64_t readFlSIntLe19At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29194,7 +29195,7 @@ static std::int64_t readFlSIntLe19At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe19At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe19At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29213,7 +29214,7 @@ static std::int64_t readFlSIntLe19At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29230,7 +29231,7 @@ static std::int64_t readFlSIntLe20At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29247,7 +29248,7 @@ static std::int64_t readFlSIntLe20At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29264,7 +29265,7 @@ static std::int64_t readFlSIntLe20At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29281,7 +29282,7 @@ static std::int64_t readFlSIntLe20At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29298,7 +29299,7 @@ static std::int64_t readFlSIntLe20At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29317,7 +29318,7 @@ static std::int64_t readFlSIntLe20At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29336,7 +29337,7 @@ static std::int64_t readFlSIntLe20At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe20At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe20At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29355,7 +29356,7 @@ static std::int64_t readFlSIntLe20At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29372,7 +29373,7 @@ static std::int64_t readFlSIntLe21At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29389,7 +29390,7 @@ static std::int64_t readFlSIntLe21At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29406,7 +29407,7 @@ static std::int64_t readFlSIntLe21At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29423,7 +29424,7 @@ static std::int64_t readFlSIntLe21At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29442,7 +29443,7 @@ static std::int64_t readFlSIntLe21At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29461,7 +29462,7 @@ static std::int64_t readFlSIntLe21At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29480,7 +29481,7 @@ static std::int64_t readFlSIntLe21At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe21At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe21At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29499,7 +29500,7 @@ static std::int64_t readFlSIntLe21At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29516,7 +29517,7 @@ static std::int64_t readFlSIntLe22At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29533,7 +29534,7 @@ static std::int64_t readFlSIntLe22At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29550,7 +29551,7 @@ static std::int64_t readFlSIntLe22At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29569,7 +29570,7 @@ static std::int64_t readFlSIntLe22At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29588,7 +29589,7 @@ static std::int64_t readFlSIntLe22At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29607,7 +29608,7 @@ static std::int64_t readFlSIntLe22At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29626,7 +29627,7 @@ static std::int64_t readFlSIntLe22At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe22At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe22At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29645,7 +29646,7 @@ static std::int64_t readFlSIntLe22At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29662,7 +29663,7 @@ static std::int64_t readFlSIntLe23At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29679,7 +29680,7 @@ static std::int64_t readFlSIntLe23At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29698,7 +29699,7 @@ static std::int64_t readFlSIntLe23At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29717,7 +29718,7 @@ static std::int64_t readFlSIntLe23At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29736,7 +29737,7 @@ static std::int64_t readFlSIntLe23At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29755,7 +29756,7 @@ static std::int64_t readFlSIntLe23At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29774,7 +29775,7 @@ static std::int64_t readFlSIntLe23At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe23At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe23At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29793,7 +29794,7 @@ static std::int64_t readFlSIntLe23At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[2];
@@ -29810,7 +29811,7 @@ static std::int64_t readFlSIntLe24At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29829,7 +29830,7 @@ static std::int64_t readFlSIntLe24At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29848,7 +29849,7 @@ static std::int64_t readFlSIntLe24At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29867,7 +29868,7 @@ static std::int64_t readFlSIntLe24At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29886,7 +29887,7 @@ static std::int64_t readFlSIntLe24At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29905,7 +29906,7 @@ static std::int64_t readFlSIntLe24At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29924,7 +29925,7 @@ static std::int64_t readFlSIntLe24At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe24At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe24At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29943,7 +29944,7 @@ static std::int64_t readFlSIntLe24At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29962,7 +29963,7 @@ static std::int64_t readFlSIntLe25At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -29981,7 +29982,7 @@ static std::int64_t readFlSIntLe25At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30000,7 +30001,7 @@ static std::int64_t readFlSIntLe25At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30019,7 +30020,7 @@ static std::int64_t readFlSIntLe25At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30038,7 +30039,7 @@ static std::int64_t readFlSIntLe25At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30057,7 +30058,7 @@ static std::int64_t readFlSIntLe25At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30076,7 +30077,7 @@ static std::int64_t readFlSIntLe25At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe25At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe25At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30095,7 +30096,7 @@ static std::int64_t readFlSIntLe25At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30114,7 +30115,7 @@ static std::int64_t readFlSIntLe26At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30133,7 +30134,7 @@ static std::int64_t readFlSIntLe26At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30152,7 +30153,7 @@ static std::int64_t readFlSIntLe26At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30171,7 +30172,7 @@ static std::int64_t readFlSIntLe26At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30190,7 +30191,7 @@ static std::int64_t readFlSIntLe26At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30209,7 +30210,7 @@ static std::int64_t readFlSIntLe26At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30228,7 +30229,7 @@ static std::int64_t readFlSIntLe26At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe26At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe26At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30249,7 +30250,7 @@ static std::int64_t readFlSIntLe26At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30268,7 +30269,7 @@ static std::int64_t readFlSIntLe27At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30287,7 +30288,7 @@ static std::int64_t readFlSIntLe27At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30306,7 +30307,7 @@ static std::int64_t readFlSIntLe27At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30325,7 +30326,7 @@ static std::int64_t readFlSIntLe27At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30344,7 +30345,7 @@ static std::int64_t readFlSIntLe27At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30363,7 +30364,7 @@ static std::int64_t readFlSIntLe27At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30384,7 +30385,7 @@ static std::int64_t readFlSIntLe27At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe27At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe27At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30405,7 +30406,7 @@ static std::int64_t readFlSIntLe27At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30424,7 +30425,7 @@ static std::int64_t readFlSIntLe28At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30443,7 +30444,7 @@ static std::int64_t readFlSIntLe28At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30462,7 +30463,7 @@ static std::int64_t readFlSIntLe28At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30481,7 +30482,7 @@ static std::int64_t readFlSIntLe28At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30500,7 +30501,7 @@ static std::int64_t readFlSIntLe28At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30521,7 +30522,7 @@ static std::int64_t readFlSIntLe28At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30542,7 +30543,7 @@ static std::int64_t readFlSIntLe28At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe28At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe28At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30563,7 +30564,7 @@ static std::int64_t readFlSIntLe28At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30582,7 +30583,7 @@ static std::int64_t readFlSIntLe29At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30601,7 +30602,7 @@ static std::int64_t readFlSIntLe29At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30620,7 +30621,7 @@ static std::int64_t readFlSIntLe29At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30639,7 +30640,7 @@ static std::int64_t readFlSIntLe29At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30660,7 +30661,7 @@ static std::int64_t readFlSIntLe29At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30681,7 +30682,7 @@ static std::int64_t readFlSIntLe29At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30702,7 +30703,7 @@ static std::int64_t readFlSIntLe29At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe29At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe29At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30723,7 +30724,7 @@ static std::int64_t readFlSIntLe29At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30742,7 +30743,7 @@ static std::int64_t readFlSIntLe30At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30761,7 +30762,7 @@ static std::int64_t readFlSIntLe30At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30780,7 +30781,7 @@ static std::int64_t readFlSIntLe30At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30801,7 +30802,7 @@ static std::int64_t readFlSIntLe30At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30822,7 +30823,7 @@ static std::int64_t readFlSIntLe30At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30843,7 +30844,7 @@ static std::int64_t readFlSIntLe30At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30864,7 +30865,7 @@ static std::int64_t readFlSIntLe30At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe30At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe30At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30885,7 +30886,7 @@ static std::int64_t readFlSIntLe30At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30904,7 +30905,7 @@ static std::int64_t readFlSIntLe31At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -30923,7 +30924,7 @@ static std::int64_t readFlSIntLe31At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30944,7 +30945,7 @@ static std::int64_t readFlSIntLe31At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30965,7 +30966,7 @@ static std::int64_t readFlSIntLe31At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -30986,7 +30987,7 @@ static std::int64_t readFlSIntLe31At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31007,7 +31008,7 @@ static std::int64_t readFlSIntLe31At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31028,7 +31029,7 @@ static std::int64_t readFlSIntLe31At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe31At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe31At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31049,7 +31050,7 @@ static std::int64_t readFlSIntLe31At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[3];
@@ -31068,7 +31069,7 @@ static std::int64_t readFlSIntLe32At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31089,7 +31090,7 @@ static std::int64_t readFlSIntLe32At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31110,7 +31111,7 @@ static std::int64_t readFlSIntLe32At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31131,7 +31132,7 @@ static std::int64_t readFlSIntLe32At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31152,7 +31153,7 @@ static std::int64_t readFlSIntLe32At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31173,7 +31174,7 @@ static std::int64_t readFlSIntLe32At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31194,7 +31195,7 @@ static std::int64_t readFlSIntLe32At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe32At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe32At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31215,7 +31216,7 @@ static std::int64_t readFlSIntLe32At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31236,7 +31237,7 @@ static std::int64_t readFlSIntLe33At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31257,7 +31258,7 @@ static std::int64_t readFlSIntLe33At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31278,7 +31279,7 @@ static std::int64_t readFlSIntLe33At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31299,7 +31300,7 @@ static std::int64_t readFlSIntLe33At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31320,7 +31321,7 @@ static std::int64_t readFlSIntLe33At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31341,7 +31342,7 @@ static std::int64_t readFlSIntLe33At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31362,7 +31363,7 @@ static std::int64_t readFlSIntLe33At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe33At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe33At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31383,7 +31384,7 @@ static std::int64_t readFlSIntLe33At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31404,7 +31405,7 @@ static std::int64_t readFlSIntLe34At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31425,7 +31426,7 @@ static std::int64_t readFlSIntLe34At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31446,7 +31447,7 @@ static std::int64_t readFlSIntLe34At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31467,7 +31468,7 @@ static std::int64_t readFlSIntLe34At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31488,7 +31489,7 @@ static std::int64_t readFlSIntLe34At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31509,7 +31510,7 @@ static std::int64_t readFlSIntLe34At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31530,7 +31531,7 @@ static std::int64_t readFlSIntLe34At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe34At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe34At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -31553,7 +31554,7 @@ static std::int64_t readFlSIntLe34At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31574,7 +31575,7 @@ static std::int64_t readFlSIntLe35At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31595,7 +31596,7 @@ static std::int64_t readFlSIntLe35At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31616,7 +31617,7 @@ static std::int64_t readFlSIntLe35At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31637,7 +31638,7 @@ static std::int64_t readFlSIntLe35At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31658,7 +31659,7 @@ static std::int64_t readFlSIntLe35At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31679,7 +31680,7 @@ static std::int64_t readFlSIntLe35At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -31702,7 +31703,7 @@ static std::int64_t readFlSIntLe35At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe35At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe35At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -31725,7 +31726,7 @@ static std::int64_t readFlSIntLe35At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31746,7 +31747,7 @@ static std::int64_t readFlSIntLe36At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31767,7 +31768,7 @@ static std::int64_t readFlSIntLe36At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31788,7 +31789,7 @@ static std::int64_t readFlSIntLe36At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31809,7 +31810,7 @@ static std::int64_t readFlSIntLe36At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31830,7 +31831,7 @@ static std::int64_t readFlSIntLe36At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -31853,7 +31854,7 @@ static std::int64_t readFlSIntLe36At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -31876,7 +31877,7 @@ static std::int64_t readFlSIntLe36At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe36At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe36At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -31899,7 +31900,7 @@ static std::int64_t readFlSIntLe36At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31920,7 +31921,7 @@ static std::int64_t readFlSIntLe37At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31941,7 +31942,7 @@ static std::int64_t readFlSIntLe37At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31962,7 +31963,7 @@ static std::int64_t readFlSIntLe37At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -31983,7 +31984,7 @@ static std::int64_t readFlSIntLe37At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32006,7 +32007,7 @@ static std::int64_t readFlSIntLe37At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32029,7 +32030,7 @@ static std::int64_t readFlSIntLe37At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32052,7 +32053,7 @@ static std::int64_t readFlSIntLe37At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe37At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe37At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32075,7 +32076,7 @@ static std::int64_t readFlSIntLe37At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -32096,7 +32097,7 @@ static std::int64_t readFlSIntLe38At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -32117,7 +32118,7 @@ static std::int64_t readFlSIntLe38At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -32138,7 +32139,7 @@ static std::int64_t readFlSIntLe38At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32161,7 +32162,7 @@ static std::int64_t readFlSIntLe38At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32184,7 +32185,7 @@ static std::int64_t readFlSIntLe38At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32207,7 +32208,7 @@ static std::int64_t readFlSIntLe38At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32230,7 +32231,7 @@ static std::int64_t readFlSIntLe38At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe38At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe38At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32253,7 +32254,7 @@ static std::int64_t readFlSIntLe38At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -32274,7 +32275,7 @@ static std::int64_t readFlSIntLe39At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -32295,7 +32296,7 @@ static std::int64_t readFlSIntLe39At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32318,7 +32319,7 @@ static std::int64_t readFlSIntLe39At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32341,7 +32342,7 @@ static std::int64_t readFlSIntLe39At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32364,7 +32365,7 @@ static std::int64_t readFlSIntLe39At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32387,7 +32388,7 @@ static std::int64_t readFlSIntLe39At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32410,7 +32411,7 @@ static std::int64_t readFlSIntLe39At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe39At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe39At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32433,7 +32434,7 @@ static std::int64_t readFlSIntLe39At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[4];
@@ -32454,7 +32455,7 @@ static std::int64_t readFlSIntLe40At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32477,7 +32478,7 @@ static std::int64_t readFlSIntLe40At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32500,7 +32501,7 @@ static std::int64_t readFlSIntLe40At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32523,7 +32524,7 @@ static std::int64_t readFlSIntLe40At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32546,7 +32547,7 @@ static std::int64_t readFlSIntLe40At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32569,7 +32570,7 @@ static std::int64_t readFlSIntLe40At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32592,7 +32593,7 @@ static std::int64_t readFlSIntLe40At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe40At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe40At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32615,7 +32616,7 @@ static std::int64_t readFlSIntLe40At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32638,7 +32639,7 @@ static std::int64_t readFlSIntLe41At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32661,7 +32662,7 @@ static std::int64_t readFlSIntLe41At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32684,7 +32685,7 @@ static std::int64_t readFlSIntLe41At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32707,7 +32708,7 @@ static std::int64_t readFlSIntLe41At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32730,7 +32731,7 @@ static std::int64_t readFlSIntLe41At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32753,7 +32754,7 @@ static std::int64_t readFlSIntLe41At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32776,7 +32777,7 @@ static std::int64_t readFlSIntLe41At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe41At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe41At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32799,7 +32800,7 @@ static std::int64_t readFlSIntLe41At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32822,7 +32823,7 @@ static std::int64_t readFlSIntLe42At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32845,7 +32846,7 @@ static std::int64_t readFlSIntLe42At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32868,7 +32869,7 @@ static std::int64_t readFlSIntLe42At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32891,7 +32892,7 @@ static std::int64_t readFlSIntLe42At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32914,7 +32915,7 @@ static std::int64_t readFlSIntLe42At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32937,7 +32938,7 @@ static std::int64_t readFlSIntLe42At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -32960,7 +32961,7 @@ static std::int64_t readFlSIntLe42At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe42At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe42At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -32985,7 +32986,7 @@ static std::int64_t readFlSIntLe42At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33008,7 +33009,7 @@ static std::int64_t readFlSIntLe43At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33031,7 +33032,7 @@ static std::int64_t readFlSIntLe43At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33054,7 +33055,7 @@ static std::int64_t readFlSIntLe43At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33077,7 +33078,7 @@ static std::int64_t readFlSIntLe43At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33100,7 +33101,7 @@ static std::int64_t readFlSIntLe43At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33123,7 +33124,7 @@ static std::int64_t readFlSIntLe43At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33148,7 +33149,7 @@ static std::int64_t readFlSIntLe43At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe43At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe43At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33173,7 +33174,7 @@ static std::int64_t readFlSIntLe43At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33196,7 +33197,7 @@ static std::int64_t readFlSIntLe44At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33219,7 +33220,7 @@ static std::int64_t readFlSIntLe44At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33242,7 +33243,7 @@ static std::int64_t readFlSIntLe44At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33265,7 +33266,7 @@ static std::int64_t readFlSIntLe44At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33288,7 +33289,7 @@ static std::int64_t readFlSIntLe44At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33313,7 +33314,7 @@ static std::int64_t readFlSIntLe44At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33338,7 +33339,7 @@ static std::int64_t readFlSIntLe44At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe44At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe44At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33363,7 +33364,7 @@ static std::int64_t readFlSIntLe44At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33386,7 +33387,7 @@ static std::int64_t readFlSIntLe45At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33409,7 +33410,7 @@ static std::int64_t readFlSIntLe45At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33432,7 +33433,7 @@ static std::int64_t readFlSIntLe45At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33455,7 +33456,7 @@ static std::int64_t readFlSIntLe45At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33480,7 +33481,7 @@ static std::int64_t readFlSIntLe45At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33505,7 +33506,7 @@ static std::int64_t readFlSIntLe45At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33530,7 +33531,7 @@ static std::int64_t readFlSIntLe45At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe45At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe45At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33555,7 +33556,7 @@ static std::int64_t readFlSIntLe45At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33578,7 +33579,7 @@ static std::int64_t readFlSIntLe46At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33601,7 +33602,7 @@ static std::int64_t readFlSIntLe46At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33624,7 +33625,7 @@ static std::int64_t readFlSIntLe46At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33649,7 +33650,7 @@ static std::int64_t readFlSIntLe46At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33674,7 +33675,7 @@ static std::int64_t readFlSIntLe46At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33699,7 +33700,7 @@ static std::int64_t readFlSIntLe46At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33724,7 +33725,7 @@ static std::int64_t readFlSIntLe46At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe46At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe46At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33749,7 +33750,7 @@ static std::int64_t readFlSIntLe46At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33772,7 +33773,7 @@ static std::int64_t readFlSIntLe47At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33795,7 +33796,7 @@ static std::int64_t readFlSIntLe47At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33820,7 +33821,7 @@ static std::int64_t readFlSIntLe47At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33845,7 +33846,7 @@ static std::int64_t readFlSIntLe47At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33870,7 +33871,7 @@ static std::int64_t readFlSIntLe47At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33895,7 +33896,7 @@ static std::int64_t readFlSIntLe47At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33920,7 +33921,7 @@ static std::int64_t readFlSIntLe47At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe47At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe47At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33945,7 +33946,7 @@ static std::int64_t readFlSIntLe47At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[5];
@@ -33968,7 +33969,7 @@ static std::int64_t readFlSIntLe48At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -33993,7 +33994,7 @@ static std::int64_t readFlSIntLe48At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34018,7 +34019,7 @@ static std::int64_t readFlSIntLe48At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34043,7 +34044,7 @@ static std::int64_t readFlSIntLe48At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34068,7 +34069,7 @@ static std::int64_t readFlSIntLe48At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34093,7 +34094,7 @@ static std::int64_t readFlSIntLe48At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34118,7 +34119,7 @@ static std::int64_t readFlSIntLe48At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe48At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe48At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34143,7 +34144,7 @@ static std::int64_t readFlSIntLe48At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34168,7 +34169,7 @@ static std::int64_t readFlSIntLe49At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34193,7 +34194,7 @@ static std::int64_t readFlSIntLe49At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34218,7 +34219,7 @@ static std::int64_t readFlSIntLe49At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34243,7 +34244,7 @@ static std::int64_t readFlSIntLe49At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34268,7 +34269,7 @@ static std::int64_t readFlSIntLe49At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34293,7 +34294,7 @@ static std::int64_t readFlSIntLe49At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34318,7 +34319,7 @@ static std::int64_t readFlSIntLe49At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe49At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe49At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34343,7 +34344,7 @@ static std::int64_t readFlSIntLe49At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34368,7 +34369,7 @@ static std::int64_t readFlSIntLe50At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34393,7 +34394,7 @@ static std::int64_t readFlSIntLe50At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34418,7 +34419,7 @@ static std::int64_t readFlSIntLe50At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34443,7 +34444,7 @@ static std::int64_t readFlSIntLe50At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34468,7 +34469,7 @@ static std::int64_t readFlSIntLe50At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34493,7 +34494,7 @@ static std::int64_t readFlSIntLe50At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34518,7 +34519,7 @@ static std::int64_t readFlSIntLe50At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe50At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe50At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -34545,7 +34546,7 @@ static std::int64_t readFlSIntLe50At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34570,7 +34571,7 @@ static std::int64_t readFlSIntLe51At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34595,7 +34596,7 @@ static std::int64_t readFlSIntLe51At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34620,7 +34621,7 @@ static std::int64_t readFlSIntLe51At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34645,7 +34646,7 @@ static std::int64_t readFlSIntLe51At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34670,7 +34671,7 @@ static std::int64_t readFlSIntLe51At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34695,7 +34696,7 @@ static std::int64_t readFlSIntLe51At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -34722,7 +34723,7 @@ static std::int64_t readFlSIntLe51At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe51At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe51At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -34749,7 +34750,7 @@ static std::int64_t readFlSIntLe51At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34774,7 +34775,7 @@ static std::int64_t readFlSIntLe52At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34799,7 +34800,7 @@ static std::int64_t readFlSIntLe52At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34824,7 +34825,7 @@ static std::int64_t readFlSIntLe52At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34849,7 +34850,7 @@ static std::int64_t readFlSIntLe52At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34874,7 +34875,7 @@ static std::int64_t readFlSIntLe52At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -34901,7 +34902,7 @@ static std::int64_t readFlSIntLe52At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -34928,7 +34929,7 @@ static std::int64_t readFlSIntLe52At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe52At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe52At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -34955,7 +34956,7 @@ static std::int64_t readFlSIntLe52At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -34980,7 +34981,7 @@ static std::int64_t readFlSIntLe53At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35005,7 +35006,7 @@ static std::int64_t readFlSIntLe53At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35030,7 +35031,7 @@ static std::int64_t readFlSIntLe53At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35055,7 +35056,7 @@ static std::int64_t readFlSIntLe53At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35082,7 +35083,7 @@ static std::int64_t readFlSIntLe53At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35109,7 +35110,7 @@ static std::int64_t readFlSIntLe53At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35136,7 +35137,7 @@ static std::int64_t readFlSIntLe53At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe53At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe53At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35163,7 +35164,7 @@ static std::int64_t readFlSIntLe53At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35188,7 +35189,7 @@ static std::int64_t readFlSIntLe54At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35213,7 +35214,7 @@ static std::int64_t readFlSIntLe54At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35238,7 +35239,7 @@ static std::int64_t readFlSIntLe54At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35265,7 +35266,7 @@ static std::int64_t readFlSIntLe54At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35292,7 +35293,7 @@ static std::int64_t readFlSIntLe54At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35319,7 +35320,7 @@ static std::int64_t readFlSIntLe54At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35346,7 +35347,7 @@ static std::int64_t readFlSIntLe54At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe54At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe54At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35373,7 +35374,7 @@ static std::int64_t readFlSIntLe54At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35398,7 +35399,7 @@ static std::int64_t readFlSIntLe55At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35423,7 +35424,7 @@ static std::int64_t readFlSIntLe55At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35450,7 +35451,7 @@ static std::int64_t readFlSIntLe55At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35477,7 +35478,7 @@ static std::int64_t readFlSIntLe55At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35504,7 +35505,7 @@ static std::int64_t readFlSIntLe55At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35531,7 +35532,7 @@ static std::int64_t readFlSIntLe55At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35558,7 +35559,7 @@ static std::int64_t readFlSIntLe55At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe55At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe55At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35585,7 +35586,7 @@ static std::int64_t readFlSIntLe55At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[6];
@@ -35610,7 +35611,7 @@ static std::int64_t readFlSIntLe56At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35637,7 +35638,7 @@ static std::int64_t readFlSIntLe56At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35664,7 +35665,7 @@ static std::int64_t readFlSIntLe56At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35691,7 +35692,7 @@ static std::int64_t readFlSIntLe56At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35718,7 +35719,7 @@ static std::int64_t readFlSIntLe56At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35745,7 +35746,7 @@ static std::int64_t readFlSIntLe56At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35772,7 +35773,7 @@ static std::int64_t readFlSIntLe56At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe56At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe56At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35799,7 +35800,7 @@ static std::int64_t readFlSIntLe56At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35826,7 +35827,7 @@ static std::int64_t readFlSIntLe57At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35853,7 +35854,7 @@ static std::int64_t readFlSIntLe57At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35880,7 +35881,7 @@ static std::int64_t readFlSIntLe57At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35907,7 +35908,7 @@ static std::int64_t readFlSIntLe57At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35934,7 +35935,7 @@ static std::int64_t readFlSIntLe57At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35961,7 +35962,7 @@ static std::int64_t readFlSIntLe57At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -35988,7 +35989,7 @@ static std::int64_t readFlSIntLe57At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe57At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe57At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36015,7 +36016,7 @@ static std::int64_t readFlSIntLe57At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36042,7 +36043,7 @@ static std::int64_t readFlSIntLe58At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36069,7 +36070,7 @@ static std::int64_t readFlSIntLe58At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36096,7 +36097,7 @@ static std::int64_t readFlSIntLe58At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36123,7 +36124,7 @@ static std::int64_t readFlSIntLe58At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36150,7 +36151,7 @@ static std::int64_t readFlSIntLe58At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36177,7 +36178,7 @@ static std::int64_t readFlSIntLe58At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36204,7 +36205,7 @@ static std::int64_t readFlSIntLe58At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe58At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe58At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36233,7 +36234,7 @@ static std::int64_t readFlSIntLe58At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36260,7 +36261,7 @@ static std::int64_t readFlSIntLe59At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36287,7 +36288,7 @@ static std::int64_t readFlSIntLe59At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36314,7 +36315,7 @@ static std::int64_t readFlSIntLe59At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36341,7 +36342,7 @@ static std::int64_t readFlSIntLe59At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36368,7 +36369,7 @@ static std::int64_t readFlSIntLe59At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36395,7 +36396,7 @@ static std::int64_t readFlSIntLe59At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36424,7 +36425,7 @@ static std::int64_t readFlSIntLe59At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe59At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe59At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36453,7 +36454,7 @@ static std::int64_t readFlSIntLe59At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36480,7 +36481,7 @@ static std::int64_t readFlSIntLe60At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36507,7 +36508,7 @@ static std::int64_t readFlSIntLe60At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36534,7 +36535,7 @@ static std::int64_t readFlSIntLe60At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36561,7 +36562,7 @@ static std::int64_t readFlSIntLe60At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36588,7 +36589,7 @@ static std::int64_t readFlSIntLe60At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36617,7 +36618,7 @@ static std::int64_t readFlSIntLe60At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36646,7 +36647,7 @@ static std::int64_t readFlSIntLe60At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe60At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe60At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36675,7 +36676,7 @@ static std::int64_t readFlSIntLe60At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36702,7 +36703,7 @@ static std::int64_t readFlSIntLe61At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36729,7 +36730,7 @@ static std::int64_t readFlSIntLe61At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36756,7 +36757,7 @@ static std::int64_t readFlSIntLe61At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36783,7 +36784,7 @@ static std::int64_t readFlSIntLe61At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36812,7 +36813,7 @@ static std::int64_t readFlSIntLe61At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36841,7 +36842,7 @@ static std::int64_t readFlSIntLe61At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36870,7 +36871,7 @@ static std::int64_t readFlSIntLe61At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe61At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe61At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -36899,7 +36900,7 @@ static std::int64_t readFlSIntLe61At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36926,7 +36927,7 @@ static std::int64_t readFlSIntLe62At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36953,7 +36954,7 @@ static std::int64_t readFlSIntLe62At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -36980,7 +36981,7 @@ static std::int64_t readFlSIntLe62At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37009,7 +37010,7 @@ static std::int64_t readFlSIntLe62At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37038,7 +37039,7 @@ static std::int64_t readFlSIntLe62At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37067,7 +37068,7 @@ static std::int64_t readFlSIntLe62At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37096,7 +37097,7 @@ static std::int64_t readFlSIntLe62At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe62At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe62At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37125,7 +37126,7 @@ static std::int64_t readFlSIntLe62At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -37152,7 +37153,7 @@ static std::int64_t readFlSIntLe63At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -37179,7 +37180,7 @@ static std::int64_t readFlSIntLe63At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37208,7 +37209,7 @@ static std::int64_t readFlSIntLe63At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37237,7 +37238,7 @@ static std::int64_t readFlSIntLe63At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37266,7 +37267,7 @@ static std::int64_t readFlSIntLe63At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37295,7 +37296,7 @@ static std::int64_t readFlSIntLe63At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37324,7 +37325,7 @@ static std::int64_t readFlSIntLe63At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe63At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe63At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37353,7 +37354,7 @@ static std::int64_t readFlSIntLe63At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At0(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At0(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[7];
@@ -37374,7 +37375,7 @@ static std::int64_t readFlSIntLe64At0(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At1(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At1(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37397,7 +37398,7 @@ static std::int64_t readFlSIntLe64At1(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At2(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At2(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37420,7 +37421,7 @@ static std::int64_t readFlSIntLe64At2(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At3(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At3(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37443,7 +37444,7 @@ static std::int64_t readFlSIntLe64At3(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At4(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At4(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37466,7 +37467,7 @@ static std::int64_t readFlSIntLe64At4(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At5(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At5(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37489,7 +37490,7 @@ static std::int64_t readFlSIntLe64At5(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At6(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At6(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37512,7 +37513,7 @@ static std::int64_t readFlSIntLe64At6(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::int64_t readFlSIntLe64At7(const std::uint8_t * const buf) {
+std::int64_t readFlSIntLe64At7(const std::uint8_t * const buf) {
     std::uint64_t res = 0;
 
     res |= buf[8];
@@ -37535,7 +37536,7 @@ static std::int64_t readFlSIntLe64At7(const std::uint8_t * const buf) {
     return static_cast<std::int64_t>(res);
 }
 
-static std::uint64_t (*readFlUIntBeFuncs[])(const std::uint8_t *) = {
+std::uint64_t (*readFlUIntBeFuncs[])(const std::uint8_t *) = {
     readFlUIntBe1At0,
     readFlUIntBe1At1,
     readFlUIntBe1At2,
@@ -38050,7 +38051,7 @@ static std::uint64_t (*readFlUIntBeFuncs[])(const std::uint8_t *) = {
     readFlUIntBe64At7,
 };
 
-static std::int64_t (*readFlSIntBeFuncs[])(const std::uint8_t *) = {
+std::int64_t (*readFlSIntBeFuncs[])(const std::uint8_t *) = {
     readFlSIntBe1At0,
     readFlSIntBe1At1,
     readFlSIntBe1At2,
@@ -38565,7 +38566,7 @@ static std::int64_t (*readFlSIntBeFuncs[])(const std::uint8_t *) = {
     readFlSIntBe64At7,
 };
 
-static std::uint64_t (*readFlUIntLeFuncs[])(const std::uint8_t *) = {
+std::uint64_t (*readFlUIntLeFuncs[])(const std::uint8_t *) = {
     readFlUIntLe1At0,
     readFlUIntLe1At1,
     readFlUIntLe1At2,
@@ -39080,7 +39081,7 @@ static std::uint64_t (*readFlUIntLeFuncs[])(const std::uint8_t *) = {
     readFlUIntLe64At7,
 };
 
-static std::int64_t (*readFlSIntLeFuncs[])(const std::uint8_t *) = {
+std::int64_t (*readFlSIntLeFuncs[])(const std::uint8_t *) = {
     readFlSIntLe1At0,
     readFlSIntLe1At1,
     readFlSIntLe1At2,
@@ -39595,6 +39596,7 @@ static std::int64_t (*readFlSIntLeFuncs[])(const std::uint8_t *) = {
     readFlSIntLe64At7,
 };
 
+} // namespace
 } // namespace internal
 } // namespace yactfr
 

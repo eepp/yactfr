@@ -576,12 +576,14 @@ void PseudoErt::_validateNotEmpty(const PseudoDst& pseudoDst) const
     throwTextParseError(ss.str());
 }
 
-static bool isFlUIntNotDtWrapper(const PseudoDt& pseudoDt) noexcept
+namespace {
+
+bool isFlUIntNotDtWrapper(const PseudoDt& pseudoDt) noexcept
 {
     return pseudoDt.kind() == PseudoDt::Kind::FL_UINT;
 }
 
-static auto validateNoMappedClkTypeId(const PseudoDt& basePseudoDt)
+auto validateNoMappedClkTypeId(const PseudoDt& basePseudoDt)
 {
     const auto pseudoDts = findPseudoUIntTypes(basePseudoDt, [](auto& pseudoIntType, auto) {
         if (!isFlUIntNotDtWrapper(pseudoIntType)) {
@@ -598,6 +600,8 @@ static auto validateNoMappedClkTypeId(const PseudoDt& basePseudoDt)
                             basePseudoDt.loc());
     }
 }
+
+} // namespace
 
 void PseudoErt::_validateNoMappedClkTypeId() const
 {
@@ -626,7 +630,7 @@ void PseudoErt::_validateNoMappedClkTypeId() const
 }
 
 template <typename PseudoTypeT>
-static std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
+std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
 {
     std::ostringstream ss;
 
@@ -653,7 +657,9 @@ static std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
     return ss.str();
 }
 
-static auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudoDt)
+namespace {
+
+auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudoDt)
 {
     return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
         return pseudoDt.kind() == PseudoDt::Kind::SL_ARRAY &&
@@ -661,8 +667,7 @@ static auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& bas
     });
 }
 
-static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
-                                      const UnsignedIntegerTypeRole role)
+auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt, const UnsignedIntegerTypeRole role)
 {
     return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
         if (isFlUIntNotDtWrapper(pseudoIntType)) {
@@ -682,7 +687,7 @@ static auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt,
     });
 }
 
-static void validateNoMetadataStreamUuidRole(const PseudoDt * const pseudoDt)
+void validateNoMetadataStreamUuidRole(const PseudoDt * const pseudoDt)
 {
     if (!pseudoDt) {
         return;
@@ -718,8 +723,8 @@ static void validateNoMetadataStreamUuidRole(const PseudoDt * const pseudoDt)
  *
  * Throws `TextParseError` on error.
  */
-static void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
-                                        const UnsignedIntegerTypeRoleSet& allowedRoles)
+void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
+                                 const UnsignedIntegerTypeRoleSet& allowedRoles)
 {
     if (!pseudoDt) {
         return;
@@ -769,7 +774,7 @@ static void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
  *
  * Throws `TextParseError` on error.
  */
-static void validatePseudoUIntTypeNoClkTsRole(const PseudoDt * const pseudoDt)
+void validatePseudoUIntTypeNoClkTsRole(const PseudoDt * const pseudoDt)
 {
     if (!pseudoDt) {
         return;
@@ -789,6 +794,8 @@ static void validatePseudoUIntTypeNoClkTsRole(const PseudoDt * const pseudoDt)
                             (*set.begin())->loc());
     }
 }
+
+} // namespace
 
 void PseudoErt::validate(const PseudoDst& pseudoDst) const
 {
@@ -1023,7 +1030,9 @@ bool PseudoTraceType::hasPseudoOrphanErt(const TypeId dstId, const TypeId ertId)
     return it->second.find(ertId) != it->second.end();
 }
 
-static Size flUIntTypeLen(const PseudoDt& pseudoDt) noexcept
+namespace {
+
+Size flUIntTypeLen(const PseudoDt& pseudoDt) noexcept
 {
     assert(pseudoDt.isFlUInt());
 
@@ -1038,6 +1047,8 @@ static Size flUIntTypeLen(const PseudoDt& pseudoDt) noexcept
         return dt.asFixedLengthUnsignedIntegerType().length();
     }
 }
+
+} // namespace
 
 void PseudoTraceType::validate() const
 {

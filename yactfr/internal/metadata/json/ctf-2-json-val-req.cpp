@@ -255,7 +255,9 @@ public:
     }
 };
 
-static void validateSIntUll(const JsonVal& jsonVal)
+namespace {
+
+void validateSIntUll(const JsonVal& jsonVal)
 {
     if (!jsonVal.isUInt()) {
         return;
@@ -271,6 +273,8 @@ static void validateSIntUll(const JsonVal& jsonVal)
         throwTextParseError(ss.str(), jsonVal.loc());
     }
 }
+
+} // namespace
 
 /*
  * JSON signed integer value (range) requirement.
@@ -488,12 +492,14 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Adds a JSON object value property requirement having the key
  * `key` to `propReqs`, passing `valReq` and `isRequired` to its
  * constructor.
  */
-static void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
+void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
                           JsonValReq::SP valReq, const bool isRequired = false)
 {
     propReqs.emplace(std::make_pair(std::move(key),
@@ -505,7 +511,7 @@ static void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 object type object
  * property requirement.
  */
-static JsonObjValReq::PropReqsEntry objTypePropReqEntry(std::string&& type)
+JsonObjValReq::PropReqsEntry objTypePropReqEntry(std::string&& type)
 {
     return {strs::TYPE, {JsonStrValInSetReq::shared(std::move(type)), true}};
 }
@@ -515,7 +521,7 @@ static JsonObjValReq::PropReqsEntry objTypePropReqEntry(std::string&& type)
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 attributes object
  * property requirement.
  */
-static JsonObjValReq::PropReqsEntry attrsPropReqEntry()
+JsonObjValReq::PropReqsEntry attrsPropReqEntry()
 {
     return {strs::ATTRS, {JsonAttrsValReq::shared()}};
 }
@@ -525,10 +531,12 @@ static JsonObjValReq::PropReqsEntry attrsPropReqEntry()
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 extensions object
  * property requirement.
  */
-static JsonObjValReq::PropReqsEntry extPropReqEntry()
+JsonObjValReq::PropReqsEntry extPropReqEntry()
 {
     return {strs::EXT, {JsonExtValReq::shared()}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON full data type value abstract requirement.
@@ -747,15 +755,19 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 integer type
  * preferred display base object property requirement.
  */
-static JsonObjValReq::PropReqsEntry intTypePrefDispBasePropReqEntry()
+JsonObjValReq::PropReqsEntry intTypePrefDispBasePropReqEntry()
 {
     return {strs::PREF_DISP_BASE, {JsonUIntValInSetReq::shared({2, 8, 10, 16})}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON fixed-length integer type value abstract requirement.
@@ -777,12 +789,14 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 data type roles
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry rolesPropReqEntry()
+JsonObjValReq::PropReqsEntry rolesPropReqEntry()
 {
     return {strs::ROLES, {JsonRolesValReq::shared()}};
 }
@@ -798,6 +812,8 @@ JsonObjValReq::PropReqsEntry intTypeMappingsPropReqEntry()
     return {strs::MAPPINGS, {JsonIntTypeMappingsFlagsValReq<JsonIntValReqT>::shared("mapping",
                                                                                     "integer type mappings")}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON fixed-length unsigned integer type value requirement.
@@ -1077,12 +1093,14 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 static-length data
  * type length object property requirement.
  */
-static JsonObjValReq::PropReqsEntry slDtLenPropReqEntry()
+JsonObjValReq::PropReqsEntry slDtLenPropReqEntry()
 {
     return {strs::LEN, {JsonValReq::shared(JsonVal::Kind::UINT), true}};
 }
@@ -1092,10 +1110,12 @@ static JsonObjValReq::PropReqsEntry slDtLenPropReqEntry()
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 dynamic-length data
  * type length location object property requirement.
  */
-static JsonObjValReq::PropReqsEntry dlDtLenFieldLocPropReqEntry()
+JsonObjValReq::PropReqsEntry dlDtLenFieldLocPropReqEntry()
 {
     return {strs::LEN_FIELD_LOC, {JsonDataLocValReq::shared(), true}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON static-length string type value requirement.
@@ -1302,14 +1322,16 @@ private:
     const JsonAnyFullDtValReq *_anyFullDtValReq;
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 data type property
  * requirement having the key `key`.
  */
-static JsonObjValReq::PropReqsEntry anyDtPropReqEntry(std::string&& key,
-                                                      const JsonAnyFullDtValReq& anyFullDtValReq,
-                                                      const bool isRequired = false)
+JsonObjValReq::PropReqsEntry anyDtPropReqEntry(std::string&& key,
+                                               const JsonAnyFullDtValReq& anyFullDtValReq,
+                                               const bool isRequired = false)
 {
     return {std::move(key), {JsonAnyDtValReqWrapper::shared(anyFullDtValReq), isRequired}};
 }
@@ -1319,10 +1341,12 @@ static JsonObjValReq::PropReqsEntry anyDtPropReqEntry(std::string&& key,
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 object name object
  * property requirement.
  */
-static JsonObjValReq::PropReqsEntry namePropReqEntry(const bool isRequired)
+JsonObjValReq::PropReqsEntry namePropReqEntry(const bool isRequired)
 {
     return {strs::NAME, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON structure field member type value requirement.
@@ -1358,18 +1382,20 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 minimum alignment
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry minAlignPropReqEntry()
+JsonObjValReq::PropReqsEntry minAlignPropReqEntry()
 {
     return {strs::MIN_ALIGN, JsonUIntValIsAlignReq::shared()};
 }
 
-static void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propName,
-                                     const char * const what)
+void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propName,
+                              const char * const what)
 {
     const auto jsonEntries = jsonVal.asObj()[propName];
 
@@ -1399,6 +1425,8 @@ static void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const 
         names.insert(*jsonNameStrVal);
     }
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON structure type value requirement.
@@ -1532,12 +1560,14 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 selector location
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry selLocPropReqEntry()
+JsonObjValReq::PropReqsEntry selLocPropReqEntry()
 {
     return {strs::SEL_FIELD_LOC, {JsonDataLocValReq::shared(), true}};
 }
@@ -1547,10 +1577,12 @@ static JsonObjValReq::PropReqsEntry selLocPropReqEntry()
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 selector ranges
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry selRangesPropReqEntry(const bool isRequired)
+JsonObjValReq::PropReqsEntry selRangesPropReqEntry(const bool isRequired)
 {
     return {strs::SEL_FIELD_RANGES, {JsonIntRangeSetValReq::shared(), isRequired}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON optional type value requirement.
@@ -1939,12 +1971,14 @@ private:
     }
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 object namespace
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry nsPropReqEntry()
+JsonObjValReq::PropReqsEntry nsPropReqEntry()
 {
     return {strs::NS, {JsonValReq::shared(JsonVal::Kind::STR)}};
 }
@@ -1954,10 +1988,12 @@ static JsonObjValReq::PropReqsEntry nsPropReqEntry()
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 object unique ID
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry uidPropReqEntry(const bool isRequired)
+JsonObjValReq::PropReqsEntry uidPropReqEntry(const bool isRequired)
 {
     return {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
 }
+
+} // namespace
 
 /*
  * CTF 2 JSON clock origin value requirement.
@@ -2034,15 +2070,19 @@ private:
     JsonClkOrigValReq _objReq;
 };
 
+namespace {
+
 /*
  * Returns the pair (suitable for insertion into a
  * `JsonObjValReq::PropReqs` instance) for the CTF 2 object numeric ID
  * object property requirement.
  */
-static JsonObjValReq::PropReqsEntry idPropReqEntry()
+JsonObjValReq::PropReqsEntry idPropReqEntry()
 {
     return {strs::ID, {JsonValReq::shared(JsonVal::Kind::UINT)}};
 }
+
+} // namespace
 
 /*
  * CTF 2 clock type fragment value requirement.

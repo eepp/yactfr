@@ -16,8 +16,9 @@
 
 namespace yactfr {
 namespace internal {
+namespace {
 
-static JsonObjVal::UP createDefClkOffsetJsonObjVal()
+JsonObjVal::UP createDefClkOffsetJsonObjVal()
 {
     JsonObjVal::Container entries;
 
@@ -25,6 +26,8 @@ static JsonObjVal::UP createDefClkOffsetJsonObjVal()
     entries.insert(std::make_pair(strs::CYCLES, createJsonVal(0ULL, TextLocation {})));
     return createJsonVal(std::move(entries), TextLocation {});
 }
+
+} // namespace
 
 Ctf2JsonSeqParser::Ctf2JsonSeqParser(const char * const begin, const char * const end) :
     _begin {begin},
@@ -246,8 +249,10 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
     _pseudoTraceType->clkTypes().insert(std::move(clkType));
 }
 
-static boost::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const JsonObjVal& jsonObjVal,
-                                                                                const std::string& propName)
+namespace {
+
+boost::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const JsonObjVal& jsonObjVal,
+                                                                         const std::string& propName)
 {
     const auto jsonVal = jsonObjVal[propName];
 
@@ -257,6 +262,8 @@ static boost::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(
 
     return boost::none;
 }
+
+} // namespace
 
 void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
 {

@@ -51,72 +51,72 @@ auto genReadFlIntBe(const std::uint8_t * const buf)
     return static_cast<GenReadFlIntRetT<ValT>>(val);
 }
 
-static inline auto readFlUInt8(const std::uint8_t * const buf)
+inline auto readFlUInt8(const std::uint8_t * const buf)
 {
     return static_cast<std::uint64_t>(buf[0]);
 }
 
-static inline auto readFlSInt8(const std::uint8_t * const buf)
+inline auto readFlSInt8(const std::uint8_t * const buf)
 {
     return static_cast<std::int64_t>(static_cast<std::int8_t>(buf[0]));
 }
 
-static inline auto readFlUIntLe16(const std::uint8_t * const buf)
+inline auto readFlUIntLe16(const std::uint8_t * const buf)
 {
     return genReadFlIntLe<std::uint16_t>(buf);
 }
 
-static inline auto readFlUIntLe32(const std::uint8_t * const buf)
+inline auto readFlUIntLe32(const std::uint8_t * const buf)
 {
     return genReadFlIntLe<std::uint32_t>(buf);
 }
 
-static inline auto readFlUIntLe64(const std::uint8_t * const buf)
+inline auto readFlUIntLe64(const std::uint8_t * const buf)
 {
     return genReadFlIntLe<std::uint64_t>(buf);
 }
 
-static inline auto readFlSIntLe16(const std::uint8_t * const buf)
+inline auto readFlSIntLe16(const std::uint8_t * const buf)
 {
     return genReadFlIntLe<std::int16_t>(buf);
 }
 
-static inline auto readFlSIntLe32(const std::uint8_t * const buf)
+inline auto readFlSIntLe32(const std::uint8_t * const buf)
 {
     return genReadFlIntLe<std::int32_t>(buf);
 }
 
-static inline auto readFlSIntLe64(const std::uint8_t * const buf)
+inline auto readFlSIntLe64(const std::uint8_t * const buf)
 {
     return genReadFlIntLe<std::int64_t>(buf);
 }
 
-static inline auto readFlUIntBe16(const std::uint8_t * const buf)
+inline auto readFlUIntBe16(const std::uint8_t * const buf)
 {
     return genReadFlIntBe<std::uint16_t>(buf);
 }
 
-static inline auto readFlUIntBe32(const std::uint8_t * const buf)
+inline auto readFlUIntBe32(const std::uint8_t * const buf)
 {
     return genReadFlIntBe<std::uint32_t>(buf);
 }
 
-static inline auto readFlUIntBe64(const std::uint8_t * const buf)
+inline auto readFlUIntBe64(const std::uint8_t * const buf)
 {
     return genReadFlIntBe<std::uint64_t>(buf);
 }
 
-static inline auto readFlSIntBe16(const std::uint8_t * const buf)
+inline auto readFlSIntBe16(const std::uint8_t * const buf)
 {
     return genReadFlIntBe<std::int16_t>(buf);
 }
 
-static inline auto readFlSIntBe32(const std::uint8_t * const buf)
+inline auto readFlSIntBe32(const std::uint8_t * const buf)
 {
     return genReadFlIntBe<std::int32_t>(buf);
 }
 
-static inline auto readFlSIntBe64(const std::uint8_t * const buf)
+inline auto readFlSIntBe64(const std::uint8_t * const buf)
 {
     return genReadFlIntBe<std::int64_t>(buf);
 }

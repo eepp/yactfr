@@ -19,7 +19,7 @@
 namespace yactfr {
 namespace internal {
 
-static inline MapItem::UP tryCloneAttrs(const MapItem * const attrs)
+inline MapItem::UP tryCloneAttrs(const MapItem * const attrs)
 {
     if (!attrs) {
         return nullptr;

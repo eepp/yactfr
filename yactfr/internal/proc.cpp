@@ -11,8 +11,9 @@
 
 namespace yactfr {
 namespace internal {
+namespace {
 
-static inline std::string _strName(const std::string& name)
+std::string _strName(const std::string& name)
 {
     std::string rName;
 
@@ -22,7 +23,7 @@ static inline std::string _strName(const std::string& name)
     return rName;
 }
 
-static inline std::string _strEndName(const std::string& name)
+std::string _strEndName(const std::string& name)
 {
     std::string rName;
 
@@ -32,7 +33,7 @@ static inline std::string _strEndName(const std::string& name)
     return rName;
 }
 
-static inline std::string _strSpecName(const std::string& name)
+std::string _strSpecName(const std::string& name)
 {
     std::string rName;
 
@@ -42,7 +43,7 @@ static inline std::string _strSpecName(const std::string& name)
     return rName;
 }
 
-static inline std::string _strTopName(const std::string& name)
+std::string _strTopName(const std::string& name)
 {
     std::string rName;
 
@@ -52,7 +53,7 @@ static inline std::string _strTopName(const std::string& name)
     return rName;
 }
 
-static inline std::string _strScopeName(const std::string& name)
+std::string _strScopeName(const std::string& name)
 {
     std::string rName;
 
@@ -61,6 +62,8 @@ static inline std::string _strScopeName(const std::string& name)
     rName += "\033[0m|";
     return rName;
 }
+
+} // namespace
 
 void Proc::buildRawProcFromShared()
 {
@@ -107,7 +110,9 @@ std::string Instr::_toStr(Size) const
     return ss.str();
 }
 
-static bool isEndProc(const Instr& instr) noexcept
+namespace {
+
+bool isEndProc(const Instr& instr) noexcept
 {
     switch (instr.kind()) {
     case Instr::Kind::END_DS_ER_PREAMBLE_PROC:
@@ -120,6 +125,8 @@ static bool isEndProc(const Instr& instr) noexcept
         return false;
     }
 }
+
+} // namespace
 
 std::string Instr::toStr(const Size indent) const
 {
@@ -189,7 +196,9 @@ SetPktEndDefClkValInstr::SetPktEndDefClkValInstr() :
 {
 }
 
-static inline Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitArrayType());
 
@@ -290,6 +299,8 @@ static inline Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
     return kind;
 }
 
+} // namespace
+
 ReadFlBitArrayInstr::ReadFlBitArrayInstr(const Kind kind, const StructureMemberType * const member,
                                          const DataType& dt) :
     ReadDataInstr {kind, member, dt},
@@ -321,7 +332,9 @@ std::string ReadFlBitArrayInstr::_commonToStr() const
     return ss.str();
 }
 
-static inline Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitMapType());
 
@@ -422,13 +435,17 @@ static inline Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
     return kind;
 }
 
+} // namespace
+
 ReadFlBitMapInstr::ReadFlBitMapInstr(const StructureMemberType * const member, const DataType& dt) :
     ReadFlBitArrayInstr {kindFromFlBitMapType(dt), member, dt}
 {
     assert(dt.isFixedLengthBitMapType());
 }
 
-static inline Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBooleanType());
 
@@ -529,6 +546,8 @@ static inline Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
     return kind;
 }
 
+} // namespace
+
 ReadFlBoolInstr::ReadFlBoolInstr(const StructureMemberType * const member, const DataType& dt) :
     ReadFlBitArrayInstr {kindFromFlBoolType(dt), member, dt}
 {
@@ -542,7 +561,9 @@ ReadFlIntInstr::ReadFlIntInstr(const Kind kind, const StructureMemberType * cons
     assert(dt.isFixedLengthIntegerType());
 }
 
-static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthIntegerType());
 
@@ -735,6 +756,8 @@ static inline Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
     return kind;
 }
 
+} // namespace
+
 ReadFlSIntInstr::ReadFlSIntInstr(const Kind kind, const StructureMemberType * const member,
                                  const DataType& dt) :
     ReadFlIntInstr {kind, member, dt}
@@ -775,7 +798,9 @@ std::string ReadFlUIntInstr::_toStr(Size) const
     return ss.str();
 }
 
-static inline Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthFloatingPointNumberType());
 
@@ -884,13 +909,17 @@ static inline Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
     }
 }
 
+} // namespace
+
 ReadFlFloatInstr::ReadFlFloatInstr(const StructureMemberType * const member, const DataType& dt) :
     ReadFlBitArrayInstr {kindFromFlFloatType(dt), member, dt}
 {
     assert(dt.isFixedLengthFloatingPointNumberType());
 }
 
-static inline Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
 {
     assert(dt.isVariableLengthIntegerType());
 
@@ -901,6 +930,8 @@ static inline Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
         return Instr::Kind::READ_VL_SINT;
     }
 }
+
+} // namespace
 
 ReadVlIntInstr::ReadVlIntInstr(const StructureMemberType * const member,
                                          const DataType& dt) :
@@ -916,7 +947,9 @@ std::string ReadVlIntInstr::_toStr(Size) const
     return ss.str();
 }
 
-static inline Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) noexcept
+namespace {
+
+Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) noexcept
 {
     switch (dt.encoding()) {
     case StringEncoding::UTF_8:
@@ -933,6 +966,8 @@ static inline Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) 
 
     std::abort();
 }
+
+} // namespace
 
 ReadNtStrInstr::ReadNtStrInstr(const StructureMemberType * const member, const DataType& dt) :
     ReadDataInstr {kindFromNtStrType(dt.asNullTerminatedStringType()), member, dt}
@@ -1046,7 +1081,9 @@ BeginReadOptSIntSelInstr::BeginReadOptSIntSelInstr(const StructureMemberType * c
 {
 }
 
-static std::string scopeStr(const Scope scope)
+namespace {
+
+std::string scopeStr(const Scope scope)
 {
     switch (scope) {
     case Scope::PACKET_HEADER:
@@ -1071,6 +1108,8 @@ static std::string scopeStr(const Scope scope)
         std::abort();
     }
 }
+
+} // namespace
 
 BeginReadScopeInstr::BeginReadScopeInstr(const Scope scope, const unsigned int align) :
     Instr {Kind::BEGIN_READ_SCOPE},

@@ -59,7 +59,7 @@ def _gen_algo_be(size, at, bytes):
 
 
 def _gen_algo(size, at, is_le, is_signed):
-    init = f'static {_ret_type(is_signed)} {_func_name(size, at, is_le, is_signed)}('
+    init = f'{_ret_type(is_signed)} {_func_name(size, at, is_le, is_signed)}('
     print(init, end='')
     print('const std::uint8_t * const buf) {')
     print('    std::uint64_t res = 0;')
@@ -108,7 +108,7 @@ def _gen_table(is_le, is_signed):
     bo = 'Le' if is_le else 'Be'
     sign = 'S' if is_signed else 'U'
     name = f'readFl{sign}Int{bo}Funcs'
-    print(f'static {_ret_type(is_signed)} (*{name}[])(const std::uint8_t *) = {{')
+    print(f'{_ret_type(is_signed)} (*{name}[])(const std::uint8_t *) = {{')
 
     for size in range(1, 65):
         for at in range(8):
@@ -130,7 +130,7 @@ def _gen_tables():
 
 if __name__ == '__main__':
     print('''/*
- * Copyright (C) 2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2022-2024 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -145,13 +145,15 @@ if __name__ == '__main__':
 
 namespace yactfr {
 namespace internal {
+namespace {
 ''')
     _gen_funcs(False, False)
     _gen_funcs(False, True)
     _gen_funcs(True, False)
     _gen_funcs(True, True)
     _gen_tables()
-    print('''} // namespace internal
+    print('''} // namespace
+} // namespace internal
 } // namespace yactfr
 
 #endif // _YACTFR_INTERNAL_FL_INT_READER_HPP''')

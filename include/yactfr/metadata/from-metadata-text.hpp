@@ -125,7 +125,7 @@ documentation.
 @throws TextParseError
     An error occurred while parsing the document.
 */
-static inline FromMetadataTextReturn fromMetadataText(const std::string& text)
+inline FromMetadataTextReturn fromMetadataText(const std::string& text)
 {
     return fromMetadataText(text.data(), text.data() + text.size());
 }

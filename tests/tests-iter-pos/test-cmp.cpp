@@ -16,8 +16,10 @@
 #include <mem-data-src-factory.hpp>
 #include <common-trace.hpp>
 
-static bool testOpsEq(const yactfr::ElementSequenceIteratorPosition& pos1,
-                      const yactfr::ElementSequenceIteratorPosition& pos2)
+namespace {
+
+bool testOpsEq(const yactfr::ElementSequenceIteratorPosition& pos1,
+               const yactfr::ElementSequenceIteratorPosition& pos2)
 {
     if (pos1 != pos2) {
         return false;
@@ -46,8 +48,8 @@ static bool testOpsEq(const yactfr::ElementSequenceIteratorPosition& pos1,
     return true;
 }
 
-static bool testOpsGt(const yactfr::ElementSequenceIteratorPosition& pos1,
-                      const yactfr::ElementSequenceIteratorPosition& pos2)
+bool testOpsGt(const yactfr::ElementSequenceIteratorPosition& pos1,
+               const yactfr::ElementSequenceIteratorPosition& pos2)
 {
     if (pos1 == pos2) {
         return false;
@@ -75,6 +77,8 @@ static bool testOpsGt(const yactfr::ElementSequenceIteratorPosition& pos1,
 
     return true;
 }
+
+} // namespace
 
 int main()
 {

@@ -20,7 +20,7 @@ namespace internal {
 std::string indent(Size indent);
 std::string strError();
 
-static inline bool isPowOfTwo(const unsigned long long x)
+inline bool isPowOfTwo(const unsigned long long x)
 {
         return (x != 0) && ((x & (~x + 1)) == x);
 }

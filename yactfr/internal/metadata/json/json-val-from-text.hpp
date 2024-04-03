@@ -31,7 +31,7 @@ JsonVal::UP parseJson(const char *begin, const char *end, Size baseOffset = 0);
  *
  * Throws `TextParseError` on error.
  */
-static inline JsonVal::UP parseJson(const std::string& str, const Size baseOffset = 0)
+inline JsonVal::UP parseJson(const std::string& str, const Size baseOffset = 0)
 {
     return parseJson(str.data(), str.data() + str.size(), baseOffset);
 }

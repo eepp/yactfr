@@ -32,9 +32,10 @@
 
 namespace yactfr {
 namespace internal {
+namespace {
 
-static void pseudoDataLocPathElemsToPathElems(const PseudoDataLoc::PathElems& pseudoDataLocPathElems,
-                                              DataLocation::PathElements& pathElems)
+void pseudoDataLocPathElemsToPathElems(const PseudoDataLoc::PathElems& pseudoDataLocPathElems,
+                                       DataLocation::PathElements& pathElems)
 {
     std::transform(pseudoDataLocPathElems.begin(), pseudoDataLocPathElems.end(),
                    std::back_inserter(pathElems),
@@ -43,6 +44,8 @@ static void pseudoDataLocPathElemsToPathElems(const PseudoDataLoc::PathElems& ps
         return *pathElem;
     });
 }
+
+} // namespace
 
 /*
  * Setter of pseudo data type yactfr data locations.
