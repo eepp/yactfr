@@ -162,7 +162,7 @@ private:
     void _expectItem(T& item);
 
 private:
-    static constexpr std::uint32_t _PKT_MAGIC = 0x75d11d57;
+    static constexpr std::uint32_t _pktMagic = 0x75d11d57;
 
     // only supported CTF version as of this version of yactfr
     static constexpr auto _majorVersion = 1;
@@ -225,10 +225,10 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
 
         const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
 
-        if (*magic == _PKT_MAGIC) {
+        if (*magic == _pktMagic) {
             _bo = bendian::order::native;
             _isPacketized = true;
-        } else if (bendian::endian_reverse(*magic) == _PKT_MAGIC) {
+        } else if (bendian::endian_reverse(*magic) == _pktMagic) {
             if (bendian::order::native == bendian::order::big) {
                 _bo = bendian::order::little;
             } else {
@@ -306,7 +306,7 @@ boost::optional<MetadataStreamDecoder::_PktHeader> MetadataStreamDecoder::_readP
             }
         }
     } else {
-        header.magic = _PKT_MAGIC;
+        header.magic = _pktMagic;
     }
 
     this->_expect(reinterpret_cast<char *>(&header.uuid[0]), sizeof header.uuid);

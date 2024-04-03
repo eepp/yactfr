@@ -18,7 +18,7 @@ namespace buuids = boost::uuids;
 
 boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
 {
-    const auto jsonUuidVal = jsonObjVal[strs::UUID];
+    const auto jsonUuidVal = jsonObjVal[strs::uuid];
 
     if (!jsonUuidVal) {
         return boost::none;
@@ -36,7 +36,7 @@ boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
 
 MapItem::UP attrsOfObj(const JsonObjVal& jsonObjVal)
 {
-    const auto jsonAttrsVal = jsonObjVal[strs::ATTRS];
+    const auto jsonAttrsVal = jsonObjVal[strs::attrs];
 
     if (!jsonAttrsVal) {
         return createItem(MapItem::Container {});

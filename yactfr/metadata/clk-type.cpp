@@ -27,14 +27,14 @@ ClockOffset::ClockOffset(const long long secs, const Cycles cycles) noexcept :
 {
 }
 
-const char *ClockOrigin::_UNIX_EPOCH_NS = "github.com/eepp/yactfr";
-const char *ClockOrigin::_UNIX_EPOCH_NAME = "unix-epoch";
-const char *ClockOrigin::_UNIX_EPOCH_UID = "";
+const char *ClockOrigin::_unixEpochNs = "github.com/eepp/yactfr";
+const char *ClockOrigin::_unixEpochName = "unix-epoch";
+const char *ClockOrigin::_unixEpochUid = "";
 
 ClockOrigin::ClockOrigin() :
-    _ns {_UNIX_EPOCH_NS},
-    _name {_UNIX_EPOCH_NAME},
-    _uid {_UNIX_EPOCH_UID}
+    _ns {_unixEpochNs},
+    _name {_unixEpochName},
+    _uid {_unixEpochUid}
 {
 }
 

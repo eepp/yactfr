@@ -54,7 +54,7 @@ private:
                                      const TraceType& traceType, bool end);
 
 private:
-    static const Index _END_OFFSET;
+    static const Index _endOffset;
 
 public:
     /*!
@@ -194,7 +194,7 @@ public:
     reference operator*() const noexcept
     {
         assert(_curElem);
-        assert(_offset < _END_OFFSET);
+        assert(_offset < _endOffset);
         return *_curElem;
     }
 
@@ -439,7 +439,7 @@ private:
     // current element
     const Element *_curElem = nullptr;
 
-    // current offset within element sequence; _END_OFFSET means ended
+    // current offset within element sequence; `_endOffset` means ended
     Index _offset = 0;
 
     /*

@@ -13,8 +13,8 @@
 namespace yactfr {
 namespace internal {
 
-constexpr Size SIZE_UNSET = std::numeric_limits<Size>::max();
-constexpr std::uint64_t SAVED_VAL_UNSET = std::numeric_limits<std::uint64_t>::max();
+constexpr Size sizeUnset = std::numeric_limits<Size>::max();
+constexpr std::uint64_t savedValUnset = std::numeric_limits<std::uint64_t>::max();
 
 VmPos::VmPos(const PktProc& pktProc) :
     pktProc {&pktProc}
@@ -36,7 +36,7 @@ VmPos& VmPos::operator=(const VmPos& other)
 
 void VmPos::_initVectorsFromPktProc()
 {
-    savedVals.resize(pktProc->savedValsCount(), SIZE_UNSET);
+    savedVals.resize(pktProc->savedValsCount(), sizeUnset);
 }
 
 void VmPos::_setSimpleFromOther(const VmPos& other)
@@ -1414,7 +1414,7 @@ Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr&)
         };
     }
 
-    if (_pos.curExpectedPktContentLenBits != SIZE_UNSET) {
+    if (_pos.curExpectedPktContentLenBits != sizeUnset) {
         if (pktTotalSizeCandidateBits < _pos.curExpectedPktContentLenBits) {
             throw ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError {
                 _pos.headOffsetInElemSeqBits(),
@@ -1434,7 +1434,7 @@ Vm::_ExecReaction Vm::_execSetPktTotalLen(const Instr&)
 
     _pos.curExpectedPktTotalLenBits = pktTotalSizeCandidateBits;
 
-    if (_pos.curExpectedPktContentLenBits == SIZE_UNSET) {
+    if (_pos.curExpectedPktContentLenBits == sizeUnset) {
         _pos.curExpectedPktContentLenBits = _pos.curExpectedPktTotalLenBits;
     }
 
@@ -1445,7 +1445,7 @@ Vm::_ExecReaction Vm::_execSetPktContentLen(const Instr&)
 {
     const auto pktContentSizeCandidateBits = _pos.lastIntVal.u;
 
-    if (_pos.curExpectedPktTotalLenBits != SIZE_UNSET) {
+    if (_pos.curExpectedPktTotalLenBits != sizeUnset) {
         if (_pos.curExpectedPktTotalLenBits < pktContentSizeCandidateBits) {
             throw ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError {
                 _pos.headOffsetInElemSeqBits(),

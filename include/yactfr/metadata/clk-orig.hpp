@@ -127,15 +127,15 @@ public:
     /// Whether or not this clock origin is the Unix epoch.
     bool isUnixEpoch() const noexcept
     {
-        return _ns && *_ns == _UNIX_EPOCH_NS &&
-               _name == _UNIX_EPOCH_NAME &&
-               _uid == _UNIX_EPOCH_UID;
+        return _ns && *_ns == _unixEpochNs &&
+               _name == _unixEpochName &&
+               _uid == _unixEpochUid;
     }
 
 private:
-    static const char *_UNIX_EPOCH_NS;
-    static const char *_UNIX_EPOCH_NAME;
-    static const char *_UNIX_EPOCH_UID;
+    static const char *_unixEpochNs;
+    static const char *_unixEpochName;
+    static const char *_unixEpochUid;
 
 private:
     boost::optional<std::string> _ns;

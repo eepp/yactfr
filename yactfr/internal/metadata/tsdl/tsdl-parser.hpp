@@ -244,7 +244,7 @@ private:
      * type to have your own copy.
      *
      * The maximum size from `begin` to `end` is
-     * `_MAX_FAST_FL_INT_TYPE_STR_SIZE`.
+     * `_maxFastFlIntTypeStrSize`.
      *
      * Is it really worth it? I don't know! Is it a cool idea even
      * without benchmarks? I think so.
@@ -966,7 +966,7 @@ private:
     void _setPseudoDstDefClkType();
 
 private:
-    static const Size _MAX_FAST_FL_INT_TYPE_STR_SIZE;
+    static const Size _maxFastFlIntTypeStrSize;
 
 private:
     // underlying string scanner

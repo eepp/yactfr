@@ -2,7 +2,7 @@
 
 = How yactfr works
 Philippe Proulx
-4 February 2024
+3 April 2024
 :toc: left
 :nofooter:
 
@@ -481,7 +481,7 @@ relying on the VM. Therefore the comparison operators of the iterator
 are inlined, just as `+operator*()+` and `+operator->()+`.
 
 An "`end`" (passed-the-end) element sequence iterator has its offset set
-to `ElementSequenceIterator::_END_OFFSET` which is the maximum value for
+to `ElementSequenceIterator::_endOffset` which is the maximum value for
 the offset type, and its mark set to{nbsp}0. Therefore, any iterator
 which isn't passed the end is less than a passed-the-end iterator.
 

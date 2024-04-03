@@ -25,7 +25,7 @@ class JsonBoValReq final :
 {
 public:
     explicit JsonBoValReq() :
-        JsonStrValInSetReq {JsonStrValInSetReq::Set {strs::BE, strs::LE}}
+        JsonStrValInSetReq {JsonStrValInSetReq::Set {strs::be, strs::le}}
     {
     }
 
@@ -54,7 +54,7 @@ class JsonBioValReq final :
 {
 public:
     explicit JsonBioValReq() :
-        JsonStrValInSetReq {JsonStrValInSetReq::Set {strs::FTL, strs::LTF}}
+        JsonStrValInSetReq {JsonStrValInSetReq::Set {strs::ftl, strs::ltf}}
     {
     }
 
@@ -113,15 +113,15 @@ class JsonDataLocValReq final :
 public:
     explicit JsonDataLocValReq() :
         JsonObjValReq {{
-            {strs::ORIG, {JsonStrValInSetReq::shared({
-                strs::PKT_HEADER,
-                strs::PKT_CTX,
-                strs::ER_HEADER,
-                strs::ER_COMMON_CTX,
-                strs::ER_SPEC_CTX,
-                strs::ER_PAYLOAD,
+            {strs::orig, {JsonStrValInSetReq::shared({
+                strs::pktHeader,
+                strs::pktCtx,
+                strs::erHeader,
+                strs::erCommonCtx,
+                strs::erSpecCtx,
+                strs::erPayload,
             })}},
-            {strs::PATH, {
+            {strs::path, {
                 JsonArrayValReq::shared(1, boost::none,
                                         JsonValReq::shared(JsonVal::Kind::STR, true)),
                 true
@@ -141,7 +141,7 @@ private:
         try {
             JsonObjValReq::_validate(jsonVal);
 
-            const auto& jsonLastPathElem = **(jsonVal.asObj()[strs::PATH]->asArray().end() - 1);
+            const auto& jsonLastPathElem = **(jsonVal.asObj()[strs::path]->asArray().end() - 1);
 
             if (jsonLastPathElem.isNull()) {
                 throwTextParseError("Path ends with `null`.", jsonLastPathElem.loc());
@@ -513,7 +513,7 @@ void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
  */
 JsonObjValReq::PropReqsEntry objTypePropReqEntry(std::string&& type)
 {
-    return {strs::TYPE, {JsonStrValInSetReq::shared(std::move(type)), true}};
+    return {strs::type, {JsonStrValInSetReq::shared(std::move(type)), true}};
 }
 
 /*
@@ -523,7 +523,7 @@ JsonObjValReq::PropReqsEntry objTypePropReqEntry(std::string&& type)
  */
 JsonObjValReq::PropReqsEntry attrsPropReqEntry()
 {
-    return {strs::ATTRS, {JsonAttrsValReq::shared()}};
+    return {strs::attrs, {JsonAttrsValReq::shared()}};
 }
 
 /*
@@ -533,7 +533,7 @@ JsonObjValReq::PropReqsEntry attrsPropReqEntry()
  */
 JsonObjValReq::PropReqsEntry extPropReqEntry()
 {
-    return {strs::EXT, {JsonExtValReq::shared()}};
+    return {strs::ext, {JsonExtValReq::shared()}};
 }
 
 } // namespace
@@ -585,7 +585,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FL_BIT_ARRAY;
+        return strs::flBitArray;
     }
 
 protected:
@@ -603,10 +603,10 @@ protected:
 private:
     static PropReqs _buildPropReqs(PropReqs&& propReqs)
     {
-        addToPropReqs(propReqs, strs::LEN, JsonUIntValInRangeReq::shared(1, 64), true);
-        addToPropReqs(propReqs, strs::BO, JsonBoValReq::shared(), true);
-        addToPropReqs(propReqs, strs::BIO, JsonBioValReq::shared());
-        addToPropReqs(propReqs, strs::ALIGN, JsonUIntValIsAlignReq::shared());
+        addToPropReqs(propReqs, strs::len, JsonUIntValInRangeReq::shared(1, 64), true);
+        addToPropReqs(propReqs, strs::bo, JsonBoValReq::shared(), true);
+        addToPropReqs(propReqs, strs::bio, JsonBioValReq::shared());
+        addToPropReqs(propReqs, strs::align, JsonUIntValIsAlignReq::shared());
         return std::move(propReqs);
     }
 };
@@ -689,7 +689,7 @@ class JsonFlBitMapTypeValReq final :
 public:
     explicit JsonFlBitMapTypeValReq() :
         JsonFlBitArrayTypeValReq {this->typeStr(), {
-            {strs::FLAGS, {
+            {strs::flags, {
                 JsonIntTypeMappingsFlagsValReq<JsonUIntValReq>::shared("flag",
                                                                        "fixed-length bit map type flags",
                                                                        false),
@@ -706,7 +706,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FL_BIT_MAP;
+        return strs::flBitMap;
     }
 
 private:
@@ -740,7 +740,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FL_BOOL;
+        return strs::flBool;
     }
 
 private:
@@ -764,7 +764,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry intTypePrefDispBasePropReqEntry()
 {
-    return {strs::PREF_DISP_BASE, {JsonUIntValInSetReq::shared({2, 8, 10, 16})}};
+    return {strs::prefDispBase, {JsonUIntValInSetReq::shared({2, 8, 10, 16})}};
 }
 
 } // namespace
@@ -798,7 +798,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry rolesPropReqEntry()
 {
-    return {strs::ROLES, {JsonRolesValReq::shared()}};
+    return {strs::roles, {JsonRolesValReq::shared()}};
 }
 
 /*
@@ -809,7 +809,7 @@ JsonObjValReq::PropReqsEntry rolesPropReqEntry()
 template <typename JsonIntValReqT>
 JsonObjValReq::PropReqsEntry intTypeMappingsPropReqEntry()
 {
-    return {strs::MAPPINGS, {JsonIntTypeMappingsFlagsValReq<JsonIntValReqT>::shared("mapping",
+    return {strs::mappings, {JsonIntTypeMappingsFlagsValReq<JsonIntValReqT>::shared("mapping",
                                                                                     "integer type mappings")}};
 }
 
@@ -840,7 +840,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FL_UINT;
+        return strs::flUInt;
     }
 
 private:
@@ -875,7 +875,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FL_SINT;
+        return strs::flSInt;
     }
 
 private:
@@ -910,7 +910,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FL_FLOAT;
+        return strs::flFloat;
     }
 
 private:
@@ -919,7 +919,7 @@ private:
         try {
             JsonDtValReq::_validate(jsonVal);
 
-            auto& jsonLenVal = *jsonVal.asObj()[strs::LEN];
+            auto& jsonLenVal = *jsonVal.asObj()[strs::len];
             const auto len = *jsonLenVal.asUInt();
 
             if (len != 32 && len != 64) {
@@ -982,7 +982,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::VL_UINT;
+        return strs::vlUInt;
     }
 
 private:
@@ -1017,7 +1017,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::VL_SINT;
+        return strs::vlSInt;
     }
 
 private:
@@ -1048,12 +1048,12 @@ protected:
 private:
     static PropReqs _buildPropReqs(PropReqs&& propReqs)
     {
-        addToPropReqs(propReqs, strs::ENCODING, JsonStrValInSetReq::shared({
-            strs::UTF_8,
-            strs::UTF_16BE,
-            strs::UTF_16LE,
-            strs::UTF_32BE,
-            strs::UTF_32LE,
+        addToPropReqs(propReqs, strs::encoding, JsonStrValInSetReq::shared({
+            strs::utf8,
+            strs::utf16Be,
+            strs::utf16Le,
+            strs::utf32Be,
+            strs::utf32Le,
         }));
         return std::move(propReqs);
     }
@@ -1078,7 +1078,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::NT_STR;
+        return strs::ntStr;
     }
 
 private:
@@ -1102,7 +1102,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry slDtLenPropReqEntry()
 {
-    return {strs::LEN, {JsonValReq::shared(JsonVal::Kind::UINT), true}};
+    return {strs::len, {JsonValReq::shared(JsonVal::Kind::UINT), true}};
 }
 
 /*
@@ -1112,7 +1112,7 @@ JsonObjValReq::PropReqsEntry slDtLenPropReqEntry()
  */
 JsonObjValReq::PropReqsEntry dlDtLenFieldLocPropReqEntry()
 {
-    return {strs::LEN_FIELD_LOC, {JsonDataLocValReq::shared(), true}};
+    return {strs::lenFieldLoc, {JsonDataLocValReq::shared(), true}};
 }
 
 } // namespace
@@ -1136,7 +1136,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::SL_STR;
+        return strs::slStr;
     }
 
 private:
@@ -1170,7 +1170,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::DL_STR;
+        return strs::dlStr;
     }
 
 private:
@@ -1200,7 +1200,7 @@ protected:
 private:
     static PropReqs _buildPropReqs(PropReqs&& propReqs)
     {
-        addToPropReqs(propReqs, strs::MEDIA_TYPE, JsonValReq::shared(JsonVal::Kind::STR));
+        addToPropReqs(propReqs, strs::mediaType, JsonValReq::shared(JsonVal::Kind::STR));
         return std::move(propReqs);
     }
 };
@@ -1224,7 +1224,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::SL_BLOB;
+        return strs::slBlob;
     }
 
 private:
@@ -1267,7 +1267,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::DL_BLOB;
+        return strs::dlBlob;
     }
 
 private:
@@ -1343,7 +1343,7 @@ JsonObjValReq::PropReqsEntry anyDtPropReqEntry(std::string&& key,
  */
 JsonObjValReq::PropReqsEntry namePropReqEntry(const bool isRequired)
 {
-    return {strs::NAME, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
+    return {strs::name, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
 }
 
 } // namespace
@@ -1358,7 +1358,7 @@ public:
     explicit JsonStructMemberTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonObjValReq {{
             namePropReqEntry(true),
-            anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
+            anyDtPropReqEntry(strs::fc, anyFullDtValReq, true),
             attrsPropReqEntry(),
             extPropReqEntry(),
         }}
@@ -1391,7 +1391,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry minAlignPropReqEntry()
 {
-    return {strs::MIN_ALIGN, JsonUIntValIsAlignReq::shared()};
+    return {strs::minAlign, JsonUIntValIsAlignReq::shared()};
 }
 
 void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propName,
@@ -1407,7 +1407,7 @@ void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propNam
     std::unordered_set<std::string> names;
 
     for (auto& jsonEntryVal : jsonEntries->asArray()) {
-        const auto jsonNameVal = jsonEntryVal->asObj()[strs::NAME];
+        const auto jsonNameVal = jsonEntryVal->asObj()[strs::name];
 
         if (!jsonNameVal) {
             continue;
@@ -1437,7 +1437,7 @@ class JsonStructTypeValReq final :
 public:
     explicit JsonStructTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
-            {strs::MEMBER_CLSS, {
+            {strs::memberClss, {
                 JsonArrayValReq::shared(JsonStructMemberTypeValReq::shared(anyFullDtValReq))
             }},
             minAlignPropReqEntry(),
@@ -1452,7 +1452,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::STRUCT;
+        return strs::structure;
     }
 
 private:
@@ -1462,7 +1462,7 @@ private:
             JsonDtValReq::_validate(jsonVal);
 
             // validate that member type names are unique
-            validateUniqueEntryNames(jsonVal, strs::MEMBER_CLSS, "structure member type");
+            validateUniqueEntryNames(jsonVal, strs::memberClss, "structure member type");
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid structure type:", jsonVal.loc());
             throw;
@@ -1486,7 +1486,7 @@ protected:
 private:
     static PropReqs _buildPropReqs(const JsonAnyFullDtValReq& anyFullDtValReq, PropReqs&& propReqs)
     {
-        propReqs.insert(anyDtPropReqEntry(strs::ELEM_FC, anyFullDtValReq, true));
+        propReqs.insert(anyDtPropReqEntry(strs::elemFc, anyFullDtValReq, true));
         propReqs.insert(minAlignPropReqEntry());
         return std::move(propReqs);
     }
@@ -1511,7 +1511,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::SL_ARRAY;
+        return strs::slArray;
     }
 
 private:
@@ -1545,7 +1545,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::DL_ARRAY;
+        return strs::dlArray;
     }
 
 private:
@@ -1569,7 +1569,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry selLocPropReqEntry()
 {
-    return {strs::SEL_FIELD_LOC, {JsonDataLocValReq::shared(), true}};
+    return {strs::selFieldLoc, {JsonDataLocValReq::shared(), true}};
 }
 
 /*
@@ -1579,7 +1579,7 @@ JsonObjValReq::PropReqsEntry selLocPropReqEntry()
  */
 JsonObjValReq::PropReqsEntry selRangesPropReqEntry(const bool isRequired)
 {
-    return {strs::SEL_FIELD_RANGES, {JsonIntRangeSetValReq::shared(), isRequired}};
+    return {strs::selFieldRanges, {JsonIntRangeSetValReq::shared(), isRequired}};
 }
 
 } // namespace
@@ -1593,7 +1593,7 @@ class JsonOptTypeValReq final :
 public:
     explicit JsonOptTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
-            anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
+            anyDtPropReqEntry(strs::fc, anyFullDtValReq, true),
             selLocPropReqEntry(),
             selRangesPropReqEntry(false),
         }}
@@ -1607,7 +1607,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::OPT;
+        return strs::opt;
     }
 
 private:
@@ -1632,7 +1632,7 @@ public:
     explicit JsonVarTypeOptValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonObjValReq {{
             namePropReqEntry(false),
-            anyDtPropReqEntry(strs::FC, anyFullDtValReq, true),
+            anyDtPropReqEntry(strs::fc, anyFullDtValReq, true),
             selRangesPropReqEntry(true),
             attrsPropReqEntry(),
             extPropReqEntry(),
@@ -1674,7 +1674,7 @@ class JsonVarTypeValReq final :
 public:
     explicit JsonVarTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
-            {strs::OPTS, {
+            {strs::opts, {
                 JsonArrayValReq::shared(1, boost::none,
                                         JsonVarTypeOptValReq::shared(anyFullDtValReq)),
                 true
@@ -1691,7 +1691,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::VAR;
+        return strs::var;
     }
 
 private:
@@ -1701,7 +1701,7 @@ private:
             JsonDtValReq::_validate(jsonVal);
 
             // validate that option names are unique
-            validateUniqueEntryNames(jsonVal, strs::OPTS, "variant type option");
+            validateUniqueEntryNames(jsonVal, strs::opts, "variant type option");
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "Invalid variant type:", jsonVal.loc());
             throw;
@@ -1718,7 +1718,7 @@ class JsonAnyFullDtValReq final :
 public:
     explicit JsonAnyFullDtValReq() :
         JsonObjValReq {{
-            {strs::TYPE, {
+            {strs::type, {
                 JsonStrValInSetReq::shared({
                     JsonFlBitArrayTypeValReq::typeStr(),
                     JsonFlBitMapTypeValReq::typeStr(),
@@ -1797,7 +1797,7 @@ private:
          * _validate() method already appends a message like
          * "Invalid xyz type:" to the exception.
          */
-        const auto it = _dtValReqs.find(*jsonVal.asObj()[strs::TYPE]->asStr());
+        const auto it = _dtValReqs.find(*jsonVal.asObj()[strs::type]->asStr());
 
         assert(it != _dtValReqs.end());
         it->second->validate(jsonVal);
@@ -1871,8 +1871,8 @@ class JsonPreFragValReq final :
 public:
     explicit JsonPreFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            {strs::VERSION, {JsonUIntValInSetReq::shared(2), true}},
-            {strs::UUID, {JsonUuidValReq::shared()}},
+            {strs::version, {JsonUIntValInSetReq::shared(2), true}},
+            {strs::uuid, {JsonUuidValReq::shared()}},
         }}
     {
     }
@@ -1884,7 +1884,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::PRE;
+        return strs::pre;
     }
 
 private:
@@ -1909,7 +1909,7 @@ public:
     explicit JsonDtAliasFragValReq() :
         JsonFragValReq {this->typeStr(), {
             namePropReqEntry(true),
-            anyDtPropReqEntry(strs::FC, _anyFullDtValReq, true), //-V1050
+            anyDtPropReqEntry(strs::fc, _anyFullDtValReq, true), //-V1050
         }}
     {
     }
@@ -1921,7 +1921,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::FC_ALIAS;
+        return strs::fcAlias;
     }
 
 private:
@@ -1948,8 +1948,8 @@ class JsonClkOffsetValReq final :
 public:
     explicit JsonClkOffsetValReq() :
         JsonObjValReq {{
-            {strs::SECS, {JsonSIntValReq::shared()}},
-            {strs::CYCLES, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::secs, {JsonSIntValReq::shared()}},
+            {strs::cycles, {JsonValReq::shared(JsonVal::Kind::UINT)}},
         }}
     {
     }
@@ -1980,7 +1980,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry nsPropReqEntry()
 {
-    return {strs::NS, {JsonValReq::shared(JsonVal::Kind::STR)}};
+    return {strs::ns, {JsonValReq::shared(JsonVal::Kind::STR)}};
 }
 
 /*
@@ -1990,7 +1990,7 @@ JsonObjValReq::PropReqsEntry nsPropReqEntry()
  */
 JsonObjValReq::PropReqsEntry uidPropReqEntry(const bool isRequired)
 {
-    return {strs::UID, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
+    return {strs::uid, {JsonValReq::shared(JsonVal::Kind::STR), isRequired}};
 }
 
 } // namespace
@@ -2047,10 +2047,10 @@ private:
     {
         try {
             if (jsonVal.isStr()) {
-                if (*jsonVal.asStr() != strs::UNIX_EPOCH) {
+                if (*jsonVal.asStr() != strs::unixEpoch) {
                     std::ostringstream ss;
 
-                    ss << "Expecting `" << strs::UNIX_EPOCH << "` or a clock origin object.";
+                    ss << "Expecting `" << strs::unixEpoch << "` or a clock origin object.";
                     throwTextParseError(ss.str(), jsonVal.loc());
                 }
             } else {
@@ -2079,7 +2079,7 @@ namespace {
  */
 JsonObjValReq::PropReqsEntry idPropReqEntry()
 {
-    return {strs::ID, {JsonValReq::shared(JsonVal::Kind::UINT)}};
+    return {strs::id, {JsonValReq::shared(JsonVal::Kind::UINT)}};
 }
 
 } // namespace
@@ -2093,16 +2093,16 @@ class JsonClkTypeFragValReq final :
 public:
     explicit JsonClkTypeFragValReq() :
         JsonFragValReq {this->typeStr(), {
-            {strs::ID, {JsonValReq::shared(JsonVal::Kind::STR), true}},
+            {strs::id, {JsonValReq::shared(JsonVal::Kind::STR), true}},
             nsPropReqEntry(),
             namePropReqEntry(false),
             uidPropReqEntry(false),
-            {strs::FREQ, {JsonUIntValInRangeReq::shared(1, boost::none), true}},
-            {strs::DESCR, {JsonValReq::shared(JsonVal::Kind::STR)}},
-            {strs::ORIG, {JsonClkTypeOrigPropValReq::shared()}},
-            {strs::OFFSET_FROM_ORIG, {JsonClkOffsetValReq::shared()}},
-            {strs::PREC, {JsonValReq::shared(JsonVal::Kind::UINT)}},
-            {strs::ACCURACY, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::freq, {JsonUIntValInRangeReq::shared(1, boost::none), true}},
+            {strs::descr, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            {strs::orig, {JsonClkTypeOrigPropValReq::shared()}},
+            {strs::offsetFromOrig, {JsonClkOffsetValReq::shared()}},
+            {strs::prec, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            {strs::accuracy, {JsonValReq::shared(JsonVal::Kind::UINT)}},
         }}
     {
     }
@@ -2114,7 +2114,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::CC;
+        return strs::cc;
     }
 
 private:
@@ -2124,22 +2124,22 @@ private:
             JsonFragValReq::_validate(jsonVal);
 
             auto& jsonObjVal = jsonVal.asObj();
-            const auto jsonOffsetFromOrigVal = jsonObjVal[strs::OFFSET_FROM_ORIG];
+            const auto jsonOffsetFromOrigVal = jsonObjVal[strs::offsetFromOrig];
 
             if (jsonOffsetFromOrigVal) {
-                const auto jsonCyclesVal = jsonOffsetFromOrigVal->asObj()[strs::CYCLES];
+                const auto jsonCyclesVal = jsonOffsetFromOrigVal->asObj()[strs::cycles];
 
                 if (jsonCyclesVal) {
                     const auto cycles = *jsonCyclesVal->asUInt();
-                    const auto freq = *jsonObjVal[strs::FREQ]->asUInt();
+                    const auto freq = *jsonObjVal[strs::freq]->asUInt();
 
                     if (cycles >= freq) {
                         std::ostringstream ss;
 
-                        ss << "Invalid `" << strs::CYCLES << "` property of " <<
-                              "`" << strs::OFFSET_FROM_ORIG << "` property: " <<
+                        ss << "Invalid `" << strs::cycles << "` property of " <<
+                              "`" << strs::offsetFromOrig << "` property: " <<
                               "value " << cycles << " is greater than the value of the " <<
-                              "`" << strs::FREQ << "` property (" << freq << ").";
+                              "`" << strs::freq << "` property (" << freq << ").";
                         throwTextParseError(ss.str(), jsonCyclesVal->loc());
                     }
                 }
@@ -2211,8 +2211,8 @@ public:
             nsPropReqEntry(),
             namePropReqEntry(false),
             uidPropReqEntry(false),
-            anyDtPropReqEntry(strs::PKT_HEADER_FC, _anyFullDtValReq), //-V1050
-            {strs::ENV, {JsonTraceEnvValReq::shared()}},
+            anyDtPropReqEntry(strs::pktHeaderFc, _anyFullDtValReq), //-V1050
+            {strs::env, {JsonTraceEnvValReq::shared()}},
         }}
     {
     }
@@ -2224,7 +2224,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::TC;
+        return strs::tc;
     }
 
 private:
@@ -2255,10 +2255,10 @@ public:
             namePropReqEntry(false),
             uidPropReqEntry(false),
             idPropReqEntry(),
-            {strs::DEF_CC_ID, {JsonValReq::shared(JsonVal::Kind::STR)}},
-            anyDtPropReqEntry(strs::PKT_CTX_FC, _anyFullDtValReq), //-V1050
-            anyDtPropReqEntry(strs::ER_HEADER_FC, _anyFullDtValReq), //-V1050
-            anyDtPropReqEntry(strs::ER_COMMON_CTX_FC, _anyFullDtValReq), //-V1050
+            {strs::defCcId, {JsonValReq::shared(JsonVal::Kind::STR)}},
+            anyDtPropReqEntry(strs::pktCtxFc, _anyFullDtValReq), //-V1050
+            anyDtPropReqEntry(strs::erHeaderFc, _anyFullDtValReq), //-V1050
+            anyDtPropReqEntry(strs::erCommonCtxFc, _anyFullDtValReq), //-V1050
         }}
     {
     }
@@ -2270,7 +2270,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::DSC;
+        return strs::dsc;
     }
 
 private:
@@ -2301,9 +2301,9 @@ public:
             namePropReqEntry(false),
             uidPropReqEntry(false),
             idPropReqEntry(),
-            {strs::DSC_ID, {JsonValReq::shared(JsonVal::Kind::UINT)}},
-            anyDtPropReqEntry(strs::SPEC_CTX_FC, _anyFullDtValReq), //-V1050
-            anyDtPropReqEntry(strs::PAYLOAD_FC, _anyFullDtValReq), //-V1050
+            {strs::dscId, {JsonValReq::shared(JsonVal::Kind::UINT)}},
+            anyDtPropReqEntry(strs::specCtxFc, _anyFullDtValReq), //-V1050
+            anyDtPropReqEntry(strs::payloadFc, _anyFullDtValReq), //-V1050
         }}
     {
     }
@@ -2315,7 +2315,7 @@ public:
 
     static const char *typeStr() noexcept
     {
-        return strs::ERC;
+        return strs::erc;
     }
 
 private:
@@ -2342,7 +2342,7 @@ class JsonAnyFragValReqImpl final :
 public:
     explicit JsonAnyFragValReqImpl() :
         JsonObjValReq {{
-            {strs::TYPE, {
+            {strs::type, {
                 JsonStrValInSetReq::shared({
                     JsonPreFragValReq::typeStr(),
                     JsonDtAliasFragValReq::typeStr(),
@@ -2392,7 +2392,7 @@ private:
          * _validate() method already appends a message like
          * "Invalid xyz fragment:" to the exception.
          */
-        const auto it = _fragValReqs.find(*jsonVal.asObj()[strs::TYPE]->asStr());
+        const auto it = _fragValReqs.find(*jsonVal.asObj()[strs::type]->asStr());
 
         assert(it != _fragValReqs.end());
         it->second->validate(jsonVal);

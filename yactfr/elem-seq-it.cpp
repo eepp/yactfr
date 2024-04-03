@@ -12,7 +12,7 @@
 
 namespace yactfr {
 
-constexpr Index ElementSequenceIterator::_END_OFFSET = static_cast<Index>(~0ULL);
+constexpr Index ElementSequenceIterator::_endOffset = static_cast<Index>(~0ULL);
 
 ElementSequenceIterator::ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
                                                  const TraceType& traceType, const bool end) :
@@ -20,7 +20,7 @@ ElementSequenceIterator::ElementSequenceIterator(DataSourceFactory& dataSrcFacto
     _traceType {&traceType}
 {
     if (end) {
-        _offset = _END_OFFSET;
+        _offset = _endOffset;
     } else {
         _vm = std::make_unique<internal::Vm>(*_dataSrcFactory, traceType._pimpl->pktProc(), *this);
         _vm->nextElem();
@@ -30,7 +30,7 @@ ElementSequenceIterator::ElementSequenceIterator(DataSourceFactory& dataSrcFacto
 void ElementSequenceIterator::_resetOther(ElementSequenceIterator& other)
 {
     other._mark = 0;
-    other._offset = _END_OFFSET;
+    other._offset = _endOffset;
     other._curElem = nullptr;
 }
 
@@ -130,7 +130,7 @@ ElementSequenceIterator& ElementSequenceIterator::operator=(ElementSequenceItera
 
 ElementSequenceIterator& ElementSequenceIterator::operator++()
 {
-    assert(_offset != _END_OFFSET);
+    assert(_offset != _endOffset);
     assert(_vm);
     _vm->nextElem();
     return *this;

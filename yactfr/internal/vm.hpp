@@ -32,8 +32,8 @@
 namespace yactfr {
 namespace internal {
 
-extern const Size SIZE_UNSET;
-extern const std::uint64_t SAVED_VAL_UNSET;
+extern const Size sizeUnset;
+extern const std::uint64_t savedValUnset;
 
 // possible VM states
 enum class VmState {
@@ -240,11 +240,11 @@ public:
         lastFlBitArrayBo = boost::none;
         curDsPktProc = nullptr;
         curErProc = nullptr;
-        curExpectedPktTotalLenBits = SIZE_UNSET;
-        curExpectedPktContentLenBits = SIZE_UNSET;
+        curExpectedPktTotalLenBits = sizeUnset;
+        curExpectedPktContentLenBits = sizeUnset;
         stack.clear();
         defClkVal = 0;
-        std::fill(savedVals.begin(), savedVals.end(), SAVED_VAL_UNSET);
+        std::fill(savedVals.begin(), savedVals.end(), savedValUnset);
 
         /*
          * Reset all informative elements as a given element sequence
@@ -735,7 +735,7 @@ private:
          */
         Size bitsToSkip = 0;
 
-        if (_pos.curExpectedPktTotalLenBits != SIZE_UNSET) {
+        if (_pos.curExpectedPktTotalLenBits != sizeUnset) {
             bitsToSkip = _pos.curExpectedPktTotalLenBits - _pos.headOffsetInCurPktBits;
         }
 
@@ -761,7 +761,7 @@ private:
         _pos.headOffsetInCurPktBits = 0;
         assert((_pos.curPktOffsetInElemSeqBits & 7) == 0);
 
-        if (_pos.curExpectedPktTotalLenBits == SIZE_UNSET) {
+        if (_pos.curExpectedPktTotalLenBits == sizeUnset) {
             // element sequence contains a single packet
             this->_resetBuffer();
         } else {
@@ -782,7 +782,7 @@ private:
     {
         assert(_pos.curDsPktProc);
 
-        if (_pos.curExpectedPktContentLenBits == SIZE_UNSET) {
+        if (_pos.curExpectedPktContentLenBits == sizeUnset) {
             if (this->_remBitsInBuf() == 0) {
                 /*
                  * Try getting 1 bit to see if we're at the end of the
@@ -1125,7 +1125,7 @@ private:
     void _setItEnd() const noexcept
     {
         _it->_mark = 0;
-        _it->_offset = ElementSequenceIterator::_END_OFFSET;
+        _it->_offset = ElementSequenceIterator::_endOffset;
     }
 
     void _resetItMark() const noexcept
@@ -1762,7 +1762,7 @@ private:
                                Size& len, const Proc * const proc, const VmState nextState)
     {
         len = _pos.savedVal(lenPos);
-        assert(len != SAVED_VAL_UNSET);
+        assert(len != savedValUnset);
         this->_alignHead(instr);
         Vm::_setDataElemFromInstr(elem, instr);
         this->_updateItForUser(elem);
