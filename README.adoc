@@ -3,7 +3,14 @@
 = yactfr
 Philippe Proulx
 3 April 2024
+:idprefix:
+:idseparator: -
+ifdef::env-github[]
+:toc: macro
+endif::env-github[]
+ifndef::env-github[]
 :toc: left
+endif::env-github[]
 
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
 
@@ -36,6 +43,10 @@ approach.
 
 WARNING: yactfr is not mature yet! Its API is still experimental:
 the interface could change at any time.
+
+ifdef::env-github[]
+toc::[]
+endif::env-github[]
 
 == Notable features
 
