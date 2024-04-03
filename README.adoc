@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-25 January 2024
+3 April 2024
 :toc: left
 
 _**yactfr**_ (yac·tif·er) is _**y**et **a**nother **CTF r**eader_.
@@ -40,9 +40,7 @@ the interface could change at any time.
 == Notable features
 
 * Full https://diamon.org/ctf/v1.8.3/[CTF{nbsp}1.8.3] and
-  CTF{nbsp}2 (as of
-  https://diamon.org/ctf/files/CTF2-SPECRC-9.0rA.html[**CTF2-SPECRC-9.0**])
-  support.
+  https://diamon.org/ctf[CTF{nbsp}2] support.
 
 * Only depends on http://www.boost.org/[Boost] at _build time_, and
   nothing at run time (except for your pass:[C++] runtime library):
@@ -71,7 +69,7 @@ $ ldd libyactfr.so
    current data block of the data source (for example, from a memory
    mapped region), which means zero string/BLOB copy.
 +
-This is possible because, as per CTF{nbsp}1.8.2 and **CTF2-SPECRC-9.0**,
+This is possible because, as per CTF{nbsp}1.8.3 and CTF2-SPEC-2.0,
 data stream strings and BLOBs have an 8-bit alignment requirement.
 
 * Decodes CTF packets of any size and event records of any size with
