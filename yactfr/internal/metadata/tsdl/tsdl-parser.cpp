@@ -24,6 +24,8 @@ TsdlParser::_StackFrame::_StackFrame(const Kind kind) :
 {
 }
 
+constexpr Size TsdlParser::_MAX_FAST_FL_INT_TYPE_STR_SIZE = 256;
+
 void TsdlParser::_setImplicitMappedClkTypeId(PseudoDt& basePseudoDt,
                                              const std::string& memberTypeName)
 {

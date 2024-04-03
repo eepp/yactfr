@@ -12,6 +12,8 @@
 
 namespace yactfr {
 
+constexpr Index ElementSequenceIterator::_END_OFFSET = static_cast<Index>(~0ULL);
+
 ElementSequenceIterator::ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
                                                  const TraceType& traceType, const bool end) :
     _dataSrcFactory {&dataSrcFactory},

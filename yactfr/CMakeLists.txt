@@ -21,6 +21,7 @@ add_library (
     internal/metadata/dt-from-pseudo-root-dt.cpp
     internal/metadata/item.cpp
     internal/metadata/json/ctf-2-json-seq-parser.cpp
+    internal/metadata/json/ctf-2-json-strs.cpp
     internal/metadata/json/ctf-2-json-utils.cpp
     internal/metadata/json/ctf-2-json-val-req.cpp
     internal/metadata/json/item-from-json-val.cpp

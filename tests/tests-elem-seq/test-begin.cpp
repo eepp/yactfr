@@ -17,7 +17,11 @@
 #include <elem-printer.hpp>
 #include <common-trace.hpp>
 
-static const auto expected = "P {\n";
+namespace {
+
+constexpr auto expected = "P {\n";
+
+} // namespace
 
 int main()
 {

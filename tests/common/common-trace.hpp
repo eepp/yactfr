@@ -10,7 +10,9 @@
 
 #include <cstdint>
 
-static const char * const metadata =
+namespace {
+
+constexpr auto metadata =
     "/* CTF 1.8 */\n"
     "typealias integer { size = 8; } := u8;"
     "typealias integer { size = 16; } := u16;"
@@ -74,7 +76,7 @@ static const char * const metadata =
     "  };"
     "};";
 
-static const std::uint8_t stream[] = {
+constexpr std::uint8_t stream[] = {
     // packet header
     0xc1, 0xfc, 0x1f, 0xc1,
     0x64, 0xdf, 0x60, 0x8e, 0x8d, 0xb9, 0x4f, 0xed,
@@ -137,5 +139,7 @@ static const std::uint8_t stream[] = {
     // padding
     0x11, 0x22,
 };
+
+} // namespace
 
 #endif // _YACTFR_TESTS_COMMON_TRACE_HPP

@@ -54,7 +54,7 @@ private:
                                      const TraceType& traceType, bool end);
 
 private:
-    static constexpr Index _END_OFFSET = static_cast<Index>(~0ULL);
+    static const Index _END_OFFSET;
 
 public:
     /*!

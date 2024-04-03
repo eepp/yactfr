@@ -165,8 +165,8 @@ private:
     static constexpr std::uint32_t _PKT_MAGIC = 0x75d11d57;
 
     // only supported CTF version as of this version of yactfr
-    static constexpr int _majorVersion = 1;
-    static constexpr int _minorVersion = 8;
+    static constexpr auto _majorVersion = 1;
+    static constexpr auto _minorVersion = 8;
 
 private:
     std::istream *_stream;

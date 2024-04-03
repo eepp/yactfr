@@ -18,9 +18,13 @@
 #include <elem-printer.hpp>
 #include <common-trace.hpp>
 
-static const auto expected =
+namespace {
+
+constexpr auto expected =
     "FLUI:142\n"
     "PMN:3254525889\n";
+
+} // namespace
 
 int main()
 {

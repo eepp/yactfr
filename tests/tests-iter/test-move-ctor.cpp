@@ -17,7 +17,9 @@
 #include <elem-printer.hpp>
 #include <common-trace.hpp>
 
-static const auto expected =
+namespace {
+
+constexpr auto expected =
     "P {\n"
     "PC {\n"
     "SC:0 {\n"
@@ -277,6 +279,8 @@ static const auto expected =
     "}\n"
     "}\n"
     "}\n";
+
+} // namespace
 
 int main()
 {

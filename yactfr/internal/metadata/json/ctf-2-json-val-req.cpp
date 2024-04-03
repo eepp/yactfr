@@ -263,7 +263,7 @@ void validateSIntUll(const JsonVal& jsonVal)
         return;
     }
 
-    constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
+    static constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
 
     if (*jsonVal.asUInt() > llMaxAsUll) {
         std::ostringstream ss;
@@ -583,7 +583,7 @@ public:
         return std::make_shared<JsonFlBitArrayTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FL_BIT_ARRAY;
     }
@@ -704,7 +704,7 @@ public:
         return std::make_shared<JsonFlBitMapTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FL_BIT_MAP;
     }
@@ -738,7 +738,7 @@ public:
         return std::make_shared<JsonFlBoolTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FL_BOOL;
     }
@@ -838,7 +838,7 @@ public:
         return std::make_shared<JsonFlUIntTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FL_UINT;
     }
@@ -873,7 +873,7 @@ public:
         return std::make_shared<JsonFlSIntTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FL_SINT;
     }
@@ -908,7 +908,7 @@ public:
         return std::make_shared<JsonFlFloatTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FL_FLOAT;
     }
@@ -980,7 +980,7 @@ public:
         return std::make_shared<JsonVlUIntTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::VL_UINT;
     }
@@ -1015,7 +1015,7 @@ public:
         return std::make_shared<JsonVlSIntTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::VL_SINT;
     }
@@ -1076,7 +1076,7 @@ public:
         return std::make_shared<JsonNtStrTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::NT_STR;
     }
@@ -1134,7 +1134,7 @@ public:
         return std::make_shared<JsonSlStrTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::SL_STR;
     }
@@ -1168,7 +1168,7 @@ public:
         return std::make_shared<JsonDlStrTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::DL_STR;
     }
@@ -1222,7 +1222,7 @@ public:
         return std::make_shared<JsonSlBlobTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::SL_BLOB;
     }
@@ -1265,7 +1265,7 @@ public:
         return std::make_shared<JsonDlBlobTypeValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::DL_BLOB;
     }
@@ -1450,7 +1450,7 @@ public:
         return std::make_shared<JsonStructTypeValReq>(anyFullDtValReq);
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::STRUCT;
     }
@@ -1509,7 +1509,7 @@ public:
         return std::make_shared<JsonSlArrayTypeValReq>(anyFullDtValReq);
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::SL_ARRAY;
     }
@@ -1543,7 +1543,7 @@ public:
         return std::make_shared<JsonDlArrayTypeValReq>(anyFullDtValReq);
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::DL_ARRAY;
     }
@@ -1605,7 +1605,7 @@ public:
         return std::make_shared<JsonOptTypeValReq>(anyFullDtValReq);
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::OPT;
     }
@@ -1689,7 +1689,7 @@ public:
         return std::make_shared<JsonVarTypeValReq>(anyFullDtValReq);
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::VAR;
     }
@@ -1882,7 +1882,7 @@ public:
         return std::make_shared<JsonPreFragValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::PRE;
     }
@@ -1919,7 +1919,7 @@ public:
         return std::make_shared<JsonDtAliasFragValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::FC_ALIAS;
     }
@@ -2112,7 +2112,7 @@ public:
         return std::make_shared<JsonClkTypeFragValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::CC;
     }
@@ -2222,7 +2222,7 @@ public:
         return std::make_shared<JsonTraceTypeFragValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::TC;
     }
@@ -2268,7 +2268,7 @@ public:
         return std::make_shared<JsonDstFragValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::DSC;
     }
@@ -2313,7 +2313,7 @@ public:
         return std::make_shared<JsonErtFragValReq>();
     }
 
-    static constexpr const char *typeStr() noexcept
+    static const char *typeStr() noexcept
     {
         return strs::ERC;
     }

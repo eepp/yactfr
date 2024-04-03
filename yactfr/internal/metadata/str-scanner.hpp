@@ -584,7 +584,7 @@ boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ul
 {
     // negate if needed
     if (std::is_signed<ValT>::value) {
-        constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
+        static constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
 
         if (negate) {
             if (ullVal > llMaxAsUll + 1) {

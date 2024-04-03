@@ -15,7 +15,9 @@
 #include <mem-data-src-factory.hpp>
 #include <elem-printer.hpp>
 
-static const auto metadata =
+namespace {
+
+constexpr auto metadata =
     "/* CTF 1.8 */\n"
     "typealias integer { size = 8; } := u8;"
     "typealias integer { size = 16; } := u16;"
@@ -65,7 +67,7 @@ static const auto metadata =
     "  };"
     "};";
 
-static const std::uint8_t stream[] = {
+constexpr std::uint8_t stream[] = {
     // packet header
     0xc1, 0xfc, 0x1f, 0xc1,
     0x64, 0xdf, 0x60, 0x8e, 0x8d, 0xb9, 0x4f, 0xed,
@@ -118,7 +120,7 @@ static const std::uint8_t stream[] = {
     0x11, 0x22,
 };
 
-static const auto expected =
+constexpr auto expected =
     "P {\n"
     "PC {\n"
     "SC:0 {\n"
@@ -229,6 +231,8 @@ static const auto expected =
     "RD:1:s\n"
     "RD:3:alu\n"
     "RD:2:t$00\n";
+
+} // namespace
 
 int main()
 {

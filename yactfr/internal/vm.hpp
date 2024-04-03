@@ -32,8 +32,8 @@
 namespace yactfr {
 namespace internal {
 
-constexpr auto SIZE_UNSET = std::numeric_limits<Size>::max();
-constexpr auto SAVED_VAL_UNSET = std::numeric_limits<std::uint64_t>::max();
+extern const Size SIZE_UNSET;
+extern const std::uint64_t SAVED_VAL_UNSET;
 
 // possible VM states
 enum class VmState {
