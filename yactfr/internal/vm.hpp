@@ -603,9 +603,7 @@ private:
     bool _stateExecInstr()
     {
         while (true) {
-            const auto reaction = this->_exec(_pos.nextInstr());
-
-            switch (reaction) {
+            switch (this->_exec(_pos.nextInstr())) {
             case _tExecReaction::FetchNextInstrAndStop:
                 _pos.gotoNextInstr();
                 return true;
@@ -655,9 +653,7 @@ private:
                 continue;
             }
 
-            const auto reaction = this->_exec(_pos.nextInstr());
-
-            switch (reaction) {
+            switch (this->_exec(_pos.nextInstr())) {
             case _tExecReaction::FetchNextInstrAndStop:
                 _pos.gotoNextInstr();
                 return true;
