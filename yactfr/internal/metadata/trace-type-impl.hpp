@@ -134,7 +134,7 @@ private:
 private:
     void _buildDstMap();
     void _createParentLinks(const TraceType& traceType) const;
-    void _setTypeDeps() const;
+    void _setKeyDts() const;
     void _setDispNames() const;
 
 private:

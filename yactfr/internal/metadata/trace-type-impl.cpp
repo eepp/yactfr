@@ -43,7 +43,7 @@ TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int
     this->_buildDstMap();
     this->_createParentLinks(traceType);
     this->_setDispNames();
-    this->_setTypeDeps();
+    this->_setKeyDts();
 }
 
 void TraceTypeImpl::_buildDstMap()
@@ -76,13 +76,13 @@ void TraceTypeImpl::_createParentLinks(const TraceType& traceType) const
     }
 }
 
-class SetTypeDepsDtVisitor :
+class SetKeyDtsDtVisitor :
     public DataTypeVisitor
 {
 public:
-    explicit SetTypeDepsDtVisitor(const TraceTypeImpl& traceType,
-                                  const DataStreamType * const curDst = nullptr,
-                                  const EventRecordType * const curErt = nullptr) :
+    explicit SetKeyDtsDtVisitor(const TraceTypeImpl& traceType,
+                                const DataStreamType * const curDst = nullptr,
+                                const EventRecordType * const curErt = nullptr) :
         _traceType {&traceType},
         _curDst {curDst},
         _curErt {curErt}
@@ -103,18 +103,18 @@ public:
 
     void visit(const DynamicLengthArrayType& dt) override
     {
-        this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dlArrayTypeLenTypes(dt));
+        this->_setKeyDts(dt.lengthLocation(), TraceTypeImpl::dlArrayTypeLenTypes(dt));
         this->_visitArrayType(dt);
     }
 
     void visit(const DynamicLengthStringType& dt) override
     {
-        this->_setTypeDeps(dt.maximumLengthLocation(), TraceTypeImpl::dlStrTypeMaxLenTypes(dt));
+        this->_setKeyDts(dt.maximumLengthLocation(), TraceTypeImpl::dlStrTypeMaxLenTypes(dt));
     }
 
     void visit(const DynamicLengthBlobType& dt) override
     {
-        this->_setTypeDeps(dt.lengthLocation(), TraceTypeImpl::dlBlobTypeLenTypes(dt));
+        this->_setKeyDts(dt.lengthLocation(), TraceTypeImpl::dlBlobTypeLenTypes(dt));
     }
 
     void visit(const VariantWithUnsignedIntegerSelectorType& dt) override
@@ -157,7 +157,7 @@ private:
     template <typename VarTypeT>
     void _visitVarType(const VarTypeT& varType)
     {
-        this->_setTypeDeps(varType.selectorLocation(), TraceTypeImpl::varOptTypeSelTypes(varType));
+        this->_setKeyDts(varType.selectorLocation(), TraceTypeImpl::varOptTypeSelTypes(varType));
 
         for (auto i = 0U; i < varType.size(); ++i) {
             // currently being visited
@@ -173,7 +173,7 @@ private:
     template <typename OptTypeT>
     void _visitOptType(const OptTypeT& optType)
     {
-        this->_setTypeDeps(optType.selectorLocation(), TraceTypeImpl::varOptTypeSelTypes(optType));
+        this->_setKeyDts(optType.selectorLocation(), TraceTypeImpl::varOptTypeSelTypes(optType));
 
         // currently being visited
         _current.insert({&optType, 0});
@@ -185,24 +185,24 @@ private:
     }
 
     template <typename VarTypeT>
-    void _setTypeDepsVar(const VarTypeT& dt, const DataLocation& loc,
-                         const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
+    void _setKeyDtsVar(const VarTypeT& dt, const DataLocation& loc,
+                       const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
     {
         const auto it = _current.find(&dt);
 
         if (it == _current.end()) {
             // fan out (consider all options)
             for (auto& opt : dt.options()) {
-                this->_setTypeDeps(opt->dataType(), loc, locIt, dts);
+                this->_setKeyDts(opt->dataType(), loc, locIt, dts);
             }
         } else {
             // follow current option only
-            this->_setTypeDeps(dt[it->second].dataType(), loc, locIt, dts);
+            this->_setKeyDts(dt[it->second].dataType(), loc, locIt, dts);
         }
     }
 
-    void _setTypeDeps(const DataType& dt, const DataLocation& loc,
-                      const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
+    void _setKeyDts(const DataType& dt, const DataLocation& loc,
+                    const DataLocation::PathElements::const_iterator locIt, DataTypeSet& dts) const
     {
         if (dt.isFixedLengthBooleanType() || dt.isIntegerType()) {
             // those are the only valid length/selector data types
@@ -212,23 +212,23 @@ private:
             const auto memberType = dt.asStructureType()[*locIt];
 
             assert(memberType);
-            this->_setTypeDeps(memberType->dataType(), loc, locIt + 1, dts);
+            this->_setKeyDts(memberType->dataType(), loc, locIt + 1, dts);
         } else if (dt.isArrayType()) {
             assert(_current.find(&dt) != _current.end());
-            this->_setTypeDeps(dt.asArrayType().elementType(), loc, locIt, dts);
+            this->_setKeyDts(dt.asArrayType().elementType(), loc, locIt, dts);
         } else if (dt.isVariantWithUnsignedIntegerSelectorType()) {
-            this->_setTypeDepsVar(dt.asVariantWithUnsignedIntegerSelectorType(), loc, locIt, dts);
+            this->_setKeyDtsVar(dt.asVariantWithUnsignedIntegerSelectorType(), loc, locIt, dts);
         } else if (dt.isVariantWithSignedIntegerSelectorType()) {
-            this->_setTypeDepsVar(dt.asVariantWithSignedIntegerSelectorType(), loc, locIt, dts);
+            this->_setKeyDtsVar(dt.asVariantWithSignedIntegerSelectorType(), loc, locIt, dts);
         } else if (dt.isOptionalType()) {
             assert(_current.find(&dt) != _current.end());
-            this->_setTypeDeps(dt.asOptionalType().dataType(), loc, locIt, dts);
+            this->_setKeyDts(dt.asOptionalType().dataType(), loc, locIt, dts);
         } else {
             std::abort();
         }
     }
 
-    void _setTypeDeps(const DataLocation& loc, DataTypeSet& dts) const
+    void _setKeyDts(const DataLocation& loc, DataTypeSet& dts) const
     {
         const DataType *dt = nullptr;
 
@@ -267,7 +267,7 @@ private:
         }
 
         assert(dt);
-        this->_setTypeDeps(*dt, loc, loc.begin(), dts);
+        this->_setKeyDts(*dt, loc, loc.begin(), dts);
     }
 
 private:
@@ -283,42 +283,42 @@ private:
     std::unordered_map<const DataType *, Index> _current;
 };
 
-void TraceTypeImpl::_setTypeDeps() const
+void TraceTypeImpl::_setKeyDts() const
 {
     if (_pktHeaderType) {
-        SetTypeDepsDtVisitor visitor {*this};
+        SetKeyDtsDtVisitor visitor {*this};
 
         _pktHeaderType->accept(visitor);
     }
 
     for (auto& dst : _dsts) {
         if (dst->packetContextType()) {
-            SetTypeDepsDtVisitor visitor {*this, dst.get()};
+            SetKeyDtsDtVisitor visitor {*this, dst.get()};
 
             dst->packetContextType()->accept(visitor);
         }
 
         if (dst->eventRecordHeaderType()) {
-            SetTypeDepsDtVisitor visitor {*this, dst.get()};
+            SetKeyDtsDtVisitor visitor {*this, dst.get()};
 
             dst->eventRecordHeaderType()->accept(visitor);
         }
 
         if (dst->eventRecordCommonContextType()) {
-            SetTypeDepsDtVisitor visitor {*this, dst.get()};
+            SetKeyDtsDtVisitor visitor {*this, dst.get()};
 
             dst->eventRecordCommonContextType()->accept(visitor);
         }
 
         for (auto& ert : dst->eventRecordTypes()) {
             if (ert->specificContextType()) {
-                SetTypeDepsDtVisitor visitor {*this, dst.get(), ert.get()};
+                SetKeyDtsDtVisitor visitor {*this, dst.get(), ert.get()};
 
                 ert->specificContextType()->accept(visitor);
             }
 
             if (ert->payloadType()) {
-                SetTypeDepsDtVisitor visitor {*this, dst.get(), ert.get()};
+                SetKeyDtsDtVisitor visitor {*this, dst.get(), ert.get()};
 
                 ert->payloadType()->accept(visitor);
             }
