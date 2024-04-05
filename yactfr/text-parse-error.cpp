@@ -55,7 +55,7 @@ void TextParseError::_buildFullError()
 
 namespace internal {
 
-void throwTextParseError(std::string msg, TextLocation loc)
+[[ noreturn ]] void throwTextParseError(std::string msg, TextLocation loc)
 {
     throw TextParseError {std::move(msg), std::move(loc)};
 }
