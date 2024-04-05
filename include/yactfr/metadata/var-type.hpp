@@ -204,9 +204,8 @@ protected:
 private:
     bool _isEqual(const DataType& other) const noexcept override
     {
-        const auto& otherVariantType = static_cast<const VariantWithIntegerSelectorType&>(other);
-
-        return VariantType::_isEqual(other) && this->_optsAreEqual(otherVariantType);
+        return VariantType::_isEqual(other) &&
+               this->_optsAreEqual(static_cast<const VariantWithIntegerSelectorType&>(other));
     }
 
     bool _optsAreEqual(const VariantWithIntegerSelectorType& other) const noexcept

@@ -29,6 +29,7 @@
 
 #include "pseudo-types.hpp"
 #include "set-pseudo-dt-data-loc.hpp"
+#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -87,13 +88,15 @@ private:
 
         DataLocation::PathElements pathElemsSuffix;
 
-        // this is the name we're looking for (first)
-        const auto& firstPathElem = *pseudoDataLoc.pathElems().front();
-
         // predicate for std::find_if() below
-        const auto pred = [&firstPathElem](const auto namePtr) {
-            return firstPathElem == *namePtr;
-        };
+        const auto pred = call([&pseudoDataLoc] {
+            // this is the name we're looking for (first)
+            const auto& firstPathElem = *pseudoDataLoc.pathElems().front();
+
+            return [&firstPathElem](const auto namePtr) {
+                return firstPathElem == *namePtr;
+            };
+        });
 
         while (true) {
             if (std::find_if(searchEntryIt->begin(),
@@ -228,9 +231,7 @@ private:
         switch (pseudoDt.kind()) {
         case PseudoDt::Kind::SlArray:
         {
-            auto& pseudoArrayType = static_cast<PseudoSlArrayType&>(pseudoDt);
-
-            this->_set(pseudoArrayType.pseudoElemType());
+            this->_set(static_cast<PseudoSlArrayType&>(pseudoDt).pseudoElemType());
             break;
         }
 
@@ -253,12 +254,10 @@ private:
 
         case PseudoDt::Kind::Struct:
         {
-            auto& pseudoStructType = static_cast<PseudoStructType&>(pseudoDt);
-
             // new level
             _memberNames.push_back({});
 
-            for (auto& pseudoMemberType : pseudoStructType.pseudoMemberTypes()) {
+            for (auto& pseudoMemberType : static_cast<PseudoStructType&>(pseudoDt).pseudoMemberTypes()) {
                 /*
                  * Append this name before so that _createLocMap() can
                  * access the ancestor names.

@@ -138,6 +138,14 @@ private:
      */
     PseudoDt::Up _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
 
+    /*
+     * Returns the default clock type for the JSON data stream type
+     * fragment `jsonFrag`, or `nullptr` if none.
+     *
+     * Throws if it can't find the clock type.
+     */
+    const ClockType *_defClkTypeOfDstFrag(const JsonObjVal& jsonFrag);
+
 private:
     // beginning and end metadata string pointers
     const char *_begin;

@@ -43,6 +43,7 @@
 #include "set-pseudo-dt-data-loc.hpp"
 #include "set-pseudo-dt-pos-in-scope.hpp"
 #include "pseudo-types.hpp"
+#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -377,7 +378,6 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
         _current[&pseudoVarType] = i;
 
         const auto& pseudoOpt = pseudoVarType.pseudoOpts()[i];
-        auto optDt = this->_dtFromPseudoDt(pseudoOpt->pseudoDt());
 
         assert(pseudoOpt->name());
 
@@ -392,7 +392,8 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoVarTy
             this->_throwInvalDataLoc(ss.str(), pseudoVarType.loc(), selLoc, pseudoVarType.loc());
         }
 
-        opts.push_back(VarTypeT::Option::create(*pseudoOpt->name(), std::move(optDt),
+        opts.push_back(VarTypeT::Option::create(*pseudoOpt->name(),
+                                                this->_dtFromPseudoDt(pseudoOpt->pseudoDt()),
                                                 rangesIt->second,
                                                 this->_tryCloneAttrs(pseudoOpt->attrs())));
     }
@@ -415,7 +416,6 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
         _current[&pseudoVarType] = i;
 
         const auto& pseudoOpt = pseudoVarType.pseudoOpts()[i];
-        auto optDt = this->_dtFromPseudoDt(pseudoOpt->pseudoDt());
         std::set<IntegerRange<IntRangeValueT>> ranges;
 
         for (auto& range : pseudoVarType.rangeSets()[i]) {
@@ -425,7 +425,8 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
             });
         }
 
-        opts.push_back(VarTypeT::Option::create(pseudoOpt->name(), std::move(optDt),
+        opts.push_back(VarTypeT::Option::create(pseudoOpt->name(),
+                                                this->_dtFromPseudoDt(pseudoOpt->pseudoDt()),
                                                 IntegerRangeSet<IntRangeValueT> {std::move(ranges)},
                                                 this->_tryCloneAttrs(pseudoOpt->attrs())));
     }
@@ -569,11 +570,10 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoFlUIntType(const PseudoDt
 DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoSlArrayType(const PseudoDt& pseudoDt)
 {
     auto& pseudoArrayType = static_cast<const PseudoSlArrayType&>(pseudoDt);
-    auto arrayType = this->_tryNonNtStrTypeFromPseudoArrayType<StaticLengthStringType>(pseudoArrayType,
-                                                                                       pseudoArrayType.pseudoElemType(),
-                                                                                       pseudoArrayType.len());
 
-    if (arrayType) {
+    if (auto arrayType = this->_tryNonNtStrTypeFromPseudoArrayType<StaticLengthStringType>(pseudoArrayType,
+                                                                                           pseudoArrayType.pseudoElemType(),
+                                                                                           pseudoArrayType.len())) {
         return arrayType;
     }
 
@@ -610,11 +610,10 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoDlArrayType(const PseudoD
 {
     auto& pseudoArrayType = static_cast<const PseudoDlArrayType&>(pseudoDt);
     const auto& lenLoc = this->_getLenLoc(pseudoArrayType);
-    auto strType = this->_tryNonNtStrTypeFromPseudoArrayType<DynamicLengthStringType>(pseudoArrayType,
-                                                                                      pseudoArrayType.pseudoElemType(),
-                                                                                      lenLoc);
 
-    if (strType) {
+    if (auto strType = this->_tryNonNtStrTypeFromPseudoArrayType<DynamicLengthStringType>(pseudoArrayType,
+                                                                                          pseudoArrayType.pseudoElemType(),
+                                                                                          lenLoc)) {
         return strType;
     }
 
@@ -685,9 +684,7 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
-        auto& pseudoStructType = static_cast<const PseudoStructType&>(pseudoDt);
-
-        for (auto& pseudoMemberType : pseudoStructType.pseudoMemberTypes()) {
+        for (auto& pseudoMemberType : static_cast<const PseudoStructType&>(pseudoDt).pseudoMemberTypes()) {
             assert(pseudoMemberType->name());
 
             if (*pseudoMemberType->name() != *locIt) {
@@ -715,9 +712,8 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
-        auto& pseudoArrayType = static_cast<const PseudoArrayType&>(pseudoDt);
-
-        return this->_findPseudoDts(pseudoArrayType.pseudoElemType(), loc, locIt, pseudoDts);
+        return this->_findPseudoDts(static_cast<const PseudoArrayType&>(pseudoDt).pseudoElemType(),
+                                    loc, locIt, pseudoDts);
     }
 
     case PseudoDt::Kind::Var:
@@ -751,9 +747,8 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
-        auto& pseudoOptType = static_cast<const PseudoOptType&>(pseudoDt);
-
-        return this->_findPseudoDts(pseudoOptType.pseudoDt(), loc, locIt, pseudoDts);
+        return this->_findPseudoDts(static_cast<const PseudoOptType&>(pseudoDt).pseudoDt(), loc,
+                                    locIt, pseudoDts);
     }
 
     default:
@@ -772,36 +767,30 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
         throwTextParseError(ss.str(), pseudoSrcDt.loc());
     }
 
-    const PseudoDt *pseudoDt = nullptr;
+    const auto pseudoDt = call([&loc, this] {
+        switch (loc.scope()) {
+        case Scope::PacketHeader:
+            return _pseudoTraceType->pseudoPktHeaderType();
 
-    switch (loc.scope()) {
-    case Scope::PacketHeader:
-        pseudoDt = _pseudoTraceType->pseudoPktHeaderType();
-        break;
+        case Scope::PacketContext:
+            return _pseudoDst->pseudoPktCtxType();
 
-    case Scope::PacketContext:
-        pseudoDt = _pseudoDst->pseudoPktCtxType();
-        break;
+        case Scope::EventRecordHeader:
+            return _pseudoDst->pseudoErHeaderType();
 
-    case Scope::EventRecordHeader:
-        pseudoDt = _pseudoDst->pseudoErHeaderType();
-        break;
+        case Scope::EventRecordCommonContext:
+            return _pseudoDst->pseudoErCommonCtxType();
 
-    case Scope::EventRecordCommonContext:
-        pseudoDt = _pseudoDst->pseudoErCommonCtxType();
-        break;
+        case Scope::EventRecordSpecificContext:
+            return _pseudoErt->pseudoSpecCtxType();
 
-    case Scope::EventRecordSpecificContext:
-        pseudoDt = _pseudoErt->pseudoSpecCtxType();
-        break;
+        case Scope::EventRecordPayload:
+            return _pseudoErt->pseudoPayloadType();
 
-    case Scope::EventRecordPayload:
-        pseudoDt = _pseudoErt->pseudoPayloadType();
-        break;
-
-    default:
-        std::abort();
-    }
+        default:
+            std::abort();
+        }
+    });
 
     if (!pseudoDt) {
         std::ostringstream ss;
@@ -957,17 +946,19 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     assert(pseudoSelDt);
 
     if (selIsFlUIntType) {
-        auto& pseudoUIntSelType = static_cast<const PseudoFlUIntType&>(*pseudoSelDt);
-
-        return this->_dtFromPseudoVarType<VariantWithUnsignedIntegerSelectorType>(pseudoVarType,
-                                                                                  pseudoUIntSelType.mappings(),
-                                                                                  selLoc);
+        return this->_dtFromPseudoVarType<VariantWithUnsignedIntegerSelectorType>(
+            pseudoVarType,
+            static_cast<const PseudoFlUIntType&>(*pseudoSelDt).mappings(),
+            selLoc
+        );
     } else {
         auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt);
-        auto& mappings = pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType().mappings();
 
-        return this->_dtFromPseudoVarType<VariantWithSignedIntegerSelectorType>(pseudoVarType,
-                                                                                mappings, selLoc);
+        return this->_dtFromPseudoVarType<VariantWithSignedIntegerSelectorType>(
+            pseudoVarType,
+            pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType().mappings(),
+            selLoc
+        );
     }
 }
 

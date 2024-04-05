@@ -22,6 +22,8 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
 
+#include "../utils.hpp"
+
 namespace yactfr {
 namespace internal {
 
@@ -598,13 +600,7 @@ boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ul
     }
 
     // success: cast and negate if needed
-    auto val = static_cast<ValT>(ullVal);
-
-    if (negate) {
-        val *= static_cast<ValT>(-1);
-    }
-
-    return val;
+    return static_cast<ValT>(ullVal) * static_cast<ValT>(negate ? -1 : 1);
 }
 
 template <typename ValT>
@@ -657,13 +653,15 @@ boost::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
         --it;
     }
 
-    const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
+    {
+        const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
 
-    if (!val) {
-        _at = at;
+        if (!val) {
+            _at = at;
+        }
+
+        return val;
     }
-
-    return val;
 }
 
 template <typename ValT, int BaseV>
@@ -694,14 +692,16 @@ boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
         return boost::none;
     }
 
-    const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
+    {
+        const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
 
-    if (val) {
-        // success: update position
-        _at += (strEnd - &(*_at));
+        if (val) {
+            // success: update position
+            _at += (strEnd - &(*_at));
+        }
+
+        return val;
     }
-
-    return val;
 }
 
 template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV>

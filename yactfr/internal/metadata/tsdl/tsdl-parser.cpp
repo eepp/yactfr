@@ -111,14 +111,16 @@ void TsdlParser::_setPseudoSlArrayTypeMetadataStreamUuidRole(PseudoDt& basePseud
         assert(pseudoArrayType.pseudoElemType().isFlUInt() &&
                pseudoArrayType.pseudoElemType().kind() != PseudoDt::Kind::ScalarDtWrapper);
 
-        auto& pseudoElemDt = static_cast<const PseudoFlUIntType&>(pseudoArrayType.pseudoElemType());
+        {
+            auto& pseudoElemDt = static_cast<const PseudoFlUIntType&>(pseudoArrayType.pseudoElemType());
 
-        if (pseudoElemDt.len() != 8) {
-            return false;
-        }
+            if (pseudoElemDt.len() != 8) {
+                return false;
+            }
 
-        if (pseudoElemDt.align() != 8) {
-            return false;
+            if (pseudoElemDt.align() != 8) {
+                return false;
+            }
         }
 
         return true;
@@ -362,9 +364,7 @@ void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
 void TsdlParser::_setPseudoDstDefClkType()
 {
     for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
-        auto& pseudoDst = idPseudoDstPair.second;
-
-        this->_setPseudoDstDefClkType(*pseudoDst);
+        this->_setPseudoDstDefClkType(*idPseudoDstPair.second);
     }
 }
 
@@ -386,11 +386,13 @@ void TsdlParser::_createTraceType()
      * orphan pseudo event record type for the DST ID 0 _and_ there's no
      * pseudo data stream types.
      */
-    const auto it = _pseudoTraceType->pseudoOrphanErts().find(0);
+    {
+        const auto it = _pseudoTraceType->pseudoOrphanErts().find(0);
 
-    if (it != _pseudoTraceType->pseudoOrphanErts().end() && !it->second.empty() &&
-            _pseudoTraceType->pseudoDsts().empty()) {
-        _pseudoTraceType->pseudoDsts()[0] = std::make_unique<PseudoDst>();
+        if (it != _pseudoTraceType->pseudoOrphanErts().end() && !it->second.empty() &&
+                _pseudoTraceType->pseudoDsts().empty()) {
+            _pseudoTraceType->pseudoDsts()[0] = std::make_unique<PseudoDst>();
+        }
     }
 
     // add roles to specific pseudo data types
@@ -425,18 +427,14 @@ bool TsdlParser::_isPseudoVarTypeWithoutSelLocRec(const PseudoDt& pseudoDt)
 {
     if (pseudoDt.kind() == PseudoDt::Kind::SlArray ||
             pseudoDt.kind() == PseudoDt::Kind::DlArray) {
-        auto& pseudoArrayType = static_cast<const PseudoArrayType&>(pseudoDt);
-
-        return TsdlParser::_isPseudoVarTypeWithoutSelLocRec(pseudoArrayType.pseudoElemType());
+        return TsdlParser::_isPseudoVarTypeWithoutSelLocRec(static_cast<const PseudoArrayType&>(pseudoDt).pseudoElemType());
     }
 
     if (pseudoDt.kind() != PseudoDt::Kind::Var) {
         return false;
     }
 
-    auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
-
-    return !pseudoVarType.pseudoSelLoc().has_value();
+    return !static_cast<const PseudoVarType&>(pseudoDt).pseudoSelLoc().has_value();
 }
 
 void TsdlParser::_checkDupAttr(const _tAttrs& attrs)
@@ -685,15 +683,11 @@ PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const PseudoDataLoc::Pa
 {
     assert(!allPathElems.empty());
 
-    auto pseudoDataLoc = this->_pseudoDataLocFromAbsAllPathElems(allPathElems, loc);
-
-    if (pseudoDataLoc) {
+    if (const auto pseudoDataLoc = this->_pseudoDataLocFromAbsAllPathElems(allPathElems, loc)) {
         return *pseudoDataLoc;
     }
 
-    pseudoDataLoc = this->_pseudoDataLocFromRelAllPathElems(allPathElems, loc);
-
-    if (pseudoDataLoc) {
+    if (const auto pseudoDataLoc = this->_pseudoDataLocFromRelAllPathElems(allPathElems, loc)) {
         return *pseudoDataLoc;
     }
 
@@ -979,7 +973,7 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
 
 bool TsdlParser::_tryParseGenericDtAlias()
 {
-    bool isTypealias = false;
+    auto isTypealias = false;
 
     if (_ss.tryScanToken("typealias")) {
         isTypealias = true;
@@ -1062,15 +1056,11 @@ bool TsdlParser::_tryParseDtAlias()
 
 PseudoDt::Up TsdlParser::_tryParseDt()
 {
-    auto pseudoDt = this->_tryParseDtAliasRef();
-
-    if (pseudoDt) {
+    if (auto pseudoDt = this->_tryParseDtAliasRef()) {
         return pseudoDt;
     }
 
-    pseudoDt = this->_tryParseFullDt();
-
-    if (pseudoDt) {
+    if (auto pseudoDt = this->_tryParseFullDt()) {
         return pseudoDt;
     }
 
@@ -1082,12 +1072,9 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     _ss.skipCommentsAndWhitespaces();
 
     const auto loc = _ss.loc();
-    PseudoDt::Up pseudoDt;
 
     try {
-        pseudoDt = this->_tryParseFlIntType();
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseFlIntType()) {
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1096,9 +1083,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseNtStrType();
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseNtStrType()) {
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1107,9 +1092,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseFlEnumType();
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseFlEnumType()) {
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1118,9 +1101,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseFlFloatType();
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseFlFloatType()) {
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1129,9 +1110,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseStructType();
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseStructType()) {
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1140,9 +1119,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        pseudoDt = this->_tryParseVarType();
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseVarType()) {
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1211,9 +1188,7 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
 
     _ss.skipCommentsAndWhitespaces();
 
-    auto fastPseudoFlIntType = this->_fastPseudoFlIntType(beforeKwLoc);
-
-    if (fastPseudoFlIntType) {
+    if (auto fastPseudoFlIntType = this->_fastPseudoFlIntType(beforeKwLoc)) {
         return fastPseudoFlIntType;
     }
 
@@ -1279,9 +1254,7 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
         } else if (attr.name == "align") {
             align = attr.align();
         } else if (attr.name == "byte_order") {
-            const auto attrBo = attr.bo();
-
-            if (attrBo) {
+            if (const auto attrBo = attr.bo()) {
                 bo = *attrBo;
             }
         } else if (attr.name == "encoding") {
@@ -1313,24 +1286,24 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
         }
     }
 
-    PseudoDt::Up pseudoDt;
+    auto pseudoDt = call([&]() -> PseudoDt::Up {
+        if (isSigned) {
+            if (mappedClkTypeId) {
+                throwTextParseError("Illegal `map` attribute for a fixed-length signed integer type.",
+                                    *mapAttrLoc);
+            }
 
-    if (isSigned) {
-        if (mappedClkTypeId) {
-            throwTextParseError("Illegal `map` attribute for a fixed-length signed integer type.",
-                                *mapAttrLoc);
-        }
-
-        auto intType = FixedLengthSignedIntegerType::create(align, size, bo, bioFromBo(bo), dispBase);
-
-        pseudoDt = std::make_unique<PseudoScalarDtWrapper>(std::move(intType), encoding,
-                                                           beforeKwLoc);
-    } else {
-        pseudoDt = std::make_unique<PseudoFlUIntType>(align, size, bo, bioFromBo(bo), dispBase,
+            return std::make_unique<PseudoScalarDtWrapper>(
+                FixedLengthSignedIntegerType::create(align, size, bo, bioFromBo(bo), dispBase),
+                encoding, beforeKwLoc
+            );
+        } else {
+            return std::make_unique<PseudoFlUIntType>(align, size, bo, bioFromBo(bo), dispBase,
                                                       FixedLengthUnsignedIntegerType::Mappings {},
                                                       encoding, mappedClkTypeId, nullptr,
                                                       UnsignedIntegerTypeRoleSet {}, beforeKwLoc);
-    }
+        }
+    });
 
     assert(pseudoDt);
 
@@ -1393,9 +1366,7 @@ PseudoDt::Up TsdlParser::_tryParseFlFloatType()
         } else if (attr.name == "align") {
             align = attr.align();
         } else if (attr.name == "byte_order") {
-            const auto attrBo = attr.bo();
-
-            if (attrBo) {
+            if (const auto attrBo = attr.bo()) {
                 bo = *attrBo;
             }
         } else {
@@ -1420,10 +1391,10 @@ PseudoDt::Up TsdlParser::_tryParseFlFloatType()
         throwTextParseError(ss.str(), beginLoc);
     }
 
-    auto floatType = FixedLengthFloatingPointNumberType::create(align, expDig + mantDig, bo,
-                                                                bioFromBo(bo));
-
-    return std::make_unique<PseudoScalarDtWrapper>(std::move(floatType), beginLoc);
+    return std::make_unique<PseudoScalarDtWrapper>(
+        FixedLengthFloatingPointNumberType::create(align, expDig + mantDig, bo, bioFromBo(bo)),
+        beginLoc
+    );
 }
 
 PseudoDt::Up TsdlParser::_tryParseNtStrType()
@@ -1596,14 +1567,14 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                                           [](const auto& pseudoDt,
                                                                              const auto& mappings) {
             auto& baseIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthSignedIntegerType();
-            auto intType = FixedLengthSignedIntegerType::create(baseIntType.alignment(),
-                                                                baseIntType.length(),
-                                                                baseIntType.byteOrder(),
-                                                                baseIntType.bitOrder(),
-                                                                baseIntType.preferredDisplayBase(),
-                                                                mappings);
 
-            return std::make_unique<PseudoScalarDtWrapper>(std::move(intType), pseudoDt.loc());
+            return std::make_unique<PseudoScalarDtWrapper>(
+                FixedLengthSignedIntegerType::create(baseIntType.alignment(), baseIntType.length(),
+                                                     baseIntType.byteOrder(),
+                                                     baseIntType.bitOrder(),
+                                                     baseIntType.preferredDisplayBase(), mappings),
+                pseudoDt.loc()
+            );
         });
     }
 }
@@ -1683,23 +1654,22 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
 
             if (_ss.tryScanToken("align")) {
                 this->_expectToken("(");
-                const auto optAlign = _ss.tryScanConstUInt();
 
-                if (!optAlign) {
+                if (const auto optAlign = _ss.tryScanConstUInt()) {
+                    if (!isPowOfTwo(*optAlign)) {
+                        std::ostringstream ss;
+
+                        ss << "Invalid minimum alignment for `struct` block " <<
+                              "(must be a power of two): " << *optAlign << ".";
+                        throwTextParseError(ss.str(), _ss.loc());
+                    }
+
+                    align = *optAlign;
+                    this->_expectToken(")");
+                } else {
                     throwTextParseError("Expecting valid constant unsigned integer.",
                                         _ss.loc());
                 }
-
-                if (!isPowOfTwo(*optAlign)) {
-                    std::ostringstream ss;
-
-                    ss << "Invalid minimum alignment for `struct` block " <<
-                          "(must be a power of two): " << *optAlign << ".";
-                    throwTextParseError(ss.str(), _ss.loc());
-                }
-
-                align = *optAlign;
-                this->_expectToken(")");
             }
 
             pseudoDt = std::make_unique<PseudoStructType>(align, std::move(pseudoMemberTypes),
@@ -2065,15 +2035,17 @@ bool TsdlParser::_tryParseClkTypeBlock()
     }
 
     // adjust offset (make sure `offsetCycles` is less than `freq`)
-    const auto completeSecsInOffsetCycles = offsetCycles / freq;
+    {
+        const auto completeSecsInOffsetCycles = offsetCycles / freq;
 
-    offsetCycles -= completeSecsInOffsetCycles * freq;
+        offsetCycles -= completeSecsInOffsetCycles * freq;
 
-    // TODO: throw if this would cause a `long long` overflow
-    offsetSecs += completeSecsInOffsetCycles;
+        // TODO: throw if this would cause a `long long` overflow
+        offsetSecs += completeSecsInOffsetCycles;
+    }
 
     // create origin
-    auto origin = [&isAbs, this]() -> boost::optional<ClockOrigin> {
+    auto origin = call([&isAbs, this]() -> boost::optional<ClockOrigin> {
         if (isAbs) {
             /*
              * CTF 1.8 says:
@@ -2112,7 +2084,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
         }
 
         return boost::none;
-    }();
+    });
 
     _pseudoTraceType->clkTypes().insert(ClockType::create(name, boost::none, name, std::move(uuidStr),
                                                           std::move(uuid), freq, descr,
@@ -2155,10 +2127,8 @@ bool TsdlParser::_tryParseTraceTypeBlock()
         }
 
         // try to parse packet header type
-        auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktHeaderType, "packet",
-                                               "header");
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktHeaderType,
+                                                   "packet", "header")) {
             if (pseudoPktHeaderType) {
                 throwTextParseError("Duplicate `packet.header` scope.", _ss.loc());
             }
@@ -2317,10 +2287,8 @@ bool TsdlParser::_tryParseDstBlock()
         }
 
         // try to parse packet context type
-        auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktCtxType, "packet",
-                                               "context");
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktCtxType,
+                                                   "packet", "context")) {
             if (pseudoPktCtxType) {
                 throwTextParseError("Duplicate `packet.context` scope.", _ss.loc());
             }
@@ -2330,10 +2298,8 @@ bool TsdlParser::_tryParseDstBlock()
         }
 
         // try to parse event record header type
-        pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErHeaderType, "event", "header",
-                                          false);
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErHeaderType,
+                                                   "event", "header", false)) {
             if (pseudoErHeaderType) {
                 throwTextParseError("Duplicate `event.header` scope.", _ss.loc());
             }
@@ -2343,10 +2309,8 @@ bool TsdlParser::_tryParseDstBlock()
         }
 
         // try to parse event record common context type
-        pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErCommonCtxType, "event",
-                                          "context", false);
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErCommonCtxType,
+                                                   "event", "context", false)) {
             if (pseudoErCommonCtxType) {
                 throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
             }
@@ -2396,13 +2360,13 @@ bool TsdlParser::_tryParseDstBlock()
     }
 
     // create and initialize pseudo data stream type
-    auto pseudoDst = std::make_unique<PseudoDst>(id, boost::none, boost::none, boost::none,
-                                                 std::move(pseudoPktCtxType),
-                                                 std::move(pseudoErHeaderType),
-                                                 std::move(pseudoErCommonCtxType));
-    _pseudoTraceType->pseudoDsts().insert(std::make_pair(id, std::move(pseudoDst)));
+    _pseudoTraceType->pseudoDsts().insert(std::make_pair(
+        id,
+        std::make_unique<PseudoDst>(id, boost::none, boost::none, boost::none,
+                                    std::move(pseudoPktCtxType), std::move(pseudoErHeaderType),
+                                    std::move(pseudoErCommonCtxType))
+    ));
     _pseudoTraceType->pseudoOrphanErts()[id];
-
     return true;
 }
 
@@ -2436,9 +2400,7 @@ bool TsdlParser::_tryParseErtBlock()
         }
 
         // try to parse specific context type
-        auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErSpecCtxType, "context");
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErSpecCtxType, "context")) {
             if (pseudoSpecCtxType) {
                 throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
             }
@@ -2448,9 +2410,7 @@ bool TsdlParser::_tryParseErtBlock()
         }
 
         // try to parse payload type
-        pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErPayloadType, "fields");
-
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErPayloadType, "fields")) {
             if (pseudoPayloadType) {
                 throwTextParseError("Duplicate `event.fields` scope.", _ss.loc());
             }
@@ -2612,18 +2572,17 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         ssRej.accept();
         return pseudoDt;
     } catch (TextParseError& exc) {
-        std::string line;
+        appendMsgToTextParseError(exc, call([&firstName, &secondName] {
+            auto line = std::string {"In the `"} + firstName;
 
-        line = "In the `";
-        line += firstName;
+            if (secondName) {
+                line += ".";
+                line += secondName;
+            }
 
-        if (secondName) {
-            line += ".";
-            line += secondName;
-        }
+            return line + "` scope:";
+        }), beginLoc);
 
-        line += "` scope:";
-        appendMsgToTextParseError(exc, std::move(line), beginLoc);
         throw;
     }
 }
@@ -2633,21 +2592,23 @@ TsdlAttr TsdlParser::_expectAttr()
     TsdlAttr attr;
 
     // parse name
-    auto nameIsFound = false;
+    {
+        auto nameIsFound = false;
 
-    _ss.skipCommentsAndWhitespaces();
-    attr.nameLoc = _ss.loc();
+        _ss.skipCommentsAndWhitespaces();
+        attr.nameLoc = _ss.loc();
 
-    if (_ss.tryScanToken("model.emf.uri")) {
-        nameIsFound = true;
-        attr.name = "model.emf.uri";
-    } else if (const auto ident = _ss.tryScanIdent()) {
-        nameIsFound = true;
-        attr.name = *ident;
-    }
+        if (_ss.tryScanToken("model.emf.uri")) {
+            nameIsFound = true;
+            attr.name = "model.emf.uri";
+        } else if (const auto ident = _ss.tryScanIdent()) {
+            nameIsFound = true;
+            attr.name = *ident;
+        }
 
-    if (!nameIsFound) {
-        throwTextParseError("Expecting attribute name.", *attr.nameLoc);
+        if (!nameIsFound) {
+            throwTextParseError("Expecting attribute name.", *attr.nameLoc);
+        }
     }
 
     // parse `=`
@@ -2668,13 +2629,11 @@ TsdlAttr TsdlParser::_expectAttr()
         this->_expectToken(".");
 
         // parse internal ID (name) of clock type
-        const auto ident = _ss.tryScanIdent();
-
-        if (!ident) {
+        if (const auto ident = _ss.tryScanIdent()) {
+            attr.strVal = *ident;
+        } else {
             throwTextParseError("Expecting identifier (clock type internal ID).", _ss.loc());
         }
-
-        attr.strVal = *ident;
 
         // parse `.`
         this->_expectToken(".");
@@ -2735,9 +2694,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
                         dtAliasName += *ident;
 
                         // get from data type alias
-                        auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc);
-
-                        if (pseudoDt) {
+                        if (auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc)) {
                             ssRej.accept();
                             return pseudoDt;
                         }
@@ -2790,9 +2747,8 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
                          * location.
                          */
                         auto pseudoDtClone = pseudoDt->clone();
-                        auto& pseudoVarType = static_cast<PseudoVarType&>(*pseudoDtClone);
 
-                        pseudoVarType.pseudoSelLoc(std::move(pseudoSelLoc));
+                        static_cast<PseudoVarType&>(*pseudoDtClone).pseudoSelLoc(std::move(pseudoSelLoc));
                         ssRej.accept();
                         return pseudoDtClone;
                     }
@@ -2807,9 +2763,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
         std::string dtAliasName;
 
         if (this->_parseDtAliasName(dtAliasName, false)) {
-            auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc);
-
-            if (pseudoDt) {
+            if (auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc)) {
                 ssRej.accept();
                 return pseudoDt;
             }
@@ -2821,7 +2775,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
 
 bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
 {
-    bool isMulti = false;
+    auto isMulti = false;
     std::vector<std::string> parts;
 
     while (true) {
@@ -2902,15 +2856,13 @@ PseudoDataLoc TsdlParser::_expectDataLoc()
     PseudoDataLoc::PathElems allPathElems;
 
     while (true) {
-        const auto ident = _ss.tryScanIdent();
+        if (const auto ident = _ss.tryScanIdent()) {
+            allPathElems.push_back(*ident);
 
-        if (!ident) {
-            break;
-        }
-
-        allPathElems.push_back(*ident);
-
-        if (!_ss.tryScanToken(".")) {
+            if (!_ss.tryScanToken(".")) {
+                break;
+            }
+        } else {
             break;
         }
     }
@@ -2923,17 +2875,15 @@ PseudoDataLoc TsdlParser::_expectDataLoc()
 }
 
 PseudoDt::Up TsdlParser::_tryParseIdentArraySubscripts(std::string& ident,
-                                                               PseudoDt::Up innerPseudoDt)
+                                                       PseudoDt::Up innerPseudoDt)
 {
     // parse identifier
-    const auto identRes = _ss.tryScanIdent();
-
-    if (!identRes) {
-        return nullptr;
+    if (const auto identRes = _ss.tryScanIdent()) {
+        ident = *identRes;
+        return this->_parseArraySubscripts(std::move(innerPseudoDt));
     }
 
-    ident = *identRes;
-    return this->_parseArraySubscripts(std::move(innerPseudoDt));
+    return nullptr;
 }
 
 PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
@@ -3156,14 +3106,13 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
     {
         StrScannerRejecter ssRej {_ss};
         const auto dtLoc = _ss.loc();
-        auto pseudoDt = this->_tryParseDtAliasRef();
 
-        if (pseudoDt) {
-            // let's try parsing an identifier + array subscripts
+        if (auto pseudoDt = this->_tryParseDtAliasRef()) {
             std::string ident;
-            auto effectivePseudoDt = this->_tryParseIdentArraySubscripts(ident, std::move(pseudoDt));
 
-            if (effectivePseudoDt) {
+            // let's try parsing an identifier + array subscripts
+            if (auto effectivePseudoDt = this->_tryParseIdentArraySubscripts(ident,
+                                                                             std::move(pseudoDt))) {
                 /*
                  * We have a winner: variant type must have a selector
                  * location at this point.
@@ -3172,10 +3121,8 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
                     throwTextParseError("Variant type needs a selector location here.", dtLoc);
                 }
 
-                auto pseudoNamedDt = std::make_unique<PseudoNamedDt>(ident,
-                                                                     std::move(effectivePseudoDt));
-
-                pseudoNamedDts.push_back(std::move(pseudoNamedDt));
+                pseudoNamedDts.push_back(std::make_unique<PseudoNamedDt>(ident,
+                                                                         std::move(effectivePseudoDt)));
                 this->_expectToken(";");
                 ssRej.accept();
                 this->_stackTop().idents.push_back(ident);
@@ -3197,14 +3144,13 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
     // try full type (cases 8)
     {
         StrScannerRejecter ssRej {_ss};
-        auto pseudoDt = this->_tryParseFullDt();
 
-        if (pseudoDt) {
+        if (auto pseudoDt = this->_tryParseFullDt()) {
             // let's try parsing an identifier + array subscripts
             std::string ident;
-            auto effectivePseudoDt = this->_tryParseIdentArraySubscripts(ident, std::move(pseudoDt));
 
-            if (effectivePseudoDt) {
+            if (auto effectivePseudoDt = this->_tryParseIdentArraySubscripts(ident,
+                                                                             std::move(pseudoDt))) {
                 /*
                  * We have a winner: variant type must have a selector
                  * location at this point.
@@ -3213,10 +3159,8 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
                     throwTextParseError("Variant type needs a selector here.", _ss.loc());
                 }
 
-                auto pseudoNamedDt = std::make_unique<PseudoNamedDt>(ident,
-                                                                     std::move(effectivePseudoDt));
-
-                pseudoNamedDts.push_back(std::move(pseudoNamedDt));
+                pseudoNamedDts.push_back(std::make_unique<PseudoNamedDt>(ident,
+                                                                         std::move(effectivePseudoDt)));
                 this->_expectToken(";");
                 ssRej.accept();
                 this->_stackTop().idents.push_back(ident);
@@ -3239,30 +3183,26 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
 
 const std::string *TsdlParser::_tryScanLitStr()
 {
-    const std::string *litStr = nullptr;
-
     _ss.skipCommentsAndWhitespaces();
 
     const auto loc = _ss.loc();
 
-    litStr = _ss.tryScanLitStr("abfnrtvx'?");
+    if (const auto litStr = _ss.tryScanLitStr("abfnrtvx'?")) {
+        for (const auto ch : *litStr) {
+            if ((ch >= 0 && ch <= 8) || (ch >= 14 && ch <= 31) || ch == 127) {
+                // disallow those control characters in the metadata text
+                std::ostringstream ss;
 
-    if (!litStr) {
-        return nullptr;
-    }
-
-    for (const auto ch : *litStr) {
-        if ((ch >= 0 && ch <= 8) || (ch >= 14 && ch <= 31) || ch == 127) {
-            // disallow those control characters in the metadata text
-            std::ostringstream ss;
-
-            ss << "Illegal character found in literal string: 0x" <<
-                  std::hex << static_cast<int>(ch) << ".";
-            throwTextParseError(ss.str(), loc);
+                ss << "Illegal character found in literal string: 0x" <<
+                      std::hex << static_cast<int>(ch) << ".";
+                throwTextParseError(ss.str(), loc);
+            }
         }
+
+        return litStr;
     }
 
-    return litStr;
+    return nullptr;
 }
 
 void TsdlParser::_skipCommentsAndWhitespacesAndSemicolons()

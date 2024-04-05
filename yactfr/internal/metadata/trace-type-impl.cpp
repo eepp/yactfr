@@ -230,44 +230,37 @@ private:
 
     void _setKeyDts(const DataLocation& loc, DataTypeSet& dts) const
     {
-        const DataType *dt = nullptr;
+        auto& dt = call([this, &loc]() -> const DataType& {
+            switch (loc.scope()) {
+            case Scope::PacketHeader:
+                return *_traceType->pktHeaderType();
 
-        switch (loc.scope()) {
-        case Scope::PacketHeader:
-            dt = _traceType->pktHeaderType();
-            break;
+            case Scope::PacketContext:
+                assert(_curDst);
+                return *_curDst->packetContextType();
 
-        case Scope::PacketContext:
-            assert(_curDst);
-            dt = _curDst->packetContextType();
-            break;
+            case Scope::EventRecordHeader:
+                assert(_curDst);
+                return *_curDst->eventRecordHeaderType();
 
-        case Scope::EventRecordHeader:
-            assert(_curDst);
-            dt = _curDst->eventRecordHeaderType();
-            break;
+            case Scope::EventRecordCommonContext:
+                assert(_curDst);
+                return *_curDst->eventRecordCommonContextType();
 
-        case Scope::EventRecordCommonContext:
-            assert(_curDst);
-            dt = _curDst->eventRecordCommonContextType();
-            break;
+            case Scope::EventRecordSpecificContext:
+                assert(_curErt);
+                return *_curErt->specificContextType();
 
-        case Scope::EventRecordSpecificContext:
-            assert(_curErt);
-            dt = _curErt->specificContextType();
-            break;
+            case Scope::EventRecordPayload:
+                assert(_curErt);
+                return *_curErt->payloadType();
 
-        case Scope::EventRecordPayload:
-            assert(_curErt);
-            dt = _curErt->payloadType();
-            break;
+            default:
+                std::abort();
+            }
+        });
 
-        default:
-            std::abort();
-        }
-
-        assert(dt);
-        this->_setKeyDts(*dt, loc, loc.begin(), dts);
+        this->_setKeyDts(dt, loc, loc.begin(), dts);
     }
 
 private:

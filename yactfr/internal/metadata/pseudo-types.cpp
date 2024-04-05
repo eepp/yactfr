@@ -26,6 +26,7 @@
 #include "pseudo-types.hpp"
 #include "pseudo-dt-visitor.hpp"
 #include "pseudo-dt-utils.hpp"
+#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -328,11 +329,11 @@ PseudoDt::Up PseudoStructType::clone() const
     PseudoNamedDts newPseudoMembers;
 
     for (const auto& pseudoMemberType : _pseudoMemberTypes) {
-        auto newPseudoMemberType = std::make_unique<PseudoNamedDt>(*pseudoMemberType->name(),
-                                                                   pseudoMemberType->pseudoDt().clone(),
-                                                                   tryCloneAttrs(pseudoMemberType->attrs()));
-
-        newPseudoMembers.push_back(std::move(newPseudoMemberType));
+        newPseudoMembers.push_back(std::make_unique<PseudoNamedDt>(
+            *pseudoMemberType->name(),
+            pseudoMemberType->pseudoDt().clone(),
+            tryCloneAttrs(pseudoMemberType->attrs())
+        ));
     }
 
     return std::make_unique<PseudoStructType>(_minAlign, std::move(newPseudoMembers),
@@ -392,11 +393,11 @@ PseudoNamedDts PseudoVarType::_clonePseudoOpts() const
     PseudoNamedDts newPseudoOpts;
 
     for (const auto& pseudoOpt : _pseudoOpts) {
-        auto newPseudoOpt = std::make_unique<PseudoNamedDt>(pseudoOpt->name(),
-                                                            pseudoOpt->pseudoDt().clone(),
-                                                            tryCloneAttrs(pseudoOpt->attrs()));
-
-        newPseudoOpts.push_back(std::move(newPseudoOpt));
+        newPseudoOpts.push_back(std::make_unique<PseudoNamedDt>(
+            pseudoOpt->name(),
+            pseudoOpt->pseudoDt().clone(),
+            tryCloneAttrs(pseudoOpt->attrs())
+        ));
     }
 
     return newPseudoOpts;
@@ -733,7 +734,7 @@ void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
     // find _invalid_ pseudo unsigned integer types
     const auto set = findPseudoUIntTypes(*pseudoDt, [&allowedRoles](auto& pseudoUIntType, auto) {
         // get roles
-        auto& roles = [&pseudoUIntType]() -> const UnsignedIntegerTypeRoleSet& {
+        auto& roles = call([&pseudoUIntType]() -> const UnsignedIntegerTypeRoleSet& {
             if (isFlUIntNotDtWrapper(pseudoUIntType)) {
                 return static_cast<const PseudoFlUIntType&>(pseudoUIntType).roles();
             } else {
@@ -748,7 +749,7 @@ void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
                     return dt.asVariableLengthUnsignedIntegerType().roles();
                 }
             }
-        }();
+        });
 
         for (auto& role : roles) {
             if (allowedRoles.count(role) == 0) {
@@ -1060,10 +1061,7 @@ void PseudoTraceType::validate() const
             ss << "Event record type needs a data stream type " <<
                   "(with ID " << dstIdPseudoOrphanErtsPair.first << ") which doesn't exist.";
             assert(!dstIdPseudoOrphanErtsPair.second.empty());
-
-            const auto& firstPseudoErt = dstIdPseudoOrphanErtsPair.second.begin()->second;
-
-            throwTextParseError(ss.str(), firstPseudoErt.loc());
+            throwTextParseError(ss.str(), dstIdPseudoOrphanErtsPair.second.begin()->second.loc());
         }
     }
 
@@ -1122,9 +1120,7 @@ void PseudoTraceType::validate() const
                                         firstPseudoDt.loc());
                 }
 
-                auto& pseudoPktHeaderType = static_cast<const PseudoStructType&>(*_pseudoPktHeaderType);
-
-                if (&pseudoPktHeaderType.pseudoMemberTypes()[0]->pseudoDt() != &firstPseudoDt) {
+                if (&static_cast<const PseudoStructType&>(*_pseudoPktHeaderType).pseudoMemberTypes()[0]->pseudoDt() != &firstPseudoDt) {
                     throwTextParseError("Fixed-length unsigned integer type with the "
                                         "\"packet magic number\" role must be within the "
                                         "first member type of the packet header structure type.",

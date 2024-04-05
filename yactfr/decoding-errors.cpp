@@ -9,6 +9,8 @@
 
 #include <yactfr/decoding-errors.hpp>
 
+#include "internal/utils.hpp"
+
 namespace yactfr {
 
 DecodingError::DecodingError(std::string reason, const Index offset) :
@@ -21,12 +23,12 @@ DecodingError::DecodingError(std::string reason, const Index offset) :
 UnknownDataStreamTypeDecodingError::UnknownDataStreamTypeDecodingError(const Index offset,
                                                                        const TypeId id) :
     DecodingError {
-        [](const auto id) {
+        internal::call([&id] {
             std::ostringstream ss;
 
             ss << "Data stream type ID " << id << " doesn't select an existing data stream type.";
             return ss.str();
-        }(id),
+        }),
         offset
     },
     _id {id}
@@ -36,12 +38,12 @@ UnknownDataStreamTypeDecodingError::UnknownDataStreamTypeDecodingError(const Ind
 UnknownEventRecordTypeDecodingError::UnknownEventRecordTypeDecodingError(const Index offset,
                                                                          const TypeId id) :
     DecodingError {
-        [](const auto id) {
+        internal::call([id] {
             std::ostringstream ss;
 
             ss << "Event record type ID " << id << " doesn't select an existing event record type.";
             return ss.str();
-        }(id),
+        }),
         offset
     },
     _id {id}
@@ -51,12 +53,12 @@ UnknownEventRecordTypeDecodingError::UnknownEventRecordTypeDecodingError(const I
 ExpectedPacketTotalLengthNotMultipleOf8DecodingError::ExpectedPacketTotalLengthNotMultipleOf8DecodingError(const Index offset,
                                                                                                            const Size expectedLen) :
     DecodingError {
-        [](const auto expectedLen) {
+        internal::call([expectedLen] {
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedLen << ") is not a multiple of 8.";
             return ss.str();
-        }(expectedLen),
+        }),
         offset
     },
     _expectedLen {expectedLen}
@@ -67,14 +69,14 @@ ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError::Expec
                                                                                                                                                      const Size expectedTotalLen,
                                                                                                                                                      const Size expectedContentLen) :
     DecodingError {
-        [](const auto expectedTotalLen, const auto expectedContentLen) {
+        internal::call([expectedTotalLen, expectedContentLen] {
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedTotalLen <<
                   ") is less than expected packet content length (" <<
                   expectedContentLen << ").";
             return ss.str();
-        }(expectedTotalLen, expectedContentLen),
+        }),
         offset
     },
     _expectedTotalLen {expectedTotalLen},
@@ -86,14 +88,14 @@ ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError::ExpectedPacketTota
                                                                                                                            const Size expectedLen,
                                                                                                                            const Index offsetInPkt) :
     DecodingError {
-        [](const auto offsetInPkt, const auto expectedLen) {
+        internal::call([offsetInPkt, expectedLen] {
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedLen <<
                   ") is less then current position in packet (" <<
                   offsetInPkt << ").";
             return ss.str();
-        }(offsetInPkt, expectedLen),
+        }),
         offset
     },
     _expectedLen {expectedLen},
@@ -105,14 +107,14 @@ ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError::ExpectedPacketCo
                                                                                                                                const Size expectedLen,
                                                                                                                                const Index offsetInPkt) :
     DecodingError {
-        [](const auto offsetInPkt, const auto expectedLen) {
+        internal::call([offsetInPkt, expectedLen] {
             std::ostringstream ss;
 
             ss << "Expected packet content length (" << expectedLen <<
                   ") is less then current position in packet (" <<
                   offsetInPkt << ").";
             return ss.str();
-        }(offsetInPkt, expectedLen),
+        }),
         offset
     },
     _expectedLen {expectedLen},
@@ -124,7 +126,7 @@ CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketCo
                                                                                                    const Size reqLen,
                                                                                                    const Size remLen) :
     DecodingError {
-        [](const auto reqLen, const auto remLen) {
+        internal::call([reqLen, remLen] {
             std::ostringstream ss;
 
             ss << "Cannot read " << reqLen << " bit" << (reqLen == 1 ? "" : "s") <<
@@ -132,7 +134,7 @@ CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketCo
                   "(" << remLen <<
                   " bit" << (remLen == 1 ? "" : "s") << " remaining).";
             return ss.str();
-        }(reqLen, remLen),
+        }),
         offset
     },
     _reqLen {reqLen},
@@ -143,14 +145,14 @@ CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketCo
 PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index offset,
                                                                  const Size reqLen) :
     DecodingError {
-        [](const auto reqLen) {
+        internal::call([reqLen] {
             std::ostringstream ss;
 
             ss << "Cannot read " << reqLen <<
                   " bit" << (reqLen == 1 ? "" : "s") << " at this point: "
                   "reaching end of data source.";
             return ss.str();
-        }(reqLen),
+        }),
         offset
     },
     _reqLen {reqLen}
@@ -159,7 +161,7 @@ PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index off
 
 namespace {
 
-const char *byteOrderString(const ByteOrder bo)
+const char *byteOrderString(const ByteOrder bo) noexcept
 {
     return bo == ByteOrder::Big ? "big" : "little";
 }
@@ -170,14 +172,14 @@ ByteOrderChangeWithinByteDecodingError::ByteOrderChangeWithinByteDecodingError(c
                                                                                const ByteOrder previousBo,
                                                                                const ByteOrder nextBo) :
     DecodingError {
-        [](const auto previousBo, const auto nextBo) {
+        internal::call([previousBo, nextBo] {
             std::ostringstream ss;
 
             ss << "Changing byte order within a byte from " <<
                   byteOrderString(previousBo) << "-endian to " <<
                   byteOrderString(nextBo) << "-endian.";
             return ss.str();
-        }(previousBo, nextBo),
+        }),
         offset
     },
     _previousBo {previousBo},

@@ -29,9 +29,7 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
 
     case PseudoDt::Kind::Struct:
     {
-        auto& pseudoStructType = static_cast<PseudoStructType&>(pseudoDt);
-
-        for (auto& pseudoMemberType : pseudoStructType.pseudoMemberTypes()) {
+        for (auto& pseudoMemberType : static_cast<PseudoStructType&>(pseudoDt).pseudoMemberTypes()) {
             setPseudoDtPosInScope(pseudoMemberType->pseudoDt(), nextPos);
         }
 
@@ -41,10 +39,9 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
     case PseudoDt::Kind::Var:
     case PseudoDt::Kind::VarWithIntRanges:
     {
-        auto& pseudoVarType = static_cast<PseudoVarType&>(pseudoDt);
         Index maxNextPos = 0;
 
-        for (auto& pseudoOpt : pseudoVarType.pseudoOpts()) {
+        for (auto& pseudoOpt : static_cast<PseudoVarType&>(pseudoDt).pseudoOpts()) {
             Index optNextPos = nextPos;
 
             setPseudoDtPosInScope(pseudoOpt->pseudoDt(), optNextPos);
@@ -58,9 +55,7 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
     case PseudoDt::Kind::OptWithBoolSel:
     case PseudoDt::Kind::OptWithIntSel:
     {
-        auto& pseudoOptType = static_cast<PseudoOptType&>(pseudoDt);
-
-        setPseudoDtPosInScope(pseudoOptType.pseudoDt(), nextPos);
+        setPseudoDtPosInScope(static_cast<PseudoOptType&>(pseudoDt).pseudoDt(), nextPos);
         break;
     }
 

@@ -28,6 +28,7 @@
 #include "proc.hpp"
 #include "std-fl-int-reader.hpp"
 #include "fl-int-rev.hpp"
+#include "utils.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -200,20 +201,23 @@ public:
         }
 
         auto curVal = defClkVal;
-        const auto newValMask = (UINT64_C(1) << len) - 1;
-        const auto curValMasked = curVal & newValMask;
 
-        if (lastIntVal.u < curValMasked) {
-            /*
-             * It looks like a wrap occured on the number of bits of the
-             * new value. Assume that the clock value wrapped only one
-             * time.
-             */
-            curVal += newValMask + 1;
+        {
+            const auto newValMask = (UINT64_C(1) << len) - 1;
+            const auto curValMasked = curVal & newValMask;
+
+            if (lastIntVal.u < curValMasked) {
+                /*
+                 * It looks like a wrap occured on the number of bits of the
+                 * new value. Assume that the clock value wrapped only one
+                 * time.
+                 */
+                curVal += newValMask + 1;
+            }
+
+            // clear the low bits of the current clock value
+            curVal &= ~newValMask;
         }
-
-        // clear the low bits of the current clock value
-        curVal &= ~newValMask;
 
         // set the low bits of the current clock value
         curVal |= lastIntVal.u;
@@ -262,10 +266,10 @@ public:
     {
         const auto otherElemAddr = reinterpret_cast<std::uintptr_t>(&otherElem);
         const auto otherPosAddr = reinterpret_cast<std::uintptr_t>(&otherPos);
-        const auto diff = otherElemAddr - otherPosAddr;
-        const auto thisAddr = reinterpret_cast<std::uintptr_t>(this);
 
-        return *reinterpret_cast<ElemT *>(thisAddr + diff);
+        return *reinterpret_cast<ElemT *>(
+            reinterpret_cast<std::uintptr_t>(this) + otherElemAddr - otherPosAddr
+        );
     }
 
 private:
@@ -498,10 +502,10 @@ public:
         } else {
             const auto posElemAddr = reinterpret_cast<std::uintptr_t>(otherElem);
             const auto posAddr = reinterpret_cast<std::uintptr_t>(&otherPos);
-            const auto diff = posElemAddr - posAddr;
-            const auto myPosAddr = reinterpret_cast<std::uintptr_t>(&_pos);
 
-            _it->_curElem = reinterpret_cast<const Element *>(myPosAddr + diff);
+            _it->_curElem = reinterpret_cast<const Element *>(
+                reinterpret_cast<std::uintptr_t>(&_pos) + posElemAddr - posAddr
+            );
         }
     }
 
@@ -729,11 +733,9 @@ private:
          * contains only one packet and there's no padding after the
          * packet content.
          */
-        Size bitsToSkip = 0;
-
-        if (_pos.curExpectedPktTotalLenBits != sizeUnset) {
-            bitsToSkip = _pos.curExpectedPktTotalLenBits - _pos.headOffsetInCurPktBits;
-        }
+        const Size bitsToSkip = _pos.curExpectedPktTotalLenBits != sizeUnset ?
+                                _pos.curExpectedPktTotalLenBits - _pos.headOffsetInCurPktBits :
+                                0;
 
         if (bitsToSkip > 0) {
             _pos.remBitsToSkip = bitsToSkip;
@@ -825,9 +827,7 @@ private:
             return false;
         }
 
-        auto& instr = **_pos.stackTop().it;
-
-        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8, false>(instr);
+        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8, false>(**_pos.stackTop().it);
         _pos.metadataStreamUuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
         --_pos.stackTop().rem;
         return true;
@@ -853,15 +853,17 @@ private:
         this->_requireContentBits(8);
 
         const auto buf = this->_bufAtHead();
-        const auto bufSizeBytes = this->_remBitsInBuf() / 8;
-        const auto sectionSizeBytes = std::min(bufSizeBytes, _pos.stackTop().rem);
-        const auto sectionLenBits = sectionSizeBytes * 8;
+        const auto sectionSizeBytes = std::min(this->_remBitsInBuf() / 8, _pos.stackTop().rem);
 
-        if (sectionLenBits > _pos.remContentBitsInPkt()) {
-            throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.headOffsetInElemSeqBits(),
-                sectionLenBits, _pos.remContentBitsInPkt()
-            };
+        {
+            const auto sectionLenBits = sectionSizeBytes * 8;
+
+            if (sectionLenBits > _pos.remContentBitsInPkt()) {
+                throw CannotDecodeDataBeyondPacketContentDecodingError {
+                    _pos.headOffsetInElemSeqBits(),
+                    sectionLenBits, _pos.remContentBitsInPkt()
+                };
+            }
         }
 
         _pos.elems.rawData._begin = buf;
@@ -875,13 +877,12 @@ private:
 
     bool _stateReadRawData()
     {
-        const auto cont = this->_stateReadBytes();
-
-        if (!cont) {
+        if (this->_stateReadBytes()) {
+            return true;
+        } else {
             _pos.setParentStateAndStackPop();
+            return false;
         }
-
-        return cont;
     }
 
     bool _stateReadUuidBlobSection()
@@ -920,39 +921,43 @@ private:
     template <bool IsSignedV>
     void _appendVlIntByte(const std::uint8_t byte)
     {
-        auto newVlIntLenBits = _pos.curVlIntLenBits + 7;
         const auto byteVal = byte & 0b0111'1111;
+        const auto newVlIntLenBits = call([this, byte, byteVal]() -> Size {
+            const auto len = _pos.curVlIntLenBits + 7;
 
-        // validate future variable-length integer length
-        if (newVlIntLenBits > 63) {
-            /*
-             * Exception for some 10th byte which can contain the last
-             * bit of a 64-bit integer (as 9 × 7 is 63).
-             *
-             * The condition to accept it is:
-             *
-             * * It's the last byte of the variable-length integer.
-             *
-             * * If `IsSignedV` is false:
-             *       Its 7-bit value (`byteVal`) must be 1.
-             *
-             *   If `IsSignedV` is true:
-             *       Its 7-bit value must be 0 (positive) or 127
-             *       (negative).
-             */
-            if ((byte & 0b1000'0000) != 0) {
-                // not the last byte
-                throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+            // validate future variable-length integer length
+            if (len > 63) {
+                /*
+                 * Exception for some 10th byte which can contain the last
+                 * bit of a 64-bit integer (as 9 × 7 is 63).
+                 *
+                 * The condition to accept it is:
+                 *
+                 * * It's the last byte of the variable-length integer.
+                 *
+                 * * If `IsSignedV` is false:
+                 *       Its 7-bit value (`byteVal`) must be 1.
+                 *
+                 *   If `IsSignedV` is true:
+                 *       Its 7-bit value must be 0 (positive) or 127
+                 *       (negative).
+                 */
+                if ((byte & 0b1000'0000) != 0) {
+                    // not the last byte
+                    throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+                }
+
+                if (IsSignedV && byteVal != 0 && byteVal != 0b0111'1111) {
+                    throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+                } else if (!IsSignedV && byteVal != 1) {
+                    throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
+                }
+
+                return 64;
             }
 
-            if (IsSignedV && byteVal != 0 && byteVal != 0b0111'1111) {
-                throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
-            } else if (!IsSignedV && byteVal != 1) {
-                throw OversizedVariableLengthIntegerDecodingError {_pos.headOffsetInElemSeqBits()};
-            }
-
-            newVlIntLenBits = 64;
-        }
+            return len;
+        });
 
         // mark this byte as consumed immediately
         this->_consumeExistingBits(8);
@@ -1066,13 +1071,15 @@ private:
             }
         }
 
-        const Size rawDataLenBits = (end - begin) * 8;
+        {
+            const Size rawDataLenBits = (end - begin) * 8;
 
-        if (rawDataLenBits > _pos.remContentBitsInPkt()) {
-            throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.headOffsetInElemSeqBits(),
-                rawDataLenBits, _pos.remContentBitsInPkt()
-            };
+            if (rawDataLenBits > _pos.remContentBitsInPkt()) {
+                throw CannotDecodeDataBeyondPacketContentDecodingError {
+                    _pos.headOffsetInElemSeqBits(),
+                    rawDataLenBits, _pos.remContentBitsInPkt()
+                };
+            }
         }
 
         _pos.elems.rawData._begin = begin;
@@ -1131,22 +1138,28 @@ private:
 
     void _alignHead(const Size align)
     {
-        const auto newHeadOffsetBits = (_pos.headOffsetInCurPktBits + align - 1) & -align;
-        const auto bitsToSkip = newHeadOffsetBits - _pos.headOffsetInCurPktBits;
+        {
+            const auto bitsToSkip = call([this, align] {
+                const auto newHeadOffsetBits = (_pos.headOffsetInCurPktBits + align - 1) & -align;
 
-        if (bitsToSkip == 0) {
-            // already aligned! yay!
-            return;
+                return newHeadOffsetBits - _pos.headOffsetInCurPktBits;
+            });
+
+            if (bitsToSkip == 0) {
+                // already aligned! yay!
+                return;
+            }
+
+            if (bitsToSkip > _pos.remContentBitsInPkt()) {
+                throw CannotDecodeDataBeyondPacketContentDecodingError {
+                    _pos.headOffsetInElemSeqBits(),
+                    bitsToSkip, _pos.remContentBitsInPkt()
+                };
+            }
+
+            _pos.remBitsToSkip = bitsToSkip;
         }
 
-        if (bitsToSkip > _pos.remContentBitsInPkt()) {
-            throw CannotDecodeDataBeyondPacketContentDecodingError {
-                _pos.headOffsetInElemSeqBits(),
-                bitsToSkip, _pos.remContentBitsInPkt()
-            };
-        }
-
-        _pos.remBitsToSkip = bitsToSkip;
         _pos.nextState = _pos.state();
         _pos.state(VmState::ContinueSkipContentPaddingBits);
         this->_continueSkipPaddingBits(true);
@@ -1192,8 +1205,7 @@ private:
          */
         const auto flooredHeadOffsetInCurPacketBits = _pos.headOffsetInCurPktBits & ~7ULL;
         const auto flooredHeadOffsetInCurPacketBytes = flooredHeadOffsetInCurPacketBits / 8;
-        const auto curPacketOffsetInElemSeqBytes = _pos.curPktOffsetInElemSeqBits / 8;
-        const auto requestOffsetInElemSeqBytes = curPacketOffsetInElemSeqBytes +
+        const auto requestOffsetInElemSeqBytes = _pos.curPktOffsetInElemSeqBits / 8 +
                                                  flooredHeadOffsetInCurPacketBytes;
         const auto bitInByte = _pos.headOffsetInCurPktBits & 7;
         const auto sizeBytes = (bits + 7 + bitInByte) / 8;
@@ -1225,9 +1237,7 @@ private:
 
     const std::uint8_t *_bufAtHead() const noexcept
     {
-        const auto offsetBytes = (_pos.headOffsetInCurPktBits - _bufOffsetInCurPktBits) / 8;
-
-        return &_bufAddr[offsetBytes];
+        return &_bufAddr[(_pos.headOffsetInCurPktBits - _bufOffsetInCurPktBits) / 8];
     }
 
     Size _remBitsInBuf() const noexcept
@@ -1479,49 +1489,45 @@ private:
 
         this->_execReadFlBitArrayPreamble(instr, LenBitsV);
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
+        return call([this] {
+            auto ret = FuncV(this->_bufAtHead());
 
-        auto ret = FuncV(this->_bufAtHead());
+            if (RevV) {
+                ret = revFlIntBits(ret, LenBitsV);
+            }
 
-        if (RevV) {
-            ret = revFlIntBits(ret, LenBitsV);
-        }
-
-        return ret;
+            return ret;
+        });
     }
 
     template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlBitArray(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
-
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
+        this->_setBitArrayElemBase(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+                                   instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(LenBitsV);
     }
 
     template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlBitMap(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
-
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitMap);
+        this->_setBitArrayElemBase(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+                                   instr, _pos.elems.flBitMap);
         this->_consumeExistingBits(LenBitsV);
     }
 
     template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlBool(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr);
-
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flBool);
+        this->_setBitArrayElemBase(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+                                   instr, _pos.elems.flBool);
         this->_consumeExistingBits(LenBitsV);
     }
 
     template <typename RetT, Size LenBitsV, RetT (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlInt(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<RetT, LenBitsV, FuncV, RevV>(instr);
-
-        this->_setFlIntElem(val, instr);
+        this->_setFlIntElem(this->_readStdFlInt<RetT, LenBitsV, FuncV, RevV>(instr), instr);
         this->_consumeExistingBits(LenBitsV);
     }
 
@@ -1551,49 +1557,46 @@ private:
 
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
 
-        const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
-        auto ret = FuncsV[index](this->_bufAtHead());
+        return call([&] {
+            const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
+            auto ret = FuncsV[index](this->_bufAtHead());
 
-        if (RevV) {
-            ret = revFlIntBits(ret, readFlBitArrayInstr.len());
-        }
+            if (RevV) {
+                ret = revFlIntBits(ret, readFlBitArrayInstr.len());
+            }
 
-        return ret;
+            return ret;
+        });
     }
 
     template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlBitArray(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
-
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitArray);
+        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+                                   instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
     template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlBitMap(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
-
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flBitMap);
+        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+                                   instr, _pos.elems.flBitMap);
         this->_consumeExistingBits(static_cast<const ReadFlBitMapInstr&>(instr).len());
     }
 
     template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlBool(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
-
-        this->_setBitArrayElemBase(val, instr, _pos.elems.flBool);
+        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+                                   instr, _pos.elems.flBool);
         this->_consumeExistingBits(static_cast<const ReadFlBoolInstr&>(instr).len());
     }
 
     template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlInt(const Instr& instr)
     {
-        const auto val = this->_readFlInt<RetT, FuncsV, RevV>(instr);
-
-        this->_setFlIntElem(val, instr);
+        this->_setFlIntElem(this->_readFlInt<RetT, FuncsV, RevV>(instr), instr);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
@@ -1622,17 +1625,15 @@ private:
     template <typename FloatT, std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
     void _execReadFlFloat(const Instr& instr)
     {
-        const auto val = this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr);
-
-        this->_execReadFlFloatPost<FloatT>(val, instr);
+        this->_execReadFlFloatPost<FloatT>(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+                                           instr);
     }
 
     template <typename FloatT, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlFloat(const Instr& instr)
     {
-        const auto val = this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, FuncV, RevV>(instr);
-
-        this->_execReadFlFloatPost<FloatT>(val, instr);
+        this->_execReadFlFloatPost<FloatT>(this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, FuncV, RevV>(instr),
+                                           instr);
     }
 
     _tExecReaction _execReadVlIntCommon(const Instr& instr, VariableLengthIntegerElement& elem,
@@ -1655,9 +1656,15 @@ private:
         const auto& beginReadVarInstr = static_cast<const ReadVarInstrT&>(instr);
         const auto uSelVal = _pos.savedVal(beginReadVarInstr.selPos());
         const auto selVal = static_cast<typename ReadVarInstrT::Opt::Val>(uSelVal);
-        const auto proc = beginReadVarInstr.procForSelVal(selVal);
 
-        if (!proc) {
+        if (const auto proc = beginReadVarInstr.procForSelVal(selVal)) {
+            Vm::_setDataElemFromInstr(elem, instr);
+            elem._selVal = selVal;
+            this->_updateItForUser(elem);
+            _pos.gotoNextInstr();
+            _pos.stackPush(proc);
+            _pos.state(VmState::ExecInstr);
+        } else {
             if (std::is_signed<typename ReadVarInstrT::Opt::Val>::value) {
                 throw InvalidVariantSignedIntegerSelectorValueDecodingError {
                     _pos.headOffsetInElemSeqBits(),
@@ -1670,13 +1677,6 @@ private:
                 };
             }
         }
-
-        Vm::_setDataElemFromInstr(elem, instr);
-        elem._selVal = selVal;
-        this->_updateItForUser(elem);
-        _pos.gotoNextInstr();
-        _pos.stackPush(proc);
-        _pos.state(VmState::ExecInstr);
     }
 
     static bool isEndReadOpt(const Instr& instr) noexcept
@@ -1693,14 +1693,13 @@ private:
 
         const auto& beginReadOptInstr = static_cast<const ReadOptInstrT&>(instr);
         const auto selVal = static_cast<SelValT>(_pos.savedVal(beginReadOptInstr.selPos()));
-        const auto isEnabled = beginReadOptInstr.isEnabled(selVal);
 
         Vm::_setDataElemFromInstr(elem, instr);
         this->_updateItForUser(elem);
         _pos.gotoNextInstr();
         _pos.stackPush(&beginReadOptInstr.proc());
 
-        if (isEnabled) {
+        if (const auto isEnabled = beginReadOptInstr.isEnabled(selVal)) {
             elem._isEnabled = true;
         } else {
             elem._isEnabled = false;
@@ -1770,9 +1769,7 @@ private:
 
     _tExecReaction _execUpdateDefClkValCommon(const Size len) noexcept
     {
-        const auto newVal = _pos.updateDefClkVal(len);
-
-        _pos.elems.defClkVal._cycles = newVal;
+        _pos.elems.defClkVal._cycles = _pos.updateDefClkVal(len);
         this->_updateItForUser(_pos.elems.defClkVal);
         return _tExecReaction::FetchNextInstrAndStop;
     }

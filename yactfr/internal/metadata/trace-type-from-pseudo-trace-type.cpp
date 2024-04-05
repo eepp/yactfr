@@ -48,15 +48,14 @@ TraceType::Up TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
         dstSet.insert(this->_dstFromPseudoDst(*idPseudoDstPair.second));
     }
 
-    auto pktHeaderType = this->_scopeStructTypeFromPseudoDt(_pseudoTraceType->pseudoPktHeaderType(),
-                                                            Scope::PacketHeader);
-
     // create yactfr trace type
     return TraceType::create(_pseudoTraceType->majorVersion(), _pseudoTraceType->minorVersion(),
                              _pseudoTraceType->ns(), _pseudoTraceType->name(),
                              _pseudoTraceType->uid(), _pseudoTraceType->env(),
-                             std::move(pktHeaderType), std::move(_pseudoTraceType->clkTypes()),
-                             std::move(dstSet), tryCloneAttrs(_pseudoTraceType->attrs()));
+                             this->_scopeStructTypeFromPseudoDt(_pseudoTraceType->pseudoPktHeaderType(),
+                                                                Scope::PacketHeader),
+                             std::move(_pseudoTraceType->clkTypes()), std::move(dstSet),
+                             tryCloneAttrs(_pseudoTraceType->attrs()));
 }
 
 StructureType::Up TraceTypeFromPseudoTraceTypeConverter::_scopeStructTypeFromPseudoDt(PseudoDt * const pseudoDt,
@@ -93,19 +92,18 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
         ertSet.insert(this->_ertFromPseudoErt(*pseudoErt, pseudoDst));
     }
 
-    // convert pseudo scope data types
-    auto pseudoPktCtxType = this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoPktCtxType(),
-                                                               Scope::PacketContext, &pseudoDst);
-    auto erHeaderType = this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoErHeaderType(),
-                                                           Scope::EventRecordHeader, &pseudoDst);
-    auto erCommonCtxType = this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoErCommonCtxType(),
-                                                              Scope::EventRecordCommonContext,
-                                                              &pseudoDst);
-
     // create yactfr data stream type
     return DataStreamType::create(pseudoDst.id(), pseudoDst.ns(), pseudoDst.name(),
-                                  pseudoDst.uid(), std::move(ertSet), std::move(pseudoPktCtxType),
-                                  std::move(erHeaderType), std::move(erCommonCtxType),
+                                  pseudoDst.uid(), std::move(ertSet),
+                                  this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoPktCtxType(),
+                                                                     Scope::PacketContext,
+                                                                     &pseudoDst),
+                                  this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoErHeaderType(),
+                                                                     Scope::EventRecordHeader,
+                                                                     &pseudoDst),
+                                  this->_scopeStructTypeFromPseudoDt(pseudoDst.pseudoErCommonCtxType(),
+                                                                     Scope::EventRecordCommonContext,
+                                                                     &pseudoDst),
                                   pseudoDst.defClkType(), tryCloneAttrs(pseudoDst.attrs()));
 }
 
@@ -115,18 +113,15 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
     // validate pseudo event record type
     pseudoErt.validate(curPseudoDst);
 
-    // convert pseudo scope data types
-    auto specCtxType = this->_scopeStructTypeFromPseudoDt(pseudoErt.pseudoSpecCtxType(),
-                                                          Scope::EventRecordSpecificContext,
-                                                          &curPseudoDst, &pseudoErt);
-    auto payloadType = this->_scopeStructTypeFromPseudoDt(pseudoErt.pseudoPayloadType(),
-                                                          Scope::EventRecordPayload,
-                                                          &curPseudoDst, &pseudoErt);
-
     // create yactfr event record type
     return EventRecordType::create(pseudoErt.id(), pseudoErt.ns(), pseudoErt.name(),
                                    pseudoErt.uid(), pseudoErt.logLevel(), pseudoErt.emfUri(),
-                                   std::move(specCtxType), std::move(payloadType),
+                                   this->_scopeStructTypeFromPseudoDt(pseudoErt.pseudoSpecCtxType(),
+                                                                      Scope::EventRecordSpecificContext,
+                                                                      &curPseudoDst, &pseudoErt),
+                                   this->_scopeStructTypeFromPseudoDt(pseudoErt.pseudoPayloadType(),
+                                                                      Scope::EventRecordPayload,
+                                                                      &curPseudoDst, &pseudoErt),
                                    tryCloneAttrs(pseudoErt.attrs()));
 }
 

@@ -18,31 +18,27 @@ namespace buuids = boost::uuids;
 
 boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
 {
-    const auto jsonUuidVal = jsonObjVal[strs::uuid];
+    if (const auto jsonUuidVal = jsonObjVal[strs::uuid]) {
+        buuids::uuid uuid;
+        auto it = uuid.begin();
 
-    if (!jsonUuidVal) {
-        return boost::none;
+        for (auto i = 0U; i < uuid.static_size(); ++i, ++it) {
+            *it = *jsonUuidVal->asArray()[i].asUInt();
+        }
+
+        return uuid;
     }
 
-    buuids::uuid uuid;
-    auto it = uuid.begin();
-
-    for (auto i = 0U; i < uuid.static_size(); ++i, ++it) {
-        *it = *jsonUuidVal->asArray()[i].asUInt();
-    }
-
-    return uuid;
+    return boost::none;
 }
 
 MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal)
 {
-    const auto jsonAttrsVal = jsonObjVal[strs::attrs];
-
-    if (!jsonAttrsVal) {
-        return createItem(MapItem::Container {});
+    if (const auto jsonAttrsVal = jsonObjVal[strs::attrs]) {
+        return MapItem::Up {static_cast<const MapItem *>(itemFromJsonVal(*jsonAttrsVal).release())};
     }
 
-    return MapItem::Up {static_cast<const MapItem *>(itemFromJsonVal(*jsonAttrsVal).release())};
+    return createItem(MapItem::Container {});
 }
 
 } // namespace internal

@@ -124,20 +124,22 @@ protected:
             return false;
         }
 
-        auto it = this->_theItems.begin();
-        auto otherIt = other._theItems.begin();
+        {
+            auto it = this->_theItems.begin();
+            auto otherIt = other._theItems.begin();
 
-        for (; it != this->_theItems.end(); ++it, ++otherIt) {
-            if (static_cast<bool>(*it) != static_cast<bool>(*otherIt)) {
-                return false;
-            }
+            for (; it != this->_theItems.end(); ++it, ++otherIt) {
+                if (static_cast<bool>(*it) != static_cast<bool>(*otherIt)) {
+                    return false;
+                }
 
-            if (!*it) {
-                continue;
-            }
+                if (!*it) {
+                    continue;
+                }
 
-            if (**it != **otherIt) {
-                return false;
+                if (**it != **otherIt) {
+                    return false;
+                }
             }
         }
 

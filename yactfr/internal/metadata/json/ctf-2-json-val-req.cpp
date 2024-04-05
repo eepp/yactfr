@@ -1397,32 +1397,23 @@ JsonObjValReq::PropReqsEntry minAlignPropReqEntry()
 void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propName,
                               const char * const what)
 {
-    const auto jsonEntries = jsonVal.asObj()[propName];
+    if (const auto jsonEntries = jsonVal.asObj()[propName]) {
+        std::unordered_set<std::string> names;
 
-    if (!jsonEntries) {
-        // empty
-        return;
-    }
+        for (auto& jsonEntryVal : jsonEntries->asArray()) {
+            if (const auto jsonNameVal = jsonEntryVal->asObj()[strs::name]) {
+                auto& jsonNameStrVal = jsonNameVal->asStr();
 
-    std::unordered_set<std::string> names;
+                if (names.count(*jsonNameStrVal) != 0) {
+                    std::ostringstream ss;
 
-    for (auto& jsonEntryVal : jsonEntries->asArray()) {
-        const auto jsonNameVal = jsonEntryVal->asObj()[strs::name];
+                    ss << "Duplicate " << what << " name `" << *jsonNameStrVal << "`.";
+                    throwTextParseError(ss.str(), jsonNameVal->loc());
+                }
 
-        if (!jsonNameVal) {
-            continue;
+                names.insert(*jsonNameStrVal);
+            }
         }
-
-        auto& jsonNameStrVal = jsonNameVal->asStr();
-
-        if (names.count(*jsonNameStrVal) != 0) {
-            std::ostringstream ss;
-
-            ss << "Duplicate " << what << " name `" << *jsonNameStrVal << "`.";
-            throwTextParseError(ss.str(), jsonNameVal->loc());
-        }
-
-        names.insert(*jsonNameStrVal);
     }
 }
 
@@ -2035,7 +2026,7 @@ class JsonClkTypeOrigPropValReq final :
     public JsonValReq
 {
 public:
-    JsonClkTypeOrigPropValReq() = default;
+    explicit JsonClkTypeOrigPropValReq() = default;
 
     static Sp shared()
     {
@@ -2124,12 +2115,9 @@ private:
             JsonFragValReq::_validate(jsonVal);
 
             auto& jsonObjVal = jsonVal.asObj();
-            const auto jsonOffsetFromOrigVal = jsonObjVal[strs::offsetFromOrig];
 
-            if (jsonOffsetFromOrigVal) {
-                const auto jsonCyclesVal = jsonOffsetFromOrigVal->asObj()[strs::cycles];
-
-                if (jsonCyclesVal) {
+            if (const auto jsonOffsetFromOrigVal = jsonObjVal[strs::offsetFromOrig]) {
+                if (const auto jsonCyclesVal = jsonOffsetFromOrigVal->asObj()[strs::cycles]) {
                     const auto cycles = *jsonCyclesVal->asUInt();
                     const auto freq = *jsonObjVal[strs::freq]->asUInt();
 

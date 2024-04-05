@@ -378,10 +378,7 @@ bool Vm::_newDataBlock(const Index offsetInElemSeqBytes, const Size sizeBytes)
 
     _bufAddr = static_cast<const std::uint8_t *>(dataBlock->address());
     _bufLenBits = dataBlock->size() * 8;
-
-    const auto offsetInElemSeqBits = offsetInElemSeqBytes * 8;
-
-    _bufOffsetInCurPktBits = offsetInElemSeqBits - _pos.curPktOffsetInElemSeqBits;
+    _bufOffsetInCurPktBits = offsetInElemSeqBytes * 8 - _pos.curPktOffsetInElemSeqBits;
     return true;
 }
 
@@ -1257,20 +1254,17 @@ Vm::_tExecReaction Vm::_execBeginReadOptBoolSel(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execBeginReadOptSIntSel(const Instr& instr)
 {
-    const auto selVal = this->_execBeginReadOpt<BeginReadOptSIntSelInstr,
-                                                long long>(instr, _pos.elems.optSIntSelBeginning);
-
-    _pos.elems.optSIntSelBeginning._selVal = selVal;
+    _pos.elems.optSIntSelBeginning._selVal = this->_execBeginReadOpt<BeginReadOptSIntSelInstr,
+                                                                     long long>(instr,
+                                                                                _pos.elems.optSIntSelBeginning);;
     return _tExecReaction::Stop;
 }
 
 Vm::_tExecReaction Vm::_execBeginReadOptUIntSel(const Instr& instr)
 {
-    const auto selVal = this->_execBeginReadOpt<BeginReadOptUIntSelInstr,
-                                                unsigned long long>(instr,
-                                                                    _pos.elems.optUIntSelBeginning);
-
-    _pos.elems.optUIntSelBeginning._selVal = selVal;
+    _pos.elems.optUIntSelBeginning._selVal = this->_execBeginReadOpt<BeginReadOptUIntSelInstr,
+                                                                     unsigned long long>(instr,
+                                                                                         _pos.elems.optUIntSelBeginning);;
     return _tExecReaction::Stop;
 }
 
@@ -1316,9 +1310,7 @@ Vm::_tExecReaction Vm::_execEndReadOptSIntSel(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execSaveVal(const Instr& instr)
 {
-    const auto& saveValInstr = static_cast<const SaveValInstr&>(instr);
-
-    _pos.saveVal(saveValInstr.pos());
+    _pos.saveVal(static_cast<const SaveValInstr&>(instr).pos());
     return _tExecReaction::ExecNextInstr;
 }
 
@@ -1330,9 +1322,7 @@ Vm::_tExecReaction Vm::_execSetPktEndDefClkVal(const Instr&)
 
 Vm::_tExecReaction Vm::_execUpdateDefClkValFl(const Instr& instr)
 {
-    const auto& updateDefClkValFlInstr = static_cast<const UpdateDefClkValFlInstr&>(instr);
-
-    return this->_execUpdateDefClkValCommon(updateDefClkValFlInstr.len());
+    return this->_execUpdateDefClkValCommon(static_cast<const UpdateDefClkValFlInstr&>(instr).len());
 }
 
 Vm::_tExecReaction Vm::_execUpdateDefClkVal(const Instr&)
@@ -1350,17 +1340,16 @@ Vm::_tExecReaction Vm::_execSetDst(const Instr& instr)
 {
     const auto& setDstInstr = static_cast<const SetDstInstr&>(instr);
     const auto id = setDstInstr.fixedId() ? *setDstInstr.fixedId() : _pos.curId;
-    const auto dstPacketProc = (*_pos.pktProc)[id];
 
-    if (!dstPacketProc) {
+    if (const auto dstPacketProc = (*_pos.pktProc)[id]) {
+        _pos.curDsPktProc = dstPacketProc;
+        _pos.elems.dsInfo._dst = &dstPacketProc->dst();
+        return _tExecReaction::ExecNextInstr;
+    } else {
         throw UnknownDataStreamTypeDecodingError {
             _pos.headOffsetInElemSeqBits(), id
         };
     }
-
-    _pos.curDsPktProc = dstPacketProc;
-    _pos.elems.dsInfo._dst = &dstPacketProc->dst();
-    return _tExecReaction::ExecNextInstr;
 }
 
 Vm::_tExecReaction Vm::_execSetErt(const Instr& instr)
@@ -1372,17 +1361,15 @@ Vm::_tExecReaction Vm::_execSetErt(const Instr& instr)
 
     assert(_pos.curDsPktProc);
 
-    const auto erProc = (*_pos.curDsPktProc)[id];
-
-    if (!erProc) {
+    if (const auto erProc = (*_pos.curDsPktProc)[id]) {
+        _pos.curErProc = erProc;
+        _pos.elems.erInfo._ert = &erProc->ert();
+        return _tExecReaction::ExecNextInstr;
+    } else {
         throw UnknownEventRecordTypeDecodingError {
             _pos.headOffsetInElemSeqBits(), id
         };
     }
-
-    _pos.curErProc = erProc;
-    _pos.elems.erInfo._ert = &erProc->ert();
-    return _tExecReaction::ExecNextInstr;
 }
 
 Vm::_tExecReaction Vm::_execSetDsId(const Instr&)

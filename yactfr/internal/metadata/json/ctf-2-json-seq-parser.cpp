@@ -13,6 +13,7 @@
 #include "json-val-from-text.hpp"
 #include "item-from-json-val.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
+#include "../../utils.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -254,9 +255,7 @@ namespace {
 boost::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const JsonObjVal& jsonObjVal,
                                                                          const std::string& propName)
 {
-    const auto jsonVal = jsonObjVal[propName];
-
-    if (jsonVal) {
+    if (const auto jsonVal = jsonObjVal[propName]) {
         return std::make_pair(*jsonVal->asStr(), jsonVal->loc());
     }
 
@@ -264,6 +263,22 @@ boost::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const J
 }
 
 } // namespace
+
+const ClockType *Ctf2JsonSeqParser::_defClkTypeOfDstFrag(const JsonObjVal& jsonFrag)
+{
+    if (const auto defClkTypeId = optStrOfObjWithLoc(jsonFrag, strs::defCcId)) {
+        if (const auto defClkType = _pseudoTraceType->findClkType(defClkTypeId->first)) {
+            return defClkType;
+        }
+
+        std::ostringstream ss;
+
+        ss << '`' << defClkTypeId->first << "` doesn't identify an existing clock type.";
+        throwTextParseError(ss.str(), defClkTypeId->second);
+    }
+
+    return nullptr;
+}
 
 void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
 {
@@ -279,34 +294,16 @@ void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
         throwTextParseError(ss.str(), jsonFrag.loc());
     }
 
-    // default clock type internal ID
-    const auto defClkTypeId = optStrOfObjWithLoc(jsonFrag, strs::defCcId);
-    const ClockType *defClkType = nullptr;
-
-    if (defClkTypeId) {
-        defClkType = _pseudoTraceType->findClkType(defClkTypeId->first);
-
-        if (!defClkType) {
-            std::ostringstream ss;
-
-            ss << '`' << defClkTypeId->first << "` doesn't identify an existing clock type.";
-            throwTextParseError(ss.str(), defClkTypeId->second);
-        }
-    }
-
     try {
-        auto pseudoDst = std::make_unique<PseudoDst>(id, optStrOfObj(jsonFrag, strs::ns),
-                                                     optStrOfObj(jsonFrag, strs::name),
-                                                     optStrOfObj(jsonFrag, strs::uid),
-                                                     this->_pseudoScopeDtOfJsonObj(jsonFrag,
-                                                                                   strs::pktCtxFc),
-                                                     this->_pseudoScopeDtOfJsonObj(jsonFrag,
-                                                                                   strs::erHeaderFc),
-                                                     this->_pseudoScopeDtOfJsonObj(jsonFrag,
-                                                                                   strs::erCommonCtxFc),
-                                                     defClkType, attrsOfObj(jsonFrag));
-
-        _pseudoTraceType->pseudoDsts().insert(std::make_pair(id, std::move(pseudoDst)));
+        _pseudoTraceType->pseudoDsts().insert(std::make_pair(id, std::make_unique<PseudoDst>(
+            id,
+            optStrOfObj(jsonFrag, strs::ns), optStrOfObj(jsonFrag, strs::name),
+            optStrOfObj(jsonFrag, strs::uid),
+            this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::pktCtxFc),
+            this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::erHeaderFc),
+            this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::erCommonCtxFc),
+            this->_defClkTypeOfDstFrag(jsonFrag), attrsOfObj(jsonFrag)
+        )));
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In data stream type fragment:", jsonFrag.loc());
         throw;
@@ -374,17 +371,16 @@ void Ctf2JsonSeqParser::_ensureExistingPseudoTraceType()
 PseudoDt::Up Ctf2JsonSeqParser::_pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal,
                                                         const std::string& propName)
 {
-    auto pseudoDt = _pseudoDtErector.pseudoDtOfJsonObj(jsonObjVal, propName);
+    if (auto pseudoDt = _pseudoDtErector.pseudoDtOfJsonObj(jsonObjVal, propName)) {
+        if (pseudoDt->kind() != PseudoDt::Kind::Struct) {
+            throwTextParseError("Root data type of scope must be a structure type.",
+                                pseudoDt->loc());
+        }
 
-    if (!pseudoDt) {
-        return nullptr;
+        return pseudoDt;
     }
 
-    if (pseudoDt->kind() != PseudoDt::Kind::Struct) {
-        throwTextParseError("Root data type of scope must be structure type.", pseudoDt->loc());
-    }
-
-    return pseudoDt;
+    return nullptr;
 }
 
 } // namespace internal

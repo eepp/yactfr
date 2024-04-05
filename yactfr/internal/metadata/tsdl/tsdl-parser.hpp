@@ -1024,9 +1024,22 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
             _ss.skipCommentsAndWhitespaces();
             loc = _ss.loc();
 
-            auto val = _ss.template tryScanConstInt<Val>();
+            if (auto val = _ss.template tryScanConstInt<Val>()) {
+                lower = *val;
+                upper = lower;
+                curVal = lower;
 
-            if (!val) {
+                if (_ss.tryScanToken("...")) {
+                    val = _ss.template tryScanConstInt<Val>();
+
+                    if (!val) {
+                        throwTextParseError("Expecting valid constant integer.", _ss.loc());
+                    }
+
+                    upper = *val;
+                    curVal = upper;
+                }
+            } else {
                 if (std::is_signed<Val>::value) {
                     throwTextParseError("Expecting valid constant signed integer.",
                                         _ss.loc());
@@ -1034,21 +1047,6 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
                     throwTextParseError("Expecting valid constant unsigned integer.",
                                         _ss.loc());
                 }
-            }
-
-            lower = *val;
-            upper = lower;
-            curVal = lower;
-
-            if (_ss.tryScanToken("...")) {
-                val = _ss.template tryScanConstInt<Val>();
-
-                if (!val) {
-                    throwTextParseError("Expecting valid constant integer.", _ss.loc());
-                }
-
-                upper = *val;
-                curVal = upper;
             }
         }
 
@@ -1106,10 +1104,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
         len = pseudoDtWrapper.dt().asFixedLengthBitArrayType().length();
     } else {
         assert(pseudoDt->kind() == PseudoDt::Kind::FlUInt);
-
-        const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(*pseudoDt);
-
-        len = pseudoUIntType.len();
+        len = static_cast<const PseudoFlUIntType&>(*pseudoDt).len();
     }
 
     this->_validateFlIntTypeMappings<FlIntTypeT>(len, pseudoDt->loc(), mappings);
@@ -1131,8 +1126,6 @@ void TsdlParser::_validateFlIntTypeMapping(const Size len, const TextLocation& l
                                            const typename FlIntTypeT::MappingRangeSet& ranges) const
 {
     using Value = typename FlIntTypeT::MappingValue;
-
-    const auto lenUnitSuffix = (len == 1) ? "" : "s";
 
     for (auto& range : ranges) {
         // validate range storage length
@@ -1163,7 +1156,7 @@ void TsdlParser::_validateFlIntTypeMapping(const Size len, const TextLocation& l
                   "at least one value of the range [" << range.lower() <<
                   ", " << range.upper() <<
                   "] doesn't fit the range [" << minLower << ", " << maxUpper << "] "
-                  "(with a length of " << len << " bit" << lenUnitSuffix << ").";
+                  "(with a length of " << len << " bit" << ((len == 1) ? "" : "s") << ").";
             throwTextParseError(ss.str(), loc);
         }
     }

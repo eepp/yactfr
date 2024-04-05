@@ -485,11 +485,14 @@ void MetadataStreamDecoder::_readText()
             break;
         }
 
-        constexpr Size blkSize = 4096;
         const auto textOffset = _text.size();
 
-        _text.resize(_text.size() + blkSize);
-        _stream->read(&_text[textOffset], blkSize);
+        {
+            static constexpr Size blkSize = 4096;
+
+            _text.resize(_text.size() + blkSize);
+            _stream->read(&_text[textOffset], blkSize);
+        }
 
         if (this->_streamIsBad()) {
             throw IOError {"Cannot read metadata stream."};
