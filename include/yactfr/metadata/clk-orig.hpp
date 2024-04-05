@@ -133,9 +133,9 @@ public:
     }
 
 private:
-    static const char *_unixEpochNs;
-    static const char *_unixEpochName;
-    static const char *_unixEpochUid;
+    static const char * const _unixEpochNs;
+    static const char * const _unixEpochName;
+    static const char * const _unixEpochUid;
 
 private:
     boost::optional<std::string> _ns;
