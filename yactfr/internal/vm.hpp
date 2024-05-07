@@ -374,7 +374,7 @@ public:
      *     64 00 20 00 3c d8 3b df 00
      *
      * Also assume the encoding is UTF-16LE (code unit size is two).
-     * Then there are five complete code units there, and half of one
+     * Then there are four complete code units there, and half of one
      * (the last zero byte). Therefore, after reading that last zero
      * byte, `ntStrCuBuf.buf[0]` would be zero and `ntStrCuBuf.index`
      * one.
