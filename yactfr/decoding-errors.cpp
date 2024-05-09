@@ -92,7 +92,7 @@ ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError::ExpectedPacketTota
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedLen <<
-                  ") is less then current position in packet (" <<
+                  ") is less than current position in packet (" <<
                   offsetInPkt << ").";
             return ss.str();
         }),
@@ -111,7 +111,7 @@ ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError::ExpectedPacketCo
             std::ostringstream ss;
 
             ss << "Expected packet content length (" << expectedLen <<
-                  ") is less then current position in packet (" <<
+                  ") is less than current position in packet (" <<
                   offsetInPkt << ").";
             return ss.str();
         }),

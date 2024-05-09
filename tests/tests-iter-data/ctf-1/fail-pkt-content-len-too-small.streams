@@ -28,4 +28,4 @@ event {
      0     SC:1 {
      0       ST {
      0         FLUI:content_size:8
-    16 Expected packet content length (8) is less then current position in packet (16).
+    16 Expected packet content length (8) is less than current position in packet (16).
