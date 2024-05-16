@@ -28,7 +28,7 @@ Object holding the origin property of a clock type.
 class ClockOrigin final
 {
 public:
-    /*
+    /*!
     @brief
         Builds a
         <a href="https://en.wikipedia.org/wiki/Unix_time">Unix epoch</a>
@@ -40,7 +40,7 @@ public:
     */
     ClockOrigin();
 
-    /*
+    /*!
     @brief
         Builds a custom clock origin object.
 
@@ -53,7 +53,7 @@ public:
     */
     explicit ClockOrigin(boost::optional<std::string> nameSpace, std::string name, std::string uid);
 
-    /*
+    /*!
     @brief
         Builds a custom clock origin object without a namespace.
 

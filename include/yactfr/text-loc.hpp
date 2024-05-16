@@ -21,13 +21,13 @@ namespace yactfr {
 class TextLocation final
 {
 public:
-    /*
+    /*!
     @brief
         Builds a default text location (first line, first column).
     */
     explicit TextLocation() = default;
 
-    /*
+    /*!
     @brief
         Builds a text location which targets offset \p offset bytes,
         zero-based line number \p lineNumber, zero-based column number

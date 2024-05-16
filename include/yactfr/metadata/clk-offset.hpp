@@ -28,7 +28,7 @@ Object holding the offset property of a clock type.
 class ClockOffset final
 {
 public:
-    /*
+    /*!
     @brief
         Builds a default clock offset object (0).
     */
