@@ -10,10 +10,9 @@
 
 #include "ctf-2-json-seq-parser.hpp"
 #include "ctf-2-json-strs.hpp"
+#include "ctf-2-json-utils.hpp"
 #include "json-val-from-text.hpp"
-#include "item-from-json-val.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
-#include "../../utils.hpp"
 
 namespace yactfr {
 namespace internal {

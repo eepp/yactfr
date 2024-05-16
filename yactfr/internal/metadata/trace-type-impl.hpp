@@ -9,10 +9,7 @@
 #define YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP
 
 #include <unordered_map>
-#include <unordered_set>
 #include <string>
-#include <sstream>
-#include <functional>
 
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
@@ -20,7 +17,6 @@
 #include <yactfr/metadata/item.hpp>
 
 #include "../proc.hpp"
-#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {

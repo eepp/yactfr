@@ -8,7 +8,6 @@
 #ifndef YACTFR_METADATA_CLK_VALUE_INTERVAL_HPP
 #define YACTFR_METADATA_CLK_VALUE_INTERVAL_HPP
 
-#include <string>
 #include <boost/core/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>

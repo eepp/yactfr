@@ -8,14 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
 #define YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
 
-#include <cstdlib>
-#include <memory>
-#include <vector>
-#include <cstring>
 #include <cassert>
-#include <sstream>
-#include <unordered_map>
-#include <unordered_set>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
 #include <boost/uuid/uuid.hpp>

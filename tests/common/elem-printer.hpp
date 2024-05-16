@@ -8,11 +8,6 @@
 #ifndef YACTFR_TESTS_ELEM_PRINTER_HPP
 #define YACTFR_TESTS_ELEM_PRINTER_HPP
 
-#include <cstdint>
-#include <cstdlib>
-#include <cassert>
-#include <memory>
-#include <vector>
 #include <string>
 #include <iomanip>
 #include <ostream>

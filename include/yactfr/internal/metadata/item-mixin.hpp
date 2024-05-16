@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <memory>
 
 #include "../../aliases.hpp"
 

@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <stdexcept>
 #include <yactfr/yactfr.hpp>
 #include <boost/uuid/uuid_io.hpp>
 

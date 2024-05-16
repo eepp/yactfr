@@ -11,8 +11,6 @@
 #include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/clk-orig.hpp>
 
-#include "../internal/utils.hpp"
-
 namespace yactfr {
 
 ClockValueInterval::ClockValueInterval(const Cycles lower, const Cycles upper) noexcept :

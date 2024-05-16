@@ -22,8 +22,6 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "utils.hpp"
-
 namespace yactfr {
 namespace internal {
 

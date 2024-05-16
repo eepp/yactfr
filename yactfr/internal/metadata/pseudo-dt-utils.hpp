@@ -8,7 +8,6 @@
 #ifndef YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
 #define YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
 
-#include "pseudo-types.hpp"
 #include "pseudo-dt-finder.hpp"
 
 namespace yactfr {

@@ -8,7 +8,6 @@
 #ifndef YACTFR_METADATA_METADATA_STREAM_HPP
 #define YACTFR_METADATA_METADATA_STREAM_HPP
 
-#include <stdexcept>
 #include <string>
 #include <istream>
 #include <memory>

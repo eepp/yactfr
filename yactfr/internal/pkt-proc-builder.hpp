@@ -8,11 +8,7 @@
 #ifndef YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
 #define YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
 
-#include <cstdlib>
-#include <cassert>
 #include <memory>
-#include <functional>
-#include <vector>
 #include <boost/noncopyable.hpp>
 
 #include <yactfr/metadata/trace-type.hpp>

@@ -8,7 +8,6 @@
 #ifndef YACTFR_METADATA_FL_INT_TYPE_HPP
 #define YACTFR_METADATA_FL_INT_TYPE_HPP
 
-#include <string>
 #include <boost/optional.hpp>
 
 #include <memory>

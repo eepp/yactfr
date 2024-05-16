@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <cassert>
-
 #include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/internal/metadata/utils.hpp>
 

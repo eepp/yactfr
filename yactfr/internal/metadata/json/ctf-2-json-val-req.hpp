@@ -8,8 +8,6 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_VAL_REQ_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_VAL_REQ_HPP
 
-#include <cassert>
-#include <unordered_map>
 #include <memory>
 
 #include "json-val.hpp"

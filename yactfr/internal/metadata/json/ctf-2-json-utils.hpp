@@ -14,7 +14,6 @@
 #include <yactfr/metadata/item.hpp>
 
 #include "json-val.hpp"
-#include "../pseudo-types.hpp"
 
 namespace yactfr {
 namespace internal {

@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <cassert>
 #include <tuple>
-#include <set>
 #include <utility>
 
 #include <yactfr/aliases.hpp>

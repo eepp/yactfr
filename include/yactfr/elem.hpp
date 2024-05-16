@@ -10,7 +10,6 @@
 
 #include <cstdint>
 #include <string>
-#include <algorithm>
 #include <unordered_set>
 #include <boost/uuid/uuid.hpp>
 #include <boost/optional/optional.hpp>

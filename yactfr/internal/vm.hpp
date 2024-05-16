@@ -9,10 +9,7 @@
 #define YACTFR_INTERNAL_VM_HPP
 
 #include <cassert>
-#include <string>
-#include <stdexcept>
 #include <vector>
-#include <limits>
 #include <algorithm>
 #include <type_traits>
 #include <cstdint>

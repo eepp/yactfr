@@ -9,7 +9,6 @@
 #define YACTFR_METADATA_INT_RANGE_HPP
 
 #include <cassert>
-#include <type_traits>
 
 namespace yactfr {
 

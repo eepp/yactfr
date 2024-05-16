@@ -5,11 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <unordered_map>
-#include <unordered_set>
 #include <string>
-#include <sstream>
-#include <functional>
 #include <cstdlib>
 #include <cstring>
 
@@ -24,7 +20,6 @@
 
 #include "../internal/metadata/trace-type-impl.hpp"
 #include "../internal/proc.hpp"
-#include "../internal/pkt-proc-builder.hpp"
 
 namespace yactfr {
 

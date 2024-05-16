@@ -8,7 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP
 
-#include <string>
+#include <yactfr/metadata/item.hpp>
 
 #include "json-val.hpp"
 

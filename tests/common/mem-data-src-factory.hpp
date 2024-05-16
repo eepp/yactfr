@@ -10,7 +10,6 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <memory>
 #include <limits>
 
 #include <yactfr/data-src-factory.hpp>

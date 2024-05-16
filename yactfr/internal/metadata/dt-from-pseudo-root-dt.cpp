@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <memory>
 #include <vector>
-#include <cstring>
 #include <cassert>
 #include <sstream>
 #include <unordered_map>

@@ -9,7 +9,6 @@
 #define YACTFR_METADATA_VAR_TYPE_OPT_HPP
 
 #include <string>
-#include <vector>
 #include <memory>
 #include <utility>
 #include <boost/optional.hpp>

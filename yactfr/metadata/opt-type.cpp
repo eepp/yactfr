@@ -5,9 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <algorithm>
-#include <cassert>
-
 #include <yactfr/metadata/opt-type.hpp>
 #include <yactfr/internal/metadata/utils.hpp>
 

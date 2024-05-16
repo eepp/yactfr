@@ -8,7 +8,6 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_HPP
 
-#include <cassert>
 #include <string>
 #include <memory>
 #include <boost/noncopyable.hpp>

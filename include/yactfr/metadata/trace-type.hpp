@@ -17,7 +17,6 @@
 
 #include "clk-type.hpp"
 #include "dst.hpp"
-#include "dt.hpp"
 #include "struct-type.hpp"
 #include "item.hpp"
 #include "trace-env.hpp"

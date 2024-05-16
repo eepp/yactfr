@@ -8,12 +8,10 @@
 #ifndef YACTFR_METADATA_ITEM_HPP
 #define YACTFR_METADATA_ITEM_HPP
 
-#include <cassert>
 #include <string>
 #include <memory>
 #include <boost/noncopyable.hpp>
 
-#include "aliases.hpp"
 #include "../internal/metadata/item-mixin.hpp"
 
 namespace yactfr {

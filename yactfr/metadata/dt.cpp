@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <string>
-#include <sstream>
 #include <cassert>
 
 #include <yactfr/metadata/dt.hpp>

@@ -8,13 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
 #define YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
 
-#include <cstdlib>
 #include <memory>
-#include <vector>
-#include <cstring>
-#include <cassert>
-#include <unordered_map>
-#include <unordered_set>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
 

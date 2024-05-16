@@ -10,7 +10,6 @@
 
 #include <cstdlib>
 #include <cassert>
-#include <memory>
 #include <vector>
 #include <limits>
 #include <regex>
@@ -21,8 +20,6 @@
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
-
-#include "../utils.hpp"
 
 namespace yactfr {
 namespace internal {

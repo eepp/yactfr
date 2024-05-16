@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <cassert>
-
 #include "ctf-2-json-utils.hpp"
 #include "ctf-2-json-strs.hpp"
 #include "item-from-json-val.hpp"

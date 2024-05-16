@@ -6,7 +6,6 @@
  */
 
 #include <string>
-#include <sstream>
 
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/dt.hpp>

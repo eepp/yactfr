@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdexcept>
 #include <yactfr/yactfr.hpp>
 
 int main(int, const char * const argv[])

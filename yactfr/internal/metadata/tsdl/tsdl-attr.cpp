@@ -5,10 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <algorithm>
-#include <cassert>
-#include <tuple>
-#include <set>
+#include <sstream>
 
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>

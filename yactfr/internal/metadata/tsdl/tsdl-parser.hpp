@@ -8,12 +8,9 @@
 #ifndef YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
 #define YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP
 
-#include <cstdlib>
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <map>
-#include <cstring>
 #include <cassert>
 #include <utility>
 #include <unordered_map>

@@ -9,7 +9,6 @@
 #define YACTFR_DATA_SRC_HPP
 
 #include <memory>
-#include <stdexcept>
 #include <boost/optional.hpp>
 
 #include "data-blk.hpp"

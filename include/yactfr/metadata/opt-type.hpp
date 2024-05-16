@@ -9,7 +9,6 @@
 #define YACTFR_METADATA_OPT_TYPE_HPP
 
 #include <algorithm>
-#include <string>
 #include <memory>
 #include <utility>
 
@@ -18,7 +17,6 @@
 #include "dt.hpp"
 #include "dt-visitor.hpp"
 #include "compound-dt.hpp"
-#include "../aliases.hpp"
 
 namespace yactfr {
 namespace internal {

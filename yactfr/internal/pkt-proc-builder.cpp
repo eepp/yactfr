@@ -6,8 +6,6 @@
  */
 
 #include <functional>
-#include <algorithm>
-#include <type_traits>
 #include <boost/optional/optional.hpp>
 
 #include <yactfr/metadata/fl-int-type.hpp>

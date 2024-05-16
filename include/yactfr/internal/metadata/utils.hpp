@@ -8,12 +8,6 @@
 #ifndef YACTFR_INTERNAL_METADATA_UTILS_HPP
 #define YACTFR_INTERNAL_METADATA_UTILS_HPP
 
-#include <cassert>
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-
 #include "../../metadata/item.hpp"
 
 namespace yactfr {

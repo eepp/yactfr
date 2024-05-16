@@ -58,14 +58,12 @@
  * the implementation of the VM.
  */
 
-#include <cstdlib>
 #include <cassert>
 #include <sstream>
 #include <list>
 #include <vector>
 #include <utility>
 #include <functional>
-#include <type_traits>
 #include <boost/optional/optional.hpp>
 
 #include <yactfr/aliases.hpp>

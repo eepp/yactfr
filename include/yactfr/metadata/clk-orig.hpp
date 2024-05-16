@@ -13,8 +13,6 @@
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
 
-#include "aliases.hpp"
-
 namespace yactfr {
 
 /*!

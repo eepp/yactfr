@@ -16,8 +16,6 @@
 #include <type_traits>
 #include <boost/optional/optional.hpp>
 
-#include "bo.hpp"
-#include "dt.hpp"
 #include "int-range-set.hpp"
 
 namespace yactfr {

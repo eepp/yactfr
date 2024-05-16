@@ -9,11 +9,6 @@
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
 
 #include <cassert>
-#include <unordered_map>
-#include <memory>
-
-#include "json-val.hpp"
-#include "json-val-req.hpp"
 
 namespace yactfr {
 namespace internal {

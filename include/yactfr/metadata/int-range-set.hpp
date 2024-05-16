@@ -8,9 +8,7 @@
 #ifndef YACTFR_METADATA_INT_RANGE_SET_HPP
 #define YACTFR_METADATA_INT_RANGE_SET_HPP
 
-#include <cassert>
 #include <set>
-#include <type_traits>
 
 #include "int-range.hpp"
 

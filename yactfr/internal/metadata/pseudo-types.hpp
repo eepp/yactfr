@@ -10,8 +10,6 @@
 
 #include <memory>
 #include <vector>
-#include <cstring>
-#include <cassert>
 #include <unordered_map>
 #include <unordered_set>
 #include <boost/optional.hpp>

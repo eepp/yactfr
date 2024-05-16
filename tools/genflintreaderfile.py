@@ -140,8 +140,6 @@ if __name__ == '__main__':
 #define YACTFR_INTERNAL_FL_INT_READER_HPP
 
 #include <cstdint>
-#include <cassert>
-#include <cstring>
 
 namespace yactfr {
 namespace internal {

@@ -8,8 +8,6 @@
 #ifndef YACTFR_ELEM_SEQ_HPP
 #define YACTFR_ELEM_SEQ_HPP
 
-#include <memory>
-
 #include "elem-seq-it.hpp"
 
 namespace yactfr {

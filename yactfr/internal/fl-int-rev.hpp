@@ -9,7 +9,6 @@
 #define YACTFR_INTERNAL_FL_INT_REV_HPP
 
 #include <cstdint>
-#include <cassert>
 
 #include <yactfr/aliases.hpp>
 

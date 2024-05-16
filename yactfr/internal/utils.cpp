@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <sstream>
+#include <vector>
 #include <string.h>
 #include <errno.h>
 

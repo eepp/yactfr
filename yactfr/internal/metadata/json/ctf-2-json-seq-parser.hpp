@@ -8,8 +8,6 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
 
-#include <cassert>
-#include <array>
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
 
@@ -21,7 +19,6 @@
 #include <yactfr/metadata/aliases.hpp>
 
 #include "ctf-2-json-val-req.hpp"
-#include "ctf-2-json-utils.hpp"
 #include "json-val.hpp"
 #include "pseudo-dt-erector.hpp"
 #include "../pseudo-types.hpp"
