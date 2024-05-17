@@ -88,8 +88,8 @@ private:
      * `pseudoDts` as it goes.
      *
      * `locIt` is the current path element, within `loc`, to consider;
-     * it can be `loc.end()` in which case some leaf/resolution is
-     * expected.
+     * it can be `loc.end()` in which case some leaf/resolution
+     * is expected.
      *
      * Returns `true` if `pseudoSrcDt` isn't reached yet (safe to
      * continue to find pseudo data types).
@@ -124,8 +124,8 @@ private:
 
     /*
      * Tries to convert the pseudo array type `pseudoArrayType` to a
-     * yactfr non null-terminated string type having the type
-     * `StrTypeT`.
+     * yactfr non null-terminated string type having the
+     * type `StrTypeT`.
      *
      * Returns a null pointer if `pseudoArrayType` doesn't match a non
      * null-terminated string type profile.
@@ -169,8 +169,8 @@ private:
     DataType::Up _dtFromPseudoStructType(const PseudoDt& pseudoDt);
 
     /*
-     * Converts the pseudo variant type `pseudoDt` to a yactfr variant
-     * type.
+     * Converts the pseudo variant type `pseudoDt` to a yactfr
+     * variant type.
      */
     DataType::Up _dtFromPseudoVarType(const PseudoDt& pseudoDt);
 
@@ -190,8 +190,8 @@ private:
     /*
      * Returns the yactfr data location and all the pseudo integer
      * selector types, validating them, of the pseudo data type
-     * `pseudoDt` of which the name is `dtName` (either `variant` or
-     * `optional`).
+     * `pseudoDt` of which the name is `dtName` (either `variant`
+     * or `optional`).
      */
     template <typename PseudoDtT>
     _tPseudoDtSels _pseudoDtIntSels(const PseudoDtT& pseudoDt, const std::string& dtName) const;
@@ -208,8 +208,8 @@ private:
     /*
      * Converts the pseudo variant (with integer ranges) type
      * `pseudoVarType` to a yactfr variant type of type `VarTypeT`, the
-     * value type of the integer ranges of the options being
-     * `IntRangeValueT`.
+     * value type of the integer ranges of the options
+     * being `IntRangeValueT`.
      */
     template <typename VarTypeT, typename IntRangeValueT>
     DataType::Up _dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
@@ -258,8 +258,8 @@ private:
     /*
      * Option/element indexes of currently visited pseudo
      * variant/optional, dynamic-length array/string/BLOB types (always
-     * 0 for pseudo dynamic-length array/string/BLOB and pseudo optional
-     * type).
+     * 0 for pseudo dynamic-length array/string/BLOB and pseudo
+     * optional type).
      */
     std::unordered_map<const PseudoDt *, Index> _current;
 };
@@ -472,18 +472,18 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(PseudoDt& pseudoDt,
      * 2. setPseudoDtPosInScope() sets the position, within their scope,
      *    of all the pseudo data types.
      *
-     *    This makes the validation of pseudo length/selector types
-     *    simpler.
+     *    This makes the validation of pseudo length/selector
+     *    types simpler.
      *
      * 3. _structTypeFromPseudoDt() recursively converts pseudo data
      *    types to yactfr data types.
      *
      *    During this process, we need to find and validate:
      *
-     *    * The length integer types of dynamic-length array, string,
+     *    • The length integer types of dynamic-length array, string,
      *      and BLOB types.
      *
-     *    * The selector type of variant and optional types.
+     *    • The selector type of variant and optional types.
      *
      *    To do so:
      *
@@ -495,8 +495,8 @@ DtFromPseudoRootDtConverter::DtFromPseudoRootDtConverter(PseudoDt& pseudoDt,
      *       `_current` contain that AT is currently being visited.
      *
      *    c) When visiting the pseudo data type of an optional type OT,
-     *       we make `_current` contain that OT is currently being
-     *       visited.
+     *       we make `_current` contain that OT is currently
+     *       being visited.
      *
      *    _findPseudoDts() uses the data above to make sure that it only
      *    finds the accessible data types depending on the context.

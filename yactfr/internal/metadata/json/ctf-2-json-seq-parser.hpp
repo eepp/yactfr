@@ -43,8 +43,8 @@ public:
      * string between `begin` (included) and `end` (excluded), and
      * parses it.
      *
-     * You can release the resulting trace type from this parser with
-     * releaseTraceType().
+     * You can release the resulting trace type from this parser
+     * with releaseTraceType().
      *
      * Throws `TextParseError` when there was a parsing error.
      */
@@ -74,8 +74,8 @@ private:
 
     /*
      * Parses the whole metadata string, creating the resulting trace
-     * type and trace environment on success, throwing `TextParseError`
-     * otherwise.
+     * type and trace environment on success, throwing
+     * `TextParseError` otherwise.
      */
     void _parseMetadata();
 
@@ -94,36 +94,36 @@ private:
 
     /*
      * Handles the JSON trace type fragment `jsonFrag`, updating the
-     * internal state on success, or throwing `TextParseError` on
-     * failure.
+     * internal state on success, or throwing `TextParseError`
+     * on failure.
      */
     void _handleTraceTypeFrag(const JsonObjVal& jsonFrag);
 
     /*
      * Handles the JSON data type alias fragment `jsonFrag`, updating
-     * the internal state on success, or throwing `TextParseError` on
-     * failure.
+     * the internal state on success, or throwing `TextParseError`
+     * on failure.
      */
     void _handleDtAliasFrag(const JsonObjVal& jsonFrag);
 
     /*
      * Handles the JSON clock type fragment `jsonFrag`, updating the
-     * internal state on success, or throwing `TextParseError` on
-     * failure.
+     * internal state on success, or throwing `TextParseError`
+     * on failure.
      */
     void _handleClkTypeFrag(const JsonObjVal& jsonFrag);
 
     /*
      * Handles the JSON data stream type fragment `jsonFrag`, updating
-     * the internal state on success, or throwing `TextParseError` on
-     * failure.
+     * the internal state on success, or throwing `TextParseError`
+     * on failure.
      */
     void _handleDstFrag(const JsonObjVal& jsonFrag);
 
     /*
      * Handles the JSON event record type fragment `jsonFrag`, updating
-     * the internal state on success, or throwing `TextParseError` on
-     * failure.
+     * the internal state on success, or throwing `TextParseError`
+     * on failure.
      */
     void _handleErtFrag(const JsonObjVal& jsonFrag);
 

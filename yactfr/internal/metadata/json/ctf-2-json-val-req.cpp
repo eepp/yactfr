@@ -299,9 +299,9 @@ private:
 /*
  * CTF 2 JSON integer range value requirement.
  *
- * An instance of this class validates that a given JSON value is
- * a CTF 2 integer range, both contained values satisfying
- * an instance of `JsonIntValReqT`.
+ * An instance of this class validates that a given JSON value is a CTF
+ * 2 integer range, both contained values satisfying an instance
+ * of `JsonIntValReqT`.
  */
 template <typename JsonIntValReqT>
 class JsonIntRangeValReqBase final :
@@ -495,9 +495,8 @@ private:
 namespace {
 
 /*
- * Adds a JSON object value property requirement having the key
- * `key` to `propReqs`, passing `valReq` and `isRequired` to its
- * constructor.
+ * Adds a JSON object value property requirement having the key `key` to
+ * `propReqs`, passing `valReq` and `isRequired` to its constructor.
  */
 void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
                           JsonValReq::Sp valReq, const bool isRequired = false)

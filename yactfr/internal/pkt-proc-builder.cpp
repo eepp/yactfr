@@ -38,8 +38,8 @@ protected:
         for (auto it = proc.begin(); it != proc.end(); ++it) {
             /*
              * Set current procedure instruction location for each
-             * iteration because it can change during an Instr::accept()
-             * call.
+             * iteration because it can change during an
+             * Instr::accept() call.
              */
             _curInstrLoc.proc = &proc.sharedProc();
             _curInstrLoc.it = it;
@@ -122,8 +122,8 @@ void PktProcBuilder::_buildPktProc()
      * 2. In the `BeginReadScopeInstr` instruction of the trace preamble
      *    procedure, find "begin read static-length array" and "begin
      *    read static-length BLOB" instructions and replace them with
-     *    `BeginReadSlUuidArrayInstr` and `BeginReadSlUuidBlobInstr`
-     *    object.
+     *    `BeginReadSlUuidArrayInstr` and
+     *    `BeginReadSlUuidBlobInstr` object.
      *
      * 3. Insert `SetCurIdInstr`, `SetDstInstr`, `SetErtInstr`,
      *    `SetDsIdInstr`, `SetPktSeqNumInstr`,
@@ -315,8 +315,8 @@ void PktProcBuilder::_subUuidInstr()
          * Replace after this visitor finishes because it recurses into
          * "begin reading static-length array" instructions afterwards
          * so we cannot change it in its back, effectively deleting the
-         * old shared pointer and making a dangling pointer within the
-         * visitor.
+         * old shared pointer and making a dangling pointer within
+         * the visitor.
          */
         instrLocs.push_back(instrLoc);
     }};
@@ -759,13 +759,13 @@ void PktProcBuilder::_setSavedValPoss()
      * the length/selector types.
      *
      * For a given length/selector type, we can find the corresponding
-     * "read boolean" or "read integer" instruction as data types are
-     * unique.
+     * "read boolean" or "read integer" instruction as data types
+     * are unique.
      *
      * We insert "save value" instructions at the appropriate locations
      * in the associated procedure and then return the saved value
-     * position to the visitor so that it changes the requesting
-     * instruction.
+     * position to the visitor so that it changes the
+     * requesting instruction.
      */
     auto dtReadLenSelInstrMap = this->_createDtReadLenSelInstrMap();
     Index nextPos = 0;

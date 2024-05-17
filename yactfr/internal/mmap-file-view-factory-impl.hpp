@@ -24,8 +24,8 @@ namespace internal {
  * and guarantee its lifetime.
  *
  * `MemoryMappedFileView` objects also have access to some parameters
- * like the preferred memory map size and the expected data access
- * pattern.
+ * like the preferred memory map size and the expected data
+ * access pattern.
  */
 class MmapFileViewFactoryImpl final
 {

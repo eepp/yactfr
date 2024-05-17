@@ -31,8 +31,8 @@ namespace internal {
  *
  * This is the base of any JSON requirement class.
  *
- * An instance of this class validates that a JSON value has a given
- * type.
+ * An instance of this class validates that a JSON value has a
+ * given type.
  */
 class JsonValReq :
     boost::noncopyable
@@ -81,8 +81,8 @@ private:
  * An instance of this class validates that, given a JSON value V of
  * type `JsonValT`:
  *
- * * V has the kind `KindV`.
- * * The raw value of V is within a given range.
+ * • V has the kind `KindV`.
+ * • The raw value of V is within a given range.
  */
 template <typename JsonValT, JsonVal::Kind KindV>
 class JsonIntValInRangeReq :
@@ -97,8 +97,8 @@ public:
      * Builds a JSON integer value in range requirement: _validate()
      * validates that the raw value of the JSON integer value is:
      *
-     * * If `minVal` is set: greater than or equal to `*minVal`.
-     * * If `maxVal` is set: less than or equal to `*maxVal`.
+     * • If `minVal` is set: greater than or equal to `*minVal`.
+     * • If `maxVal` is set: less than or equal to `*maxVal`.
      */
     explicit JsonIntValInRangeReq(const boost::optional<_tVal>& minVal,
                                   const boost::optional<_tVal>& maxVal) :
@@ -110,8 +110,8 @@ public:
 
     /*
      * Builds a JSON integer value in range requirement: _validate()
-     * validates that the raw value of the JSON integer value is exactly
-     * `exactVal`.
+     * validates that the raw value of the JSON integer value is
+     * exactly `exactVal`.
      */
     explicit JsonIntValInRangeReq(const _tVal exactVal) :
         JsonIntValInRangeReq {exactVal, exactVal}
@@ -200,8 +200,8 @@ inline void writeRawVal<bool>(std::ostringstream& ss, const bool& val)
  * An instance of this class validates that, given a JSON value V of
  * type `JsonValT`:
  *
- * * V has the kind `KindV`.
- * * The raw value of V is an element of a given set.
+ * • V has the kind `KindV`.
+ * • The raw value of V is an element of a given set.
  */
 template <typename JsonValT, JsonVal::Kind KindV>
 class JsonScalarValInSetReq :
@@ -332,9 +332,9 @@ using JsonStrValInSetReq = JsonScalarValInSetReq<JsonStrVal, JsonVal::Kind::Str>
  *
  * An instance of this class validates that, given a JSON value V:
  *
- * * V is a JSON unsigned integer value.
+ * • V is a JSON unsigned integer value.
  *
- * * The raw value of V is a valid alignment (greater than zero, power
+ * • The raw value of V is a valid alignment (greater than zero, power
  *   of two).
  */
 class JsonUIntValIsAlignReq :
@@ -363,8 +363,8 @@ protected:
  *
  * An instance of this class validates that, given a JSON value V:
  *
- * * V is a JSON string value.
- * * The raw value of V matches a given regular expression.
+ * • V is a JSON string value.
+ * • The raw value of V matches a given regular expression.
  */
 class JsonStrValMatchesRegexReq :
     public JsonValReq
@@ -380,22 +380,22 @@ public:
     /*
      * Builds a JSON string value matches regular expression
      * requirement: _validate() validates that the raw value of the JSON
-     * string value matches the regular expression `regex` (ECMAScript
-     * engine).
+     * string value matches the regular expression `regex`
+     * (ECMAScript engine).
      */
     explicit JsonStrValMatchesRegexReq(const char *regex);
 
     /*
      * Returns a shared pointer to JSON string value matches regular
-     * expression requirement, forwarding the parameter to the
-     * constructor.
+     * expression requirement, forwarding the parameter to
+     * the constructor.
      */
     static Sp shared(std::regex regex);
 
     /*
      * Returns a shared pointer to JSON string value matches regular
-     * expression requirement, forwarding the parameter to the
-     * constructor.
+     * expression requirement, forwarding the parameter to
+     * the constructor.
      */
     static Sp shared(const char *regex);
 
@@ -411,9 +411,9 @@ private:
  *
  * An instance of this class validates that, given a JSON value V:
  *
- * * V is a JSON array value.
- * * The size of V is within a given range.
- * * All the elements of V satisfy a given JSON value requirement.
+ * • V is a JSON array value.
+ * • The size of V is within a given range.
+ * • All the elements of V satisfy a given JSON value requirement.
  */
 class JsonArrayValReq :
     public JsonValReq
@@ -423,14 +423,14 @@ public:
      * Builds a JSON array value requirement: _validate() validates
      * that, for a given JSON array value V:
      *
-     * * If `minSize` is set: the size of V is greater than or equal to
-     *   `*minSize`.
+     * • If `minSize` is set: the size of V is greater than or equal
+     *   to `*minSize`.
      *
-     * * If `maxSize` is set: the size of V is less than or equal to
-     *   `*maxSize`.
+     * • If `maxSize` is set: the size of V is less than or equal
+     *   to `*maxSize`.
      *
-     * * If `elemValReq` is not `nullptr`: all the elements of V satisfy
-     *   `*elemValReq`.
+     * • If `elemValReq` is not `nullptr`: all the elements of V
+     *   satisfy `*elemValReq`.
      */
     explicit JsonArrayValReq(const boost::optional<Size>& minSize,
                              const boost::optional<Size>& maxSize,
@@ -440,10 +440,10 @@ public:
      * Builds a JSON array value requirement: _validate() validates
      * that, for a given JSON array value V:
      *
-     * * The size of V is exactly `exactSize`.
+     * • The size of V is exactly `exactSize`.
      *
-     * * If `elemValReq` is not `nullptr`: all the elements of V satisfy
-     *   `*elemValReq`.
+     * • If `elemValReq` is not `nullptr`: all the elements of V
+     *   satisfy `*elemValReq`.
      */
     explicit JsonArrayValReq(Size exactSize, JsonValReq::Sp elemValReq = nullptr);
 
@@ -485,11 +485,11 @@ private:
 /*
  * JSON object value property requirement.
  *
- * An instance of this class contains the requirements of a single
- * JSON object value property, that is:
+ * An instance of this class contains the requirements of a single JSON
+ * object value property, that is:
  *
- * * Whether or not it's required.
- * * The requirement of the JSON value of the property.
+ * • Whether or not it's required.
+ * • The requirement of the JSON value of the property.
  */
 class JsonObjValPropReq final
 {
@@ -535,9 +535,9 @@ private:
  *
  * An instance of this class validates that, given a JSON value V:
  *
- * * V is a JSON object value.
+ * • V is a JSON object value.
  *
- * * The properties of V satisfy a given set of JSON object value
+ * • The properties of V satisfy a given set of JSON object value
  *   property requirements.
  */
 class JsonObjValReq :
@@ -555,14 +555,14 @@ public:
      * Builds a JSON object value requirement: _validate() validates
      * that, for a given JSON object value V:
      *
-     * * If `allowUnknownProps` is false, then V has no value of which
+     * • If `allowUnknownProps` is false, then V has no value of which
      *   the key is not an element of the keys of `propReqs`.
      *
-     * * For each property requirement PR having the key K in
+     * • For each property requirement PR having the key K in
      *   `propReqs`: if `PR.isRequired()`, then a value having the key K
      *   exists in V.
      *
-     * * For each value VV having the key K in V: VV satisfies the JSON
+     * • For each value VV having the key K in V: VV satisfies the JSON
      *   value requirement, if any, of `propReqs[K]`.
      */
     explicit JsonObjValReq(PropReqs propReqs, bool allowUnknownProps = false);

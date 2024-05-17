@@ -264,13 +264,13 @@ bool JsonParser<ListenerT>::_tryParseNumber()
      *
      * The strategy below is to:
      *
-     * 1. Call the tryScanConstUInt() and tryScanConstSInt() methods
-     *    first.
+     * 1. Call the tryScanConstUInt() and tryScanConstSInt()
+     *    methods first.
      *
      *    If either one succeeds, make sure the scanned JSON number
      *    can't be in fact a real number. If it can, then reset the
-     *    position of the string scanner to before the parsed JSON
-     *    number.
+     *    position of the string scanner to before the parsed
+     *    JSON number.
      *
      * 2. Call the tryScanConstReal() method.
      */

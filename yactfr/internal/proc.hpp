@@ -5,6 +5,9 @@
  * MIT license. See the LICENSE file for details.
  */
 
+#ifndef YACTFR_INTERNAL_PROC_HPP
+#define YACTFR_INTERNAL_PROC_HPP
+
 /*
  * Here are the possible instructions for the yactfr VM.
  *
@@ -29,7 +32,7 @@
  *
  * At the beginning of a packet:
  *
- * * Execute the preamble procedure of the packet procedure.
+ * • Execute the preamble procedure of the packet procedure.
  *
  * A `DsPktProc` object contains the instructions to execute after the
  * preamble procedure of the packet procedure for any data stream of a
@@ -54,9 +57,6 @@
  * record types, and how to determine the end of the packet, are left to
  * the implementation of the VM.
  */
-
-#ifndef YACTFR_INTERNAL_PROC_HPP
-#define YACTFR_INTERNAL_PROC_HPP
 
 #include <cstdlib>
 #include <cassert>
@@ -351,8 +351,8 @@ public:
  * the list of shared pointers. The list must remain alive as it keeps
  * the instructions alive. Going from raw pointer to raw pointer in a
  * vector seems more efficient than going from shared pointer to shared
- * pointer in a linked list. I did not measure the difference yet
- * however.
+ * pointer in a linked list. I did not measure the difference
+ * yet however.
  *
  * Instructions are shared because sometimes they are reused, for
  * example multiple range procedures of a `BeginReadVarInstr`
@@ -787,8 +787,8 @@ protected:
 
 public:
     /*
-     * `memberType` can be `nullptr` if this is the scope's root read
-     * instruction.
+     * `memberType` can be `nullptr` if this is the scope's root
+     * read instruction.
      */
     explicit ReadDataInstr(const StructureMemberType *memberType, const DataType& dt);
 
@@ -1766,8 +1766,8 @@ public:
 };
 
 /*
- * "Begin reading optional with integer selector" procedure instruction
- * template.
+ * "Begin reading optional with integer selector" procedure
+ * instruction template.
  */
 template <typename OptTypeT, Instr::Kind SelfKindV>
 class BeginReadOptIntSelInstr :
@@ -1805,8 +1805,8 @@ private:
 };
 
 /*
- * "Begin reading optional with unsigned integer selector" procedure
- * instruction.
+ * "Begin reading optional with unsigned integer selector"
+ * procedure instruction.
  */
 class BeginReadOptUIntSelInstr :
     public BeginReadOptIntSelInstr<OptionalWithUnsignedIntegerSelectorType,
@@ -1822,8 +1822,8 @@ public:
 };
 
 /*
- * "Begin reading optional with signed integer selector" procedure
- * instruction.
+ * "Begin reading optional with signed integer selector"
+ * procedure instruction.
  */
 class BeginReadOptSIntSelInstr :
     public BeginReadOptIntSelInstr<OptionalWithSignedIntegerSelectorType,
@@ -1933,8 +1933,8 @@ public:
 };
 
 /*
- * "Set packet discarded event record counter snapshot" procedure
- * instruction.
+ * "Set packet discarded event record counter snapshot"
+ * procedure instruction.
  *
  * This instruction requires the VM to set the packet discarded event
  * record counter snapshot to the last decoded value.
@@ -1993,8 +1993,8 @@ public:
 /*
  * "Set packet info" procedure instruction.
  *
- * This instruction requires the VM to set and emit the packet info
- * element.
+ * This instruction requires the VM to set and emit the packet
+ * info element.
  */
 class SetPktInfoInstr final :
     public Instr
@@ -2084,8 +2084,8 @@ public:
 };
 
 /*
- * "Update clock value from fixed-length unsigned integer" procedure
- * instruction.
+ * "Update clock value from fixed-length unsigned integer"
+ * procedure instruction.
  *
  * This instruction requires the VM to update the value of the default
  * clock from the last decoded fixed-length unsigned integer value.
@@ -2168,8 +2168,8 @@ public:
 };
 
 /*
- * "End data stream event record preamble procedure" procedure
- * instruction.
+ * "End data stream event record preamble procedure"
+ * procedure instruction.
  *
  * This instruction indicates that the data stream event record preamble
  * procedure containing it has no more instructions.

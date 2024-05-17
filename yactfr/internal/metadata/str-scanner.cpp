@@ -216,15 +216,15 @@ void StrScanner::_skipComment()
 
                 while (!this->isDone()) {
                     /*
-                     * TODO: Handle `\` to continue the comment on
-                     * the next line.
+                     * TODO: Handle `\` to continue the comment on the
+                     * next line.
                      */
                     if (*_at == '\n') {
                         /*
                          * We don't set a newline here because the
                          * current position is left at the newline
-                         * character, which is considered excluded
-                         * from the comment itself.
+                         * character, which is considered excluded from
+                         * the comment itself.
                          */
                         return;
                     }

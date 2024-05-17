@@ -42,8 +42,8 @@ namespace internal {
 
 /*
  * A pseudo data location is the result of parsing a data location,
- * possibly not yet converted to an absolute data location (as yactfr
- * requires).
+ * possibly not yet converted to an absolute data location (as
+ * yactfr requires).
  *
  * The kinds of pseudo data locations are:
  *
@@ -71,8 +71,8 @@ namespace internal {
  *     A path element may be `boost::none` to indicate "parent".
  *
  * The distinction between `Kind::Rel1` and `Kind::Rel2` is important
- * because `Kind::Rel2` allows no-value path elements (`boost::none`)
- * to explicitly indicate "parent", whereas `Kind::Rel1` indicates
+ * because `Kind::Rel2` allows no-value path elements (`boost::none`) to
+ * explicitly indicate "parent", whereas `Kind::Rel1` indicates
  * "parent" implicitly.
  */
 class PseudoDataLoc final
@@ -209,14 +209,14 @@ using PseudoDtSet = std::unordered_set<PseudoDt *>;
 using ConstPseudoDtSet = std::unordered_set<const PseudoDt *>;
 
 /*
- * This is a wrapper for any yactfr scalar type, except unsigned integer
- * types.
+ * This is a wrapper for any yactfr scalar type, except unsigned
+ * integer types.
  *
  * Scalar types are final and don't need to be modified during the
  * parsing process, so we can simply create them directly, wrap them
  * within instances of `PseudoScalarDtWrapper` so that they get the
- * common pseudo data type base, and move them later without unnecessary
- * allocations.
+ * common pseudo data type base, and move them later without
+ * unnecessary allocations.
  */
 class PseudoScalarDtWrapper :
     public PseudoDt
@@ -279,14 +279,14 @@ private:
  *
  * This is needed because:
  *
- * * During the decoding process, a TSDL fixed-length unsigned integer
+ * • During the decoding process, a TSDL fixed-length unsigned integer
  *   type may be mapped to a clock type by internal ID, and we want to
  *   keep this ID for validation and role creation purposes.
  *
- * * A TSDL fixed-length unsigned integer type may have an implicit
+ * • A TSDL fixed-length unsigned integer type may have an implicit
  *   role, but we need its structure member type name to assign it.
  *
- * * A TSDL fixed-length unsigned integer type may have an encoding:
+ * • A TSDL fixed-length unsigned integer type may have an encoding:
  *   this is only needed to detect static-length and dynamic-length
  *   string types; a yactfr fixed-length integer type has no encoding.
  *
@@ -1144,8 +1144,8 @@ public:
                              MapItem::Up attrs = nullptr);
 
     /*
-     * Validates this pseudo trace type, throwing `TextParseError`
-     * on any error.
+     * Validates this pseudo trace type, throwing `TextParseError` on
+     * any error.
      */
     void validate() const;
 

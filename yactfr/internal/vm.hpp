@@ -92,12 +92,12 @@ struct VmStackFrame final
     /*
      * Either:
      *
-     * * Array elements left to read (`*proc` is the procedure of this
+     * • Array elements left to read (`*proc` is the procedure of this
      *   array read instruction in this case).
      *
-     * * String bytes left to read.
+     * • String bytes left to read.
      *
-     * * BLOB bytes left to read.
+     * • BLOB bytes left to read.
      */
     Size rem = 0;
 };
@@ -192,8 +192,8 @@ public:
     {
         /*
          * Special case for a 64-bit new value, which is the limit of a
-         * clock value as of this version: overwrite the current value
-         * directly.
+         * clock value as of this version: overwrite the current
+         * value directly.
          */
         if (len == 64) {
             defClkVal = lastIntVal.u;
@@ -208,9 +208,9 @@ public:
 
             if (lastIntVal.u < curValMasked) {
                 /*
-                 * It looks like a wrap occured on the number of bits of the
-                 * new value. Assume that the clock value wrapped only one
-                 * time.
+                 * It looks like a wrap occured on the number of bits of
+                 * the new value. Assume that the clock value wrapped
+                 * only one time.
                  */
                 curVal += newValMask + 1;
             }
@@ -376,8 +376,8 @@ public:
      * Also assume the encoding is UTF-16LE (code unit size is two).
      * Then there are four complete code units there, and half of one
      * (the last zero byte). Therefore, after reading that last zero
-     * byte, `ntStrCuBuf.buf[0]` would be zero and `ntStrCuBuf.index`
-     * one.
+     * byte, `ntStrCuBuf.buf[0]` would be zero and
+     * `ntStrCuBuf.index` one.
      *
      * Now assume the next data block starts with
      *
@@ -783,8 +783,8 @@ private:
         if (_pos.curExpectedPktContentLenBits == sizeUnset) {
             if (this->_remBitsInBuf() == 0) {
                 /*
-                 * Try getting 1 bit to see if we're at the end of the
-                 * packet.
+                 * Try getting 1 bit to see if we're at the end of
+                 * the packet.
                  */
                 if (!this->_tryHaveBits(1)) {
                     _pos.state(VmState::EndPktContent);
@@ -799,8 +799,8 @@ private:
         }
 
         /*
-         * Align now so that the offset of the iterator is _after_ any
-         * padding.
+         * Align now so that the offset of the iterator is _after_
+         * any padding.
          */
         this->_alignHead(_pos.curDsPktProc->erAlign());
 
@@ -928,19 +928,19 @@ private:
             // validate future variable-length integer length
             if (len > 63) {
                 /*
-                 * Exception for some 10th byte which can contain the last
-                 * bit of a 64-bit integer (as 9 × 7 is 63).
+                 * Exception for some 10th byte which can contain the
+                 * last bit of a 64-bit integer (as 9 × 7 is 63).
                  *
                  * The condition to accept it is:
                  *
-                 * * It's the last byte of the variable-length integer.
+                 * • It's the last byte of the variable-length integer.
                  *
-                 * * If `IsSignedV` is false:
+                 * • If `IsSignedV` is false:
                  *       Its 7-bit value (`byteVal`) must be 1.
                  *
                  *   If `IsSignedV` is true:
-                 *       Its 7-bit value must be 0 (positive) or 127
-                 *       (negative).
+                 *       Its 7-bit value must be 0 (positive) or
+                 *       127 (negative).
                  */
                 if ((byte & 0b1000'0000) != 0) {
                     // not the last byte
@@ -1099,8 +1099,10 @@ private:
     bool _stateEndStr()
     {
         /*
-         * NOTE: _setDataElemFromInstr() was already called from
-         * _execReadNtStr() for `_pos.elems.ntStrEnd`.
+         * ┌───────────────────────────────────────────────────────┐
+         * │ NOTE: _setDataElemFromInstr() was already called from │
+         * │ _execReadNtStr() for `_pos.elems.ntStrEnd`.           │
+         * └───────────────────────────────────────────────────────┘
          */
         this->_updateItForUser(_pos.elems.ntStrEnd);
         _pos.state(_pos.nextState);
@@ -1706,8 +1708,8 @@ private:
 
             /*
              * Disabled: go directly to the last instruction of the
-             * loaded subprocedure, which has the kind
-             * `Instr::Kind::EndReadOpt`.
+             * loaded subprocedure, which has the
+             * kind `Instr::Kind::EndReadOpt`.
              */
             assert(!_pos.stackTop().proc->empty());
             _pos.stackTop().it = _pos.stackTop().proc->end() - 1;

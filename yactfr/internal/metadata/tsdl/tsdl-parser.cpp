@@ -34,8 +34,8 @@ void TsdlParser::_setImplicitMappedClkTypeId(PseudoDt& basePseudoDt,
      *     Use the internal ID of this clock type.
      *
      * If there's no clock type in the pseudo trace type:
-     *     Create a default 1-GHz clock type and use its internal ID
-     *     (`default`).
+     *     Create a default 1-GHz clock type and use its internal
+     *     ID (`default`).
      *
      * If there's more than one clock type in the pseudo trace type:
      *     Leave it as is (no mapped clock type internal ID).
@@ -896,8 +896,8 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
                 ssRej.accept();
 
                 /*
-                 * Add data type alias if a data type alias name was found
-                 * (safe to move here).
+                 * Add data type alias if a data type alias name was
+                 * found (safe to move here).
                  */
                 if (!dtAliasName.empty()) {
                     this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
@@ -926,8 +926,8 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
                 ssRej.accept();
 
                 /*
-                 * Add data type alias if a data type alias name was found
-                 * (safe to move here).
+                 * Add data type alias if a data type alias name was
+                 * found (safe to move here).
                  */
                 if (!dtAliasName.empty()) {
                     this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
@@ -956,8 +956,8 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
                 ssRej.accept();
 
                 /*
-                 * Add data type alias if a data type alias name was found
-                 * (safe to move here).
+                 * Add data type alias if a data type alias name was
+                 * found (safe to move here).
                  */
                 if (!dtAliasName.empty()) {
                     this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
@@ -2056,8 +2056,8 @@ bool TsdlParser::_tryParseClkTypeBlock()
              * Although that sentence doesn't indicate that the
              * `absolute` property means Unix epoch, in practice many
              * tools do because there's no other way to specify a clock
-             * origin with CTF 1.8. Therefore, follow that de facto
-             * convention.
+             * origin with CTF 1.8. Therefore, follow that de
+             * facto convention.
              */
             return ClockOrigin {};
         }
@@ -2743,8 +2743,8 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
 
                     if (!_ss.tryScanToken("{")) {
                         /*
-                         * Create new pseudo variant type with this selector
-                         * location.
+                         * Create new pseudo variant type with this
+                         * selector location.
                          */
                         auto pseudoDtClone = pseudoDt->clone();
 
@@ -2999,8 +2999,8 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
      *     string s[2][len][4];
      *
      * becomes the class of a static-length array of two dynamic-length
-     * arrays of `len` static-length arrays of four null-terminated
-     * strings.
+     * arrays of `len` static-length arrays of four
+     * null-terminated strings.
      *
      * At this point, `innerPseudoDt` is the null-terminated string type
      * in the example above.
@@ -3167,9 +3167,9 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
                 return true;
             } else {
                 /*
-                 * If there's a type, but no identifier, and we know that
-                 * it's not a data type alias, then we expect an identifier
-                 * at this point.
+                 * If there's a type, but no identifier, and we know
+                 * that it's not a data type alias, then we expect an
+                 * identifier at this point.
                  */
                 _ss.skipCommentsAndWhitespaces();
                 throwTextParseError("Expecting identifier (member type/option name).",

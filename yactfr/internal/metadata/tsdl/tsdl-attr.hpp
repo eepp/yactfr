@@ -79,8 +79,8 @@ public:
 
     /*
      * Returns an alignment from this attribute, throwing an error if
-     * it's a wrong alignment or if the kind of this attribute isn't
-     * expected.
+     * it's a wrong alignment or if the kind of this attribute
+     * isn't expected.
      */
     unsigned int align() const;
 

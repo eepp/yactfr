@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#ifndef YACTFR_INTERNAL_FL_INTRev_HPP
-#define YACTFR_INTERNAL_FL_INTRev_HPP
+#ifndef YACTFR_INTERNAL_FL_INT_REV_HPP
+#define YACTFR_INTERNAL_FL_INT_REV_HPP
 
 #include <cstdint>
 #include <cassert>
@@ -72,4 +72,4 @@ ValT revFlIntBits(const ValT val, const Size len)
 } // namespace internal
 } // namespace yactfr
 
-#endif // YACTFR_INTERNAL_FL_INTRev_HPP
+#endif // YACTFR_INTERNAL_FL_INT_REV_HPP

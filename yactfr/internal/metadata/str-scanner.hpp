@@ -52,8 +52,8 @@ namespace internal {
  * for each call to save().
  *
  * It's recommended to use an auto-rejecter instead of using save(),
- * accept(), and reject() manually (see StrScannerRejecter) when
- * possible.
+ * accept(), and reject() manually (see StrScannerRejecter)
+ * when possible.
  */
 class StrScanner final :
     private boost::noncopyable
@@ -63,9 +63,11 @@ public:
      * Builds a string scanner, wrapping a string between `begin`
      * (inclusive) and `end` (exclusive).
      *
-     * NOTE: This string scanner does NOT own the string between `begin`
-     * and `end`, so you must make sure that it's still alive when you
-     * call its scanning methods.
+     * ┌───────────────────────────────────────────────────────────┐
+     * │ NOTE: This string scanner does NOT own the string between │
+     * │ `begin` and `end`, so you must make sure that it's still  │
+     * │ alive when you call its scanning methods.                 │
+     * └───────────────────────────────────────────────────────────┘
      */
     explicit StrScanner(const char *begin, const char *end);
 
@@ -80,9 +82,11 @@ public:
     /*
      * Sets the current character pointer.
      *
-     * NOTE: This may corrupt the current location (loc()) if the string
-     * between the current position and new position includes one or
-     * more newline characters.
+     * ┌───────────────────────────────────────────────────────────────┐
+     * │ NOTE: This may corrupt the current location (loc()) if the    │
+     * │ string between the current position and new position includes │
+     * │ one or more newline characters.                               │
+     * └───────────────────────────────────────────────────────────────┘
      */
     void at(const char * const at)
     {
@@ -137,8 +141,8 @@ public:
     }
 
     /*
-     * Resets this string scanner, including the character pointer
-     * stack.
+     * Resets this string scanner, including the character
+     * pointer stack.
      *
      * Resets the current character pointer to begin().
      */
@@ -163,8 +167,8 @@ public:
      * Accepts the content parsed since the latest call to save().
      *
      * This method removes an entry from the top of the character
-     * pointer stack without changing the current character pointer
-     * position.
+     * pointer stack without changing the current character
+     * pointer position.
      */
     void accept()
     {
@@ -185,8 +189,8 @@ public:
      * Tries to scan a C identifier, placing the current character
      * pointer after this string on success.
      *
-     * Returns the identifier string or `nullptr` if there's no
-     * identifier.
+     * Returns the identifier string or `nullptr` if there's
+     * no identifier.
      *
      * The returned string remains valid as long as you don't call any
      * method of this object.
@@ -251,11 +255,11 @@ public:
 
     /*
      * Tries to scan and decode a constant unsigned integer string, with
-     * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
-     * true.
+     * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV`
+     * is true.
      *
-     * Returns `boost::none` if it could not scan a constant unsigned
-     * integer.
+     * Returns `boost::none` if it could not scan a constant
+     * unsigned integer.
      *
      * The current character pointer is placed after this constant
      * unsigned integer string on success.
@@ -281,8 +285,8 @@ public:
      * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
      * true, and possibly negative.
      *
-     * Returns `boost::none` if it could not scan a constant signed
-     * integer.
+     * Returns `boost::none` if it could not scan a constant
+     * signed integer.
      *
      * The current character pointer is placed after this constant
      * signed integer string on success.
@@ -405,8 +409,8 @@ private:
     /*
      * Tries to append an escaped character to `_strBuf` from the
      * characters at the current position, considering the characters of
-     * `escapeSeqStartList` and `"` as escape sequence starting
-     * characters.
+     * `escapeSeqStartList` and `"` as escape sequence
+     * starting characters.
      */
     bool _tryAppendEscapedChar(const char *escapeSeqStartList);
 

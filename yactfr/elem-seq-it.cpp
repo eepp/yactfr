@@ -50,8 +50,8 @@ ElementSequenceIterator::ElementSequenceIterator(const ElementSequenceIterator& 
 
 /*
  * Copy (do not move) data source factory and trace types so that the
- * source iterator can still create a new VM in the future if needed (in
- * ElementSequenceIterator::restorePosition()).
+ * source iterator can still create a new VM in the future if needed
+ * (in ElementSequenceIterator::restorePosition()).
  */
 ElementSequenceIterator::ElementSequenceIterator(ElementSequenceIterator&& other) :
     _dataSrcFactory {other._dataSrcFactory},

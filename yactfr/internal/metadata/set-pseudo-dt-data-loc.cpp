@@ -189,8 +189,8 @@ private:
         }
 
         /*
-         * Relative location: start the search with the last entry of
-         * `_memberNames`.
+         * Relative location: start the search with the last entry
+         * of `_memberNames`.
          */
         auto searchEntryIt = _memberNames.end() - 1;
 

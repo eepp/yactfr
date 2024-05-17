@@ -19,9 +19,9 @@ namespace internal {
  * Returns the root yactfr data type from the pseudo data type
  * `pseudoDt` having the scope `scope` within:
  *
- * * If not `nullptr`: the pseudo event record type `curPseudoErt`.
- * * If not `nullptr`: the pseudo data stream type `curPseudoDst`.
- * * The pseudo trace type `pseudoTraceType`.
+ * • If not `nullptr`: the pseudo event record type `curPseudoErt`.
+ * • If not `nullptr`: the pseudo data stream type `curPseudoDst`.
+ * • The pseudo trace type `pseudoTraceType`.
  */
 StructureType::Up dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
                                      const PseudoTraceType& pseudoTraceType,

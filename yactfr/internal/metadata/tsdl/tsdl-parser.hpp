@@ -57,8 +57,8 @@ namespace internal {
  *
  * This parser parses a CTF 1 (TSDL) metadata string and then contains:
  *
- * * A corresponding trace type object.
- * * A corresponding trace environment object.
+ * • A corresponding trace type object.
+ * • A corresponding trace environment object.
  *
  * Parsing methods which return `bool` can backtrack: if they return
  * `false`, then the state of the parser is as it was when calling them.
@@ -97,20 +97,20 @@ private:
      *
      * Each frame has:
      *
-     * * A kind, which indicates what kind of frame/scope this
-     *   represents.
+     * • A kind, which indicates what kind of frame/scope
+     *   this represents.
      *
-     * * A map of data type alias names to full pseudo data types, local
+     * • A map of data type alias names to full pseudo data types, local
      *   to the frame. Frames which are higher in the stack have access
      *   to the aliased data types of the frames below them.
      *
-     * * A vector of the current member/option names, when the kind of
+     * • A vector of the current member/option names, when the kind of
      *   this frame is `STRUCT_TYPE` or `VAR_TYPE`. This is used to
      *   ensure that a relative data location doesn't target a data type
      *   which is located outside the topmost data type alias frame.
      *
-     *   Even if CTF 1.8 officially supports this feature, yactfr
-     *   doesn't.
+     *   Even if CTF 1.8 officially supports this feature,
+     *   yactfr doesn't.
      *
      * You can use _stackPush() and _stackPop() manually, but it's
      * recommended to use an RAII `_LexicalScope` instead to
@@ -243,8 +243,8 @@ private:
      * _fastPseudoFlIntType(), then you can clone the cached pseudo data
      * type to have your own copy.
      *
-     * The maximum size from `begin` to `end` is
-     * `_maxFastFlIntTypeStrSize`.
+     * The maximum size from `begin` to `end`
+     * is `_maxFastFlIntTypeStrSize`.
      *
      * Is it really worth it? I don't know! Is it a cool idea even
      * without benchmarks? I think so.
@@ -259,8 +259,8 @@ private:
 private:
     /*
      * Parses the whole metadata string, creating the resulting trace
-     * type and trace environment on success, throwing `TextParseError`
-     * otherwise.
+     * type and trace environment on success, throwing
+     * `TextParseError` otherwise.
      */
     void _parseMetadata();
 
@@ -268,8 +268,8 @@ private:
      * Tries to parse one individual root block with a terminating `;`.
      * Root blocks can be explicit data type aliases (including data
      * type definitions), named enumeration/structure/variant types,
-     * `trace`, `env`, `clock`, `stream`, `event`, and `callsite`
-     * blocks.
+     * `trace`, `env`, `clock`, `stream`, `event`, and
+     * `callsite` blocks.
      *
      * Returns whether or not a root block was parsed.
      */
@@ -308,8 +308,8 @@ private:
      * Tries to parse a `typealias` or `typedef` block, adding it to the
      * map of aliased pseudo data types of the current frame on success.
      *
-     * Returns whether or not a generic data type alias block was
-     * parsed.
+     * Returns whether or not a generic data type alias block
+     * was parsed.
      *
      * Examples:
      *
@@ -378,8 +378,8 @@ private:
      *
      * If `expect` is true, then the method throws `TextParseError` if
      * it cannot parse the scope data type successfully. Otherwise, the
-     * method can return `nullptr` if it cannot parse the scope data
-     * type.
+     * method can return `nullptr` if it cannot parse the scope
+     * data type.
      *
      * Examples:
      *
@@ -394,8 +394,8 @@ private:
                                   bool expect = true);
 
     /*
-     * Tries to parse an identifier followed by zero or more array
-     * subscripts.
+     * Tries to parse an identifier followed by zero or more
+     * array subscripts.
      *
      * This method sets `ident` to the parsed identifier.
      *
@@ -414,8 +414,8 @@ private:
     PseudoDt::Up _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::Up innerPseudoDt);
 
     /*
-     * Like _tryParseIdentArraySubscripts(), but without the identifier
-     * part.
+     * Like _tryParseIdentArraySubscripts(), but without the
+     * identifier part.
      *
      * Examples:
      *
@@ -448,8 +448,8 @@ private:
     bool _parseDtAliasName(std::string& dtAliasName, bool expect);
 
     /*
-     * Expects a data location, returning a corresponding
-     * pseudo data location on success.
+     * Expects a data location, returning a corresponding pseudo data
+     * location on success.
      *
      * Throws if it cannot parse a data location successfully.
      *
@@ -466,10 +466,10 @@ private:
     /*
      * Parses a reference to a data type alias, that is, one of:
      *
-     * * `enum NAME` not followed by `:` or `{`
-     * * `struct NAME` not followed by `{`
-     * * `variant NAME` or `variant NAME <ABS-TAG>` not followed by `{`
-     * * `some_alias_name` (keywords are excluded)
+     * • `enum NAME` not followed by `:` or `{`
+     * • `struct NAME` not followed by `{`
+     * • `variant NAME` or `variant NAME <ABS-TAG>` not followed by `{`
+     * • `some_alias_name` (keywords are excluded)
      *
      * This method returns the aliased pseudo data type, or `nullptr` if
      * it cannot find it.
@@ -484,8 +484,8 @@ private:
      *
      *     variant my_variant <stream.packet.context.my.tag>;
      *
-     * Not supported (named variant type with relative selector
-     * location):
+     * Not supported (named variant type with relative
+     * selector location):
      *
      *     variant my_variant <my.tag>;
      */
@@ -520,16 +520,16 @@ private:
     bool _tryParseNamedDtOrDtAlias(PseudoNamedDts& entries);
 
     /*
-     * Tries to parse a data type, which also includes a data type alias
-     * reference.
+     * Tries to parse a data type, which also includes a data type
+     * alias reference.
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      */
     PseudoDt::Up _tryParseDt();
 
     /*
-     * Tries to parse a data type block (excludes data type alias
-     * references).
+     * Tries to parse a data type block (excludes data type
+     * alias references).
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
      */
@@ -764,8 +764,8 @@ private:
 
     /*
      * Returns a fast pseudo fixed-length integer type clone from the
-     * fast pseudo fixed-length integer type cache, or `nullptr` if not
-     * found.
+     * fast pseudo fixed-length integer type cache, or `nullptr` if
+     * not found.
      */
     PseudoDt::Up _fastPseudoFlIntType(TextLocation loc);
 
@@ -955,8 +955,8 @@ private:
     void _addPseudoDtRoles();
 
     /*
-     * Set default clock type of the pseudo data stream type
-     * `pseudoDst`.
+     * Set default clock type of the pseudo data stream
+     * type `pseudoDst`.
      */
     void _setPseudoDstDefClkType(PseudoDst& pseudoDst);
 
