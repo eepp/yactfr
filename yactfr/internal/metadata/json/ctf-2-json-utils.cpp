@@ -14,24 +14,6 @@
 namespace yactfr {
 namespace internal {
 
-namespace buuids = boost::uuids;
-
-boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
-{
-    if (const auto jsonUuidVal = jsonObjVal[strs::uuid]) {
-        buuids::uuid uuid;
-        auto it = uuid.begin();
-
-        for (auto i = 0U; i < uuid.static_size(); ++i, ++it) {
-            *it = *jsonUuidVal->asArray()[i].asUInt();
-        }
-
-        return uuid;
-    }
-
-    return boost::none;
-}
-
 MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal)
 {
     if (const auto jsonAttrsVal = jsonObjVal[strs::attrs]) {

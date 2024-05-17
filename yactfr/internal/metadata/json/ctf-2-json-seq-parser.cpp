@@ -93,6 +93,32 @@ void Ctf2JsonSeqParser::_parseFrag(const char * const begin, const char * const 
     this->_handleFrag(*parseJson(begin, end, begin - _begin), index);
 }
 
+namespace {
+
+namespace buuids = boost::uuids;
+
+/*
+ * Returns the UUID of the JSON object value `jsonObjVal`, or
+ * `boost::none` if there's no such property.
+ */
+boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
+{
+    if (const auto jsonUuidVal = jsonObjVal[strs::uuid]) {
+        buuids::uuid uuid;
+        auto it = uuid.begin();
+
+        for (auto i = 0U; i < uuid.static_size(); ++i, ++it) {
+            *it = *jsonUuidVal->asArray()[i].asUInt();
+        }
+
+        return uuid;
+    }
+
+    return boost::none;
+}
+
+} // namespace
+
 void Ctf2JsonSeqParser::_handleFrag(const JsonVal& jsonFrag, const Index index)
 {
     // validate

@@ -20,12 +20,6 @@ namespace yactfr {
 namespace internal {
 
 /*
- * Returns the UUID of the JSON object value `jsonObjVal`, or
- * `boost::none` if there's no such property.
- */
-boost::optional<boost::uuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal);
-
-/*
  * Returns the attributes of the JSON object value `jsonObjVal`, or an
  * empty map item there's no such property.
  */
