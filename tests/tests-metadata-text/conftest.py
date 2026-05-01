@@ -37,45 +37,31 @@ class _MetadataTextItem(pytest.Item):
         self._path = path
 
     def runtest(self):
-        tmp_dir = None
-        metadata_stream_path = self._path
+        tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests', 'testers',
+                                   'metadata-text-tester')
 
-        # if this is an expect-to-fail test item, then create the real
-        # metadata stream file and get the expected lines
-        expect_to_pass = self._basename.startswith('pass-')
+        if self._basename.startswith('pass-'):
+            output = subprocess.check_output([tester_path, self._path], text=True).strip('\n')
 
-        if not expect_to_pass:
-            # create a temporary directory to contain the metadata stream file
-            tmp_dir = tempfile.TemporaryDirectory(prefix='pytest-yactfr')
+            if output != '':
+                raise yactfrutils.UnexpectedOutput(output, '')
 
-            # get the metadata stream file and expected output lines
+            return
+
+        # expect-to-fail test item: create the real metadata stream file
+        # and get the expected lines
+        with tempfile.TemporaryDirectory(prefix='pytest-yactfr') as tmp_dir:
             with open(self._path) as f:
                 parts = moultipart.parse(f)
 
-            # create the metadata stream file
-            yactfrutils.create_text_file('metadata', parts[0].content, tmp_dir.name)
-            metadata_stream_path = os.path.join(tmp_dir.name, 'metadata')
-
-        # run the tester, keeping the output on success
-        tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests', 'testers',
-                                   'metadata-text-tester')
-        output = subprocess.check_output([tester_path, metadata_stream_path], text=True)
-
-        # compare to the expected lines
-        output = output.strip('\n')
-
-        if expect_to_pass:
-            expect = ''
-        else:
+            yactfrutils.create_text_file('metadata', parts[0].content, tmp_dir)
+            metadata_stream_path = os.path.join(tmp_dir, 'metadata')
+            output = subprocess.check_output([tester_path, metadata_stream_path],
+                                             text=True).strip('\n')
             expect = parts[1].content.strip('\n')
 
-        if output != expect:
-            raise yactfrutils.UnexpectedOutput(output, expect)
-
-        # delete temporary directory, if any
-        if tmp_dir is not None:
-            #tmp_dir.cleanup()
-            pass
+            if output != expect:
+                raise yactfrutils.UnexpectedOutput(output, expect)
 
     def repr_failure(self, excinfo, style=None):
         exc = excinfo.value

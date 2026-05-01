@@ -118,23 +118,19 @@ class _StreamsItem(pytest.Item):
 
     def runtest(self):
         # create a temporary directory to contain the trace
-        trace_tmp_dir = tempfile.TemporaryDirectory(prefix='pytest-yactfr')
+        with tempfile.TemporaryDirectory(prefix='pytest-yactfr') as trace_tmp_dir:
+            # create the streams and get the expected lines
+            expect = _create_streams(self._path, trace_tmp_dir)
 
-        # create the streams and get the expected lines
-        expect = _create_streams(self._path, trace_tmp_dir.name)
+            # run the tester, keeping the output
+            output = subprocess.check_output([self._tester_path, trace_tmp_dir], text=True)
 
-        # run the tester, keeping the output
-        output = subprocess.check_output([self._tester_path, trace_tmp_dir.name], text=True)
+            # compare to the expected lines
+            output = output.strip('\n') + '\n'
+            expect = expect.strip('\n') + '\n'
 
-        # compare to the expected lines
-        output = output.strip('\n') + '\n'
-        expect = expect.strip('\n') + '\n'
-
-        if output != expect:
-            raise UnexpectedOutput(output, expect)
-
-        # delete temporary directory
-        trace_tmp_dir.cleanup()
+            if output != expect:
+                raise UnexpectedOutput(output, expect)
 
     def repr_failure(self, excinfo, style=None):
         exc = excinfo.value
