@@ -21,7 +21,7 @@ While the https://diamon.org/ctf/[CTF] reading libraries that I know
 about focus on decoding and providing you with complete, ordered event
 record objects, the yactfr API offers a lower level of CTF processing:
 you iterate individual element sequences to obtain _elements_:
-beginning/end of packet, beginning/end of event record, beggining/end of
+beginning/end of packet, beginning/end of event record, beginning/end of
 structure, individual data stream scalar values like fixed-length
 integers, fixed-length floating point numbers, and null-terminated
 strings, specific clock value update, known data stream ID, and the
@@ -241,7 +241,7 @@ Make sure you have the build time requirements:
 * https://cmake.org/[CMake] ≥ 3.10.0
 * pass:[C++14] compiler
 * http://www.boost.org/[Boost] ≥ 1.58
-* **If you build the API documentation**: http://www.stack.nl/~dimitri/doxygen/[Doxygen]
+* **If you build the API documentation**: https://www.doxygen.nl/[Doxygen]
 
 .Build and install yactfr from source
 ----
@@ -249,7 +249,7 @@ $ git clone https://github.com/eepp/yactfr
 $ cd yactfr
 $ mkdir build
 $ cd build
-$ cmake -DCMAKE_BUILD_TYPE=release ..
+$ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
 # make install
 ----
@@ -271,14 +271,14 @@ For example, this is how I run `cmake` for development:
 
 ----
 $ CC=clang CXX=clang++ CXXFLAGS='-Wextra -Wall -pedantic' \
-  cmake .. -DCMAKE_BUILD_TYPE=debug -DOPT_BUILD_DOC=ON
+  cmake .. -DCMAKE_BUILD_TYPE=Debug -DOPT_BUILD_DOC=ON
 ----
 
 For production, you should make a release build:
 
 ----
 $ CC=clang CXX=clang++ \
-  cmake .. -DCMAKE_BUILD_TYPE=release -DOPT_BUILD_DOC=ON
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DOPT_BUILD_DOC=ON
 ----
 
 == Run the tests
@@ -310,8 +310,7 @@ In the examples below, the program accepts two arguments:
 
 . The path to the metadata stream file of the trace (required).
 
-. The path to a data stream file of the same trace (required by some
-  example).
+. The path to a data stream file of the same trace (required).
 
 <<build,Build>> the API documentation for a thorough reference.
 
@@ -412,6 +411,10 @@ int main(const int argc, const char * const argv[])
             }
 
             continue;
+        } else if (it->isEventRecordEndElement()) {
+            // leaving the event record: clear the flag
+            inSchedSwitchEventRecord = false;
+            continue;
         }
 
         if (inSchedSwitchEventRecord && it->isFixedLengthSignedIntegerElement()) {
@@ -480,7 +483,7 @@ int main(const int argc, const char * const argv[])
 
             std::cout << "Packet #" << curPktNumber << ":    " <<
                          "Offset: " << std::setw(10) << curPktOffset << "    " <<
-                         "Size: " << std::setw(10) << pktLen <<
+                         "Length: " << std::setw(10) << pktLen <<
                          std::endl;
             ++curPktNumber;
         }
@@ -551,7 +554,7 @@ int main(const int argc, const char * const argv[])
             assert(elem.expectedTotalLength());
             std::cout << "Packet #" << curPktNumber << ":    " <<
                          "Offset: " << std::setw(10) << curPktOffset << "    " <<
-                         "Size: " << std::setw(10) << *elem.expectedTotalLength() <<
+                         "Length: " << std::setw(10) << *elem.expectedTotalLength() <<
                          std::endl;
             ++curPktNumber;
 
