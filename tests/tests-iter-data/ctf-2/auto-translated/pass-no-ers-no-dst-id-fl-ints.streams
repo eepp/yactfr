@@ -53,6 +53,9 @@
     "type": "trace-class",
     "name": "",
     "uid": "78f376a3-dff9-44d9-a37b-dca9ccf8c5ac"
+  },
+  {
+    "type": "data-stream-class"
   }
 ]
 ---
@@ -71,6 +74,7 @@ c1fc1fc1                              # packet magic number
    160         }
    160       }
    160     }
-   160     DSI
+   160     DSI:T0
+   160     PI
    160   }
    160 }

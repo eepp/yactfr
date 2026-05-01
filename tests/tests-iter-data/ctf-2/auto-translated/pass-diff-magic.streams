@@ -23,6 +23,9 @@
       "type": "structure"
     },
     "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
   }
 ]
 ---
@@ -36,6 +39,7 @@ c1fc1fc1
     32         PMN:3254525889
     32       }
     32     }
-    32     DSI
+    32     DSI:T0
+    32     PI
     32   }
     32 }

@@ -37,16 +37,6 @@ Ctf2JsonSeqParser::Ctf2JsonSeqParser(const char * const begin, const char * cons
     this->_parseMetadata();
 }
 
-void Ctf2JsonSeqParser::_createTraceType()
-{
-    if (!_pseudoTraceType) {
-        throwTextParseError("Missing trace type.", TextLocation {});
-    }
-
-    // create yactfr trace type
-    _traceType = traceTypeFromPseudoTraceType(*_pseudoTraceType);
-}
-
 void Ctf2JsonSeqParser::_parseMetadata()
 {
     auto fragBegin = _begin;
@@ -61,7 +51,17 @@ void Ctf2JsonSeqParser::_parseMetadata()
 
         if (fragBegin == _end) {
             // end of stream
-            this->_createTraceType();
+            if (fragIndex == 0) {
+                throwTextParseError("Missing preamble fragment.", TextLocation {});
+            }
+
+            if (!_pseudoTraceType || _pseudoTraceType->pseudoDsts().empty()) {
+                throwTextParseError("Metadata stream must contain at least one "
+                                    "data stream class fragment.",
+                                    TextLocation {});
+            }
+
+            _traceType = traceTypeFromPseudoTraceType(*_pseudoTraceType);
             return;
         }
 
@@ -175,6 +175,11 @@ void Ctf2JsonSeqParser::_handleDtAliasFrag(const JsonObjVal& jsonFrag)
 
 void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
 {
+    if (_pseudoTraceType && !_pseudoTraceType->pseudoDsts().empty()) {
+        throwTextParseError("Trace type fragment must precede any "
+                            "data stream type fragment.", jsonFrag.loc());
+    }
+
     if (_pseudoTraceType) {
         throwTextParseError("Duplicate trace type fragment.", jsonFrag.loc());
     }

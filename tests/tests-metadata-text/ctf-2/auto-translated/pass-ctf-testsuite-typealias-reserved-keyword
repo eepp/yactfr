@@ -22,3 +22,6 @@
   },
   "type": "trace-class"
 }
+{
+  "type": "data-stream-class"
+}

@@ -65,11 +65,6 @@ public:
 
 private:
     /*
-     * Creates the yactfr trace type from the pseudo trace type.
-     */
-    void _createTraceType();
-
-    /*
      * Parses the whole metadata string, creating the resulting trace
      * type and trace environment on success, throwing
      * `TextParseError` otherwise.
