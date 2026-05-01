@@ -21,11 +21,11 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os.path
+import os
 import yactfrutils
+import pathlib
 
 
 def pytest_collect_file(parent, file_path):
-    tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests',
-                               'testers', 'iter-data-tester')
+    tester_path = pathlib.Path(os.environ['YACTFR_BINARY_DIR']) / 'tests/testers/iter-data-tester'
     return yactfrutils.collect_streams_file(parent, file_path, tester_path)

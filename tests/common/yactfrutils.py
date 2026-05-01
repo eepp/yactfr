@@ -21,8 +21,6 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os
-import os.path
 import json
 import pytest
 import subprocess
@@ -31,22 +29,15 @@ import sys
 import moultipart
 import normand
 import difflib
-
-
-def _join_lines(lines):
-    return '\n'.join(lines)
+import pathlib
+from dataclasses import dataclass
 
 
 def _metadata(orig_metadata):
     if orig_metadata.strip().startswith('['):
         # CTF 2: convert to JSON text sequence
         frags = json.loads(orig_metadata)
-        json_seq_lines = []
-
-        for frag in frags:
-            json_seq_lines.append('\x1e' + json.dumps(frag, ensure_ascii=False))
-
-        return _join_lines(json_seq_lines)
+        return '\n'.join('\x1e' + json.dumps(frag, ensure_ascii=False) for frag in frags)
     else:
         # CTF 1: add preamble
         return '''/* CTF 1.8 */
@@ -79,8 +70,7 @@ typealias integer { signed = true; size = 64; byte_order = be; } := i64be;
 
 
 def create_text_file(filename, contents, out_dir_path):
-    with open(os.path.join(out_dir_path, filename), 'w') as f:
-        f.write(contents)
+    (pathlib.Path(out_dir_path) / filename).write_text(contents)
 
 
 def _create_streams(descr_path, out_dir_path):
@@ -88,31 +78,19 @@ def _create_streams(descr_path, out_dir_path):
         metadata_part, data_part, expect_part = moultipart.parse(f)
 
     create_text_file('metadata', _metadata(metadata_part.content), out_dir_path)
-
-    with open(os.path.join(out_dir_path, 'stream'), 'wb') as f:
-        f.write(normand.parse(data_part.content).data)
-
+    (pathlib.Path(out_dir_path) / 'stream').write_bytes(normand.parse(data_part.content).data)
     return expect_part.content
 
 
-class UnexpectedOutput(RuntimeError):
-    def __init__(self, output, expected):
-        self._output = output
-        self._expected = expected
-
-    @property
-    def output(self):
-        return self._output
-
-    @property
-    def expected(self):
-        return self._expected
+@dataclass(frozen=True)
+class UnexpectedOutput(Exception):
+    output: str
+    expected: str
 
 
 class _StreamsItem(pytest.Item):
     def __init__(self, parent, path, tester_path):
-        name = name=os.path.splitext(os.path.basename(path))[0].replace('.', '-')
-        super().__init__(parent=parent, name=name)
+        super().__init__(parent=parent, name=pathlib.Path(path).stem.replace('.', '-'))
         self._path = path
         self._tester_path = tester_path
 
@@ -120,14 +98,12 @@ class _StreamsItem(pytest.Item):
         # create a temporary directory to contain the trace
         with tempfile.TemporaryDirectory(prefix='pytest-yactfr') as trace_tmp_dir:
             # create the streams and get the expected lines
-            expect = _create_streams(self._path, trace_tmp_dir)
+            expect = _create_streams(self._path, trace_tmp_dir).strip('\n') + '\n'
 
-            # run the tester, keeping the output
-            output = subprocess.check_output([self._tester_path, trace_tmp_dir], text=True)
-
-            # compare to the expected lines
-            output = output.strip('\n') + '\n'
-            expect = expect.strip('\n') + '\n'
+            # run the tester and compare to the expected lines
+            output = subprocess.run([self._tester_path, trace_tmp_dir],
+                                    capture_output=True, text=True,
+                                    check=True).stdout.strip('\n') + '\n'
 
             if output != expect:
                 raise UnexpectedOutput(output, expect)
@@ -135,10 +111,10 @@ class _StreamsItem(pytest.Item):
     def repr_failure(self, excinfo, style=None):
         exc = excinfo.value
 
-        if type(exc) is UnexpectedOutput:
+        if isinstance(exc, UnexpectedOutput):
             msg = f'; got:\n\n{exc.output}\n\n'
             msg += f'Expecting:\n\n{exc.expected}\n\n'
-            msg += f'Diff:\n\n'
+            msg += 'Diff:\n\n'
             msg += ''.join(difflib.unified_diff(exc.output.splitlines(keepends=True),
                                                 exc.expected.splitlines(keepends=True),
                                                 fromfile='got', tofile='expected'))

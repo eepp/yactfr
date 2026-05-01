@@ -22,26 +22,26 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-import os.path
 import pytest
 import subprocess
 import tempfile
 import yactfrutils
 import moultipart
+import pathlib
 
 
 class _MetadataTextItem(pytest.Item):
     def __init__(self, parent, path):
-        self._basename = os.path.basename(path)
-        super().__init__(parent=parent, name=self._basename.replace('.', '-'))
+        super().__init__(parent=parent, name=pathlib.Path(path).name.replace('.', '-'))
         self._path = path
 
     def runtest(self):
-        tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests', 'testers',
-                                   'metadata-text-tester')
+        tester_path = pathlib.Path(os.environ['YACTFR_BINARY_DIR']) / 'tests/testers/metadata-text-tester'
 
-        if self._basename.startswith('pass-'):
-            output = subprocess.check_output([tester_path, self._path], text=True).strip('\n')
+        if pathlib.Path(self._path).name.startswith('pass-'):
+            output = subprocess.run([tester_path, self._path],
+                                    capture_output=True, text=True,
+                                    check=True).stdout.strip('\n')
 
             if output != '':
                 raise yactfrutils.UnexpectedOutput(output, '')
@@ -55,9 +55,9 @@ class _MetadataTextItem(pytest.Item):
                 parts = moultipart.parse(f)
 
             yactfrutils.create_text_file('metadata', parts[0].content, tmp_dir)
-            metadata_stream_path = os.path.join(tmp_dir, 'metadata')
-            output = subprocess.check_output([tester_path, metadata_stream_path],
-                                             text=True).strip('\n')
+            output = subprocess.run([tester_path, pathlib.Path(tmp_dir) / 'metadata'],
+                                    capture_output=True, text=True,
+                                    check=True).stdout.strip('\n')
             expect = parts[1].content.strip('\n')
 
             if output != expect:
@@ -66,7 +66,7 @@ class _MetadataTextItem(pytest.Item):
     def repr_failure(self, excinfo, style=None):
         exc = excinfo.value
 
-        if type(exc) is yactfrutils.UnexpectedOutput:
+        if isinstance(exc, yactfrutils.UnexpectedOutput):
             msg = f'; got:\n\n{exc.output}\n\nExpecting:\n\n{exc.expected}'
         else:
             msg = f': {exc}'
