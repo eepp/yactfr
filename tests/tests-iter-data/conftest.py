@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2015-2022 Philippe Proulx <pproulx@efficios.com>
+# Copyright (c) 2015-2026 Philippe Proulx <pproulx@efficios.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -25,7 +25,7 @@ import os.path
 import yactfrutils
 
 
-def pytest_collect_file(parent, path):
+def pytest_collect_file(parent, file_path):
     tester_path = os.path.join(os.environ['YACTFR_BINARY_DIR'], 'tests',
                                'testers', 'iter-data-tester')
-    return yactfrutils.collect_streams_file(parent, path, tester_path)
+    return yactfrutils.collect_streams_file(parent, file_path, tester_path)

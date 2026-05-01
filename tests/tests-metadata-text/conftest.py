@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2015-2022 Philippe Proulx <pproulx@efficios.com>
+# Copyright (c) 2015-2026 Philippe Proulx <pproulx@efficios.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -25,7 +25,6 @@ import os
 import os.path
 import pytest
 import subprocess
-import pathlib
 import tempfile
 import yactfrutils
 import moultipart
@@ -97,12 +96,10 @@ class _MetadataTextFile(pytest.File):
         yield _MetadataTextItem.from_parent(self, path=self.path)
 
 
-def pytest_collect_file(parent, path):
-    basename = os.path.basename(path)
-
-    if not basename.startswith('pass-') and not basename.startswith('fail-'):
+def pytest_collect_file(parent, file_path):
+    if not file_path.name.startswith('pass-') and not file_path.name.startswith('fail-'):
         # not a metadata text file: don't collect
         return
 
     # create the file node
-    return _MetadataTextFile.from_parent(parent, path=pathlib.Path(path))
+    return _MetadataTextFile.from_parent(parent, path=file_path)

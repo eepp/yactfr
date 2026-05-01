@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2015-2024 Philippe Proulx <pproulx@efficios.com>
+# Copyright (c) 2015-2026 Philippe Proulx <pproulx@efficios.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -25,7 +25,6 @@ import os
 import os.path
 import json
 import pytest
-import pathlib
 import subprocess
 import tempfile
 import sys
@@ -165,13 +164,13 @@ class _StreamsFile(pytest.File):
         yield _StreamsItem.from_parent(self, path=self.path, tester_path=self._tester_path)
 
 
-def collect_streams_file(parent, path, tester_path):
-    if path.ext != '.streams':
+def collect_streams_file(parent, file_path, tester_path):
+    if file_path.suffix != '.streams':
         # not a streams file: don't collect
         return
 
     # create the file node
-    return _StreamsFile.from_parent(parent, path=pathlib.Path(path), tester_path=tester_path)
+    return _StreamsFile.from_parent(parent, path=file_path, tester_path=tester_path)
 
 
 if __name__ == '__main__':
