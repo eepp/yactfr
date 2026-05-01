@@ -301,7 +301,7 @@ example:
 .Run the yactfr tests in parallel from the build directory.
 ----
 $ make tests
-$ YACTFR_BINARY_DIR=$(pwd) pytest -n logical
+$ YACTFR_BINARY_DIR=$(pwd) pytest -n logical ../tests
 ----
 
 == Usage examples
