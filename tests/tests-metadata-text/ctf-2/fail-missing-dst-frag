@@ -1,0 +1,5 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+---
+[1:1] Metadata stream must contain at least one data stream class fragment.

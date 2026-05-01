@@ -54,7 +54,17 @@ class _MetadataTextItem(pytest.Item):
             with open(self._path) as f:
                 parts = moultipart.parse(f)
 
-            yactfrutils.create_text_file('metadata', parts[0].content, tmp_dir)
+            metadata = parts[0].content
+
+            # For CTF 2 (metadata stream starts with a record
+            # separator), strip the trailing new line added by
+            # `moultipart`: this lets a metadata stream consist of only
+            # record separators without trailing characters that the
+            # parser would treat as part of a fragment.
+            if metadata.startswith('\x1e'):
+                metadata = metadata.rstrip('\n')
+
+            yactfrutils.create_text_file('metadata', metadata, tmp_dir)
             output = subprocess.run([tester_path, pathlib.Path(tmp_dir) / 'metadata'],
                                     capture_output=True, text=True,
                                     check=True).stdout.strip('\n')
