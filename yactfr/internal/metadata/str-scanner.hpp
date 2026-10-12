@@ -15,6 +15,7 @@
 #include <regex>
 #include <cmath>
 #include <array>
+#include <sstream>
 #include <boost/utility.hpp>
 #include <boost/optional.hpp>
 
