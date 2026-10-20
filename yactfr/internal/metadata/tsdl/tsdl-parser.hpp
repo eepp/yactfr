@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cassert>
 #include <utility>
+#include <sstream>
 #include <unordered_map>
 #include <boost/utility.hpp>
 #include <boost/uuid/uuid.hpp>
