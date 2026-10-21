@@ -750,7 +750,7 @@ const boost::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const
 
 void TsdlParser::_parseMetadata()
 {
-    _LexicalScope lexScope {*this, _tStackFrame::Kind::Root};
+    _tLexScope lexScope {*this, _tStackFrame::Kind::Root};
 
     while (this->_tryParseRootBlock());
 
@@ -969,7 +969,7 @@ bool TsdlParser::_tryParseGenericDtAlias()
     std::string dtAliasName;
 
     {
-        _LexicalScope lexScope {*this, _tStackFrame::Kind::DtAlias};
+        _tLexScope lexScope {*this, _tStackFrame::Kind::DtAlias};
 
         // parse full data type
         pseudoDt = this->_tryParseFullDt();
@@ -1582,20 +1582,20 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
     PseudoDt::Up pseudoDt;
 
     {
-        _LexicalScope dtAliasLexScope;
+        _tLexScope dtAliasLexScope;
 
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "struct ";
             potDtAliasName += *ident;
 
             if (dtAliasName) {
-                dtAliasLexScope = _LexicalScope {*this, _tStackFrame::Kind::DtAlias};
+                dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
                 *dtAliasName = potDtAliasName;
             }
         }
 
         {
-            _LexicalScope structTypeLexScope {*this, _tStackFrame::Kind::StructType};
+            _tLexScope structTypeLexScope {*this, _tStackFrame::Kind::StructType};
             const auto lexId = this->_stackTop().lexId;
 
             // parse `{`
@@ -1687,20 +1687,20 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
     PseudoDt::Up pseudoDt;
 
     {
-        _LexicalScope dtAliasLexScope;
+        _tLexScope dtAliasLexScope;
 
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "variant ";
             potDtAliasName += *ident;
 
             if (dtAliasName) {
-                dtAliasLexScope = _LexicalScope {*this, _tStackFrame::Kind::DtAlias};
+                dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
                 *dtAliasName = potDtAliasName;
             }
         }
 
         {
-            _LexicalScope varTypeLexScope {*this, _tStackFrame::Kind::VarType};
+            _tLexScope varTypeLexScope {*this, _tStackFrame::Kind::VarType};
 
             // try to parse `<`
             boost::optional<PseudoDataLoc> pseudoDataLoc;
@@ -2081,7 +2081,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
 
 bool TsdlParser::_tryParseTraceTypeBlock()
 {
-    _LexicalScope lexScope {*this, _tStackFrame::Kind::TraceType};
+    _tLexScope lexScope {*this, _tStackFrame::Kind::TraceType};
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
@@ -2243,7 +2243,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
 
 bool TsdlParser::_tryParseDstBlock()
 {
-    _LexicalScope lexScope {*this, _tStackFrame::Kind::Dst};
+    _tLexScope lexScope {*this, _tStackFrame::Kind::Dst};
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
@@ -2357,7 +2357,7 @@ bool TsdlParser::_tryParseDstBlock()
 
 bool TsdlParser::_tryParseErtBlock()
 {
-    _LexicalScope lexScope {*this, _tStackFrame::Kind::Ert};
+    _tLexScope lexScope {*this, _tStackFrame::Kind::Ert};
 
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
@@ -2539,7 +2539,7 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         PseudoDt::Up pseudoDt;
 
         {
-            _LexicalScope lexScope {*this, scopeDtStackFrameKind};
+            _tLexScope lexScope {*this, scopeDtStackFrameKind};
 
             pseudoDt = this->_tryParseDt();
         }

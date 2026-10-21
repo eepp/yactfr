@@ -40,7 +40,7 @@ template <typename ValT>
 class ScalarValItemMixin
 {
 protected:
-    using _Val = ValT;
+    using _tVal = ValT;
 
 protected:
     explicit ScalarValItemMixin(ValT val) :

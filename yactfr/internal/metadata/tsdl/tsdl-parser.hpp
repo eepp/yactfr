@@ -114,7 +114,7 @@ private:
      *   data location.
      *
      * You can use _stackPush() and _stackPop() manually, but it's
-     * recommended to use an RAII `_LexicalScope` instead to
+     * recommended to use an RAII `_tLexScope` instead to
      * automatically push and pop scopes and avoid errors.
      */
     struct _tStackFrame final
@@ -179,33 +179,33 @@ private:
     /*
      * RAII class to automatically manage lexical scopes.
      *
-     * The constructor of a `_LexicalScope` instance expects a TSDL
+     * The constructor of a `_tLexScope` instance expects a TSDL
      * parser reference. The RAII object automatically calls
      * _stackPush() and _stackPop() on said parser.
      */
-    class _LexicalScope final :
+    class _tLexScope final :
         private boost::noncopyable
     {
     public:
-        _LexicalScope() noexcept :
+        _tLexScope() noexcept :
             _parser {nullptr},
             _frameKind {_tStackFrame::Kind::Root}
         {
         }
 
-        explicit _LexicalScope(TsdlParser& mp, const _tStackFrame::Kind frameKind) :
+        explicit _tLexScope(TsdlParser& mp, const _tStackFrame::Kind frameKind) :
             _parser {&mp},
             _frameKind {frameKind}
         {
             _parser->_stackPush(frameKind);
         }
 
-        ~_LexicalScope()
+        ~_tLexScope()
         {
             this->exit();
         }
 
-        void operator=(const _LexicalScope& lexicalScope)
+        void operator=(const _tLexScope& lexicalScope)
         {
             this->exit();
             _parser = lexicalScope._parser;
