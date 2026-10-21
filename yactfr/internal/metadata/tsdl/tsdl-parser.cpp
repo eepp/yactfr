@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2026 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -957,6 +957,20 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
 
 bool TsdlParser::_tryParseGenericDtAlias()
 {
+    _ss.skipCommentsAndWhitespaces();
+
+    const auto loc = _ss.loc();
+
+    try {
+        return this->_tryParseGenericDtAliasNoErrCtx();
+    } catch (TextParseError& exc) {
+        appendMsgToTextParseError(exc, "In data type alias:", loc);
+        throw;
+    }
+}
+
+bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
+{
     auto isTypealias = false;
 
     if (_ss.tryScanToken("typealias")) {
@@ -971,8 +985,24 @@ bool TsdlParser::_tryParseGenericDtAlias()
     {
         _tLexScope lexScope {*this, _tStackFrame::Kind::DtAlias};
 
-        // parse full data type
-        pseudoDt = this->_tryParseFullDt();
+        /*
+         * Parse full data type.
+         *
+         * If it's a named fixed-length enumeration, structure, or
+         * variant type, then add a data type alias for its name (for
+         * example, `struct foo`) to the parent frame, not to the data
+         * type alias frame which `lexScope` manages: the latter only
+         * exists while parsing this block.
+         */
+        std::string innerDtAliasName;
+
+        pseudoDt = this->_tryParseFullDt(false, &innerDtAliasName);
+
+        if (pseudoDt && !innerDtAliasName.empty()) {
+            assert(_stack.size() >= 2);
+            this->_addDtAlias(std::move(innerDtAliasName), *pseudoDt, _ss.loc(),
+                              _stack[_stack.size() - 2]);
+        }
 
         if (!pseudoDt) {
             /*
@@ -1020,15 +1050,8 @@ bool TsdlParser::_tryParseDtAlias()
 {
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
-    const auto loc = _ss.loc();
-
-    try {
-        if (this->_tryParseGenericDtAlias()) {
-            return true;
-        }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In data type alias:", loc);
-        throw;
+    if (this->_tryParseGenericDtAlias()) {
+        return true;
     }
 
     if (this->_tryParseFlEnumStructVarDtAlias()) {
@@ -1038,27 +1061,48 @@ bool TsdlParser::_tryParseDtAlias()
     return false;
 }
 
-PseudoDt::Up TsdlParser::_tryParseDt()
+PseudoDt::Up TsdlParser::_tryParseDt(const bool addDtAlias, std::string * const dtAliasName)
 {
     if (auto pseudoDt = this->_tryParseDtAliasRef()) {
+        if (dtAliasName) {
+            dtAliasName->clear();
+        }
+
         return pseudoDt;
     }
 
-    if (auto pseudoDt = this->_tryParseFullDt()) {
+    if (auto pseudoDt = this->_tryParseFullDt(addDtAlias, dtAliasName)) {
         return pseudoDt;
     }
 
     return nullptr;
 }
 
-PseudoDt::Up TsdlParser::_tryParseFullDt()
+PseudoDt::Up TsdlParser::_tryParseFullDt(const bool addDtAlias, std::string * const dtAliasName,
+                                         bool * const isCompound)
 {
     _ss.skipCommentsAndWhitespaces();
 
     const auto loc = _ss.loc();
 
+    /*
+     * A failed attempt below may set `*dtAliasName` (for example,
+     * `enum foo` without `:` or `{`), so always start from an
+     * empty name.
+     */
+    if (dtAliasName) {
+        dtAliasName->clear();
+    }
+
+    const auto setIsCompound = [isCompound](const bool val) {
+        if (isCompound) {
+            *isCompound = val;
+        }
+    };
+
     try {
         if (auto pseudoDt = this->_tryParseFlIntType()) {
+            setIsCompound(false);
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1068,6 +1112,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
 
     try {
         if (auto pseudoDt = this->_tryParseNtStrType()) {
+            setIsCompound(false);
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1076,7 +1121,8 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        if (auto pseudoDt = this->_tryParseFlEnumType()) {
+        if (auto pseudoDt = this->_tryParseFlEnumType(addDtAlias, dtAliasName)) {
+            setIsCompound(true);
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1086,6 +1132,7 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
 
     try {
         if (auto pseudoDt = this->_tryParseFlFloatType()) {
+            setIsCompound(false);
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1094,7 +1141,8 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        if (auto pseudoDt = this->_tryParseStructType()) {
+        if (auto pseudoDt = this->_tryParseStructType(addDtAlias, dtAliasName)) {
+            setIsCompound(true);
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
@@ -1103,12 +1151,17 @@ PseudoDt::Up TsdlParser::_tryParseFullDt()
     }
 
     try {
-        if (auto pseudoDt = this->_tryParseVarType()) {
+        if (auto pseudoDt = this->_tryParseVarType(addDtAlias, dtAliasName)) {
+            setIsCompound(true);
             return pseudoDt;
         }
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In `variant` block:", loc);
         throw;
+    }
+
+    if (dtAliasName) {
+        dtAliasName->clear();
     }
 
     return nullptr;
@@ -2537,11 +2590,20 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
 
         // parse data type
         PseudoDt::Up pseudoDt;
+        std::string dtAliasName;
 
         {
             _tLexScope lexScope {*this, scopeDtStackFrameKind};
 
-            pseudoDt = this->_tryParseDt();
+            /*
+             * Don't let the structure type parser add a data type alias
+             * for a named structure type: it would add it to the frame
+             * which `lexScope` manages, which only exists while parsing
+             * this scope data type.
+             *
+             * Add it to the current frame below instead.
+             */
+            pseudoDt = this->_tryParseDt(false, &dtAliasName);
         }
 
         if (!pseudoDt) {
@@ -2550,6 +2612,11 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
 
         if (pseudoDt->kind() != PseudoDt::Kind::Struct) {
             throwTextParseError("Expecting a structure type.", dtLoc);
+        }
+
+        // add data type alias if the structure type is named
+        if (!dtAliasName.empty()) {
+            this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
         }
 
         // parse `;`
@@ -3114,21 +3181,52 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
         }
     }
 
-    // try type alias (cases 1, 2, 3, 4)
-    {
-        StrScannerRejecter ssRej {_ss};
-
-        if (this->_tryParseDtAlias()) {
-            ssRej.accept();
-            return true;
-        }
+    // try generic data type alias (case 1)
+    if (this->_tryParseGenericDtAlias()) {
+        return true;
     }
 
-    // try full type (cases 8)
+    /*
+     * Try full data type (cases 2, 3, 4, and 8).
+     *
+     * Parse it only once, and then decide with what follows:
+     *
+     * `;`:
+     *     Data type alias (cases 2, 3, and 4), only for a fixed-length
+     *     enumeration, structure, or variant type.
+     *
+     *     An anonymous one, for example `struct { ... };`, is accepted
+     *     and ignored.
+     *
+     * Identifier:
+     *     Member type/option (case 8). A named fixed-length
+     *     enumeration, structure, or variant type also defines a data
+     *     type alias.
+     */
     {
         StrScannerRejecter ssRej {_ss};
+        std::string dtAliasName;
+        auto isCompound = false;
 
-        if (auto pseudoDt = this->_tryParseFullDt()) {
+        if (auto pseudoDt = this->_tryParseFullDt(false, &dtAliasName, &isCompound)) {
+            const auto afterDtLoc = _ss.loc();
+
+            if (isCompound && _ss.tryScanToken(";")) {
+                // data type alias (cases 2, 3, and 4)
+                ssRej.accept();
+
+                if (!dtAliasName.empty()) {
+                    this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
+                }
+
+                return true;
+            }
+
+            // member type/option (case 8)
+            if (!dtAliasName.empty()) {
+                this->_addDtAlias(std::move(dtAliasName), *pseudoDt, afterDtLoc);
+            }
+
             // let's try parsing an identifier + array subscripts
             std::string ident;
 

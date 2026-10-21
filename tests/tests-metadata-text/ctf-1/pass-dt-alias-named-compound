@@ -1,0 +1,50 @@
+/* CTF 1.8 */
+
+typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
+
+/*
+ * A named fixed-length enumeration, structure, or variant type within a
+ * `typealias` or `typedef` block also defines a data type alias for its
+ * name (`enum NAME`, `struct NAME`, or `variant NAME`).
+ */
+typealias enum my_enum : uint8_t {
+  A,
+  B,
+} := my_enum_t;
+
+typealias struct my_struct {
+  uint8_t a;
+  string b;
+} := my_struct_t;
+
+typedef variant my_var {
+  uint8_t A;
+  string B;
+} my_var_t;
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    enum my_enum tag;
+    my_enum_t tag2;
+    struct my_struct s;
+    my_struct_t s2;
+    variant my_var <tag> v;
+    variant my_var <tag2> v2;
+
+    /* also within a structure type */
+    typedef struct inner_struct {
+      uint8_t c;
+    } inner_struct_t;
+
+    struct inner_struct is;
+    inner_struct_t is2;
+  };
+};

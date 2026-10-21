@@ -1,0 +1,47 @@
+/* CTF 1.8 */
+
+typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
+typealias integer { size = 32; align = 8; signed = false; } := uint32_t;
+
+/*
+ * A named structure type as a scope data type also defines a data type
+ * alias for its name (`struct NAME`) within the enclosing block.
+ */
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+
+  packet.header := struct pkt_header {
+    uint32_t magic;
+  };
+
+  typealias struct {
+    struct pkt_header h;
+  } := pkt_header_wrapper;
+};
+
+stream {
+  packet.context := struct pkt_ctx {
+    uint32_t packet_size;
+    uint32_t content_size;
+  };
+
+  event.context := struct {
+    struct pkt_ctx copy;
+  };
+};
+
+event {
+  name = event;
+
+  context := struct ctx {
+    uint8_t a;
+    string b;
+  };
+
+  fields := struct {
+    struct ctx c;
+    uint8_t d;
+  };
+};

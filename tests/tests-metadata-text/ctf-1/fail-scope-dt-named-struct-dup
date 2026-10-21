@@ -1,0 +1,27 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+};
+
+event {
+  name = event;
+
+  context := struct my_struct {
+    string a;
+  };
+
+  fields := struct my_struct {
+    string b;
+  };
+};
+---
+[12:1] In `event` root block:
+[19:3] In the `fields` scope:
+[21:4] Duplicate data type alias named `struct my_struct`.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Philippe Proulx <eepp.ca>
+ * Copyright (C) 2015-2026 Philippe Proulx <eepp.ca>
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -340,8 +340,20 @@ private:
      *         int a;
      *         int b;
      *     } align(16) my_struct;
+     *
+     * If the aliased data type is a named fixed-length enumeration,
+     * structure, or variant type, then this method also adds a data
+     * type alias for its name (for example, `struct foo` with
+     * `typedef struct foo { ... } bar;`) to the map of aliased pseudo
+     * data types of the current frame.
      */
     bool _tryParseGenericDtAlias();
+
+    /*
+     * Like _tryParseGenericDtAlias(), but without adding an
+     * "In data type alias:" context to a thrown `TextParseError`.
+     */
+    bool _tryParseGenericDtAliasNoErrCtx();
 
     /*
      * Tries to parse any data type alias, generic (`typealias`,
@@ -384,6 +396,11 @@ private:
      * it cannot parse the scope data type successfully. Otherwise, the
      * method can return `nullptr` if it cannot parse the scope
      * data type.
+     *
+     * If the scope data type is a named structure type, then this
+     * method also adds a data type alias for its name (for example,
+     * `struct foo` with `fields := struct foo { ... };`) to the map of
+     * aliased pseudo data types of the current frame.
      *
      * Examples:
      *
@@ -528,16 +545,33 @@ private:
      * alias reference.
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     *
+     * `addDtAlias` and `dtAliasName` have the same meaning as with
+     * _tryParseFullDt(). On success, if `dtAliasName` isn't `nullptr`
+     * and the data type isn't a named fixed-length enumeration,
+     * structure, or variant type block, then this method sets
+     * `*dtAliasName` to an empty string.
      */
-    PseudoDt::Up _tryParseDt();
+    PseudoDt::Up _tryParseDt(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
      * Tries to parse a data type block (excludes data type
      * alias references).
      *
      * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     *
+     * `addDtAlias` and `dtAliasName` have the same meaning as with
+     * _tryParseFlEnumType(), _tryParseStructType(), and
+     * _tryParseVarType(). On success, if `dtAliasName` isn't `nullptr`
+     * and the data type isn't named, then this method sets
+     * `*dtAliasName` to an empty string.
+     *
+     * On success, if `isCompound` isn't `nullptr`, then this method
+     * sets `*isCompound` to whether or not the parsed data type is a
+     * fixed-length enumeration, structure, or variant type.
      */
-    PseudoDt::Up _tryParseFullDt();
+    PseudoDt::Up _tryParseFullDt(bool addDtAlias = true, std::string *dtAliasName = nullptr,
+                                 bool *isCompound = nullptr);
 
     /*
      * Tries to parse a fixed-length integer type block.

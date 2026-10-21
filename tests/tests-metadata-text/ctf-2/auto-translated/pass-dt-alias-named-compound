@@ -1,0 +1,227 @@
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "type": "trace-class"
+}
+{
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "mappings": {
+            "A": [
+              [
+                0,
+                0
+              ]
+            ],
+            "B": [
+              [
+                1,
+                1
+              ]
+            ]
+          },
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "tag"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "mappings": {
+            "A": [
+              [
+                0,
+                0
+              ]
+            ],
+            "B": [
+              [
+                1,
+                1
+              ]
+            ]
+          },
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "tag2"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "a"
+            },
+            {
+              "field-class": {
+                "type": "null-terminated-string"
+              },
+              "name": "b"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "s"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "a"
+            },
+            {
+              "field-class": {
+                "type": "null-terminated-string"
+              },
+              "name": "b"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "s2"
+      },
+      {
+        "field-class": {
+          "options": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "A",
+              "selector-field-ranges": [
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "field-class": {
+                "type": "null-terminated-string"
+              },
+              "name": "B",
+              "selector-field-ranges": [
+                [
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "selector-field-location": {
+            "origin": "event-record-payload",
+            "path": [
+              "tag"
+            ]
+          },
+          "type": "variant"
+        },
+        "name": "v"
+      },
+      {
+        "field-class": {
+          "options": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "A",
+              "selector-field-ranges": [
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "field-class": {
+                "type": "null-terminated-string"
+              },
+              "name": "B",
+              "selector-field-ranges": [
+                [
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "selector-field-location": {
+            "origin": "event-record-payload",
+            "path": [
+              "tag2"
+            ]
+          },
+          "type": "variant"
+        },
+        "name": "v2"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "c"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "is"
+      },
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "c"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "is2"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}

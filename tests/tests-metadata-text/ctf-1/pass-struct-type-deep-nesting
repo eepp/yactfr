@@ -1,0 +1,115 @@
+/* CTF 1.8 */
+
+/*
+ * Deeply nested anonymous fixed-length enumeration, structure, and
+ * variant types.
+ *
+ * The parser must parse each one only once: parsing each one twice
+ * (data type alias attempt, then member type/option) would take
+ * exponential time here.
+ */
+typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    struct {
+      enum : uint8_t { A, B } tag;
+      variant <tag> {
+        struct {
+          enum : uint8_t { A, B } tag;
+          variant <tag> {
+            struct {
+              enum : uint8_t { A, B } tag;
+              variant <tag> {
+                struct {
+                  enum : uint8_t { A, B } tag;
+                  variant <tag> {
+                    struct {
+                      enum : uint8_t { A, B } tag;
+                      variant <tag> {
+                        struct {
+                          enum : uint8_t { A, B } tag;
+                          variant <tag> {
+                            struct {
+                              enum : uint8_t { A, B } tag;
+                              variant <tag> {
+                                struct {
+                                  enum : uint8_t { A, B } tag;
+                                  variant <tag> {
+                                    struct {
+                                      enum : uint8_t { A, B } tag;
+                                      variant <tag> {
+                                        struct {
+                                          enum : uint8_t { A, B } tag;
+                                          variant <tag> {
+                                            struct {
+                                              enum : uint8_t { A, B } tag;
+                                              variant <tag> {
+                                                struct {
+                                                  enum : uint8_t { A, B } tag;
+                                                  variant <tag> {
+                                                    struct {
+                                                      enum : uint8_t { A, B } tag;
+                                                      variant <tag> {
+                                                        struct {
+                                                          enum : uint8_t { A, B } tag;
+                                                          variant <tag> {
+                                                            struct {
+                                                              enum : uint8_t { A, B } tag;
+                                                              variant <tag> {
+                                                                uint8_t A;
+                                                                string B;
+                                                              } v;
+                                                            } A;
+                                                            string B;
+                                                          } v;
+                                                        } A;
+                                                        string B;
+                                                      } v;
+                                                    } A;
+                                                    string B;
+                                                  } v;
+                                                } A;
+                                                string B;
+                                              } v;
+                                            } A;
+                                            string B;
+                                          } v;
+                                        } A;
+                                        string B;
+                                      } v;
+                                    } A;
+                                    string B;
+                                  } v;
+                                } A;
+                                string B;
+                              } v;
+                            } A;
+                            string B;
+                          } v;
+                        } A;
+                        string B;
+                      } v;
+                    } A;
+                    string B;
+                  } v;
+                } A;
+                string B;
+              } v;
+            } A;
+            string B;
+          } v;
+        } A;
+        string B;
+      } v;
+    } s;
+  };
+};

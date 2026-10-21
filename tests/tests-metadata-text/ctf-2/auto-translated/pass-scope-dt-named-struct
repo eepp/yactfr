@@ -1,0 +1,148 @@
+{
+  "type": "preamble",
+  "version": 2
+}
+{
+  "packet-header-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "roles": [
+            "packet-magic-number"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "magic"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "trace-class"
+}
+{
+  "event-record-common-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 32,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "packet_size"
+            },
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 32,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "content_size"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "copy"
+      }
+    ],
+    "type": "structure"
+  },
+  "packet-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "roles": [
+            "packet-total-length"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "packet_size"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 32,
+          "roles": [
+            "packet-content-length"
+          ],
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "content_size"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "data-stream-class"
+}
+{
+  "name": "event",
+  "payload-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "member-classes": [
+            {
+              "field-class": {
+                "alignment": 8,
+                "byte-order": "little-endian",
+                "length": 8,
+                "type": "fixed-length-unsigned-integer"
+              },
+              "name": "a"
+            },
+            {
+              "field-class": {
+                "type": "null-terminated-string"
+              },
+              "name": "b"
+            }
+          ],
+          "type": "structure"
+        },
+        "name": "c"
+      },
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "d"
+      }
+    ],
+    "type": "structure"
+  },
+  "specific-context-field-class": {
+    "member-classes": [
+      {
+        "field-class": {
+          "alignment": 8,
+          "byte-order": "little-endian",
+          "length": 8,
+          "type": "fixed-length-unsigned-integer"
+        },
+        "name": "a"
+      },
+      {
+        "field-class": {
+          "type": "null-terminated-string"
+        },
+        "name": "b"
+      }
+    ],
+    "type": "structure"
+  },
+  "type": "event-record-class"
+}
