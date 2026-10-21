@@ -19,8 +19,9 @@
 namespace yactfr {
 namespace internal {
 
-TsdlParser::_tStackFrame::_tStackFrame(const Kind kind) :
-    kind {kind}
+TsdlParser::_tStackFrame::_tStackFrame(const Kind kind, const Index lexId) :
+    kind {kind},
+    lexId {lexId}
 {
 }
 
@@ -370,7 +371,8 @@ void TsdlParser::_setPseudoDstDefClkType()
 
 void TsdlParser::_stackPush(const _tStackFrame::Kind kind)
 {
-    _stack.push_back(_tStackFrame {kind});
+    _stack.push_back(_tStackFrame {kind, _nextLexId});
+    ++_nextLexId;
 }
 
 void TsdlParser::_stackPop()
@@ -581,49 +583,40 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
                                                                              const TextLocation& loc)
 {
     /*
-     * In this method, we only want to make sure that the relative data
-     * location doesn't target a datum which is outside the topmost data
-     * type alias scope, if any, within the current stack.
+     * A CTF 1.8 relative data location is relative to where the TSDL
+     * text defines it, NOT to where the data type containing it ends up
+     * once data type aliases are expanded.
      *
-     * For example, this is okay:
+     * For example:
      *
-     *     typealias struct {
-     *         int a;
-     *         struct {
-     *             string seq[a];
-     *         } b;
-     *     } := some_name;
-     *
-     * This isn't (it _should_, in fact, but it's not supported as of
-     * this version of yactfr):
-     *
-     *     typealias struct {
-     *         my_int a;
+     *     fields := struct {
+     *         int len;
      *
      *         typealias struct {
-     *             string seq[a];
+     *             string seq[len];
      *         } := my_struct;
      *
      *         struct {
-     *             int a;
-     *             my_struct b;
-     *         };
-     *     } := some_name;
+     *             int len;
+     *             my_struct a;
+     *         } b;
+     *     };
      *
-     * In this last example, the location of the length data type for
-     * the dynamic-length array type `seq[a]` contained in `my_struct b`
-     * is NOT `int a` immediately before, but rather `my_int a`. In
-     * practice, this trick of using a data type which is external to a
-     * data type alias for dynamic-length array type lengths or variant
-     * type selectors is rarely, if ever, used.
+     * Here, the length of `fields.b.a.seq` is `fields.len`,
+     * NOT `fields.b.len`.
      *
-     * So this is easy to detect, because each time this parser "enters"
-     * a data type alias (with the `typealias` keyword or with a named
-     * structure/variant type), it pushes a data type alias frame onto
-     * the stack. We just need to check if we can find the first path
-     * element within the identifiers of the stack frames, from top to
-     * bottom, until we reach a data type alias or the root frame (both
-     * lead to an exception).
+     * Therefore, this method finds the first path element within the
+     * identifiers of the `StructType` stack frames, from top to bottom,
+     * crossing any data type alias frame. The identifiers of a
+     * `StructType` frame are the names of the member types which
+     * precede the data location.
+     *
+     * The returned pseudo data location refers to the lexical ID of the
+     * frame which contains the first path element: this is also the
+     * lexical ID of the pseudo structure type which the TSDL parser
+     * creates from this frame, as well as of all its clones (data type
+     * alias expansions). setPseudoDtDataLoc() later uses this lexical
+     * ID to find the right ancestor structure type.
      */
     assert(!_stack.empty());
     assert(!allPathElems.empty());
@@ -633,22 +626,13 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
     const auto& firstPathElem = *allPathElems.front();
 
     while (true) {
-        if (stackIt->kind == _tStackFrame::Kind::DtAlias) {
-            std::ostringstream ss;
-
-            ss << "First element of data location, `" <<
-                  firstPathElem << "`, refers to an identifier which crosses a "
-                  "data type alias (or named structure/variant type) boundary. "
-                  "CTF 1.8 allows this, but this version of yactfr doesn't "
-                  "support it.";
-            throwTextParseError(ss.str(), loc);
-        } else if (stackIt->kind == _tStackFrame::Kind::StructType) {
+        if (stackIt->kind == _tStackFrame::Kind::StructType) {
             const auto& frameIdents = stackIt->idents;
 
             if (std::find(frameIdents.begin(), frameIdents.end(), firstPathElem) != frameIdents.end()) {
                 // identifier found in this frame: win!
                 return PseudoDataLoc {
-                    PseudoDataLoc::Kind::Rel1, boost::none, allPathElems, loc
+                    PseudoDataLoc::Kind::Rel1, boost::none, allPathElems, loc, stackIt->lexId
                 };
             }
         }
@@ -1612,6 +1596,7 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
 
         {
             _LexicalScope structTypeLexScope {*this, _tStackFrame::Kind::StructType};
+            const auto lexId = this->_stackTop().lexId;
 
             // parse `{`
             if (!_ss.tryScanToken("{")) {
@@ -1673,7 +1658,7 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
             }
 
             pseudoDt = std::make_unique<PseudoStructType>(align, std::move(pseudoMemberTypes),
-                                                          nullptr, beginLoc);
+                                                          nullptr, beginLoc, lexId);
         }
     }
 
@@ -3086,18 +3071,16 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
      * We want to try cases 5, 6, 7, and 9 first because otherwise it
      * can be ambiguous when parsing a variant type:
      *
-     * a) variant var_name <tag> field_name;
-     * b) variant var_name <tag> { ... };
-     * c) variant var_name { ... };
-     * d) variant var_name <tag> { ... } field_name;
-     * e) variant <tag> { ... } field_name;
+     * a) `variant var_name <tag> field_name;`
+     * b) `variant var_name <tag> { ... };`
+     * c) `variant var_name { ... };`
+     * d) `variant var_name <tag> { ... } field_name;`
+     * e) `variant <tag> { ... } field_name;`
      *
-     * Here, b), c), and d) are invalid because we're creating a data
-     * type alias (named variant) and using a relative selector location
-     * at the same time (not supported). a) has a relative selector
-     * location, but we're using an aliased variant type named
-     * `var_name` which should already exist at this point: this is why
-     * we try it first.
+     * Here, b), c), and d) define a data type alias (named variant),
+     * whereas a) has a relative selector location, but uses an aliased
+     * variant type named `var_name` which should already exist at this
+     * point: this is why we try it first.
      */
 
     // try cases 5, 6, 7, and 9 first

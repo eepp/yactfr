@@ -63,6 +63,13 @@ namespace internal {
  *
  *     All path elements have values.
  *
+ *     `baseStructTypeLexId` is the lexical ID (see
+ *     PseudoStructType::lexId()) of the structure type which contains
+ *     the member type named after the first path element. This is the
+ *     structure type in which the TSDL parser found such a member type
+ *     when it parsed the data location, which might be outside the data
+ *     type alias containing the data location.
+ *
  * `Kind::Rel2`::
  *     Relative from CTF 2.
  *
@@ -88,7 +95,8 @@ public:
 
 public:
     explicit PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems pathElems,
-                           TextLocation loc);
+                           TextLocation loc,
+                           boost::optional<Index> baseStructTypeLexId = boost::none);
 
     PseudoDataLoc(const PseudoDataLoc&) = default;
     PseudoDataLoc(PseudoDataLoc&&) = default;
@@ -115,11 +123,17 @@ public:
         return _loc;
     }
 
+    const boost::optional<Index>& baseStructTypeLexId() const noexcept
+    {
+        return _baseStructTypeLexId;
+    }
+
 private:
     Kind _kind;
     boost::optional<Scope> _scope;
     PathElems _pathElems;
     TextLocation _loc;
+    boost::optional<Index> _baseStructTypeLexId;
 };
 
 class PseudoDt;
@@ -619,6 +633,15 @@ using PseudoNamedDts = std::vector<PseudoNamedDt::Up>;
 
 /*
  * Pseudo structure type.
+ *
+ * A pseudo structure type which the TSDL parser creates has a lexical
+ * ID: a unique ID of the TSDL `struct` block which defines it. A clone
+ * keeps the lexical ID of its original, so that all the expansions of a
+ * given data type alias share the lexical IDs of the original
+ * structure types.
+ *
+ * A CTF 1.8 relative pseudo data location refers to the lexical ID of a
+ * structure type (see `PseudoDataLoc`).
  */
 class PseudoStructType final :
     public PseudoDt,
@@ -626,7 +649,8 @@ class PseudoStructType final :
 {
 public:
     explicit PseudoStructType(unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                              MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
+                              MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {},
+                              boost::optional<Index> lexId = boost::none);
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -658,9 +682,15 @@ public:
         return _pseudoMemberTypes;
     }
 
+    const boost::optional<Index>& lexId() const noexcept
+    {
+        return _lexId;
+    }
+
 private:
     unsigned int _minAlign;
     PseudoNamedDts _pseudoMemberTypes;
+    boost::optional<Index> _lexId;
 };
 
 /*

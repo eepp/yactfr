@@ -1,0 +1,64 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        struct {
+            u8 len;
+        } hdr;
+
+        typealias struct {
+            string seq[hdr.len];
+        } := s;
+
+        struct {
+            struct {
+                u8 len;
+            } hdr;
+
+            s a;
+        } b;
+    };
+};
+---
+# event record
+02              # `hdr.len`
+05              # `b.hdr.len`
+"un\0" "deux\0" # `b.a.seq` (length: `hdr.len`)
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           ST:hdr {
+     0             FLUI:len:2
+     8           }
+     8           ST:b {
+     8             ST:hdr {
+     8               FLUI:len:5
+    16             }
+    16             ST:a {
+    16               DLA:seq {
+    16                 NTS {
+    16                   RD:3:un$00
+    40                 }
+    40                 NTS {
+    40                   RD:5:deux$00
+    80                 }
+    80               }
+    80             }
+    80           }
+    80         }
+    80       }
+    80     }
+    80   }
+    80 }

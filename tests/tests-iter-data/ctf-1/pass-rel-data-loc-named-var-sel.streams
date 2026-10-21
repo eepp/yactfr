@@ -1,0 +1,58 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        enum : u8 {
+            A, B,
+        } tag;
+
+        variant v <tag> {
+            u8 A;
+            u16 B;
+        } x;
+
+        struct {
+            enum : u8 {
+                B, A,
+            } tag;
+
+            variant v y;
+        } s;
+    };
+};
+---
+# event record
+01          # `tag` (`B`)
+[0x1234 : 16be] # `x` (selector: `tag`)
+01          # `s.tag` (`A`)
+[0x5678 : 16be] # `s.y` (selector: `tag`)
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:tag:1
+     8           VU:x:1 {
+     8             FLUI:4660
+    24           }
+    24           ST:s {
+    24             FLUI:tag:1
+    32             VU:y:1 {
+    32               FLUI:22136
+    48             }
+    48           }
+    48         }
+    48       }
+    48     }
+    48   }
+    48 }

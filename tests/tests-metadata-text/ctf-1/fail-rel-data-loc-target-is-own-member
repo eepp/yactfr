@@ -1,0 +1,27 @@
+---
+/* CTF 1.8 */
+
+typealias integer { size = 8; } := u8;
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  fields := struct {
+    struct {
+      u8 seq[len];
+    } len;
+  };
+};
+---
+[11:1] In `event` root block:
+[12:3] In the `fields` scope:
+[12:13] In `struct` block:
+[13:5] While parsing body of `struct` block:
+[13:5] In `struct` block:
+[14:7] While parsing body of `struct` block:
+[14:14] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[14:14] Invalid relative data location (`len`): cannot find `len` (first element).

@@ -1,0 +1,103 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+typealias struct {
+    u8 len;
+
+    typealias struct {
+        u8 seq[len];
+    } := inner;
+
+    struct {
+        u8 len;
+        inner a;
+    } f;
+} := outer;
+
+event {
+    name = test;
+    context := struct {
+        outer c;
+    };
+    fields := struct {
+        u8 len;
+        outer x;
+
+        struct {
+            outer y;
+        } z;
+    };
+};
+---
+# event record
+01          # `c.len`
+07          # `c.f.len`
+aa          # `c.f.a.seq` (length: `c.len`)
+09          # `len`
+02          # `x.len`
+08          # `x.f.len`
+bb cc       # `x.f.a.seq` (length: `x.len`)
+03          # `z.y.len`
+06          # `z.y.f.len`
+dd ee ff    # `z.y.f.a.seq` (length: `z.y.len`)
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:4 {
+     0         ST {
+     0           ST:c {
+     0             FLUI:len:1
+     8             ST:f {
+     8               FLUI:len:7
+    16               ST:a {
+    16                 DLA:seq {
+    16                   FLUI:170
+    24                 }
+    24               }
+    24             }
+    24           }
+    24         }
+    24       }
+    24       SC:5 {
+    24         ST {
+    24           FLUI:len:9
+    32           ST:x {
+    32             FLUI:len:2
+    40             ST:f {
+    40               FLUI:len:8
+    48               ST:a {
+    48                 DLA:seq {
+    48                   FLUI:187
+    56                   FLUI:204
+    64                 }
+    64               }
+    64             }
+    64           }
+    64           ST:z {
+    64             ST:y {
+    64               FLUI:len:3
+    72               ST:f {
+    72                 FLUI:len:6
+    80                 ST:a {
+    80                   DLA:seq {
+    80                     FLUI:221
+    88                     FLUI:238
+    96                     FLUI:255
+   104                   }
+   104                 }
+   104               }
+   104             }
+   104           }
+   104         }
+   104       }
+   104     }
+   104   }
+   104 }

@@ -98,17 +98,20 @@ private:
      * • A kind, which indicates what kind of frame/scope
      *   this represents.
      *
+     * • A lexical ID, unique amongst all the frames of a parser.
+     *
+     *   The pseudo structure type which a `StructType` frame defines
+     *   gets the lexical ID of said frame
+     *   (see PseudoStructType::lexId()).
+     *
      * • A map of data type alias names to full pseudo data types, local
      *   to the frame. Frames which are higher in the stack have access
      *   to the aliased data types of the frames below them.
      *
      * • A vector of the current member/option names, when the kind of
-     *   this frame is `STRUCT_TYPE` or `VAR_TYPE`. This is used to
-     *   ensure that a relative data location doesn't target a data type
-     *   which is located outside the topmost data type alias frame.
-     *
-     *   Even if CTF 1.8 officially supports this feature,
-     *   yactfr doesn't.
+     *   this frame is `StructType` or `VarType`. This is used to find
+     *   the structure type which contains the target of a relative
+     *   data location.
      *
      * You can use _stackPush() and _stackPop() manually, but it's
      * recommended to use an RAII `_LexicalScope` instead to
@@ -158,10 +161,13 @@ private:
             VarType,
         };
 
-        explicit _tStackFrame(Kind kind);
+        explicit _tStackFrame(Kind kind, Index lexId);
 
         // kind of this frame
         const Kind kind;
+
+        // lexical ID of this frame
+        const Index lexId;
 
         // data type aliases of this frame
         std::unordered_map<std::string, PseudoDt::Up> dtAliases;
@@ -987,6 +993,9 @@ private:
 
     // lexical scope stack
     std::vector<_tStackFrame> _stack;
+
+    // lexical ID of the next frame to push
+    Index _nextLexId = 0;
 };
 
 template <typename FlIntTypeT, typename CreatePseudoDtFuncT>

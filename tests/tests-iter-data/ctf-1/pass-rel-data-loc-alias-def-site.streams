@@ -1,0 +1,51 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 len;
+
+        typealias struct {
+            u8 seq[len];
+        } := my_struct;
+
+        struct {
+            u8 len;
+            my_struct a_struct;
+        } field;
+    };
+};
+---
+# event record
+02          # `len`
+05          # `field.len`
+aa bb       # `field.a_struct.seq` (length: `len`)
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len:2
+     8           ST:field {
+     8             FLUI:len:5
+    16             ST:a_struct {
+    16               DLA:seq {
+    16                 FLUI:170
+    24                 FLUI:187
+    32               }
+    32             }
+    32           }
+    32         }
+    32       }
+    32     }
+    32   }
+    32 }

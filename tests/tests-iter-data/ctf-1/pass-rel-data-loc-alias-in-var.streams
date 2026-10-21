@@ -1,0 +1,84 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 len;
+
+        enum : u8 {
+            X, Y,
+        } tag;
+
+        variant <tag> {
+            typealias struct {
+                u8 seq[len];
+            } := s;
+
+            s X;
+
+            struct {
+                u8 len;
+                s inner;
+            } Y;
+        } v;
+    };
+};
+---
+# event record
+02          # `len`
+00          # `tag` (`X`)
+aa bb       # `v.X.seq` (length: `len`)
+
+# event record
+01          # `len`
+01          # `tag` (`Y`)
+05          # `v.Y.len`
+cc          # `v.Y.inner.seq` (length: `len`)
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len:2
+     8           FLUI:tag:0
+    16           VU:v:0 {
+    16             ST {
+    16               DLA:seq {
+    16                 FLUI:170
+    24                 FLUI:187
+    32               }
+    32             }
+    32           }
+    32         }
+    32       }
+    32     }
+    32     ER {
+    32       ERI:T0:#test
+    32       SC:5 {
+    32         ST {
+    32           FLUI:len:1
+    40           FLUI:tag:1
+    48           VU:v:1 {
+    48             ST {
+    48               FLUI:len:5
+    56               ST:inner {
+    56                 DLA:seq {
+    56                   FLUI:204
+    64                 }
+    64               }
+    64             }
+    64           }
+    64         }
+    64       }
+    64     }
+    64   }
+    64 }

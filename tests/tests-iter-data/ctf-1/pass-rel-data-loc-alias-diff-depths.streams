@@ -1,0 +1,65 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        u8 len;
+
+        typealias struct {
+            u8 seq[len];
+        } := s;
+
+        s a;
+
+        struct {
+            u8 len;
+
+            struct {
+                s c;
+            } b;
+        } d;
+    };
+};
+---
+# event record
+02          # `len`
+aa bb       # `a.seq` (length: `len`)
+05          # `d.len`
+cc dd       # `d.b.c.seq` (length: `len`)
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:len:2
+     8           ST:a {
+     8             DLA:seq {
+     8               FLUI:170
+    16               FLUI:187
+    24             }
+    24           }
+    24           ST:d {
+    24             FLUI:len:5
+    32             ST:b {
+    32               ST:c {
+    32                 DLA:seq {
+    32                   FLUI:204
+    40                   FLUI:221
+    48                 }
+    48               }
+    48             }
+    48           }
+    48         }
+    48       }
+    48     }
+    48   }
+    48 }

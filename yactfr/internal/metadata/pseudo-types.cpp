@@ -31,13 +31,15 @@ namespace yactfr {
 namespace internal {
 
 PseudoDataLoc::PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems pathElems,
-                             TextLocation loc) :
+                             TextLocation loc, boost::optional<Index> baseStructTypeLexId) :
     _kind {kind},
     _scope {std::move(scope)},
     _pathElems {std::move(pathElems)},
-    _loc {std::move(loc)}
+    _loc {std::move(loc)},
+    _baseStructTypeLexId {std::move(baseStructTypeLexId)}
 {
     assert(_scope || _kind != Kind::Abs);
+    assert(_kind != Kind::Rel1 || _baseStructTypeLexId);
 }
 
 PseudoDt::PseudoDt(TextLocation loc) :
@@ -315,11 +317,13 @@ PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::Up pse
 }
 
 PseudoStructType::PseudoStructType(const unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
-                                   MapItem::Up attrs, TextLocation loc) :
+                                   MapItem::Up attrs, TextLocation loc,
+                                   boost::optional<Index> lexId) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _minAlign {minAlign},
-    _pseudoMemberTypes {std::move(pseudoMemberTypes)}
+    _pseudoMemberTypes {std::move(pseudoMemberTypes)},
+    _lexId {std::move(lexId)}
 {
 }
 
@@ -336,7 +340,8 @@ PseudoDt::Up PseudoStructType::clone() const
     }
 
     return std::make_unique<PseudoStructType>(_minAlign, std::move(newPseudoMembers),
-                                              tryCloneAttrs(this->attrs()), this->loc());
+                                              tryCloneAttrs(this->attrs()), this->loc(),
+                                              _lexId);
 }
 
 bool PseudoStructType::isEmpty() const

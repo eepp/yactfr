@@ -64,9 +64,16 @@ public:
 
 private:
     /*
-     * An entry of `_tMemberNames`.
+     * An entry of `_tMemberNames`: one per structure type level.
      */
-    using _tMemberNamesEntry = std::vector<const std::string *>;
+    struct _tMemberNamesEntry final
+    {
+        // lexical ID of the structure type (CTF 1.8 only)
+        boost::optional<Index> structTypeLexId;
+
+        // member type names of the structure type visited so far
+        std::vector<const std::string *> names;
+    };
 
     /*
      * A vector of `_tMemberNamesEntry`, used temporarily by _set() and
@@ -85,36 +92,38 @@ private:
     {
         assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel1);
 
-        DataLocation::PathElements pathElemsSuffix;
+        assert(pseudoDataLoc.baseStructTypeLexId());
 
-        // predicate for std::find_if() below
-        const auto pred = call([&pseudoDataLoc] {
-            // this is the name we're looking for (first)
-            const auto& firstPathElem = *pseudoDataLoc.pathElems().front();
-
-            return [&firstPathElem](const auto namePtr) {
-                return firstPathElem == *namePtr;
-            };
-        });
-
-        while (true) {
-            if (std::find_if(searchEntryIt->begin(),
-                             searchEntryIt->end(), pred) != searchEntryIt->end()) {
-                pseudoDataLocPathElemsToPathElems(pseudoDataLoc.pathElems(), pathElemsSuffix);
-                break;
-            }
-
-            /*
-             * We can assert this because at this point the target
-             * member name must exist. This is checked by
-             * TsdlParser::_pseudoDataLocFromRelAllPathElems() when also
-             * making sure that the target doesn't cross a data type
-             * alias boundary.
-             */
+        /*
+         * Find the closest ancestor structure type having the lexical
+         * ID of the pseudo data location.
+         *
+         * Searching by lexical ID instead of by name is what makes a
+         * relative data location relative to where the TSDL text
+         * defines it instead of to where some data type alias expansion
+         * ends up.
+         *
+         * We can assert that such a structure type exists because
+         * TsdlParser::_pseudoDataLocFromRelAllPathElems() found it
+         * within the lexical scope of the data location, and a data
+         * type alias is only visible within its own lexical scope.
+         * Therefore, any expansion of a data type alias containing the
+         * data location is a descendant of (a clone of) the structure
+         * type having such a lexical ID.
+         */
+        while (searchEntryIt->structTypeLexId != pseudoDataLoc.baseStructTypeLexId()) {
             assert(searchEntryIt != _memberNames.begin());
             --searchEntryIt;
         }
 
+        assert(std::find_if(searchEntryIt->names.begin(), searchEntryIt->names.end(),
+                            [&pseudoDataLoc](const auto namePtr) {
+            return *namePtr == *pseudoDataLoc.pathElems().front();
+        }) != searchEntryIt->names.end());
+
+        DataLocation::PathElements pathElemsSuffix;
+
+        pseudoDataLocPathElemsToPathElems(pseudoDataLoc.pathElems(), pathElemsSuffix);
         return {pathElemsSuffix, searchEntryIt};
     }
 
@@ -213,7 +222,7 @@ private:
 
         for (auto entryIt = _memberNames.begin(); entryIt != searchEntryIt; ++entryIt) {
             // last item of the entry is the parent name
-            pathElems.push_back(*entryIt->back());
+            pathElems.push_back(*entryIt->names.back());
         }
 
         // append remaining suffix
@@ -253,16 +262,18 @@ private:
 
         case PseudoDt::Kind::Struct:
         {
-            // new level
-            _memberNames.push_back({});
+            auto& pseudoStructType = static_cast<PseudoStructType&>(pseudoDt);
 
-            for (auto& pseudoMemberType : static_cast<PseudoStructType&>(pseudoDt).pseudoMemberTypes()) {
+            // new level
+            _memberNames.push_back({pseudoStructType.lexId(), {}});
+
+            for (auto& pseudoMemberType : pseudoStructType.pseudoMemberTypes()) {
                 /*
                  * Append this name before so that _createLocMap() can
                  * access the ancestor names.
                  */
                 assert(pseudoMemberType->name());
-                _memberNames.back().push_back(&(*pseudoMemberType->name()));
+                _memberNames.back().names.push_back(&(*pseudoMemberType->name()));
                 this->_set(pseudoMemberType->pseudoDt());
             }
 

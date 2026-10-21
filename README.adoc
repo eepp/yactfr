@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-3 April 2024
+21 October 2026
 :idprefix:
 :idseparator: -
 ifdef::env-github[]
@@ -163,67 +163,6 @@ event {
     id = 23; we're still in the comment started above here
     id = 42;
     ...
-};
-----
---
-
-* TSDL (CTF{nbsp}1.8): Doesn't support relative dynamic-length array
-  type lengths and variant type selectors in data type aliases (or named
-  structure/variant types) which target structure member types outside
-  this data type alias.
-+
-For example, this is not supported (TSDL):
-+
---
-----
-fields := struct {
-    int len;
-
-    typealias struct {
-        int sequence[len];
-    } := my_struct;
-
-    struct {
-        int len;
-        my_struct a_struct;
-    } field;
-};
-----
---
-+
-This is also not supported (TSDL):
-+
---
-----
-fields := struct {
-    enum {
-        ...
-    } tag;
-
-    variant my_variant <tag> {
-        ...
-    } a_variant;
-
-    my_variant the_variant;
-};
-----
---
-+
-The example above would work, however, if the selector location of the
-variant type would be absolute:
-+
---
-----
-fields := struct {
-    enum {
-        ...
-    } tag;
-
-    variant my_variant <event.fields.tag> {
-        ...
-    } a_variant;
-
-    my_variant the_variant;
 };
 ----
 --
