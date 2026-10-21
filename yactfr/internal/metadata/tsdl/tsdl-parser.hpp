@@ -230,6 +230,48 @@ private:
     using _tAttrs = std::vector<TsdlAttr>;
 
     /*
+     * TSDL keyword, or C type word which may be part of a data type
+     * alias name (for example, `unsigned` in `unsigned long`).
+     */
+    enum class _tKw
+    {
+        None,
+        Align,
+        Callsite,
+        Clock,
+        Context,
+        Enum,
+        Env,
+        Event,
+        Fields,
+        FloatingPoint,
+        Integer,
+        Packet,
+        Stream,
+        String,
+        Struct,
+        Trace,
+        Typealias,
+        Typedef,
+        Variant,
+
+        // C type words
+        CBool,
+        CChar,
+        CComplex,
+        CConst,
+        CDouble,
+        CFloat,
+        CImaginary,
+        CInt,
+        CLong,
+        CShort,
+        CSigned,
+        CUnsigned,
+        CVoid,
+    };
+
+    /*
      * A "fast" pseudo fixed-length integer type entry.
      *
      * Often, fixed-length integer types, which are usually the most
@@ -818,6 +860,57 @@ private:
 
     void _skipCommentsAndWhitespacesAndSemicolons();
     const std::string *_tryScanLitStr();
+
+    /*
+     * Returns the keyword which the identifier `ident` is, or
+     * `_tKw::None` if it's not a keyword.
+     */
+    static _tKw _kwFromIdent(const std::string& ident) noexcept;
+
+    /*
+     * Skips whitespaces and comments, and then returns the keyword at
+     * the current position, without consuming it, or `_tKw::None` if
+     * there's none.
+     *
+     * Use this to only try parsing what can start with this keyword.
+     */
+    _tKw _peekKw();
+
+    /*
+     * Returns whether or not the keyword `kw` can start a data type
+     * alias (see _tryParseDtAlias()).
+     */
+    static bool _kwStartsDtAlias(const _tKw kw) noexcept
+    {
+        return kw == _tKw::Typealias || kw == _tKw::Typedef || kw == _tKw::Enum ||
+               kw == _tKw::Struct || kw == _tKw::Variant;
+    }
+
+    /*
+     * Returns whether or not the keyword `kw` is a C type word.
+     */
+    static bool _kwIsCTypeWord(const _tKw kw) noexcept
+    {
+        switch (kw) {
+        case _tKw::CBool:
+        case _tKw::CChar:
+        case _tKw::CComplex:
+        case _tKw::CConst:
+        case _tKw::CDouble:
+        case _tKw::CFloat:
+        case _tKw::CImaginary:
+        case _tKw::CInt:
+        case _tKw::CLong:
+        case _tKw::CShort:
+        case _tKw::CSigned:
+        case _tKw::CUnsigned:
+        case _tKw::CVoid:
+            return true;
+
+        default:
+            return false;
+        }
+    }
     void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt);
 
     Index _at() const

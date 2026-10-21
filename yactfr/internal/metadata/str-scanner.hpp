@@ -204,6 +204,21 @@ public:
     }
 
     /*
+     * Skips whitespaces and comments, and then returns the C identifier
+     * at the current position, without consuming it, or `nullptr` if
+     * there's no identifier.
+     *
+     * The returned string remains valid as long as you don't call any
+     * method of this object.
+     */
+    const std::string *peekIdent()
+    {
+        this->skipCommentsAndWhitespaces();
+        this->_lexIdent();
+        return _identEnd == _identBegin ? nullptr : &_identBuf;
+    }
+
+    /*
      * Tries to scan a double-quoted literal string, considering the
      * characters of `escapeSeqStartList` and `"` as escape sequence
      * starting characters, placing the current character pointer after
@@ -331,6 +346,10 @@ public:
     /*
      * Tries to scan a specific token `token`, placing the current
      * character pointer after this string on success.
+     *
+     * If `token` ends with a C identifier character, then this method
+     * only succeeds if the following character isn't a C identifier
+     * character: for example, `struct` doesn't match `structure`.
      */
     template <bool SkipWsV, bool SkipCommentsV>
     bool tryScanToken(const char *token);
@@ -354,6 +373,33 @@ public:
             return;
         }
 
+        /*
+         * A backtracking parser often skips from the same position
+         * many times, mostly from a position where there's
+         * nothing to skip.
+         *
+         * Skipping from a given position always leads to the same
+         * position (and line), so remember the last skip when skipping
+         * both whitespaces and comments.
+         */
+        constexpr auto useCache = SkipWsV && SkipCommentsV;
+
+        if (useCache) {
+            if (_at == _skipTo) {
+                // nothing to skip here
+                return;
+            }
+
+            if (_at == _skipFrom) {
+                _at = _skipTo;
+                _lineBegin = _skipToLineBegin;
+                _nbLines = _skipToNbLines;
+                return;
+            }
+        }
+
+        const auto from = _at;
+
         while (!this->isDone()) {
             const auto at = _at;
 
@@ -367,8 +413,15 @@ public:
 
             if (_at == at) {
                 // no more whitespaces or comments
-                return;
+                break;
             }
+        }
+
+        if (useCache) {
+            _skipFrom = from;
+            _skipTo = _at;
+            _skipToLineBegin = _lineBegin;
+            _skipToNbLines = _nbLines;
         }
     }
 
@@ -397,6 +450,46 @@ private:
 
     template <typename ValT, int BaseV>
     boost::optional<ValT> _tryScanConstInt(bool negate);
+
+    static bool _isIdentFirstChar(const char ch) noexcept
+    {
+        return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
+    }
+
+    static bool _isIdentChar(const char ch) noexcept
+    {
+        return _isIdentFirstChar(ch) || (ch >= '0' && ch <= '9');
+    }
+
+    /*
+     * Makes `_identBegin`, `_identEnd`, and `_identBuf` describe the C
+     * identifier at the current position (empty if none).
+     *
+     * Parsers often try to scan the same identifier many times when
+     * backtracking: this method doesn't scan again if `_identBegin` is
+     * the current position.
+     */
+    void _lexIdent()
+    {
+        if (_identBegin == _at) {
+            // already lexed
+            return;
+        }
+
+        auto end = _at;
+
+        if (end != _end && StrScanner::_isIdentFirstChar(*end)) {
+            ++end;
+
+            while (end != _end && StrScanner::_isIdentChar(*end)) {
+                ++end;
+            }
+        }
+
+        _identBegin = _at;
+        _identEnd = end;
+        _identBuf.assign(_identBegin, _identEnd);
+    }
 
     void _skipComment();
     void _skipWhitespaces();
@@ -461,6 +554,22 @@ private:
     // string buffer
     std::string _strBuf;
 
+    /*
+     * Last skip of whitespaces and comments (see
+     * skipCommentsAndWhitespaces()): from `_skipFrom` to `_skipTo`, the
+     * latter being at line `_skipToNbLines` which begins
+     * at `_skipToLineBegin`.
+     */
+    const char *_skipFrom = nullptr;
+    const char *_skipTo = nullptr;
+    const char *_skipToLineBegin = nullptr;
+    Size _skipToNbLines = 0;
+
+    // last lexed identifier (see _lexIdent())
+    const char *_identBegin = nullptr;
+    const char *_identEnd = nullptr;
+    std::string _identBuf;
+
     // real number string regex
     static const std::regex _realRegex;
 };
@@ -469,37 +578,15 @@ template <bool SkipWsV, bool SkipCommentsV>
 const std::string *StrScanner::tryScanIdent()
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
+    this->_lexIdent();
 
-    // first character: `_` or alpha
-    const auto c = this->_scanAnyChar();
-
-    if (c < 0) {
+    if (_identEnd == _identBegin) {
+        // no identifier
         return nullptr;
     }
 
-    auto chr = static_cast<char>(c);
-
-    if (chr != '_' && !std::isalpha(chr)) {
-        --_at;
-        return nullptr;
-    }
-
-    _strBuf.clear();
-    _strBuf.push_back(chr);
-
-    // other characters: `_` or alphanumeric
-    while (!this->isDone()) {
-        chr = *_at;
-
-        if (chr != '_' && !std::isalpha(chr) && !std::isdigit(chr)) {
-            break;
-        }
-
-        _strBuf.push_back(chr);
-        ++_at;
-    }
-
-    return &_strBuf;
+    _at = _identEnd;
+    return &_identBuf;
 }
 
 template <bool SkipWsV, bool SkipCommentsV>
@@ -574,6 +661,12 @@ bool StrScanner::tryScanToken(const char * const token)
     }
 
     if (*tokenAt != '\0') {
+        return false;
+    }
+
+    // check token boundary
+    if (tokenAt != token && StrScanner::_isIdentChar(tokenAt[-1]) && at != _end &&
+            StrScanner::_isIdentChar(*at)) {
         return false;
     }
 

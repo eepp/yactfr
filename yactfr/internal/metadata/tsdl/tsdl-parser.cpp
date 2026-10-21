@@ -780,67 +780,45 @@ bool TsdlParser::_tryParseRootBlock()
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
     const auto loc = _ss.loc();
+    const auto kw = this->_peekKw();
 
-    if (this->_tryParseDtAlias()) {
-        return true;
+    if (TsdlParser::_kwStartsDtAlias(kw)) {
+        return this->_tryParseDtAlias();
     }
 
-    try {
-        if (this->_tryParseErtBlock()) {
-            return true;
+    const auto tryParseBlock = [this, &loc](bool (TsdlParser::*parseFunc)(),
+                                            const char * const name) {
+        try {
+            return (this->*parseFunc)();
+        } catch (TextParseError& error) {
+            appendMsgToTextParseError(error, std::string {"In `"} + name + "` root block:", loc);
+            throw;
         }
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, "In `event` root block:", loc);
-        throw;
-    }
+    };
 
-    try {
-        if (this->_tryParseDstBlock()) {
-            return true;
-        }
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, "In `stream` root block:", loc);
-        throw;
-    }
+    switch (kw) {
+    case _tKw::Event:
+        return tryParseBlock(&TsdlParser::_tryParseErtBlock, "event");
 
-    try {
-        if (this->_tryParseTraceTypeBlock()) {
-            return true;
-        }
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, "In `trace` root block:", loc);
-        throw;
-    }
+    case _tKw::Stream:
+        return tryParseBlock(&TsdlParser::_tryParseDstBlock, "stream");
 
-    try {
-        if (this->_tryParseEnvBlock()) {
-            return true;
-        }
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, "In `env` root block:", loc);
-        throw;
-    }
+    case _tKw::Trace:
+        return tryParseBlock(&TsdlParser::_tryParseTraceTypeBlock, "trace");
 
-    try {
-        if (this->_tryParseClkTypeBlock()) {
-            return true;
-        }
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, "In `clock` root block:", loc);
-        throw;
-    }
+    case _tKw::Env:
+        return tryParseBlock(&TsdlParser::_tryParseEnvBlock, "env");
 
-    try {
+    case _tKw::Clock:
+        return tryParseBlock(&TsdlParser::_tryParseClkTypeBlock, "clock");
+
+    case _tKw::Callsite:
         // parse callsite, even if we don't care about it
-        if (this->_tryParseCallsiteBlock()) {
-            return true;
-        }
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, "In `callsite` root block:", loc);
-        throw;
-    }
+        return tryParseBlock(&TsdlParser::_tryParseCallsiteBlock, "callsite");
 
-    return false;
+    default:
+        return false;
+    }
 }
 
 void TsdlParser::_expectToken(const char * const token)
@@ -1094,77 +1072,76 @@ PseudoDt::Up TsdlParser::_tryParseFullDt(const bool addDtAlias, std::string * co
         dtAliasName->clear();
     }
 
-    const auto setIsCompound = [isCompound](const bool val) {
-        if (isCompound) {
-            *isCompound = val;
+    const auto tryParse = [&loc](auto&& parseFunc, const char * const name) {
+        try {
+            return parseFunc();
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc, std::string {"In `"} + name + "` block:", loc);
+            throw;
         }
     };
 
-    try {
-        if (auto pseudoDt = this->_tryParseFlIntType()) {
-            setIsCompound(false);
-            return pseudoDt;
+    PseudoDt::Up pseudoDt;
+    auto parsedCompound = false;
+
+    // only try what can start with the keyword at the current position
+    switch (this->_peekKw()) {
+    case _tKw::Integer:
+        pseudoDt = tryParse([this] {
+            return this->_tryParseFlIntType();
+        }, "integer");
+        break;
+
+    case _tKw::String:
+        pseudoDt = tryParse([this] {
+            return this->_tryParseNtStrType();
+        }, "string");
+        break;
+
+    case _tKw::Enum:
+        pseudoDt = tryParse([this, addDtAlias, dtAliasName] {
+            return this->_tryParseFlEnumType(addDtAlias, dtAliasName);
+        }, "enum");
+        parsedCompound = true;
+        break;
+
+    case _tKw::FloatingPoint:
+        pseudoDt = tryParse([this] {
+            return this->_tryParseFlFloatType();
+        }, "floating_point");
+        break;
+
+    case _tKw::Struct:
+        pseudoDt = tryParse([this, addDtAlias, dtAliasName] {
+            return this->_tryParseStructType(addDtAlias, dtAliasName);
+        }, "struct");
+        parsedCompound = true;
+        break;
+
+    case _tKw::Variant:
+        pseudoDt = tryParse([this, addDtAlias, dtAliasName] {
+            return this->_tryParseVarType(addDtAlias, dtAliasName);
+        }, "variant");
+        parsedCompound = true;
+        break;
+
+    default:
+        break;
+    }
+
+    if (!pseudoDt) {
+        if (dtAliasName) {
+            dtAliasName->clear();
         }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In `integer` block:", loc);
-        throw;
+
+        return nullptr;
     }
 
-    try {
-        if (auto pseudoDt = this->_tryParseNtStrType()) {
-            setIsCompound(false);
-            return pseudoDt;
-        }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In `string` block:", loc);
-        throw;
+    if (isCompound) {
+        *isCompound = parsedCompound;
     }
 
-    try {
-        if (auto pseudoDt = this->_tryParseFlEnumType(addDtAlias, dtAliasName)) {
-            setIsCompound(true);
-            return pseudoDt;
-        }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In `enum` block:", loc);
-        throw;
-    }
-
-    try {
-        if (auto pseudoDt = this->_tryParseFlFloatType()) {
-            setIsCompound(false);
-            return pseudoDt;
-        }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In `floating_point` block:", loc);
-        throw;
-    }
-
-    try {
-        if (auto pseudoDt = this->_tryParseStructType(addDtAlias, dtAliasName)) {
-            setIsCompound(true);
-            return pseudoDt;
-        }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In `struct` block:", loc);
-        throw;
-    }
-
-    try {
-        if (auto pseudoDt = this->_tryParseVarType(addDtAlias, dtAliasName)) {
-            setIsCompound(true);
-            return pseudoDt;
-        }
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In `variant` block:", loc);
-        throw;
-    }
-
-    if (dtAliasName) {
-        dtAliasName->clear();
-    }
-
-    return nullptr;
+    return pseudoDt;
 }
 
 void TsdlParser::_insertFastPseudoFlIntType(const char * const begin, const char * const end,
@@ -2164,19 +2141,23 @@ bool TsdlParser::_tryParseTraceTypeBlock()
             break;
         }
 
-        // try to parse packet header type
-        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktHeaderType,
-                                                   "packet", "header")) {
-            if (pseudoPktHeaderType) {
-                throwTextParseError("Duplicate `packet.header` scope.", _ss.loc());
-            }
+        const auto kw = this->_peekKw();
 
-            pseudoPktHeaderType = std::move(pseudoDt);
-            continue;
+        // try to parse packet header type
+        if (kw == _tKw::Packet) {
+            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktHeaderType,
+                                                       "packet", "header")) {
+                if (pseudoPktHeaderType) {
+                    throwTextParseError("Duplicate `packet.header` scope.", _ss.loc());
+                }
+
+                pseudoPktHeaderType = std::move(pseudoDt);
+                continue;
+            }
         }
 
         // try to parse data type alias
-        if (this->_tryParseDtAlias()) {
+        if (TsdlParser::_kwStartsDtAlias(kw) && this->_tryParseDtAlias()) {
             continue;
         }
 
@@ -2324,41 +2305,45 @@ bool TsdlParser::_tryParseDstBlock()
             break;
         }
 
-        // try to parse packet context type
-        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktCtxType,
-                                                   "packet", "context")) {
-            if (pseudoPktCtxType) {
-                throwTextParseError("Duplicate `packet.context` scope.", _ss.loc());
+        const auto kw = this->_peekKw();
+
+        if (kw == _tKw::Packet) {
+            // try to parse packet context type
+            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktCtxType,
+                                                       "packet", "context")) {
+                if (pseudoPktCtxType) {
+                    throwTextParseError("Duplicate `packet.context` scope.", _ss.loc());
+                }
+
+                pseudoPktCtxType = std::move(pseudoDt);
+                continue;
+            }
+        } else if (kw == _tKw::Event) {
+            // try to parse event record header type
+            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErHeaderType,
+                                                       "event", "header", false)) {
+                if (pseudoErHeaderType) {
+                    throwTextParseError("Duplicate `event.header` scope.", _ss.loc());
+                }
+
+                pseudoErHeaderType = std::move(pseudoDt);
+                continue;
             }
 
-            pseudoPktCtxType = std::move(pseudoDt);
-            continue;
-        }
+            // try to parse event record common context type
+            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErCommonCtxType,
+                                                       "event", "context", false)) {
+                if (pseudoErCommonCtxType) {
+                    throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
+                }
 
-        // try to parse event record header type
-        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErHeaderType,
-                                                   "event", "header", false)) {
-            if (pseudoErHeaderType) {
-                throwTextParseError("Duplicate `event.header` scope.", _ss.loc());
+                pseudoErCommonCtxType = std::move(pseudoDt);
+                continue;
             }
-
-            pseudoErHeaderType = std::move(pseudoDt);
-            continue;
-        }
-
-        // try to parse event record common context type
-        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErCommonCtxType,
-                                                   "event", "context", false)) {
-            if (pseudoErCommonCtxType) {
-                throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
-            }
-
-            pseudoErCommonCtxType = std::move(pseudoDt);
-            continue;
         }
 
         // try to parse data type alias
-        if (this->_tryParseDtAlias()) {
+        if (TsdlParser::_kwStartsDtAlias(kw) && this->_tryParseDtAlias()) {
             continue;
         }
 
@@ -2437,28 +2422,34 @@ bool TsdlParser::_tryParseErtBlock()
             break;
         }
 
-        // try to parse specific context type
-        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErSpecCtxType, "context")) {
-            if (pseudoSpecCtxType) {
-                throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
+        const auto kw = this->_peekKw();
+
+        if (kw == _tKw::Context) {
+            // try to parse specific context type
+            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErSpecCtxType,
+                                                       "context")) {
+                if (pseudoSpecCtxType) {
+                    throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
+                }
+
+                pseudoSpecCtxType = std::move(pseudoDt);
+                continue;
             }
+        } else if (kw == _tKw::Fields) {
+            // try to parse payload type
+            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErPayloadType,
+                                                       "fields")) {
+                if (pseudoPayloadType) {
+                    throwTextParseError("Duplicate `event.fields` scope.", _ss.loc());
+                }
 
-            pseudoSpecCtxType = std::move(pseudoDt);
-            continue;
-        }
-
-        // try to parse payload type
-        if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErPayloadType, "fields")) {
-            if (pseudoPayloadType) {
-                throwTextParseError("Duplicate `event.fields` scope.", _ss.loc());
+                pseudoPayloadType = std::move(pseudoDt);
+                continue;
             }
-
-            pseudoPayloadType = std::move(pseudoDt);
-            continue;
         }
 
         // try to parse data type alias
-        if (this->_tryParseDtAlias()) {
+        if (TsdlParser::_kwStartsDtAlias(kw) && this->_tryParseDtAlias()) {
             continue;
         }
 
@@ -2736,12 +2727,12 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
         StrScannerRejecter ssRej {_ss};
 
         if (auto ident = _ss.tryScanIdent()) {
-            const std::string kw {*ident};
+            const auto kw = TsdlParser::_kwFromIdent(*ident);
 
-            if (kw == "enum" || kw == "struct") {
+            if (kw == _tKw::Enum || kw == _tKw::Struct) {
                 if ((ident = _ss.tryScanIdent())) {
                     if (!_ss.tryScanToken("{") && !_ss.tryScanToken(":")) {
-                        std::string dtAliasName = kw + ' ';
+                        std::string dtAliasName {kw == _tKw::Enum ? "enum " : "struct "};
 
                         dtAliasName += *ident;
 
@@ -2843,11 +2834,21 @@ bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
             break;
         }
 
+        const auto kw = TsdlParser::_kwFromIdent(*ident);
+
         // disallow reserved words
-        if (*ident == "integer" || *ident == "floating_point" || *ident == "enum" ||
-                *ident == "string" || *ident == "struct" || *ident == "variant" ||
-                *ident == "trace" || *ident == "stream" ||
-                *ident == "clock" || *ident == "event" || *ident == "env") {
+        switch (kw) {
+        case _tKw::Integer:
+        case _tKw::FloatingPoint:
+        case _tKw::Enum:
+        case _tKw::String:
+        case _tKw::Struct:
+        case _tKw::Variant:
+        case _tKw::Trace:
+        case _tKw::Stream:
+        case _tKw::Clock:
+        case _tKw::Event:
+        case _tKw::Env:
             if (expect) {
                 std::ostringstream ss;
 
@@ -2856,12 +2857,12 @@ bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
             } else {
                 return false;
             }
+
+        default:
+            break;
         }
 
-        if (*ident == "const" || *ident == "char" || *ident == "double" || *ident == "float" ||
-                *ident == "int" || *ident == "long" || *ident == "short" || *ident == "signed" ||
-                *ident == "unsigned" || *ident == "void" || *ident == "_Bool" ||
-                *ident == "_Complex" || *ident == "_Imaginary") {
+        if (TsdlParser::_kwIsCTypeWord(kw)) {
             isMulti = true;
         } else {
             if (isMulti) {
@@ -3284,6 +3285,155 @@ const std::string *TsdlParser::_tryScanLitStr()
     }
 
     return nullptr;
+}
+
+TsdlParser::_tKw TsdlParser::_kwFromIdent(const std::string& ident) noexcept
+{
+    if (ident.empty()) {
+        return _tKw::None;
+    }
+
+    // switch on the first character to limit string comparisons
+    switch (ident.front()) {
+    case '_':
+        if (ident == "_Bool") {
+            return _tKw::CBool;
+        } else if (ident == "_Complex") {
+            return _tKw::CComplex;
+        } else if (ident == "_Imaginary") {
+            return _tKw::CImaginary;
+        }
+
+        break;
+
+    case 'a':
+        if (ident == "align") {
+            return _tKw::Align;
+        }
+
+        break;
+
+    case 'c':
+        if (ident == "callsite") {
+            return _tKw::Callsite;
+        } else if (ident == "char") {
+            return _tKw::CChar;
+        } else if (ident == "clock") {
+            return _tKw::Clock;
+        } else if (ident == "const") {
+            return _tKw::CConst;
+        } else if (ident == "context") {
+            return _tKw::Context;
+        }
+
+        break;
+
+    case 'd':
+        if (ident == "double") {
+            return _tKw::CDouble;
+        }
+
+        break;
+
+    case 'e':
+        if (ident == "enum") {
+            return _tKw::Enum;
+        } else if (ident == "env") {
+            return _tKw::Env;
+        } else if (ident == "event") {
+            return _tKw::Event;
+        }
+
+        break;
+
+    case 'f':
+        if (ident == "fields") {
+            return _tKw::Fields;
+        } else if (ident == "float") {
+            return _tKw::CFloat;
+        } else if (ident == "floating_point") {
+            return _tKw::FloatingPoint;
+        }
+
+        break;
+
+    case 'i':
+        if (ident == "int") {
+            return _tKw::CInt;
+        } else if (ident == "integer") {
+            return _tKw::Integer;
+        }
+
+        break;
+
+    case 'l':
+        if (ident == "long") {
+            return _tKw::CLong;
+        }
+
+        break;
+
+    case 'p':
+        if (ident == "packet") {
+            return _tKw::Packet;
+        }
+
+        break;
+
+    case 's':
+        if (ident == "short") {
+            return _tKw::CShort;
+        } else if (ident == "signed") {
+            return _tKw::CSigned;
+        } else if (ident == "stream") {
+            return _tKw::Stream;
+        } else if (ident == "string") {
+            return _tKw::String;
+        } else if (ident == "struct") {
+            return _tKw::Struct;
+        }
+
+        break;
+
+    case 't':
+        if (ident == "trace") {
+            return _tKw::Trace;
+        } else if (ident == "typealias") {
+            return _tKw::Typealias;
+        } else if (ident == "typedef") {
+            return _tKw::Typedef;
+        }
+
+        break;
+
+    case 'u':
+        if (ident == "unsigned") {
+            return _tKw::CUnsigned;
+        }
+
+        break;
+
+    case 'v':
+        if (ident == "variant") {
+            return _tKw::Variant;
+        } else if (ident == "void") {
+            return _tKw::CVoid;
+        }
+
+        break;
+
+    default:
+        break;
+    }
+
+    return _tKw::None;
+}
+
+TsdlParser::_tKw TsdlParser::_peekKw()
+{
+    const auto ident = _ss.peekIdent();
+
+    return ident ? TsdlParser::_kwFromIdent(*ident) : _tKw::None;
 }
 
 void TsdlParser::_skipCommentsAndWhitespacesAndSemicolons()
