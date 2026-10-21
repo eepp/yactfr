@@ -30,7 +30,6 @@ import moultipart
 import normand
 import difflib
 import pathlib
-from dataclasses import dataclass
 
 
 def _metadata(orig_metadata):
@@ -82,10 +81,11 @@ def _create_streams(descr_path, out_dir_path):
     return expect_part.content
 
 
-@dataclass(frozen=True)
 class UnexpectedOutput(Exception):
-    output: str
-    expected: str
+    def __init__(self, output: str, expected: str):
+        super().__init__(output, expected)
+        self.output = output
+        self.expected = expected
 
 
 class _StreamsItem(pytest.Item):
