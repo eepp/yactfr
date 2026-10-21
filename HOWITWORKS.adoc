@@ -2,7 +2,7 @@
 
 = How yactfr works
 Philippe Proulx
-3 April 2024
+21 October 2026
 :toc: left
 :nofooter:
 
@@ -37,6 +37,7 @@ documented uses unabbreviated names.
 |Bio |Bit order
 |Bo |Byte order
 |Bool |Boolean
+|Buf |Buffer
 |Cand |Candidate
 |Cc |Clock class (CTF{nbsp}2)
 |Clk |Clock
@@ -44,6 +45,7 @@ documented uses unabbreviated names.
 |Col |Column
 |Conv |Conversion
 |Ctx |Context
+|Cu |Code unit
 |Cur |Current
 |Decr |Decrement
 |Def |Default
@@ -63,9 +65,11 @@ documented uses unabbreviated names.
 |Erc |Event record class (CTF{nbsp}2)
 |Ert |Event record type
 |Exc |Exception
+|Ext |Extension (CTF{nbsp}2)
 |Fc |Field class (CTF{nbsp}2)
 |Fl |Fixed-length
 |Float |Floating point number
+|Frag |Fragment (CTF{nbsp}2)
 |Freq |Frequency
 |Id |Identifier (numeric)
 |Ident |Identifier (language)
@@ -76,11 +80,14 @@ documented uses unabbreviated names.
 |Le |Little-endian
 |Len |Length
 |Lex |Lexical
+|Lit |Literal
 |Loc |Location
 |Max |Maximum
 |Min |Minimum
+|Mmap |Memory map
 |Ns |Namespace
 |Nt |Null-terminated
+|Obj |Object
 |Opt |Option, optional
 |Orig |Origin
 |Pkt |Packet
@@ -89,6 +96,7 @@ documented uses unabbreviated names.
 |Prec |Precision
 |Pref |Preferred
 |Proc |Procedure
+|Prop |Property
 |Rec |Recursive
 |Ref |Reference
 |Rej |Rejecter
@@ -247,11 +255,77 @@ debug, and modify.
 Its validation relies a lot on `internal::JsonAnyFragValReq`, a JSON
 value requirement to validate a single CTF{nbsp}2 fragment.
 
+=== Pseudo types
+
+Neither parser builds yactfr metadata objects directly. Both build a
+mutable _pseudo trace type_ (`internal::PseudoTraceType`) instead, and
+then convert it to an immutable trace type at the very end with
+`internal::traceTypeFromPseudoTraceType()`.
+
+This intermediate layer exists because yactfr metadata objects are
+immutable while a parser needs to modify its types after creating them.
+For example:
+
+* TSDL data type aliases may contain _relative_ data locations
+  (lengths and selectors), but the yactfr API only deals with
+  _absolute_ data locations. The same alias may also be used in
+  different places, which means different absolute data locations.
+
+* A TSDL fixed-length unsigned integer type may be mapped to a clock
+  type, may get an implicit role from its structure member type name,
+  or may have an encoding which only serves to detect TSDL string
+  types (`internal::PseudoFlUIntType`).
+
+* The TSDL parser adds roles and sets the default clock type of data
+  stream types once the whole document is parsed.
+
+The pseudo types are in `pseudo-types.hpp`. Scalar types which never
+need to change are created as actual yactfr data types right away and
+wrapped within `internal::PseudoScalarDtWrapper` objects to avoid
+copying them later.
+
+The parser keeps pseudo event record types outside of their pseudo data
+stream type: `internal::PseudoTraceType` maps data stream type IDs to
+_orphan_ pseudo event record types (`internal::PseudoOrphanErt`). This
+is because TSDL may define an event record type before its data stream
+type, or without one at all (implicit data stream type with ID{nbsp}0).
+The conversion attaches the orphans to their data stream types.
+
+`internal::traceTypeFromPseudoTraceType()`:
+
+. Validates the whole pseudo trace type (`validate()` methods), for
+  example to report an event record type which needs a data stream
+  type which doesn't exist.
+
+. For each root pseudo data type (packet header, packet context, and
+  so on), `internal::dtFromPseudoRootDt()`:
++
+.. Converts each pseudo data location to an absolute yactfr data
+   location (`set-pseudo-dt-data-loc.hpp`).
+
+.. Sets the pre-order (decoding order) position within its scope of
+   each pseudo data type (`set-pseudo-dt-pos-in-scope.hpp`).
++
+Those positions make it simpler to validate that the length and
+selector types of a given data type are decoded _before_ it.
+
+.. Recursively converts the pseudo data types to yactfr data types,
+   finding and validating the length and selector types on the way.
+
+. Builds the final data stream types, event record types, and
+  trace type.
+
+All the parsing and validation errors are `TextParseError` exceptions
+containing the text location (`TextLocation`) of the problem. Lower
+levels throw the initial error, and upper levels append context messages
+on the way up (`internal::appendMsgToTextParseError()`), for example
+"`In data stream type fragment:`".
+
 [[pkt-proc]]
 == Packet procedure
 
 A trace type gets translated into a _packet procedure_ once you call its
-`internal::TraceTypeImpl::packetProc()` accessor method. It's lazily
+`internal::TraceTypeImpl::pktProc()` accessor method. It's lazily
 built because the user could need a trace type without having to read
 data streams with it, for example to inspect a metadata stream file. The
 trace type implementation itself owns the packet procedure, and the
