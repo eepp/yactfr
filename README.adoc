@@ -2,7 +2,7 @@
 
 = yactfr
 Philippe Proulx
-21 October 2026
+24 October 2026
 :idprefix:
 :idseparator: -
 ifdef::env-github[]
@@ -152,20 +152,6 @@ functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 * Packet lengths must be multiples of 8 bits (I'm still not sure, but
   this could be enforced by the specification anyway), and be at least
   8{nbsp}bits.
-
-* TSDL (CTF{nbsp}1.8): Doesn't handle single-line comment continuation
-  when the line ends with `\`:
-+
---
-----
-event {
-    name = "hello"; // this is a comment \
-    id = 23; we're still in the comment started above here
-    id = 42;
-    ...
-};
-----
---
 
 * API and ABI backward compatibility is not guaranteed at this point.
 +

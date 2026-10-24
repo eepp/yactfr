@@ -1,0 +1,24 @@
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8; // this comment continues \
+  byte_order = be; on this line, \
+  and on this one too
+  byte_order = le;
+};
+
+// a backslash \ which isn't at the end of the line doesn't continue
+stream {
+};
+
+event { // continued comment \
+  fields := struct { string nope; };
+  name = event;
+
+  fields := struct {
+    string a; // \\
+    string nope;
+    string b; // \ \ not continued
+  };
+};

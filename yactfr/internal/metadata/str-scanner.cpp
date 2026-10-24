@@ -217,10 +217,26 @@ void StrScanner::_skipComment()
                 _at += 2;
 
                 while (!this->isDone()) {
-                    /*
-                     * TODO: Handle `\` to continue the comment on the
-                     * next line.
-                     */
+                    if (*_at == '\\') {
+                        /*
+                         * Like in C, a `\` character immediately
+                         * followed by a newline (LF or CRLF) continues
+                         * the comment on the next line.
+                         */
+                        auto next = _at + 1;
+
+                        if (next != _end && *next == '\r') {
+                            ++next;
+                        }
+
+                        if (next != _end && *next == '\n') {
+                            _at = next;
+                            this->_checkNewLine();
+                            ++_at;
+                            continue;
+                        }
+                    }
+
                     if (*_at == '\n') {
                         /*
                          * We don't set a newline here because the

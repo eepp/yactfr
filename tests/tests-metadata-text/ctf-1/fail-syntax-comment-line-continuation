@@ -1,0 +1,24 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8 // this comment continues \
+  ;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string a;
+  };
+};
+---
+[3:1] In `trace` root block:
+[7:3] Expecting `;`.
