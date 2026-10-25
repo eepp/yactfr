@@ -524,6 +524,16 @@ public:
 
     void nextElem()
     {
+        /*
+         * Fast path: most elements come from executing instructions.
+         *
+         * In that case, skip calling _handleState(), which is too large
+         * to inline, and its state switch.
+         */
+        if (_pos.state() == VmState::ExecInstr && this->_stateExecInstr()) {
+            return;
+        }
+
         while (!this->_handleState());
     }
 
