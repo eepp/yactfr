@@ -394,6 +394,7 @@ bool Vm::_newDataBlock(const Index offsetInElemSeqBytes, const Size sizeBytes)
     _bufAddr = static_cast<const std::uint8_t *>(dataBlock->address());
     _bufLenBits = dataBlock->size() * 8;
     _bufOffsetInCurPktBits = offsetInElemSeqBytes * 8 - _pos.curPktOffsetInElemSeqBits;
+    this->_updateBufEnd();
     return true;
 }
 

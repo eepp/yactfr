@@ -27,6 +27,19 @@
 #include "fl-int-rev.hpp"
 #include "utils.hpp"
 
+/*
+ * The decoding speed depends on keeping some small checks inline and
+ * their slow paths out of line, whatever the inlining decisions of
+ * the compiler.
+ *
+ * Hiding the VM classes also avoids calling their methods through
+ * the PLT.
+ */
+#define YACTFR_VM_HIDDEN            __attribute__((visibility("hidden")))
+#define YACTFR_VM_ALWAYS_INLINE     __attribute__((always_inline))
+#define YACTFR_VM_NOINLINE          __attribute__((noinline))
+#define YACTFR_VM_LIKELY(_cond)     __builtin_expect(static_cast<bool>(_cond), 1)
+
 namespace yactfr {
 namespace internal {
 
@@ -96,7 +109,7 @@ struct VmStackFrame final
  * This contains the whole state of a yactfr VM _except_ for everything
  * related to data source/buffering.
  */
-class VmPos final
+class YACTFR_VM_HIDDEN VmPos final
 {
 public:
     explicit VmPos(const PktProc& pktProc);
@@ -457,7 +470,7 @@ public:
     std::uint64_t defClkVal = 0;
 };
 
-class ItInfos final
+class YACTFR_VM_HIDDEN ItInfos final
 {
 public:
     void elemFromOther(const VmPos& myPos, const VmPos& otherPos, const Element& otherElem)
@@ -506,7 +519,7 @@ public:
     const Element *elem = nullptr;
 };
 
-class Vm final
+class YACTFR_VM_HIDDEN Vm final
 {
 public:
     explicit Vm(DataSourceFactory& dataSrcFactory, const PktProc& pktProc,
@@ -830,6 +843,7 @@ private:
             _bufAddr += (_pos.curExpectedPktTotalLenBits / 8);
             _bufOffsetInCurPktBits = 0;
             _bufLenBits -= (_bufAddr - oldBufAddr) * 8;
+            this->_updateBufEnd();
         }
 
         this->_updateItForUser(_pos.elems.pktEnd, offset);
@@ -1199,7 +1213,17 @@ private:
         _it->_mark = 0;
     }
 
-    void _alignHead(const Size align)
+    YACTFR_VM_ALWAYS_INLINE void _alignHead(const Size align)
+    {
+        // fast path: already aligned
+        if (YACTFR_VM_LIKELY((_pos.headOffsetInCurPktBits & (align - 1)) == 0)) {
+            return;
+        }
+
+        this->_alignHeadSlow(align);
+    }
+
+    YACTFR_VM_NOINLINE void _alignHeadSlow(const Size align)
     {
         {
             const auto bitsToSkip = call([this, align] {
@@ -1285,7 +1309,17 @@ private:
         }
     }
 
-    void _requireContentBits(const Size bits)
+    YACTFR_VM_ALWAYS_INLINE void _requireContentBits(const Size bits)
+    {
+        // fast path: within the packet content and the current buffer
+        if (YACTFR_VM_LIKELY(bits <= _pos.remContentBitsInPkt() && bits <= this->_remBitsInBuf())) {
+            return;
+        }
+
+        this->_requireContentBitsSlow(bits);
+    }
+
+    YACTFR_VM_NOINLINE void _requireContentBitsSlow(const Size bits)
     {
         if (bits > _pos.remContentBitsInPkt()) {
             // going past the packet content
@@ -1305,7 +1339,7 @@ private:
 
     Size _remBitsInBuf() const noexcept
     {
-        return (_bufOffsetInCurPktBits + _bufLenBits) - _pos.headOffsetInCurPktBits;
+        return _bufEndOffsetInCurPktBits - _pos.headOffsetInCurPktBits;
     }
 
     void _consumeExistingBits(const Size bitsToConsume) noexcept
@@ -1314,11 +1348,17 @@ private:
         _pos.headOffsetInCurPktBits += bitsToConsume;
     }
 
+    void _updateBufEnd() noexcept
+    {
+        _bufEndOffsetInCurPktBits = _bufOffsetInCurPktBits + _bufLenBits;
+    }
+
     void _resetBuffer() noexcept
     {
         _bufAddr = nullptr;
         _bufLenBits = 0;
         _bufOffsetInCurPktBits = _pos.headOffsetInCurPktBits;
+        this->_updateBufEnd();
     }
 
     // instruction handlers
@@ -1594,6 +1634,13 @@ private:
         this->_consumeExistingBits(LenBitsV);
     }
 
+    [[noreturn]] YACTFR_VM_NOINLINE void _throwByteOrderChangeWithinByte(const ByteOrder bo)
+    {
+        throw ByteOrderChangeWithinByteDecodingError {
+            _pos.headOffsetInElemSeqBits(), *_pos.lastFlBitArrayBo, bo
+        };
+    }
+
     template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
     RetT _readFlInt(const Instr& instr)
     {
@@ -1609,11 +1656,7 @@ private:
                  * previous fixed-length bit array.
                  */
                 if (readFlBitArrayInstr.bo() != *_pos.lastFlBitArrayBo) {
-                    throw ByteOrderChangeWithinByteDecodingError {
-                        _pos.headOffsetInElemSeqBits(),
-                        *_pos.lastFlBitArrayBo,
-                        readFlBitArrayInstr.bo()
-                    };
+                    this->_throwByteOrderChangeWithinByte(readFlBitArrayInstr.bo());
                 }
             }
         }
@@ -1852,6 +1895,9 @@ private:
 
     // offset of buffer within current packet (bits)
     Index _bufOffsetInCurPktBits = 0;
+
+    // `_bufOffsetInCurPktBits + _bufLenBits`
+    Index _bufEndOffsetInCurPktBits = 0;
 
     // owning element sequence iterator
     ElementSequenceIterator *_it;
