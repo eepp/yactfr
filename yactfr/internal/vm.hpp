@@ -572,8 +572,27 @@ private:
     };
 
 private:
-    template <Instr::Kind InstrKindV>
-    void _initExecFunc(_tExecReaction (Vm::*)(const Instr&)) noexcept;
+    using _tExecMemberFunc = _tExecReaction (Vm::*)(const Instr&);
+
+    /*
+     * Calls the instruction handler `FuncV` with `instr`.
+     *
+     * `_execFuncs` contains pointers to instantiations of this plain
+     * function instead of pointers to member functions: calling the
+     * latter requires loading the `this` adjustment from the table,
+     * delaying any VM access within the handler.
+     */
+    template <_tExecMemberFunc FuncV>
+    static _tExecReaction _execThunk(Vm& vm, const Instr& instr)
+    {
+        return (vm.*FuncV)(instr);
+    }
+
+    template <Instr::Kind InstrKindV, _tExecMemberFunc FuncV>
+    void _initExecFunc() noexcept
+    {
+        _execFuncs[static_cast<unsigned int>(InstrKindV)] = &Vm::_execThunk<FuncV>;
+    }
 
     void _initExecFuncs() noexcept;
     bool _newDataBlock(Index offsetInElemSeqBytes, Size sizeBytes);
@@ -1154,7 +1173,7 @@ private:
 
     _tExecReaction _exec(const Instr& instr)
     {
-        return (this->*_execFuncs[static_cast<Index>(instr.kind())])(instr);
+        return _execFuncs[static_cast<Index>(instr.kind())](*this, instr);
     }
 
     void _updateItForUser(const Element& elem, const Index offset) noexcept
@@ -1819,7 +1838,7 @@ private:
     }
 
 private:
-    using ExecFunc = _tExecReaction (Vm::*)(const Instr&);
+    using ExecFunc = _tExecReaction (*)(Vm&, const Instr&);
 
 private:
     DataSourceFactory *_dataSrcFactory;
@@ -1843,12 +1862,6 @@ private:
     // position (whole state of the VM)
     VmPos _pos;
 };
-
-template <Instr::Kind InstrKindV>
-void Vm::_initExecFunc(const ExecFunc execFunc) noexcept
-{
-    _execFuncs[static_cast<unsigned int>(InstrKindV)] = execFunc;
-}
 
 } // namespace internal
 } // namespace yactfr
