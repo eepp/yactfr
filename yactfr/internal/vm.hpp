@@ -60,28 +60,21 @@ enum class VmState {
 // VM stack frame
 struct VmStackFrame final
 {
-    explicit VmStackFrame(const Proc * const proc, const VmState parentState) :
-        proc {proc ? &proc->rawProc() : nullptr},
-        parentState {parentState}
-    {
-        if (proc) {
-            it = proc->rawProc().begin();
-        }
-    }
-
     /*
-     * Base procedure (container of `it` below).
+     * Base procedure (container of `VmPos::instrIt` while this frame is
+     * the top frame).
      *
      * May be `nullptr`.
      */
     const Proc::Raw *proc;
 
     /*
-     * _Next_ instruction to execute (part of `*proc` above).
+     * Value of `VmPos::instrIt` when this frame was pushed, that is,
+     * the next instruction of the parent frame.
      *
-     * Not needed if `proc` is `nullptr`.
+     * VmPos::stackPop() restores it.
      */
-    Proc::RawIt it;
+    Proc::RawIt parentInstrIt;
 
     // state when this frame was created
     VmState parentState;
@@ -122,55 +115,81 @@ public:
 
     void stackPush(const Proc * const proc = nullptr)
     {
-        stack.push_back(VmStackFrame {proc, theState});
+        if (stackEnd == stackCapEnd) {
+            this->_growStack();
+        }
+
+        /*
+         * Write each field directly instead of copying a temporary
+         * frame: GCC may copy such a temporary with a single wide load
+         * which the CPU can't forward from the narrower stores which
+         * build it, therefore waiting for them to complete.
+         */
+        const auto frame = stackEnd;
+
+        frame->proc = proc ? &proc->rawProc() : nullptr;
+        frame->parentInstrIt = instrIt;
+        frame->parentState = theState;
+        frame->rem = 0;
+        stackEnd = frame + 1;
+
+        if (proc) {
+            instrIt = proc->rawProc().begin();
+        }
+    }
+
+    bool stackIsEmpty() const noexcept
+    {
+        return stackEnd == stack.data();
     }
 
     VmStackFrame& stackTop() noexcept
     {
-        assert(!stack.empty());
-        return stack.back();
+        assert(!this->stackIsEmpty());
+        return stackEnd[-1];
     }
 
-    void stackPop()
+    void stackPop() noexcept
     {
-        assert(!stack.empty());
-        stack.pop_back();
+        assert(!this->stackIsEmpty());
+        --stackEnd;
+        instrIt = stackEnd->parentInstrIt;
     }
 
     void setParentStateAndStackPop() noexcept
     {
-        assert(!stack.empty());
+        assert(!this->stackIsEmpty());
         theState = this->stackTop().parentState;
         this->stackPop();
     }
 
     void gotoNextInstr()
     {
-        ++this->stackTop().it;
+        ++instrIt;
     }
 
     void gotoNextArrayElemInstr()
     {
         auto& stackTop = this->stackTop();
 
-        ++stackTop.it;
+        ++instrIt;
 
-        if (stackTop.it == stackTop.proc->end()) {
+        if (instrIt == stackTop.proc->end()) {
             assert(stackTop.rem > 0);
             --stackTop.rem;
-            stackTop.it = stackTop.proc->begin();
+            instrIt = stackTop.proc->begin();
         }
     }
 
     void loadNewProc(const Proc& proc)
     {
-        assert(stack.empty());
+        assert(this->stackIsEmpty());
         this->stackPush(&proc);
     }
 
     const Instr& nextInstr() noexcept
     {
-        return **this->stackTop().it;
+        return **instrIt;
     }
 
     void saveVal(const Index pos) noexcept
@@ -243,7 +262,7 @@ public:
         curErProc = nullptr;
         curExpectedPktTotalLenBits = sizeUnset;
         curExpectedPktContentLenBits = sizeUnset;
-        stack.clear();
+        stackEnd = stack.data();
         defClkVal = 0;
         std::fill(savedVals.begin(), savedVals.end(), savedValUnset);
 
@@ -270,6 +289,7 @@ public:
     }
 
 private:
+    void _growStack();
     void _initVectorsFromPktProc();
     void _setSimpleFromOther(const VmPos& other);
     void _setFromOther(const VmPos& other);
@@ -412,8 +432,23 @@ public:
     // current packet content length (bits)
     Size curExpectedPktContentLenBits;
 
-    // stack
+    /*
+     * Next instruction to execute (part of the procedure of the
+     * top frame).
+     *
+     * Keeping it here instead of within the top frame saves loading the
+     * address of the top frame for each instruction.
+     */
+    Proc::RawIt instrIt;
+
+    /*
+     * Stack frame storage: the frames of the stack are
+     * [`stack.data()`, `stackEnd`[, and `stackCapEnd` is
+     * `stack.data() + stack.size()`.
+     */
     std::vector<VmStackFrame> stack;
+    VmStackFrame *stackEnd = nullptr;
+    VmStackFrame *stackCapEnd = nullptr;
 
     // vector of saved values
     std::vector<std::uint64_t> savedVals;
@@ -641,7 +676,7 @@ private:
         while (true) {
             auto& stackTop = _pos.stackTop();
 
-            if (stackTop.it == stackTop.proc->end()) {
+            if (_pos.instrIt == stackTop.proc->end()) {
                 assert(stackTop.rem > 0);
                 --stackTop.rem;
 
@@ -650,7 +685,7 @@ private:
                     return false;
                 }
 
-                stackTop.it = stackTop.proc->begin();
+                _pos.instrIt = stackTop.proc->begin();
                 continue;
             }
 
@@ -824,7 +859,7 @@ private:
             return false;
         }
 
-        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8, false>(**_pos.stackTop().it);
+        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8, false>(_pos.nextInstr());
         _pos.metadataStreamUuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
         --_pos.stackTop().rem;
         return true;
@@ -995,10 +1030,10 @@ private:
 
             /*
              * When calling _setBitArrayElemBase() below,
-             * `**_pos.stackTop().it` is the current
+             * `_pos.nextInstr()` is the current
              * `ReadVlIntInstr` instruction.
              */
-            auto& instr = **_pos.stackTop().it;
+            auto& instr = _pos.nextInstr();
 
             assert(_pos.curVlIntElem);
             _pos.curVlIntElem->_len = _pos.curVlIntLenBits;
@@ -1709,7 +1744,7 @@ private:
              * kind `Instr::Kind::EndReadOpt`.
              */
             assert(!_pos.stackTop().proc->empty());
-            _pos.stackTop().it = _pos.stackTop().proc->end() - 1;
+            _pos.instrIt = _pos.stackTop().proc->end() - 1;
             assert(isEndReadOpt(_pos.nextInstr()));
         }
 

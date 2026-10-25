@@ -37,6 +37,18 @@ VmPos& VmPos::operator=(const VmPos& other)
 void VmPos::_initVectorsFromPktProc()
 {
     savedVals.resize(pktProc->savedValsCount(), sizeUnset);
+    stack.resize(16);
+    stackEnd = stack.data();
+    stackCapEnd = stack.data() + stack.size();
+}
+
+void VmPos::_growStack()
+{
+    const auto len = stackEnd - stack.data();
+
+    stack.resize(stack.size() * 2);
+    stackEnd = stack.data() + len;
+    stackCapEnd = stack.data() + stack.size();
 }
 
 void VmPos::_setSimpleFromOther(const VmPos& other)
@@ -65,6 +77,9 @@ void VmPos::_setFromOther(const VmPos& other)
 {
     this->_setSimpleFromOther(other);
     stack = other.stack;
+    stackEnd = stack.data() + (other.stackEnd - other.stack.data());
+    stackCapEnd = stack.data() + stack.size();
+    instrIt = other.instrIt;
     savedVals = other.savedVals;
     defClkVal = other.defClkVal;
 }
@@ -1493,7 +1508,7 @@ Vm::_tExecReaction Vm::_execEndPktPreambleProc(const Instr&)
 {
     // after packet header
     _pos.stackPop();
-    assert(_pos.stack.empty());
+    assert(_pos.stackIsEmpty());
 
     if (_pos.curDsPktProc) {
         _pos.loadNewProc(_pos.curDsPktProc->pktPreambleProc());
@@ -1508,7 +1523,7 @@ Vm::_tExecReaction Vm::_execEndDsPktPreambleProc(const Instr&)
 {
     // after packet context
     _pos.stackPop();
-    assert(_pos.stack.empty());
+    assert(_pos.stackIsEmpty());
     assert(_pos.curDsPktProc);
 
     if (_pos.curDsPktProc->dst().eventRecordTypes().empty()) {
@@ -1524,7 +1539,7 @@ Vm::_tExecReaction Vm::_execEndDsErPreambleProc(const Instr&)
 {
     // after second event record context
     _pos.stackPop();
-    assert(_pos.stack.empty());
+    assert(_pos.stackIsEmpty());
     assert(_pos.curErProc);
     _pos.loadNewProc(_pos.curErProc->proc());
     return _tExecReaction::ExecCurInstr;
@@ -1534,7 +1549,7 @@ Vm::_tExecReaction Vm::_execEndErProc(const Instr&)
 {
     // after event record payload
     _pos.stackPop();
-    assert(_pos.stack.empty());
+    assert(_pos.stackIsEmpty());
     _pos.state(VmState::EndEr);
     return _tExecReaction::ChangeState;
 }
