@@ -175,13 +175,24 @@ void Ctf2JsonSeqParser::_handleDtAliasFrag(const JsonObjVal& jsonFrag)
 
 void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
 {
+    if (_hasTraceTypeFrag) {
+        throwTextParseError("Duplicate trace type fragment.", jsonFrag.loc());
+    }
+
     if (_pseudoTraceType && !_pseudoTraceType->pseudoDsts().empty()) {
         throwTextParseError("Trace type fragment must precede any "
                             "data stream type fragment.", jsonFrag.loc());
     }
 
+    /*
+     * A trace type fragment may follow clock type fragments, in which
+     * case `_pseudoTraceType` is an implicit pseudo trace type (see
+     * _ensureExistingPseudoTraceType()): keep its clock types.
+     */
+    ClockTypeSet clkTypes;
+
     if (_pseudoTraceType) {
-        throwTextParseError("Duplicate trace type fragment.", jsonFrag.loc());
+        clkTypes = std::move(_pseudoTraceType->clkTypes());
     }
 
     // environment
@@ -217,6 +228,9 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
         appendMsgToTextParseError(exc, "In trace type fragment:", jsonFrag.loc());
         throw;
     }
+
+    _pseudoTraceType->clkTypes() = std::move(clkTypes);
+    _hasTraceTypeFrag = true;
 }
 
 void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)

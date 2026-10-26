@@ -160,6 +160,12 @@ private:
 
     // current pseudo trace type
     boost::optional<PseudoTraceType> _pseudoTraceType;
+
+    /*
+     * Whether or not the parser handled a trace type fragment
+     * (`_pseudoTraceType` may exist without one).
+     */
+    bool _hasTraceTypeFrag = false;
 };
 
 } // namespace internal

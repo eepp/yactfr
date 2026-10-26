@@ -1,0 +1,90 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000
+  },
+  {
+    "type": "trace-class",
+    "packet-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "magic",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 32,
+            "byte-order": "big-endian",
+            "roles": [
+              "packet-magic-number"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "data-stream-class",
+    "default-clock-class-id": "clk",
+    "event-record-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "ts",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "roles": [
+              "default-clock-timestamp"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "name": "ev"
+  }
+]
+---
+c1fc1fc1   # `magic`
+17         # `ts`
+2a         # `ts`
+---
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3254525889
+    32         PMN:3254525889
+    32       }
+    32     }
+    32     DSI:T0
+    32     PI
+    32     ER {
+    32       SC:2 {
+    32         ST {
+    32           FLUI:ts:23
+    40           DCV:23
+    40         }
+    40       }
+    40       ERI:T0:#ev
+    40     }
+    40     ER {
+    40       SC:2 {
+    40         ST {
+    40           FLUI:ts:42
+    48           DCV:42
+    48         }
+    48       }
+    48       ERI:T0:#ev
+    48     }
+    48   }
+    48 }
