@@ -30,6 +30,7 @@ import moultipart
 import normand
 import difflib
 import pathlib
+import re
 
 
 def _metadata(orig_metadata):
@@ -88,11 +89,54 @@ class UnexpectedOutput(Exception):
         self.expected = expected
 
 
+_RAW_DATA_LINE_RE = re.compile(r'^( *\d+ +)RD:(\d+):(.*)$')
+
+
+# Merges consecutive raw data element lines of `output` having the same
+# indentation level into a single line.
+#
+# The VM emits one raw data element per data block section, therefore
+# the raw data elements depend on the size of the data blocks.
+def _merge_raw_data_lines(output: str) -> str:
+    lines = []
+    prev_raw_data = None
+
+    for line in output.split('\n'):
+        m = _RAW_DATA_LINE_RE.match(line)
+
+        if m is None:
+            lines.append(line)
+            prev_raw_data = None
+            continue
+
+        prefix, size, data = m.group(1), int(m.group(2)), m.group(3)
+
+        if prev_raw_data is not None and len(prev_raw_data[0]) == len(prefix):
+            # same indentation level: merge with the previous line
+            prev_raw_data = (prev_raw_data[0], prev_raw_data[1] + size, prev_raw_data[2] + data)
+            lines[-1] = f'{prev_raw_data[0]}RD:{prev_raw_data[1]}:{prev_raw_data[2]}'
+        else:
+            prev_raw_data = (prefix, size, data)
+            lines.append(line)
+
+    return '\n'.join(lines)
+
+
 class _StreamsItem(pytest.Item):
-    def __init__(self, parent, path, tester_path):
-        super().__init__(parent=parent, name=pathlib.Path(path).stem.replace('.', '-'))
+    # `tester_args` are the arguments to pass to the tester after the
+    # trace directory path to make it read data from memory with a given
+    # maximum data block size, and possibly with a data source which
+    # throws `yactfr::DataNotAvailable` every other time.
+    def __init__(self, parent, path, tester_path, tester_args=()):
+        name = pathlib.Path(path).stem.replace('.', '-')
+
+        if tester_args:
+            name += f'[{"-".join(tester_args)}]'
+
+        super().__init__(parent=parent, name=name)
         self._path = path
         self._tester_path = tester_path
+        self._tester_args = list(tester_args)
 
     def runtest(self):
         # create a temporary directory to contain the trace
@@ -101,9 +145,13 @@ class _StreamsItem(pytest.Item):
             expect = _create_streams(self._path, trace_tmp_dir).strip('\n') + '\n'
 
             # run the tester and compare to the expected lines
-            output = subprocess.run([self._tester_path, trace_tmp_dir],
+            output = subprocess.run([self._tester_path, trace_tmp_dir] + self._tester_args,
                                     capture_output=True, text=True,
                                     check=True).stdout.strip('\n') + '\n'
+
+            if self._tester_args:
+                output = _merge_raw_data_lines(output)
+                expect = _merge_raw_data_lines(expect)
 
             if output != expect:
                 raise UnexpectedOutput(output, expect)
@@ -134,6 +182,14 @@ class _StreamsFile(pytest.File):
 
     def collect(self):
         yield _StreamsItem.from_parent(self, path=self.path, tester_path=self._tester_path)
+
+        # also read the data with small data blocks
+        for max_data_blk_size in ('1', '2', '3', '5', '7', '9'):
+            yield _StreamsItem.from_parent(self, path=self.path, tester_path=self._tester_path,
+                                           tester_args=(max_data_blk_size,))
+
+        yield _StreamsItem.from_parent(self, path=self.path, tester_path=self._tester_path,
+                                       tester_args=('3', 'data-not-avail'))
 
 
 def collect_streams_file(parent, file_path, tester_path):
