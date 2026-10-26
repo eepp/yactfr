@@ -148,6 +148,10 @@ def test_pass_empty_pkt(pass_executor):
   pass_executor('empty-pkt', 'text-size=1084,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
+def test_pass_only_empty_pkts(pass_executor):
+  pass_executor('only-empty-pkts', 'text-size=0,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+
+
 def test_pass_with_signature(pass_executor):
   pass_executor('with-signature', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 

@@ -19,7 +19,13 @@ MetadataStream::MetadataStream(std::string&& text) :
 
 unsigned int MetadataStream::majorVersion() const noexcept
 {
-    assert(!_text.empty());
+    if (_text.empty()) {
+        /*
+         * Only a packetized metadata stream, which is always CTF 1,
+         * may have an empty text (all its packets are empty).
+         */
+        return 1;
+    }
 
     // CTF 2 if the text starts with a record separator (RS) byte
     return _text[0] == 30 ? 2 : 1;
