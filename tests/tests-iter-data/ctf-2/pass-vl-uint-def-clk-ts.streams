@@ -1,0 +1,134 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000000000
+  },
+  {
+    "type": "data-stream-class",
+    "default-clock-class-id": "clk",
+    "packet-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "ts_begin",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["default-clock-timestamp"]
+          }
+        }
+      ]
+    },
+    "event-record-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "ts",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["default-clock-timestamp"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "name": "test"
+  }
+]
+---
+# Each clock value update uses L = 7 × (VL integer byte count) as the
+# timestamp length (CTF 2 clock value update procedure).
+[1000 : uleb128]                 # `ts_begin` (L = 14): 1000
+[20 : uleb128]                   # `ts` (L = 7, wraps): 896 + 128 + 20 = 1044
+[100 : uleb128]                  # `ts` (L = 7): 1024 + 100 = 1124
+[5000 : uleb128]                 # `ts` (L = 14): 5000
+[200 : uleb128]                  # `ts` (L = 14, wraps): 16384 + 200 = 16584
+[64 : uleb128]                   # `ts` (L = 7, wraps): 16512 + 128 + 64 = 16704
+[1152921504606846976 : uleb128]  # `ts` (L = 63): 2^60
+83 00                            # `ts` (3, L = 14): 2^60 + 3
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         VLUI:ts_begin:1000
+    16         DCV:1000
+    16       }
+    16     }
+    16     PI
+    16     ER {
+    16       SC:2 {
+    16         ST {
+    16           VLUI:ts:20
+    24           DCV:1044
+    24         }
+    24       }
+    24       ERI:T0:#test
+    24     }
+    24     ER {
+    24       SC:2 {
+    24         ST {
+    24           VLUI:ts:100
+    32           DCV:1124
+    32         }
+    32       }
+    32       ERI:T0:#test
+    32     }
+    32     ER {
+    32       SC:2 {
+    32         ST {
+    32           VLUI:ts:5000
+    48           DCV:5000
+    48         }
+    48       }
+    48       ERI:T0:#test
+    48     }
+    48     ER {
+    48       SC:2 {
+    48         ST {
+    48           VLUI:ts:200
+    64           DCV:16584
+    64         }
+    64       }
+    64       ERI:T0:#test
+    64     }
+    64     ER {
+    64       SC:2 {
+    64         ST {
+    64           VLUI:ts:64
+    72           DCV:16704
+    72         }
+    72       }
+    72       ERI:T0:#test
+    72     }
+    72     ER {
+    72       SC:2 {
+    72         ST {
+    72           VLUI:ts:1152921504606846976
+   144           DCV:1152921504606846976
+   144         }
+   144       }
+   144       ERI:T0:#test
+   144     }
+   144     ER {
+   144       SC:2 {
+   144         ST {
+   144           VLUI:ts:3
+   160           DCV:1152921504606846979
+   160         }
+   160       }
+   160       ERI:T0:#test
+   160     }
+   160   }
+   160 }

@@ -1343,7 +1343,8 @@ Vm::_tExecReaction Vm::_execUpdateDefClkValFl(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execUpdateDefClkVal(const Instr&)
 {
-    return this->_execUpdateDefClkValCommon(_pos.lastIntVal.u);
+    // length of the variable-length integer which the VM just read
+    return this->_execUpdateDefClkValCommon(_pos.curVlIntLenBits);
 }
 
 Vm::_tExecReaction Vm::_execSetCurrentId(const Instr&)
