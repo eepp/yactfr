@@ -1,0 +1,39 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "o",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
+            "field-class": {
+              "type": "fixed-length-unsigned-integer",
+              "length": 8,
+              "byte-order": "little-endian"
+            },
+            "selector-field-ranges": [[1, 1]]
+          }
+        }
+      ]
+    }
+  }
+---
+[17:26] Invalid data location (event record payload: `sel`):
+[9:26] Selector type of optional type isn't an integer type.

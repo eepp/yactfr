@@ -1,0 +1,29 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "len",
+          "field-class": {"type": "null-terminated-string"}
+        },
+        {
+          "name": "s",
+          "field-class": {
+            "type": "dynamic-length-string",
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            }
+          }
+        }
+      ]
+    }
+  }
+---
+[13:26] Invalid data location (event record payload: `len`):
+[9:26] Length type isn't an unsigned integer type.

@@ -1,0 +1,24 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "s",
+          "field-class": {
+            "type": "dynamic-length-string",
+            "length-field-location": {
+              "origin": "event-record-specific-context",
+              "path": ["len"]
+            }
+          }
+        }
+      ]
+    }
+  }
+---
+[9:26] Data location [event record specific context: `len`]: cannot find scope data type.

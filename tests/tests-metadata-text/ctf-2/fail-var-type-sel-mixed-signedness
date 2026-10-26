@@ -1,0 +1,89 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "v",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
+            "options": [
+              {
+                "field-class": {
+                  "type": "structure",
+                  "member-classes": [
+                    {
+                      "name": "x",
+                      "field-class": {
+                        "type": "fixed-length-unsigned-integer",
+                        "length": 8,
+                        "byte-order": "little-endian"
+                      }
+                    }
+                  ]
+                },
+                "selector-field-ranges": [[0, 0]],
+                "name": "a"
+              },
+              {
+                "field-class": {
+                  "type": "structure",
+                  "member-classes": [
+                    {
+                      "name": "x",
+                      "field-class": {
+                        "type": "fixed-length-signed-integer",
+                        "length": 8,
+                        "byte-order": "little-endian"
+                      }
+                    }
+                  ]
+                },
+                "selector-field-ranges": [[1, 1]],
+                "name": "b"
+              }
+            ]
+          }
+        },
+        {
+          "name": "w",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["v", "x"]
+            },
+            "options": [
+              {
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "little-endian"
+                },
+                "selector-field-ranges": [[0, 0]]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+---
+[63:26] Invalid data location (event record payload: `v`/`x`):
+[63:26] All selector types of variant type don't have the same signedness.

@@ -1,0 +1,55 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "o",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
+            "field-class": {
+              "type": "structure",
+              "member-classes": [
+                {
+                  "name": "len",
+                  "field-class": {
+                    "type": "fixed-length-unsigned-integer",
+                    "length": 8,
+                    "byte-order": "little-endian"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "s",
+          "field-class": {
+            "type": "dynamic-length-string",
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["o", "len"]
+            }
+          }
+        }
+      ]
+    }
+  }
+---
+[17:26] Data location [event record payload: `o`]: unreachable optional data.

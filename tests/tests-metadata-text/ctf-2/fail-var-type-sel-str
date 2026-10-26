@@ -1,0 +1,39 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {"type": "null-terminated-string"}
+        },
+        {
+          "name": "v",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
+            "options": [
+              {
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "little-endian"
+                },
+                "selector-field-ranges": [[0, 0]]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+---
+[13:26] Invalid data location (event record payload: `sel`):
+[9:26] Selector type of variant type isn't an integer type.
