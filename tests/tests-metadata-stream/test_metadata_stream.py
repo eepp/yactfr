@@ -20,6 +20,20 @@ def _exec_pass(name, expected):
     assert(output.strip() == expected.strip())
 
 
+# like _exec_pass(), but make the tester read the standard input
+def _exec_pass_stdin(name, expected):
+    with open(_metadata_stream_path(f'pass-{name}'), 'rb') as f:
+        output = subprocess.check_output([_TESTER_PATH, '1', '-'], stdin=f, text=True)
+
+    assert(output.strip() == expected.strip())
+
+
+# like _exec_fail(), but make the tester read the standard input
+def _exec_fail_stdin(name, offset):
+    with open(_metadata_stream_path(f'fail-{name}'), 'rb') as f:
+        assert(subprocess.call([_TESTER_PATH, '1', '-', str(offset)], stdin=f) == 2)
+
+
 @pytest.fixture
 def pass_executor():
     return _exec_pass
@@ -127,24 +141,40 @@ def test_fail_uuid_mismatch(fail_executor):
 
 
 def test_pass_23_pkts(pass_executor):
-  pass_executor('23-pkts', 'text-size=11633,has-ctf-1-signature=0,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('23-pkts', 'text-size=11633,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_empty_pkt(pass_executor):
-  pass_executor('empty-pkt', 'text-size=1084,has-ctf-1-signature=0,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('empty-pkt', 'text-size=1084,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_with_signature(pass_executor):
-  pass_executor('with-signature', 'text-size=1084,has-ctf-1-signature=1,pkt-count=1,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('with-signature', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_with_signature_be(pass_executor):
-  pass_executor('with-signature-be', 'text-size=1084,has-ctf-1-signature=1,pkt-count=1,major-version=1,minor-version=8,bo=be,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('with-signature-be', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,major-version=1,minor-version=8,bo=be,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_text(pass_executor):
-  pass_executor('text', 'text-size=378,has-ctf-1-signature=1')
+  pass_executor('text', 'text-size=378,has-ctf-1-signature=1,ctf-major-version=1')
 
 
 def test_pass_text_no_sig(pass_executor):
-  pass_executor('text-no-sig', 'text-size=363,has-ctf-1-signature=0')
+  pass_executor('text-no-sig', 'text-size=363,has-ctf-1-signature=0,ctf-major-version=1')
+
+
+def test_pass_text_ctf_2(pass_executor):
+  pass_executor('text-ctf-2', 'text-size=63,has-ctf-1-signature=0,ctf-major-version=2')
+
+
+def test_pass_text_stdin():
+  _exec_pass_stdin('text', 'text-size=378,has-ctf-1-signature=1,ctf-major-version=1')
+
+
+def test_pass_23_pkts_stdin():
+  _exec_pass_stdin('23-pkts', 'text-size=11633,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+
+
+def test_fail_uuid_mismatch_stdin():
+  _exec_fail_stdin('uuid-mismatch', 4096)

@@ -21,7 +21,7 @@ int main(const int argc, const char * const argv[])
 
     try {
         std::istream *stream;
-        std::ifstream file {argv[1]};
+        std::ifstream file;
 
         if (useStdin[0] == '1') {
             stream = &std::cin;
@@ -33,7 +33,8 @@ int main(const int argc, const char * const argv[])
         const auto metaStream = yactfr::createMetadataStream(*stream);
 
         std::cout << "text-size=" << metaStream->text().size() <<
-                     ",has-ctf-1-signature=" << metaStream->hasCtf1Signature();
+                     ",has-ctf-1-signature=" << metaStream->hasCtf1Signature() <<
+                     ",ctf-major-version=" << metaStream->MetadataStream::majorVersion();
 
         if (const auto pktMetadataStream = dynamic_cast<const yactfr::PacketizedMetadataStream *>(metaStream.get())) {
             std::cout << ",pkt-count=" << pktMetadataStream->packetCount() <<
