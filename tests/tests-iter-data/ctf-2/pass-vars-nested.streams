@@ -1,0 +1,268 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "tag",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "v",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "path": ["tag"]
+            },
+            "options": [
+              {
+                "name": "a",
+                "selector-field-ranges": [[0, 0]],
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "big-endian",
+                  "alignment": 8
+                }
+              },
+              {
+                "name": "b",
+                "selector-field-ranges": [[1, 9]],
+                "field-class": {
+                  "type": "structure",
+                  "member-classes": [
+                    {
+                      "name": "tag2",
+                      "field-class": {
+                        "type": "fixed-length-unsigned-integer",
+                        "length": 8,
+                        "byte-order": "big-endian",
+                        "alignment": 8
+                      }
+                    },
+                    {
+                      "name": "inner",
+                      "field-class": {
+                        "type": "variant",
+                        "selector-field-location": {
+                          "path": ["tag2"]
+                        },
+                        "options": [
+                          {
+                            "name": "x",
+                            "selector-field-ranges": [[0, 0]],
+                            "field-class": {
+                              "type": "null-terminated-string"
+                            }
+                          },
+                          {
+                            "name": "y",
+                            "selector-field-ranges": [[1, 255]],
+                            "field-class": {
+                              "type": "fixed-length-unsigned-integer",
+                              "length": 16,
+                              "byte-order": "big-endian",
+                              "alignment": 8
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "c",
+                "selector-field-ranges": [[10, 10], [20, 20]],
+                "field-class": {
+                  "type": "static-length-array",
+                  "length": 2,
+                  "element-field-class": {
+                    "type": "variant",
+                    "selector-field-location": {
+                      "origin": "event-record-payload",
+                      "path": ["tag"]
+                    },
+                    "options": [
+                      {
+                        "selector-field-ranges": [[10, 10]],
+                        "field-class": {
+                          "type": "fixed-length-unsigned-integer",
+                          "length": 8,
+                          "byte-order": "big-endian",
+                          "alignment": 8
+                        }
+                      },
+                      {
+                        "selector-field-ranges": [[20, 20]],
+                        "field-class": {
+                          "type": "null-terminated-string"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "after",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        }
+      ]
+    }
+  }
+]
+---
+!be
+
+# event record: option `a`
+[0 : 8]        # `tag`
+[0x11 : 8]     # `v`
+[0xa1 : 8]     # `after`
+
+# event record: option `b`, inner option `x`
+[5 : 8]        # `tag`
+[0 : 8]        # `v.tag2`
+"hey\0"        # `v.inner`
+[0xa2 : 8]     # `after`
+
+# event record: option `b`, inner option `y`
+[9 : 8]        # `tag`
+[200 : 8]      # `v.tag2`
+[0xbeef : 16]  # `v.inner`
+[0xa3 : 8]     # `after`
+
+# event record: option `c`, inner first option
+[10 : 8]       # `tag`
+[1 : 8]        # `v[0]`
+[2 : 8]        # `v[1]`
+[0xa4 : 8]     # `after`
+
+# event record: option `c`, inner second option
+[20 : 8]       # `tag`
+"p\0"          # `v[0]`
+"q\0"          # `v[1]`
+[0xa5 : 8]     # `after`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:tag:0
+     8           VU:v:0 {
+     8             FLUI:17
+    16           }
+    16           FLUI:after:161
+    24         }
+    24       }
+    24     }
+    24     ER {
+    24       ERI:T0:#test
+    24       SC:5 {
+    24         ST {
+    24           FLUI:tag:5
+    32           VU:v:5 {
+    32             ST {
+    32               FLUI:tag2:0
+    40               VU:inner:0 {
+    40                 NTS {
+    40                   RD:4:hey$00
+    72                 }
+    72               }
+    72             }
+    72           }
+    72           FLUI:after:162
+    80         }
+    80       }
+    80     }
+    80     ER {
+    80       ERI:T0:#test
+    80       SC:5 {
+    80         ST {
+    80           FLUI:tag:9
+    88           VU:v:9 {
+    88             ST {
+    88               FLUI:tag2:200
+    96               VU:inner:200 {
+    96                 FLUI:48879
+   112               }
+   112             }
+   112           }
+   112           FLUI:after:163
+   120         }
+   120       }
+   120     }
+   120     ER {
+   120       ERI:T0:#test
+   120       SC:5 {
+   120         ST {
+   120           FLUI:tag:10
+   128           VU:v:10 {
+   128             SLA {
+   128               VU:10 {
+   128                 FLUI:1
+   136               }
+   136               VU:10 {
+   136                 FLUI:2
+   144               }
+   144             }
+   144           }
+   144           FLUI:after:164
+   152         }
+   152       }
+   152     }
+   152     ER {
+   152       ERI:T0:#test
+   152       SC:5 {
+   152         ST {
+   152           FLUI:tag:20
+   160           VU:v:20 {
+   160             SLA {
+   160               VU:20 {
+   160                 NTS {
+   160                   RD:2:p$00
+   176                 }
+   176               }
+   176               VU:20 {
+   176                 NTS {
+   176                   RD:2:q$00
+   192                 }
+   192               }
+   192             }
+   192           }
+   192           FLUI:after:165
+   200         }
+   200       }
+   200     }
+   200   }
+   200 }
+

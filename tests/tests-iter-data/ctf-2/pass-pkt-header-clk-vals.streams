@@ -1,0 +1,291 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2,
+    "uuid": [100, 23, 75, 150, 74, 129, 77, 189, 141, 226, 104, 26, 41, 230, 62, 11]
+  },
+  {
+    "type": "trace-class",
+    "packet-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "magic",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 32,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["packet-magic-number"]
+          }
+        },
+        {
+          "name": "uuid",
+          "field-class": {
+            "type": "static-length-blob",
+            "length": 16,
+            "roles": ["metadata-stream-uuid"]
+          }
+        },
+        {
+          "name": "dsc_id",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["data-stream-class-id"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000000000
+  },
+  {
+    "type": "data-stream-class",
+    "id": 3,
+    "default-clock-class-id": "clk",
+    "packet-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "total_len",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["packet-total-length"]
+          }
+        },
+        {
+          "name": "content_len",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["packet-content-length"]
+          }
+        },
+        {
+          "name": "begin_ts",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 64,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["default-clock-timestamp"]
+          }
+        },
+        {
+          "name": "end_ts",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 64,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["packet-end-default-clock-timestamp"]
+          }
+        }
+      ]
+    },
+    "event-record-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "id",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["event-record-class-id"]
+          }
+        },
+        {
+          "name": "ts",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "roles": ["default-clock-timestamp"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "data-stream-class-id": 3,
+    "id": 7,
+    "name": "ev",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "x",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        }
+      ]
+    }
+  }
+]
+---
+!macro pkt_header()
+  c1fc1fc1                                         # `magic`
+  64 17 4b 96 4a 81 4d bd 8d e2 68 1a 29 e6 3e 0b  # `uuid`
+  03                                               # `dsc_id`
+!end
+
+!macro er(ts, x)
+  07           # `id`
+  [ts : 16]    # `ts`
+  [x : 8]      # `x`
+!end
+
+!be
+
+# first packet
+m:pkt_header()
+[448 : 16]                 # `total_len`
+[424 : 16]                 # `content_len`
+[0x1_0000_fff0 : 64]       # `begin_ts`
+[0x1_0002_0005 : 64]       # `end_ts`
+m:er(0xfff8, 1)
+m:er(0x0003, 2)            # wraps
+m:er(0x0003, 3)
+00 00 00                   # padding
+
+# second packet
+m:pkt_header()
+[360 : 16]                 # `total_len`
+[360 : 16]                 # `content_len`
+[5 : 64]                   # `begin_ts`
+[16 : 64]                  # `end_ts`
+m:er(0x0007, 4)
+---
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3254525889
+    32         PMN:3254525889
+    32         SLB:uuid:application/octet-stream {
+    32           RD:16:64174b964a814dbd8de2681a29e63e0b
+   160           MSU:64174b96-4a81-4dbd-8de2-681a29e63e0b
+   160         }
+   160         FLUI:dsc_id:3
+   168       }
+   168     }
+   168     DSI:T3
+   168     SC:1 {
+   168       ST {
+   168         FLUI:total_len:448
+   184         FLUI:content_len:424
+   200         FLUI:begin_ts:4295032816
+   264         DCV:4295032816
+   264         FLUI:end_ts:4295098373
+   328       }
+   328     }
+   328     PI:T448:C424:E4295098373
+   328     ER {
+   328       SC:2 {
+   328         ST {
+   328           FLUI:id:7
+   336           FLUI:ts:65528
+   352           DCV:4295032824
+   352         }
+   352       }
+   352       ERI:T7:#ev
+   352       SC:5 {
+   352         ST {
+   352           FLUI:x:1
+   360         }
+   360       }
+   360     }
+   360     ER {
+   360       SC:2 {
+   360         ST {
+   360           FLUI:id:7
+   368           FLUI:ts:3
+   384           DCV:4295032835
+   384         }
+   384       }
+   384       ERI:T7:#ev
+   384       SC:5 {
+   384         ST {
+   384           FLUI:x:2
+   392         }
+   392       }
+   392     }
+   392     ER {
+   392       SC:2 {
+   392         ST {
+   392           FLUI:id:7
+   400           FLUI:ts:3
+   416           DCV:4295032835
+   416         }
+   416       }
+   416       ERI:T7:#ev
+   416       SC:5 {
+   416         ST {
+   416           FLUI:x:3
+   424         }
+   424       }
+   424     }
+   424   }
+   448 }
+   448 P {
+   448   PC {
+   448     SC:0 {
+   448       ST {
+   448         FLUI:magic:3254525889
+   480         PMN:3254525889
+   480         SLB:uuid:application/octet-stream {
+   480           RD:16:64174b964a814dbd8de2681a29e63e0b
+   608           MSU:64174b96-4a81-4dbd-8de2-681a29e63e0b
+   608         }
+   608         FLUI:dsc_id:3
+   616       }
+   616     }
+   616     DSI:T3
+   616     SC:1 {
+   616       ST {
+   616         FLUI:total_len:360
+   632         FLUI:content_len:360
+   648         FLUI:begin_ts:5
+   712         DCV:5
+   712         FLUI:end_ts:16
+   776       }
+   776     }
+   776     PI:T360:C360:E16
+   776     ER {
+   776       SC:2 {
+   776         ST {
+   776           FLUI:id:7
+   784           FLUI:ts:7
+   800           DCV:7
+   800         }
+   800       }
+   800       ERI:T7:#ev
+   800       SC:5 {
+   800         ST {
+   800           FLUI:x:4
+   808         }
+   808       }
+   808     }
+   808   }
+   808 }
+

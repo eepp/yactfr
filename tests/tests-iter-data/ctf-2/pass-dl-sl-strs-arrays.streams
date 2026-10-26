@@ -1,0 +1,204 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "n",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "u16s",
+          "field-class": {
+            "type": "dynamic-length-array",
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["n"]
+            },
+            "element-field-class": {
+              "type": "fixed-length-unsigned-integer",
+              "length": 16,
+              "byte-order": "little-endian",
+              "alignment": 16
+            }
+          }
+        },
+        {
+          "name": "vn",
+          "field-class": {
+            "type": "variable-length-unsigned-integer"
+          }
+        },
+        {
+          "name": "items",
+          "field-class": {
+            "type": "dynamic-length-array",
+            "length-field-location": {
+              "path": ["vn"]
+            },
+            "element-field-class": {
+              "type": "structure",
+              "member-classes": [
+                {
+                  "name": "k",
+                  "field-class": {
+                    "type": "fixed-length-unsigned-integer",
+                    "length": 8,
+                    "byte-order": "little-endian",
+                    "alignment": 8
+                  }
+                },
+                {
+                  "name": "s",
+                  "field-class": {
+                    "type": "dynamic-length-string",
+                    "length-field-location": {
+                      "path": ["k"]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "z",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "empty",
+          "field-class": {
+            "type": "dynamic-length-array",
+            "length-field-location": {
+              "path": ["z"]
+            },
+            "element-field-class": {
+              "type": "null-terminated-string"
+            }
+          }
+        },
+        {
+          "name": "sls8",
+          "field-class": {
+            "type": "static-length-string",
+            "length": 8
+          }
+        },
+        {
+          "name": "sls32",
+          "field-class": {
+            "type": "static-length-string",
+            "length": 8,
+            "encoding": "utf-32be"
+          }
+        },
+        {
+          "name": "n16",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "dls16",
+          "field-class": {
+            "type": "dynamic-length-string",
+            "length-field-location": {
+              "path": ["n16"]
+            },
+            "encoding": "utf-16le"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+!le
+
+[3 : 8]                  # `n`
+00                       # padding
+[0x0102 : 16]            # `u16s[0]`
+[0xffff : 16]            # `u16s[1]`
+[0 : 16]                 # `u16s[2]`
+[2 : uleb128]            # `vn`
+[5 : 8] "hello"          # `items[0]`
+[0 : 8]                  # `items[1]`
+[0 : 8]                  # `z`
+"ab\0" ff ff ff ff ff    # `sls8`
+00 00 00 41 00 00 00 42  # `sls32`
+[6 : 8]                  # `n16`
+68 00 69 00 21 00        # `dls16`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:n:3
+    16           DLA:u16s {
+    16             FLUI:258
+    32             FLUI:65535
+    48             FLUI:0
+    64           }
+    64           VLUI:vn:2
+    72           DLA:items {
+    72             ST {
+    72               FLUI:k:5
+    80               DLS:s {
+    80                 RD:5:hello
+   120               }
+   120             }
+   120             ST {
+   120               FLUI:k:0
+   128               DLS:s {
+   128               }
+   128             }
+   128           }
+   128           FLUI:z:0
+   136           DLA:empty {
+   136           }
+   136           SLS:sls8 {
+   136             RD:8:ab$00$ff$ff$ff$ff$ff
+   200           }
+   200           SLS:sls32 {
+   200             RD:8:$00$00$00A$00$00$00B
+   264           }
+   264           FLUI:n16:6
+   272           DLS:dls16 {
+   272             RD:6:h$00i$00!$00
+   320           }
+   320         }
+   320       }
+   320     }
+   320   }
+   320 }
+
