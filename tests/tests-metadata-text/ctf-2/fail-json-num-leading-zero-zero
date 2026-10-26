@@ -1,0 +1,6 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class", "environment": {"x": 00}}
+{"type": "data-stream-class"}
+---
+[1:46] Invalid JSON number: unexpected leading zero.

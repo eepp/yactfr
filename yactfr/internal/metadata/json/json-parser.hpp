@@ -8,6 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP
 
+#include <cctype>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -256,6 +257,23 @@ bool JsonParser<ListenerT>::_tryParseNumber()
     this->_skipWhitespaces();
 
     const auto loc = _ss.loc();
+
+    {
+        /*
+         * Unlike StrScanner::tryScanConstUInt() and
+         * StrScanner::tryScanConstSInt(), JSON doesn't allow leading
+         * zeros (RFC 8259, section 6).
+         */
+        auto at = _ss.at();
+
+        if (at != _ss.end() && *at == '-') {
+            ++at;
+        }
+
+        if (_ss.end() - at >= 2 && at[0] == '0' && std::isdigit(at[1])) {
+            throwTextParseError("Invalid JSON number: unexpected leading zero.", loc);
+        }
+    }
 
     /*
      * The tryScanConstReal() method call below is somewhat expensive
