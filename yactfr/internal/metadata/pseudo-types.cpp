@@ -642,7 +642,7 @@ std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
     ss << pseudoDst.id();
 
     if (pseudoDst.name() || pseudoDst.ns()) {
-        ss << '(';
+        ss << " (";
 
         if (pseudoDst.name()) {
             ss << "named `" << *pseudoDst.name() << '`';

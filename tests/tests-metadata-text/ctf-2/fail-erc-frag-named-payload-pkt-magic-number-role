@@ -1,0 +1,16 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class", "name": "dsc"}
+{
+  "type": "event-record-class",
+  "name": "er",
+  "payload-field-class": {
+    "type": "structure",
+    "member-classes": [{"name": "m", "field-class": {"type": "fixed-length-unsigned-integer", "length": 32, "byte-order": "little-endian", "roles": ["packet-magic-number"]}}]
+  }
+}
+---
+[1:1] In the event record type 0 (named `er`) of data stream type 0 (named `dsc`):
+[4:26] In the payload type:
+[6:53] Unsigned integer type has at least one invalid role within its scope.
