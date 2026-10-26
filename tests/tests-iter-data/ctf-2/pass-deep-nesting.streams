@@ -1,0 +1,511 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "deep",
+          "field-class": {
+            "type": "structure",
+            "member-classes": [
+              {
+                "name": "m0",
+                "field-class": {
+                  "type": "static-length-array",
+                  "length": 1,
+                  "element-field-class": {
+                    "type": "structure",
+                    "member-classes": [
+                      {
+                        "name": "m1",
+                        "field-class": {
+                          "type": "static-length-array",
+                          "length": 1,
+                          "element-field-class": {
+                            "type": "structure",
+                            "member-classes": [
+                              {
+                                "name": "m2",
+                                "field-class": {
+                                  "type": "static-length-array",
+                                  "length": 1,
+                                  "element-field-class": {
+                                    "type": "structure",
+                                    "member-classes": [
+                                      {
+                                        "name": "m3",
+                                        "field-class": {
+                                          "type": "static-length-array",
+                                          "length": 1,
+                                          "element-field-class": {
+                                            "type": "structure",
+                                            "member-classes": [
+                                              {
+                                                "name": "m4",
+                                                "field-class": {
+                                                  "type": "static-length-array",
+                                                  "length": 1,
+                                                  "element-field-class": {
+                                                    "type": "structure",
+                                                    "member-classes": [
+                                                      {
+                                                        "name": "m5",
+                                                        "field-class": {
+                                                          "type": "static-length-array",
+                                                          "length": 1,
+                                                          "element-field-class": {
+                                                            "type": "structure",
+                                                            "member-classes": [
+                                                              {
+                                                                "name": "m6",
+                                                                "field-class": {
+                                                                  "type": "static-length-array",
+                                                                  "length": 1,
+                                                                  "element-field-class": {
+                                                                    "type": "structure",
+                                                                    "member-classes": [
+                                                                      {
+                                                                        "name": "m7",
+                                                                        "field-class": {
+                                                                          "type": "static-length-array",
+                                                                          "length": 1,
+                                                                          "element-field-class": {
+                                                                            "type": "structure",
+                                                                            "member-classes": [
+                                                                              {
+                                                                                "name": "m8",
+                                                                                "field-class": {
+                                                                                  "type": "static-length-array",
+                                                                                  "length": 1,
+                                                                                  "element-field-class": {
+                                                                                    "type": "structure",
+                                                                                    "member-classes": [
+                                                                                      {
+                                                                                        "name": "m9",
+                                                                                        "field-class": {
+                                                                                          "type": "static-length-array",
+                                                                                          "length": 1,
+                                                                                          "element-field-class": {
+                                                                                            "type": "structure",
+                                                                                            "member-classes": [
+                                                                                              {
+                                                                                                "name": "m10",
+                                                                                                "field-class": {
+                                                                                                  "type": "static-length-array",
+                                                                                                  "length": 1,
+                                                                                                  "element-field-class": {
+                                                                                                    "type": "structure",
+                                                                                                    "member-classes": [
+                                                                                                      {
+                                                                                                        "name": "m11",
+                                                                                                        "field-class": {
+                                                                                                          "type": "static-length-array",
+                                                                                                          "length": 1,
+                                                                                                          "element-field-class": {
+                                                                                                            "type": "structure",
+                                                                                                            "member-classes": [
+                                                                                                              {
+                                                                                                                "name": "m12",
+                                                                                                                "field-class": {
+                                                                                                                  "type": "static-length-array",
+                                                                                                                  "length": 1,
+                                                                                                                  "element-field-class": {
+                                                                                                                    "type": "structure",
+                                                                                                                    "member-classes": [
+                                                                                                                      {
+                                                                                                                        "name": "m13",
+                                                                                                                        "field-class": {
+                                                                                                                          "type": "static-length-array",
+                                                                                                                          "length": 1,
+                                                                                                                          "element-field-class": {
+                                                                                                                            "type": "structure",
+                                                                                                                            "member-classes": [
+                                                                                                                              {
+                                                                                                                                "name": "m14",
+                                                                                                                                "field-class": {
+                                                                                                                                  "type": "static-length-array",
+                                                                                                                                  "length": 1,
+                                                                                                                                  "element-field-class": {
+                                                                                                                                    "type": "structure",
+                                                                                                                                    "member-classes": [
+                                                                                                                                      {
+                                                                                                                                        "name": "m15",
+                                                                                                                                        "field-class": {
+                                                                                                                                          "type": "static-length-array",
+                                                                                                                                          "length": 1,
+                                                                                                                                          "element-field-class": {
+                                                                                                                                            "type": "structure",
+                                                                                                                                            "member-classes": [
+                                                                                                                                              {
+                                                                                                                                                "name": "m16",
+                                                                                                                                                "field-class": {
+                                                                                                                                                  "type": "static-length-array",
+                                                                                                                                                  "length": 1,
+                                                                                                                                                  "element-field-class": {
+                                                                                                                                                    "type": "structure",
+                                                                                                                                                    "member-classes": [
+                                                                                                                                                      {
+                                                                                                                                                        "name": "m17",
+                                                                                                                                                        "field-class": {
+                                                                                                                                                          "type": "static-length-array",
+                                                                                                                                                          "length": 1,
+                                                                                                                                                          "element-field-class": {
+                                                                                                                                                            "type": "structure",
+                                                                                                                                                            "member-classes": [
+                                                                                                                                                              {
+                                                                                                                                                                "name": "m18",
+                                                                                                                                                                "field-class": {
+                                                                                                                                                                  "type": "static-length-array",
+                                                                                                                                                                  "length": 1,
+                                                                                                                                                                  "element-field-class": {
+                                                                                                                                                                    "type": "structure",
+                                                                                                                                                                    "member-classes": [
+                                                                                                                                                                      {
+                                                                                                                                                                        "name": "m19",
+                                                                                                                                                                        "field-class": {
+                                                                                                                                                                          "type": "static-length-array",
+                                                                                                                                                                          "length": 2,
+                                                                                                                                                                          "element-field-class": {
+                                                                                                                                                                            "type": "structure",
+                                                                                                                                                                            "member-classes": [
+                                                                                                                                                                              {
+                                                                                                                                                                                "name": "u",
+                                                                                                                                                                                "field-class": {
+                                                                                                                                                                                  "type": "fixed-length-unsigned-integer",
+                                                                                                                                                                                  "length": 8,
+                                                                                                                                                                                  "byte-order": "little-endian",
+                                                                                                                                                                                  "alignment": 8
+                                                                                                                                                                                }
+                                                                                                                                                                              },
+                                                                                                                                                                              {
+                                                                                                                                                                                "name": "s",
+                                                                                                                                                                                "field-class": {
+                                                                                                                                                                                  "type": "null-terminated-string"
+                                                                                                                                                                                }
+                                                                                                                                                                              }
+                                                                                                                                                                            ]
+                                                                                                                                                                          }
+                                                                                                                                                                        }
+                                                                                                                                                                      }
+                                                                                                                                                                    ]
+                                                                                                                                                                  }
+                                                                                                                                                                }
+                                                                                                                                                              }
+                                                                                                                                                            ]
+                                                                                                                                                          }
+                                                                                                                                                        }
+                                                                                                                                                      }
+                                                                                                                                                    ]
+                                                                                                                                                  }
+                                                                                                                                                }
+                                                                                                                                              }
+                                                                                                                                            ]
+                                                                                                                                          }
+                                                                                                                                        }
+                                                                                                                                      }
+                                                                                                                                    ]
+                                                                                                                                  }
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            ]
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    ]
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            ]
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    ]
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            ]
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    ]
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            ]
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "after",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        }
+      ]
+    }
+  }
+]
+---
+# event record
+01 "a\0"    # `u`, `s`
+02 "bc\0"   # `u`, `s`
+[4660 : 16be]  # `after`
+
+# event record
+fe "\0"     # `u`, `s`
+ff "xyz\0"  # `u`, `s`
+[65244 : 16be]  # `after`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           ST:deep {
+     0             SLA:m0 {
+     0               ST {
+     0                 SLA:m1 {
+     0                   ST {
+     0                     SLA:m2 {
+     0                       ST {
+     0                         SLA:m3 {
+     0                           ST {
+     0                             SLA:m4 {
+     0                               ST {
+     0                                 SLA:m5 {
+     0                                   ST {
+     0                                     SLA:m6 {
+     0                                       ST {
+     0                                         SLA:m7 {
+     0                                           ST {
+     0                                             SLA:m8 {
+     0                                               ST {
+     0                                                 SLA:m9 {
+     0                                                   ST {
+     0                                                     SLA:m10 {
+     0                                                       ST {
+     0                                                         SLA:m11 {
+     0                                                           ST {
+     0                                                             SLA:m12 {
+     0                                                               ST {
+     0                                                                 SLA:m13 {
+     0                                                                   ST {
+     0                                                                     SLA:m14 {
+     0                                                                       ST {
+     0                                                                         SLA:m15 {
+     0                                                                           ST {
+     0                                                                             SLA:m16 {
+     0                                                                               ST {
+     0                                                                                 SLA:m17 {
+     0                                                                                   ST {
+     0                                                                                     SLA:m18 {
+     0                                                                                       ST {
+     0                                                                                         SLA:m19 {
+     0                                                                                           ST {
+     0                                                                                             FLUI:u:1
+     8                                                                                             NTS:s {
+     8                                                                                               RD:2:a$00
+    24                                                                                             }
+    24                                                                                           }
+    24                                                                                           ST {
+    24                                                                                             FLUI:u:2
+    32                                                                                             NTS:s {
+    32                                                                                               RD:3:bc$00
+    56                                                                                             }
+    56                                                                                           }
+    56                                                                                         }
+    56                                                                                       }
+    56                                                                                     }
+    56                                                                                   }
+    56                                                                                 }
+    56                                                                               }
+    56                                                                             }
+    56                                                                           }
+    56                                                                         }
+    56                                                                       }
+    56                                                                     }
+    56                                                                   }
+    56                                                                 }
+    56                                                               }
+    56                                                             }
+    56                                                           }
+    56                                                         }
+    56                                                       }
+    56                                                     }
+    56                                                   }
+    56                                                 }
+    56                                               }
+    56                                             }
+    56                                           }
+    56                                         }
+    56                                       }
+    56                                     }
+    56                                   }
+    56                                 }
+    56                               }
+    56                             }
+    56                           }
+    56                         }
+    56                       }
+    56                     }
+    56                   }
+    56                 }
+    56               }
+    56             }
+    56           }
+    56           FLUI:after:4660
+    72         }
+    72       }
+    72     }
+    72     ER {
+    72       ERI:T0:#test
+    72       SC:5 {
+    72         ST {
+    72           ST:deep {
+    72             SLA:m0 {
+    72               ST {
+    72                 SLA:m1 {
+    72                   ST {
+    72                     SLA:m2 {
+    72                       ST {
+    72                         SLA:m3 {
+    72                           ST {
+    72                             SLA:m4 {
+    72                               ST {
+    72                                 SLA:m5 {
+    72                                   ST {
+    72                                     SLA:m6 {
+    72                                       ST {
+    72                                         SLA:m7 {
+    72                                           ST {
+    72                                             SLA:m8 {
+    72                                               ST {
+    72                                                 SLA:m9 {
+    72                                                   ST {
+    72                                                     SLA:m10 {
+    72                                                       ST {
+    72                                                         SLA:m11 {
+    72                                                           ST {
+    72                                                             SLA:m12 {
+    72                                                               ST {
+    72                                                                 SLA:m13 {
+    72                                                                   ST {
+    72                                                                     SLA:m14 {
+    72                                                                       ST {
+    72                                                                         SLA:m15 {
+    72                                                                           ST {
+    72                                                                             SLA:m16 {
+    72                                                                               ST {
+    72                                                                                 SLA:m17 {
+    72                                                                                   ST {
+    72                                                                                     SLA:m18 {
+    72                                                                                       ST {
+    72                                                                                         SLA:m19 {
+    72                                                                                           ST {
+    72                                                                                             FLUI:u:254
+    80                                                                                             NTS:s {
+    80                                                                                               RD:1:$00
+    88                                                                                             }
+    88                                                                                           }
+    88                                                                                           ST {
+    88                                                                                             FLUI:u:255
+    96                                                                                             NTS:s {
+    96                                                                                               RD:4:xyz$00
+   128                                                                                             }
+   128                                                                                           }
+   128                                                                                         }
+   128                                                                                       }
+   128                                                                                     }
+   128                                                                                   }
+   128                                                                                 }
+   128                                                                               }
+   128                                                                             }
+   128                                                                           }
+   128                                                                         }
+   128                                                                       }
+   128                                                                     }
+   128                                                                   }
+   128                                                                 }
+   128                                                               }
+   128                                                             }
+   128                                                           }
+   128                                                         }
+   128                                                       }
+   128                                                     }
+   128                                                   }
+   128                                                 }
+   128                                               }
+   128                                             }
+   128                                           }
+   128                                         }
+   128                                       }
+   128                                     }
+   128                                   }
+   128                                 }
+   128                               }
+   128                             }
+   128                           }
+   128                         }
+   128                       }
+   128                     }
+   128                   }
+   128                 }
+   128               }
+   128             }
+   128           }
+   128           FLUI:after:65244
+   144         }
+   144       }
+   144     }
+   144   }
+   144 }
