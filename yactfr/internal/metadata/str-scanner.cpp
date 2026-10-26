@@ -321,7 +321,10 @@ void StrScanner::_skipComment()
                 break;
 
             case '*':
+            {
                 // multi-line comment
+                const auto commentLoc = this->loc();
+
                 _at += 2;
 
                 while (!this->isDone()) {
@@ -335,7 +338,10 @@ void StrScanner::_skipComment()
                     this->_checkNewLine();
                     ++_at;
                 }
-                break;
+
+                throwTextParseError("Unterminated multi-line comment: expecting `*/`.",
+                                    commentLoc);
+            }
 
             default:
                 break;

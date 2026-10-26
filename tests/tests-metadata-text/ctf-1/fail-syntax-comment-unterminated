@@ -1,0 +1,16 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+/* stream {
+  packet.context := struct {
+    integer { size = 8; } x;
+  };
+};
+---
+[9:1] Unterminated multi-line comment: expecting `*/`.
