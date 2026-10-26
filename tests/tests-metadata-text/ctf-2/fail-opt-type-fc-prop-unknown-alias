@@ -1,0 +1,37 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "o",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
+            "field-class": "meow"
+          }
+        }
+      ]
+    }
+  }
+---
+[2:3] In event record type fragment:
+[15:9] In structure member type `o`:
+[17:26] In optional type:
+[23:28] In object property `field-class`:
+[23:28] Cannot find data type alias `meow`.

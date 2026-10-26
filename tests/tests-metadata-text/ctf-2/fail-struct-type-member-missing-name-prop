@@ -1,0 +1,40 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "a",
+          "field-class": {
+            "type": "structure",
+            "member-classes": [
+              {
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "little-endian"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+---
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[7:9] In array element #1:
+[7:9] Invalid structure member type:
+[9:26] In object property `field-class`:
+[9:26] Invalid structure type:
+[11:31] In object property `member-classes`:
+[12:15] In array element #1:
+[12:15] Invalid structure member type:
+[12:15] Missing mandatory object property `name`.

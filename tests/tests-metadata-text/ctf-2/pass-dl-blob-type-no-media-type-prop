@@ -1,0 +1,29 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "len",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "a",
+          "field-class": {
+            "type": "dynamic-length-blob",
+            "length-field-location": {
+              "origin": "event-record-payload",
+              "path": ["len"]
+            }
+          }
+        }
+      ]
+    }
+  }

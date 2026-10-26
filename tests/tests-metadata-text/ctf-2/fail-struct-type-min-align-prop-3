@@ -1,0 +1,27 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "a",
+          "field-class": {"type": "structure", "minimum-alignment": 3}
+        }
+      ]
+    }
+  }
+---
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid structure type:
+[6:25] In object property `member-classes`:
+[7:9] In array element #1:
+[7:9] Invalid structure member type:
+[9:26] In object property `field-class`:
+[9:26] Invalid structure type:
+[9:69] In object property `minimum-alignment`:
+[9:69] Invalid alignment: 3 is not a power of two.

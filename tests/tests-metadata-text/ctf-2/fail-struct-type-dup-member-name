@@ -1,0 +1,29 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "a",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "a",
+          "field-class": {"type": "null-terminated-string"}
+        }
+      ]
+    }
+  }
+---
+[2:3] Invalid event record type fragment:
+[4:28] In object property `payload-field-class`:
+[4:28] Invalid structure type:
+[16:19] Duplicate structure member type name `a`.
