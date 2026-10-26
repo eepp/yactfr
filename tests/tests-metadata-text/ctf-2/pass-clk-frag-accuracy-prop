@@ -1,0 +1,10 @@
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000,
+    "accuracy": 20
+  }
+{"type": "data-stream-class"}

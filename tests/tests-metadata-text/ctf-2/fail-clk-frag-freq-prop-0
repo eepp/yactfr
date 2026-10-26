@@ -1,0 +1,9 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "clock-class", "id": "clk", "frequency": 0}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid clock type fragment:
+[1:51] In object property `frequency`:
+[1:51] Integer 0 is too small: expecting at least 1.

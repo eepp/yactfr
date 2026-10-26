@@ -1,0 +1,18 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000,
+    "offset-from-origin": {
+      "meow": 1
+    }
+  }
+{"type": "data-stream-class"}
+---
+[2:3] Invalid clock type fragment:
+[6:27] In object property `offset-from-origin`:
+[6:27] Invalid clock offset:
+[7:15] Unknown object property `meow`.

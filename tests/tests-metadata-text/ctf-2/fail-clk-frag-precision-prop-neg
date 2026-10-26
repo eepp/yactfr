@@ -1,0 +1,15 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000,
+    "precision": -1
+  }
+{"type": "data-stream-class"}
+---
+[2:3] Invalid clock type fragment:
+[6:18] In object property `precision`:
+[6:18] Expecting an unsigned integer.

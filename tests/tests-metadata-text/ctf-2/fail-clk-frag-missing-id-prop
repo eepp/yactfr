@@ -1,0 +1,8 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "clock-class", "frequency": 1000}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid clock type fragment:
+[1:1] Missing mandatory object property `id`.
