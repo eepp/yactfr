@@ -142,8 +142,11 @@ private:
                 normPathElems.push_back(*it);
             } else {
                 // "parent"
-                if (normPathElems.empty()) {
-                    // empty path: add parent
+                if (normPathElems.empty() || !normPathElems.back()) {
+                    /*
+                     * Empty path or only "parent" elements so far:
+                     * add parent.
+                     */
                     normPathElems.push_back(boost::none);
                 } else {
                     normPathElems.pop_back();
