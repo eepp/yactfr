@@ -1,0 +1,30 @@
+---
+{"type": "preamble", "version": 2}
+  {
+    "type": "trace-class",
+    "packet-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["meow"]
+          }
+        }
+      ]
+    }
+  }
+---
+[1:3] Invalid trace type fragment:
+[3:34] In object property `packet-header-field-class`:
+[3:34] Invalid structure type:
+[5:25] In object property `member-classes`:
+[6:9] In array element #1:
+[6:9] Invalid structure member type:
+[8:26] In object property `field-class`:
+[8:26] Invalid variable-length unsigned integer type:
+[10:22] In object property `roles`:
+[10:22] Invalid roles:
+[10:23] In array element #1:
+[10:23] Unexpected value `meow`: expecting `data-stream-class-id`, `data-stream-id`, `default-clock-timestamp`, `discarded-event-record-counter-snapshot`, `event-record-class-id`, `packet-content-length`, `packet-end-default-clock-timestamp`, `packet-magic-number`, `packet-sequence-number`, or `packet-total-length`.

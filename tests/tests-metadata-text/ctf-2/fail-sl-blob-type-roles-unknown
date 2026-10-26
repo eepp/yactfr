@@ -1,0 +1,31 @@
+---
+{"type": "preamble", "version": 2}
+  {
+    "type": "trace-class",
+    "packet-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "test",
+          "field-class": {
+            "type": "static-length-blob",
+            "length": 16,
+            "roles": ["meow"]
+          }
+        }
+      ]
+    }
+  }
+---
+[1:3] Invalid trace type fragment:
+[3:34] In object property `packet-header-field-class`:
+[3:34] Invalid structure type:
+[5:25] In object property `member-classes`:
+[6:9] In array element #1:
+[6:9] Invalid structure member type:
+[8:26] In object property `field-class`:
+[8:26] Invalid static-length BLOB type:
+[11:22] In object property `roles`:
+[11:22] Invalid roles:
+[11:23] In array element #1:
+[11:23] Unexpected value `meow`: expecting `metadata-stream-uuid`.

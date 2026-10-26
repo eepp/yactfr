@@ -465,19 +465,22 @@ using JsonIntRangeSetValReq = JsonIntRangeSetValReqBase<JsonIntValReq>;
 
 /*
  * CTF 2 JSON roles value requirement.
+ *
+ * Each role must be an element of the set of valid roles which the
+ * constructor accepts.
  */
 class JsonRolesValReq final :
     public JsonArrayValReq
 {
 public:
-    explicit JsonRolesValReq() :
-        JsonArrayValReq {JsonValReq::shared(JsonVal::Kind::Str)}
+    explicit JsonRolesValReq(JsonStrValInSetReq::Set validRoles) :
+        JsonArrayValReq {JsonStrValInSetReq::shared(std::move(validRoles))}
     {
     }
 
-    static Sp shared()
+    static Sp shared(JsonStrValInSetReq::Set validRoles)
     {
-        return std::make_shared<JsonRolesValReq>();
+        return std::make_shared<JsonRolesValReq>(std::move(validRoles));
     }
 
 private:
@@ -792,12 +795,33 @@ namespace {
 
 /*
  * Returns the pair (suitable for insertion into a
- * `JsonObjValReq::PropReqs` instance) for the CTF 2 data type roles
- * object property requirement.
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 unsigned integer
+ * type roles object property requirement.
  */
-JsonObjValReq::PropReqsEntry rolesPropReqEntry()
+JsonObjValReq::PropReqsEntry uIntTypeRolesPropReqEntry()
 {
-    return {strs::roles, {JsonRolesValReq::shared()}};
+    return {strs::roles, {JsonRolesValReq::shared({
+        strs::dscId,
+        strs::dsId,
+        strs::pktMagicNumber,
+        strs::defClkTs,
+        strs::discErCounterSnap,
+        strs::pktContentLen,
+        strs::pktTotalLen,
+        strs::pktEndDefClkTs,
+        strs::pktSeqNum,
+        strs::ercId,
+    })}};
+}
+
+/*
+ * Returns the pair (suitable for insertion into a
+ * `JsonObjValReq::PropReqs` instance) for the CTF 2 static-length BLOB
+ * type roles object property requirement.
+ */
+JsonObjValReq::PropReqsEntry slBlobTypeRolesPropReqEntry()
+{
+    return {strs::roles, {JsonRolesValReq::shared({strs::metadataStreamUuid})}};
 }
 
 /*
@@ -825,7 +849,7 @@ public:
         JsonFlIntTypeValReq {
             this->typeStr(),
             {
-                rolesPropReqEntry(),
+                uIntTypeRolesPropReqEntry(),
                 intTypeMappingsPropReqEntry<JsonUIntValReq>(),
             },
         }
@@ -967,7 +991,7 @@ public:
         JsonVlIntTypeValReq {
             this->typeStr(),
             {
-                rolesPropReqEntry(),
+                uIntTypeRolesPropReqEntry(),
                 intTypeMappingsPropReqEntry<JsonUIntValReq>(),
             },
         }
@@ -1232,7 +1256,7 @@ private:
         PropReqs propReqs;
 
         propReqs.insert(slDtLenPropReqEntry());
-        propReqs.insert(rolesPropReqEntry());
+        propReqs.insert(slBlobTypeRolesPropReqEntry());
         return propReqs;
     }
 
