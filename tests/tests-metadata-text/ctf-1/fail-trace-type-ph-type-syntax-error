@@ -1,0 +1,17 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+
+  packet.header := struct {
+    meow x;
+  };
+};
+---
+[3:1] In `trace` root block:
+[8:3] In the `packet.header` scope:
+[8:20] In `struct` block:
+[9:5] Expecting member type with known data type or data type alias.

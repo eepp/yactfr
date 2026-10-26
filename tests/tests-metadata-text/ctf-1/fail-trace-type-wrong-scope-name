@@ -1,0 +1,16 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+
+  packet.foo := struct {
+    integer {size = 8;} x;
+  };
+};
+---
+[3:1] In `trace` root block:
+[8:3] In the `packet.header` scope:
+[8:10] Expecting `header`.

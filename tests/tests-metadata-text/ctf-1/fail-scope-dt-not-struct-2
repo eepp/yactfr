@@ -1,0 +1,19 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+typealias integer {size = 8;} := u8;
+
+event {
+  name = event;
+  fields := u8;
+};
+---
+[11:1] In `event` root block:
+[13:3] In the `fields` scope:
+[13:13] Expecting a structure type.

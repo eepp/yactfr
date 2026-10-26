@@ -1,0 +1,11 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = native;
+};
+---
+[3:1] In `trace` root block:
+[6:16] Invalid `byte_order` attribute: cannot be `native` here.

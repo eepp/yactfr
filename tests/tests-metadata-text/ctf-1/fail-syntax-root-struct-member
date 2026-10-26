@@ -1,0 +1,14 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+struct s {
+  integer {size = 8;} a;
+} x;
+---
+[9:1] Expecting data type alias (`typealias`, `typedef`, `enum NAME`, `struct NAME`, or `variant NAME`), trace type block (`trace`), trace environment block (`env`), clock type block (`clock`), data stream type block (`stream`), or event record type block (`event`). Did you forget the `;` after the closing `}` of the block?
