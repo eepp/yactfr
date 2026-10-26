@@ -33,7 +33,8 @@ private:
     boost::optional<yactfr::DataBlock> _data(const yactfr::Index offset,
                                              const yactfr::Size minSize) override
     {
-        if (offset >= _size) {
+        if (offset + minSize > _size) {
+            // not enough data
             return boost::none;
         }
 
