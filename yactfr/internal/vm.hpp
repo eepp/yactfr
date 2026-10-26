@@ -389,7 +389,7 @@ public:
     Size curVlIntLenBits;
 
     // current variable-length integer element
-    VariableLengthIntegerElement *curVlIntElem;
+    VariableLengthIntegerElement *curVlIntElem = nullptr;
 
     /*
      * Code unit buffer for null-terminated strings.
@@ -867,8 +867,11 @@ private:
         _pos.headOffsetInCurPktBits = 0;
         assert((_pos.curPktOffsetInElemSeqBits & 7) == 0);
 
-        if (_pos.curExpectedPktTotalLenBits == sizeUnset) {
-            // element sequence contains a single packet
+        if (_pos.curExpectedPktTotalLenBits == sizeUnset || !_bufAddr) {
+            /*
+             * Element sequence contains a single packet, or there's no
+             * current buffer (for example, the VM is a copy).
+             */
             this->_resetBuffer();
         } else {
             const auto oldBufAddr = _bufAddr;

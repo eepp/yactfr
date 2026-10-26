@@ -61,7 +61,8 @@ void VmPos::_setSimpleFromOther(const VmPos& other)
     remBitsToSkip = other.remBitsToSkip;
     lastIntVal = other.lastIntVal;
     curVlIntLenBits = other.curVlIntLenBits;
-    curVlIntElem = &this->elemFromOther(other, *other.curVlIntElem);
+    curVlIntElem = other.curVlIntElem ? &this->elemFromOther(other, *other.curVlIntElem) :
+                   nullptr;
     curId = other.curId;
     ntStrCuBuf = other.ntStrCuBuf;
     pktProc = other.pktProc;
