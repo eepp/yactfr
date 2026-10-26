@@ -126,7 +126,7 @@ public:
         return theState;
     }
 
-    void stackPush(const Proc * const proc = nullptr)
+    YACTFR_VM_ALWAYS_INLINE void stackPush(const Proc * const proc = nullptr)
     {
         if (stackEnd == stackCapEnd) {
             this->_growStack();
@@ -1642,7 +1642,7 @@ private:
     }
 
     template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
-    RetT _readFlInt(const Instr& instr)
+    YACTFR_VM_ALWAYS_INLINE RetT _readFlInt(const Instr& instr)
     {
         auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
