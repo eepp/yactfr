@@ -1,0 +1,82 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+typealias integer { size = 8; } := unsigned char;
+typealias integer { size = 8; signed = true; } := signed char;
+typealias integer { size = 8; encoding = UTF8; } := const char;
+typealias integer { size = 8; } := _Bool;
+typealias integer { size = 16; signed = true; } := signed short;
+typealias integer { size = 32; } := unsigned int;
+typealias integer { size = 64; } := unsigned long long;
+typealias integer { size = 64; signed = true; } := long long int;
+typealias integer { size = 8; } := void;
+typealias floating_point {
+    exp_dig = 8;
+    mant_dig = 24;
+} := float;
+typealias floating_point {
+    exp_dig = 11;
+    mant_dig = 53;
+} := long double;
+
+event {
+    name = ev;
+    fields := struct {
+        unsigned char a;
+        signed char b;
+        const char c;
+        _Bool d;
+        signed  /* comment */ short e;
+        unsigned int f;
+        unsigned long long g;
+        long
+        long
+        int h;
+        void i;
+        float j;
+        long double k;
+    };
+};
+---
+!be
+
+$255                            # `a`
+$-2                             # `b`
+"A"                             # `c`
+01                              # `d`
+[-1234 : 16]                    # `e`
+[3000000000 : 32]               # `f`
+[18446744073709551615 : 64]     # `g`
+[-42 : 64]                      # `h`
+2a                              # `i`
+[1.5 : 32]                      # `j`
+[-2.25 : 64]                    # `k`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#ev
+     0       SC:5 {
+     0         ST {
+     0           FLUI:a:255
+     8           FLSI:b:-2
+    16           FLUI:c:65
+    24           FLUI:d:1
+    32           FLSI:e:-1234
+    48           FLUI:f:3000000000
+    80           FLUI:g:18446744073709551615
+   144           FLSI:h:-42
+   208           FLUI:i:42
+   216           FLFPN:j:1.5
+   248           FLFPN:k:-2.25
+   312         }
+   312       }
+   312     }
+   312   }
+   312 }

@@ -1,0 +1,26 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    enum : integer {size = 8;} {
+      A = 1 ...,
+      B = 7,
+    } tag;
+  };
+};
+---
+[9:1] In `event` root block:
+[12:3] In the `fields` scope:
+[12:13] In `struct` block:
+[13:5] While parsing body of `struct` block:
+[13:5] In `enum` block:
+[14:16] Expecting valid constant integer.

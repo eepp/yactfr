@@ -1,0 +1,21 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    enum meow tag;
+  };
+};
+---
+[9:1] In `event` root block:
+[12:3] In the `fields` scope:
+[12:13] In `struct` block:
+[13:5] Expecting member type with known data type or data type alias.
