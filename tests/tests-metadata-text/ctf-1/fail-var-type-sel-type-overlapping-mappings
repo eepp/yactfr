@@ -1,0 +1,27 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    enum : integer {size = 8;} {
+      A = 0 ... 3,
+      B = 2 ... 5,
+    } tag;
+
+    variant <tag> {
+      string A;
+      string B;
+    } var;
+  };
+};
+---
+[18:5] Invalid data location (event record payload: `tag`):
+[18:5] Selector type of variant type contains overlapping mappings.

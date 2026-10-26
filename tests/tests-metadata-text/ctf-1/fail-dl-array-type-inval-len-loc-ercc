@@ -1,0 +1,25 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+  event.context := struct {
+    string s[len];
+  };
+};
+
+event {
+  name = event;
+};
+---
+[9:1] In `stream` root block:
+[10:3] In the `event.context` scope:
+[10:20] In `struct` block:
+[11:5] While parsing body of `struct` block:
+[11:14] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[11:14] Invalid relative data location (`len`): cannot find `len` (first element).

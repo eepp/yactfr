@@ -1,0 +1,23 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    string s[event.foo];
+  };
+};
+---
+[9:1] In `event` root block:
+[12:3] In the `fields` scope:
+[12:13] In `struct` block:
+[13:5] While parsing body of `struct` block:
+[13:14] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[13:14] Expecting `context` or `fields` after `event.`.
