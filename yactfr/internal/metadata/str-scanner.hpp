@@ -678,10 +678,10 @@ template <typename ValT>
 boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullVal,
                                                      const bool negate)
 {
+    static constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
+
     // negate if needed
     if (std::is_signed<ValT>::value) {
-        static constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
-
         if (negate) {
             if (ullVal > llMaxAsUll + 1) {
                 return boost::none;
@@ -694,7 +694,24 @@ boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ul
     }
 
     // success: cast and negate if needed
-    return static_cast<ValT>(ullVal) * static_cast<ValT>(negate ? -1 : 1);
+    if (!negate) {
+        return static_cast<ValT>(ullVal);
+    }
+
+    if (std::is_signed<ValT>::value) {
+        if (ullVal == llMaxAsUll + 1) {
+            /*
+             * Cannot negate `static_cast<ValT>(ullVal)`
+             * without overflowing.
+             */
+            return std::numeric_limits<ValT>::min();
+        }
+
+        return -static_cast<ValT>(ullVal);
+    }
+
+    // unsigned: wrap around
+    return static_cast<ValT>(0ULL - ullVal);
 }
 
 template <typename ValT>
