@@ -2141,8 +2141,8 @@ private:
 
                         ss << "Invalid `" << strs::cycles << "` property of " <<
                               "`" << strs::offsetFromOrig << "` property: " <<
-                              "value " << cycles << " is greater than the value of the " <<
-                              "`" << strs::freq << "` property (" << freq << ").";
+                              "value " << cycles << " is greater than or equal to the " <<
+                              "value of the `" << strs::freq << "` property (" << freq << ").";
                         throwTextParseError(ss.str(), jsonCyclesVal->loc());
                     }
                 }

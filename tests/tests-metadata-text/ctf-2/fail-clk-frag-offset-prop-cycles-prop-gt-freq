@@ -1,0 +1,8 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "clock-class", "id": "clk", "frequency": 1000, "offset-from-origin": {"seconds": 1, "cycles": 1001}}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid clock type fragment:
+[1:104] Invalid `cycles` property of `offset-from-origin` property: value 1001 is greater than or equal to the value of the `frequency` property (1000).
