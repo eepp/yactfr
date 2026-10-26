@@ -1,0 +1,157 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+clock {
+    name = clk;
+};
+
+typealias integer { size = 8; map = clock.clk.value; } := clk8;
+typealias integer { size = 16; map = clock.clk.value; } := clk16;
+
+stream {
+    packet.context := struct {
+        u16 packet_size;
+        u8 info[3];
+        clk16 begin[2];
+        u8 tail;
+    };
+    event.header := struct {
+        u8 id;
+        clk8 ts[2];
+        u8 extra[2];
+    };
+};
+
+event {
+    name = a;
+    id = 0;
+    fields := struct {
+        u8 x;
+    };
+};
+
+event {
+    name = b;
+    id = 1;
+};
+---
+!be
+
+[216 : 16]       # `packet_size`
+01 02 03         # `info`
+[0x1234 : 16]    # `begin[0]`
+[0x1200 : 16]    # `begin[1]` (wraps)
+ff               # `tail`
+
+# event record
+00               # `id`
+[0x10 : 8]       # `ts[0]`
+[0x20 : 8]       # `ts[1]`
+aa bb            # `extra`
+[23 : 8]         # `x`
+
+# event record
+01               # `id`
+[0x20 : 8]       # `ts[0]` (no change)
+[0x05 : 8]       # `ts[1]` (wraps)
+cc dd            # `extra`
+
+# event record
+00               # `id`
+[0xfe : 8]       # `ts[0]`
+[0xff : 8]       # `ts[1]`
+ee ff            # `extra`
+[42 : 8]         # `x`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     SC:1 {
+     0       ST {
+     0         FLUI:packet_size:216
+    16         SLA:info {
+    16           FLUI:1
+    24           FLUI:2
+    32           FLUI:3
+    40         }
+    40         SLA:begin {
+    40           FLUI:4660
+    56           DCV:4660
+    56           FLUI:4608
+    72           DCV:70144
+    72         }
+    72         FLUI:tail:255
+    80       }
+    80     }
+    80     PI:T216:C216
+    80     ER {
+    80       SC:2 {
+    80         ST {
+    80           FLUI:id:0
+    88           SLA:ts {
+    88             FLUI:16
+    96             DCV:70160
+    96             FLUI:32
+   104             DCV:70176
+   104           }
+   104           SLA:extra {
+   104             FLUI:170
+   112             FLUI:187
+   120           }
+   120         }
+   120       }
+   120       ERI:T0:#a
+   120       SC:5 {
+   120         ST {
+   120           FLUI:x:23
+   128         }
+   128       }
+   128     }
+   128     ER {
+   128       SC:2 {
+   128         ST {
+   128           FLUI:id:1
+   136           SLA:ts {
+   136             FLUI:32
+   144             DCV:70176
+   144             FLUI:5
+   152             DCV:70405
+   152           }
+   152           SLA:extra {
+   152             FLUI:204
+   160             FLUI:221
+   168           }
+   168         }
+   168       }
+   168       ERI:T1:#b
+   168     }
+   168     ER {
+   168       SC:2 {
+   168         ST {
+   168           FLUI:id:0
+   176           SLA:ts {
+   176             FLUI:254
+   184             DCV:70654
+   184             FLUI:255
+   192             DCV:70655
+   192           }
+   192           SLA:extra {
+   192             FLUI:238
+   200             FLUI:255
+   208           }
+   208         }
+   208       }
+   208       ERI:T0:#a
+   208       SC:5 {
+   208         ST {
+   208           FLUI:x:42
+   216         }
+   216       }
+   216     }
+   216   }
+   216 }
+
