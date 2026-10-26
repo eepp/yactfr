@@ -1,0 +1,29 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "x",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        }
+      ]
+    },
+    "specific-context-field-class": {
+      "type": "fixed-length-unsigned-integer",
+      "length": 8,
+      "byte-order": "little-endian"
+    }
+  }
+---
+[2:3] In event record type fragment:
+[17:37] Root data type of scope must be a structure type.

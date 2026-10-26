@@ -1,0 +1,7 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+---
+[1:1] Preamble fragment must be the first fragment of the metadata stream.

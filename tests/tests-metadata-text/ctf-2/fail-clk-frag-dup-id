@@ -1,0 +1,8 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "clock-class", "id": "clk", "frequency": 1000}
+{"type": "clock-class", "id": "clk", "frequency": 1000}
+{"type": "data-stream-class"}
+---
+[1:1] Duplicate clock type fragment with internal ID `clk`.

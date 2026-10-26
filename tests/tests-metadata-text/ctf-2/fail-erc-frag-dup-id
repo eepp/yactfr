@@ -1,0 +1,8 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+{"type": "event-record-class", "id": 23}
+{"type": "event-record-class", "id": 23}
+---
+[1:38] Duplicate event record type with ID 23 within data stream type 0.

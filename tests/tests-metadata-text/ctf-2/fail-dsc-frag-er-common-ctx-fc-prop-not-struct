@@ -1,0 +1,15 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+
+  {
+    "type": "data-stream-class",
+    "event-record-common-context-field-class": {
+      "type": "fixed-length-unsigned-integer",
+      "length": 8,
+      "byte-order": "little-endian"
+    }
+  }
+---
+[2:3] In data stream type fragment:
+[4:48] Root data type of scope must be a structure type.

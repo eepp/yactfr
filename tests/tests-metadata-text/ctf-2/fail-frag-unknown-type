@@ -1,0 +1,9 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "meow"}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid fragment:
+[1:10] In object property `type`:
+[1:10] Unexpected value `meow`: expecting `clock-class`, `data-stream-class`, `event-record-class`, `field-class-alias`, `preamble`, or `trace-class`.

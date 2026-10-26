@@ -1,0 +1,7 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class", "id": 23}
+{"type": "data-stream-class", "id": 23}
+---
+[1:1] Duplicate data stream type with ID 23.

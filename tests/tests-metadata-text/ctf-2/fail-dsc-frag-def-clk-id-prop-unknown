@@ -1,0 +1,8 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "clock-class", "id": "clk", "frequency": 1000}
+{"type": "data-stream-class", "default-clock-class-id": "meow"}
+---
+[1:1] In data stream type fragment:
+[1:57] `meow` doesn't identify an existing clock type.

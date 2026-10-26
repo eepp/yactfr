@@ -1,0 +1,8 @@
+---
+{"type": "preamble", "version": 3}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid preamble fragment:
+[1:33] In object property `version`:
+[1:33] Unexpected value 3: expecting 2.

@@ -1,0 +1,15 @@
+---
+{"type": "preamble", "version": 2}
+
+  {
+    "type": "trace-class",
+    "packet-header-field-class": {
+      "type": "fixed-length-unsigned-integer",
+      "length": 8,
+      "byte-order": "little-endian"
+    }
+  }
+{"type": "data-stream-class"}
+---
+[2:3] In trace type fragment:
+[4:34] Root data type of scope must be a structure type.

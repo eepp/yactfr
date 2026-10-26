@@ -1,0 +1,7 @@
+---
+{"type": "preamble", "version": 2, "meow": 1}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid preamble fragment:
+[1:44] Unknown object property `meow`.

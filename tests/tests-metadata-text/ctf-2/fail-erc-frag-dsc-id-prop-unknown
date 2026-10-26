@@ -1,0 +1,7 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+{"type": "event-record-class", "data-stream-class-id": 23}
+---
+[1:56] No data stream type exists with ID 23.

@@ -1,0 +1,32 @@
+---
+
+  {
+    "type": "preamble",
+    "version": 2,
+    "uuid": [
+      256,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ]
+  }
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+---
+[2:3] Invalid preamble fragment:
+[5:13] In object property `uuid`:
+[5:13] Invalid UUID:
+[6:7] In array element #1:
+[6:7] Integer 256 is too large: expecting at most 255.
