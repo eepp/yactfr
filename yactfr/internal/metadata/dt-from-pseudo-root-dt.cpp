@@ -321,15 +321,21 @@ DataType::Up DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
         unsigned int align;
         unsigned int elemLen;
 
-        if (pseudoElemType.isUInt()) {
+        if (pseudoElemType.kind() == PseudoDt::Kind::FlUInt) {
             auto& pseudoIntElemType = static_cast<const PseudoFlUIntType&>(pseudoElemType);
 
             encoding = pseudoIntElemType.encoding();
             align = pseudoIntElemType.align();
             elemLen = pseudoIntElemType.len();
         } else {
+            /*
+             * Wrapped fixed-length signed integer type (CTF 1.8 and
+             * CTF 2) or unsigned integer type (CTF 2).
+             */
+            assert(pseudoElemType.kind() == PseudoDt::Kind::ScalarDtWrapper);
+
             auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(pseudoElemType);
-            auto& intType = pseudoScalarDtWrapper.dt().asFixedLengthSignedIntegerType();
+            auto& intType = pseudoScalarDtWrapper.dt().asFixedLengthBitArrayType();
 
             encoding = pseudoScalarDtWrapper.encoding();
             align = intType.alignment();
