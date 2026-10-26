@@ -24,6 +24,7 @@
 
 #include "proc.hpp"
 #include "std-fl-int-reader.hpp"
+#include "fl-int-reader.hpp"
 #include "fl-int-rev.hpp"
 #include "utils.hpp"
 
@@ -32,10 +33,9 @@
  * their slow paths out of line, whatever the inlining decisions of
  * the compiler.
  *
- * Hiding the VM classes also avoids calling their methods through
- * the PLT.
+ * Hiding the VM classes (`YACTFR_INTERNAL_HIDDEN`) also avoids calling
+ * their methods through the PLT.
  */
-#define YACTFR_VM_HIDDEN            __attribute__((visibility("hidden")))
 #define YACTFR_VM_ALWAYS_INLINE     __attribute__((always_inline))
 #define YACTFR_VM_NOINLINE          __attribute__((noinline))
 #define YACTFR_VM_LIKELY(_cond)     __builtin_expect(static_cast<bool>(_cond), 1)
@@ -109,7 +109,7 @@ struct VmStackFrame final
  * This contains the whole state of a yactfr VM _except_ for everything
  * related to data source/buffering.
  */
-class YACTFR_VM_HIDDEN VmPos final
+class YACTFR_INTERNAL_HIDDEN VmPos final
 {
 public:
     explicit VmPos(const PktProc& pktProc);
@@ -470,7 +470,7 @@ public:
     std::uint64_t defClkVal = 0;
 };
 
-class YACTFR_VM_HIDDEN ItInfos final
+class YACTFR_INTERNAL_HIDDEN ItInfos final
 {
 public:
     void elemFromOther(const VmPos& myPos, const VmPos& otherPos, const Element& otherElem)
@@ -519,7 +519,7 @@ public:
     const Element *elem = nullptr;
 };
 
-class YACTFR_VM_HIDDEN Vm final
+class YACTFR_INTERNAL_HIDDEN Vm final
 {
 public:
     explicit Vm(DataSourceFactory& dataSrcFactory, const PktProc& pktProc,
@@ -1641,7 +1641,7 @@ private:
         };
     }
 
-    template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
+    template <typename RetT, ByteOrder BoV, bool RevV>
     YACTFR_VM_ALWAYS_INLINE RetT _readFlInt(const Instr& instr)
     {
         auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
@@ -1665,7 +1665,7 @@ private:
 
         return call([&] {
             const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
-            auto ret = FuncsV[index](this->_bufAtHead());
+            auto ret = FlIntReadFuncs<RetT, BoV>::funcs[index](this->_bufAtHead());
 
             if (RevV) {
                 ret = revFlIntBits(ret, readFlBitArrayInstr.len());
@@ -1675,34 +1675,34 @@ private:
         });
     }
 
-    template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
+    template <ByteOrder BoV, bool RevV>
     void _execReadFlBitArray(const Instr& instr)
     {
-        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, BoV, RevV>(instr),
                                    instr, _pos.elems.flBitArray);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
-    template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
+    template <ByteOrder BoV, bool RevV>
     void _execReadFlBitMap(const Instr& instr)
     {
-        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, BoV, RevV>(instr),
                                    instr, _pos.elems.flBitMap);
         this->_consumeExistingBits(static_cast<const ReadFlBitMapInstr&>(instr).len());
     }
 
-    template <std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
+    template <ByteOrder BoV, bool RevV>
     void _execReadFlBool(const Instr& instr)
     {
-        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+        this->_setBitArrayElemBase(this->_readFlInt<std::uint64_t, BoV, RevV>(instr),
                                    instr, _pos.elems.flBool);
         this->_consumeExistingBits(static_cast<const ReadFlBoolInstr&>(instr).len());
     }
 
-    template <typename RetT, RetT (*FuncsV[])(const std::uint8_t *), bool RevV>
+    template <typename RetT, ByteOrder BoV, bool RevV>
     void _execReadFlInt(const Instr& instr)
     {
-        this->_setFlIntElem(this->_readFlInt<RetT, FuncsV, RevV>(instr), instr);
+        this->_setFlIntElem(this->_readFlInt<RetT, BoV, RevV>(instr), instr);
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
@@ -1728,10 +1728,10 @@ private:
         this->_consumeExistingBits(sizeof(FloatT) * 8);
     }
 
-    template <typename FloatT, std::uint64_t (*FuncsV[])(const std::uint8_t *), bool RevV>
+    template <typename FloatT, ByteOrder BoV, bool RevV>
     void _execReadFlFloat(const Instr& instr)
     {
-        this->_execReadFlFloatPost<FloatT>(this->_readFlInt<std::uint64_t, FuncsV, RevV>(instr),
+        this->_execReadFlFloatPost<FloatT>(this->_readFlInt<std::uint64_t, BoV, RevV>(instr),
                                            instr);
     }
 

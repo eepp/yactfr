@@ -8,7 +8,6 @@
 #include <cstdint>
 
 #include "vm.hpp"
-#include "fl-int-reader.hpp"
 
 namespace yactfr {
 namespace internal {
@@ -433,13 +432,13 @@ void Vm::restorePos(const ElementSequenceIteratorPosition& pos)
 
 Vm::_tExecReaction Vm::_execReadFlBitArrayLe(const Instr& instr)
 {
-    this->_execReadFlBitArray<readFlUIntLeFuncs, false>(instr);
+    this->_execReadFlBitArray<ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlBitArrayBe(const Instr& instr)
 {
-    this->_execReadFlBitArray<readFlUIntBeFuncs, false>(instr);
+    this->_execReadFlBitArray<ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -487,13 +486,13 @@ Vm::_tExecReaction Vm::_execReadFlBitArrayA64Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlBitMapLe(const Instr& instr)
 {
-    this->_execReadFlBitMap<readFlUIntLeFuncs, false>(instr);
+    this->_execReadFlBitMap<ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlBitMapBe(const Instr& instr)
 {
-    this->_execReadFlBitMap<readFlUIntBeFuncs, false>(instr);
+    this->_execReadFlBitMap<ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -541,13 +540,13 @@ Vm::_tExecReaction Vm::_execReadFlBitMapA64Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlBoolLe(const Instr& instr)
 {
-    this->_execReadFlBool<readFlUIntLeFuncs, false>(instr);
+    this->_execReadFlBool<ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlBoolBe(const Instr& instr)
 {
-    this->_execReadFlBool<readFlUIntBeFuncs, false>(instr);
+    this->_execReadFlBool<ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -595,13 +594,13 @@ Vm::_tExecReaction Vm::_execReadFlBoolA64Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlSIntLe(const Instr& instr)
 {
-    this->_execReadFlInt<std::int64_t, readFlSIntLeFuncs, false>(instr);
+    this->_execReadFlInt<std::int64_t, ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlSIntBe(const Instr& instr)
 {
-    this->_execReadFlInt<std::int64_t, readFlSIntBeFuncs, false>(instr);
+    this->_execReadFlInt<std::int64_t, ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -649,13 +648,13 @@ Vm::_tExecReaction Vm::_execReadFlSIntA64Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlUIntLe(const Instr& instr)
 {
-    this->_execReadFlInt<std::uint64_t, readFlUIntLeFuncs, false>(instr);
+    this->_execReadFlInt<std::uint64_t, ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlUIntBe(const Instr& instr)
 {
-    this->_execReadFlInt<std::uint64_t, readFlUIntBeFuncs, false>(instr);
+    this->_execReadFlInt<std::uint64_t, ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -703,13 +702,13 @@ Vm::_tExecReaction Vm::_execReadFlUIntA64Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlFloat32Le(const Instr& instr)
 {
-    this->_execReadFlFloat<float, readFlUIntLeFuncs, false>(instr);
+    this->_execReadFlFloat<float, ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat32Be(const Instr& instr)
 {
-    this->_execReadFlFloat<float, readFlUIntBeFuncs, false>(instr);
+    this->_execReadFlFloat<float, ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -727,13 +726,13 @@ Vm::_tExecReaction Vm::_execReadFlFloatA32Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlFloat64Le(const Instr& instr)
 {
-    this->_execReadFlFloat<double, readFlUIntLeFuncs, false>(instr);
+    this->_execReadFlFloat<double, ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat64Be(const Instr& instr)
 {
-    this->_execReadFlFloat<double, readFlUIntBeFuncs, false>(instr);
+    this->_execReadFlFloat<double, ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -751,13 +750,13 @@ Vm::_tExecReaction Vm::_execReadFlFloatA64Be(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlBitArrayLeRev(const Instr& instr)
 {
-    this->_execReadFlBitArray<readFlUIntLeFuncs, true>(instr);
+    this->_execReadFlBitArray<ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlBitArrayBeRev(const Instr& instr)
 {
-    this->_execReadFlBitArray<readFlUIntBeFuncs, true>(instr);
+    this->_execReadFlBitArray<ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -805,13 +804,13 @@ Vm::_tExecReaction Vm::_execReadFlBitArrayA64BeRev(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlBoolLeRev(const Instr& instr)
 {
-    this->_execReadFlBool<readFlUIntLeFuncs, true>(instr);
+    this->_execReadFlBool<ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlBoolBeRev(const Instr& instr)
 {
-    this->_execReadFlBool<readFlUIntBeFuncs, true>(instr);
+    this->_execReadFlBool<ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -859,13 +858,13 @@ Vm::_tExecReaction Vm::_execReadFlBitMapA64BeRev(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlBitMapLeRev(const Instr& instr)
 {
-    this->_execReadFlBitMap<readFlUIntLeFuncs, true>(instr);
+    this->_execReadFlBitMap<ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlBitMapBeRev(const Instr& instr)
 {
-    this->_execReadFlBitMap<readFlUIntBeFuncs, true>(instr);
+    this->_execReadFlBitMap<ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -913,13 +912,13 @@ Vm::_tExecReaction Vm::_execReadFlBoolA64BeRev(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlSIntLeRev(const Instr& instr)
 {
-    this->_execReadFlInt<std::int64_t, readFlSIntLeFuncs, true>(instr);
+    this->_execReadFlInt<std::int64_t, ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlSIntBeRev(const Instr& instr)
 {
-    this->_execReadFlInt<std::int64_t, readFlSIntBeFuncs, true>(instr);
+    this->_execReadFlInt<std::int64_t, ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -967,13 +966,13 @@ Vm::_tExecReaction Vm::_execReadFlSIntA64BeRev(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlUIntLeRev(const Instr& instr)
 {
-    this->_execReadFlInt<std::uint64_t, readFlUIntLeFuncs, true>(instr);
+    this->_execReadFlInt<std::uint64_t, ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlUIntBeRev(const Instr& instr)
 {
-    this->_execReadFlInt<std::uint64_t, readFlUIntBeFuncs, true>(instr);
+    this->_execReadFlInt<std::uint64_t, ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -1021,13 +1020,13 @@ Vm::_tExecReaction Vm::_execReadFlUIntA64BeRev(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlFloat32LeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<float, readFlUIntLeFuncs, true>(instr);
+    this->_execReadFlFloat<float, ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat32BeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<float, readFlUIntBeFuncs, true>(instr);
+    this->_execReadFlFloat<float, ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -1045,13 +1044,13 @@ Vm::_tExecReaction Vm::_execReadFlFloatA32BeRev(const Instr& instr)
 
 Vm::_tExecReaction Vm::_execReadFlFloat64LeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<double, readFlUIntLeFuncs, true>(instr);
+    this->_execReadFlFloat<double, ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat64BeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<double, readFlUIntBeFuncs, true>(instr);
+    this->_execReadFlFloat<double, ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 

@@ -13,6 +13,12 @@
 
 #include <yactfr/aliases.hpp>
 
+/*
+ * Hidden visibility for an internal entity: no dynamic symbol and no
+ * call through the PLT from within the library.
+ */
+#define YACTFR_INTERNAL_HIDDEN  __attribute__((visibility("hidden")))
+
 namespace yactfr {
 namespace internal {
 
