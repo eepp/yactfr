@@ -414,6 +414,35 @@ template <typename VarTypeT, typename IntRangeValueT>
 DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
                                                                             DataLocation&& selLoc)
 {
+    // integer range sets of the options, now that we know the signedness
+    std::vector<IntegerRangeSet<IntRangeValueT>> rangeSets;
+
+    for (auto& pseudoRangeSet : pseudoVarType.rangeSets()) {
+        std::set<IntegerRange<IntRangeValueT>> ranges;
+
+        for (auto& range : pseudoRangeSet) {
+            ranges.insert(IntegerRange<IntRangeValueT> {
+                static_cast<IntRangeValueT>(range.lower()),
+                static_cast<IntRangeValueT>(range.upper())
+            });
+        }
+
+        rangeSets.emplace_back(std::move(ranges));
+    }
+
+    // validate that the integer ranges of two options don't intersect
+    for (auto i = 0U; i < rangeSets.size(); ++i) {
+        for (auto j = i + 1; j < rangeSets.size(); ++j) {
+            if (rangeSets[i].intersects(rangeSets[j])) {
+                std::ostringstream ss;
+
+                ss << "Selector field ranges of variant type options #" << (i + 1) <<
+                      " and #" << (j + 1) << " intersect.";
+                throwTextParseError(ss.str(), pseudoVarType.loc());
+            }
+        }
+    }
+
     typename VarTypeT::Options opts;
 
     for (auto i = 0U; i < pseudoVarType.pseudoOpts().size(); ++i) {
@@ -421,18 +450,10 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
         _current[&pseudoVarType] = i;
 
         const auto& pseudoOpt = pseudoVarType.pseudoOpts()[i];
-        std::set<IntegerRange<IntRangeValueT>> ranges;
-
-        for (auto& range : pseudoVarType.rangeSets()[i]) {
-            ranges.insert(IntegerRange<IntRangeValueT> {
-                static_cast<IntRangeValueT>(range.lower()),
-                static_cast<IntRangeValueT>(range.upper())
-            });
-        }
 
         opts.push_back(VarTypeT::Option::create(pseudoOpt->name(),
                                                 this->_dtFromPseudoDt(pseudoOpt->pseudoDt()),
-                                                IntegerRangeSet<IntRangeValueT> {std::move(ranges)},
+                                                std::move(rangeSets[i]),
                                                 this->_tryCloneAttrs(pseudoOpt->attrs())));
     }
 
