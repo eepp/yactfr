@@ -1,0 +1,13 @@
+{"type": "preamble", "version": 2}
+
+  {
+    "type": "trace-class",
+    "environment": {
+      "a": -23,
+      "b": "meow",
+      "c": 42,
+      "d": 9223372036854775807,
+      "e": -9223372036854775808
+    }
+  }
+{"type": "data-stream-class"}

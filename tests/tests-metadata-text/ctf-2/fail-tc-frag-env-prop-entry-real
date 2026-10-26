@@ -1,0 +1,10 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class", "environment": {"meow": 1.5}}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid trace type fragment:
+[1:40] In object property `environment`:
+[1:40] Invalid trace environment:
+[1:49] Invalid trace environment entry `meow`:
+[1:49] Expecting an integer or a string.
