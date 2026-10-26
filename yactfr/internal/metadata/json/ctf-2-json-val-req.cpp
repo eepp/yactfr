@@ -2011,6 +2011,9 @@ JsonObjValReq::PropReqsEntry uidPropReqEntry(const bool isRequired)
 
 /*
  * CTF 2 JSON clock origin value requirement.
+ *
+ * No _validate() override: `JsonClkTypeOrigPropValReq` already appends
+ * the "Invalid clock origin" context message.
  */
 class JsonClkOrigValReq final :
     public JsonObjValReq
@@ -2028,17 +2031,6 @@ public:
     static Sp shared()
     {
         return std::make_shared<JsonClkOrigValReq>();
-    }
-
-private:
-    void _validate(const JsonVal& jsonVal) const override
-    {
-        try {
-            JsonObjValReq::_validate(jsonVal);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, "Invalid clock origin:", jsonVal.loc());
-            throw;
-        }
     }
 };
 

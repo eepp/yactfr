@@ -1,0 +1,10 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "clock-class", "id": "clk", "frequency": 1000, "origin": "meow"}
+{"type": "data-stream-class"}
+---
+[1:1] Invalid clock type fragment:
+[1:67] In object property `origin`:
+[1:67] Invalid clock origin:
+[1:67] Expecting `unix-epoch` or a clock origin object.
