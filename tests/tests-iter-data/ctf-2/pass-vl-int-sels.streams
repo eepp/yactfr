@@ -1,0 +1,223 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "ev",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "usel",
+          "field-class": {
+            "type": "variable-length-unsigned-integer"
+          }
+        },
+        {
+          "name": "uopt",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": {
+              "path": [
+                "usel"
+              ]
+            },
+            "selector-field-ranges": [
+              [
+                1,
+                5
+              ]
+            ],
+            "field-class": {
+              "type": "fixed-length-unsigned-integer",
+              "length": 8,
+              "byte-order": "little-endian"
+            }
+          }
+        },
+        {
+          "name": "uvar",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "path": [
+                "usel"
+              ]
+            },
+            "options": [
+              {
+                "name": "a",
+                "selector-field-ranges": [
+                  [
+                    0,
+                    0
+                  ]
+                ],
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "little-endian"
+                }
+              },
+              {
+                "name": "b",
+                "selector-field-ranges": [
+                  [
+                    1,
+                    1000
+                  ]
+                ],
+                "field-class": {
+                  "type": "null-terminated-string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "ssel",
+          "field-class": {
+            "type": "variable-length-signed-integer"
+          }
+        },
+        {
+          "name": "svar",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "path": [
+                "ssel"
+              ]
+            },
+            "options": [
+              {
+                "name": "neg",
+                "selector-field-ranges": [
+                  [
+                    -5,
+                    -1
+                  ]
+                ],
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "little-endian"
+                }
+              },
+              {
+                "name": "pos",
+                "selector-field-ranges": [
+                  [
+                    0,
+                    300
+                  ]
+                ],
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 16,
+                  "byte-order": "little-endian"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "sopt",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": {
+              "path": [
+                "ssel"
+              ]
+            },
+            "selector-field-ranges": [
+              [
+                -3,
+                -3
+              ]
+            ],
+            "field-class": {
+              "type": "fixed-length-unsigned-integer",
+              "length": 8,
+              "byte-order": "little-endian"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+---
+# event record 1
+ac 02             # `usel`: 300
+"hi" 00           # `uvar.b`
+7d                # `ssel`: -3
+11                # `svar.neg`
+22                # `sopt`
+
+# event record 2
+03                # `usel`: 3
+33                # `uopt`
+"x" 00            # `uvar.b`
+c8 01             # `ssel`: 200
+02 01             # `svar.pos`: 258
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#ev
+     0       SC:5 {
+     0         ST {
+     0           VLUI:usel:300
+    16           OU:uopt:disabled:300 {
+    16           }
+    16           VU:uvar:300 {
+    16             NTS {
+    16               RD:3:hi$00
+    40             }
+    40           }
+    40           VLSI:ssel:-3
+    48           VS:svar:-3 {
+    48             FLUI:17
+    56           }
+    56           OS:sopt:enabled:-3 {
+    56             FLUI:34
+    64           }
+    64         }
+    64       }
+    64     }
+    64     ER {
+    64       ERI:T0:#ev
+    64       SC:5 {
+    64         ST {
+    64           VLUI:usel:3
+    72           OU:uopt:enabled:3 {
+    72             FLUI:51
+    80           }
+    80           VU:uvar:3 {
+    80             NTS {
+    80               RD:2:x$00
+    96             }
+    96           }
+    96           VLSI:ssel:200
+   112           VS:svar:200 {
+   112             FLUI:258
+   128           }
+   128           OS:sopt:disabled:200 {
+   128           }
+   128         }
+   128       }
+   128     }
+   128   }
+   128 }

@@ -103,7 +103,7 @@ void PseudoScalarDtWrapper::accept(ConstPseudoDtVisitor& visitor) const
 
 bool PseudoScalarDtWrapper::isInt() const noexcept
 {
-    return _dt->isFixedLengthIntegerType();
+    return _dt->isIntegerType();
 }
 
 bool PseudoScalarDtWrapper::isUInt() const noexcept

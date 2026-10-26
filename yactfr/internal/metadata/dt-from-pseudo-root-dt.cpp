@@ -330,11 +330,18 @@ DataType::Up DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
         } else {
             /*
              * Wrapped fixed-length signed integer type (CTF 1.8 and
-             * CTF 2) or unsigned integer type (CTF 2).
+             * CTF 2), or fixed-length unsigned integer type or
+             * variable-length integer type (CTF 2).
              */
             assert(pseudoElemType.kind() == PseudoDt::Kind::ScalarDtWrapper);
 
             auto& pseudoScalarDtWrapper = static_cast<const PseudoScalarDtWrapper&>(pseudoElemType);
+
+            if (!pseudoScalarDtWrapper.dt().isFixedLengthIntegerType()) {
+                // only an array of fixed-length integers may be a string
+                return nullptr;
+            }
+
             auto& intType = pseudoScalarDtWrapper.dt().asFixedLengthBitArrayType();
 
             encoding = pseudoScalarDtWrapper.encoding();
