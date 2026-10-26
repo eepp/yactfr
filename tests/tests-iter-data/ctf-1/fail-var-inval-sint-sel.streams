@@ -1,0 +1,83 @@
+---
+trace {
+    major = 1;
+    minor = 8;
+    byte_order = be;
+};
+
+event {
+    name = test;
+    fields := struct {
+        enum : i8 {
+            A = -3 ... -1,
+            B = 0 ... 2,
+            C = -128 ... -100,
+        } tag;
+        variant <tag> {
+            string A;
+            u16 B;
+            u8 C[2];
+        } v;
+    };
+};
+---
+[-2 : 8]    # `tag`
+"hello\0"   # `v` (`A`)
+
+[1 : 8]     # `tag`
+1234        # `v` (`B`)
+
+[-128 : 8]  # `tag`
+abcd        # `v` (`C`)
+
+[-4 : 8]    # `tag`
+"hello\0"
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLSI:tag:-2
+     8           VS:v:-2 {
+     8             NTS {
+     8               RD:6:hello$00
+    56             }
+    56           }
+    56         }
+    56       }
+    56     }
+    56     ER {
+    56       ERI:T0:#test
+    56       SC:5 {
+    56         ST {
+    56           FLSI:tag:1
+    64           VS:v:1 {
+    64             FLUI:4660
+    80           }
+    80         }
+    80       }
+    80     }
+    80     ER {
+    80       ERI:T0:#test
+    80       SC:5 {
+    80         ST {
+    80           FLSI:tag:-128
+    88           VS:v:-128 {
+    88             SLA {
+    88               FLUI:171
+    96               FLUI:205
+   104             }
+   104           }
+   104         }
+   104       }
+   104     }
+   104     ER {
+   104       ERI:T0:#test
+   104       SC:5 {
+   104         ST {
+   104           FLSI:tag:-4
+   112 Selector value -4 doesn't select a valid variant option.

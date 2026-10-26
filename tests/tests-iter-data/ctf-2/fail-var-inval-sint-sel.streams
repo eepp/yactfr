@@ -1,0 +1,128 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 64,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "v",
+          "field-class": {
+            "type": "variant",
+            "selector-field-location": {
+              "origin": "event-record-payload",
+              "path": ["sel"]
+            },
+            "options": [
+              {
+                "name": "A",
+                "selector-field-ranges": [[-10, -1]],
+                "field-class": {
+                  "type": "fixed-length-unsigned-integer",
+                  "length": 8,
+                  "byte-order": "little-endian",
+                  "alignment": 8
+                }
+              },
+              {
+                "name": "B",
+                "selector-field-ranges": [[0, 7], [20, 30]],
+                "field-class": {
+                  "type": "null-terminated-string"
+                }
+              },
+              {
+                "name": "C",
+                "selector-field-ranges": [[-9223372036854775808, -1000]],
+                "field-class": {
+                  "type": "fixed-length-signed-integer",
+                  "length": 16,
+                  "byte-order": "little-endian",
+                  "alignment": 8
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
+---
+[-3 : 64le]                    # `sel`
+[42 : 8]                       # `v` (`A`)
+
+[25 : 64le]                    # `sel`
+"tea\0"                        # `v` (`B`)
+
+[-9223372036854775808 : 64le]  # `sel`
+[-2 : 16le]                    # `v` (`C`)
+
+[-500 : 64le]                  # `sel`
+[0 : 8]
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLSI:sel:-3
+    64           VS:v:-3 {
+    64             FLUI:42
+    72           }
+    72         }
+    72       }
+    72     }
+    72     ER {
+    72       ERI:T0:#test
+    72       SC:5 {
+    72         ST {
+    72           FLSI:sel:25
+   136           VS:v:25 {
+   136             NTS {
+   136               RD:4:tea$00
+   168             }
+   168           }
+   168         }
+   168       }
+   168     }
+   168     ER {
+   168       ERI:T0:#test
+   168       SC:5 {
+   168         ST {
+   168           FLSI:sel:-9223372036854775808
+   232           VS:v:-9223372036854775808 {
+   232             FLSI:-2
+   248           }
+   248         }
+   248       }
+   248     }
+   248     ER {
+   248       ERI:T0:#test
+   248       SC:5 {
+   248         ST {
+   248           FLSI:sel:-500
+   312 Selector value -500 doesn't select a valid variant option.

@@ -1,0 +1,182 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class",
+    "event-record-common-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "sel",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 32,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "opt",
+          "field-class": {
+            "type": "optional",
+            "selector-field-location": {
+              "origin": "event-record-common-context",
+              "path": ["sel"]
+            },
+            "selector-field-ranges": [
+              [-9223372036854775808, -1000000],
+              [-5, -2],
+              [100, 200]
+            ],
+            "field-class": {
+              "type": "fixed-length-signed-integer",
+              "length": 16,
+              "byte-order": "big-endian",
+              "alignment": 8
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+---
+[-5 : 32le]           # `sel`
+[-300 : 16be]         # `opt`
+
+[-1 : 32le]           # `sel`
+
+[-2147483648 : 32le]  # `sel`
+[1234 : 16be]         # `opt`
+
+[-999999 : 32le]      # `sel`
+
+[0 : 32le]            # `sel`
+
+[200 : 32le]          # `sel`
+[-1 : 16be]           # `opt`
+
+[201 : 32le]          # `sel`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:3 {
+     0         ST {
+     0           FLSI:sel:-5
+    32         }
+    32       }
+    32       SC:5 {
+    32         ST {
+    32           OS:opt:enabled:-5 {
+    32             FLSI:-300
+    48           }
+    48         }
+    48       }
+    48     }
+    48     ER {
+    48       ERI:T0:#test
+    48       SC:3 {
+    48         ST {
+    48           FLSI:sel:-1
+    80         }
+    80       }
+    80       SC:5 {
+    80         ST {
+    80           OS:opt:disabled:-1 {
+    80           }
+    80         }
+    80       }
+    80     }
+    80     ER {
+    80       ERI:T0:#test
+    80       SC:3 {
+    80         ST {
+    80           FLSI:sel:-2147483648
+   112         }
+   112       }
+   112       SC:5 {
+   112         ST {
+   112           OS:opt:enabled:-2147483648 {
+   112             FLSI:1234
+   128           }
+   128         }
+   128       }
+   128     }
+   128     ER {
+   128       ERI:T0:#test
+   128       SC:3 {
+   128         ST {
+   128           FLSI:sel:-999999
+   160         }
+   160       }
+   160       SC:5 {
+   160         ST {
+   160           OS:opt:disabled:-999999 {
+   160           }
+   160         }
+   160       }
+   160     }
+   160     ER {
+   160       ERI:T0:#test
+   160       SC:3 {
+   160         ST {
+   160           FLSI:sel:0
+   192         }
+   192       }
+   192       SC:5 {
+   192         ST {
+   192           OS:opt:disabled:0 {
+   192           }
+   192         }
+   192       }
+   192     }
+   192     ER {
+   192       ERI:T0:#test
+   192       SC:3 {
+   192         ST {
+   192           FLSI:sel:200
+   224         }
+   224       }
+   224       SC:5 {
+   224         ST {
+   224           OS:opt:enabled:200 {
+   224             FLSI:-1
+   240           }
+   240         }
+   240       }
+   240     }
+   240     ER {
+   240       ERI:T0:#test
+   240       SC:3 {
+   240         ST {
+   240           FLSI:sel:201
+   272         }
+   272       }
+   272       SC:5 {
+   272         ST {
+   272           OS:opt:disabled:201 {
+   272           }
+   272         }
+   272       }
+   272     }
+   272   }
+   272 }
