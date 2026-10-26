@@ -357,7 +357,7 @@ void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
         std::ostringstream ss;
 
         ss << "In the data stream type with ID " << pseudoDst.id() << ":";
-        appendMsgToTextParseError(exc, ss.str());
+        appendMsgToTextParseError(exc, ss.str(), pseudoDst.loc());
         throw;
     }
 }
@@ -2406,7 +2406,8 @@ bool TsdlParser::_tryParseDstBlock()
         id,
         std::make_unique<PseudoDst>(id, boost::none, boost::none, boost::none,
                                     std::move(pseudoPktCtxType), std::move(pseudoErHeaderType),
-                                    std::move(pseudoErCommonCtxType))
+                                    std::move(pseudoErCommonCtxType), nullptr, nullptr,
+                                    beginLoc)
     ));
     _pseudoTraceType->pseudoOrphanErts()[id];
     return true;
@@ -2553,7 +2554,7 @@ bool TsdlParser::_tryParseErtBlock()
         PseudoErt {
             id, boost::none, std::move(name), boost::none, std::move(logLevel),
             std::move(emfUri), std::move(pseudoSpecCtxType),
-            std::move(pseudoPayloadType)
+            std::move(pseudoPayloadType), nullptr, beginLoc
         },
         beginLoc
     }));

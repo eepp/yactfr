@@ -540,7 +540,7 @@ PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, boost::optional<std::string> uid,
                      boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
                      PseudoDt::Up pseudoSpecCtxType, PseudoDt::Up pseudoPayloadType,
-                     MapItem::Up attrs) :
+                     MapItem::Up attrs, TextLocation loc) :
     WithAttrsMixin {std::move(attrs)},
     _id {id},
     _ns {std::move(ns)},
@@ -549,7 +549,8 @@ PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
     _logLevel {std::move(logLevel)},
     _emfUri {std::move(emfUri)},
     _pseudoSpecCtxType {std::move(pseudoSpecCtxType)},
-    _pseudoPayloadType {std::move(pseudoPayloadType)}
+    _pseudoPayloadType {std::move(pseudoPayloadType)},
+    _loc {std::move(loc)}
 {
 }
 
@@ -835,7 +836,7 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
 
         ss << "In the event record type " << pseudoTypeIdenStr(*this) <<
               " of data stream type " << pseudoTypeIdenStr(pseudoDst) << ":";
-        appendMsgToTextParseError(exc, ss.str());
+        appendMsgToTextParseError(exc, ss.str(), _loc);
         throw;
     }
 }
@@ -850,7 +851,7 @@ PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
                      boost::optional<std::string> name, boost::optional<std::string> uid,
                      PseudoDt::Up pseudoPktCtxType, PseudoDt::Up pseudoErHeaderType,
                      PseudoDt::Up pseudoErCommonCtxType, const ClockType * const defClkType,
-                     MapItem::Up attrs) :
+                     MapItem::Up attrs, TextLocation loc) :
     WithAttrsMixin {std::move(attrs)},
     _id {id},
     _ns {std::move(ns)},
@@ -859,7 +860,8 @@ PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
     _pseudoPktCtxType {std::move(pseudoPktCtxType)},
     _pseudoErHeaderType {std::move(pseudoErHeaderType)},
     _pseudoErCommonCtxType {std::move(pseudoErCommonCtxType)},
-    _defClkType {defClkType}
+    _defClkType {defClkType},
+    _loc {std::move(loc)}
 {
 }
 
@@ -980,7 +982,7 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
         std::ostringstream ss;
 
         ss << "In data stream type " << pseudoTypeIdenStr(*this) << ':';
-        appendMsgToTextParseError(exc, ss.str());
+        appendMsgToTextParseError(exc, ss.str(), _loc);
         throw;
     }
 }

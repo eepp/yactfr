@@ -346,7 +346,7 @@ void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::pktCtxFc),
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::erHeaderFc),
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::erCommonCtxFc),
-            this->_defClkTypeOfDstFrag(jsonFrag), attrsOfObj(jsonFrag)
+            this->_defClkTypeOfDstFrag(jsonFrag), attrsOfObj(jsonFrag), jsonFrag.loc()
         )));
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In data stream type fragment:", jsonFrag.loc());
@@ -391,7 +391,7 @@ void Ctf2JsonSeqParser::_handleErtFrag(const JsonObjVal& jsonFrag)
                 boost::none, boost::none,
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::specCtxFc),
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::payloadFc),
-                attrsOfObj(jsonFrag)
+                attrsOfObj(jsonFrag), jsonFrag.loc()
             },
             jsonFrag.loc()
         }));

@@ -934,7 +934,7 @@ public:
                        boost::optional<std::string> name, boost::optional<std::string> uid,
                        boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
                        PseudoDt::Up pseudoSpecCtxType, PseudoDt::Up pseudoPayloadType,
-                       MapItem::Up attrs = nullptr);
+                       MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoErt(const PseudoErt&) = delete;
     PseudoErt(PseudoErt&&) = default;
@@ -997,6 +997,11 @@ public:
         return _pseudoPayloadType.get();
     }
 
+    const TextLocation& loc() const noexcept
+    {
+        return _loc;
+    }
+
 private:
     void _validateNotEmpty(const PseudoDst& pseudoDst) const;
     void _validateNoMappedClkTypeId() const;
@@ -1010,6 +1015,7 @@ private:
     boost::optional<std::string> _emfUri;
     PseudoDt::Up _pseudoSpecCtxType;
     PseudoDt::Up _pseudoPayloadType;
+    TextLocation _loc;
 };
 
 /*
@@ -1029,7 +1035,7 @@ public:
                        boost::optional<std::string> name, boost::optional<std::string> uid,
                        PseudoDt::Up pseudoPktCtxType, PseudoDt::Up pseudoErHeaderType,
                        PseudoDt::Up pseudoErCommonCtxType, const ClockType *defClkType = nullptr,
-                       MapItem::Up attrs = nullptr);
+                       MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDst(const PseudoDst&) = delete;
     PseudoDst(PseudoDst&&) = default;
@@ -1103,6 +1109,11 @@ public:
         _defClkType = &clkType;
     }
 
+    const TextLocation& loc() const noexcept
+    {
+        return _loc;
+    }
+
 private:
     void _validatePktCtxType() const;
     void _validateErHeaderType(const PseudoErtSet& pseudoErts) const;
@@ -1118,6 +1129,7 @@ private:
     PseudoDt::Up _pseudoErHeaderType;
     PseudoDt::Up _pseudoErCommonCtxType;
     const ClockType *_defClkType = nullptr;
+    TextLocation _loc;
 };
 
 /*
