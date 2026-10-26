@@ -1,0 +1,24 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+{
+  "type": "event-record-class",
+  "payload-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "uuid",
+        "field-class": {
+          "type": "static-length-blob",
+          "length": 16,
+          "roles": ["metadata-stream-uuid"]
+        }
+      }
+    ]
+  }
+}
+---
+[1:1] In the event record type 0 of data stream type 0:
+[3:26] In the payload type:
+[8:24] Invalid "metadata stream UUID" role within this scope.

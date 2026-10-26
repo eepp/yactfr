@@ -817,6 +817,7 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the specific context type:",
                                       _pseudoSpecCtxType->loc());
+            throw;
         }
 
         try {
@@ -827,6 +828,7 @@ void PseudoErt::validate(const PseudoDst& pseudoDst) const
             validateNoMetadataStreamUuidRole(_pseudoPayloadType.get());
         } catch (TextParseError& exc) {
             appendMsgToTextParseError(exc, "In the payload type:", _pseudoPayloadType->loc());
+            throw;
         }
     } catch (TextParseError& exc) {
         std::ostringstream ss;
