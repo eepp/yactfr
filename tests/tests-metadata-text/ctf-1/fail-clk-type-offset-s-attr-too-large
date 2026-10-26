@@ -1,0 +1,16 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+clock {
+  name = a;
+  offset_s = 9223372036854775808;
+};
+---
+[9:1] In `clock` root block:
+[11:14] Attribute `offset_s`: value is too large: 9223372036854775808.
