@@ -68,6 +68,7 @@ enum class VmState {
     SetMetadataStreamUuid,
     ContinueSkipPaddingBits,
     ContinueSkipContentPaddingBits,
+    EndElemSeq,
 };
 
 // VM stack frame
@@ -694,6 +695,9 @@ private:
         case VmState::EndPkt:
             return this->_stateEndPkt();
 
+        case VmState::EndElemSeq:
+            return this->_stateEndElemSeq();
+
         default:
             std::abort();
         }
@@ -884,7 +888,26 @@ private:
         }
 
         this->_updateItForUser(_pos.elems.pktEnd, offset);
-        _pos.state(VmState::BeginPkt);
+
+        if (_pos.curExpectedPktTotalLenBits == sizeUnset &&
+                _pos.curExpectedPktContentLenBits == sizeUnset) {
+            /*
+             * Without any packet total and content lengths, the packet
+             * spans the whole element sequence: there's no next
+             * packet, even if there's remaining data (possible when
+             * the data stream type has no event record types).
+             */
+            _pos.state(VmState::EndElemSeq);
+        } else {
+            _pos.state(VmState::BeginPkt);
+        }
+
+        return true;
+    }
+
+    bool _stateEndElemSeq()
+    {
+        this->_setItEnd();
         return true;
     }
 

@@ -1,0 +1,22 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  }
+]
+---
+01 02 03
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0   }
+     0 }

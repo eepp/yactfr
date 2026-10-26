@@ -1,0 +1,14 @@
+---
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = be;
+};
+---
+01 02 03
+---
+     0 P {
+     0   PC {
+     0     DSI
+     0   }
+     0 }

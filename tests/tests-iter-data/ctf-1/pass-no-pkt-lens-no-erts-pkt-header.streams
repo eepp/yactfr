@@ -1,0 +1,23 @@
+---
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = be;
+  packet.header := struct {
+    u8 x;
+  };
+};
+---
+01   # `x`
+02 03
+---
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:x:1
+     8       }
+     8     }
+     8     DSI
+     8   }
+     8 }
