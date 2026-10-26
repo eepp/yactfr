@@ -178,19 +178,26 @@ void JsonArrayValReq::_validate(const JsonVal& jsonVal) const
 {
     auto& jsonArrayVal = jsonVal.asArray();
 
+    const auto elemsStr = [](const Size count) {
+        std::ostringstream ss;
+
+        ss << count << " element" << (count == 1 ? "" : "s");
+        return ss.str();
+    };
+
     if (jsonArrayVal.size() < _minSize) {
         std::ostringstream ss;
 
-        ss << "Size of array (" << jsonArrayVal.size() << ") is too small: " <<
-              "expecting at least " << _minSize << " elements.";
+        ss << "Size of array (" << jsonArrayVal.size() << ") is too small: expecting " <<
+              (_minSize == _maxSize ? "exactly " : "at least ") << elemsStr(_minSize) << '.';
         throwTextParseError(ss.str(), jsonVal.loc());
     }
 
     if (jsonArrayVal.size() > _maxSize) {
         std::ostringstream ss;
 
-        ss << "Size of array (" << jsonArrayVal.size() << ") is too large: " <<
-              "expecting at most " << _maxSize << " elements    .";
+        ss << "Size of array (" << jsonArrayVal.size() << ") is too large: expecting " <<
+              (_minSize == _maxSize ? "exactly " : "at most ") << elemsStr(_maxSize) << '.';
         throwTextParseError(ss.str(), jsonVal.loc());
     }
 

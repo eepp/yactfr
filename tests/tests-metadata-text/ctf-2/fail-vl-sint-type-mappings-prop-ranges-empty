@@ -32,4 +32,4 @@
 [11:25] Invalid integer type mappings:
 [11:25] In mapping `loco`:
 [12:23] Invalid integer range set:
-[12:23] Size of array (0) is too small: expecting at least 1 elements.
+[12:23] Size of array (0) is too small: expecting at least 1 element.

@@ -1,0 +1,38 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+{
+  "type": "event-record-class",
+  "payload-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "x",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 8,
+          "byte-order": "little-endian",
+          "mappings": {"m": [[1, 2, 3]]}
+        }
+      }
+    ]
+  }
+}
+---
+[1:1] Invalid event record type fragment:
+[3:26] In object property `payload-field-class`:
+[3:26] Invalid structure type:
+[5:23] In object property `member-classes`:
+[6:7] In array element #1:
+[6:7] Invalid structure member type:
+[8:24] In object property `field-class`:
+[8:24] Invalid fixed-length unsigned integer type:
+[8:24] Invalid fixed-length bit array type:
+[12:23] In object property `mappings`:
+[12:23] Invalid integer type mappings:
+[12:23] In mapping `m`:
+[12:29] Invalid integer range set:
+[12:30] In array element #1:
+[12:30] Invalid integer range:
+[12:30] Size of array (3) is too large: expecting exactly 2 elements.
