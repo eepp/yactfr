@@ -542,12 +542,17 @@ public:
          *
          * In that case, skip calling _handleState(), which is too large
          * to inline, and its state switch.
+         *
+         * _nextElemSlow() isn't inlined so that the compiler can't
+         * merge the state check below with the state switch of
+         * _handleState(), which would make this fast path an indirect
+         * jump through a jump table.
          */
-        if (_pos.state() == VmState::ExecInstr && this->_stateExecInstr()) {
+        if (YACTFR_VM_LIKELY(_pos.state() == VmState::ExecInstr) && this->_stateExecInstr()) {
             return;
         }
 
-        while (!this->_handleState());
+        this->_nextElemSlow();
     }
 
     void updateItElemFromOtherPos(const VmPos& otherPos, const Element * const otherElem)
@@ -575,13 +580,29 @@ public:
     }
 
 private:
-    // instruction handler reaction
-    enum class _tExecReaction {
-        ExecNextInstr,
-        FetchNextInstrAndStop,
-        ChangeState,
-        ExecCurInstr,
-        Stop,
+    // instruction handler reaction flag: go to the next instruction
+    static constexpr auto _execReactionNextInstrFlag = 1U;
+
+    // instruction handler reaction flag: stop (element available)
+    static constexpr auto _execReactionStopFlag = 2U;
+
+    // instruction handler reaction flag: the handler changed the state
+    static constexpr auto _execReactionChangeStateFlag = 4U;
+
+    /*
+     * Instruction handler reaction.
+     *
+     * Each value is a combination of the `_execReaction*Flag` flags so
+     * that _stateExecInstr() and _stateExecArrayInstr() handle any
+     * reaction with a single conditional branch instead of a switch
+     * statement (an indirect jump through a jump table).
+     */
+    enum class _tExecReaction : unsigned int {
+        ExecCurInstr =          0,
+        ExecNextInstr =         _execReactionNextInstrFlag,
+        Stop =                  _execReactionStopFlag,
+        FetchNextInstrAndStop = _execReactionNextInstrFlag | _execReactionStopFlag,
+        ChangeState =           _execReactionChangeStateFlag,
     };
 
 private:
@@ -678,34 +699,59 @@ private:
         }
     }
 
+    YACTFR_VM_NOINLINE void _nextElemSlow()
+    {
+        while (!this->_handleState());
+    }
+
+    /*
+     * Executes the next instruction, going to the following one if the
+     * handler requires it, and returns the flags of the
+     * handler reaction.
+     */
+    YACTFR_VM_ALWAYS_INLINE unsigned int _execNextInstr()
+    {
+        const auto reaction = static_cast<unsigned int>(this->_exec(_pos.nextInstr()));
+
+        // no conditional branch: add zero or one
+        _pos.instrIt += reaction & _execReactionNextInstrFlag;
+        return reaction;
+    }
+
+    /*
+     * Returns whether or not the instruction handler reaction flags
+     * `reaction` require to stop executing instructions.
+     */
+    static bool _execReactionStops(const unsigned int reaction) noexcept
+    {
+        return reaction & (_execReactionStopFlag | _execReactionChangeStateFlag);
+    }
+
+    /*
+     * Returns the value which _stateExecInstr() and
+     * _stateExecArrayInstr() return when the instruction handler
+     * reaction flags `reaction` stop executing instructions:
+     *
+     * `true`:
+     *     An element is available.
+     *
+     * `false`:
+     *     The handler changed the state: handle the new state.
+     */
+    static bool _execReactionHasElem(const unsigned int reaction) noexcept
+    {
+        return !(reaction & _execReactionChangeStateFlag);
+    }
+
     bool _stateExecInstr()
     {
         while (true) {
-            switch (this->_exec(_pos.nextInstr())) {
-            case _tExecReaction::FetchNextInstrAndStop:
-                _pos.gotoNextInstr();
-                return true;
+            const auto reaction = this->_execNextInstr();
 
-            case _tExecReaction::Stop:
-                return true;
-
-            case _tExecReaction::ExecNextInstr:
-                _pos.gotoNextInstr();
-                break;
-
-            case _tExecReaction::ExecCurInstr:
-                break;
-
-            case _tExecReaction::ChangeState:
-                // the handler changed the state: return `false` to continue
-                return false;
-
-            default:
-                std::abort();
+            if (_execReactionStops(reaction)) {
+                return _execReactionHasElem(reaction);
             }
         }
-
-        return true;
     }
 
     bool _stateExecArrayInstr()
@@ -731,27 +777,15 @@ private:
                 continue;
             }
 
-            switch (this->_exec(_pos.nextInstr())) {
-            case _tExecReaction::FetchNextInstrAndStop:
-                _pos.gotoNextInstr();
-                return true;
+            const auto reaction = this->_execNextInstr();
 
-            case _tExecReaction::Stop:
-                return true;
+            // only "end procedure" instruction handlers request this
+            assert(reaction != static_cast<unsigned int>(_tExecReaction::ExecCurInstr));
 
-            case _tExecReaction::ExecNextInstr:
-                _pos.gotoNextInstr();
-                break;
-
-            case _tExecReaction::ChangeState:
-                return false;
-
-            default:
-                std::abort();
+            if (_execReactionStops(reaction)) {
+                return _execReactionHasElem(reaction);
             }
         }
-
-        return true;
     }
 
     bool _stateContinueSkipPaddingBits()

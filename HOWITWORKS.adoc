@@ -470,8 +470,9 @@ state of the VM, including:
 * Current packet procedure, data stream packet procedure, and
   event record procedure.
 * Current expected packet total and content lengths.
-* Stack of frames containing the next instruction to execute and
-  the parent procedure.
+* Next instruction to execute.
+* Stack of frames, each one containing the procedure being executed
+  as well as the next instruction and the state of its parent.
 * Array of saved values.
 * Current data stream clock value.
 * Concrete element objects to set when executing the VM.
@@ -489,8 +490,21 @@ is faster. It's also faster than a big `switch` statement. I didn't opt
 for computed gotos only because they're not portable and it would make
 an eventual portability effort more complicated.
 
-State handling however is an inline `switch` statement with about
-15{nbsp}cases. This seems faster than a function table for some reason.
+An instruction handler returns a reaction which is a combination of
+flags: go to the next instruction, stop (an element is available), and
+state changed. This makes it possible for the instruction executing loop
+to handle any reaction with a single conditional branch instead of a
+`switch` statement, which the compiler would make an indirect jump
+through a jump table. Most of the time, the bottleneck is the front end
+of the CPU (fetching the machine instructions of the VM to execute), not
+data access, and indirect branches make this worse.
+
+State handling however is a `switch` statement with about 20{nbsp}cases.
+This seems faster than a function table for some reason. As most
+elements come from executing instructions, `internal::Vm::nextElem()`
+first checks for the `VmState::ExecInstr` state and then executes
+instructions with an inline loop, only handling the other states with
+an out-of-line method.
 
 The reason why there are instructions _and_ VM states is that the yactfr
 instruction set is not general enough. This would result in many useless
