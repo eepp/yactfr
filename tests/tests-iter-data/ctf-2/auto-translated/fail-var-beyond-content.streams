@@ -146,4 +146,5 @@ $40       # packet content size
      8           FLUI:tag:1
     16           VU:v:1 {
     16             NTS {
-    16 Cannot read 48 bits at this point: would move beyond the content of the current packet (24 bits remaining).
+    16               RD:3:bla
+    40 Cannot read 8 bits at this point: would move beyond the content of the current packet (0 bits remaining).

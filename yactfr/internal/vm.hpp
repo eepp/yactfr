@@ -958,22 +958,26 @@ private:
             return false;
         }
 
+        {
+            /*
+             * Check the whole remaining data so that the decoding error
+             * doesn't depend on the size of the data blocks.
+             */
+            const auto remLenBits = _pos.stackTop().rem * 8;
+
+            if (remLenBits > _pos.remContentBitsInPkt()) {
+                throw CannotDecodeDataBeyondPacketContentDecodingError {
+                    _pos.headOffsetInElemSeqBits(),
+                    remLenBits, _pos.remContentBitsInPkt()
+                };
+            }
+        }
+
         // require at least one byte
         this->_requireContentBits(8);
 
         const auto buf = this->_bufAtHead();
         const auto sectionSizeBytes = std::min(this->_remBitsInBuf() / 8, _pos.stackTop().rem);
-
-        {
-            const auto sectionLenBits = sectionSizeBytes * 8;
-
-            if (sectionLenBits > _pos.remContentBitsInPkt()) {
-                throw CannotDecodeDataBeyondPacketContentDecodingError {
-                    _pos.headOffsetInElemSeqBits(),
-                    sectionLenBits, _pos.remContentBitsInPkt()
-                };
-            }
-        }
 
         _pos.elems.rawData._begin = buf;
         _pos.elems.rawData._end = buf + sectionSizeBytes;
@@ -1149,8 +1153,13 @@ private:
         // require at least one byte
         this->_requireContentBits(8);
 
+        /*
+         * Never look beyond the packet content so that the decoding
+         * error, when there's no null character within the packet
+         * content, doesn't depend on the size of the data blocks.
+         */
         const auto begin = this->_bufAtHead();
-        const auto bufSizeBytes = this->_remBitsInBuf() / 8;
+        const auto bufSizeBytes = std::min(this->_remBitsInBuf(), _pos.remContentBitsInPkt()) / 8;
 
         assert(bufSizeBytes >= 1);
 
@@ -1179,17 +1188,7 @@ private:
             }
         }
 
-        {
-            const Size rawDataLenBits = (end - begin) * 8;
-
-            if (rawDataLenBits > _pos.remContentBitsInPkt()) {
-                throw CannotDecodeDataBeyondPacketContentDecodingError {
-                    _pos.headOffsetInElemSeqBits(),
-                    rawDataLenBits, _pos.remContentBitsInPkt()
-                };
-            }
-        }
-
+        assert(static_cast<Size>(end - begin) * 8 <= _pos.remContentBitsInPkt());
         _pos.elems.rawData._begin = begin;
         _pos.elems.rawData._end = end;
 

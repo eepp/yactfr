@@ -89,4 +89,5 @@ $144                # packet content size
     88         ST {
     88           FLUI:yy:4277009102
    120           NTS:str {
-   120 Cannot read 56 bits at this point: would move beyond the content of the current packet (24 bits remaining).
+   120             RD:3:fas
+   144 Cannot read 8 bits at this point: would move beyond the content of the current packet (0 bits remaining).
