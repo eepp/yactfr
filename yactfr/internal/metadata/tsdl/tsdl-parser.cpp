@@ -267,7 +267,7 @@ public:
                 std::ostringstream ss;
 
                 ss << "Unsigned fixed-length integer type is mapped to a clock type (`" <<
-                      *pseudoDt.mappedClkTypeId() << "` which is "
+                      *pseudoDt.mappedClkTypeId() << "`) which is "
                       "different than another mapped clock type (`" <<
                       *_clkTypeId << "`) within the same data stream type.";
                 throwTextParseError(ss.str(), pseudoDt.loc());

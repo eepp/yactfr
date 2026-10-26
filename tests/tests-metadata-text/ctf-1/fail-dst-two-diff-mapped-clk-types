@@ -1,0 +1,36 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+clock {
+  name = a;
+};
+
+clock {
+  name = b;
+};
+
+stream {
+  packet.context := struct {
+    integer { size = 64; map = clock.a.value; } timestamp_begin;
+  };
+  event.header := struct {
+    integer { size = 32; map = clock.b.value; } timestamp;
+  };
+};
+
+event {
+  name = ev;
+  fields := struct {
+    integer { size = 8; } x;
+  };
+};
+---
+[17:1] In the data stream type with ID 0:
+[21:19] In the event record header type:
+[22:5] Unsigned fixed-length integer type is mapped to a clock type (`b`) which is different than another mapped clock type (`a`) within the same data stream type.
