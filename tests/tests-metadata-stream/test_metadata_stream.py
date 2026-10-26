@@ -178,3 +178,7 @@ def test_pass_23_pkts_stdin():
 
 def test_fail_uuid_mismatch_stdin():
   _exec_fail_stdin('uuid-mismatch', 4096)
+
+
+def test_io_error(executor):
+    executor('metadata-stream', 'io-error')

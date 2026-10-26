@@ -7,6 +7,7 @@ add_subdirectory (testers)
 add_subdirectory (tests-iter)
 add_subdirectory (tests-iter-pos)
 add_subdirectory (tests-elem-seq)
+add_subdirectory (tests-metadata-stream)
 add_custom_target (
     tests
     DEPENDS
@@ -14,6 +15,7 @@ add_custom_target (
         tests-iter
         tests-iter-pos
         tests-elem-seq
+        tests-metadata-stream
     VERBATIM
 )
 add_custom_target (
