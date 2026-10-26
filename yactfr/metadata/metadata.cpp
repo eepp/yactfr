@@ -29,6 +29,46 @@ namespace buuids = boost::uuids;
 namespace yactfr {
 namespace internal {
 
+namespace {
+
+/*
+ * Sets the exception mask of an input stream to nothing on
+ * construction, restoring the original one on destruction.
+ */
+class StreamExceptionMaskGuard final
+{
+public:
+    explicit StreamExceptionMaskGuard(std::istream& stream) :
+        _stream {&stream},
+        _origMask {stream.exceptions()}
+    {
+        stream.exceptions(std::ios_base::goodbit);
+    }
+
+    StreamExceptionMaskGuard(const StreamExceptionMaskGuard&) = delete;
+    StreamExceptionMaskGuard& operator=(const StreamExceptionMaskGuard&) = delete;
+
+    ~StreamExceptionMaskGuard()
+    {
+        try {
+            /*
+             * std::ios::exceptions() sets the mask and then throws
+             * `std::ios_base::failure` if the current state of the
+             * stream matches it, for example the end-of-file and fail
+             * bits after reading the whole stream: ignore this.
+             */
+            _stream->exceptions(_origMask);
+        } catch (const std::ios_base::failure&) {
+        }
+    }
+
+private:
+    std::istream *_stream;
+    std::ios_base::iostate _origMask;
+};
+
+} // namespace
+
 class MetadataStreamDecoder final
 {
 public:
@@ -170,7 +210,6 @@ private:
 
 private:
     std::istream *_stream;
-    std::ios_base::iostate _origStreamMask;
 
     /*
      * We keep a current offset for exception messages because
@@ -198,64 +237,54 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
     /*
      * We don't want any I/O exceptions during the decoding process (we
      * check the error flags explicitly), so temporarily set the
-     * exception mask of the input stream to nothing. Save the current
-     * value to restore it after the decoding process.
+     * exception mask of the input stream to nothing.
      */
-    _origStreamMask = stream.exceptions();
-    stream.exceptions(std::ios_base::goodbit);
+    const StreamExceptionMaskGuard exceptionMaskGuard {stream};
 
-    try {
-        /*
-         * Let's read the first four bytes of the stream first.
-         *
-         * This indicates if the metadata is packetized or not. If it's
-         * not, we append those four bytes as the first four characters
-         * of the metadata text and read the whole stream directly.
-         *
-         * Otherwise, we decode each packet, except for the magic number
-         * of the first packet which is already decoded.
-         *
-         * It's okay to require four bytes at this point: the size of a
-         * valid metadata stream, plain text or packetized, cannot be
-         * under four bytes.
-         */
-        std::array<char, sizeof(std::uint32_t)> magicBuf;
+    /*
+     * Let's read the first four bytes of the stream first.
+     *
+     * This indicates if the metadata is packetized or not. If it's
+     * not, we append those four bytes as the first four characters
+     * of the metadata text and read the whole stream directly.
+     *
+     * Otherwise, we decode each packet, except for the magic number
+     * of the first packet which is already decoded.
+     *
+     * It's okay to require four bytes at this point: the size of a
+     * valid metadata stream, plain text or packetized, cannot be
+     * under four bytes.
+     */
+    std::array<char, sizeof(std::uint32_t)> magicBuf;
 
-        this->_expect(magicBuf.data(), magicBuf.size());
+    this->_expect(magicBuf.data(), magicBuf.size());
 
-        if (this->_streamIsBad()) {
-            throw IOError {"Cannot read metadata stream."};
-        }
-
-        const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
-
-        if (*magic == _pktMagic) {
-            _bo = bendian::order::native;
-            _isPacketized = true;
-        } else if (bendian::endian_reverse(*magic) == _pktMagic) {
-            if (bendian::order::native == bendian::order::big) {
-                _bo = bendian::order::little;
-            } else {
-                _bo = bendian::order::big;
-            }
-
-            _isPacketized = true;
-        }
-
-        if (_isPacketized) {
-            this->_readPacketized();
-        } else {
-            // start with those four bytes
-            _text.assign(magicBuf.begin(), magicBuf.end());
-            this->_readText();
-        }
-    } catch (...) {
-        stream.exceptions(_origStreamMask);
-        throw;
+    if (this->_streamIsBad()) {
+        throw IOError {"Cannot read metadata stream."};
     }
 
-    // TODO: should probably use some RAII to avoid repeating this
-    stream.exceptions(_origStreamMask);
+    const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
+
+    if (*magic == _pktMagic) {
+        _bo = bendian::order::native;
+        _isPacketized = true;
+    } else if (bendian::endian_reverse(*magic) == _pktMagic) {
+        if (bendian::order::native == bendian::order::big) {
+            _bo = bendian::order::little;
+        } else {
+            _bo = bendian::order::big;
+        }
+
+        _isPacketized = true;
+    }
+
+    if (_isPacketized) {
+        this->_readPacketized();
+    } else {
+        // start with those four bytes
+        _text.assign(magicBuf.begin(), magicBuf.end());
+        this->_readText();
+    }
 }
 
 template <typename T>

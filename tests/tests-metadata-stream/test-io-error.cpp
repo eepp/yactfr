@@ -170,5 +170,38 @@ int main()
                           "At packet 1: " + cannotReadMsg) && ok;
     }
 
+    // exception mask of the caller: restored, without throwing
+    {
+        FailingStreamBuf buf {text, 1000};
+        std::istream stream {&buf};
+
+        stream.exceptions(std::ios_base::failbit | std::ios_base::eofbit);
+
+        try {
+            yactfr::createMetadataStream(stream);
+
+            if (stream.exceptions() != (std::ios_base::failbit | std::ios_base::eofbit)) {
+                std::cerr << "exc-mask-fail-eof: exception mask isn't restored\n";
+                ok = false;
+            }
+        } catch (const std::exception& exc) {
+            std::cerr << "exc-mask-fail-eof: unexpected exception: " << exc.what() << "\n";
+            ok = false;
+        }
+    }
+
+    {
+        FailingStreamBuf buf {text, 10};
+        std::istream stream {&buf};
+
+        stream.exceptions(std::ios_base::badbit);
+        ok = checkIoError("exc-mask-bad", stream, cannotReadMsg) && ok;
+
+        if (stream.exceptions() != std::ios_base::badbit) {
+            std::cerr << "exc-mask-bad: exception mask isn't restored\n";
+            ok = false;
+        }
+    }
+
     return ok ? 0 : 1;
 }
