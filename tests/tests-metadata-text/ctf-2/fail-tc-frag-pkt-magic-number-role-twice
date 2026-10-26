@@ -1,0 +1,32 @@
+---
+{"type": "preamble", "version": 2}
+{
+  "type": "trace-class",
+  "packet-header-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "m",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 32,
+          "byte-order": "little-endian",
+          "roles": ["packet-magic-number"]
+        }
+      },
+      {
+        "name": "n",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 32,
+          "byte-order": "little-endian",
+          "roles": ["packet-magic-number"]
+        }
+      }
+    ]
+  }
+}
+{"type": "data-stream-class"}
+---
+[3:32] In the packet header type:
+[3:32] More than one fixed-length unsigned integer type with the "packet magic number" role found.

@@ -1,0 +1,24 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{
+  "type": "data-stream-class",
+  "packet-context-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "ts",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 8,
+          "byte-order": "little-endian",
+          "roles": ["default-clock-timestamp"]
+        }
+      }
+    ]
+  }
+}
+---
+[1:1] In data stream type 0:
+[3:33] In the packet context type:
+[8:24] Unsigned integer type has a default clock related role, but the containing data stream type has no default clock type.

@@ -1,0 +1,24 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{
+  "type": "data-stream-class",
+  "event-record-header-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "m",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 32,
+          "byte-order": "little-endian",
+          "roles": ["packet-magic-number"]
+        }
+      }
+    ]
+  }
+}
+---
+[1:1] In data stream type 0:
+[3:38] In the event record header type:
+[8:24] Unsigned integer type has at least one invalid role within its scope.

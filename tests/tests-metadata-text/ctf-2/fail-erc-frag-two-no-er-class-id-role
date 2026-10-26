@@ -1,0 +1,25 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{
+  "type": "data-stream-class",
+  "event-record-header-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "a",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 8,
+          "byte-order": "little-endian"
+        }
+      }
+    ]
+  }
+}
+{"type": "event-record-class", "id": 0}
+{"type": "event-record-class", "id": 1}
+---
+[1:1] In data stream type 0:
+[3:38] In the event record header type:
+[3:38] No structure member type with the "event record type ID" role, but the data stream type contains more than one event record type.

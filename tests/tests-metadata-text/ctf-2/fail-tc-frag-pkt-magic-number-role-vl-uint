@@ -1,0 +1,21 @@
+---
+{"type": "preamble", "version": 2}
+{
+  "type": "trace-class",
+  "packet-header-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "m",
+        "field-class": {
+          "type": "variable-length-unsigned-integer",
+          "roles": ["packet-magic-number"]
+        }
+      }
+    ]
+  }
+}
+{"type": "data-stream-class"}
+---
+[3:32] In the packet header type:
+[8:24] Unsigned integer type with the "packet magic number" role must be a fixed-length integer type.

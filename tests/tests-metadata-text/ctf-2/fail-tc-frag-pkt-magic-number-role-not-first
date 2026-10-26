@@ -1,0 +1,31 @@
+---
+{"type": "preamble", "version": 2}
+{
+  "type": "trace-class",
+  "packet-header-field-class": {
+    "type": "structure",
+    "member-classes": [
+      {
+        "name": "a",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 8,
+          "byte-order": "little-endian"
+        }
+      },
+      {
+        "name": "m",
+        "field-class": {
+          "type": "fixed-length-unsigned-integer",
+          "length": 32,
+          "byte-order": "little-endian",
+          "roles": ["packet-magic-number"]
+        }
+      }
+    ]
+  }
+}
+{"type": "data-stream-class"}
+---
+[3:32] In the packet header type:
+[16:24] Fixed-length unsigned integer type with the "packet magic number" role must be within the first member type of the packet header structure type.
