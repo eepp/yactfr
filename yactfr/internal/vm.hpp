@@ -998,12 +998,11 @@ private:
     {
         if (this->_stateReadBytes()) {
             // new UUID bytes
-            const auto blobSize = _pos.elems.rawData.size();
-            const auto startIndex = 16 - _pos.stackTop().rem - blobSize;
+            const auto sectionSize = _pos.elems.rawData.size();
+            const auto startIndex = 16 - _pos.stackTop().rem - sectionSize;
 
-            for (auto index = startIndex; index < startIndex + blobSize; ++index) {
-                _pos.metadataStreamUuid.data[index] = static_cast<std::uint8_t>(_pos.elems.rawData.begin()[index]);
-            }
+            std::copy(_pos.elems.rawData.begin(), _pos.elems.rawData.end(),
+                      &_pos.metadataStreamUuid.data[startIndex]);
 
             return true;
         } else {
