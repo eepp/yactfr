@@ -1,0 +1,133 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "s8le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 8,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s16le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s32le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 32,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s64le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 64,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s8be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s16be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s32be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 32,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s64be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 64,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+52                # `s8le`
+775e              # `s16le`
+be8ac115          # `s32le`
+654b3e7f3cb6a5eb  # `s64le`
+0e                # `s8be`
+31a7              # `s16be`
+f11d31f8          # `s32be`
+cca6905c4fe596f5  # `s64be`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLSI:s8le:74
+     8           FLSI:s16le:-4486
+    24           FLSI:s32le:2102494120
+    56           FLSI:s64le:-6425936286926920233
+   120           FLSI:s8be:112
+   128           FLSI:s16be:-6772
+   144           FLSI:s32be:529315983
+   176           FLSI:s64be:-5806925585719925453
+   240         }
+   240       }
+   240     }
+   240   }
+   240 }

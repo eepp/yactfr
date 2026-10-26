@@ -1,0 +1,341 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "bm8le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 8,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  7,
+                  7
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "high": [
+                [
+                  4,
+                  7
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm16le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  15,
+                  15
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  7
+                ]
+              ],
+              "high": [
+                [
+                  8,
+                  15
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm32le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 32,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  31,
+                  31
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  15
+                ]
+              ],
+              "high": [
+                [
+                  16,
+                  31
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm64le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 64,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  63,
+                  63
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  31
+                ]
+              ],
+              "high": [
+                [
+                  32,
+                  63
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm8be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 8,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  7,
+                  7
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "high": [
+                [
+                  4,
+                  7
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm16be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  15,
+                  15
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  7
+                ]
+              ],
+              "high": [
+                [
+                  8,
+                  15
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm32be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 32,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  31,
+                  31
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  15
+                ]
+              ],
+              "high": [
+                [
+                  16,
+                  31
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm64be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 64,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  63,
+                  63
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  31
+                ]
+              ],
+              "high": [
+                [
+                  32,
+                  63
+                ]
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+---
+e9                # `bm8le`
+d14a              # `bm16le`
+84c6c696          # `bm32le`
+57dedaaf7aad8625  # `bm64le`
+59                # `bm8be`
+da9e              # `bm16be`
+652cf405          # `bm32be`
+bf1d4d299bfe6308  # `bm64be`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLBM:bm8le:151:first,high,last,low
+     8           FLBM:bm16le:35666:high,last,low
+    24           FLBM:bm32le:560161641:first,high,low
+    56           FLBM:bm64le:16896199536424608164:high,last,low
+   120           FLBM:bm8be:154:high,last,low
+   128           FLBM:bm16be:31067:first,high,low
+   144           FLBM:bm32be:2687448230:high,last,low
+   176           FLBM:bm64be:1208794122474928381:first,high,low
+   240         }
+   240       }
+   240     }
+   240   }
+   240 }

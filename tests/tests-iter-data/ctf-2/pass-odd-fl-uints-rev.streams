@@ -1,0 +1,238 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "u3le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 3,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u7le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 7,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u13le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 13,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u1le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 1,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u22le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 22,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u37le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 37,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u63le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 63,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u6le",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 6,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "u5be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 5,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u11be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 11,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u1be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 1,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u27be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 27,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u40be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 40,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u60be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 60,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u16be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "u8be",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+%11010100  # `u3le`, `u7le` starts
+%10111111  # `u13le` starts
+%01101001  # `u1le` starts
+%00000100  # `u22le` starts
+%11101010
+%01011100  # `u37le` starts
+%01100011
+%01110100
+%01000000
+%00101111
+%01000011  # `u63le` starts
+%10011101
+%01101011
+%00101110
+%01000000
+%10110011
+%00100010
+%00110100
+%00010000  # `u6le` starts
+%11100101  # `u5be`, `u11be` starts
+%11110011
+%11011010  # `u1be`, `u27be` starts
+%10110000
+%01011000
+%00010001  # `u40be` starts
+%00101010
+%10001101
+%10011010
+%11000110
+%01100011  # `u60be` starts
+%01101011
+%11101000
+%10100010
+%01011110
+%00101010
+%10000011
+%11100000
+%10010001  # `u16be` starts
+%10101110
+%00111110  # `u8be` starts
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLUI:u3le:1
+     3           FLUI:u7le:47
+    10           FLUI:u13le:7883
+    23           FLUI:u1le:0
+    24           FLUI:u22le:529870
+    46           FLUI:u37le:95318710182
+    83           FLUI:u63le:785695410075537584
+   146           FLUI:u6le:8
+   152           FLUI:u5be:7
+   157           FLUI:u11be:1661
+   168           FLUI:u1be:1
+   169           FLUI:u27be:67962541
+   196           FLUI:u40be:438986020168
+   236           FLUI:u60be:34926294555786604
+   296           FLUI:u16be:30089
+   312           FLUI:u8be:124
+   320         }
+   320       }
+   320     }
+   320   }
+   320 }

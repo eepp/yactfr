@@ -1,0 +1,238 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "b3le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 3,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b7le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 7,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b13le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 13,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b1le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 1,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b22le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 22,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b37le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 37,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b63le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 63,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b6le",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 6,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "b5be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 5,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b11be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 11,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b1be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 1,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b27be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 27,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b40be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 40,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b60be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 60,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b16be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 16,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "b8be",
+          "field-class": {
+            "type": "fixed-length-boolean",
+            "length": 8,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+%10011100  # `b3le`, `b7le` starts
+%00000010  # `b13le` starts
+%10000000  # `b1le` starts
+%01001001  # `b22le` starts
+%10100111
+%00111011  # `b37le` starts
+%00000000
+%00000000
+%00000000
+%00000000
+%00000000  # `b63le` starts
+%00000000
+%00000000
+%00000000
+%00000000
+%00000000
+%00000000
+%00000000
+%00101110  # `b6le` starts
+%00000100  # `b5be`, `b11be` starts
+%00000000
+%00000000  # `b1be`, `b27be` starts
+%00000000
+%00000000
+%00001000  # `b40be` starts
+%00000000
+%00000000
+%00000000
+%00000000
+%00000111  # `b60be` starts
+%11010101
+%11001101
+%01000011
+%11101110
+%00100101
+%00000100
+%11000011
+%00000000  # `b16be` starts
+%00000000
+%10000000  # `b8be` starts
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLB:b3le:true
+     3           FLB:b7le:true
+    10           FLB:b13le:false
+    23           FLB:b1le:true
+    24           FLB:b22le:true
+    46           FLB:b37le:false
+    83           FLB:b63le:true
+   146           FLB:b6le:true
+   152           FLB:b5be:false
+   157           FLB:b11be:true
+   168           FLB:b1be:false
+   169           FLB:b27be:false
+   196           FLB:b40be:true
+   236           FLB:b60be:true
+   296           FLB:b16be:false
+   312           FLB:b8be:true
+   320         }
+   320       }
+   320     }
+   320   }
+   320 }

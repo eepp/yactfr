@@ -1,0 +1,654 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "bm3le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 3,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  2,
+                  2
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "high": [
+                [
+                  1,
+                  2
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm7le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 7,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  6,
+                  6
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "high": [
+                [
+                  3,
+                  6
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm13le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 13,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  12,
+                  12
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  6
+                ]
+              ],
+              "high": [
+                [
+                  6,
+                  12
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm1le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 1,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "high": [
+                [
+                  0,
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm22le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 22,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  21,
+                  21
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  10
+                ]
+              ],
+              "high": [
+                [
+                  11,
+                  21
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm37le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 37,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  36,
+                  36
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  18
+                ]
+              ],
+              "high": [
+                [
+                  18,
+                  36
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm63le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 63,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  62,
+                  62
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  31
+                ]
+              ],
+              "high": [
+                [
+                  31,
+                  62
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm6le",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 6,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  5,
+                  5
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  2
+                ]
+              ],
+              "high": [
+                [
+                  3,
+                  5
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm5be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 5,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  4,
+                  4
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  2
+                ]
+              ],
+              "high": [
+                [
+                  2,
+                  4
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm11be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 11,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  10,
+                  10
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  5
+                ]
+              ],
+              "high": [
+                [
+                  5,
+                  10
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm1be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 1,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "high": [
+                [
+                  0,
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm27be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 27,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  26,
+                  26
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  13
+                ]
+              ],
+              "high": [
+                [
+                  13,
+                  26
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm40be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 40,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  39,
+                  39
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  19
+                ]
+              ],
+              "high": [
+                [
+                  20,
+                  39
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm60be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 60,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  59,
+                  59
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  29
+                ]
+              ],
+              "high": [
+                [
+                  30,
+                  59
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm16be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 16,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  15,
+                  15
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  7
+                ]
+              ],
+              "high": [
+                [
+                  8,
+                  15
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "bm8be",
+          "field-class": {
+            "type": "fixed-length-bit-map",
+            "length": 8,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last",
+            "flags": {
+              "first": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "last": [
+                [
+                  7,
+                  7
+                ]
+              ],
+              "low": [
+                [
+                  0,
+                  3
+                ]
+              ],
+              "high": [
+                [
+                  4,
+                  7
+                ]
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+---
+%10010100  # `bm3le`, `bm7le` starts
+%01100001  # `bm13le` starts
+%11011001  # `bm1le` starts
+%10100110  # `bm22le` starts
+%00100110
+%00001000  # `bm37le` starts
+%11110001
+%01001010
+%00011111
+%00010011
+%01000110  # `bm63le` starts
+%00000100
+%00100111
+%01100010
+%10100000
+%00100011
+%11001100
+%00101011
+%10000011  # `bm6le` starts
+%00110101  # `bm5be`, `bm11be` starts
+%00110001
+%11101110  # `bm1be`, `bm27be` starts
+%00010010
+%10000101
+%00101111  # `bm40be` starts
+%11111000
+%11100101
+%01110011
+%00111011
+%11110001  # `bm60be` starts
+%10100100
+%11011000
+%01111100
+%00110011
+%10011001
+%00001000
+%11110000
+%00001011  # `bm16be` starts
+%00011100
+%10100001  # `bm8be` starts
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLBM:bm3le:1:first,low
+     3           FLBM:bm7le:38:high,low
+    10           FLBM:bm13le:845:first,high,low
+    23           FLBM:bm1le:1:first,high,last,low
+    24           FLBM:bm22le:1661188:high,low
+    46           FLBM:bm37le:19236636227:first,high,low
+    83           FLBM:bm63le:613493506904739667:first,high,low
+   146           FLBM:bm6le:1:first,low
+   152           FLBM:bm5be:12:high,low
+   157           FLBM:bm11be:1125:first,high,last,low
+   168           FLBM:bm1be:1:first,high,last,low
+   169           FLBM:bm27be:38839355:first,high,low
+   196           FLBM:bm40be:1090064642559:first,high,last,low
+   236           FLBM:bm60be:67846038293164632:high,low
+   296           FLBM:bm16be:14544:high,low
+   312           FLBM:bm8be:133:first,high,last,low
+   320         }
+   320       }
+   320     }
+   320   }
+   320 }

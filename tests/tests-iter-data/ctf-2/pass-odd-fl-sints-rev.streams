@@ -1,0 +1,238 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "s3le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 3,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s7le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 7,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s13le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 13,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s1le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 1,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s22le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 22,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s37le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 37,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s63le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 63,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s6le",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 6,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "s5be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 5,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s11be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 11,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s1be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 1,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s27be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 27,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s40be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 40,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s60be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 60,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s16be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 16,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "s8be",
+          "field-class": {
+            "type": "fixed-length-signed-integer",
+            "length": 8,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+%11111110  # `s3le`, `s7le` starts
+%11111010  # `s13le` starts
+%10101010  # `s1le` starts
+%00001110  # `s22le` starts
+%10100110
+%11110001  # `s37le` starts
+%10011100
+%11000110
+%01010000
+%11111101
+%10010011  # `s63le` starts
+%01010111
+%00111101
+%01011101
+%11110000
+%01100011
+%00111010
+%11100010
+%11100101  # `s6le` starts
+%11000100  # `s5be`, `s11be` starts
+%10010011
+%01101101  # `s1be`, `s27be` starts
+%11010111
+%11010011
+%11010010  # `s40be` starts
+%11001001
+%11100100
+%10111110
+%00001100
+%10101010  # `s60be` starts
+%11101011
+%10001001
+%10101101
+%10001111
+%11011000
+%10101011
+%01110011
+%00110101  # `s16be` starts
+%01001110
+%01110101  # `s8be` starts
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLSI:s3le:3
+     3           FLSI:s7le:-3
+    10           FLSI:s13le:4010
+    23           FLSI:s1le:-1
+    24           FLSI:s22le:1841507
+    46           FLSI:s37le:-26657401346
+    83           FLSI:s63le:2858363992824967454
+   146           FLSI:s6le:-25
+   152           FLSI:s5be:3
+   157           FLSI:s11be:-439
+   168           FLSI:s1be:0
+   169           FLSI:s27be:-35260965
+   196           FLSI:s40be:356613519668
+   236           FLSI:s60be:-221430925431857803
+   296           FLSI:s16be:29356
+   312           FLSI:s8be:-82
+   320         }
+   320       }
+   320     }
+   320   }
+   320 }
