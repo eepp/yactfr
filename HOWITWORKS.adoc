@@ -591,6 +591,13 @@ auto endIter = mySeq.end();     // has no VM
 endIter = beginIter;            // creates a copy of the other VM
 ----
 
+`ElementSequence::end()`, the constructor of an "`end`" iterator, and
+the destructor of an iterator (which only calls an out-of-line method
+when the iterator has a VM) are inline. Therefore, when the library
+user writes `+it != mySeq.end()+` as a loop condition, the compiler
+reduces building, comparing, and destroying the "`end`" iterator to
+comparing two integers.
+
 An element sequence iterator can seek a packet within the data of its
 data source known to be located at a specific offset in bytes. When you
 call `ElementSequenceIterator::seekPacket()`, it resets the VM position

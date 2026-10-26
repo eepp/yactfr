@@ -27,12 +27,7 @@ ElementSequence::Iterator ElementSequence::at(const Index offset)
 
 ElementSequence::Iterator ElementSequence::begin()
 {
-    return ElementSequence::Iterator {*_dataSrcFactory, *_traceType, false};
-}
-
-ElementSequence::Iterator ElementSequence::end() noexcept
-{
-    return ElementSequence::Iterator {*_dataSrcFactory, *_traceType, true};
+    return ElementSequence::Iterator {*_dataSrcFactory, *_traceType};
 }
 
 } // namespace yactfr

@@ -93,7 +93,10 @@ public:
     @returns
         Element sequence iterator at the end of this element sequence.
     */
-    Iterator end() noexcept;
+    Iterator end() noexcept
+    {
+        return Iterator {*_dataSrcFactory, *_traceType, Iterator::_tEndTag {}};
+    }
 
     /*!
     @brief

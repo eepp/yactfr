@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <memory>
+
 #include <yactfr/elem-seq-it.hpp>
 
 #include "internal/vm.hpp"
@@ -12,19 +14,27 @@
 
 namespace yactfr {
 
-constexpr Index ElementSequenceIterator::_endOffset = static_cast<Index>(~0ULL);
+constexpr Index ElementSequenceIterator::_endOffset;
 
 ElementSequenceIterator::ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
-                                                 const TraceType& traceType, const bool end) :
+                                                 const TraceType& traceType) :
     _dataSrcFactory {&dataSrcFactory},
     _traceType {&traceType}
 {
-    if (end) {
-        _offset = _endOffset;
-    } else {
-        _vm = std::make_unique<internal::Vm>(*_dataSrcFactory, traceType._pimpl->pktProc(), *this);
-        _vm->nextElem();
-    }
+    /*
+     * The destructor doesn't run if this constructor throws: own the VM
+     * with a unique pointer until it's ready.
+     */
+    auto vm = std::make_unique<internal::Vm>(*_dataSrcFactory, traceType._pimpl->pktProc(),
+                                             *this);
+
+    vm->nextElem();
+    _vm = vm.release();
+}
+
+void ElementSequenceIterator::_destroyVm() noexcept
+{
+    delete _vm;
 }
 
 void ElementSequenceIterator::_resetOther(ElementSequenceIterator& other)
@@ -44,7 +54,7 @@ ElementSequenceIterator::ElementSequenceIterator(const ElementSequenceIterator& 
         return;
     }
 
-    _vm = std::make_unique<internal::Vm>(*other._vm, *this);
+    _vm = new internal::Vm {*other._vm, *this};
     _vm->updateItElemFromOtherPos(other._vm->pos(), other._curElem);
 }
 
@@ -66,14 +76,11 @@ ElementSequenceIterator::ElementSequenceIterator(ElementSequenceIterator&& other
 
     auto& otherPos = other._vm->pos();
 
-    _vm = std::move(other._vm);
+    _vm = other._vm;
+    other._vm = nullptr;
     _vm->it(*this);
     _vm->updateItElemFromOtherPos(otherPos, other._curElem);
     this->_resetOther(other);
-}
-
-ElementSequenceIterator::~ElementSequenceIterator()
-{
 }
 
 ElementSequenceIterator& ElementSequenceIterator::operator=(const ElementSequenceIterator& other)
@@ -95,7 +102,7 @@ ElementSequenceIterator& ElementSequenceIterator::operator=(const ElementSequenc
     if (_vm) {
         _vm->setFromOther(*other._vm, *this);
     } else {
-        _vm = std::make_unique<internal::Vm>(*other._vm, *this);
+        _vm = new internal::Vm {*other._vm, *this};
     }
 
     _vm->updateItElemFromOtherPos(other._vm->pos(), other._curElem);
@@ -104,6 +111,10 @@ ElementSequenceIterator& ElementSequenceIterator::operator=(const ElementSequenc
 
 ElementSequenceIterator& ElementSequenceIterator::operator=(ElementSequenceIterator&& other)
 {
+    if (&other == this) {
+        return *this;
+    }
+
     /*
      * Data source factory and trace type should already be the same
      * because we're in the same element sequence.
@@ -121,7 +132,9 @@ ElementSequenceIterator& ElementSequenceIterator::operator=(ElementSequenceItera
 
     auto& otherPos = other._vm->pos();
 
-    _vm = std::move(other._vm);
+    delete _vm;
+    _vm = other._vm;
+    other._vm = nullptr;
     _vm->it(*this);
     _vm->updateItElemFromOtherPos(otherPos, other._curElem);
     this->_resetOther(other);
@@ -155,8 +168,7 @@ void ElementSequenceIterator::restorePosition(const ElementSequenceIteratorPosit
          * This iterator is at the end of the element sequence and has
          * no VM. Create a new VM before restoring the VM's position.
          */
-        _vm = std::make_unique<internal::Vm>(*_dataSrcFactory, _traceType->_pimpl->pktProc(),
-                                             *this);
+        _vm = new internal::Vm {*_dataSrcFactory, _traceType->_pimpl->pktProc(), *this};
     }
 
     _vm->restorePos(pos);

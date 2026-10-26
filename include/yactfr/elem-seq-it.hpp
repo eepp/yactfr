@@ -11,7 +11,6 @@
 #include <cassert>
 #include <cstddef>
 #include <iterator>
-#include <memory>
 
 #include "elem-seq-it-pos.hpp"
 #include "aliases.hpp"
@@ -50,11 +49,31 @@ public:
     using iterator_category = std::input_iterator_tag;
 
 private:
-    explicit ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
-                                     const TraceType& traceType, bool end);
+    static constexpr Index _endOffset = static_cast<Index>(~0ULL);
+
+    // tag to select the end iterator constructor
+    struct _tEndTag final
+    {
+    };
 
 private:
-    static const Index _endOffset;
+    // creates an iterator at the beginning of its element sequence
+    explicit ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
+                                     const TraceType& traceType);
+
+    /*
+     * Creates an iterator at the end of its element sequence.
+     *
+     * This constructor and the destructor are inline so that the
+     * compiler can reduce `it != seq.end()` to comparing two integers.
+     */
+    explicit ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
+                                     const TraceType& traceType, _tEndTag) noexcept :
+        _dataSrcFactory {&dataSrcFactory},
+        _traceType {&traceType},
+        _offset {_endOffset}
+    {
+    }
 
 public:
     /*!
@@ -99,8 +118,12 @@ public:
     */
     ElementSequenceIterator(ElementSequenceIterator&& other);
 
-    // required because internal::Vm has no known size at this point
-    ~ElementSequenceIterator();
+    ~ElementSequenceIterator()
+    {
+        if (_vm) {
+            this->_destroyVm();
+        }
+    }
 
     /*!
     @brief
@@ -431,10 +454,18 @@ public:
 private:
     void _resetOther(ElementSequenceIterator& other);
 
+    /*
+     * Out of line because `internal::Vm` has no known size at
+     * this point.
+     */
+    void _destroyVm() noexcept;
+
 private:
     DataSourceFactory *_dataSrcFactory;
     const TraceType *_traceType;
-    std::unique_ptr<internal::Vm> _vm;
+
+    // owned virtual machine; `nullptr` for an ended iterator
+    internal::Vm *_vm = nullptr;
 
     // current element
     const Element *_curElem = nullptr;
