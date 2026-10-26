@@ -1,0 +1,7 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+{"type": "event-record-class", "name": "\u12"}
+---
+[1:41] In `\u` escape sequence: unexpected character `"`.

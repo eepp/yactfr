@@ -1,0 +1,4 @@
+{"type": "preamble", "version": 2}
+{"type": "trace-class"}
+{"type": "data-stream-class"}
+{"type": "event-record-class", "payload-field-class": {"type": "structure", "member-classes": [{"name": "x", "field-class": {"type": "null-terminated-string"}}]}, "name": "a\bb\fc\/d\"e\\f\ng\rh\ti"}

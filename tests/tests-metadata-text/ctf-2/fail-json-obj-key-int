@@ -1,0 +1,6 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class", 23: 1}
+{"type": "data-stream-class"}
+---
+[1:25] Expecting a JSON object key (double-quoted string).

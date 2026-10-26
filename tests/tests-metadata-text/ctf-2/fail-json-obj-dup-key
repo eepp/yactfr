@@ -1,0 +1,6 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class", "type": "trace-class"}
+{"type": "data-stream-class"}
+---
+[1:25] Duplicate JSON object key `type`.
