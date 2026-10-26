@@ -1736,13 +1736,17 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
             boost::optional<PseudoDataLoc> pseudoDataLoc;
 
             if (_ss.tryScanToken("<")) {
+                _ss.skipCommentsAndWhitespaces();
+
+                const auto selLoc = _ss.loc();
+
                 pseudoDataLoc = this->_expectDataLoc();
                 assert(pseudoDataLoc);
 
                 if (pseudoDataLoc->kind() == PseudoDataLoc::Kind::Env) {
                     throwTextParseError("Selector location of variant type "
                                         "cannot start with `env.`.",
-                                        _ss.loc());
+                                        selLoc);
                 }
 
                 this->_expectToken(">");

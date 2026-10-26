@@ -1,0 +1,29 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+env {
+  x = 23;
+};
+
+event {
+  name = ev;
+  fields := struct {
+    integer { size = 8; } tag;
+    variant < env.x > {
+      integer { size = 8; } a;
+    } v;
+  };
+};
+---
+[13:1] In `event` root block:
+[15:3] In the `fields` scope:
+[15:13] In `struct` block:
+[17:5] While parsing body of `struct` block:
+[17:5] In `variant` block:
+[17:15] Selector location of variant type cannot start with `env.`.
