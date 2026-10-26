@@ -1,0 +1,234 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class",
+    "packet-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "dsc_id",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["data-stream-class-id"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "clock-class",
+    "id": "clk",
+    "frequency": 1000000000
+  },
+  {
+    "type": "data-stream-class",
+    "id": 300,
+    "default-clock-class-id": "clk",
+    "packet-context-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "total_len",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["packet-total-length"]
+          }
+        },
+        {
+          "name": "content_len",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["packet-content-length"]
+          }
+        },
+        {
+          "name": "end_ts",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["packet-end-default-clock-timestamp"]
+          }
+        },
+        {
+          "name": "disc_er_counter",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["discarded-event-record-counter-snapshot"]
+          }
+        },
+        {
+          "name": "seq_num",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["packet-sequence-number"]
+          }
+        }
+      ]
+    },
+    "event-record-header-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "id",
+          "field-class": {
+            "type": "variable-length-unsigned-integer",
+            "roles": ["event-record-class-id"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "data-stream-class-id": 300,
+    "id": 0,
+    "name": "zero",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "val",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 8,
+            "byte-order": "little-endian"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "event-record-class",
+    "data-stream-class-id": 300,
+    "id": 1000,
+    "name": "thousand",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "str",
+          "field-class": {
+            "type": "null-terminated-string"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+# first packet
+[300 : uleb128]      # `dsc_id`
+[192 : uleb128]      # `total_len`
+[160 : uleb128]      # `content_len`
+[1234567 : uleb128]  # `end_ts`
+[5 : uleb128]        # `disc_er_counter`
+[70000 : uleb128]    # `seq_num`
+
+# event record
+[0 : uleb128]        # `id`
+$17                  # `val`
+
+# event record
+[1000 : uleb128]     # `id`
+"hi\0"               # `str`
+
+# padding
+00 00 00 00
+
+# second packet
+[300 : uleb128]      # `dsc_id`
+[144 : uleb128]      # `total_len`
+[144 : uleb128]      # `content_len`
+[1099511627776 : uleb128] # `end_ts` (2^40)
+[0 : uleb128]        # `disc_er_counter`
+[70001 : uleb128]    # `seq_num`
+
+# event record
+[0 : uleb128]        # `id`
+$255                 # `val`
+---
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         VLUI:dsc_id:300
+    16       }
+    16     }
+    16     DSI:T300
+    16     SC:1 {
+    16       ST {
+    16         VLUI:total_len:192
+    32         VLUI:content_len:160
+    48         VLUI:end_ts:1234567
+    72         VLUI:disc_er_counter:5
+    80         VLUI:seq_num:70000
+   104       }
+   104     }
+   104     PI:T192:C160:E1234567:S70000:D5
+   104     ER {
+   104       SC:2 {
+   104         ST {
+   104           VLUI:id:0
+   112         }
+   112       }
+   112       ERI:T0:#zero
+   112       SC:5 {
+   112         ST {
+   112           FLUI:val:17
+   120         }
+   120       }
+   120     }
+   120     ER {
+   120       SC:2 {
+   120         ST {
+   120           VLUI:id:1000
+   136         }
+   136       }
+   136       ERI:T1000:#thousand
+   136       SC:5 {
+   136         ST {
+   136           NTS:str {
+   136             RD:3:hi$00
+   160           }
+   160         }
+   160       }
+   160     }
+   160   }
+   192 }
+   192 P {
+   192   PC {
+   192     SC:0 {
+   192       ST {
+   192         VLUI:dsc_id:300
+   208       }
+   208     }
+   208     DSI:T300
+   208     SC:1 {
+   208       ST {
+   208         VLUI:total_len:144
+   224         VLUI:content_len:144
+   240         VLUI:end_ts:1099511627776
+   288         VLUI:disc_er_counter:0
+   296         VLUI:seq_num:70001
+   320       }
+   320     }
+   320     PI:T144:C144:E1099511627776:S70001:D0
+   320     ER {
+   320       SC:2 {
+   320         ST {
+   320           VLUI:id:0
+   328         }
+   328       }
+   328       ERI:T0:#zero
+   328       SC:5 {
+   328         ST {
+   328           FLUI:val:255
+   336         }
+   336       }
+   336     }
+   336   }
+   336 }
+
