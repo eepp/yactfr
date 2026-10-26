@@ -1,0 +1,6 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class", "uid": "\udc00"}
+{"type": "data-stream-class"}
+---
+[1:33] In `\u` escape sequence: unexpected low surrogate U+DC00 without a preceding high surrogate.

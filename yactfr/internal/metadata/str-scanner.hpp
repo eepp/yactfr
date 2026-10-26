@@ -493,7 +493,22 @@ private:
 
     void _skipComment();
     void _skipWhitespaces();
-    void _appendEscapedUnicodeChar(const char *at);
+    /*
+     * Validates and returns the code unit of the four hexadecimal
+     * digits at `at`.
+     */
+    unsigned long _scanEscapedUnicodeCodeUnit(const char *at);
+
+    /*
+     * Appends to `_strBuf` the UTF-8 encoding of the codepoint of the
+     * `\u` escape sequence of which `at` points to the first
+     * hexadecimal digit, possibly followed with another `\u` escape
+     * sequence (surrogate pair).
+     *
+     * Returns the number of characters after the first `\u` which
+     * the escape sequence(s) spans.
+     */
+    Size _appendEscapedUnicodeChar(const char *at);
     void _appendEscapedHexChar(const char *at);
 
     /*

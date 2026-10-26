@@ -1,0 +1,6 @@
+---
+{"type": "preamble", "version": 2}
+{"type": "trace-class", "uid": "\ud800\udbff"}
+{"type": "data-stream-class"}
+---
+[1:33] In `\u` escape sequence: expecting a low surrogate after the high surrogate U+D800, got U+DBFF.
