@@ -223,6 +223,10 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
 
         this->_expect(magicBuf.data(), magicBuf.size());
 
+        if (this->_streamIsBad()) {
+            throw IOError {"Cannot read metadata stream."};
+        }
+
         const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
 
         if (*magic == _pktMagic) {

@@ -143,6 +143,11 @@ int main()
         ok = checkIoError("bad-bit-before", stream, badStateMsg) && ok;
     }
 
+    // within the first four bytes (plain text or packetized)
+    ok = checkIoError("first-byte", text, 0, cannotReadMsg) && ok;
+    ok = checkIoError("text-magic", text, 2, cannotReadMsg) && ok;
+    ok = checkIoError("pkt-magic", pkt(text), 2, cannotReadMsg) && ok;
+
     // plain text: within the first block and after the first block
     ok = checkIoError("text-1", text, 10, cannotReadMsg) && ok;
     ok = checkIoError("text-2", text + std::string(5000, ' '), 4500, cannotReadMsg) && ok;
