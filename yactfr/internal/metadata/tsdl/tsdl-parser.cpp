@@ -1814,10 +1814,6 @@ bool TsdlParser::_tryParseEnvBlock()
         throwTextParseError("Duplicate `env` block.", loc);
     }
 
-    if (!_pseudoTraceType) {
-        throwTextParseError("`env` block: missing `trace` block.", loc);
-    }
-
     // parse `{`
     this->_expectToken("{");
 
@@ -1838,6 +1834,11 @@ bool TsdlParser::_tryParseEnvBlock()
 
     // parse `;`
     this->_expectToken(";");
+
+    if (!_pseudoTraceType) {
+        // first pass: skip
+        return true;
+    }
 
     // check for duplicate attributes
     TsdlParser::_checkDupAttr(attrs);
@@ -2122,7 +2123,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
         return false;
     }
 
-    if (_pseudoTraceType) {
+    if (_traceTypeBlockParsed) {
         throwTextParseError("Duplicate `trace` block.", _ss.loc());
     }
 
@@ -2252,10 +2253,22 @@ bool TsdlParser::_tryParseTraceTypeBlock()
 
     if (_nativeBo) {
         // second time we parse this: create pseudo trace type
-        _pseudoTraceType = PseudoTraceType {
+        PseudoTraceType pseudoTraceType {
             *majorVersion, *minorVersion, boost::none, boost::none, std::move(uuidStr),
             TraceEnvironment {}, std::move(pseudoPktHeaderType)
         };
+
+        /*
+         * Keep what the root blocks preceding this `trace` block added
+         * to the placeholder pseudo trace type.
+         */
+        assert(_pseudoTraceType);
+        pseudoTraceType.env(_pseudoTraceType->env());
+        pseudoTraceType.clkTypes() = std::move(_pseudoTraceType->clkTypes());
+        pseudoTraceType.pseudoDsts() = std::move(_pseudoTraceType->pseudoDsts());
+        pseudoTraceType.pseudoOrphanErts() = std::move(_pseudoTraceType->pseudoOrphanErts());
+        _pseudoTraceType = std::move(pseudoTraceType);
+        _traceTypeBlockParsed = true;
     } else {
         /*
          * Alright, we have the REAL native byte order now, so restart
@@ -2270,6 +2283,12 @@ bool TsdlParser::_tryParseTraceTypeBlock()
         assert(_stack.size() == 2);
         _stack[0].dtAliases.clear();
         _ss.reset();
+
+        /*
+         * Placeholder pseudo trace type for the root blocks which
+         * precede the `trace` block during the second pass.
+         */
+        _pseudoTraceType = PseudoTraceType {*majorVersion, *minorVersion};
     }
 
     return true;

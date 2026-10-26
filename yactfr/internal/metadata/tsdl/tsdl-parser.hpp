@@ -1112,8 +1112,17 @@ private:
     // current native byte order
     boost::optional<ByteOrder> _nativeBo;
 
-    // current pseudo trace type
+    /*
+     * Current pseudo trace type.
+     *
+     * During the second pass (`_nativeBo` is set), this is a
+     * placeholder until the parser reaches the `trace` block so that
+     * root blocks may precede the `trace` block.
+     */
     boost::optional<PseudoTraceType> _pseudoTraceType;
+
+    // whether or not the second pass parsed the `trace` block
+    bool _traceTypeBlockParsed = false;
 
     // whether or not an `env` block was parsed
     bool _envParsed = false;

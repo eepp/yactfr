@@ -1,0 +1,79 @@
+---
+env {
+  tracer_name = "lttng-ust";
+  hostname = "meow";
+};
+
+clock {
+  name = mon;
+  freq = 1000;
+};
+
+stream {
+  event.header := struct {
+    integer { size = 8; map = clock.mon.value; } ts;
+  };
+};
+
+event {
+  name = ev;
+  fields := struct {
+    u8 x;
+  };
+};
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+  packet.header := struct {
+    u32le magic;
+  };
+};
+---
+c1 1f fc c1   # `magic`
+17            # `ts`
+2a            # `x`
+2b            # `ts`
+05            # `x`
+---
+     0 P {
+     0   PC {
+     0     SC:0 {
+     0       ST {
+     0         FLUI:magic:3254525889
+    32         PMN:3254525889
+    32       }
+    32     }
+    32     DSI:T0
+    32     PI
+    32     ER {
+    32       SC:2 {
+    32         ST {
+    32           FLUI:ts:23
+    40           DCV:23
+    40         }
+    40       }
+    40       ERI:T0:#ev
+    40       SC:5 {
+    40         ST {
+    40           FLUI:x:42
+    48         }
+    48       }
+    48     }
+    48     ER {
+    48       SC:2 {
+    48         ST {
+    48           FLUI:ts:43
+    56           DCV:43
+    56         }
+    56       }
+    56       ERI:T0:#ev
+    56       SC:5 {
+    56         ST {
+    56           FLUI:x:5
+    64         }
+    64       }
+    64     }
+    64   }
+    64 }
