@@ -83,7 +83,8 @@ ArrayItem::Up ArrayItem::clone() const
     Container items;
 
     for (const auto& item : this->_theItems) {
-        items.push_back(item->clone());
+        // null item pointer means a null item
+        items.push_back(item ? item->clone() : nullptr);
     }
 
     return std::make_unique<const ArrayItem>(std::move(items));
@@ -110,7 +111,9 @@ MapItem::Up MapItem::clone() const
     Container items;
 
     for (const auto& keyItemPair : this->_theItems) {
-        items.insert(std::make_pair(keyItemPair.first, keyItemPair.second->clone()));
+        // null item pointer means a null item
+        items.insert(std::make_pair(keyItemPair.first,
+                                    keyItemPair.second ? keyItemPair.second->clone() : nullptr));
     }
 
     return std::make_unique<const MapItem>(std::move(items));

@@ -402,7 +402,8 @@ public:
         Index of the item to return.
 
     @returns
-        Item at the index \p index.
+        Item at the index \p index, or \c nullptr if it's a null item
+        (for example, from a JSON \c null value).
 
     @pre
         \p index &lt; size()
@@ -485,7 +486,8 @@ public:
         Index of the item to return.
 
     @returns
-        Item having the key \p key.
+        Item having the key \p key, or \c nullptr if it's a null item
+        (for example, from a JSON \c null value).
 
     @pre
         This map item has an item having the key \p key.

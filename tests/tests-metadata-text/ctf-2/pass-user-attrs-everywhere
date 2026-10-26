@@ -1,0 +1,475 @@
+{
+  "type": "preamble",
+  "version": 2,
+  "extensions": {}
+}
+{
+  "type": "field-class-alias",
+  "name": "u8a",
+  "field-class": {
+    "type": "fixed-length-unsigned-integer",
+    "length": 8,
+    "byte-order": "little-endian",
+    "attributes": {
+      "tag": "u8",
+      "n": null,
+      "b": true,
+      "f": false,
+      "u": 18446744073709551615,
+      "i": -9223372036854775808,
+      "r": -25000000000.0,
+      "s": "zoom",
+      "a": [
+        null,
+        1,
+        [
+          null,
+          {
+            "x": null
+          }
+        ],
+        {
+          "y": [
+            null
+          ]
+        }
+      ],
+      "m": {
+        "z": null
+      }
+    },
+    "extensions": {}
+  },
+  "attributes": {
+    "tag": "alias",
+    "n": null,
+    "b": true,
+    "f": false,
+    "u": 18446744073709551615,
+    "i": -9223372036854775808,
+    "r": -25000000000.0,
+    "s": "zoom",
+    "a": [
+      null,
+      1,
+      [
+        null,
+        {
+          "x": null
+        }
+      ],
+      {
+        "y": [
+          null
+        ]
+      }
+    ],
+    "m": {
+      "z": null
+    }
+  },
+  "extensions": {}
+}
+{
+  "type": "trace-class",
+  "attributes": {
+    "tag": "tc",
+    "n": null,
+    "b": true,
+    "f": false,
+    "u": 18446744073709551615,
+    "i": -9223372036854775808,
+    "r": -25000000000.0,
+    "s": "zoom",
+    "a": [
+      null,
+      1,
+      [
+        null,
+        {
+          "x": null
+        }
+      ],
+      {
+        "y": [
+          null
+        ]
+      }
+    ],
+    "m": {
+      "z": null
+    }
+  },
+  "extensions": {}
+}
+{
+  "type": "clock-class",
+  "id": "clk",
+  "frequency": 1000,
+  "attributes": {
+    "tag": "clk",
+    "n": null,
+    "b": true,
+    "f": false,
+    "u": 18446744073709551615,
+    "i": -9223372036854775808,
+    "r": -25000000000.0,
+    "s": "zoom",
+    "a": [
+      null,
+      1,
+      [
+        null,
+        {
+          "x": null
+        }
+      ],
+      {
+        "y": [
+          null
+        ]
+      }
+    ],
+    "m": {
+      "z": null
+    }
+  },
+  "extensions": {}
+}
+{
+  "type": "data-stream-class",
+  "default-clock-class-id": "clk",
+  "attributes": {
+    "tag": "dsc",
+    "n": null,
+    "b": true,
+    "f": false,
+    "u": 18446744073709551615,
+    "i": -9223372036854775808,
+    "r": -25000000000.0,
+    "s": "zoom",
+    "a": [
+      null,
+      1,
+      [
+        null,
+        {
+          "x": null
+        }
+      ],
+      {
+        "y": [
+          null
+        ]
+      }
+    ],
+    "m": {
+      "z": null
+    }
+  },
+  "extensions": {}
+}
+{
+  "type": "event-record-class",
+  "name": "er",
+  "attributes": {
+    "tag": "erc",
+    "n": null,
+    "b": true,
+    "f": false,
+    "u": 18446744073709551615,
+    "i": -9223372036854775808,
+    "r": -25000000000.0,
+    "s": "zoom",
+    "a": [
+      null,
+      1,
+      [
+        null,
+        {
+          "x": null
+        }
+      ],
+      {
+        "y": [
+          null
+        ]
+      }
+    ],
+    "m": {
+      "z": null
+    }
+  },
+  "extensions": {},
+  "payload-field-class": {
+    "type": "structure",
+    "attributes": {
+      "tag": "struct",
+      "n": null,
+      "b": true,
+      "f": false,
+      "u": 18446744073709551615,
+      "i": -9223372036854775808,
+      "r": -25000000000.0,
+      "s": "zoom",
+      "a": [
+        null,
+        1,
+        [
+          null,
+          {
+            "x": null
+          }
+        ],
+        {
+          "y": [
+            null
+          ]
+        }
+      ],
+      "m": {
+        "z": null
+      }
+    },
+    "extensions": {},
+    "member-classes": [
+      {
+        "name": "sel",
+        "field-class": "u8a",
+        "attributes": {
+          "tag": "member",
+          "n": null,
+          "b": true,
+          "f": false,
+          "u": 18446744073709551615,
+          "i": -9223372036854775808,
+          "r": -25000000000.0,
+          "s": "zoom",
+          "a": [
+            null,
+            1,
+            [
+              null,
+              {
+                "x": null
+              }
+            ],
+            {
+              "y": [
+                null
+              ]
+            }
+          ],
+          "m": {
+            "z": null
+          }
+        },
+        "extensions": {}
+      },
+      {
+        "name": "sel2",
+        "field-class": "u8a"
+      },
+      {
+        "name": "var",
+        "field-class": {
+          "type": "variant",
+          "attributes": {
+            "tag": "var",
+            "n": null,
+            "b": true,
+            "f": false,
+            "u": 18446744073709551615,
+            "i": -9223372036854775808,
+            "r": -25000000000.0,
+            "s": "zoom",
+            "a": [
+              null,
+              1,
+              [
+                null,
+                {
+                  "x": null
+                }
+              ],
+              {
+                "y": [
+                  null
+                ]
+              }
+            ],
+            "m": {
+              "z": null
+            }
+          },
+          "extensions": {},
+          "selector-field-location": {
+            "origin": "event-record-payload",
+            "path": [
+              "sel"
+            ]
+          },
+          "options": [
+            {
+              "name": "a",
+              "selector-field-ranges": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "field-class": "u8a",
+              "attributes": {
+                "tag": "opt",
+                "n": null,
+                "b": true,
+                "f": false,
+                "u": 18446744073709551615,
+                "i": -9223372036854775808,
+                "r": -25000000000.0,
+                "s": "zoom",
+                "a": [
+                  null,
+                  1,
+                  [
+                    null,
+                    {
+                      "x": null
+                    }
+                  ],
+                  {
+                    "y": [
+                      null
+                    ]
+                  }
+                ],
+                "m": {
+                  "z": null
+                }
+              },
+              "extensions": {}
+            },
+            {
+              "selector-field-ranges": [
+                [
+                  1,
+                  1
+                ]
+              ],
+              "field-class": {
+                "type": "null-terminated-string",
+                "attributes": {
+                  "tag": "nts",
+                  "n": null,
+                  "b": true,
+                  "f": false,
+                  "u": 18446744073709551615,
+                  "i": -9223372036854775808,
+                  "r": -25000000000.0,
+                  "s": "zoom",
+                  "a": [
+                    null,
+                    1,
+                    [
+                      null,
+                      {
+                        "x": null
+                      }
+                    ],
+                    {
+                      "y": [
+                        null
+                      ]
+                    }
+                  ],
+                  "m": {
+                    "z": null
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "opt",
+        "field-class": {
+          "type": "optional",
+          "attributes": {
+            "tag": "optional",
+            "n": null,
+            "b": true,
+            "f": false,
+            "u": 18446744073709551615,
+            "i": -9223372036854775808,
+            "r": -25000000000.0,
+            "s": "zoom",
+            "a": [
+              null,
+              1,
+              [
+                null,
+                {
+                  "x": null
+                }
+              ],
+              {
+                "y": [
+                  null
+                ]
+              }
+            ],
+            "m": {
+              "z": null
+            }
+          },
+          "selector-field-location": {
+            "origin": "event-record-payload",
+            "path": [
+              "sel2"
+            ]
+          },
+          "selector-field-ranges": [
+            [
+              1,
+              3
+            ]
+          ],
+          "field-class": {
+            "type": "static-length-array",
+            "length": 2,
+            "element-field-class": "u8a",
+            "attributes": {
+              "tag": "sla",
+              "n": null,
+              "b": true,
+              "f": false,
+              "u": 18446744073709551615,
+              "i": -9223372036854775808,
+              "r": -25000000000.0,
+              "s": "zoom",
+              "a": [
+                null,
+                1,
+                [
+                  null,
+                  {
+                    "x": null
+                  }
+                ],
+                {
+                  "y": [
+                    null
+                  ]
+                }
+              ],
+              "m": {
+                "z": null
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
