@@ -8,6 +8,7 @@
 #include <cassert>
 #include <iomanip>
 #include <sstream>
+#include <charconv>
 
 #include <yactfr/text-parse-error.hpp>
 
@@ -79,7 +80,10 @@ unsigned long StrScanner::_scanEscapedUnicodeCodeUnit(const char * const at)
     }
 
     // convert hex characters to integral code unit (always works)
-    return std::strtoul(hexCpBuf.data(), nullptr, 16);
+    unsigned long codeUnit = 0;
+
+    std::from_chars(hexCpBuf.data(), hexCpBuf.data() + hexCpBuf.size(), codeUnit, 16);
+    return codeUnit;
 }
 
 namespace {
@@ -188,7 +192,9 @@ void StrScanner::_appendEscapedHexChar(const char * const at)
     }
 
     // convert hex characters to byte (always works)
-    const auto byte = std::strtoull(hexByteBuf.data(), nullptr, 16);
+    unsigned int byte = 0;
+
+    std::from_chars(hexByteBuf.data(), hexByteBuf.data() + hexByteBuf.size(), byte, 16);
 
     // validate value
     if (byte == 0) {

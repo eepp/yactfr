@@ -8,14 +8,14 @@
 #ifndef YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
 #define YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP
 
-#include <cstdlib>
 #include <cassert>
 #include <vector>
 #include <limits>
 #include <regex>
-#include <cmath>
 #include <array>
 #include <optional>
+#include <charconv>
+#include <system_error>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
@@ -795,27 +795,25 @@ template <typename ValT, int BaseV>
 std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 {
     /*
-     * Only accept hex characters for the first two characters at this
-     * point, as std::strtoull() will accept a hexadecimal radix prefix,
-     * whitespaces, `-`, and `+`.
+     * Reject a hexadecimal radix prefix at this point: we already
+     * scanned any prefix, if allowed.
+     *
+     * Without this, std::from_chars() would scan the `0` of `0x`.
+     *
+     * std::from_chars() itself rejects whitespaces, `-` (unsigned
+     * type), and `+`.
      */
     if (this->charsLeft() >= 2 && _at[0] == '0') {
         if (_at[1] == 'x' || _at[1] == 'X') {
-            // we already scanned any prefix, if allowed
             return std::nullopt;
         }
     }
 
-    if (this->charsLeft() >= 1 && !std::isxdigit(*_at)) {
-        return std::nullopt;
-    }
+    unsigned long long ullVal;
+    const auto res = std::from_chars(_at, _end, ullVal, BaseV);
 
-    char *strEnd = nullptr;
-    const auto ullVal = std::strtoull(_at, &strEnd, BaseV);
-
-    if ((ullVal == 0 && &(*_at) == strEnd) || errno == ERANGE) {
-        // could not parse
-        errno = 0;
+    if (res.ec != std::errc {}) {
+        // could not parse or out of range
         return std::nullopt;
     }
 
@@ -824,7 +822,7 @@ std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 
         if (val) {
             // success: update position
-            _at += (strEnd - &(*_at));
+            _at = res.ptr;
         }
 
         return val;
@@ -913,25 +911,24 @@ std::optional<double> StrScanner::tryScanConstReal()
     /*
      * Validate JSON number format (with fraction and/or exponent part).
      *
-     * This is needed because std::strtod() accepts more formats which
-     * JSON doesn't support.
+     * This is needed because std::from_chars() accepts more formats
+     * which JSON doesn't support.
      */
     if (!std::regex_search(_at, _end, StrScanner::_realRegex)) {
         return std::nullopt;
     }
 
     // parse
-    char *strEnd = nullptr;
-    const auto val = std::strtod(_at, &strEnd);
+    double val;
+    const auto res = std::from_chars(_at, _end, val);
 
-    if (val == HUGE_VAL || (val == 0 && &(*_at) == strEnd) || errno == ERANGE) {
-        // could not parse
-        errno = 0;
+    if (res.ec != std::errc {}) {
+        // could not parse or out of range
         return std::nullopt;
     }
 
     // success: update position and return value
-    _at += (strEnd - &(*_at));
+    _at = res.ptr;
     return val;
 }
 
