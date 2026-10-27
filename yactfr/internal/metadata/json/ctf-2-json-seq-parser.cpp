@@ -22,8 +22,8 @@ JsonObjVal::Up createDefClkOffsetJsonObjVal()
 {
     JsonObjVal::Container entries;
 
-    entries.insert(std::make_pair(strs::secs, createJsonVal(0LL, TextLocation {})));
-    entries.insert(std::make_pair(strs::cycles, createJsonVal(0ULL, TextLocation {})));
+    entries.try_emplace(strs::secs, createJsonVal(0LL, TextLocation {}));
+    entries.try_emplace(strs::cycles, createJsonVal(0ULL, TextLocation {}));
     return createJsonVal(std::move(entries), TextLocation {});
 }
 
@@ -205,13 +205,12 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
             auto& jsonEntryVal = *jsonVal;
 
             if (jsonEntryVal.isStr()) {
-                envEntries.emplace(std::make_pair(key, *jsonEntryVal.asStr()));
+                envEntries.emplace(key, *jsonEntryVal.asStr());
             } else if (jsonEntryVal.isSInt()) {
-                envEntries.emplace(std::make_pair(key, *jsonEntryVal.asSInt()));
+                envEntries.emplace(key, *jsonEntryVal.asSInt());
             } else {
                 assert(jsonEntryVal.isUInt());
-                envEntries.emplace(std::make_pair(key,
-                                                  static_cast<long long>(*jsonEntryVal.asUInt())));
+                envEntries.emplace(key, static_cast<long long>(*jsonEntryVal.asUInt()));
             }
         }
     }
@@ -339,7 +338,7 @@ void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
     }
 
     try {
-        _pseudoTraceType->pseudoDsts().insert(std::make_pair(id, std::make_unique<PseudoDst>(
+        _pseudoTraceType->pseudoDsts().try_emplace(id, std::make_unique<PseudoDst>(
             id,
             optStrOfObj(jsonFrag, strs::ns), optStrOfObj(jsonFrag, strs::name),
             optStrOfObj(jsonFrag, strs::uid),
@@ -347,7 +346,7 @@ void Ctf2JsonSeqParser::_handleDstFrag(const JsonObjVal& jsonFrag)
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::erHeaderFc),
             this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::erCommonCtxFc),
             this->_defClkTypeOfDstFrag(jsonFrag), attrsOfObj(jsonFrag), jsonFrag.loc()
-        )));
+        ));
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In data stream type fragment:", jsonFrag.loc());
         throw;
@@ -384,7 +383,7 @@ void Ctf2JsonSeqParser::_handleErtFrag(const JsonObjVal& jsonFrag)
     }
 
     try {
-        _pseudoTraceType->pseudoOrphanErts()[dstId].insert(std::make_pair(id, PseudoOrphanErt {
+        _pseudoTraceType->pseudoOrphanErts()[dstId].try_emplace(id, PseudoOrphanErt {
             PseudoErt {
                 id, optStrOfObj(jsonFrag, strs::ns), optStrOfObj(jsonFrag, strs::name),
                 optStrOfObj(jsonFrag, strs::uid),
@@ -394,7 +393,7 @@ void Ctf2JsonSeqParser::_handleErtFrag(const JsonObjVal& jsonFrag)
                 attrsOfObj(jsonFrag), jsonFrag.loc()
             },
             jsonFrag.loc()
-        }));
+        });
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, "In event record type fragment:", jsonFrag.loc());
         throw;

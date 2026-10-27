@@ -408,14 +408,12 @@ void TsdlParser::_checkDupPseudoNamedDt(const PseudoNamedDts& entries, const Tex
     for (const auto& entry : entries) {
         assert(entry->name());
 
-        if (entryNames.find(*entry->name()) != entryNames.end()) {
+        if (!entryNames.insert(*entry->name()).second) {
             std::ostringstream ss;
 
             ss << "Duplicate identifier (member type or option name) `" << *entry->name() << "`.";
             throwTextParseError(ss.str(), loc);
         }
-
-        entryNames.insert(*entry->name());
     }
 }
 
@@ -438,14 +436,12 @@ void TsdlParser::_checkDupAttr(const _tAttrs& attrs)
     std::set<std::string> attrSet;
 
     for (const auto& attr : attrs) {
-        if (attrSet.find(attr.name) != attrSet.end()) {
+        if (!attrSet.insert(attr.name).second) {
             std::ostringstream ss;
 
             ss << "Duplicate attribute `" << attr.name << "`.";
             throwTextParseError(ss.str(), attr.nameTextLoc());
         }
-
-        attrSet.insert(attr.name);
     }
 }
 
@@ -2400,13 +2396,13 @@ bool TsdlParser::_tryParseDstBlock()
     }
 
     // create and initialize pseudo data stream type
-    _pseudoTraceType->pseudoDsts().insert(std::make_pair(
+    _pseudoTraceType->pseudoDsts().try_emplace(
         id,
         std::make_unique<PseudoDst>(id, std::nullopt, std::nullopt, std::nullopt,
                                     std::move(pseudoPktCtxType), std::move(pseudoErHeaderType),
                                     std::move(pseudoErCommonCtxType), nullptr, nullptr,
                                     beginLoc)
-    ));
+    );
     _pseudoTraceType->pseudoOrphanErts()[id];
     return true;
 }
@@ -2548,14 +2544,14 @@ bool TsdlParser::_tryParseErtBlock()
     }
 
     // build event record type object
-    dstPseudoOrphanErts.insert(std::make_pair(id, PseudoOrphanErt {
+    dstPseudoOrphanErts.try_emplace(id, PseudoOrphanErt {
         PseudoErt {
             id, std::nullopt, std::move(name), std::nullopt, std::move(logLevel),
             std::move(emfUri), std::move(pseudoSpecCtxType),
             std::move(pseudoPayloadType), nullptr, beginLoc
         },
         beginLoc
-    }));
+    });
 
     return true;
 }

@@ -74,8 +74,8 @@ MappingsOrFlagsT intTypeMappingsOrFlagsOfDt(const JsonObjVal& jsonDt, const char
 
     if (const auto jsonMappingsOrFlags = jsonDt[propName]) {
         for (auto& [key, jsonIntRanges] : jsonMappingsOrFlags->asObj()) {
-            mappingsOrFlags.insert(std::make_pair(key,
-                                                  intRangesFromArray<RangeValueT>(jsonIntRanges->asArray())));
+            mappingsOrFlags.try_emplace(key,
+                                        intRangesFromArray<RangeValueT>(jsonIntRanges->asArray()));
         }
     }
 
@@ -645,19 +645,13 @@ PseudoDt::Up PseudoDtErector::_aliasedPseudoDt(const std::string& name,
 void PseudoDtErector::addAlias(const std::string& name, PseudoDt::Up pseudoDt,
                                const TextLocation& nameLoc)
 {
-    // check for duplicate
-    {
-        const auto it = _aliases.find(name);
+    // add alias, checking for duplicate
+    if (!_aliases.try_emplace(name, std::move(pseudoDt)).second) {
+        std::ostringstream ss;
 
-        if (it != _aliases.end()) {
-            std::ostringstream ss;
-
-            ss << "Duplicate data type alias named `" << name << "`.";
-            throwTextParseError(ss.str(), nameLoc);
-        }
+        ss << "Duplicate data type alias named `" << name << "`.";
+        throwTextParseError(ss.str(), nameLoc);
     }
-
-    _aliases.emplace(name, std::move(pseudoDt));
 }
 
 } // namespace internal

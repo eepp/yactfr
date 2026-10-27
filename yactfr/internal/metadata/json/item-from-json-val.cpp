@@ -64,7 +64,7 @@ public:
 
         for (auto& [key, childJsonVal] : jsonVal) {
             childJsonVal->accept(*this);
-            items.insert(std::make_pair(key, std::move(_item)));
+            items.try_emplace(key, std::move(_item));
         }
 
         _item = createItem(std::move(items));

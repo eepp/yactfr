@@ -18,7 +18,7 @@ FromMetadataTextReturn fromMetadataText(const char * const begin, const char * c
 {
     ParserT parser {begin, end};
 
-    return std::make_pair(parser.releaseTraceType(), parser.metadataStreamUuid());
+    return {parser.releaseTraceType(), parser.metadataStreamUuid()};
 }
 
 FromMetadataTextReturn fromMetadataText(const char * const begin,

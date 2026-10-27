@@ -43,8 +43,10 @@ StructureType::StructureType(StructureType::MemberTypes&& memberTypes, MapItem::
 void StructureType::_initNamesToMemberTypes()
 {
     for (const auto& member : _memberTypes) {
-        assert(_namesToMemberTypes.find(member->name()) == _namesToMemberTypes.end());
-        _namesToMemberTypes[member->name()] = member.get();
+        [[maybe_unused]] const auto [it, inserted] = _namesToMemberTypes.emplace(member->name(),
+                                                                                 member.get());
+
+        assert(inserted);
     }
 }
 

@@ -345,14 +345,13 @@ bool JsonParser<ListenerT>::_tryParseObjKey()
     if (const auto str = this->_tryScanLitStr()) {
         assert(!_keys.empty());
 
-        if (_keys.back().count(*str) != 0) {
+        if (!_keys.back().insert(*str).second) {
             std::ostringstream ss;
 
             ss << "Duplicate JSON object key `" << *str << "`.";
             throwTextParseError(ss.str(), loc);
         }
 
-        _keys.back().insert(*str);
         _listener->onObjKey(*str, loc);
         return true;
     }

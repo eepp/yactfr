@@ -1195,14 +1195,6 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
 
         ++curVal;
 
-        /*
-         * Insert integer range into pseudo mapping (create pseudo
-         * mapping if it doesn't exist).
-         */
-        if (pseudoMappings.find(name) == pseudoMappings.end()) {
-            pseudoMappings[name] = {};
-        }
-
         if (lower > upper) {
             std::ostringstream ss;
 
@@ -1211,6 +1203,10 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
             throwTextParseError(ss.str(), *loc);
         }
 
+        /*
+         * Insert integer range into pseudo mapping (`operator[]()`
+         * creates the pseudo mapping if it doesn't exist).
+         */
         pseudoMappings[name].insert(typename FlIntTypeT::MappingRangeSet::Range {lower, upper});
 
         const bool gotComma = _ss.tryScanToken(",");

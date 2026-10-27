@@ -505,8 +505,7 @@ namespace {
 void addToPropReqs(JsonObjValReq::PropReqs& propReqs, std::string&& key,
                           JsonValReq::Sp valReq, const bool isRequired = false)
 {
-    propReqs.emplace(std::make_pair(std::move(key),
-                                    JsonObjValPropReq {std::move(valReq), isRequired}));
+    propReqs.emplace(std::move(key), JsonObjValPropReq {std::move(valReq), isRequired});
 }
 
 /*
@@ -1428,14 +1427,12 @@ void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propNam
             if (const auto jsonNameVal = jsonEntryVal->asObj()[strs::name]) {
                 auto& jsonNameStrVal = jsonNameVal->asStr();
 
-                if (names.count(*jsonNameStrVal) != 0) {
+                if (!names.insert(*jsonNameStrVal).second) {
                     std::ostringstream ss;
 
                     ss << "Duplicate " << what << " name `" << *jsonNameStrVal << "`.";
                     throwTextParseError(ss.str(), jsonNameVal->loc());
                 }
-
-                names.insert(*jsonNameStrVal);
             }
         }
     }
@@ -1794,8 +1791,9 @@ private:
     {
         const auto typeStr = JsonValReqT::typeStr();
 
-        assert(_dtValReqs.find(typeStr) == _dtValReqs.end());
-        _dtValReqs.insert(std::make_pair(typeStr, &valReq));
+        [[maybe_unused]] const auto [it, inserted] = _dtValReqs.emplace(typeStr, &valReq);
+
+        assert(inserted);
     }
 
     void _validate(const JsonVal& jsonVal) const override
@@ -2378,8 +2376,9 @@ private:
     {
         const auto typeStr = JsonValReqT::typeStr();
 
-        assert(_fragValReqs.find(typeStr) == _fragValReqs.end());
-        _fragValReqs.insert(std::make_pair(typeStr, &valReq));
+        [[maybe_unused]] const auto [it, inserted] = _fragValReqs.emplace(typeStr, &valReq);
+
+        assert(inserted);
     }
 
     void _validate(const JsonVal& jsonVal) const override

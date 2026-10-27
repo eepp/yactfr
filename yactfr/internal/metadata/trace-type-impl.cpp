@@ -49,8 +49,9 @@ TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int
 void TraceTypeImpl::_buildDstMap()
 {
     for (auto& dstUp : _dsts) {
-        assert(_idsToDsts.find(dstUp->id()) == _idsToDsts.end());
-        _idsToDsts[dstUp->id()] = dstUp.get();
+        [[maybe_unused]] const auto [it, inserted] = _idsToDsts.emplace(dstUp->id(), dstUp.get());
+
+        assert(inserted);
     }
 }
 

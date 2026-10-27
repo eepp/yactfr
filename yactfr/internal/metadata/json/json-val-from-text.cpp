@@ -120,8 +120,8 @@ private:
 
         case _tState::InObj:
              // safe to move `lastObjKey`: only used once
-            this->_stackTop().objValCont.insert(std::make_pair(std::move(this->_stackTop().lastObjKey),
-                                                               std::move(jsonVal)));
+            this->_stackTop().objValCont.try_emplace(std::move(this->_stackTop().lastObjKey),
+                                                     std::move(jsonVal));
             break;
 
         default:
