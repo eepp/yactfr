@@ -30,8 +30,7 @@
 #include "set-pseudo-dt-data-loc.hpp"
 #include "../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 namespace {
 
 void pseudoDataLocPathElemsToPathElems(const PseudoDataLoc::PathElems& pseudoDataLocPathElems,
@@ -326,5 +325,4 @@ void setPseudoDtDataLoc(PseudoDt& pseudoDt, const Scope scope)
     DataLocSetter setter {pseudoDt, scope};
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

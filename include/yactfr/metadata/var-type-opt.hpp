@@ -189,7 +189,7 @@ public:
     }
 
     /// Clone (deep copy) of this variant type option.
-    Up clone() const
+    [[ nodiscard ]] Up clone() const
     {
         return VariantTypeOption::create(_name, _dt->clone(), _selRanges,
                                          internal::tryCloneAttrs(this->attributes()));

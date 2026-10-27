@@ -18,8 +18,7 @@
 #include "../pkt-proc-builder.hpp"
 #include "../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 TraceTypeImpl::TraceTypeImpl(const unsigned int majorVersion, const unsigned int minorVersion,
                              std::optional<std::string>&& ns,
@@ -447,5 +446,4 @@ const PktProc& TraceTypeImpl::pktProc() const
     return *_pktProc;
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

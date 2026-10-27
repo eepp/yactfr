@@ -654,7 +654,7 @@ public:
     @returns
         Clone (deep copy) of this type.
     */
-    DataType::Up clone() const;
+    [[ nodiscard ]] DataType::Up clone() const;
 
     /*!
     @brief

@@ -46,8 +46,7 @@
 #include "../pseudo-dt-utils.hpp"
 #include "../str-scanner.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * TSDL metadata stream parser.
@@ -319,7 +318,7 @@ private:
      *
      * Returns whether or not a root block was parsed.
      */
-    bool _tryParseRootBlock();
+    [[ nodiscard ]] bool _tryParseRootBlock();
 
     /*
      * Tries to parse a data type alias given by a named
@@ -348,7 +347,7 @@ private:
      *         ...
      *     };
      */
-    bool _tryParseFlEnumStructVarDtAlias();
+    [[ nodiscard ]] bool _tryParseFlEnumStructVarDtAlias();
 
     /*
      * Tries to parse a `typealias` or `typedef` block, adding it to the
@@ -389,13 +388,13 @@ private:
      * `typedef struct foo { ... } bar;`) to the map of aliased pseudo
      * data types of the current frame.
      */
-    bool _tryParseGenericDtAlias();
+    [[ nodiscard ]] bool _tryParseGenericDtAlias();
 
     /*
      * Like _tryParseGenericDtAlias(), but without adding an
      * "In data type alias:" context to a thrown `TextParseError`.
      */
-    bool _tryParseGenericDtAliasNoErrCtx();
+    [[ nodiscard ]] bool _tryParseGenericDtAliasNoErrCtx();
 
     /*
      * Tries to parse any data type alias, generic (`typealias`,
@@ -405,7 +404,7 @@ private:
      *
      * Returns whether or not a data type alias was parsed.
      */
-    bool _tryParseDtAlias();
+    [[ nodiscard ]] bool _tryParseDtAlias();
 
     /*
      * Expects a generic attribute, with a terminating `;`.
@@ -452,7 +451,7 @@ private:
      *
      *     event.header := struct my_event_header;
      */
-    PseudoDt::Up _tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
+    [[ nodiscard ]] PseudoDt::Up _tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
                                   const char *firstName, const char *secondName = nullptr,
                                   bool expect = true);
 
@@ -474,7 +473,7 @@ private:
      *
      *     my_field[event.context.some.location][23][len]
      */
-    PseudoDt::Up _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::Up innerPseudoDt);
+    [[ nodiscard ]] PseudoDt::Up _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::Up innerPseudoDt);
 
     /*
      * Like _tryParseIdentArraySubscripts(), but without the
@@ -552,7 +551,7 @@ private:
      *
      *     variant my_variant <my.tag>;
      */
-    PseudoDt::Up _tryParseDtAliasRef();
+    [[ nodiscard ]] PseudoDt::Up _tryParseDtAliasRef();
 
     /*
      * Expects the specific token `token`, throwing `TextParseError` if
@@ -580,7 +579,7 @@ private:
      *
      *     typealias string := string_t;
      */
-    bool _tryParseNamedDtOrDtAlias(PseudoNamedDts& entries);
+    [[ nodiscard ]] bool _tryParseNamedDtOrDtAlias(PseudoNamedDts& entries);
 
     /*
      * Tries to parse a data type, which also includes a data type
@@ -594,7 +593,7 @@ private:
      * structure, or variant type block, then this method sets
      * `*dtAliasName` to an empty string.
      */
-    PseudoDt::Up _tryParseDt(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] PseudoDt::Up _tryParseDt(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
      * Tries to parse a data type block (excludes data type
@@ -612,7 +611,7 @@ private:
      * sets `*isCompound` to whether or not the parsed data type is a
      * fixed-length enumeration, structure, or variant type.
      */
-    PseudoDt::Up _tryParseFullDt(bool addDtAlias = true, std::string *dtAliasName = nullptr,
+    [[ nodiscard ]] PseudoDt::Up _tryParseFullDt(bool addDtAlias = true, std::string *dtAliasName = nullptr,
                                  bool *isCompound = nullptr);
 
     /*
@@ -629,7 +628,7 @@ private:
      *         byte_order = be;
      *     }
      */
-    PseudoDt::Up _tryParseFlIntType();
+    [[ nodiscard ]] PseudoDt::Up _tryParseFlIntType();
 
     /*
      * Tries to parse a fixed-length floating point number type block.
@@ -644,7 +643,7 @@ private:
      *         byte_order = le;
      *     }
      */
-    PseudoDt::Up _tryParseFlFloatType();
+    [[ nodiscard ]] PseudoDt::Up _tryParseFlFloatType();
 
     /*
      * Tries to parse a null-terminated string type block.
@@ -659,7 +658,7 @@ private:
      *         encoding = ascii;
      *     }
      */
-    PseudoDt::Up _tryParseNtStrType();
+    [[ nodiscard ]] PseudoDt::Up _tryParseNtStrType();
 
     /*
      * Tries to parse a fixed-length enumeration type block.
@@ -681,7 +680,7 @@ private:
      *         "HAR TENVAR" = -17 ... 28,
      *     }
      */
-    PseudoDt::Up _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] PseudoDt::Up _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
     PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt, bool addDtAlias,
@@ -713,7 +712,7 @@ private:
      *         } c;
      *     } align(64)
      */
-    PseudoDt::Up _tryParseStructType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] PseudoDt::Up _tryParseStructType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
      * Tries to parse a variant type block.
@@ -732,7 +731,7 @@ private:
      *         integer { size = 32; align = 32; } i;
      *     }
      */
-    PseudoDt::Up _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] PseudoDt::Up _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     /*
      * Tries to parse a trace environment block and sets the trace
@@ -747,7 +746,7 @@ private:
      *         some_str = "some string";
      *     };
      */
-    bool _tryParseEnvBlock();
+    [[ nodiscard ]] bool _tryParseEnvBlock();
 
     /*
      * Tries to parse a clock type block and appends it to the current
@@ -765,7 +764,7 @@ private:
      *         offset = 1446222697389173303;
      *     };
      */
-    bool _tryParseClkTypeBlock();
+    [[ nodiscard ]] bool _tryParseClkTypeBlock();
 
     /*
      * Tries to parse a callsite block and ignores it.
@@ -782,7 +781,7 @@ private:
      *         ip = 0x40096c;
      *     };
      */
-    bool _tryParseCallsiteBlock();
+    [[ nodiscard ]] bool _tryParseCallsiteBlock();
 
     /*
      * Tries to parse a trace type block and sets its properties in the
@@ -804,7 +803,7 @@ private:
      *         };
      *     };
      */
-    bool _tryParseTraceTypeBlock();
+    [[ nodiscard ]] bool _tryParseTraceTypeBlock();
 
     /*
      * Tries to parse a data stream type block and initializes a pseudo
@@ -821,7 +820,7 @@ private:
      *         event.context := ...;
      *     };
      */
-    bool _tryParseDstBlock();
+    [[ nodiscard ]] bool _tryParseDstBlock();
 
     /*
      * Tries to parse an event record type block and inserts a resulting
@@ -840,7 +839,7 @@ private:
      *         event.fields := ...;
      *     };
      */
-    bool _tryParseErtBlock();
+    [[ nodiscard ]] bool _tryParseErtBlock();
 
     /*
      * Returns a fast pseudo fixed-length integer type clone from the
@@ -859,7 +858,7 @@ private:
                                     const PseudoDt& pseudoIntType);
 
     void _skipCommentsAndWhitespacesAndSemicolons();
-    const std::string *_tryScanLitStr();
+    [[ nodiscard ]] const std::string *_tryScanLitStr();
 
     /*
      * Returns the keyword which the identifier `ident` is, or
@@ -1334,7 +1333,6 @@ void TsdlParser::_addPseudoFlUIntTypeRoles(PseudoDt& basePseudoDt,
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_TSDL_TSDL_PARSER_HPP

@@ -148,7 +148,7 @@ public:
     @returns
         Clone of this structure member type.
     */
-    std::unique_ptr<const StructureMemberType> clone() const;
+    [[ nodiscard ]] std::unique_ptr<const StructureMemberType> clone() const;
 
     /*!
     @brief

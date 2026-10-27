@@ -23,8 +23,7 @@
 #include "pseudo-dt-erector.hpp"
 #include "../pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * CTF 2 JSON text sequence metadata stream parser.
@@ -168,7 +167,6 @@ private:
     bool _hasTraceTypeFrag = false;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP

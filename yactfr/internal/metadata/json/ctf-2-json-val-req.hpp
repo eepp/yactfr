@@ -13,8 +13,7 @@
 #include "json-val.hpp"
 #include "json-val-req.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 class JsonAnyFragValReqImpl;
 
@@ -40,7 +39,6 @@ private:
     std::unique_ptr<const JsonAnyFragValReqImpl> _impl;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_VAL_REQ_HPP

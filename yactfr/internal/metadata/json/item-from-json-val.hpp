@@ -12,8 +12,7 @@
 
 #include "json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Converts the JSON value `jsonVal` to an equivalent yactfr item and
@@ -21,7 +20,6 @@ namespace internal {
  */
 Item::Up itemFromJsonVal(const JsonVal& jsonVal);
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_ITEM_FROM_JSON_VAL_HPP

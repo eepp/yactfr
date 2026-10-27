@@ -16,8 +16,7 @@
 
 #include "../../aliases.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 template <typename KindT>
 class ItemMixin
@@ -169,7 +168,7 @@ protected:
     }
 
     template <typename KeyT>
-    const ItemT *_tryAt(const KeyT& key) const noexcept
+    [[ nodiscard ]] const ItemT *_tryAt(const KeyT& key) const noexcept
     {
         const auto it = this->_theItems.find(key);
 
@@ -226,7 +225,6 @@ protected:
     }
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP

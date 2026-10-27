@@ -11,8 +11,7 @@
 
 #include "utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 std::string indent(const Size indent)
 {
@@ -36,5 +35,4 @@ std::string strError()
         return buf.data();
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

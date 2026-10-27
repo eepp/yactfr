@@ -12,8 +12,7 @@
 
 #include "json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Parses the JSON text between `begin` and `end` (excluded) and returns
@@ -36,7 +35,6 @@ inline JsonVal::Up parseJson(const std::string& str, const Size baseOffset = 0)
     return parseJson(str.data(), str.data() + str.size(), baseOffset);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_FROM_TEXT_HPP

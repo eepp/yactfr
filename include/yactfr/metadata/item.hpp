@@ -238,7 +238,7 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    Up clone() const;
+    [[ nodiscard ]] Up clone() const;
 
     /*!
     @brief
@@ -327,7 +327,7 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    Up clone() const
+    [[ nodiscard ]] Up clone() const
     {
         return std::make_unique<const ScalarValueItem<ValueT, KindV>>(this->_val());
     }
@@ -421,7 +421,7 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    Up clone() const;
+    [[ nodiscard ]] Up clone() const;
 
 private:
     Item::Up _clone() const override;
@@ -523,7 +523,7 @@ public:
     @returns
         Clone (deep copy) of this item.
     */
-    Up clone() const;
+    [[ nodiscard ]] Up clone() const;
 
 private:
     Item::Up _clone() const override;

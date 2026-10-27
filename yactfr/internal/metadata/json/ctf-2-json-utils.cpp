@@ -9,8 +9,7 @@
 #include "ctf-2-json-strs.hpp"
 #include "item-from-json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal)
 {
@@ -21,5 +20,4 @@ MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal)
     return createItem(MapItem::Container {});
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

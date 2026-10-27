@@ -15,8 +15,7 @@
 
 #include <yactfr/aliases.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Returns the value of the native floating point number having the
@@ -31,7 +30,7 @@ FloatT nativeFlFloatValFromBits(const std::uint64_t bits) noexcept
     using UIntT = std::conditional_t<sizeof(FloatT) == sizeof(std::uint32_t),
                                      std::uint32_t, std::uint64_t>;
 
-    static_assert(std::is_same<FloatT, float>::value || std::is_same<FloatT, double>::value,
+    static_assert(std::is_same_v<FloatT, float> || std::is_same_v<FloatT, double>,
                   "`FloatT` is `float` or `double`.");
     static_assert(std::numeric_limits<FloatT>::is_iec559,
                   "`FloatT` is an IEEE 754 floating point number type.");
@@ -111,7 +110,6 @@ double flFloatValFromBits(const std::uint64_t bits) noexcept
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_FL_FLOAT_VAL_HPP

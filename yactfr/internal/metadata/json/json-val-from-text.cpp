@@ -13,8 +13,7 @@
 #include "json-parser.hpp"
 #include "json-val-from-text.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Listener for the listener version of parseJson() which iteratively
@@ -157,5 +156,4 @@ JsonVal::Up parseJson(const char * const begin, const char * const end, const Si
     return builder.releaseVal();
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

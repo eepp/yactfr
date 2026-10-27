@@ -18,8 +18,7 @@
 
 #include "../str-scanner.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * JSON text parser.
@@ -72,40 +71,40 @@ private:
     /*
      * Tries to parse `null`, calling the event listener on success.
      */
-    bool _tryParseNull();
+    [[ nodiscard ]] bool _tryParseNull();
 
     /*
      * Tries to parse `true` or `false`, calling the event listener on
      * success.
      */
-    bool _tryParseBool();
+    [[ nodiscard ]] bool _tryParseBool();
 
     /*
      * Tries to parse a JSON number, calling the event listener on
      * success.
      */
-    bool _tryParseNumber();
+    [[ nodiscard ]] bool _tryParseNumber();
 
     /*
      * Tries to parse a JSON object key, calling the event listener on
      * success.
      */
-    bool _tryParseObjKey();
+    [[ nodiscard ]] bool _tryParseObjKey();
 
     /*
      * Tries to parse a JSON string.
      */
-    bool _tryParseStr();
+    [[ nodiscard ]] bool _tryParseStr();
 
     /*
      * Tries to parse a JSON array.
      */
-    bool _tryParseArray();
+    [[ nodiscard ]] bool _tryParseArray();
 
     /*
      * Tries to parse a JSON object.
      */
-    bool _tryParseObj();
+    [[ nodiscard ]] bool _tryParseObj();
 
     /*
      * Expects a specific token, throwing an exception if not found.
@@ -120,7 +119,7 @@ private:
         }
     }
 
-    bool _tryScanToken(const char * const token)
+    [[ nodiscard ]] bool _tryScanToken(const char * const token)
     {
         return _ss.tryScanToken<true, false>(token);
     }
@@ -135,7 +134,7 @@ private:
         return std::distance(_ss.begin(), _ss.at());
     }
 
-    const std::string *_tryScanLitStr()
+    [[ nodiscard ]] const std::string *_tryScanLitStr()
     {
         return _ss.tryScanLitStr<true, false>("/bfnrtu");
     }
@@ -457,7 +456,6 @@ void parseJson(const std::string& str, ListenerT& listener)
     JsonParser<ListenerT> {str.data(), str.data() + str.size(), listener}; //-V607
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_JSON_PARSER_HPP

@@ -22,8 +22,7 @@
 
 #include "pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
 
@@ -87,7 +86,6 @@ private:
     PseudoTraceType *_pseudoTraceType;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP

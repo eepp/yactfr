@@ -20,8 +20,7 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * String scanner.
@@ -194,12 +193,12 @@ public:
      * method of this object.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    const std::string *tryScanIdent();
+    [[ nodiscard ]] const std::string *tryScanIdent();
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    const std::string *tryScanIdent()
+    [[ nodiscard ]] const std::string *tryScanIdent()
     {
         return this->tryScanIdent<true, true>();
     }
@@ -212,7 +211,7 @@ public:
      * The returned string remains valid as long as you don't call any
      * method of this object.
      */
-    const std::string *peekIdent()
+    [[ nodiscard ]] const std::string *peekIdent()
     {
         this->skipCommentsAndWhitespaces();
         this->_lexIdent();
@@ -234,12 +233,12 @@ public:
      * method of this object.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    const std::string *tryScanLitStr(const char *escapeSeqStartList);
+    [[ nodiscard ]] const std::string *tryScanLitStr(const char *escapeSeqStartList);
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    const std::string *tryScanLitStr(const char * const escapeSeqStartList)
+    [[ nodiscard ]] const std::string *tryScanLitStr(const char * const escapeSeqStartList)
     {
         return this->tryScanLitStr<true, true>(escapeSeqStartList);
     }
@@ -255,13 +254,13 @@ public:
      * integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV = true>
-    std::optional<ValT> tryScanConstInt();
+    [[ nodiscard ]] std::optional<ValT> tryScanConstInt();
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
     template <typename ValT, bool AllowPrefixV = true>
-    std::optional<ValT> tryScanConstInt()
+    [[ nodiscard ]] std::optional<ValT> tryScanConstInt()
     {
         return this->tryScanConstInt<true, true, ValT, AllowPrefixV>();
     }
@@ -278,7 +277,7 @@ public:
      * unsigned integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
-    std::optional<unsigned long long> tryScanConstUInt()
+    [[ nodiscard ]] std::optional<unsigned long long> tryScanConstUInt()
     {
         return this->tryScanConstInt<SkipWsV, SkipCommentsV,
                                      unsigned long long, AllowPrefixV>();
@@ -288,7 +287,7 @@ public:
      * Alternative version which skips whitespaces and comments.
      */
     template <bool AllowPrefixV = true>
-    std::optional<unsigned long long> tryScanConstUInt()
+    [[ nodiscard ]] std::optional<unsigned long long> tryScanConstUInt()
     {
         return this->tryScanConstUInt<true, true, AllowPrefixV>();
     }
@@ -305,7 +304,7 @@ public:
      * signed integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
-    std::optional<long long> tryScanConstSInt()
+    [[ nodiscard ]] std::optional<long long> tryScanConstSInt()
     {
         return this->tryScanConstInt<SkipWsV, SkipCommentsV,
                                      long long, AllowPrefixV>();
@@ -315,7 +314,7 @@ public:
      * Alternative version which skips whitespaces and comments.
      */
     template <bool AllowPrefixV = true>
-    std::optional<long long> tryScanConstSInt()
+    [[ nodiscard ]] std::optional<long long> tryScanConstSInt()
     {
         return this->tryScanConstSInt<true, true, AllowPrefixV>();
     }
@@ -334,12 +333,12 @@ public:
      * number string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    std::optional<double> tryScanConstReal();
+    [[ nodiscard ]] std::optional<double> tryScanConstReal();
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    std::optional<double> tryScanConstReal()
+    [[ nodiscard ]] std::optional<double> tryScanConstReal()
     {
         return this->tryScanConstReal<true, true>();
     }
@@ -353,12 +352,12 @@ public:
      * character: for example, `struct` doesn't match `structure`.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    bool tryScanToken(const char *token);
+    [[ nodiscard ]] bool tryScanToken(const char *token);
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    bool tryScanToken(const char * const token)
+    [[ nodiscard ]] bool tryScanToken(const char * const token)
     {
         return this->tryScanToken<true, true>(token);
     }
@@ -444,13 +443,13 @@ private:
 
 private:
     template <typename ValT>
-    static std::optional<ValT> _tryNegateConstInt(unsigned long long ullVal, bool negate);
+    [[ nodiscard ]] static std::optional<ValT> _tryNegateConstInt(unsigned long long ullVal, bool negate);
 
     template <typename ValT>
-    std::optional<ValT> _tryScanConstBinInt(bool negate);
+    [[ nodiscard ]] std::optional<ValT> _tryScanConstBinInt(bool negate);
 
     template <typename ValT, int BaseV>
-    std::optional<ValT> _tryScanConstInt(bool negate);
+    [[ nodiscard ]] std::optional<ValT> _tryScanConstInt(bool negate);
 
     static bool _isIdentFirstChar(const char ch) noexcept
     {
@@ -518,7 +517,7 @@ private:
      * `escapeSeqStartList` and `"` as escape sequence
      * starting characters.
      */
-    bool _tryAppendEscapedChar(const char *escapeSeqStartList);
+    [[ nodiscard ]] bool _tryAppendEscapedChar(const char *escapeSeqStartList);
 
     int _scanAnyChar()
     {
@@ -832,8 +831,7 @@ std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV>
 std::optional<ValT> StrScanner::tryScanConstInt()
 {
-    static_assert(std::is_same<ValT, long long>::value ||
-                  std::is_same<ValT, unsigned long long>::value,
+    static_assert(std::is_same_v<ValT, long long> || std::is_same_v<ValT, unsigned long long>,
                   "`ValT` is `long long` or `unsigned long long`.");
 
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
@@ -1001,7 +999,6 @@ private:
     StrScanner *_ss;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_STR_SCANNER_HPP

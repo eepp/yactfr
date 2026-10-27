@@ -43,8 +43,7 @@
 #define YACTFR_VM_NOINLINE          __attribute__((noinline))
 #define YACTFR_VM_LIKELY(_cond)     __builtin_expect(static_cast<bool>(_cond), 1)
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 inline constexpr auto sizeUnset = std::numeric_limits<Size>::max();
 inline constexpr auto savedValUnset = std::numeric_limits<std::uint64_t>::max();
@@ -1338,7 +1337,7 @@ private:
         _pos.state(_pos.nextState);
     }
 
-    bool _tryHaveBits(const Size bits)
+    [[ nodiscard ]] bool _tryHaveBits(const Size bits)
     {
         assert(bits <= 64);
 
@@ -1969,7 +1968,6 @@ private:
     VmPos _pos;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_VM_HPP

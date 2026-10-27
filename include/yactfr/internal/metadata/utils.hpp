@@ -10,10 +10,9 @@
 
 #include "../../metadata/item.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
-inline MapItem::Up tryCloneAttrs(const MapItem * const attrs)
+[[ nodiscard ]] inline MapItem::Up tryCloneAttrs(const MapItem * const attrs)
 {
     if (!attrs) {
         return nullptr;
@@ -22,7 +21,6 @@ inline MapItem::Up tryCloneAttrs(const MapItem * const attrs)
     return MapItem::Up {static_cast<const MapItem *>(attrs->clone().release())};
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_UTILS_HPP

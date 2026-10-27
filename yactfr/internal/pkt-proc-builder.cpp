@@ -17,8 +17,7 @@
 
 #include "pkt-proc-builder.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 class CallerInstrVisitor :
     public InstrVisitor
@@ -1198,5 +1197,4 @@ void PktProcBuilder::_buildReadOptSIntSelInstr(const StructureMemberType * const
                                                              Instr::Kind::EndReadOptSIntSel);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

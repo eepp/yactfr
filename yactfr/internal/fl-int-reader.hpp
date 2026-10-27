@@ -17,8 +17,7 @@
 
 #include "utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Returns the bytes from `buf[FirstIndexV]` to `buf[LastIndexV]`, the
@@ -132,7 +131,6 @@ struct YACTFR_INTERNAL_HIDDEN FlIntReadFuncsImpl<RetT, BoV, std::index_sequence<
 template <typename RetT, ByteOrder BoV>
 using FlIntReadFuncs = FlIntReadFuncsImpl<RetT, BoV, std::make_index_sequence<64 * 8>>;
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_FL_INT_READER_HPP

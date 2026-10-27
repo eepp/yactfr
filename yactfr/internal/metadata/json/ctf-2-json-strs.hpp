@@ -8,9 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP
 
-namespace yactfr {
-namespace internal {
-namespace strs {
+namespace yactfr::internal::strs {
 
 inline constexpr auto accuracy = "accuracy";
 inline constexpr auto align = "alignment";
@@ -109,8 +107,6 @@ inline constexpr auto version = "version";
 inline constexpr auto vlSInt = "variable-length-signed-integer";
 inline constexpr auto vlUInt = "variable-length-unsigned-integer";
 
-} // namespace strs
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal::strs
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_STRS_HPP

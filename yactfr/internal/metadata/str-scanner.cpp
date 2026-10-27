@@ -14,8 +14,7 @@
 
 #include "str-scanner.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 const std::regex StrScanner::_realRegex {
     "^"                     // start of target
@@ -356,5 +355,4 @@ void StrScanner::_skipComment()
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

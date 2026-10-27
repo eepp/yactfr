@@ -92,8 +92,7 @@
 #include "utils.hpp"
 #include "vendor/wise-enum/wise_enum.h"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 class BeginReadDlArrayInstr;
 class BeginReadDlStrInstr;
@@ -2454,7 +2453,6 @@ inline BeginReadStructInstr& instrAsBeginReadStruct(Instr& instr) noexcept
     return static_cast<BeginReadStructInstr&>(instr);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_PROC_HPP

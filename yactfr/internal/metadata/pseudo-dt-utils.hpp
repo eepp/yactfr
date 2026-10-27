@@ -10,11 +10,10 @@
 
 #include "pseudo-dt-finder.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 template <typename PseudoDtT, typename PredFuncT>
-auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName, PredFuncT&& predFunc)
+[[ nodiscard ]] auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName, PredFuncT&& predFunc)
 {
     return findPseudoDts(basePseudoDt, [&memberTypeName, &predFunc](auto& pseudoDt,
                                                                     const auto name) {
@@ -23,7 +22,7 @@ auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeN
 }
 
 template <typename PseudoDtT>
-auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName)
+[[ nodiscard ]] auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName)
 {
     return findPseudoDtsByName(basePseudoDt, memberTypeName, [](auto&) {
         return true;
@@ -31,7 +30,7 @@ auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeN
 }
 
 template <typename PseudoDtT, typename PredFuncT>
-auto findPseudoUIntTypes(PseudoDtT& basePseudoDt, PredFuncT&& predFunc)
+[[ nodiscard ]] auto findPseudoUIntTypes(PseudoDtT& basePseudoDt, PredFuncT&& predFunc)
 {
     return findPseudoDts(basePseudoDt, [&predFunc](auto& pseudoDt, const auto name) {
         return pseudoDt.isUInt() && predFunc(pseudoDt, name);
@@ -39,14 +38,13 @@ auto findPseudoUIntTypes(PseudoDtT& basePseudoDt, PredFuncT&& predFunc)
 }
 
 template <typename PseudoDtT>
-auto findPseudoUIntTypesByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName)
+[[ nodiscard ]] auto findPseudoUIntTypesByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName)
 {
     return findPseudoUIntTypes(basePseudoDt, [&memberTypeName](auto&, const auto name) {
         return name && memberTypeName == *name;
     });
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP

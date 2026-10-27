@@ -9,8 +9,7 @@
 
 #include "json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 JsonVal::JsonVal(const Kind kind, TextLocation&& loc) :
     internal::ItemMixin<Kind> {kind},
@@ -199,5 +198,4 @@ JsonObjVal::Up createJsonVal(JsonObjVal::Container&& items, TextLocation loc)
     return std::make_unique<const JsonObjVal>(std::move(items), std::move(loc));
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

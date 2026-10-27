@@ -34,8 +34,7 @@
 #include "ctf-2-json-utils.hpp"
 #include "../../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 template <typename DtT, typename... ArgTs>
 PseudoDt::Up createPseudoScalarDtWrapper(const JsonVal& jsonVal, ArgTs&&... args)
@@ -654,5 +653,4 @@ void PseudoDtErector::addAlias(const std::string& name, PseudoDt::Up pseudoDt,
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

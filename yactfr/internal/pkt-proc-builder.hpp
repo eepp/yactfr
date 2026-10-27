@@ -14,8 +14,7 @@
 
 #include "proc.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Packet procedure builder.
@@ -205,7 +204,6 @@ void PktProcBuilder::_buildReadOptIntSelInstr(const StructureMemberType * const 
     baseProc.pushBack(std::move(instr));
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP

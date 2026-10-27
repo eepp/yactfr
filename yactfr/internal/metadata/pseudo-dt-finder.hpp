@@ -17,8 +17,7 @@
 #include "pseudo-types.hpp"
 #include "pseudo-dt-visitor.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 template <typename ParentVisitorT>
 class PseudoDtFinder :
@@ -135,7 +134,7 @@ private:
 };
 
 template <typename VisitorT, typename PseudoDtT>
-auto commonFindPseudoDts(PseudoDtT& pseudoDt, typename VisitorT::PredFunc predFunc)
+[[ nodiscard ]] auto commonFindPseudoDts(PseudoDtT& pseudoDt, typename VisitorT::PredFunc predFunc)
 {
     VisitorT visitor {std::move(predFunc)};
 
@@ -143,18 +142,17 @@ auto commonFindPseudoDts(PseudoDtT& pseudoDt, typename VisitorT::PredFunc predFu
     return visitor.set();
 }
 
-inline auto findPseudoDts(PseudoDt& pseudoDt, PseudoDtFinder<PseudoDtVisitor>::PredFunc predFunc)
+[[ nodiscard ]] inline auto findPseudoDts(PseudoDt& pseudoDt, PseudoDtFinder<PseudoDtVisitor>::PredFunc predFunc)
 {
     return commonFindPseudoDts<PseudoDtFinder<PseudoDtVisitor>>(pseudoDt, std::move(predFunc));
 }
 
-inline auto findPseudoDts(const PseudoDt& pseudoDt,
+[[ nodiscard ]] inline auto findPseudoDts(const PseudoDt& pseudoDt,
                           PseudoDtFinder<ConstPseudoDtVisitor>::PredFunc predFunc)
 {
     return commonFindPseudoDts<PseudoDtFinder<ConstPseudoDtVisitor>>(pseudoDt, std::move(predFunc));
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP

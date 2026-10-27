@@ -15,8 +15,7 @@
 
 #include "json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Returns the attributes of the JSON object value `jsonObjVal`, or an
@@ -70,7 +69,6 @@ inline std::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjV
     return std::nullopt;
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP

@@ -19,8 +19,7 @@
 #include "tsdl-attr.hpp"
 #include "../../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 std::optional<ByteOrder> TsdlAttr::_toBo() const
 {
@@ -185,5 +184,4 @@ bool TsdlAttr::boolEquiv() const
     throwTextParseError(ss.str(), this->valTextLoc());
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

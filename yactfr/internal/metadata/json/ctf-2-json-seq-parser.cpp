@@ -14,8 +14,7 @@
 #include "json-val-from-text.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 namespace {
 
 JsonObjVal::Up createDefClkOffsetJsonObjVal()
@@ -426,5 +425,4 @@ PseudoDt::Up Ctf2JsonSeqParser::_pseudoScopeDtOfJsonObj(const JsonObjVal& jsonOb
     return nullptr;
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

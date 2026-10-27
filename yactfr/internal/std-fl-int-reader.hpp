@@ -23,13 +23,10 @@
 
 #include <yactfr/metadata/bo.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 template <typename ValT>
-using GenReadFlIntRetT = typename std::conditional<std::is_signed<ValT>::value,
-                                                   std::int64_t,
-                                                   std::uint64_t>::type;
+using GenReadFlIntRetT = std::conditional_t<std::is_signed_v<ValT>, std::int64_t, std::uint64_t>;
 
 /*
  * Reads a fixed-length integer having the native type `ValT` and the
@@ -55,7 +52,6 @@ auto readStdFlInt(const std::uint8_t * const buf)
     return static_cast<GenReadFlIntRetT<ValT>>(val);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_STD_FL_INT_READER_HPP

@@ -17,8 +17,7 @@
 #include <yactfr/text-loc.hpp>
 #include <yactfr/internal/metadata/item-mixin.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 enum class JsonValKind
 {
@@ -163,7 +162,7 @@ public:
     const JsonStrVal& asStr() const noexcept;
     const JsonArrayVal& asArray() const noexcept;
     const JsonObjVal& asObj() const noexcept;
-    Up clone() const;
+    [[ nodiscard ]] Up clone() const;
     void accept(JsonValVisitor& visitor) const;
     bool operator==(const JsonVal& other) const noexcept;
 
@@ -413,7 +412,6 @@ JsonStrVal::Up createJsonVal(std::string val, TextLocation loc);
 JsonArrayVal::Up createJsonVal(JsonArrayVal::Container&& items, TextLocation loc);
 JsonObjVal::Up createJsonVal(JsonObjVal::Container&& items, TextLocation loc);
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_HPP

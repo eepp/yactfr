@@ -9,8 +9,7 @@
 
 #include "proc.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 namespace {
 
 std::string _strName(const std::string& name)
@@ -1619,5 +1618,4 @@ std::string PktProc::toStr(const Size indent) const
     return ss.str();
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

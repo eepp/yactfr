@@ -9,8 +9,7 @@
 
 #include "item-from-json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 class ItemFromJsonValConverter final :
     public JsonValVisitor
@@ -94,5 +93,4 @@ Item::Up itemFromJsonVal(const JsonVal& val)
     return converter.releaseItem();
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

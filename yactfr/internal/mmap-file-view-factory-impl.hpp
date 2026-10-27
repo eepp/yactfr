@@ -12,8 +12,7 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/mmap-file-view-factory.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * An `MmapFileViewFactoryImpl` object is shared by zero or more
@@ -82,7 +81,6 @@ private:
     Size _mmapOffsetGranularity;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_MMAP_FILE_VIEW_FACTORY_IMPL_HPP

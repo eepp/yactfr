@@ -15,8 +15,7 @@
 #include "ctf-2-json-val-req.hpp"
 #include "ctf-2-json-strs.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * CTF 2 JSON byte order value requirement.
@@ -2425,5 +2424,4 @@ void JsonAnyFragValReq::_validate(const JsonVal& jsonVal) const
     _impl->validate(jsonVal);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

@@ -12,8 +12,7 @@
 
 #include "pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Sets the yactfr data locations of all the dynamic-length, optional,
@@ -28,7 +27,6 @@ namespace internal {
  */
 void setPseudoDtDataLoc(PseudoDt& pseudoDt, Scope scope);
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_DATA_LOC_HPP

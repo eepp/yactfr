@@ -44,8 +44,7 @@
 #include "pseudo-types.hpp"
 #include "../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Converter of root pseudo data type to yactfr data type.
@@ -82,7 +81,7 @@ private:
      * Doesn't add to the returned set any pseudo data type candidate
      * occurring after `pseudoSrcDt`.
      */
-    ConstPseudoDtSet _findPseudoDts(const DataLocation& loc, const PseudoDt& pseudoSrcDt) const;
+    [[ nodiscard ]] ConstPseudoDtSet _findPseudoDts(const DataLocation& loc, const PseudoDt& pseudoSrcDt) const;
 
     /*
      * Recursive version of the other _findPseudoDts(), filling
@@ -132,7 +131,7 @@ private:
      * null-terminated string type profile.
      */
     template <typename StrTypeT, typename PseudoArrayTypeT, typename LenT>
-    DataType::Up _tryNonNtStrTypeFromPseudoArrayType(const PseudoArrayTypeT& pseudoArrayType,
+    [[ nodiscard ]] DataType::Up _tryNonNtStrTypeFromPseudoArrayType(const PseudoArrayTypeT& pseudoArrayType,
                                                      const PseudoDt& pseudoElemType, LenT&& len);
 
     /*
@@ -238,7 +237,7 @@ private:
     template <typename MappingsT>
     static bool _intTypeMappingsOverlap(const MappingsT& mappings);
 
-    static MapItem::Up _tryCloneAttrs(const MapItem *attrs);
+    [[ nodiscard ]] static MapItem::Up _tryCloneAttrs(const MapItem *attrs);
 
 private:
     // final yactfr data type
@@ -1105,5 +1104,4 @@ StructureType::Up dtFromPseudoRootDt(PseudoDt& pseudoDt, const Scope scope,
     }._releaseDt();
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

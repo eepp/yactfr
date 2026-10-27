@@ -10,8 +10,7 @@
 #include "pseudo-types.hpp"
 #include "set-pseudo-dt-pos-in-scope.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 namespace {
 
 void setPseudoDtPosInScope(PseudoDt& pseudoDt, Index& nextPos)
@@ -73,5 +72,4 @@ void setPseudoDtPosInScope(PseudoDt& pseudoDt)
     setPseudoDtPosInScope(pseudoDt, nextPos);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

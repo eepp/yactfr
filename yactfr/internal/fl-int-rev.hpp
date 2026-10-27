@@ -12,8 +12,7 @@
 
 #include <yactfr/aliases.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Does... something.
@@ -68,7 +67,6 @@ ValT revFlIntBits(const ValT val, const Size len)
     return static_cast<ValT>(uVal) >> (64 - len);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_FL_INT_REV_HPP

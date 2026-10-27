@@ -20,8 +20,7 @@
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/text-parse-error.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * A TSDL attribute, the result of parsing something like this:
@@ -149,7 +148,6 @@ private:
     std::optional<ByteOrder> _toBo() const;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP

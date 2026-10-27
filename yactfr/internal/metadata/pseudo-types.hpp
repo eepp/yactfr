@@ -26,8 +26,7 @@
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/text-loc.hpp>
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * All the "pseudo" stuff below exists because the yactfr metadata
@@ -182,7 +181,7 @@ public:
      * Fully clones this pseudo data type, meaning the returned object
      * is completely independent from this one.
      */
-    virtual PseudoDt::Up clone() const = 0;
+    [[ nodiscard ]] virtual PseudoDt::Up clone() const = 0;
 
     const TextLocation& loc() const noexcept
     {
@@ -248,7 +247,7 @@ public:
 
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     bool isInt() const noexcept override;
     bool isUInt() const noexcept override;
     bool isFlUInt() const noexcept override;
@@ -324,7 +323,7 @@ public:
         return PseudoDt::Kind::FlUInt;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
     bool isInt() const noexcept override;
@@ -503,7 +502,7 @@ public:
         return PseudoDt::Kind::SlArray;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -544,7 +543,7 @@ public:
         return PseudoDt::Kind::DlArray;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -590,7 +589,7 @@ public:
         return PseudoDt::Kind::DlBlob;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 };
@@ -658,7 +657,7 @@ public:
         return PseudoDt::Kind::Struct;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -713,7 +712,7 @@ public:
         return PseudoDt::Kind::Var;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     bool isEmpty() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
@@ -794,7 +793,7 @@ public:
         return PseudoDt::Kind::VarWithIntRanges;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
@@ -874,7 +873,7 @@ public:
         return PseudoDt::Kind::OptWithBoolSel;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 };
@@ -914,7 +913,7 @@ public:
         return PseudoDt::Kind::OptWithIntSel;
     }
 
-    PseudoDt::Up clone() const override;
+    [[ nodiscard ]] PseudoDt::Up clone() const override;
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
@@ -1246,7 +1245,7 @@ public:
     }
 
     bool hasClkType(const std::string& id) const noexcept;
-    const ClockType *findClkType(const std::string& id) const noexcept;
+    [[ nodiscard ]] const ClockType *findClkType(const std::string& id) const noexcept;
 
     const PseudoDsts& pseudoDsts() const noexcept
     {
@@ -1285,7 +1284,6 @@ private:
     PseudoOrphanErts _pseudoOrphanErts;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_PSEUDO_TYPES_HPP

@@ -10,8 +10,7 @@
 
 #include "pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 class PseudoDtVisitor
 {
@@ -115,7 +114,6 @@ public:
     }
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_PSEUDO_DT_VISITOR_HPP

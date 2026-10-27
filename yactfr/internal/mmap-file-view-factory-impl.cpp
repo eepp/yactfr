@@ -19,8 +19,7 @@
 #include "mmap-file-view-factory-impl.hpp"
 #include "utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
                                                  const std::optional<Size>& preferredMmapSize,
@@ -105,5 +104,4 @@ MmapFileViewFactoryImpl::~MmapFileViewFactoryImpl()
     this->_close();
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

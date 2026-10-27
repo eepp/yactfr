@@ -9,6 +9,7 @@
 #include <sstream>
 #include <functional>
 #include <limits>
+#include <variant>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -18,8 +19,7 @@
 #include "../trace-type-from-pseudo-trace-type.hpp"
 #include "../../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 TsdlParser::_tStackFrame::_tStackFrame(const Kind kind, const Index lexId) :
     kind {kind},
@@ -2958,16 +2958,13 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
     /*
      * A temporary array type subscript.
      *
-     * If `isStatic` is true, then use `arrayLen` to build a
-     * static-length array type. Otherwise use `dlArrayLenLoc`.
-     *
-     * TODO: Use `std::variant`.
+     * If `len` holds a length, then use it to build a static-length
+     * array type. Otherwise, `len` holds a pseudo data location: use it
+     * to build a dynamic-length array type.
      */
     struct LenDescr final
     {
-        bool isStatic;
-        std::optional<PseudoDataLoc> dlArrayLenLoc;
-        Size arrayLen;
+        std::variant<Size, PseudoDataLoc> len;
         TextLocation loc;
     };
 
@@ -2990,7 +2987,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                 throwTextParseError(ss.str(), subscriptLoc);
             }
 
-            lenDescrs.push_back({true, std::nullopt, static_cast<Size>(*val), subscriptLoc});
+            lenDescrs.push_back({static_cast<Size>(*val), subscriptLoc});
         } else {
             std::optional<PseudoDataLoc> pseudoDataLoc;
 
@@ -3043,8 +3040,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                         throwTextParseError(ss.str(), subscriptLoc);
                     }
 
-                    lenDescrs.push_back({true, std::nullopt, static_cast<Size>(*entryVal),
-                                        subscriptLoc});
+                    lenDescrs.push_back({static_cast<Size>(*entryVal), subscriptLoc});
                 } else {
                     std::ostringstream ss;
 
@@ -3053,7 +3049,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                     throwTextParseError(ss.str(), subscriptLoc);
                 }
             } else {
-                lenDescrs.push_back({false, *pseudoDataLoc, 0, subscriptLoc});
+                lenDescrs.push_back({*pseudoDataLoc, subscriptLoc});
             }
         }
 
@@ -3073,13 +3069,12 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
      * in the example above.
      */
     for (const auto& lenDescr : boost::adaptors::reverse(lenDescrs)) {
-        if (lenDescr.isStatic) {
-            innerPseudoDt = std::make_unique<PseudoSlArrayType>(lenDescr.arrayLen,
+        if (const auto arrayLen = std::get_if<Size>(&lenDescr.len)) {
+            innerPseudoDt = std::make_unique<PseudoSlArrayType>(*arrayLen,
                                                                 std::move(innerPseudoDt), nullptr,
                                                                 lenDescr.loc);
         } else {
-            assert(lenDescr.dlArrayLenLoc);
-            innerPseudoDt = std::make_unique<PseudoDlArrayType>(*lenDescr.dlArrayLenLoc,
+            innerPseudoDt = std::make_unique<PseudoDlArrayType>(std::get<PseudoDataLoc>(lenDescr.len),
                                                                 std::move(innerPseudoDt), nullptr,
                                                                 lenDescr.loc);
         }
@@ -3461,5 +3456,4 @@ void TsdlParser::_skipCommentsAndWhitespacesAndSemicolons()
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

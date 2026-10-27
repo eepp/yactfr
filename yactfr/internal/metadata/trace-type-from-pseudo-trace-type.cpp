@@ -18,8 +18,7 @@
 #include "trace-type-from-pseudo-trace-type.hpp"
 #include "dt-from-pseudo-root-dt.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType)
 {
@@ -120,5 +119,4 @@ std::unique_ptr<const EventRecordType> TraceTypeFromPseudoTraceTypeConverter::_e
                                    tryCloneAttrs(pseudoErt.attrs()));
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

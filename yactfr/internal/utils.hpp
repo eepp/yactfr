@@ -19,8 +19,7 @@
  */
 #define YACTFR_INTERNAL_HIDDEN  __attribute__((visibility("hidden")))
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 std::string indent(Size indent);
 std::string strError();
@@ -30,7 +29,6 @@ inline bool isPowOfTwo(const unsigned long long x)
         return (x != 0) && ((x & (~x + 1)) == x);
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_UTILS_HPP

@@ -22,8 +22,7 @@
 
 #include "json-val.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * JSON value requirement.
@@ -576,7 +575,6 @@ private:
     bool _allowUnknownProps;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_REQ_HPP

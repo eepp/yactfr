@@ -14,8 +14,7 @@
 #include "json-val.hpp"
 #include "../pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Erects pseudo data types from equivalent CTF 2 JSON values,
@@ -63,7 +62,6 @@ private:
     std::unordered_map<std::string, PseudoDt::Up> _aliases;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_JSON_PSEUDO_DT_ERECTOR_HPP

@@ -18,8 +18,7 @@
 
 #include "../proc.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 class TraceTypeImpl final
 {
@@ -81,7 +80,7 @@ public:
         return _attrs.get();
     }
 
-    const DataStreamType *findDst(TypeId id) const noexcept;
+    [[ nodiscard ]] const DataStreamType *findDst(TypeId id) const noexcept;
 
     /*
      * It is safe to keep a pointer to the returned object as long as
@@ -151,7 +150,6 @@ private:
     mutable std::unique_ptr<const PktProc> _pktProc;
 };
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_TRACE_TYPE_IMPL_HPP

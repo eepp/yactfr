@@ -12,8 +12,7 @@
 
 #include "pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Returns the root yactfr data type from the pseudo data type
@@ -28,7 +27,6 @@ StructureType::Up dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
                                      const PseudoDst *curPseudoDst = nullptr,
                                      const PseudoErt *curPseudoErt = nullptr);
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_DT_FROM_PSEUDO_ROOT_DT_HPP

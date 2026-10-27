@@ -10,8 +10,7 @@
 
 #include "pseudo-types.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 /*
  * Sets the position-in-scope of all the pseudo data types of `pseudoDt`
@@ -22,7 +21,6 @@ namespace internal {
  */
 void setPseudoDtPosInScope(PseudoDt& pseudoDt);
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_SET_PSEUDO_DT_POS_IN_SCOPE_HPP

@@ -10,8 +10,7 @@
 #include "json-val-req.hpp"
 #include "../../../internal/utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 JsonValReq::JsonValReq(std::optional<JsonVal::Kind> kind, const bool allowNull) :
     _kind {std::move(kind)},
@@ -287,5 +286,4 @@ void JsonObjValReq::_validate(const JsonVal& jsonVal) const
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal

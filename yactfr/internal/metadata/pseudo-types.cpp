@@ -28,8 +28,7 @@
 #include "pseudo-dt-utils.hpp"
 #include "../utils.hpp"
 
-namespace yactfr {
-namespace internal {
+namespace yactfr::internal {
 
 PseudoDataLoc::PseudoDataLoc(Kind kind, std::optional<Scope> scope, PathElems pathElems,
                              TextLocation loc, std::optional<Index> baseStructTypeLexId) :
@@ -666,7 +665,7 @@ std::string pseudoTypeIdenStr(const PseudoTypeT& pseudoDst)
 
 namespace {
 
-auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudoDt)
+[[ nodiscard ]] auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudoDt)
 {
     return findPseudoDts(basePseudoDt, [](auto& pseudoDt, auto) {
         return pseudoDt.kind() == PseudoDt::Kind::SlArray &&
@@ -674,7 +673,7 @@ auto findPseudoSlArrayTypesWithMetadataStreamUuidRole(const PseudoDt& basePseudo
     });
 }
 
-auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt, const UnsignedIntegerTypeRole role)
+[[ nodiscard ]] auto findPseudoUIntTypesByRole(const PseudoDt& basePseudoDt, const UnsignedIntegerTypeRole role)
 {
     return findPseudoUIntTypes(basePseudoDt, [role](auto& pseudoIntType, auto) {
         if (isFlUIntNotDtWrapper(pseudoIntType)) {
@@ -1180,5 +1179,4 @@ void PseudoTraceType::validate() const
     }
 }
 
-} // namespace internal
-} // namespace yactfr
+} // namespace yactfr::internal
