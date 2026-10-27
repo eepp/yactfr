@@ -90,11 +90,8 @@ private:
      * `locIt` is the current path element, within `loc`, to consider;
      * it can be `loc.end()` in which case some leaf/resolution
      * is expected.
-     *
-     * Returns `true` if `pseudoSrcDt` isn't reached yet (safe to
-     * continue to find pseudo data types).
      */
-    bool _findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
+    void _findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
                         DataLocation::PathElements::const_iterator locIt,
                         ConstPseudoDtSet& pseudoDts) const;
 
@@ -690,7 +687,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoStructType(const PseudoDt
                                  tryCloneAttrs(pseudoStructType.attrs()));
 }
 
-bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
+void DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const DataLocation& loc,
                                                  const DataLocation::PathElements::const_iterator locIt,
                                                  ConstPseudoDtSet& pseudoDts) const
 {
@@ -706,7 +703,7 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
         }
 
         pseudoDts.insert(&pseudoDt);
-        return true;
+        break;
 
     case PseudoDt::Kind::Struct:
     {
@@ -725,7 +722,8 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
                 continue;
             }
 
-            return this->_findPseudoDts(pseudoMemberType->pseudoDt(), loc, locIt + 1, pseudoDts);
+            this->_findPseudoDts(pseudoMemberType->pseudoDt(), loc, locIt + 1, pseudoDts);
+            return;
         }
 
         std::ostringstream ss;
@@ -746,8 +744,9 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
-        return this->_findPseudoDts(static_cast<const PseudoArrayType&>(pseudoDt).pseudoElemType(),
-                                    loc, locIt, pseudoDts);
+        this->_findPseudoDts(static_cast<const PseudoArrayType&>(pseudoDt).pseudoElemType(), loc,
+                             locIt, pseudoDts);
+        break;
     }
 
     case PseudoDt::Kind::Var:
@@ -762,11 +761,11 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
             }
         } else {
             // follow current option only
-            return this->_findPseudoDts(pseudoVarType.pseudoOpts()[it->second]->pseudoDt(), loc,
-                                        locIt, pseudoDts);
+            this->_findPseudoDts(pseudoVarType.pseudoOpts()[it->second]->pseudoDt(), loc, locIt,
+                                 pseudoDts);
         }
 
-        return true;
+        break;
     }
 
     case PseudoDt::Kind::OptWithBoolSel:
@@ -780,8 +779,9 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
             throwTextParseError(ss.str(), pseudoDt.loc());
         }
 
-        return this->_findPseudoDts(static_cast<const PseudoOptType&>(pseudoDt).pseudoDt(), loc,
-                                    locIt, pseudoDts);
+        this->_findPseudoDts(static_cast<const PseudoOptType&>(pseudoDt).pseudoDt(), loc, locIt,
+                             pseudoDts);
+        break;
     }
 
     default:
