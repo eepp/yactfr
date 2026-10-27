@@ -236,9 +236,8 @@ public:
 
         {
             const auto newValMask = (UINT64_C(1) << len) - 1;
-            const auto curValMasked = curVal & newValMask;
 
-            if (lastIntVal.u < curValMasked) {
+            if (const auto curValMasked = curVal & newValMask; lastIntVal.u < curValMasked) {
                 /*
                  * It looks like a wrap occured on the number of bits of
                  * the new value. Assume that the clock value wrapped
@@ -768,9 +767,7 @@ private:
         }
 
         while (true) {
-            auto& stackTop = _pos.stackTop();
-
-            if (_pos.instrIt == stackTop.proc->end()) {
+            if (auto& stackTop = _pos.stackTop(); _pos.instrIt == stackTop.proc->end()) {
                 assert(stackTop.rem > 0);
                 --stackTop.rem;
 
@@ -847,11 +844,10 @@ private:
          * contains only one packet and there's no padding after the
          * packet content.
          */
-        const Size bitsToSkip = _pos.curExpectedPktTotalLenBits != sizeUnset ?
-                                _pos.curExpectedPktTotalLenBits - _pos.headOffsetInCurPktBits :
-                                0;
-
-        if (bitsToSkip > 0) {
+        if (const Size bitsToSkip = _pos.curExpectedPktTotalLenBits != sizeUnset ?
+                                    _pos.curExpectedPktTotalLenBits - _pos.headOffsetInCurPktBits :
+                                    0;
+                bitsToSkip > 0) {
             _pos.remBitsToSkip = bitsToSkip;
             _pos.nextState = VmState::EndPkt;
             _pos.state(VmState::ContinueSkipPaddingBits);

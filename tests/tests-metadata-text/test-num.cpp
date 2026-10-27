@@ -47,9 +47,7 @@ bool checkRange(const char * const name, const std::string& buf, const std::size
         return false;
     }
 
-    const auto msg = parseErrorMsg(buf.data(), buf.data() + len);
-
-    if (msg != expectedMsg) {
+    if (const auto msg = parseErrorMsg(buf.data(), buf.data() + len); msg != expectedMsg) {
         std::cerr << name << ": unexpected parse error: `" << msg << "` (expecting `" <<
                      expectedMsg << "`)\n";
         return false;

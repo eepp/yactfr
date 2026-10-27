@@ -2731,9 +2731,8 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
                     return nullptr;
                 }
 
-                auto& pseudoVarType = static_cast<PseudoVarType&>(*pseudoDt);
-
-                if (pseudoVarType.pseudoSelLoc()) {
+                if (auto& pseudoVarType = static_cast<PseudoVarType&>(*pseudoDt);
+                        pseudoVarType.pseudoSelLoc()) {
                     ssRej.accept();
                     return pseudoDt;
                 }

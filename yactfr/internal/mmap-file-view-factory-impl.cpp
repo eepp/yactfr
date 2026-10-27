@@ -47,9 +47,7 @@ MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
 
     struct stat stat;
 
-    const auto ret = fstat(_fd, &stat);
-
-    if (ret < 0) {
+    if (const auto ret = fstat(_fd, &stat); ret < 0) {
         const auto error = internal::strError();
         std::ostringstream ss;
 

@@ -355,10 +355,10 @@ void PktProcBuilder::_insertSpecialInstrs()
 void PktProcBuilder::_insertSpecialPktProcPreambleProcInstrs()
 {
     auto hasDstId = false;
-    auto readScopeInstrIt = firstBeginReadScopeInstr(_pktProc->preambleProc(),
-                                                     Scope::PacketHeader);
 
-    if (readScopeInstrIt != _pktProc->preambleProc().end()) {
+    if (auto readScopeInstrIt = firstBeginReadScopeInstr(_pktProc->preambleProc(),
+                                                         Scope::PacketHeader);
+            readScopeInstrIt != _pktProc->preambleProc().end()) {
         auto& readScopeInstr = static_cast<BeginReadScopeInstr&>(**readScopeInstrIt);
 
         InstrFinder {

@@ -202,9 +202,9 @@ Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
     assert(dt.isFixedLengthBitArrayType());
 
     auto kind = Instr::Kind::Unset;
-    auto& bitArrayType = dt.asFixedLengthBitArrayType();
 
-    if (bitArrayType.byteOrder() == ByteOrder::Little) {
+    if (auto& bitArrayType = dt.asFixedLengthBitArrayType();
+            bitArrayType.byteOrder() == ByteOrder::Little) {
         if (bitArrayType.bitOrder() == BitOrder::FirstToLast) {
             kind = Instr::Kind::ReadFlBitArrayLe;
 
@@ -338,9 +338,9 @@ Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
     assert(dt.isFixedLengthBitMapType());
 
     auto kind = Instr::Kind::Unset;
-    auto& bitMapType = dt.asFixedLengthBitMapType();
 
-    if (bitMapType.byteOrder() == ByteOrder::Little) {
+    if (auto& bitMapType = dt.asFixedLengthBitMapType();
+            bitMapType.byteOrder() == ByteOrder::Little) {
         if (bitMapType.bitOrder() == BitOrder::FirstToLast) {
             kind = Instr::Kind::ReadFlBitMapLe;
 
@@ -449,9 +449,9 @@ Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
     assert(dt.isFixedLengthBooleanType());
 
     auto kind = Instr::Kind::Unset;
-    auto& boolType = dt.asFixedLengthBooleanType();
 
-    if (boolType.byteOrder() == ByteOrder::Little) {
+    if (auto& boolType = dt.asFixedLengthBooleanType();
+            boolType.byteOrder() == ByteOrder::Little) {
         if (boolType.bitOrder() == BitOrder::FirstToLast) {
             kind = Instr::Kind::ReadFlBoolLe;
 

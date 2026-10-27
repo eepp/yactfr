@@ -68,9 +68,9 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
 {
     // collect pseudo child event record types
     PseudoErtSet pseudoErts;
-    const auto it = _pseudoTraceType->pseudoOrphanErts().find(pseudoDst.id());
 
-    if (it != _pseudoTraceType->pseudoOrphanErts().end()) {
+    if (const auto it = _pseudoTraceType->pseudoOrphanErts().find(pseudoDst.id());
+            it != _pseudoTraceType->pseudoOrphanErts().end()) {
         for (auto& [ertId, pseudoOrphanErt] : it->second) {
             pseudoErts.insert(&pseudoOrphanErt.pseudoErt());
         }

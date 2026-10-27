@@ -1110,10 +1110,9 @@ void PseudoTraceType::validate() const
              * Validate pseudo unsigned integer types with the "packet
              * magic number" role.
              */
-            const auto pseudoMagicDts = findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
-                                                                    UnsignedIntegerTypeRole::PacketMagicNumber);
-
-            if (pseudoMagicDts.size() == 1) {
+            if (const auto pseudoMagicDts = findPseudoUIntTypesByRole(*_pseudoPktHeaderType,
+                                                                        UnsignedIntegerTypeRole::PacketMagicNumber);
+                    pseudoMagicDts.size() == 1) {
                 auto& firstPseudoDt = **pseudoMagicDts.begin();
 
                 if (!firstPseudoDt.isFlUInt()) {

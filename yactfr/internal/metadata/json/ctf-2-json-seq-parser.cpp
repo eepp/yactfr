@@ -197,9 +197,7 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
     // environment
     TraceEnvironment::Entries envEntries;
 
-    const auto jsonEnv = jsonFrag[strs::env];
-
-    if (jsonEnv) {
+    if (const auto jsonEnv = jsonFrag[strs::env]) {
         for (auto& [key, jsonVal] : jsonEnv->asObj()) {
             auto& jsonEntryVal = *jsonVal;
 
@@ -258,9 +256,8 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
 
     // origin
     std::optional<ClockOrigin> orig;
-    const auto jsonOrigVal = jsonFrag[strs::orig];
 
-    if (jsonOrigVal) {
+    if (const auto jsonOrigVal = jsonFrag[strs::orig]) {
         if (jsonOrigVal->isStr()) {
             assert(*jsonOrigVal->asStr() == strs::unixEpoch);
             orig = ClockOrigin {};

@@ -754,9 +754,8 @@ bool DtFromPseudoRootDtConverter::_findPseudoDts(const PseudoDt& pseudoDt, const
     case PseudoDt::Kind::VarWithIntRanges:
     {
         auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
-        const auto it = _current.find(&pseudoDt);
 
-        if (it == _current.end()) {
+        if (const auto it = _current.find(&pseudoDt); it == _current.end()) {
             // fan out (consider all options)
             for (auto& pseudoOpt : pseudoVarType.pseudoOpts()) {
                 this->_findPseudoDts(pseudoOpt->pseudoDt(), loc, locIt, pseudoDts);

@@ -249,9 +249,8 @@ MetadataStreamDecoder::MetadataStreamDecoder(std::istream& stream) :
         throw IOError {"Cannot read metadata stream."};
     }
 
-    const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
-
-    if (*magic == _pktMagic) {
+    if (const auto magic = reinterpret_cast<const std::uint32_t *>(magicBuf.data());
+            *magic == _pktMagic) {
         _bo = bendian::order::native;
         _isPacketized = true;
     } else if (bendian::endian_reverse(*magic) == _pktMagic) {

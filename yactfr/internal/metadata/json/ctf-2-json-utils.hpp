@@ -44,9 +44,7 @@ ValT rawIntValFromJsonIntVal(const JsonVal& jsonIntVal) noexcept
 inline std::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
                                                 const std::string& propName)
 {
-    const auto jsonVal = jsonObjVal[propName];
-
-    if (jsonVal) {
+    if (const auto jsonVal = jsonObjVal[propName]) {
         return *jsonVal->asStr();
     }
 
@@ -60,9 +58,7 @@ inline std::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
 inline std::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjVal,
                                                         const std::string& propName)
 {
-    const auto jsonVal = jsonObjVal[propName];
-
-    if (jsonVal) {
+    if (const auto jsonVal = jsonObjVal[propName]) {
         return *jsonVal->asUInt();
     }
 
