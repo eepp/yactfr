@@ -141,23 +141,23 @@ def test_fail_uuid_mismatch(fail_executor):
 
 
 def test_pass_23_pkts(pass_executor):
-  pass_executor('23-pkts', 'text-size=11633,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('23-pkts', 'text-size=11633,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=23,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_empty_pkt(pass_executor):
-  pass_executor('empty-pkt', 'text-size=1084,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('empty-pkt', 'text-size=1084,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_only_empty_pkts(pass_executor):
-  pass_executor('only-empty-pkts', 'text-size=0,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('only-empty-pkts', 'text-size=0,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=2,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_with_signature(pass_executor):
-  pass_executor('with-signature', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('with-signature', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_with_signature_be(pass_executor):
-  pass_executor('with-signature-be', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,major-version=1,minor-version=8,bo=be,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  pass_executor('with-signature-be', 'text-size=1084,has-ctf-1-signature=1,ctf-major-version=1,pkt-count=1,bo=be,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_pass_text(pass_executor):
@@ -177,7 +177,7 @@ def test_pass_text_stdin():
 
 
 def test_pass_23_pkts_stdin():
-  _exec_pass_stdin('23-pkts', 'text-size=11633,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=23,major-version=1,minor-version=8,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
+  _exec_pass_stdin('23-pkts', 'text-size=11633,has-ctf-1-signature=0,ctf-major-version=1,pkt-count=23,bo=le,uuid=a560bbc4-7f93-b346-a980-3959745a0f5d')
 
 
 def test_fail_uuid_mismatch_stdin():

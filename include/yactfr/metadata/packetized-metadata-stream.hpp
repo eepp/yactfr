@@ -28,8 +28,7 @@ class PacketizedMetadataStream final :
     friend std::unique_ptr<const MetadataStream> createMetadataStream(std::istream&);
 
 private:
-    explicit PacketizedMetadataStream(std::string text, Size pktCount, unsigned int majorVersion,
-                                      unsigned int minorVersion, ByteOrder bo,
+    explicit PacketizedMetadataStream(std::string text, Size pktCount, ByteOrder bo,
                                       boost::uuids::uuid uuid);
 
 public:
@@ -39,18 +38,6 @@ public:
     Size packetCount() const noexcept
     {
         return _pktCount;
-    }
-
-    /// Major version number of this metadata stream.
-    unsigned int majorVersion() const noexcept
-    {
-        return _majorVersion;
-    }
-
-    /// Minor version number of this metadata stream.
-    unsigned int minorVersion() const noexcept
-    {
-        return _minorVersion;
     }
 
     /// Byte order of this metadata stream.
@@ -83,8 +70,6 @@ public:
 
 private:
     const Size _pktCount;
-    const unsigned int _majorVersion;
-    const unsigned int _minorVersion;
     const ByteOrder _bo;
     const boost::uuids::uuid _uuid;
 };

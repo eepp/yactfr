@@ -89,16 +89,6 @@ public:
         return _pktCount;
     }
 
-    int majorVersion() const noexcept
-    {
-        return _majorVersion;
-    }
-
-    int minorVersion() const noexcept
-    {
-        return _minorVersion;
-    }
-
     ByteOrder bo() const noexcept
     {
         if (_bo == bendian::order::little) {
@@ -203,10 +193,6 @@ private:
 
 private:
     static constexpr std::uint32_t _pktMagic = 0x75d11d57;
-
-    // only supported CTF version as of this version of yactfr
-    static constexpr auto _majorVersion = 1;
-    static constexpr auto _minorVersion = 8;
 
 private:
     std::istream *_stream;
@@ -549,10 +535,7 @@ std::unique_ptr<const MetadataStream> createMetadataStream(std::istream& stream)
 
     if (decoder.isPacketized()) {
         return std::unique_ptr<const PacketizedMetadataStream> {new PacketizedMetadataStream {
-            std::move(decoder.text()), decoder.pktCount(),
-            static_cast<unsigned int>(decoder.majorVersion()),
-            static_cast<unsigned int>(decoder.minorVersion()),
-            decoder.bo(), decoder.uuid()
+            std::move(decoder.text()), decoder.pktCount(), decoder.bo(), decoder.uuid()
         }};
     } else {
         return std::unique_ptr<const PlainTextMetadataStream> {new PlainTextMetadataStream {

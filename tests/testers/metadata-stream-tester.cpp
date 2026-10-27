@@ -34,12 +34,10 @@ int main(const int argc, const char * const argv[])
 
         std::cout << "text-size=" << metaStream->text().size() <<
                      ",has-ctf-1-signature=" << metaStream->hasCtf1Signature() <<
-                     ",ctf-major-version=" << metaStream->MetadataStream::majorVersion();
+                     ",ctf-major-version=" << metaStream->majorVersion();
 
         if (const auto pktMetadataStream = dynamic_cast<const yactfr::PacketizedMetadataStream *>(metaStream.get())) {
             std::cout << ",pkt-count=" << pktMetadataStream->packetCount() <<
-                         ",major-version=" << pktMetadataStream->majorVersion() <<
-                         ",minor-version=" << pktMetadataStream->minorVersion() <<
                          ",bo=";
 
             if (pktMetadataStream->byteOrder() == yactfr::ByteOrder::Little) {
