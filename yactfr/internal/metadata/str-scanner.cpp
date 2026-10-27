@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <cctype>
 #include <iomanip>
 #include <sstream>
 #include <charconv>
@@ -26,20 +27,17 @@ const std::regex StrScanner::_realRegex {
     std::regex::optimize
 };
 
-StrScanner::StrScanner(const char * const begin, const char * const end) : //-V730
-    _begin {begin},
-    _end {end},
-    _at {begin},
-    _lineBegin {begin}
+StrScanner::StrScanner(const std::string_view str) noexcept :
+    _str {str}
 {
 }
 
 void StrScanner::reset()
 {
     _stack.clear();
-    _at = _begin;
+    _at = 0;
     _nbLines = 0;
-    _lineBegin = _begin;
+    _lineBegin = 0;
 }
 
 void StrScanner::reject()
@@ -54,7 +52,9 @@ void StrScanner::reject()
 void StrScanner::_skipWhitespaces()
 {
     while (!this->isDone()) {
-        if (*_at != ' ' && *_at != '\t' && *_at != '\v' && *_at != '\n' && *_at != '\r') {
+        const auto ch = _str[_at];
+
+        if (ch != ' ' && ch != '\t' && ch != '\v' && ch != '\n' && ch != '\r') {
             return;
         }
 
@@ -63,14 +63,16 @@ void StrScanner::_skipWhitespaces()
     }
 }
 
-unsigned long StrScanner::_scanEscapedUnicodeCodeUnit(const char * const at)
+unsigned long StrScanner::_scanEscapedUnicodeCodeUnit(const std::string_view hexDigits)
 {
-    // create array of four hex characters
-    const std::string hexCpBuf {at, at + 4};
+    assert(hexDigits.size() >= 4);
+
+    // four hex characters
+    const auto hexCp = hexDigits.substr(0, 4);
 
     // validate hex characters
-    for (const auto ch : hexCpBuf) {
-        if (!std::isxdigit(ch)) {
+    for (const auto ch : hexCp) {
+        if (!std::isxdigit(static_cast<unsigned char>(ch))) {
             std::ostringstream ss;
 
             ss << "In `\\u` escape sequence: unexpected character `" << ch << "`.";
@@ -81,7 +83,7 @@ unsigned long StrScanner::_scanEscapedUnicodeCodeUnit(const char * const at)
     // convert hex characters to integral code unit (always works)
     unsigned long codeUnit = 0;
 
-    std::from_chars(hexCpBuf.data(), hexCpBuf.data() + hexCpBuf.size(), codeUnit, 16);
+    std::from_chars(hexCp.data(), hexCp.data() + hexCp.size(), codeUnit, 16);
     return codeUnit;
 }
 
@@ -107,18 +109,18 @@ std::string cpStr(const unsigned long cp)
 
 } // namespace
 
-Size StrScanner::_appendEscapedUnicodeChar(const char * const at)
+Size StrScanner::_appendEscapedUnicodeChar(const std::string_view hexDigits)
 {
     /*
-     * `at` points to the first hexadecimal digit of a `\u` escape
-     * sequence.
+     * `hexDigits` starts with the first hexadecimal digit of a `\u`
+     * escape sequence.
      *
      * Like in JSON (RFC 8259, section 7), a codepoint outside the BMP
      * is a UTF-16 surrogate pair, that is, a `\u` escape sequence
      * having a high surrogate followed with another one having a low
      * surrogate.
      */
-    auto cp = this->_scanEscapedUnicodeCodeUnit(at);
+    auto cp = this->_scanEscapedUnicodeCodeUnit(hexDigits);
     Size len = 4;
 
     if (isLowSurrogate(cp)) {
@@ -130,9 +132,9 @@ Size StrScanner::_appendEscapedUnicodeChar(const char * const at)
     }
 
     if (isHighSurrogate(cp)) {
-        const auto lowAt = at + 4;
+        const auto low = hexDigits.substr(4);
 
-        if (static_cast<Size>(_end - lowAt) < 6 || lowAt[0] != '\\' || lowAt[1] != 'u') {
+        if (low.size() < 6 || low[0] != '\\' || low[1] != 'u') {
             std::ostringstream ss;
 
             ss << "In `\\u` escape sequence: expecting a `\\u` escape sequence having a "
@@ -140,7 +142,7 @@ Size StrScanner::_appendEscapedUnicodeChar(const char * const at)
             throwTextParseError(ss.str(), this->loc());
         }
 
-        const auto lowCodeUnit = this->_scanEscapedUnicodeCodeUnit(lowAt + 2);
+        const auto lowCodeUnit = this->_scanEscapedUnicodeCodeUnit(low.substr(2));
 
         if (!isLowSurrogate(lowCodeUnit)) {
             std::ostringstream ss;
@@ -175,14 +177,16 @@ Size StrScanner::_appendEscapedUnicodeChar(const char * const at)
     return len;
 }
 
-void StrScanner::_appendEscapedHexChar(const char * const at)
+void StrScanner::_appendEscapedHexChar(const std::string_view hexDigits)
 {
-    // create array of two hex characters
-    const std::string hexByteBuf {at, at + 2};
+    assert(hexDigits.size() >= 2);
+
+    // two hex characters
+    const auto hexByte = hexDigits.substr(0, 2);
 
     // validate hex characters
-    for (const auto ch : hexByteBuf) {
-        if (!std::isxdigit(ch)) {
+    for (const auto ch : hexByte) {
+        if (!std::isxdigit(static_cast<unsigned char>(ch))) {
             std::ostringstream ss;
 
             ss << "In `\\x` escape sequence: unexpected character `" << ch << "`.";
@@ -193,7 +197,7 @@ void StrScanner::_appendEscapedHexChar(const char * const at)
     // convert hex characters to byte (always works)
     unsigned int byte = 0;
 
-    std::from_chars(hexByteBuf.data(), hexByteBuf.data() + hexByteBuf.size(), byte, 16);
+    std::from_chars(hexByte.data(), hexByte.data() + hexByte.size(), byte, 16);
 
     // validate value
     if (byte == 0) {
@@ -204,154 +208,147 @@ void StrScanner::_appendEscapedHexChar(const char * const at)
     _strBuf.push_back(static_cast<char>(byte));
 }
 
-bool StrScanner::_tryAppendEscapedChar(const char * const escapeSeqStartList)
+bool StrScanner::_tryAppendEscapedChar(const std::string_view escapeSeqStartList)
 {
-    if (this->charsLeft() < 2) {
+    const auto rest = this->rest();
+
+    if (rest.size() < 2 || rest[0] != '\\') {
         return false;
     }
 
-    if (_at[0] != '\\') {
+    const auto ch = rest[1];
+
+    if (ch != '"' && ch != '\\' && escapeSeqStartList.find(ch) == std::string_view::npos) {
+        // not an escape sequence
         return false;
     }
 
-    auto escapeSeqStart = escapeSeqStartList;
-
-    while (*escapeSeqStart != '\0') {
-        if (_at[1] == '"' || _at[1] == '\\' || _at[1] == *escapeSeqStart) {
-            if (_at[1] == 'u') {
-                if (this->charsLeft() < 6) {
-                    throwTextParseError("`\\u` escape sequence needs four hexadecimal digits.",
-                                        this->loc());
-                }
-
-                _at += 2 + this->_appendEscapedUnicodeChar(_at + 2);
-            } else if (_at[1] == 'x') {
-                if (this->charsLeft() < 4) {
-                    throwTextParseError("`\\x` escape sequence needs two hexadecimal digits.",
-                                        this->loc());
-                }
-
-                this->_appendEscapedHexChar(_at + 2);
-                _at += 4;
-            } else {
-                switch (_at[1]) {
-                case 'a':
-                    _strBuf.push_back('\a');
-                    break;
-
-                case 'b':
-                    _strBuf.push_back('\b');
-                    break;
-
-                case 'f':
-                    _strBuf.push_back('\f');
-                    break;
-
-                case 'n':
-                    _strBuf.push_back('\n');
-                    break;
-
-                case 'r':
-                    _strBuf.push_back('\r');
-                    break;
-
-                case 't':
-                    _strBuf.push_back('\t');
-                    break;
-
-                case 'v':
-                    _strBuf.push_back('\v');
-                    break;
-
-                default:
-                    // as is
-                    _strBuf.push_back(_at[1]);
-                    break;
-                }
-
-                _at += 2;
-            }
-
-            return true;
+    if (ch == 'u') {
+        if (rest.size() < 6) {
+            throwTextParseError("`\\u` escape sequence needs four hexadecimal digits.",
+                                this->loc());
         }
 
-        ++escapeSeqStart;
+        _at += 2 + this->_appendEscapedUnicodeChar(rest.substr(2));
+    } else if (ch == 'x') {
+        if (rest.size() < 4) {
+            throwTextParseError("`\\x` escape sequence needs two hexadecimal digits.",
+                                this->loc());
+        }
+
+        this->_appendEscapedHexChar(rest.substr(2));
+        _at += 4;
+    } else {
+        switch (ch) {
+        case 'a':
+            _strBuf.push_back('\a');
+            break;
+
+        case 'b':
+            _strBuf.push_back('\b');
+            break;
+
+        case 'f':
+            _strBuf.push_back('\f');
+            break;
+
+        case 'n':
+            _strBuf.push_back('\n');
+            break;
+
+        case 'r':
+            _strBuf.push_back('\r');
+            break;
+
+        case 't':
+            _strBuf.push_back('\t');
+            break;
+
+        case 'v':
+            _strBuf.push_back('\v');
+            break;
+
+        default:
+            // as is
+            _strBuf.push_back(ch);
+            break;
+        }
+
+        _at += 2;
     }
 
-    return false;
+    return true;
 }
 
 void StrScanner::_skipComment()
 {
-    if (this->charsLeft() >= 2) {
-        if (*_at == '/') {
-            switch (*(_at + 1)) {
-            case '/':
-                // single-line comment
-                _at += 2;
+    const auto rest = this->rest();
 
-                while (!this->isDone()) {
-                    if (*_at == '\\') {
-                        /*
-                         * Like in C, a `\` character immediately
-                         * followed by a newline (LF or CRLF) continues
-                         * the comment on the next line.
-                         */
-                        auto next = _at + 1;
+    if (rest.size() < 2 || rest[0] != '/') {
+        return;
+    }
 
-                        if (next != _end && *next == '\r') {
-                            ++next;
-                        }
+    switch (rest[1]) {
+    case '/':
+        // single-line comment
+        _at += 2;
 
-                        if (next != _end && *next == '\n') {
-                            _at = next;
-                            this->_checkNewLine();
-                            ++_at;
-                            continue;
-                        }
-                    }
+        while (!this->isDone()) {
+            if (_str[_at] == '\\') {
+                /*
+                 * Like in C, a `\` character immediately followed by a
+                 * newline (LF or CRLF) continues the comment on the
+                 * next line.
+                 */
+                auto next = _at + 1;
 
-                    if (*_at == '\n') {
-                        /*
-                         * We don't set a newline here because the
-                         * current position is left at the newline
-                         * character, which is considered excluded from
-                         * the comment itself.
-                         */
-                        return;
-                    }
-
-                    ++_at;
+                if (next != _str.size() && _str[next] == '\r') {
+                    ++next;
                 }
-                break;
 
-            case '*':
-            {
-                // multi-line comment
-                const auto commentLoc = this->loc();
-
-                _at += 2;
-
-                while (!this->isDone()) {
-                    if (this->charsLeft() >= 2) {
-                        if (*_at == '*' && *(_at + 1) == '/') {
-                            _at += 2;
-                            return;
-                        }
-                    }
-
+                if (next != _str.size() && _str[next] == '\n') {
+                    _at = next;
                     this->_checkNewLine();
                     ++_at;
+                    continue;
                 }
-
-                throwTextParseError("Unterminated multi-line comment: expecting `*/`.",
-                                    commentLoc);
             }
 
-            default:
-                break;
+            if (_str[_at] == '\n') {
+                /*
+                 * We don't set a newline here because the current
+                 * position is left at the newline character, which is
+                 * considered excluded from the comment itself.
+                 */
+                return;
             }
+
+            ++_at;
         }
+        break;
+
+    case '*':
+    {
+        // multi-line comment
+        const auto commentLoc = this->loc();
+
+        _at += 2;
+
+        while (!this->isDone()) {
+            if (this->_charsLeft() >= 2 && _str[_at] == '*' && _str[_at + 1] == '/') {
+                _at += 2;
+                return;
+            }
+
+            this->_checkNewLine();
+            ++_at;
+        }
+
+        throwTextParseError("Unterminated multi-line comment: expecting `*/`.", commentLoc);
+    }
+
+    default:
+        break;
     }
 }
 

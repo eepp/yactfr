@@ -9,31 +9,20 @@
 #define YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_FROM_TEXT_HPP
 
 #include <string>
+#include <string_view>
 
 #include "json-val.hpp"
 
 namespace yactfr::internal {
 
 /*
- * Parses the JSON text between `begin` and `end` (excluded) and returns
- * the resulting JSON value, adding `baseOffset` to the text location
- * offset of all the created JSON values.
- *
- * Throws `TextParseError` on error.
- */
-[[ nodiscard ]] JsonVal::Up parseJson(const char *begin, const char *end, Size baseOffset = 0);
-
-/*
- * Parses the JSON string `str` and returns the resulting JSON value,
+ * Parses the JSON text `str` and returns the resulting JSON value,
  * adding `baseOffset` to the text location offset of all the created
  * JSON values.
  *
  * Throws `TextParseError` on error.
  */
-[[ nodiscard ]] inline JsonVal::Up parseJson(const std::string& str, const Size baseOffset = 0)
-{
-    return parseJson(str.data(), str.data() + str.size(), baseOffset);
-}
+[[ nodiscard ]] JsonVal::Up parseJson(std::string_view str, Size baseOffset = 0);
 
 } // namespace yactfr::internal
 

@@ -17,6 +17,8 @@
 #include <unordered_map>
 #include <optional>
 #include <limits>
+#include <string>
+#include <string_view>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -63,15 +65,15 @@ class TsdlParser final
 {
 public:
     /*
-     * Builds a metadata parser, wrapping a string between `begin`
-     * (included) and `end` (excluded), and parses it.
+     * Builds a metadata parser, wrapping the string `str`, and
+     * parses it.
      *
      * You can release the resulting trace type from this parser with
      * releaseTraceType() and get the trace environment with traceEnv().
      *
      * Throws `TextParseError` when there was a parsing error.
      */
-    explicit TsdlParser(const char *begin, const char *end);
+    explicit TsdlParser(std::string_view str);
 
     /*
      * Releases and returns the parsed trace type.
@@ -283,13 +285,11 @@ private:
      * To avoid parsing this substring as 5 attributes each time, we
      * keep it in a cache after the first time we parse it.
      *
-     * This cache associates a substring, from `begin` to `end`, to the
-     * parsed pseudo data type. If it is found using
-     * _fastPseudoFlIntType(), then you can clone the cached pseudo data
-     * type to have your own copy.
+     * This cache associates a substring, `str`, to the parsed pseudo
+     * data type. If it is found using _fastPseudoFlIntType(), then you
+     * can clone the cached pseudo data type to have your own copy.
      *
-     * The maximum size from `begin` to `end`
-     * is `_maxFastFlIntTypeStrSize`.
+     * The maximum size of `str` is `_maxFastFlIntTypeStrSize`.
      *
      * Is it worth it? Yes: with an optimized build, parsing some
      * LTTng-modules 2.9.2 metadata text (1.2 MiB, 9349 fixed-length
@@ -298,8 +298,7 @@ private:
      */
     struct _tFastPseudoFlIntTypeEntry final
     {
-        const char *begin;
-        const char *end;
+        std::string_view str;
         PseudoDt::Up pseudoDt;
     };
 
@@ -559,7 +558,7 @@ private:
      * Expects the specific token `token`, throwing `TextParseError` if
      * not found.
      */
-    void _expectToken(const char *token);
+    void _expectToken(std::string_view token);
 
     /*
      * Tries to parse a member type/option or a data type alias, with a
@@ -852,21 +851,19 @@ private:
 
     /*
      * Inserts a clone of the pseudo fixed-length integer type
-     * `pseudoIntType` having the corresponding TSDL string from `begin`
-     * (inclusive) to `end` (exclusive) into the fast pseudo
-     * fixed-length integer type cache.
+     * `pseudoIntType` having the corresponding TSDL string `str` into
+     * the fast pseudo fixed-length integer type cache.
      */
-    void _insertFastPseudoFlIntType(const char *begin, const char *end,
-                                    const PseudoDt& pseudoIntType);
+    void _insertFastPseudoFlIntType(std::string_view str, const PseudoDt& pseudoIntType);
 
     void _skipCommentsAndWhitespacesAndSemicolons();
-    [[ nodiscard ]] const std::string *_tryScanLitStr();
+    [[ nodiscard ]] std::optional<std::string_view> _tryScanLitStr();
 
     /*
      * Returns the keyword which the identifier `ident` is, or
      * `_tKw::None` if it's not a keyword.
      */
-    [[ nodiscard ]] static _tKw _kwFromIdent(const std::string& ident) noexcept;
+    [[ nodiscard ]] static _tKw _kwFromIdent(std::string_view ident) noexcept;
 
     /*
      * Skips whitespaces and comments, and then returns the keyword at
@@ -916,7 +913,7 @@ private:
 
     Index _at() const
     {
-        return _ss.at() - _ss.begin();
+        return _ss.at();
     }
 
     /*

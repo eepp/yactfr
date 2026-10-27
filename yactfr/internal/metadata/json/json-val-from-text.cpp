@@ -38,6 +38,11 @@ public:
         this->_handleVal(loc, val);
     }
 
+    void onScalarVal(const std::string_view val, const TextLocation& loc)
+    {
+        this->_handleVal(loc, std::string {val});
+    }
+
     void onArrayBegin(const TextLocation&)
     {
         _stack.push_back(_tStackFrame {_tState::InArray});
@@ -56,7 +61,7 @@ public:
         _stack.push_back(_tStackFrame {_tState::InObj});
     }
 
-    void onObjKey(const std::string& key, const TextLocation&)
+    void onObjKey(const std::string_view key, const TextLocation&)
     {
         this->_stackTop().lastObjKey = key;
     }
@@ -134,12 +139,12 @@ private:
     JsonVal::Up _jsonVal;
 };
 
-JsonVal::Up parseJson(const char * const begin, const char * const end, const Size baseOffset)
+JsonVal::Up parseJson(const std::string_view str, const Size baseOffset)
 {
     JsonValBuilder builder {baseOffset};
 
     try {
-        parseJson(begin, end, builder);
+        parseJson(str, builder);
     } catch (const TextParseError& exc) {
         // parseJson() only throws single-message text parse errors
         assert(exc.messages().size() == 1);

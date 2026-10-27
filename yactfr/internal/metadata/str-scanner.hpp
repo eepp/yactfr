@@ -13,6 +13,8 @@
 #include <limits>
 #include <regex>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <charconv>
 #include <system_error>
 
@@ -24,9 +26,9 @@ namespace yactfr::internal {
 /*
  * String scanner.
  *
- * A string scanner wraps an input string using two `const char`
- * pointers and scans specific characters and sequences of characters,
- * managing a current character pointer.
+ * A string scanner wraps an input string view and scans specific
+ * characters and sequences of characters, managing a current position
+ * (offset within the input string).
  *
  * It's a backtracking lexer.
  *
@@ -34,16 +36,16 @@ namespace yactfr::internal {
  * comments when you call any tryScan*() method if needed.
  *
  * When you call the various tryScan*() methods to scan some contents,
- * they advance the current character pointer on success. You can
- * control the current character pointer with the save(), accept(), and
- * reject() methods. The latter methods operate on a character pointer
- * stack, a stack of saved positions which you can restore.
+ * they advance the current position on success. You can control the
+ * current position with the save(), accept(), and reject() methods. The
+ * latter methods operate on a position stack, a stack of saved
+ * positions which you can restore.
  *
  * Before scanning anything that could be reverted, call save(). Then,
- * if you must revert the character pointer position, call reject(). If,
- * on the other hand, the advanced character pointer position is okay,
- * call accept(). You must call exactly one accept() or reject() method
- * for each call to save().
+ * if you must revert the current position, call reject(). If, on the
+ * other hand, the advanced current position is okay, call accept(). You
+ * must call exactly one accept() or reject() method for each call
+ * to save().
  *
  * It's recommended to use an auto-rejecter instead of using save(),
  * accept(), and reject() manually (see StrScannerRejecter)
@@ -53,67 +55,58 @@ class StrScanner final
 {
 public:
     /*
-     * Builds a string scanner, wrapping a string between `begin`
-     * (inclusive) and `end` (exclusive).
+     * Builds a string scanner, wrapping the string `str`.
      *
-     * ┌───────────────────────────────────────────────────────────┐
-     * │ NOTE: This string scanner does NOT own the string between │
-     * │ `begin` and `end`, so you must make sure that it's still  │
-     * │ alive when you call its scanning methods.                 │
-     * └───────────────────────────────────────────────────────────┘
+     * ┌───────────────────────────────────────────────────────────────┐
+     * │ NOTE: This string scanner does NOT own the string which `str` │
+     * │ views, so you must make sure that it's still alive when you   │
+     * │ call its scanning methods.                                    │
+     * └───────────────────────────────────────────────────────────────┘
      */
-    explicit StrScanner(const char *begin, const char *end);
+    explicit StrScanner(std::string_view str) noexcept;
 
     StrScanner(const StrScanner&) = delete;
     StrScanner& operator=(const StrScanner&) = delete;
 
     /*
-     * Returns the current character pointer.
+     * Returns the whole string, the one with which this string scanner
+     * was built.
      */
-    const char *at() const
+    std::string_view str() const noexcept
+    {
+        return _str;
+    }
+
+    /*
+     * Returns the current position, an offset within str().
+     */
+    Index at() const noexcept
     {
         return _at;
     }
 
     /*
-     * Sets the current character pointer.
+     * Returns the rest of the string, from the current position until
+     * the end of str().
+     */
+    std::string_view rest() const noexcept
+    {
+        return this->_substr(_at, _str.size());
+    }
+
+    /*
+     * Advances the current position by `count` characters.
      *
-     * ┌───────────────────────────────────────────────────────────────┐
-     * │ NOTE: This may corrupt the current location (loc()) if the    │
-     * │ string between the current position and new position includes │
-     * │ one or more newline characters.                               │
-     * └───────────────────────────────────────────────────────────────┘
+     * ┌────────────────────────────────────────────────────────────┐
+     * │ NOTE: This may corrupt the current location (loc()) if the │
+     * │ `count` skipped characters include one or more             │
+     * │ newline characters.                                        │
+     * └────────────────────────────────────────────────────────────┘
      */
-    void at(const char * const at)
+    void skip(const Size count) noexcept
     {
-        assert(at >= _begin && at <= _end);
-        _at = at;
-    }
-
-    /*
-     * Returns the beginning character pointer, the one with which this
-     * string scanner was built.
-     */
-    const char *begin() const
-    {
-        return _begin;
-    }
-
-    /*
-     * Returns the ending character pointer, the one with which this
-     * string scanner was built.
-     */
-    const char *end() const
-    {
-        return _end;
-    }
-
-    /*
-     * Returns the number of characters left until end().
-     */
-    Size charsLeft() const
-    {
-        return _end - _at;
+        assert(count <= this->_charsLeft());
+        _at += count;
     }
 
     /*
@@ -121,32 +114,26 @@ public:
      */
     TextLocation loc() const
     {
-        return TextLocation {
-            static_cast<Index>(_at - _begin),
-            _nbLines,
-            static_cast<Index>(_at - _lineBegin)
-        };
+        return TextLocation {_at, _nbLines, _at - _lineBegin};
     }
 
     /*
      * Returns whether or not the end of the string is reached.
      */
-    bool isDone() const
+    bool isDone() const noexcept
     {
-        return _at == _end;
+        return _at == _str.size();
     }
 
     /*
-     * Resets this string scanner, including the character
-     * pointer stack.
+     * Resets this string scanner, including the position stack.
      *
-     * Resets the current character pointer to begin().
+     * Resets the current position to the beginning of str().
      */
     void reset();
 
     /*
-     * Pushes the current character pointer position on the character
-     * pointer stack.
+     * Pushes the current position on the position stack.
      *
      * Call this before calling one or more parsing methods of which the
      * content could be rejected.
@@ -162,9 +149,8 @@ public:
     /*
      * Accepts the content parsed since the latest call to save().
      *
-     * This method removes an entry from the top of the character
-     * pointer stack without changing the current character
-     * pointer position.
+     * This method removes an entry from the top of the position stack
+     * without changing the current position.
      */
     void accept()
     {
@@ -175,69 +161,74 @@ public:
     /*
      * Rejects the content parsed since the latest call to save().
      *
-     * This method removes an entry from the top of the character
-     * pointer stack, and also restores the position of the current
-     * character pointer to the saved position of the entry.
+     * This method removes an entry from the top of the position stack,
+     * and also restores the current position to the saved position of
+     * the entry.
      */
     void reject();
 
     /*
-     * Tries to scan a C identifier, placing the current character
-     * pointer after this string on success.
+     * Tries to scan a C identifier, placing the current position after
+     * this string on success.
      *
-     * Returns the identifier string or `nullptr` if there's
+     * Returns the identifier string or `std::nullopt` if there's
      * no identifier.
      *
-     * The returned string remains valid as long as you don't call any
-     * method of this object.
+     * The returned string view is a view of str(), therefore it remains
+     * valid as long as the string which str() views.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    [[ nodiscard ]] const std::string *tryScanIdent();
+    [[ nodiscard ]] std::optional<std::string_view> tryScanIdent();
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    [[ nodiscard ]] const std::string *tryScanIdent()
+    [[ nodiscard ]] std::optional<std::string_view> tryScanIdent()
     {
         return this->tryScanIdent<true, true>();
     }
 
     /*
      * Skips whitespaces and comments, and then returns the C identifier
-     * at the current position, without consuming it, or `nullptr` if
-     * there's no identifier.
+     * at the current position, without consuming it, or `std::nullopt`
+     * if there's no identifier.
      *
-     * The returned string remains valid as long as you don't call any
-     * method of this object.
+     * The returned string view is a view of str(), therefore it remains
+     * valid as long as the string which str() views.
      */
-    [[ nodiscard ]] const std::string *peekIdent()
+    [[ nodiscard ]] std::optional<std::string_view> peekIdent()
     {
         this->skipCommentsAndWhitespaces();
         this->_lexIdent();
-        return _identEnd == _identBegin ? nullptr : &_identBuf;
+
+        if (_identEnd == _identBegin) {
+            return std::nullopt;
+        }
+
+        return this->_substr(_identBegin, _identEnd);
     }
 
     /*
      * Tries to scan a double-quoted literal string, considering the
-     * characters of `escapeSeqStartList` and `"` as escape sequence
-     * starting characters, placing the current character pointer after
+     * characters of `escapeSeqStartList`, `"`, and `\` as escape
+     * sequence starting characters, placing the current position after
      * the closing double quote on success.
      *
      * Returns the escaped string, without beginning/end double quotes,
-     * on success, or `nullptr` if there's no double-quoted literal
-     * string (or if the method reaches the end character pointer before
+     * on success, or `std::nullopt` if there's no double-quoted literal
+     * string (or if the method reaches the end of the string before
      * a closing `"`).
      *
-     * The returned string remains valid as long as you don't call any
-     * method of this object.
+     * The returned string view remains valid as long as you don't call
+     * any method of this object.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    [[ nodiscard ]] const std::string *tryScanLitStr(const char *escapeSeqStartList);
+    [[ nodiscard ]] std::optional<std::string_view> tryScanLitStr(std::string_view escapeSeqStartList);
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    [[ nodiscard ]] const std::string *tryScanLitStr(const char * const escapeSeqStartList)
+    [[ nodiscard ]] std::optional<std::string_view> tryScanLitStr(const std::string_view escapeSeqStartList)
     {
         return this->tryScanLitStr<true, true>(escapeSeqStartList);
     }
@@ -249,8 +240,8 @@ public:
      *
      * Returns `std::nullopt` if it could not scan a constant integer.
      *
-     * The current character pointer is placed after this constant
-     * integer string on success.
+     * The current position is placed after this constant integer string
+     * on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV = true>
     [[ nodiscard ]] std::optional<ValT> tryScanConstInt();
@@ -272,8 +263,8 @@ public:
      * Returns `std::nullopt` if it could not scan a constant
      * unsigned integer.
      *
-     * The current character pointer is placed after this constant
-     * unsigned integer string on success.
+     * The current position is placed after this constant unsigned
+     * integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
     [[ nodiscard ]] std::optional<unsigned long long> tryScanConstUInt()
@@ -299,8 +290,8 @@ public:
      * Returns `std::nullopt` if it could not scan a constant
      * signed integer.
      *
-     * The current character pointer is placed after this constant
-     * signed integer string on success.
+     * The current position is placed after this constant signed
+     * integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
     [[ nodiscard ]] std::optional<long long> tryScanConstSInt()
@@ -328,8 +319,8 @@ public:
      * returns `std::nullopt`: use tryScanConstInt() to try scanning a
      * constant integer instead.
      *
-     * The current character pointer is placed after this constant real
-     * number string on success.
+     * The current position is placed after this constant real number
+     * string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV>
     [[ nodiscard ]] std::optional<double> tryScanConstReal();
@@ -344,19 +335,19 @@ public:
 
     /*
      * Tries to scan a specific token `token`, placing the current
-     * character pointer after this string on success.
+     * position after this string on success.
      *
      * If `token` ends with a C identifier character, then this method
      * only succeeds if the following character isn't a C identifier
      * character: for example, `struct` doesn't match `structure`.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    [[ nodiscard ]] bool tryScanToken(const char *token);
+    [[ nodiscard ]] bool tryScanToken(std::string_view token);
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    [[ nodiscard ]] bool tryScanToken(const char * const token)
+    [[ nodiscard ]] bool tryScanToken(const std::string_view token)
     {
         return this->tryScanToken<true, true>(token);
     }
@@ -426,19 +417,22 @@ public:
 
 private:
     /*
-     * A frame of the character pointer stack.
+     * A frame of the position stack.
      */
     struct _tStackFrame final
     {
         // position when save() was called
-        const char *at;
+        Index at;
 
         // position of the beginning of the current line when save() was called
-        const char *lineBegin;
+        Index lineBegin;
 
         // number of lines scanned so far when save was called()
         Size nbLines;
     };
+
+    // "no position" value of the caches
+    static constexpr auto _noPos = std::numeric_limits<Index>::max();
 
 private:
     template <typename ValT>
@@ -458,8 +452,30 @@ private:
     }
 
     /*
-     * Makes `_identBegin`, `_identEnd`, and `_identBuf` describe the C
-     * identifier at the current position (empty if none).
+     * Returns the substring of str() from `begin` (included) to
+     * `end` (excluded).
+     *
+     * Unlike std::string_view::substr(), this method doesn't check
+     * its parameters.
+     */
+    std::string_view _substr(const Index begin, const Index end) const noexcept
+    {
+        assert(begin <= end);
+        assert(end <= _str.size());
+        return {_str.data() + begin, static_cast<std::string_view::size_type>(end - begin)};
+    }
+
+    /*
+     * Returns the number of characters left until the end of str().
+     */
+    Size _charsLeft() const noexcept
+    {
+        return _str.size() - _at;
+    }
+
+    /*
+     * Makes `_identBegin` and `_identEnd` describe the C identifier at
+     * the current position (empty if none).
      *
      * Parsers often try to scan the same identifier many times when
      * backtracking: this method doesn't scan again if `_identBegin` is
@@ -474,58 +490,51 @@ private:
 
         auto end = _at;
 
-        if (end != _end && StrScanner::_isIdentFirstChar(*end)) {
+        if (end != _str.size() && StrScanner::_isIdentFirstChar(_str[end])) {
             ++end;
 
-            while (end != _end && StrScanner::_isIdentChar(*end)) {
+            while (end != _str.size() && StrScanner::_isIdentChar(_str[end])) {
                 ++end;
             }
         }
 
         _identBegin = _at;
         _identEnd = end;
-        _identBuf.assign(_identBegin, _identEnd);
     }
 
     void _skipComment();
     void _skipWhitespaces();
+
     /*
-     * Validates and returns the code unit of the four hexadecimal
-     * digits at `at`.
+     * Validates and returns the code unit of the first four hexadecimal
+     * digits of `hexDigits`.
      */
-    unsigned long _scanEscapedUnicodeCodeUnit(const char *at);
+    unsigned long _scanEscapedUnicodeCodeUnit(std::string_view hexDigits);
 
     /*
      * Appends to `_strBuf` the UTF-8 encoding of the codepoint of the
-     * `\u` escape sequence of which `at` points to the first
+     * `\u` escape sequence of which `hexDigits` starts with the first
      * hexadecimal digit, possibly followed with another `\u` escape
      * sequence (surrogate pair).
      *
      * Returns the number of characters after the first `\u` which
      * the escape sequence(s) spans.
      */
-    Size _appendEscapedUnicodeChar(const char *at);
-    void _appendEscapedHexChar(const char *at);
+    Size _appendEscapedUnicodeChar(std::string_view hexDigits);
+
+    /*
+     * Appends to `_strBuf` the byte of the first two hexadecimal digits
+     * of `hexDigits` (`\x` escape sequence).
+     */
+    void _appendEscapedHexChar(std::string_view hexDigits);
 
     /*
      * Tries to append an escaped character to `_strBuf` from the
      * characters at the current position, considering the characters of
-     * `escapeSeqStartList` and `"` as escape sequence
+     * `escapeSeqStartList`, `"`, and `\` as escape sequence
      * starting characters.
      */
-    [[ nodiscard ]] bool _tryAppendEscapedChar(const char *escapeSeqStartList);
-
-    int _scanAnyChar()
-    {
-        if (this->isDone()) {
-            return -1;
-        }
-
-        const auto c = *_at;
-
-        ++_at;
-        return c;
-    }
+    [[ nodiscard ]] bool _tryAppendEscapedChar(std::string_view escapeSeqStartList);
 
     _tStackFrame& _stackTop()
     {
@@ -534,29 +543,26 @@ private:
 
     void _checkNewLine()
     {
-        if (*_at == '\n') {
+        if (_str[_at] == '\n') {
             ++_nbLines;
             _lineBegin = _at + 1;
         }
     }
 
 private:
-    // beginning of the substring to scan, given by user
-    const char *_begin;
-
-    // end of the substring to scan, given by user
-    const char *_end;
+    // string to scan, given by user
+    std::string_view _str;
 
     // current position
-    const char *_at;
+    Index _at = 0;
 
     // position of the beginning of the current line
-    const char *_lineBegin;
+    Index _lineBegin = 0;
 
     // number of lines scanned so far
     Size _nbLines = 0;
 
-    // character pointer stack
+    // position stack
     std::vector<_tStackFrame> _stack;
 
     // string buffer
@@ -568,58 +574,49 @@ private:
      * latter being at line `_skipToNbLines` which begins
      * at `_skipToLineBegin`.
      */
-    const char *_skipFrom = nullptr;
-    const char *_skipTo = nullptr;
-    const char *_skipToLineBegin = nullptr;
+    Index _skipFrom = _noPos;
+    Index _skipTo = _noPos;
+    Index _skipToLineBegin = 0;
     Size _skipToNbLines = 0;
 
     // last lexed identifier (see _lexIdent())
-    const char *_identBegin = nullptr;
-    const char *_identEnd = nullptr;
-    std::string _identBuf;
+    Index _identBegin = _noPos;
+    Index _identEnd = _noPos;
 
     // real number string regex
     static const std::regex _realRegex;
 };
 
 template <bool SkipWsV, bool SkipCommentsV>
-const std::string *StrScanner::tryScanIdent()
+std::optional<std::string_view> StrScanner::tryScanIdent()
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
     this->_lexIdent();
 
     if (_identEnd == _identBegin) {
         // no identifier
-        return nullptr;
+        return std::nullopt;
     }
 
     _at = _identEnd;
-    return &_identBuf;
+    return this->_substr(_identBegin, _identEnd);
 }
 
 template <bool SkipWsV, bool SkipCommentsV>
-const std::string *StrScanner::tryScanLitStr(const char * const escapeSeqStartList)
+std::optional<std::string_view> StrScanner::tryScanLitStr(const std::string_view escapeSeqStartList)
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
+
+    // first character: `"`
+    if (this->isDone() || _str[_at] != '"') {
+        return std::nullopt;
+    }
 
     const auto at = _at;
     const auto lineBegin = _lineBegin;
     const auto nbLines = _nbLines;
 
-    // first character: `"` or alpha
-    auto c = this->_scanAnyChar();
-
-    if (c < 0) {
-        return nullptr;
-    }
-
-    if (c != '"') {
-        _at = at;
-        _lineBegin = lineBegin;
-        _nbLines = nbLines;
-        return nullptr;
-    }
-
+    ++_at;
     _strBuf.clear();
 
     while (!this->isDone()) {
@@ -628,17 +625,19 @@ const std::string *StrScanner::tryScanLitStr(const char * const escapeSeqStartLi
             continue;
         }
 
+        const auto ch = _str[_at];
+
         // check for end of string
-        if (*_at == '"') {
+        if (ch == '"') {
             ++_at;
-            return &_strBuf;
+            return std::string_view {_strBuf};
         }
 
         // check for newline
         this->_checkNewLine();
 
         // append character
-        _strBuf.push_back(*_at);
+        _strBuf.push_back(ch);
 
         // go to next character
         ++_at;
@@ -648,37 +647,27 @@ const std::string *StrScanner::tryScanLitStr(const char * const escapeSeqStartLi
     _at = at;
     _lineBegin = lineBegin;
     _nbLines = nbLines;
-    return nullptr;
+    return std::nullopt;
 }
 
 template <bool SkipWsV, bool SkipCommentsV>
-bool StrScanner::tryScanToken(const char * const token)
+bool StrScanner::tryScanToken(const std::string_view token)
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
-    auto tokenAt = token;
-    auto at = _at;
+    const auto rest = this->rest();
 
-    while (*tokenAt != '\0' && at != _end) {
-        if (*at != *tokenAt) {
-            return false;
-        }
-
-        ++at;
-        ++tokenAt;
-    }
-
-    if (*tokenAt != '\0') {
+    if (rest.compare(0, token.size(), token) != 0) {
         return false;
     }
 
     // check token boundary
-    if (tokenAt != token && StrScanner::_isIdentChar(tokenAt[-1]) && at != _end &&
-            StrScanner::_isIdentChar(*at)) {
+    if (!token.empty() && StrScanner::_isIdentChar(token.back()) &&
+            rest.size() > token.size() && StrScanner::_isIdentChar(rest[token.size()])) {
         return false;
     }
 
-    _at = at;
+    _at += token.size();
     return true;
 }
 
@@ -725,6 +714,8 @@ std::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullV
 template <typename ValT, int BaseV>
 std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 {
+    const auto rest = this->rest();
+
     /*
      * Reject a hexadecimal radix prefix at this point: we already
      * scanned any prefix, if allowed.
@@ -734,14 +725,12 @@ std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
      * std::from_chars() itself rejects whitespaces, `-` (unsigned
      * type), and `+`.
      */
-    if (this->charsLeft() >= 2 && _at[0] == '0') {
-        if (_at[1] == 'x' || _at[1] == 'X') {
-            return std::nullopt;
-        }
+    if (rest.size() >= 2 && rest[0] == '0' && (rest[1] == 'x' || rest[1] == 'X')) {
+        return std::nullopt;
     }
 
     unsigned long long ullVal;
-    const auto res = std::from_chars(_at, _end, ullVal, BaseV);
+    const auto res = std::from_chars(rest.data(), rest.data() + rest.size(), ullVal, BaseV);
 
     if (res.ec != std::errc {}) {
         // could not parse or out of range
@@ -753,7 +742,7 @@ std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 
         if (val) {
             // success: update position
-            _at = res.ptr;
+            _at += res.ptr - rest.data();
         }
 
         return val;
@@ -768,64 +757,51 @@ std::optional<ValT> StrScanner::tryScanConstInt()
 
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
-    const auto at = _at;
-    const auto c = this->_scanAnyChar();
-
-    if (c < 0) {
+    if (this->isDone()) {
         // nothing left
         return std::nullopt;
     }
 
+    const auto at = _at;
+
     // check for negation
-    const bool negate = (c == '-');
+    const bool negate = (_str[_at] == '-');
 
     if constexpr (!std::is_signed_v<ValT>) {
         if (negate) {
-            _at = at;
             return std::nullopt;
         }
     }
 
-    if (!negate) {
-        --_at;
-
-        if (AllowPrefixV && c == '+') {
-            ++_at;
-        }
+    if (negate || (AllowPrefixV && _str[_at] == '+')) {
+        ++_at;
     }
 
     // check for radix prefix
+    const auto rest = this->rest();
     std::optional<ValT> val;
 
-    if (AllowPrefixV && *_at == '0' && this->charsLeft() >= 2) {
-        if (_at[1] == 'b' || _at[1] == 'B' ||
-                _at[1] == 'x' || _at[1] == 'X' ||
-                (_at[1] >= '1' && _at[1] <= '9')) {
-            if (_at[1] == 'b' || _at[1] == 'B') {
-                // binary
-                _at += 2;
-                val = this->_tryScanConstInt<ValT, 2>(negate);
-            } else if (_at[1] == 'x' || _at[1] == 'X') {
-                // hexadecimal
-                _at += 2;
-                val = this->_tryScanConstInt<ValT, 16>(negate);
-            } else {
-                // octal: leave prefix to catch 0 too
-                assert(_at[1] >= '1' && _at[1] <= '9');
-                val = this->_tryScanConstInt<ValT, 8>(negate);
-            }
-
-            if (!val) {
-                _at = at;
-                return std::nullopt;
-            }
-
-            return val;
+    if (AllowPrefixV && rest.size() >= 2 && rest[0] == '0' &&
+            (rest[1] == 'b' || rest[1] == 'B' ||
+             rest[1] == 'x' || rest[1] == 'X' ||
+             (rest[1] >= '1' && rest[1] <= '9'))) {
+        if (rest[1] == 'b' || rest[1] == 'B') {
+            // binary
+            _at += 2;
+            val = this->_tryScanConstInt<ValT, 2>(negate);
+        } else if (rest[1] == 'x' || rest[1] == 'X') {
+            // hexadecimal
+            _at += 2;
+            val = this->_tryScanConstInt<ValT, 16>(negate);
+        } else {
+            // octal: leave prefix to catch 0 too
+            assert(rest[1] >= '1' && rest[1] <= '9');
+            val = this->_tryScanConstInt<ValT, 8>(negate);
         }
+    } else {
+        // fall back to decimal
+        val = this->_tryScanConstInt<ValT, 10>(negate);
     }
-
-    // fall back to decimal
-    val = this->_tryScanConstInt<ValT, 10>(negate);
 
     if (!val) {
         // no constant integer
@@ -840,19 +816,21 @@ std::optional<double> StrScanner::tryScanConstReal()
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
+    const auto rest = this->rest();
+
     /*
      * Validate JSON number format (with fraction and/or exponent part).
      *
      * This is needed because std::from_chars() accepts more formats
      * which JSON doesn't support.
      */
-    if (!std::regex_search(_at, _end, StrScanner::_realRegex)) {
+    if (!std::regex_search(rest.begin(), rest.end(), StrScanner::_realRegex)) {
         return std::nullopt;
     }
 
     // parse
     double val;
-    const auto res = std::from_chars(_at, _end, val);
+    const auto res = std::from_chars(rest.data(), rest.data() + rest.size(), val);
 
     if (res.ec != std::errc {}) {
         // could not parse or out of range
@@ -860,7 +838,7 @@ std::optional<double> StrScanner::tryScanConstReal()
     }
 
     // success: update position and return value
-    _at = res.ptr;
+    _at += res.ptr - rest.data();
     return val;
 }
 

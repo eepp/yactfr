@@ -12,6 +12,8 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <string_view>
+#include <optional>
 #include <unordered_set>
 
 #include <yactfr/text-parse-error.hpp>
@@ -33,11 +35,11 @@ namespace yactfr::internal {
  *     void onScalarVal(unsigned long long, const TextLocation&);
  *     void onScalarVal(long long, const TextLocation&);
  *     void onScalarVal(double, const TextLocation&);
- *     void onScalarVal(const std::string&, const TextLocation&);
+ *     void onScalarVal(std::string_view, const TextLocation&);
  *     void onArrayBegin(const TextLocation&);
  *     void onArrayEnd(const TextLocation&);
  *     void onObjBegin(const TextLocation&);
- *     void onObjKey(const std::string&, const TextLocation&);
+ *     void onObjKey(std::string_view, const TextLocation&);
  *     void onObjEnd(const TextLocation&);
  *
  * The received text location always indicate the location of the
@@ -48,14 +50,13 @@ class JsonParser final
 {
 public:
     /*
-     * Builds a JSON text parser, wrapping a string between `begin`
-     * (included) and `end` (excluded), and parses it, calling the
-     * methods of the JSON event listener `listener`.
+     * Builds a JSON text parser, wrapping the string `str`, and parses
+     * it, calling the methods of the JSON event listener `listener`.
      *
      * Throws `TextParseError` when there's a parsing error, including
      * when it can't fully parse the JSON string as a valid JSON value.
      */
-    explicit JsonParser(const char *begin, const char *end, ListenerT& listener);
+    explicit JsonParser(std::string_view str, ListenerT& listener);
 
 private:
     /*
@@ -109,7 +110,7 @@ private:
     /*
      * Expects a specific token, throwing an exception if not found.
      */
-    void _expectToken(const char * const token)
+    void _expectToken(const std::string_view token)
     {
         if (!this->_tryScanToken(token)) {
             std::ostringstream ss;
@@ -119,7 +120,7 @@ private:
         }
     }
 
-    [[ nodiscard ]] bool _tryScanToken(const char * const token)
+    [[ nodiscard ]] bool _tryScanToken(const std::string_view token)
     {
         return _ss.tryScanToken<true, false>(token);
     }
@@ -131,17 +132,19 @@ private:
 
     Index _at() const
     {
-        return std::distance(_ss.begin(), _ss.at());
+        return _ss.at();
     }
 
-    [[ nodiscard ]] const std::string *_tryScanLitStr()
+    [[ nodiscard ]] std::optional<std::string_view> _tryScanLitStr()
     {
         return _ss.tryScanLitStr<true, false>("/bfnrtu");
     }
 
     bool _ssCurCharLikeConstRealFracOrExp() const noexcept
     {
-        return *_ss.at() == '.' || *_ss.at() == 'E' || *_ss.at() == 'e';
+        const auto rest = _ss.rest();
+
+        return !rest.empty() && (rest[0] == '.' || rest[0] == 'E' || rest[0] == 'e');
     }
 
 private:
@@ -156,12 +159,10 @@ private:
 };
 
 template <typename ListenerT>
-JsonParser<ListenerT>::JsonParser(const char * const begin, const char * const end,
-                                  ListenerT& listener) :
-    _ss {begin, end},
+JsonParser<ListenerT>::JsonParser(const std::string_view str, ListenerT& listener) :
+    _ss {str},
     _listener {&listener}
 {
-    assert(end >= begin);
     this->_parse();
 }
 
@@ -263,13 +264,13 @@ bool JsonParser<ListenerT>::_tryParseNumber()
          * StrScanner::tryScanConstSInt(), JSON doesn't allow leading
          * zeros (RFC 8259, section 6).
          */
-        auto at = _ss.at();
+        auto rest = _ss.rest();
 
-        if (at != _ss.end() && *at == '-') {
-            ++at;
+        if (!rest.empty() && rest[0] == '-') {
+            rest.remove_prefix(1);
         }
 
-        if (_ss.end() - at >= 2 && at[0] == '0' && std::isdigit(at[1])) {
+        if (rest.size() >= 2 && rest[0] == '0' && std::isdigit(static_cast<unsigned char>(rest[1]))) {
             throwTextParseError("Invalid JSON number: unexpected leading zero.", loc);
         }
     }
@@ -344,7 +345,7 @@ bool JsonParser<ListenerT>::_tryParseObjKey()
     if (const auto str = this->_tryScanLitStr()) {
         assert(!_keys.empty());
 
-        if (!_keys.back().insert(*str).second) {
+        if (!_keys.back().insert(std::string {*str}).second) {
             std::ostringstream ss;
 
             ss << "Duplicate JSON object key `" << *str << "`.";
@@ -445,15 +446,9 @@ bool JsonParser<ListenerT>::_tryParseObj()
 }
 
 template <typename ListenerT>
-void parseJson(const char * const begin, const char * const end, ListenerT& listener)
+void parseJson(const std::string_view str, ListenerT& listener)
 {
-    JsonParser {begin, end, listener}; //-V607
-}
-
-template <typename ListenerT>
-void parseJson(const std::string& str, ListenerT& listener)
-{
-    JsonParser {str.data(), str.data() + str.size(), listener}; //-V607
+    JsonParser {str, listener}; //-V607
 }
 
 } // namespace yactfr::internal

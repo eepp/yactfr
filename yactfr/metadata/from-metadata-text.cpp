@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <string_view>
+
 #include <yactfr/metadata/from-metadata-text.hpp>
 #include <yactfr/text-parse-error.hpp>
 
@@ -13,10 +15,10 @@
 
 namespace yactfr {
 
-template <typename ParserT>
-FromMetadataTextReturn fromMetadataText(const char * const begin, const char * const end)
+template <typename ParserT, typename... ArgTs>
+FromMetadataTextReturn fromMetadataText(const ArgTs... args)
 {
-    ParserT parser {begin, end};
+    ParserT parser {args...};
 
     return {parser.releaseTraceType(), parser.metadataStreamUuid()};
 }
@@ -33,7 +35,9 @@ FromMetadataTextReturn fromMetadataText(const char * const begin,
         return fromMetadataText<internal::Ctf2JsonSeqParser>(begin, end);
     } else {
         // fall back to CTF 1.8
-        return fromMetadataText<internal::TsdlParser>(begin, end);
+        return fromMetadataText<internal::TsdlParser>(std::string_view {
+            begin, static_cast<std::string_view::size_type>(end - begin)
+        });
     }
 }
 

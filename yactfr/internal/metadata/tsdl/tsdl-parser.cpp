@@ -715,10 +715,9 @@ PseudoDt::Up TsdlParser::_aliasedPseudoDt(const std::string& name, TextLocation 
     return nullptr;
 }
 
-TsdlParser::TsdlParser(const char * const begin, const char * const end) :
-    _ss {begin, end}
+TsdlParser::TsdlParser(const std::string_view str) :
+    _ss {str}
 {
-    assert(end >= begin);
     this->_parseMetadata();
 }
 
@@ -806,7 +805,7 @@ bool TsdlParser::_tryParseRootBlock()
     }
 }
 
-void TsdlParser::_expectToken(const char * const token)
+void TsdlParser::_expectToken(const std::string_view token)
 {
     if (!_ss.tryScanToken(token)) {
         std::ostringstream ss;
@@ -975,7 +974,7 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
             const auto loc = _ss.loc();
 
             if (const auto ident = _ss.tryScanIdent()) {
-                pseudoDt = this->_aliasedPseudoDt(*ident, loc);
+                pseudoDt = this->_aliasedPseudoDt(std::string {*ident}, loc);
 
                 if (!pseudoDt) {
                     throwTextParseError("Expecting explicit data type block (`integer`, `floating_point`, "
@@ -1129,31 +1128,24 @@ PseudoDt::Up TsdlParser::_tryParseFullDt(const bool addDtAlias, std::string * co
     return pseudoDt;
 }
 
-void TsdlParser::_insertFastPseudoFlIntType(const char * const begin, const char * const end,
+void TsdlParser::_insertFastPseudoFlIntType(const std::string_view str,
                                             const PseudoDt& pseudoDt)
 {
-    assert(end >= begin);
-
-    if (static_cast<Size>(end - begin) > TsdlParser::_maxFastFlIntTypeStrSize) {
+    if (str.size() > TsdlParser::_maxFastFlIntTypeStrSize) {
         return;
     }
 
-    _fastPseudoFlIntTypes.push_back({begin, end, pseudoDt.clone()});
+    _fastPseudoFlIntTypes.push_back({str, pseudoDt.clone()});
 }
 
 PseudoDt::Up TsdlParser::_fastPseudoFlIntType(TextLocation loc)
 {
+    const auto rest = _ss.rest();
+
     for (const auto& entry : _fastPseudoFlIntTypes) {
-        const auto entrySize = std::distance(entry.begin, entry.end);
-
-        if (_ss.charsLeft() < static_cast<Size>(entrySize)) {
-            // would not fit
-            continue;
-        }
-
-        if (std::equal(entry.begin, entry.end, _ss.at(), _ss.at() + entrySize)) {
+        if (rest.compare(0, entry.str.size(), entry.str) == 0) {
             // we have a match!
-            _ss.at(_ss.at() + entrySize);
+            _ss.skip(entry.str.size());
 
             auto dt = entry.pseudoDt->clone();
 
@@ -1311,7 +1303,7 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
          * Fast pseudo fixed-length integer type cache only supported
          * for single lines.
          */
-        this->_insertFastPseudoFlIntType(beginAt, endAt, *pseudoDt);
+        this->_insertFastPseudoFlIntType(_ss.str().substr(beginAt, endAt - beginAt), *pseudoDt);
     }
 
     return pseudoDt;
@@ -2644,7 +2636,7 @@ TsdlAttr TsdlParser::_expectAttr()
 
         // parse internal ID (name) of clock type
         if (const auto ident = _ss.tryScanIdent()) {
-            attr.val = TsdlAttr::ClkNameVal {*ident};
+            attr.val = TsdlAttr::ClkNameVal {std::string {*ident}};
         } else {
             throwTextParseError("Expecting identifier (clock type internal ID).", _ss.loc());
         }
@@ -2662,10 +2654,10 @@ TsdlAttr TsdlParser::_expectAttr()
 
     if (const auto escapedStr = this->_tryScanLitStr()) {
         // literal string
-        attr.val = *escapedStr;
+        attr.val = std::string {*escapedStr};
     } else if (const auto ident = _ss.tryScanIdent()) {
         // identifier
-        attr.val = TsdlAttr::Ident {*ident};
+        attr.val = TsdlAttr::Ident {std::string {*ident}};
     } else if (const auto val = _ss.tryScanConstUInt()) {
         // constant unsigned integer
         attr.val = *val;
@@ -2838,7 +2830,7 @@ bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
         }
 
         ssRej.accept();
-        parts.push_back(*ident);
+        parts.emplace_back(*ident);
 
         if (!isMulti) {
             // single word data type alias name: break now
@@ -2876,7 +2868,7 @@ PseudoDataLoc TsdlParser::_expectDataLoc()
 
     while (true) {
         if (const auto ident = _ss.tryScanIdent()) {
-            allPathElems.push_back(*ident);
+            allPathElems.emplace_back(*ident);
 
             if (!_ss.tryScanToken(".")) {
                 break;
@@ -3224,7 +3216,7 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
     return false;
 }
 
-const std::string *TsdlParser::_tryScanLitStr()
+std::optional<std::string_view> TsdlParser::_tryScanLitStr()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -3245,10 +3237,10 @@ const std::string *TsdlParser::_tryScanLitStr()
         return litStr;
     }
 
-    return nullptr;
+    return std::nullopt;
 }
 
-TsdlParser::_tKw TsdlParser::_kwFromIdent(const std::string& ident) noexcept
+TsdlParser::_tKw TsdlParser::_kwFromIdent(const std::string_view ident) noexcept
 {
     if (ident.empty()) {
         return _tKw::None;

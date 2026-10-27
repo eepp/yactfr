@@ -88,7 +88,8 @@ void Ctf2JsonSeqParser::_parseMetadata()
 void Ctf2JsonSeqParser::_parseFrag(const char * const begin, const char * const end,
     const Index index)
 {
-    this->_handleFrag(*parseJson(begin, end, begin - _begin), index);
+    this->_handleFrag(*parseJson({begin, static_cast<std::string_view::size_type>(end - begin)},
+                                 begin - _begin), index);
 }
 
 namespace {
