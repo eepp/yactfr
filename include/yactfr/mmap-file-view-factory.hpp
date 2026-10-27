@@ -85,7 +85,8 @@ public:
         by this factory.
 
     @throws IOError
-        An I/O error occurred (file not found, permission denied, etc.).
+        An I/O error occurred (file not found, permission denied, not a
+        regular file, etc.).
     */
     explicit MemoryMappedFileViewFactory(std::string path,
                                          const std::optional<Size>& preferredMmapSize = std::nullopt,

@@ -26,7 +26,12 @@ MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
     _path {std::move(path)},
     _accessPattern {accessPattern}
 {
-    _fd = open(_path.c_str(), O_RDONLY);
+    /*
+     * `O_NONBLOCK` so that opening a FIFO doesn't block until a writer
+     * opens it: the check below rejects it anyway. This flag has no
+     * effect on a regular file.
+     */
+    _fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
 
     if (_fd < 0) {
         const auto error = internal::strError();
@@ -45,6 +50,14 @@ MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
         std::ostringstream ss;
 
         ss << "Cannot get file status for \"" << _path << "\": " << error;
+        this->_close();
+        throw IOError {ss.str()};
+    }
+
+    if (!S_ISREG(stat.st_mode)) {
+        std::ostringstream ss;
+
+        ss << "Cannot memory-map \"" << _path << "\": not a regular file";
         this->_close();
         throw IOError {ss.str()};
     }
