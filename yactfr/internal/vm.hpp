@@ -964,7 +964,8 @@ private:
             return false;
         }
 
-        this->_execReadStdFlInt<std::uint64_t, 8, readFlUInt8, false>(_pos.nextInstr());
+        // byte order doesn't matter for a single byte
+        this->_execReadStdFlInt<std::uint8_t, ByteOrder::Little, false>(_pos.nextInstr());
         _pos.metadataStreamUuid.data[16 - _pos.stackTop().rem] = static_cast<std::uint8_t>(_pos.lastIntVal.u);
         --_pos.stackTop().rem;
         return true;
@@ -1153,7 +1154,7 @@ private:
              */
             const auto offset = _pos.headOffsetInElemSeqBits() - _pos.curVlIntElem->dataLength();
 
-            if (IsSignedV) {
+            if constexpr (IsSignedV) {
                 this->_signExtendVlSIntVal();
                 this->_setBitArrayElemBase(_pos.lastIntVal.i, instr, *_pos.curVlIntElem, offset);
             } else {
@@ -1653,53 +1654,56 @@ private:
         this->_requireContentBits(len);
     }
 
-    template <typename RetT, Size LenBitsV, RetT (*FuncV)(const std::uint8_t *), bool RevV>
-    RetT _readStdFlInt(const Instr& instr)
+    template <typename ValT, ByteOrder BoV, bool RevV>
+    GenReadFlIntRetT<ValT> _readStdFlInt(const Instr& instr)
     {
         auto& readFlBitArrayInstr = static_cast<const ReadFlBitArrayInstr&>(instr);
 
-        this->_execReadFlBitArrayPreamble(instr, LenBitsV);
+        this->_execReadFlBitArrayPreamble(instr, sizeof(ValT) * 8);
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
         return std::invoke([this] {
-            auto ret = FuncV(this->_bufAtHead());
+            auto ret = readStdFlInt<ValT, BoV>(this->_bufAtHead());
 
-            if (RevV) {
-                ret = revFlIntBits(ret, LenBitsV);
+            if constexpr (RevV) {
+                ret = revFlIntBits(ret, sizeof(ValT) * 8);
             }
 
             return ret;
         });
     }
 
-    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
+    template <typename ValT, ByteOrder BoV, bool RevV>
     void _execReadStdFlBitArray(const Instr& instr)
     {
-        this->_setBitArrayElemBase(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+        static_assert(std::is_unsigned_v<ValT>, "`ValT` is an unsigned integer type.");
+        this->_setBitArrayElemBase(this->_readStdFlInt<ValT, BoV, RevV>(instr),
                                    instr, _pos.elems.flBitArray);
-        this->_consumeExistingBits(LenBitsV);
+        this->_consumeExistingBits(sizeof(ValT) * 8);
     }
 
-    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
+    template <typename ValT, ByteOrder BoV, bool RevV>
     void _execReadStdFlBitMap(const Instr& instr)
     {
-        this->_setBitArrayElemBase(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+        static_assert(std::is_unsigned_v<ValT>, "`ValT` is an unsigned integer type.");
+        this->_setBitArrayElemBase(this->_readStdFlInt<ValT, BoV, RevV>(instr),
                                    instr, _pos.elems.flBitMap);
-        this->_consumeExistingBits(LenBitsV);
+        this->_consumeExistingBits(sizeof(ValT) * 8);
     }
 
-    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
+    template <typename ValT, ByteOrder BoV, bool RevV>
     void _execReadStdFlBool(const Instr& instr)
     {
-        this->_setBitArrayElemBase(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+        static_assert(std::is_unsigned_v<ValT>, "`ValT` is an unsigned integer type.");
+        this->_setBitArrayElemBase(this->_readStdFlInt<ValT, BoV, RevV>(instr),
                                    instr, _pos.elems.flBool);
-        this->_consumeExistingBits(LenBitsV);
+        this->_consumeExistingBits(sizeof(ValT) * 8);
     }
 
-    template <typename RetT, Size LenBitsV, RetT (*FuncV)(const std::uint8_t *), bool RevV>
+    template <typename ValT, ByteOrder BoV, bool RevV>
     void _execReadStdFlInt(const Instr& instr)
     {
-        this->_setFlIntElem(this->_readStdFlInt<RetT, LenBitsV, FuncV, RevV>(instr), instr);
-        this->_consumeExistingBits(LenBitsV);
+        this->_setFlIntElem(this->_readStdFlInt<ValT, BoV, RevV>(instr), instr);
+        this->_consumeExistingBits(sizeof(ValT) * 8);
     }
 
     [[noreturn]] YACTFR_VM_NOINLINE void _throwByteOrderChangeWithinByte(const ByteOrder bo)
@@ -1735,7 +1739,7 @@ private:
             const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
             auto ret = FlIntReadFuncs<RetT, BoV>::funcs[index](this->_bufAtHead());
 
-            if (RevV) {
+            if constexpr (RevV) {
                 ret = revFlIntBits(ret, readFlBitArrayInstr.len());
             }
 
@@ -1789,11 +1793,12 @@ private:
                                              instr);
     }
 
-    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
+    template <typename ValT, ByteOrder BoV, bool RevV>
     void _execReadStdFlFloat(const Instr& instr)
     {
-        this->_execReadFlFloatPost<LenBitsV>(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
-                                             instr);
+        static_assert(std::is_unsigned_v<ValT>, "`ValT` is an unsigned integer type.");
+        this->_execReadFlFloatPost<sizeof(ValT) * 8>(this->_readStdFlInt<ValT, BoV, RevV>(instr),
+                                                     instr);
     }
 
     _tExecReaction _execReadVlIntCommon(const Instr& instr, VariableLengthIntegerElement& elem,
@@ -1825,7 +1830,7 @@ private:
             _pos.stackPush(proc);
             _pos.state(VmState::ExecInstr);
         } else {
-            if (std::is_signed<typename ReadVarInstrT::Opt::Val>::value) {
+            if constexpr (std::is_signed_v<typename ReadVarInstrT::Opt::Val>) {
                 throw InvalidVariantSignedIntegerSelectorValueDecodingError {
                     _pos.headOffsetInElemSeqBits(),
                     static_cast<std::int64_t>(selVal)

@@ -30,26 +30,15 @@ namespace internal {
  */
 template <unsigned int FirstIndexV, unsigned int LastIndexV>
 YACTFR_INTERNAL_HIDDEN
-std::uint64_t gatherFlIntBytes(const std::uint8_t * const buf, std::true_type) noexcept
-{
-    return buf[FirstIndexV];
-}
-
-template <unsigned int FirstIndexV, unsigned int LastIndexV>
-YACTFR_INTERNAL_HIDDEN
-std::uint64_t gatherFlIntBytes(const std::uint8_t * const buf, std::false_type) noexcept
-{
-    constexpr auto nextIndex = FirstIndexV < LastIndexV ? FirstIndexV + 1 : FirstIndexV - 1;
-
-    return (gatherFlIntBytes<nextIndex, LastIndexV>(buf, std::integral_constant<bool, nextIndex == LastIndexV> {}) << 8) |
-           buf[FirstIndexV];
-}
-
-template <unsigned int FirstIndexV, unsigned int LastIndexV>
-YACTFR_INTERNAL_HIDDEN
 std::uint64_t gatherFlIntBytes(const std::uint8_t * const buf) noexcept
 {
-    return gatherFlIntBytes<FirstIndexV, LastIndexV>(buf, std::integral_constant<bool, FirstIndexV == LastIndexV> {});
+    if constexpr (FirstIndexV == LastIndexV) {
+        return buf[FirstIndexV];
+    } else {
+        constexpr auto nextIndex = FirstIndexV < LastIndexV ? FirstIndexV + 1 : FirstIndexV - 1;
+
+        return (gatherFlIntBytes<nextIndex, LastIndexV>(buf) << 8) | buf[FirstIndexV];
+    }
 }
 
 /*
@@ -73,16 +62,14 @@ RetT readFlInt(const std::uint8_t * const buf) noexcept
 
     std::uint64_t res = 0;
 
-    if (BoV == ByteOrder::Little) {
+    if constexpr (BoV == ByteOrder::Little) {
         /*
          * Gather all the bytes except the first one, the last one being
          * the most significant, and then make place for the remaining
          * bits of the first byte (least significant bits).
-         *
-         * `+ (lenBytes == 1)` makes the unused instantiation valid.
          */
-        if (lenBytes > 1) {
-            res = gatherFlIntBytes<1, lenBytes - 1 + (lenBytes == 1)>(buf);
+        if constexpr (lenBytes > 1) {
+            res = gatherFlIntBytes<1, lenBytes - 1>(buf);
             res <<= 8 - AtV;
         }
 
@@ -97,26 +84,26 @@ RetT readFlInt(const std::uint8_t * const buf) noexcept
          * Gather all the bytes except the last one, the first one being
          * the most significant, and then make place for the remaining
          * bits of the last byte (least significant bits).
-         *
-         * `+ (lenBytes == 1)` makes the unused instantiation valid.
          */
-        if (lenBytes > 1) {
-            res = gatherFlIntBytes<lastIndex - 1 + (lenBytes == 1), 0>(buf);
+        if constexpr (lenBytes > 1) {
+            res = gatherFlIntBytes<lastIndex - 1, 0>(buf);
             res <<= 8 - lastByteShift;
         }
 
         res |= buf[lastIndex] >> lastByteShift;
     }
 
-    if (LenV < 64) {
-        // clear garbage most significant bits (`% 64`: valid unused shift)
-        constexpr auto mask = (UINT64_C(1) << (LenV % 64)) - 1;
+    if constexpr (LenV < 64) {
+        // clear garbage most significant bits
+        constexpr auto mask = (UINT64_C(1) << LenV) - 1;
 
         res &= mask;
 
-        if (std::is_signed<RetT>::value && (res >> (LenV - 1))) {
-            // sign-extend negative value
-            res |= ~mask;
+        if constexpr (std::is_signed_v<RetT>) {
+            if (res >> (LenV - 1)) {
+                // sign-extend negative value
+                res |= ~mask;
+            }
         }
     }
 

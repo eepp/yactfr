@@ -1183,7 +1183,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
                     curVal = upper;
                 }
             } else {
-                if (std::is_signed<Val>::value) {
+                if constexpr (std::is_signed_v<Val>) {
                     throwTextParseError("Expecting valid constant signed integer.",
                                         _ss.loc());
                 } else {
@@ -1274,7 +1274,7 @@ void TsdlParser::_validateFlIntTypeMapping(const Size len, const TextLocation& l
         // validate range storage length
         Value minLower, maxUpper;
 
-        if (std::is_signed<Value>::value) {
+        if constexpr (std::is_signed_v<Value>) {
             if (len < 63) {
                 minLower = -(1LL << (len - 1));
                 maxUpper = (1LL << (len - 1)) - 1;

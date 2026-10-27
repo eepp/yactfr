@@ -370,7 +370,7 @@ public:
     template <bool SkipWsV = true, bool SkipCommentsV = true>
     void skipCommentsAndWhitespaces()
     {
-        if (!SkipWsV && !SkipCommentsV) {
+        if constexpr (!SkipWsV && !SkipCommentsV) {
             return;
         }
 
@@ -385,7 +385,7 @@ public:
          */
         constexpr auto useCache = SkipWsV && SkipCommentsV;
 
-        if (useCache) {
+        if constexpr (useCache) {
             if (_at == _skipTo) {
                 // nothing to skip here
                 return;
@@ -404,11 +404,11 @@ public:
         while (!this->isDone()) {
             const auto at = _at;
 
-            if (SkipWsV) {
+            if constexpr (SkipWsV) {
                 this->_skipWhitespaces();
             }
 
-            if (SkipCommentsV) {
+            if constexpr (SkipCommentsV) {
                 this->_skipComment();
             }
 
@@ -418,7 +418,7 @@ public:
             }
         }
 
-        if (useCache) {
+        if constexpr (useCache) {
             _skipFrom = from;
             _skipTo = _at;
             _skipToLineBegin = _lineBegin;
@@ -697,7 +697,7 @@ std::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullV
     static constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
 
     // negate if needed
-    if (std::is_signed<ValT>::value) {
+    if constexpr (std::is_signed_v<ValT>) {
         if (negate) {
             if (ullVal > llMaxAsUll + 1) {
                 return std::nullopt;
@@ -714,7 +714,7 @@ std::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullV
         return static_cast<ValT>(ullVal);
     }
 
-    if (std::is_signed<ValT>::value) {
+    if constexpr (std::is_signed_v<ValT>) {
         if (ullVal == llMaxAsUll + 1) {
             /*
              * Cannot negate `static_cast<ValT>(ullVal)`
@@ -724,10 +724,10 @@ std::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullV
         }
 
         return -static_cast<ValT>(ullVal);
+    } else {
+        // unsigned: wrap around
+        return static_cast<ValT>(0ULL - ullVal);
     }
-
-    // unsigned: wrap around
-    return static_cast<ValT>(0ULL - ullVal);
 }
 
 template <typename ValT>
@@ -849,9 +849,11 @@ std::optional<ValT> StrScanner::tryScanConstInt()
     // check for negation
     const bool negate = (c == '-');
 
-    if (negate && !std::is_signed<ValT>::value) {
-        _at = at;
-        return std::nullopt;
+    if constexpr (!std::is_signed_v<ValT>) {
+        if (negate) {
+            _at = at;
+            return std::nullopt;
+        }
     }
 
     if (!negate) {

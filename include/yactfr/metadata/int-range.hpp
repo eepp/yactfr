@@ -52,7 +52,7 @@ public:
         _lower {lower},
         _upper {upper}
     {
-        if (ValidatePreconditionsV) {
+        if constexpr (ValidatePreconditionsV) {
             assert(lower <= upper);
         }
     }

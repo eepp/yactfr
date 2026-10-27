@@ -16,6 +16,7 @@
 #include <limits>
 #include <sstream>
 #include <optional>
+#include <type_traits>
 
 #include <yactfr/text-parse-error.hpp>
 
@@ -179,19 +180,13 @@ using JsonSIntValInRangeReq = JsonIntValInRangeReq<JsonSIntVal, JsonVal::Kind::S
 template <typename ValT>
 void writeRawVal(std::ostringstream& ss, const ValT& val)
 {
-    ss << val;
-}
-
-template <>
-inline void writeRawVal<std::string>(std::ostringstream& ss, const std::string& val)
-{
-    ss << '`' << val << '`';
-}
-
-template <>
-inline void writeRawVal<bool>(std::ostringstream& ss, const bool& val)
-{
-    writeRawVal(ss, std::string {val ? "true" : "false"});
+    if constexpr (std::is_same_v<ValT, std::string>) {
+        ss << '`' << val << '`';
+    } else if constexpr (std::is_same_v<ValT, bool>) {
+        ss << (val ? "`true`" : "`false`");
+    } else {
+        ss << val;
+    }
 }
 
 /*
