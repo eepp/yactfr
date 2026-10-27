@@ -10,6 +10,7 @@
 #include <cassert>
 #include <set>
 #include <sstream>
+#include <functional>
 
 #include <yactfr/text-loc.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
@@ -739,7 +740,7 @@ void validatePseudoUIntTypeRoles(const PseudoDt * const pseudoDt,
     // find _invalid_ pseudo unsigned integer types
     const auto set = findPseudoUIntTypes(*pseudoDt, [&allowedRoles](auto& pseudoUIntType, auto) {
         // get roles
-        auto& roles = call([&pseudoUIntType]() -> const UnsignedIntegerTypeRoleSet& {
+        auto& roles = std::invoke([&pseudoUIntType]() -> const UnsignedIntegerTypeRoleSet& {
             if (isFlUIntNotDtWrapper(pseudoUIntType)) {
                 return static_cast<const PseudoFlUIntType&>(pseudoUIntType).roles();
             } else {

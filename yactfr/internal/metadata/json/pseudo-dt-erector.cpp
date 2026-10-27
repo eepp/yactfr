@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <sstream>
+#include <functional>
 
 #include <yactfr/metadata/fl-bit-array-type.hpp>
 #include <yactfr/metadata/fl-bit-map-type.hpp>
@@ -200,7 +201,7 @@ PseudoDt::Up pseudoDtFromFlBitArrayType(const JsonObjVal& jsonDt, const std::str
     const auto bo = jsonDt.getRawStrVal(strs::bo) == strs::le ? ByteOrder::Little : ByteOrder::Big;
 
     // bit order
-    const auto bio = call([&jsonDt, &bo] {
+    const auto bio = std::invoke([&jsonDt, &bo] {
         if (const auto jsonBo = jsonDt[strs::bio]) {
             return *jsonBo->asStr() == strs::ftl ? BitOrder::FirstToLast : BitOrder::LastToFirst;
         } else {
@@ -293,10 +294,10 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
 {
     auto& jsonLocVal = jsonDt[propName]->asObj();
 
-    const auto scope = call([&jsonLocVal]() -> std::optional<Scope> {
+    const auto scope = std::invoke([&jsonLocVal]() -> std::optional<Scope> {
         if (const auto jsonOrigVal = jsonLocVal[strs::orig]) {
             // absolute
-            return call([jsonOrigVal] {
+            return std::invoke([jsonOrigVal] {
                 auto& scopeName = *jsonOrigVal->asStr();
 
                 if (scopeName == strs::pktHeader) {
@@ -466,7 +467,7 @@ PseudoDt::Up PseudoDtErector::_pseudoDtFromStructType(const JsonObjVal& jsonDt,
         for (auto& jsonMemberCls : jsonMemberClss->asArray()) {
             auto& jsonMemberClsObj = jsonMemberCls->asObj();
             auto& name = jsonMemberClsObj.getRawStrVal(strs::name);
-            auto pseudoDt = call([this, &name, &jsonMemberCls, &jsonMemberClsObj] {
+            auto pseudoDt = std::invoke([this, &name, &jsonMemberCls, &jsonMemberClsObj] {
                 try {
                     return this->pseudoDtOfJsonObj(jsonMemberClsObj, strs::fc);
                 } catch (TextParseError& exc) {
@@ -515,7 +516,7 @@ PseudoDt::Up PseudoDtErector::_pseudoDtFromOptType(const JsonObjVal& jsonDt, Map
     auto pseudoSelLoc = pseudoDataLocOfDynDt(jsonDt, strs::selFieldLoc);
 
     // data type
-    auto pseudoDt = call([this, &jsonDt] {
+    auto pseudoDt = std::invoke([this, &jsonDt] {
         try {
             return this->pseudoDtOfJsonObj(jsonDt, strs::fc);
         } catch (TextParseError& exc) {
@@ -542,7 +543,7 @@ PseudoDt::Up PseudoDtErector::_pseudoDtFromVarType(const JsonObjVal& jsonDt, Map
 
     for (auto& jsonOpt : jsonDt[strs::opts]->asArray()) {
         auto& jsonOptObj = jsonOpt->asObj();
-        auto pseudoDt = call([this, &pseudoOpts, &jsonOptObj] {
+        auto pseudoDt = std::invoke([this, &pseudoOpts, &jsonOptObj] {
             try {
                 return this->pseudoDtOfJsonObj(jsonOptObj, strs::fc);
             } catch (TextParseError& exc) {

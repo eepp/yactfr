@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <functional>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -1300,7 +1301,7 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
         }
     }
 
-    auto pseudoDt = call([&]() -> PseudoDt::Up {
+    auto pseudoDt = std::invoke([&]() -> PseudoDt::Up {
         if (isSigned) {
             if (mappedClkTypeId) {
                 throwTextParseError("Illegal `map` attribute for a fixed-length signed integer type.",
@@ -2065,7 +2066,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     }
 
     // create origin
-    auto origin = call([&isAbs, this]() -> std::optional<ClockOrigin> {
+    auto origin = std::invoke([&isAbs, this]() -> std::optional<ClockOrigin> {
         if (isAbs) {
             /*
              * CTF 1.8 says:
@@ -2639,7 +2640,7 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         ssRej.accept();
         return pseudoDt;
     } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, call([&firstName, &secondName] {
+        appendMsgToTextParseError(exc, std::invoke([&firstName, &secondName] {
             auto line = std::string {"In the `"} + firstName;
 
             if (secondName) {

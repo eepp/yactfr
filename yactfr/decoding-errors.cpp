@@ -6,10 +6,9 @@
  */
 
 #include <sstream>
+#include <functional>
 
 #include <yactfr/decoding-errors.hpp>
-
-#include "internal/utils.hpp"
 
 namespace yactfr {
 
@@ -23,7 +22,7 @@ DecodingError::DecodingError(std::string reason, const Index offset) :
 UnknownDataStreamTypeDecodingError::UnknownDataStreamTypeDecodingError(const Index offset,
                                                                        const TypeId id) :
     DecodingError {
-        internal::call([&id] {
+        std::invoke([&id] {
             std::ostringstream ss;
 
             ss << "Data stream type ID " << id << " doesn't select an existing data stream type.";
@@ -38,7 +37,7 @@ UnknownDataStreamTypeDecodingError::UnknownDataStreamTypeDecodingError(const Ind
 UnknownEventRecordTypeDecodingError::UnknownEventRecordTypeDecodingError(const Index offset,
                                                                          const TypeId id) :
     DecodingError {
-        internal::call([id] {
+        std::invoke([id] {
             std::ostringstream ss;
 
             ss << "Event record type ID " << id << " doesn't select an existing event record type.";
@@ -53,7 +52,7 @@ UnknownEventRecordTypeDecodingError::UnknownEventRecordTypeDecodingError(const I
 ExpectedPacketTotalLengthNotMultipleOf8DecodingError::ExpectedPacketTotalLengthNotMultipleOf8DecodingError(const Index offset,
                                                                                                            const Size expectedLen) :
     DecodingError {
-        internal::call([expectedLen] {
+        std::invoke([expectedLen] {
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedLen << ") is not a multiple of 8.";
@@ -69,7 +68,7 @@ ExpectedPacketTotalLengthLessThanExpectedPacketContentLengthDecodingError::Expec
                                                                                                                                                      const Size expectedTotalLen,
                                                                                                                                                      const Size expectedContentLen) :
     DecodingError {
-        internal::call([expectedTotalLen, expectedContentLen] {
+        std::invoke([expectedTotalLen, expectedContentLen] {
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedTotalLen <<
@@ -88,7 +87,7 @@ ExpectedPacketTotalLengthLessThanOffsetInPacketDecodingError::ExpectedPacketTota
                                                                                                                            const Size expectedLen,
                                                                                                                            const Index offsetInPkt) :
     DecodingError {
-        internal::call([offsetInPkt, expectedLen] {
+        std::invoke([offsetInPkt, expectedLen] {
             std::ostringstream ss;
 
             ss << "Expected packet total length (" << expectedLen <<
@@ -107,7 +106,7 @@ ExpectedPacketContentLengthLessThanOffsetInPacketDecodingError::ExpectedPacketCo
                                                                                                                                const Size expectedLen,
                                                                                                                                const Index offsetInPkt) :
     DecodingError {
-        internal::call([offsetInPkt, expectedLen] {
+        std::invoke([offsetInPkt, expectedLen] {
             std::ostringstream ss;
 
             ss << "Expected packet content length (" << expectedLen <<
@@ -126,7 +125,7 @@ CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketCo
                                                                                                    const Size reqLen,
                                                                                                    const Size remLen) :
     DecodingError {
-        internal::call([reqLen, remLen] {
+        std::invoke([reqLen, remLen] {
             std::ostringstream ss;
 
             ss << "Cannot read " << reqLen << " bit" << (reqLen == 1 ? "" : "s") <<
@@ -145,7 +144,7 @@ CannotDecodeDataBeyondPacketContentDecodingError::CannotDecodeDataBeyondPacketCo
 PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index offset,
                                                                  const Size reqLen) :
     DecodingError {
-        internal::call([reqLen] {
+        std::invoke([reqLen] {
             std::ostringstream ss;
 
             ss << "Cannot read " << reqLen <<
@@ -172,7 +171,7 @@ ByteOrderChangeWithinByteDecodingError::ByteOrderChangeWithinByteDecodingError(c
                                                                                const ByteOrder previousBo,
                                                                                const ByteOrder nextBo) :
     DecodingError {
-        internal::call([previousBo, nextBo] {
+        std::invoke([previousBo, nextBo] {
             std::ostringstream ss;
 
             ss << "Changing byte order within a byte from " <<

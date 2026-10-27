@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <array>
+#include <functional>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/elem.hpp>
@@ -1060,7 +1061,7 @@ private:
     void _appendVlIntByte(const std::uint8_t byte)
     {
         const auto byteVal = byte & 0b0111'1111;
-        const auto newVlIntLenBits = call([this, byte, byteVal]() -> Size {
+        const auto newVlIntLenBits = std::invoke([this, byte, byteVal]() -> Size {
             const auto len = _pos.curVlIntLenBits + 7;
 
             // validate future variable-length integer length
@@ -1284,7 +1285,7 @@ private:
     YACTFR_VM_NOINLINE void _alignHeadSlow(const Size align)
     {
         {
-            const auto bitsToSkip = call([this, align] {
+            const auto bitsToSkip = std::invoke([this, align] {
                 const auto newHeadOffsetBits = (_pos.headOffsetInCurPktBits + align - 1) & -align;
 
                 return newHeadOffsetBits - _pos.headOffsetInCurPktBits;
@@ -1650,7 +1651,7 @@ private:
 
         this->_execReadFlBitArrayPreamble(instr, LenBitsV);
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
-        return call([this] {
+        return std::invoke([this] {
             auto ret = FuncV(this->_bufAtHead());
 
             if (RevV) {
@@ -1721,7 +1722,7 @@ private:
 
         _pos.lastFlBitArrayBo = readFlBitArrayInstr.bo();
 
-        return call([&] {
+        return std::invoke([&] {
             const auto index = (readFlBitArrayInstr.len() - 1) * 8 + (_pos.headOffsetInCurPktBits & 7);
             auto ret = FlIntReadFuncs<RetT, BoV>::funcs[index](this->_bufAtHead());
 

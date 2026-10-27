@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <string>
 #include <cassert>
+#include <functional>
 
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
@@ -229,7 +230,7 @@ private:
 
     void _setKeyDts(const DataLocation& loc, DataTypeSet& dts) const
     {
-        auto& dt = call([this, &loc]() -> const DataType& {
+        auto& dt = std::invoke([this, &loc]() -> const DataType& {
             switch (loc.scope()) {
             case Scope::PacketHeader:
                 return *_traceType->pktHeaderType();

@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <optional>
+#include <functional>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -801,7 +802,7 @@ ConstPseudoDtSet DtFromPseudoRootDtConverter::_findPseudoDts(const DataLocation&
         throwTextParseError(ss.str(), pseudoSrcDt.loc());
     }
 
-    const auto pseudoDt = call([&loc, this] {
+    const auto pseudoDt = std::invoke([&loc, this] {
         switch (loc.scope()) {
         case Scope::PacketHeader:
             return _pseudoTraceType->pseudoPktHeaderType();
