@@ -23,21 +23,18 @@ FromMetadataTextReturn fromMetadataText(const ArgTs... args)
     return {parser.releaseTraceType(), parser.metadataStreamUuid()};
 }
 
-FromMetadataTextReturn fromMetadataText(const char * const begin,
-                                                            const char * const end)
+FromMetadataTextReturn fromMetadataText(const std::string_view text)
 {
-    if (begin == end) {
+    if (text.empty()) {
         internal::throwTextParseError("Empty metadata text.", TextLocation {});
     }
 
-    if (*begin == 30) {
+    if (text.front() == 30) {
         // starts with the RS byte: expect CTF 2
-        return fromMetadataText<internal::Ctf2JsonSeqParser>(begin, end);
+        return fromMetadataText<internal::Ctf2JsonSeqParser>(text);
     } else {
         // fall back to CTF 1.8
-        return fromMetadataText<internal::TsdlParser>(std::string_view {
-            begin, static_cast<std::string_view::size_type>(end - begin)
-        });
+        return fromMetadataText<internal::TsdlParser>(text);
     }
 }
 

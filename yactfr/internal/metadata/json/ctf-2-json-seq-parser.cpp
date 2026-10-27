@@ -28,9 +28,8 @@ namespace {
 
 } // namespace
 
-Ctf2JsonSeqParser::Ctf2JsonSeqParser(const char * const begin, const char * const end) :
-    _begin {begin},
-    _end {end},
+Ctf2JsonSeqParser::Ctf2JsonSeqParser(const std::string_view text) :
+    _text {text},
     _defClkOffsetVal {createDefClkOffsetJsonObjVal()}
 {
     this->_parseMetadata();
@@ -38,17 +37,17 @@ Ctf2JsonSeqParser::Ctf2JsonSeqParser(const char * const begin, const char * cons
 
 void Ctf2JsonSeqParser::_parseMetadata()
 {
-    auto fragBegin = _begin;
-    const char *fragEnd;
+    // record separator (RS) character
+    constexpr auto rs = '\x1e';
+
+    std::string_view::size_type fragBegin = 0;
     Index fragIndex = 0;
 
     while (true) {
-        // find the beginning pointer of the JSON fragment
-        while (fragBegin != _end && *fragBegin == 30) {
-            ++fragBegin;
-        }
+        // find the beginning offset of the JSON fragment
+        fragBegin = _text.find_first_not_of(rs, fragBegin);
 
-        if (fragBegin == _end) {
+        if (fragBegin == std::string_view::npos) {
             // end of stream
             if (fragIndex == 0) {
                 throwTextParseError("Missing preamble fragment.", TextLocation {});
@@ -64,20 +63,15 @@ void Ctf2JsonSeqParser::_parseMetadata()
             return;
         }
 
-        // find the end pointer of the JSON fragment
-        fragEnd = fragBegin;
+        // find the end offset of the JSON fragment
+        auto fragEnd = _text.find(rs, fragBegin);
 
-        while (fragEnd != _end && *fragEnd != 30) {
-            ++fragEnd;
-        }
-
-        if (fragBegin == fragEnd) {
-            throwTextParseError("Expecting a fragment.",
-                                TextLocation {static_cast<Index>(fragBegin - _begin), 0, 0});
+        if (fragEnd == std::string_view::npos) {
+            fragEnd = _text.size();
         }
 
         // parse fragment
-        this->_parseFrag(fragBegin, fragEnd, fragIndex);
+        this->_parseFrag(_text.substr(fragBegin, fragEnd - fragBegin), fragIndex);
 
         // go to next fragment
         fragBegin = fragEnd;
@@ -85,11 +79,9 @@ void Ctf2JsonSeqParser::_parseMetadata()
     }
 }
 
-void Ctf2JsonSeqParser::_parseFrag(const char * const begin, const char * const end,
-    const Index index)
+void Ctf2JsonSeqParser::_parseFrag(const std::string_view frag, const Index index)
 {
-    this->_handleFrag(*parseJson({begin, static_cast<std::string_view::size_type>(end - begin)},
-                                 begin - _begin), index);
+    this->_handleFrag(*parseJson(frag, frag.data() - _text.data()), index);
 }
 
 namespace {
@@ -293,7 +285,7 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
 namespace {
 
 std::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const JsonObjVal& jsonObjVal,
-                                                                         const std::string& propName)
+                                                                         const std::string_view propName)
 {
     if (const auto jsonVal = jsonObjVal[propName]) {
         return std::pair {*jsonVal->asStr(), jsonVal->loc()};
@@ -409,7 +401,7 @@ void Ctf2JsonSeqParser::_ensureExistingPseudoTraceType()
 }
 
 PseudoDt::Up Ctf2JsonSeqParser::_pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal,
-                                                        const std::string& propName)
+                                                        const std::string_view propName)
 {
     if (auto pseudoDt = _pseudoDtErector.pseudoDtOfJsonObj(jsonObjVal, propName)) {
         if (pseudoDt->kind() != PseudoDt::Kind::Struct) {

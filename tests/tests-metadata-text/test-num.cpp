@@ -10,6 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 #include <yactfr/yactfr.hpp>
 
@@ -17,13 +18,13 @@ namespace {
 
 /*
  * Returns the message of the text parse error which
- * yactfr::fromMetadataText() throws when parsing [`begin`, `end`[, or
- * an empty string if it doesn't throw.
+ * yactfr::fromMetadataText() throws when parsing `text`, or an empty
+ * string if it doesn't throw.
  */
-std::string parseErrorMsg(const char * const begin, const char * const end)
+std::string parseErrorMsg(const std::string_view text)
 {
     try {
-        static_cast<void>(yactfr::fromMetadataText(begin, end));
+        static_cast<void>(yactfr::fromMetadataText(text));
     } catch (const yactfr::TextParseError& exc) {
         return exc.what();
     }
@@ -40,14 +41,14 @@ std::string parseErrorMsg(const char * const begin, const char * const end)
 bool checkRange(const char * const name, const std::string& buf, const std::size_t len)
 {
     const std::string text {buf, 0, len};
-    const auto expectedMsg = parseErrorMsg(text.data(), text.data() + text.size());
+    const auto expectedMsg = parseErrorMsg(text);
 
     if (expectedMsg.empty()) {
         std::cerr << name << ": no parse error with the NUL-terminated text\n";
         return false;
     }
 
-    if (const auto msg = parseErrorMsg(buf.data(), buf.data() + len); msg != expectedMsg) {
+    if (const auto msg = parseErrorMsg({buf.data(), len}); msg != expectedMsg) {
         std::cerr << name << ": unexpected parse error: `" << msg << "` (expecting `" <<
                      expectedMsg << "`)\n";
         return false;

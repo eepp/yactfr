@@ -223,10 +223,9 @@ While you can build a trace type object manually, the most interesting
 use case is probably to get one out of a standard TSDL document
 (CTF{nbsp}1.8) or JSON text sequence document (CTF{nbsp}2).
 
-The `fromMetadataText()` functions do exactly that. Those functions
-accept either two character pointers (beginning and end) or an
-`std::string` object to synthesize a pair of trace type object and
-metadata stream UUID out of the parsed text.
+The `fromMetadataText()` function does exactly that. This function
+accepts an `std::string_view` object to synthesize a pair of trace type
+object and metadata stream UUID out of the parsed text.
 
 `fromMetadataText()` requires a _textual_ (non-packetized) version of
 the document (for CTF{nbsp}1.8). If the TSDL content is packetized, you

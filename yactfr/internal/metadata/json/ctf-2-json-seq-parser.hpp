@@ -9,6 +9,7 @@
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
 
 #include <optional>
+#include <string_view>
 #include <boost/uuid/uuid.hpp>
 
 #include <yactfr/aliases.hpp>
@@ -35,16 +36,15 @@ class Ctf2JsonSeqParser final
 {
 public:
     /*
-     * Builds a JSON text sequence metadata stream parser, wrapping a
-     * string between `begin` (included) and `end` (excluded), and
-     * parses it.
+     * Builds a JSON text sequence metadata stream parser, wrapping
+     * the string `text`, and parses it.
      *
      * You can release the resulting trace type from this parser
      * with releaseTraceType().
      *
      * Throws `TextParseError` when there was a parsing error.
      */
-    explicit Ctf2JsonSeqParser(const char *begin, const char *end);
+    explicit Ctf2JsonSeqParser(std::string_view text);
 
     /*
      * Releases and returns the parsed trace type.
@@ -71,11 +71,11 @@ private:
     void _parseMetadata();
 
     /*
-     * Parses the JSON fragment between `begin` (included) and `end`
-     * (excluded), updating the internal state on success, or throwing
-     * `TextParseError` on failure.
+     * Parses the JSON fragment `frag`, a substring of `_text`, updating
+     * the internal state on success, or throwing `TextParseError`
+     * on failure.
      */
-    void _parseFrag(const char *begin, const char *end, Index fragIndex);
+    void _parseFrag(std::string_view frag, Index fragIndex);
 
     /*
      * Handles the JSON fragment `jsonFrag`, updating the internal state
@@ -127,7 +127,7 @@ private:
      * Calls `_pseudoDtErector.pseudoDtOfJsonObj()`, also validating
      * that the returned value is a pseudo structure type.
      */
-    [[ nodiscard ]] PseudoDt::Up _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
+    [[ nodiscard ]] PseudoDt::Up _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, std::string_view propName);
 
     /*
      * Returns the default clock type for the JSON data stream type
@@ -138,9 +138,8 @@ private:
     const ClockType *_defClkTypeOfDstFrag(const JsonObjVal& jsonFrag);
 
 private:
-    // beginning and end metadata string pointers
-    const char *_begin;
-    const char *_end;
+    // metadata string
+    std::string_view _text;
 
     // fragment requirement
     JsonAnyFragValReq _fragValReq;

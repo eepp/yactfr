@@ -14,6 +14,8 @@
 #include <unordered_set>
 #include <optional>
 #include <variant>
+#include <string>
+#include <string_view>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/aliases.hpp>
@@ -674,7 +676,7 @@ public:
     /*
      * Returns the member class named `name`, or `nullptr` if not found.
      */
-    const PseudoNamedDt *operator[](const std::string& name) const noexcept;
+    const PseudoNamedDt *operator[](std::string_view name) const noexcept;
 
     unsigned int minAlign() const noexcept
     {
@@ -1253,8 +1255,8 @@ public:
         return _clkTypes;
     }
 
-    bool hasClkType(const std::string& id) const noexcept;
-    [[ nodiscard ]] const ClockType *findClkType(const std::string& id) const noexcept;
+    bool hasClkType(std::string_view id) const noexcept;
+    [[ nodiscard ]] const ClockType *findClkType(std::string_view id) const noexcept;
 
     const PseudoDsts& pseudoDsts() const noexcept
     {

@@ -364,10 +364,10 @@ void PseudoStructType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const noexcept
+const PseudoNamedDt *PseudoStructType::operator[](const std::string_view name) const noexcept
 {
     const auto it = std::find_if(_pseudoMemberTypes.begin(), _pseudoMemberTypes.end(),
-                                 [&name](const auto& pseudoMember) {
+                                 [name](const auto& pseudoMember) {
         return *pseudoMember->name() == name;
     });
 
@@ -998,15 +998,15 @@ PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned
 {
 }
 
-bool PseudoTraceType::hasClkType(const std::string& id) const noexcept
+bool PseudoTraceType::hasClkType(const std::string_view id) const noexcept
 {
     return this->findClkType(id);
 }
 
-const ClockType *PseudoTraceType::findClkType(const std::string& id) const noexcept
+const ClockType *PseudoTraceType::findClkType(const std::string_view id) const noexcept
 {
     const auto it = std::find_if(_clkTypes.begin(), _clkTypes.end(),
-                                 [&id](auto& clkType) {
+                                 [id](auto& clkType) {
         assert(clkType->internalId());
         return *clkType->internalId() == id;
     });

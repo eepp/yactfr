@@ -9,6 +9,8 @@
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
 
 #include <optional>
+#include <string>
+#include <string_view>
 #include <boost/uuid/uuid.hpp>
 
 #include <yactfr/metadata/item.hpp>
@@ -42,7 +44,7 @@ template <typename ValT>
  * `propName` within `jsonObjVal`.
  */
 inline std::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
-                                                const std::string& propName)
+                                                const std::string_view propName)
 {
     if (const auto jsonVal = jsonObjVal[propName]) {
         return *jsonVal->asStr();
@@ -56,7 +58,7 @@ inline std::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
  * `propName` within `jsonObjVal`.
  */
 inline std::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjVal,
-                                                        const std::string& propName)
+                                                        const std::string_view propName)
 {
     if (const auto jsonVal = jsonObjVal[propName]) {
         return *jsonVal->asUInt();

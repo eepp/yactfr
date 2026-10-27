@@ -431,8 +431,9 @@ private:
      * `scopeDtStackFrameKind` is the kind of stack frame to push for
      * this scope data type.
      *
-     * `firstName` and optional `secondName` are the one or two words
-     * naming the scope, e.g., `event` and `header`, or just `context`.
+     * `firstName` and optional `secondName` (empty if none) are the one
+     * or two words naming the scope, e.g., `event` and `header`, or
+     * just `context`.
      *
      * If `expect` is true, then the method throws `TextParseError` if
      * it cannot parse the scope data type successfully. Otherwise, the
@@ -453,7 +454,7 @@ private:
      *     event.header := struct my_event_header;
      */
     [[ nodiscard ]] PseudoDt::Up _tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
-                                  const char *firstName, const char *secondName = nullptr,
+                                  std::string_view firstName, std::string_view secondName = {},
                                   bool expect = true);
 
     /*

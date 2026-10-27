@@ -2508,8 +2508,8 @@ bool TsdlParser::_tryParseErtBlock()
 }
 
 PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
-                                                  const char * const firstName,
-                                                  const char * const secondName, const bool expect)
+                                                  const std::string_view firstName,
+                                                  const std::string_view secondName, const bool expect)
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -2523,7 +2523,7 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
     }
 
     try {
-        if (secondName) {
+        if (!secondName.empty()) {
             this->_expectToken(".");
 
             if (!_ss.tryScanToken(secondName)) {
@@ -2581,9 +2581,11 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         return pseudoDt;
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, std::invoke([&firstName, &secondName] {
-            auto line = std::string {"In the `"} + firstName;
+            std::string line {"In the `"};
 
-            if (secondName) {
+            line += firstName;
+
+            if (!secondName.empty()) {
                 line += ".";
                 line += secondName;
             }

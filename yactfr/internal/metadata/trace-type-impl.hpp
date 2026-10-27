@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <string_view>
 
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/aliases.hpp>
@@ -110,12 +111,12 @@ public:
     }
 
     template <typename ObjT>
-    static void setDispName(const ObjT& obj, const std::string& name, const bool removeUnderscore)
+    static void setDispName(const ObjT& obj, const std::string_view name, const bool removeUnderscore)
     {
-        if (removeUnderscore && name.c_str()[0] == '_') {
-            obj._dispName = name.substr(1);
+        if (removeUnderscore && !name.empty() && name.front() == '_') {
+            obj._dispName = std::string {name.substr(1)};
         } else {
-            obj._dispName = name;
+            obj._dispName = std::string {name};
         }
     }
 

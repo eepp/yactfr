@@ -65,6 +65,8 @@
 #include <utility>
 #include <functional>
 #include <optional>
+#include <string>
+#include <string_view>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
@@ -1591,7 +1593,7 @@ private:
     Proc _proc;
 };
 
-inline std::string _strProp(const std::string& prop)
+inline std::string _strProp(const std::string_view prop)
 {
     std::string rProp;
 

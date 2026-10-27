@@ -8,21 +8,23 @@
 #ifndef YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
 #define YACTFR_INTERNAL_METADATA_PSEUDO_DT_UTILS_HPP
 
+#include <string_view>
+
 #include "pseudo-dt-finder.hpp"
 
 namespace yactfr::internal {
 
 template <typename PseudoDtT, typename PredFuncT>
-[[ nodiscard ]] auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName, PredFuncT&& predFunc)
+[[ nodiscard ]] auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string_view memberTypeName, PredFuncT&& predFunc)
 {
-    return findPseudoDts(basePseudoDt, [&memberTypeName, &predFunc](auto& pseudoDt,
-                                                                    const auto name) {
+    return findPseudoDts(basePseudoDt, [memberTypeName, &predFunc](auto& pseudoDt,
+                                                                   const auto name) {
         return name && memberTypeName == *name && predFunc(pseudoDt);
     });
 }
 
 template <typename PseudoDtT>
-[[ nodiscard ]] auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName)
+[[ nodiscard ]] auto findPseudoDtsByName(PseudoDtT& basePseudoDt, const std::string_view memberTypeName)
 {
     return findPseudoDtsByName(basePseudoDt, memberTypeName, [](auto&) {
         return true;
@@ -38,9 +40,9 @@ template <typename PseudoDtT, typename PredFuncT>
 }
 
 template <typename PseudoDtT>
-[[ nodiscard ]] auto findPseudoUIntTypesByName(PseudoDtT& basePseudoDt, const std::string& memberTypeName)
+[[ nodiscard ]] auto findPseudoUIntTypesByName(PseudoDtT& basePseudoDt, const std::string_view memberTypeName)
 {
-    return findPseudoUIntTypes(basePseudoDt, [&memberTypeName](auto&, const auto name) {
+    return findPseudoUIntTypes(basePseudoDt, [memberTypeName](auto&, const auto name) {
         return name && memberTypeName == *name;
     });
 }

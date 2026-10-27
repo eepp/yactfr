@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <unordered_map>
 #include <memory>
@@ -171,7 +172,7 @@ public:
     @returns
         Member type named \p name, or \c nullptr if not found.
     */
-    const StructureMemberType *operator[](const std::string& name) const noexcept;
+    const StructureMemberType *operator[](std::string_view name) const noexcept;
 
 private:
     DataType::Up _clone() const override;

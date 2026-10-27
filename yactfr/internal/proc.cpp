@@ -6,13 +6,14 @@
  */
 
 #include <string>
+#include <string_view>
 
 #include "proc.hpp"
 
 namespace yactfr::internal {
 namespace {
 
-std::string _strName(const std::string& name)
+std::string _strName(const std::string_view name)
 {
     std::string rName;
 
@@ -22,7 +23,7 @@ std::string _strName(const std::string& name)
     return rName;
 }
 
-std::string _strEndName(const std::string& name)
+std::string _strEndName(const std::string_view name)
 {
     std::string rName;
 
@@ -32,7 +33,7 @@ std::string _strEndName(const std::string& name)
     return rName;
 }
 
-std::string _strSpecName(const std::string& name)
+std::string _strSpecName(const std::string_view name)
 {
     std::string rName;
 
@@ -42,7 +43,7 @@ std::string _strSpecName(const std::string& name)
     return rName;
 }
 
-std::string _strTopName(const std::string& name)
+std::string _strTopName(const std::string_view name)
 {
     std::string rName;
 
@@ -52,7 +53,7 @@ std::string _strTopName(const std::string& name)
     return rName;
 }
 
-std::string _strScopeName(const std::string& name)
+std::string _strScopeName(const std::string_view name)
 {
     std::string rName;
 
@@ -129,7 +130,7 @@ bool isEndProc(const Instr& instr) noexcept
 
 std::string Instr::toStr(const Size indent) const
 {
-    const std::string kindStr {wise_enum::to_string(_theKind)};
+    const auto kindStr = wise_enum::to_string(_theKind);
     std::ostringstream ss;
 
     ss << internal::indent(indent);

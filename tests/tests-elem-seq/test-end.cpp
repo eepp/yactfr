@@ -6,7 +6,6 @@
  */
 
 #include <limits>
-#include <cstring>
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -18,8 +17,7 @@
 
 int main()
 {
-    const auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadata,
-                                                              metadata + std::strlen(metadata));
+    const auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadata);
     MemDataSrcFactory factory {stream, sizeof stream};
     yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
     std::ostringstream ss;

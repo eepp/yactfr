@@ -11,6 +11,7 @@
 #include <cassert>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -179,12 +180,12 @@ private:
      * mentioning `expectedDescr` if it's not a `ValT` value.
      */
     template <typename ValT>
-    const ValT& _expectVal(const char *expectedDescr) const;
+    const ValT& _expectVal(std::string_view expectedDescr) const;
 
     /*
      * Throws that this attribute expects `expectedDescr`.
      */
-    [[ noreturn ]] void _throwExpecting(const char *expectedDescr) const;
+    [[ noreturn ]] void _throwExpecting(std::string_view expectedDescr) const;
 };
 
 } // namespace yactfr::internal

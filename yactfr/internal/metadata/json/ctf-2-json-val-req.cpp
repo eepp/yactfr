@@ -8,6 +8,7 @@
 #include <cassert>
 #include <unordered_set>
 #include <string>
+#include <string_view>
 #include <limits>
 
 #include <yactfr/text-parse-error.hpp>
@@ -625,8 +626,8 @@ class JsonIntTypeMappingsFlagsValReq final :
     public JsonObjValReq
 {
 public:
-    explicit JsonIntTypeMappingsFlagsValReq(const char * const propName,
-                                            const char * const objName,
+    explicit JsonIntTypeMappingsFlagsValReq(const std::string_view propName,
+                                            const std::string_view objName,
                                             const bool allowEmpty = true) :
         JsonObjValReq {{}, true},
         _propName {propName},
@@ -635,7 +636,7 @@ public:
     {
     }
 
-    [[ nodiscard ]] static Sp shared(const char * const propName, const char * const objName,
+    [[ nodiscard ]] static Sp shared(const std::string_view propName, const std::string_view objName,
                      const bool allowEmpty = true)
     {
         return std::make_shared<JsonIntTypeMappingsFlagsValReq>(propName, objName, allowEmpty);
@@ -676,8 +677,8 @@ private:
 
 private:
     JsonIntRangeSetValReqBase<JsonIntValReqT> _rangeSetReq;
-    const char *_propName;
-    const char *_objName;
+    std::string_view _propName;
+    std::string_view _objName;
     bool _allowEmpty;
 };
 
@@ -1416,8 +1417,8 @@ JsonObjValReq::PropReqsEntry minAlignPropReqEntry()
     return {strs::minAlign, JsonUIntValIsAlignReq::shared()};
 }
 
-void validateUniqueEntryNames(const JsonVal& jsonVal, const char * const propName,
-                              const char * const what)
+void validateUniqueEntryNames(const JsonVal& jsonVal, const std::string_view propName,
+                              const std::string_view what)
 {
     if (const auto jsonEntries = jsonVal.asObj()[propName]) {
         std::unordered_set<std::string> names;

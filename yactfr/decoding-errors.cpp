@@ -7,6 +7,7 @@
 
 #include <sstream>
 #include <functional>
+#include <string_view>
 
 #include <yactfr/decoding-errors.hpp>
 
@@ -160,7 +161,7 @@ PrematureEndOfDataDecodingError::PrematureEndOfDataDecodingError(const Index off
 
 namespace {
 
-const char *byteOrderString(const ByteOrder bo) noexcept
+std::string_view byteOrderString(const ByteOrder bo) noexcept
 {
     return bo == ByteOrder::Big ? "big" : "little";
 }

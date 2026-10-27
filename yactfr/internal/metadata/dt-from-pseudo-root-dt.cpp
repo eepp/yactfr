@@ -14,6 +14,7 @@
 #include <unordered_set>
 #include <optional>
 #include <functional>
+#include <string_view>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -191,7 +192,7 @@ private:
      * or `optional`).
      */
     template <typename PseudoDtT>
-    _tPseudoDtSels _pseudoDtIntSels(const PseudoDtT& pseudoDt, const std::string& dtName) const;
+    _tPseudoDtSels _pseudoDtIntSels(const PseudoDtT& pseudoDt, std::string_view dtName) const;
 
     /*
      * Converts the pseudo variant type `pseudoVarType` to a yactfr
@@ -870,7 +871,7 @@ DtFromPseudoRootDtConverter::_tPseudoDtSels DtFromPseudoRootDtConverter::_pseudo
 
 template <typename PseudoDtT>
 DtFromPseudoRootDtConverter::_tPseudoDtSels DtFromPseudoRootDtConverter::_pseudoDtIntSels(const PseudoDtT& pseudoDt,
-                                                                                         const std::string& dtName) const
+                                                                                         const std::string_view dtName) const
 {
     auto pseudoDtSels = this->_pseudoDtSels(pseudoDt);
 

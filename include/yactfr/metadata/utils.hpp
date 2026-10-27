@@ -8,7 +8,7 @@
 #ifndef YACTFR_METADATA_UTILS_HPP
 #define YACTFR_METADATA_UTILS_HPP
 
-#include <string>
+#include <string_view>
 
 namespace yactfr {
 
@@ -25,7 +25,7 @@ namespace yactfr {
 @returns
     \c true if \p nameSpace is a standard CTF&nbsp;2 namespace.
 */
-inline bool isStandardNamespace(const std::string& nameSpace) noexcept
+inline bool isStandardNamespace(const std::string_view nameSpace) noexcept
 {
     return nameSpace == "std" || nameSpace == "diamon.org,2012";
 }

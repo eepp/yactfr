@@ -21,7 +21,7 @@
 
 namespace yactfr::internal {
 
-void TsdlAttr::_throwExpecting(const char * const expectedDescr) const
+void TsdlAttr::_throwExpecting(const std::string_view expectedDescr) const
 {
     std::ostringstream ss;
 
@@ -30,7 +30,7 @@ void TsdlAttr::_throwExpecting(const char * const expectedDescr) const
 }
 
 template <typename ValT>
-const ValT& TsdlAttr::_expectVal(const char * const expectedDescr) const
+const ValT& TsdlAttr::_expectVal(const std::string_view expectedDescr) const
 {
     if (const auto typedVal = std::get_if<ValT>(&val)) {
         return *typedVal;

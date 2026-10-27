@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <string_view>
 #include <cassert>
 #include <functional>
 
@@ -373,7 +374,7 @@ public:
 
 private:
     template <typename ObjT>
-    void _setDispName(const ObjT& obj, const std::string& name) const noexcept
+    void _setDispName(const ObjT& obj, const std::string_view name) const noexcept
     {
         TraceTypeImpl::setDispName(obj, name, _removeUnderscore);
     }

@@ -86,10 +86,10 @@ bool StructureType::_isEqual(const DataType& other) const noexcept
     return true;
 }
 
-const StructureMemberType *StructureType::operator[](const std::string& name) const noexcept
+const StructureMemberType *StructureType::operator[](const std::string_view name) const noexcept
 {
     const auto it = std::find_if(_memberTypes.begin(), _memberTypes.end(),
-                                 [&name](const auto& member) {
+                                 [name](const auto& member) {
         return member->name() == name;
     });
 

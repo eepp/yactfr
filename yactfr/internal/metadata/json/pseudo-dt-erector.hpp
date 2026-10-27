@@ -9,6 +9,7 @@
 #define YACTFR_INTERNAL_METADATA_JSON_PSEUDO_DT_ERECTOR_HPP
 
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 #include "json-val.hpp"
@@ -32,7 +33,7 @@ public:
      * The value of the property named `propName` may be a JSON object
      * (full data type) or a JSON string (data type alias name).
      */
-    [[ nodiscard ]] PseudoDt::Up pseudoDtOfJsonObj(const JsonObjVal& jsonDt, const std::string& propName);
+    [[ nodiscard ]] PseudoDt::Up pseudoDtOfJsonObj(const JsonObjVal& jsonDt, std::string_view propName);
 
     /*
      * Adds the data type alias `pseudoDt` named `name`.
@@ -51,7 +52,7 @@ private:
     [[ nodiscard ]] PseudoDt::Up _pseudoDtFromSlArrayType(const JsonObjVal& jsonDt, MapItem::Up attrs,
                                           unsigned int minAlign);
 
-    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromArrayType(const JsonObjVal& jsonDt, const std::string& type,
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromArrayType(const JsonObjVal& jsonDt, std::string_view type,
                                         MapItem::Up attrs);
 
     [[ nodiscard ]] PseudoDt::Up _pseudoDtFromStructType(const JsonObjVal& jsonDt, MapItem::Up attrs);

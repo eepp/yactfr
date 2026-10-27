@@ -6,7 +6,6 @@
  */
 
 #include <limits>
-#include <cstring>
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -82,8 +81,7 @@ bool testOpsGt(const yactfr::ElementSequenceIteratorPosition& pos1,
 
 int main()
 {
-    const auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadata,
-                                                              metadata + std::strlen(metadata));
+    const auto traceTypeMsUuidPair = yactfr::fromMetadataText(metadata);
     MemDataSrcFactory factory {stream, sizeof stream};
     yactfr::ElementSequence seq {*traceTypeMsUuidPair.first, factory};
     auto it1 = seq.begin();

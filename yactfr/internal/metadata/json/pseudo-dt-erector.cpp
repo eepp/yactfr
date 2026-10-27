@@ -65,7 +65,8 @@ IntegerRangeSet<ValT, ValidatePrecondsV> intRangesFromArray(const JsonArrayVal& 
 }
 
 template <typename MappingsOrFlagsT>
-MappingsOrFlagsT intTypeMappingsOrFlagsOfDt(const JsonObjVal& jsonDt, const char * const propName)
+MappingsOrFlagsT intTypeMappingsOrFlagsOfDt(const JsonObjVal& jsonDt,
+                                            const std::string_view propName)
 {
     using RangeValueT = typename MappingsOrFlagsT::mapped_type::Value;
 
@@ -148,7 +149,7 @@ UnsignedIntegerTypeRoleSet uIntTypeRolesOfUIntType(const JsonObjVal& jsonDt)
     );
 }
 
-[[ nodiscard ]] PseudoDt::Up pseudoDtFromFlIntType(const JsonObjVal& jsonDt, const std::string& type,
+[[ nodiscard ]] PseudoDt::Up pseudoDtFromFlIntType(const JsonObjVal& jsonDt, const std::string_view type,
                                    MapItem::Up attrs, const unsigned int len, const ByteOrder bo,
                                    const BitOrder bio, const unsigned int align)
 {
@@ -190,7 +191,7 @@ UnsignedIntegerTypeRoleSet uIntTypeRolesOfUIntType(const JsonObjVal& jsonDt)
                                                                            bio, std::move(attrs));
 }
 
-[[ nodiscard ]] PseudoDt::Up pseudoDtFromFlBitArrayType(const JsonObjVal& jsonDt, const std::string& type,
+[[ nodiscard ]] PseudoDt::Up pseudoDtFromFlBitArrayType(const JsonObjVal& jsonDt, const std::string_view type,
                                         MapItem::Up attrs)
 {
     // length
@@ -247,7 +248,7 @@ UnsignedIntegerTypeRoleSet uIntTypeRolesOfUIntType(const JsonObjVal& jsonDt)
     );
 }
 
-[[ nodiscard ]] PseudoDt::Up pseudoDtFromVlIntType(const JsonObjVal& jsonDt, const std::string& type,
+[[ nodiscard ]] PseudoDt::Up pseudoDtFromVlIntType(const JsonObjVal& jsonDt, const std::string_view type,
                                    MapItem::Up attrs)
 {
     // preferred display base
@@ -289,7 +290,7 @@ StringEncoding strEncodingOfStrType(const JsonObjVal& jsonDt) noexcept
                                                                  std::move(attrs));
 }
 
-PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& propName)
+PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string_view propName)
 {
     auto& jsonLocVal = jsonDt[propName]->asObj();
 
@@ -372,7 +373,7 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
                                                                std::move(attrs));
 }
 
-[[ nodiscard ]] PseudoDt::Up pseudoDtFromNonNtStrType(const JsonObjVal& jsonDt, const std::string& type,
+[[ nodiscard ]] PseudoDt::Up pseudoDtFromNonNtStrType(const JsonObjVal& jsonDt, const std::string_view type,
                                       MapItem::Up attrs)
 {
     if (type == strs::slStr) {
@@ -404,7 +405,7 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
     );
 }
 
-[[ nodiscard ]] PseudoDt::Up pseudoDtFromBlobType(const JsonObjVal& jsonDt, const std::string& type,
+[[ nodiscard ]] PseudoDt::Up pseudoDtFromBlobType(const JsonObjVal& jsonDt, const std::string_view type,
                                   MapItem::Up attrs)
 {
     // media type
@@ -440,7 +441,7 @@ PseudoDt::Up PseudoDtErector::_pseudoDtFromSlArrayType(const JsonObjVal& jsonDt,
 }
 
 PseudoDt::Up PseudoDtErector::_pseudoDtFromArrayType(const JsonObjVal& jsonDt,
-                                                     const std::string& type,
+                                                     const std::string_view type,
                                                      MapItem::Up attrs)
 {
     // minimum alignment
@@ -571,7 +572,7 @@ PseudoDt::Up PseudoDtErector::_pseudoDtFromVarType(const JsonObjVal& jsonDt, Map
 }
 
 PseudoDt::Up PseudoDtErector::pseudoDtOfJsonObj(const JsonObjVal& jsonObjVal,
-                                                const std::string& propName)
+                                                const std::string_view propName)
 {
     const auto jsonDtVal = jsonObjVal[propName];
 
