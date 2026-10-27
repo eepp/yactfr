@@ -296,6 +296,10 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::ReadFlBoolBeRev, &Vm::_execReadFlBoolBeRev>();
     this->_initExecFunc<Instr::Kind::ReadFlBoolLe, &Vm::_execReadFlBoolLe>();
     this->_initExecFunc<Instr::Kind::ReadFlBoolLeRev, &Vm::_execReadFlBoolLeRev>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloat16Be, &Vm::_execReadFlFloat16Be>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloat16BeRev, &Vm::_execReadFlFloat16BeRev>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloat16Le, &Vm::_execReadFlFloat16Le>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloat16LeRev, &Vm::_execReadFlFloat16LeRev>();
     this->_initExecFunc<Instr::Kind::ReadFlFloat32Be, &Vm::_execReadFlFloat32Be>();
     this->_initExecFunc<Instr::Kind::ReadFlFloat32BeRev, &Vm::_execReadFlFloat32BeRev>();
     this->_initExecFunc<Instr::Kind::ReadFlFloat32Le, &Vm::_execReadFlFloat32Le>();
@@ -304,6 +308,10 @@ void Vm::_initExecFuncs() noexcept
     this->_initExecFunc<Instr::Kind::ReadFlFloat64BeRev, &Vm::_execReadFlFloat64BeRev>();
     this->_initExecFunc<Instr::Kind::ReadFlFloat64Le, &Vm::_execReadFlFloat64Le>();
     this->_initExecFunc<Instr::Kind::ReadFlFloat64LeRev, &Vm::_execReadFlFloat64LeRev>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloatA16Be, &Vm::_execReadFlFloatA16Be>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloatA16BeRev, &Vm::_execReadFlFloatA16BeRev>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloatA16Le, &Vm::_execReadFlFloatA16Le>();
+    this->_initExecFunc<Instr::Kind::ReadFlFloatA16LeRev, &Vm::_execReadFlFloatA16LeRev>();
     this->_initExecFunc<Instr::Kind::ReadFlFloatA32Be, &Vm::_execReadFlFloatA32Be>();
     this->_initExecFunc<Instr::Kind::ReadFlFloatA32BeRev, &Vm::_execReadFlFloatA32BeRev>();
     this->_initExecFunc<Instr::Kind::ReadFlFloatA32Le, &Vm::_execReadFlFloatA32Le>();
@@ -702,51 +710,75 @@ Vm::_tExecReaction Vm::_execReadFlUIntA64Be(const Instr& instr)
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
+Vm::_tExecReaction Vm::_execReadFlFloat16Le(const Instr& instr)
+{
+    this->_execReadFlFloat<16, ByteOrder::Little, false>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
+Vm::_tExecReaction Vm::_execReadFlFloat16Be(const Instr& instr)
+{
+    this->_execReadFlFloat<16, ByteOrder::Big, false>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
+Vm::_tExecReaction Vm::_execReadFlFloatA16Le(const Instr& instr)
+{
+    this->_execReadStdFlFloat<16, readFlUIntLe16, false>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
+Vm::_tExecReaction Vm::_execReadFlFloatA16Be(const Instr& instr)
+{
+    this->_execReadStdFlFloat<16, readFlUIntBe16, false>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
 Vm::_tExecReaction Vm::_execReadFlFloat32Le(const Instr& instr)
 {
-    this->_execReadFlFloat<float, ByteOrder::Little, false>(instr);
+    this->_execReadFlFloat<32, ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat32Be(const Instr& instr)
 {
-    this->_execReadFlFloat<float, ByteOrder::Big, false>(instr);
+    this->_execReadFlFloat<32, ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA32Le(const Instr& instr)
 {
-    this->_execReadStdFlFloat<float, readFlUIntLe32, false>(instr);
+    this->_execReadStdFlFloat<32, readFlUIntLe32, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA32Be(const Instr& instr)
 {
-    this->_execReadStdFlFloat<float, readFlUIntBe32, false>(instr);
+    this->_execReadStdFlFloat<32, readFlUIntBe32, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat64Le(const Instr& instr)
 {
-    this->_execReadFlFloat<double, ByteOrder::Little, false>(instr);
+    this->_execReadFlFloat<64, ByteOrder::Little, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat64Be(const Instr& instr)
 {
-    this->_execReadFlFloat<double, ByteOrder::Big, false>(instr);
+    this->_execReadFlFloat<64, ByteOrder::Big, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA64Le(const Instr& instr)
 {
-    this->_execReadStdFlFloat<double, readFlUIntLe64, false>(instr);
+    this->_execReadStdFlFloat<64, readFlUIntLe64, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA64Be(const Instr& instr)
 {
-    this->_execReadStdFlFloat<double, readFlUIntBe64, false>(instr);
+    this->_execReadStdFlFloat<64, readFlUIntBe64, false>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
@@ -1020,51 +1052,75 @@ Vm::_tExecReaction Vm::_execReadFlUIntA64BeRev(const Instr& instr)
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
+Vm::_tExecReaction Vm::_execReadFlFloat16LeRev(const Instr& instr)
+{
+    this->_execReadFlFloat<16, ByteOrder::Little, true>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
+Vm::_tExecReaction Vm::_execReadFlFloat16BeRev(const Instr& instr)
+{
+    this->_execReadFlFloat<16, ByteOrder::Big, true>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
+Vm::_tExecReaction Vm::_execReadFlFloatA16LeRev(const Instr& instr)
+{
+    this->_execReadStdFlFloat<16, readFlUIntLe16, true>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
+Vm::_tExecReaction Vm::_execReadFlFloatA16BeRev(const Instr& instr)
+{
+    this->_execReadStdFlFloat<16, readFlUIntBe16, true>(instr);
+    return _tExecReaction::FetchNextInstrAndStop;
+}
+
 Vm::_tExecReaction Vm::_execReadFlFloat32LeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<float, ByteOrder::Little, true>(instr);
+    this->_execReadFlFloat<32, ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat32BeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<float, ByteOrder::Big, true>(instr);
+    this->_execReadFlFloat<32, ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA32LeRev(const Instr& instr)
 {
-    this->_execReadStdFlFloat<float, readFlUIntLe32, true>(instr);
+    this->_execReadStdFlFloat<32, readFlUIntLe32, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA32BeRev(const Instr& instr)
 {
-    this->_execReadStdFlFloat<float, readFlUIntBe32, true>(instr);
+    this->_execReadStdFlFloat<32, readFlUIntBe32, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat64LeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<double, ByteOrder::Little, true>(instr);
+    this->_execReadFlFloat<64, ByteOrder::Little, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloat64BeRev(const Instr& instr)
 {
-    this->_execReadFlFloat<double, ByteOrder::Big, true>(instr);
+    this->_execReadFlFloat<64, ByteOrder::Big, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA64LeRev(const Instr& instr)
 {
-    this->_execReadStdFlFloat<double, readFlUIntLe64, true>(instr);
+    this->_execReadStdFlFloat<64, readFlUIntLe64, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 
 Vm::_tExecReaction Vm::_execReadFlFloatA64BeRev(const Instr& instr)
 {
-    this->_execReadStdFlFloat<double, readFlUIntBe64, true>(instr);
+    this->_execReadStdFlFloat<64, readFlUIntBe64, true>(instr);
     return _tExecReaction::FetchNextInstrAndStop;
 }
 

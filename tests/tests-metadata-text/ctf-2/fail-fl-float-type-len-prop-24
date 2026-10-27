@@ -11,7 +11,7 @@
           "name": "a",
           "field-class": {
             "type": "fixed-length-floating-point-number",
-            "length": 16,
+            "length": 24,
             "byte-order": "little-endian"
           }
         }
@@ -27,4 +27,4 @@
 [7:9] Invalid structure member type:
 [9:26] In object property `field-class`:
 [9:26] Invalid fixed-length floating-point number type:
-[11:23] Unexpected length 16: yactfr only supports 32 and 64.
+[11:23] Unexpected length 24: yactfr only supports 16, 32, and 64.

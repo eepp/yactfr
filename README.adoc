@@ -145,8 +145,9 @@ functions such as `open()`, `close()`, `fstat()`, `mmap()`, and
 * Decodes up to, and including, 63-bit (effective, which means
   72{nbsp}total) signed/unsigned CTF variable-length integers.
 
-* Only decodes 32-bit and 64-bit CTF fixed-length floating point
-  numbers.
+* Only decodes 16-bit (CTF{nbsp}2 only), 32-bit, and 64-bit CTF
+  fixed-length floating point numbers (IEEE{nbsp}754 binary16, binary32,
+  and binary64).
 
 * Packet lengths must be multiples of 8 bits (I'm still not sure, but
   this could be enforced by the specification anyway), and be at least

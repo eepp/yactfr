@@ -13,8 +13,6 @@
 #include <algorithm>
 #include <type_traits>
 #include <cstdint>
-#include <cstring>
-#include <limits>
 #include <array>
 #include <functional>
 
@@ -29,6 +27,7 @@
 #include "std-fl-int-reader.hpp"
 #include "fl-int-reader.hpp"
 #include "fl-int-rev.hpp"
+#include "fl-float-val.hpp"
 #include "utils.hpp"
 
 /*
@@ -1509,6 +1508,10 @@ private:
     _tExecReaction _execReadFlBoolBeRev(const Instr& instr);
     _tExecReaction _execReadFlBoolLe(const Instr& instr);
     _tExecReaction _execReadFlBoolLeRev(const Instr& instr);
+    _tExecReaction _execReadFlFloat16Be(const Instr& instr);
+    _tExecReaction _execReadFlFloat16BeRev(const Instr& instr);
+    _tExecReaction _execReadFlFloat16Le(const Instr& instr);
+    _tExecReaction _execReadFlFloat16LeRev(const Instr& instr);
     _tExecReaction _execReadFlFloat32Be(const Instr& instr);
     _tExecReaction _execReadFlFloat32BeRev(const Instr& instr);
     _tExecReaction _execReadFlFloat32Le(const Instr& instr);
@@ -1517,6 +1520,10 @@ private:
     _tExecReaction _execReadFlFloat64BeRev(const Instr& instr);
     _tExecReaction _execReadFlFloat64Le(const Instr& instr);
     _tExecReaction _execReadFlFloat64LeRev(const Instr& instr);
+    _tExecReaction _execReadFlFloatA16Be(const Instr& instr);
+    _tExecReaction _execReadFlFloatA16BeRev(const Instr& instr);
+    _tExecReaction _execReadFlFloatA16Le(const Instr& instr);
+    _tExecReaction _execReadFlFloatA16LeRev(const Instr& instr);
     _tExecReaction _execReadFlFloatA32Be(const Instr& instr);
     _tExecReaction _execReadFlFloatA32BeRev(const Instr& instr);
     _tExecReaction _execReadFlFloatA32Le(const Instr& instr);
@@ -1767,53 +1774,26 @@ private:
         this->_consumeExistingBits(static_cast<const ReadFlBitArrayInstr&>(instr).len());
     }
 
-    template <typename FloatT>
-    void _execReadFlFloatPost(const std::uint64_t val, const Instr& instr) noexcept
+    template <Size LenBitsV>
+    void _execReadFlFloatPost(const std::uint64_t bits, const Instr& instr) noexcept
     {
-        using UIntT = std::conditional_t<sizeof(FloatT) == sizeof(std::uint32_t),
-                                         std::uint32_t, std::uint64_t>;
-
-        static_assert(std::is_same<FloatT, float>::value || std::is_same<FloatT, double>::value,
-                      "`FloatT` is `float` or `double`.");
-        static_assert(std::numeric_limits<FloatT>::is_iec559,
-                      "`FloatT` is an IEEE 754 floating point number type.");
-        static_assert(std::numeric_limits<FloatT>::radix == 2,
-                      "`FloatT` is a binary floating point number type.");
-        static_assert(std::numeric_limits<FloatT>::digits == (sizeof(FloatT) == 4 ? 24 : 53),
-                      "`FloatT` has the significand length of IEEE 754 binary32/binary64.");
-        static_assert(std::numeric_limits<FloatT>::max_exponent == (sizeof(FloatT) == 4 ? 128 : 1024),
-                      "`FloatT` has the exponent range of IEEE 754 binary32/binary64.");
-        static_assert(sizeof(FloatT) == sizeof(UIntT),
-                      "Floating point number and integer sizes match.");
-
-        // `double` (element value) can represent any `FloatT` value exactly
-        static_assert(std::numeric_limits<double>::digits >= std::numeric_limits<FloatT>::digits &&
-                      std::numeric_limits<double>::max_exponent >=
-                      std::numeric_limits<FloatT>::max_exponent &&
-                      std::numeric_limits<double>::min_exponent <=
-                      std::numeric_limits<FloatT>::min_exponent,
-                      "`double` can represent any `FloatT` value exactly.");
-
-        const auto flUInt = static_cast<UIntT>(val);
-        FloatT flFloat;
-
-        std::memcpy(&flFloat, &flUInt, sizeof(flFloat));
-        this->_setFlFloatVal(flFloat, static_cast<const ReadDataInstr&>(instr));
-        this->_consumeExistingBits(sizeof(FloatT) * 8);
+        this->_setFlFloatVal(flFloatValFromBits<LenBitsV>(bits),
+                             static_cast<const ReadDataInstr&>(instr));
+        this->_consumeExistingBits(LenBitsV);
     }
 
-    template <typename FloatT, ByteOrder BoV, bool RevV>
+    template <Size LenBitsV, ByteOrder BoV, bool RevV>
     void _execReadFlFloat(const Instr& instr)
     {
-        this->_execReadFlFloatPost<FloatT>(this->_readFlInt<std::uint64_t, BoV, RevV>(instr),
-                                           instr);
+        this->_execReadFlFloatPost<LenBitsV>(this->_readFlInt<std::uint64_t, BoV, RevV>(instr),
+                                             instr);
     }
 
-    template <typename FloatT, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
+    template <Size LenBitsV, std::uint64_t (*FuncV)(const std::uint8_t *), bool RevV>
     void _execReadStdFlFloat(const Instr& instr)
     {
-        this->_execReadFlFloatPost<FloatT>(this->_readStdFlInt<std::uint64_t, sizeof(FloatT) * 8, FuncV, RevV>(instr),
-                                           instr);
+        this->_execReadFlFloatPost<LenBitsV>(this->_readStdFlInt<std::uint64_t, LenBitsV, FuncV, RevV>(instr),
+                                             instr);
     }
 
     _tExecReaction _execReadVlIntCommon(const Instr& instr, VariableLengthIntegerElement& elem,

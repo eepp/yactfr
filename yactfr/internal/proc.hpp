@@ -510,6 +510,10 @@ public:
         ReadFlBoolBeRev,
         ReadFlBoolLe,
         ReadFlBoolLeRev,
+        ReadFlFloat16Be,
+        ReadFlFloat16BeRev,
+        ReadFlFloat16Le,
+        ReadFlFloat16LeRev,
         ReadFlFloat32Be,
         ReadFlFloat32BeRev,
         ReadFlFloat32Le,
@@ -518,6 +522,10 @@ public:
         ReadFlFloat64BeRev,
         ReadFlFloat64Le,
         ReadFlFloat64LeRev,
+        ReadFlFloatA16Be,
+        ReadFlFloatA16BeRev,
+        ReadFlFloatA16Le,
+        ReadFlFloatA16LeRev,
         ReadFlFloatA32Be,
         ReadFlFloatA32BeRev,
         ReadFlFloatA32Le,
@@ -674,6 +682,10 @@ public:
         case Instr::Kind::ReadFlBoolBeRev:
         case Instr::Kind::ReadFlBoolLe:
         case Instr::Kind::ReadFlBoolLeRev:
+        case Instr::Kind::ReadFlFloat16Be:
+        case Instr::Kind::ReadFlFloat16BeRev:
+        case Instr::Kind::ReadFlFloat16Le:
+        case Instr::Kind::ReadFlFloat16LeRev:
         case Instr::Kind::ReadFlFloat32Be:
         case Instr::Kind::ReadFlFloat32BeRev:
         case Instr::Kind::ReadFlFloat32Le:
@@ -682,6 +694,10 @@ public:
         case Instr::Kind::ReadFlFloat64BeRev:
         case Instr::Kind::ReadFlFloat64Le:
         case Instr::Kind::ReadFlFloat64LeRev:
+        case Instr::Kind::ReadFlFloatA16Be:
+        case Instr::Kind::ReadFlFloatA16BeRev:
+        case Instr::Kind::ReadFlFloatA16Le:
+        case Instr::Kind::ReadFlFloatA16LeRev:
         case Instr::Kind::ReadFlFloatA32Be:
         case Instr::Kind::ReadFlFloatA32BeRev:
         case Instr::Kind::ReadFlFloatA32Le:

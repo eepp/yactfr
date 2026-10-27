@@ -1,0 +1,201 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "le",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "le2",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "be",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "be2",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "min-subnormal-le",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "min-subnormal-be",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8,
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "pad1",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 3,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "a16-le",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 16,
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "pad2",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 3,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "le-odd",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        },
+        {
+          "name": "pad3",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 5,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "pad4",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 6,
+            "byte-order": "big-endian"
+          }
+        },
+        {
+          "name": "be-odd",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "bit-order": "first-to-last"
+          }
+        },
+        {
+          "name": "pad5",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 2,
+            "byte-order": "big-endian"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+%00111100  # `le` starts
+%00000000
+%10000011  # `le2` starts
+%00000000
+%00010010  # `be` starts
+%01000010
+%00000000  # `be2` starts
+%00111111
+%00000000  # `min-subnormal-le` starts
+%10000000
+%10000000  # `min-subnormal-be` starts
+%00000000
+%11111010  # `pad1` starts
+%11111111
+%11011110  # `a16-le` starts
+%11111111
+%11101101  # `pad2`, `le-odd` starts
+%00000001
+%10001000  # `pad3` starts
+%10101000  # `pad4`, `be-odd` starts
+%00001001
+%10101001  # `pad5` starts
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLFPN:le:1
+    16           FLFPN:le2:-2.5
+    32           FLFPN:be:3.14062
+    48           FLFPN:be2:-inf
+    64           FLFPN:min-subnormal-le:5.96046e-08
+    80           FLFPN:min-subnormal-be:5.96046e-08
+    96           FLUI:pad1:2
+   112           FLFPN:a16-le:65504
+   128           FLUI:pad2:5
+   131           FLFPN:le-odd:-1
+   147           FLUI:pad3:17
+   152           FLUI:pad4:42
+   158           FLFPN:be-odd:100
+   174           FLUI:pad5:1
+   176         }
+   176       }
+   176     }
+   176   }
+   176 }

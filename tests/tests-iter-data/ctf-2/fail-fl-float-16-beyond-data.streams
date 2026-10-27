@@ -1,0 +1,54 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "a",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "b",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        }
+      ]
+    }
+  }
+]
+---
+00 3c  # `a`
+00     # partial `b`
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLFPN:a:1
+    16 Cannot read 16 bits at this point: reaching end of data source.

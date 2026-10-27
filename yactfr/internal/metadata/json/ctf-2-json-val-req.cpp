@@ -946,10 +946,10 @@ private:
             auto& jsonLenVal = *jsonVal.asObj()[strs::len];
             const auto len = *jsonLenVal.asUInt();
 
-            if (len != 32 && len != 64) {
+            if (len != 16 && len != 32 && len != 64) {
                 std::ostringstream ss;
 
-                ss << "Unexpected length " << len << ": yactfr only supports 32 and 64.";
+                ss << "Unexpected length " << len << ": yactfr only supports 16, 32, and 64.";
                 throwTextParseError(ss.str(), jsonLenVal.loc());
             }
         } catch (TextParseError& exc) {

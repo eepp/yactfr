@@ -27,8 +27,22 @@ class DataTypeVisitor;
 @ingroup metadata_dt
 
 A fixed-length floating point number type describes data stream
-fixed-length single-precision and double-precision floating point
-numbers.
+fixed-length IEEE&nbsp;754 floating point numbers:
+
+<dl>
+  <dt>16-bit
+  <dd>binary16 (half precision).
+
+  <dt>32-bit
+  <dd>binary32 (single precision).
+
+  <dt>64-bit
+  <dd>binary64 (double precision).
+</dl>
+
+The value of a FixedLengthFloatingPointNumberElement is always a
+<code>double</code>, which can represent any value of the three
+formats exactly.
 */
 class FixedLengthFloatingPointNumberType final :
     public FixedLengthBitArrayType
@@ -80,7 +94,7 @@ public:
     @pre
         \p alignment is a power of two.
     @pre
-        \p length is 32 or 64.
+        \p length is 16, 32, or 64.
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int alignment, unsigned int length,
                                                 ByteOrder byteOrder,
@@ -123,7 +137,7 @@ public:
         @endparblock
 
     @pre
-        \p length is 32 or 64.
+        \p length is 16, 32, or 64.
     */
     explicit FixedLengthFloatingPointNumberType(unsigned int length, ByteOrder byteOrder,
                                                 const std::optional<BitOrder>& bitOrder = std::nullopt,

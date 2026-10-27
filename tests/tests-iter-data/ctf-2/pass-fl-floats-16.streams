@@ -1,0 +1,323 @@
+---
+[
+  {
+    "type": "preamble",
+    "version": 2
+  },
+  {
+    "type": "trace-class"
+  },
+  {
+    "type": "data-stream-class"
+  },
+  {
+    "type": "event-record-class",
+    "name": "test",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "one",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "neg",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "pi",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "max",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "min-normal",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "max-subnormal",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "min-subnormal",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "zero",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "neg-zero",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "inf",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "neg-inf",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "qnan",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "snan",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "neg-be",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "third-be",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "neg-min-subnormal-be",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 8
+          }
+        },
+        {
+          "name": "pad1",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 3,
+            "byte-order": "big-endian"
+          }
+        },
+        {
+          "name": "a16-be",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 16
+          }
+        },
+        {
+          "name": "pad2",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 3,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "le-odd",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "le-odd2",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "pad3",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 5,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "pad4",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 6,
+            "byte-order": "big-endian"
+          }
+        },
+        {
+          "name": "be-odd",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian"
+          }
+        },
+        {
+          "name": "pad5",
+          "field-class": {
+            "type": "fixed-length-unsigned-integer",
+            "length": 2,
+            "byte-order": "big-endian"
+          }
+        }
+      ]
+    }
+  }
+]
+---
+%00000000  # `one` starts
+%00111100
+%00000000  # `neg` starts
+%11000001
+%01001000  # `pi` starts
+%01000010
+%11111111  # `max` starts
+%01111011
+%00000000  # `min-normal` starts
+%00000100
+%11111111  # `max-subnormal` starts
+%00000011
+%00000001  # `min-subnormal` starts
+%00000000
+%00000000  # `zero` starts
+%00000000
+%00000000  # `neg-zero` starts
+%10000000
+%00000000  # `inf` starts
+%01111100
+%00000000  # `neg-inf` starts
+%11111100
+%00000000  # `qnan` starts
+%01111110
+%00000000  # `snan` starts
+%01111101
+%11000101  # `neg-be` starts
+%00000000
+%00110101  # `third-be` starts
+%01010101
+%10000000  # `neg-min-subnormal-be` starts
+%00000001
+%11011111  # `pad1` starts
+%11111111
+%00111100  # `a16-be` starts
+%00000001
+%00000101  # `pad2`, `le-odd` starts
+%11100000
+%00000101  # `le-odd2` starts
+%10110010
+%10001010  # `pad3` starts
+%10101001  # `pad4`, `be-odd` starts
+%00100100
+%00000001  # `pad5` starts
+---
+     0 P {
+     0   PC {
+     0     DSI:T0
+     0     PI
+     0     ER {
+     0       ERI:T0:#test
+     0       SC:5 {
+     0         ST {
+     0           FLFPN:one:1
+    16           FLFPN:neg:-2.5
+    32           FLFPN:pi:3.14062
+    48           FLFPN:max:65504
+    64           FLFPN:min-normal:6.10352e-05
+    80           FLFPN:max-subnormal:6.09756e-05
+    96           FLFPN:min-subnormal:5.96046e-08
+   112           FLFPN:zero:0
+   128           FLFPN:neg-zero:-0
+   144           FLFPN:inf:inf
+   160           FLFPN:neg-inf:-inf
+   176           FLFPN:qnan:nan
+   192           FLFPN:snan:nan
+   208           FLFPN:neg-be:-5
+   224           FLFPN:third-be:0.333252
+   240           FLFPN:neg-min-subnormal-be:-5.96046e-08
+   256           FLUI:pad1:6
+   272           FLFPN:a16-be:1.00098
+   288           FLUI:pad2:5
+   291           FLFPN:le-odd:-1
+   307           FLFPN:le-odd2:100
+   323           FLUI:pad3:17
+   328           FLUI:pad4:42
+   334           FLFPN:be-odd:10
+   350           FLUI:pad5:1
+   352         }
+   352       }
+   352     }
+   352   }
+   352 }

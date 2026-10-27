@@ -19,7 +19,7 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const uns
                                                                        MapItem::Up attrs) :
     FixedLengthBitArrayType {_kindFlFloat, align, len, bo, bio, std::move(attrs)}
 {
-    assert(len == 32 || len == 64);
+    assert(len == 16 || len == 32 || len == 64);
 }
 
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int len,

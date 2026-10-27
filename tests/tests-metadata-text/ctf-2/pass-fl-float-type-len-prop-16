@@ -1,0 +1,37 @@
+{"type": "preamble", "version": 2}
+{"type": "data-stream-class"}
+
+  {
+    "type": "event-record-class",
+    "payload-field-class": {
+      "type": "structure",
+      "member-classes": [
+        {
+          "name": "a",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian"
+          }
+        },
+        {
+          "name": "b",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "big-endian",
+            "alignment": 16
+          }
+        },
+        {
+          "name": "c",
+          "field-class": {
+            "type": "fixed-length-floating-point-number",
+            "length": 16,
+            "byte-order": "little-endian",
+            "bit-order": "last-to-first"
+          }
+        }
+      ]
+    }
+  }

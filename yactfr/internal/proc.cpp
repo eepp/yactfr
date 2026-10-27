@@ -810,6 +810,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
         if (floatType.bitOrder() == BitOrder::FirstToLast) {
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloatA16Le;
+
                 case 32:
                     return Instr::Kind::ReadFlFloatA32Le;
 
@@ -821,6 +824,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
                 }
             } else {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloat16Le;
+
                 case 32:
                     return Instr::Kind::ReadFlFloat32Le;
 
@@ -834,6 +840,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
         } else {
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloatA16LeRev;
+
                 case 32:
                     return Instr::Kind::ReadFlFloatA32LeRev;
 
@@ -845,6 +854,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
                 }
             } else {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloat16LeRev;
+
                 case 32:
                     return Instr::Kind::ReadFlFloat32LeRev;
 
@@ -860,6 +872,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
         if (floatType.bitOrder() == BitOrder::FirstToLast) {
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloatA16BeRev;
+
                 case 32:
                     return Instr::Kind::ReadFlFloatA32BeRev;
 
@@ -871,6 +886,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
                 }
             } else {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloat16BeRev;
+
                 case 32:
                     return Instr::Kind::ReadFlFloat32BeRev;
 
@@ -884,6 +902,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
         } else {
             if (dt.alignment() % 8 == 0) {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloatA16Be;
+
                 case 32:
                     return Instr::Kind::ReadFlFloatA32Be;
 
@@ -895,6 +916,9 @@ Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
                 }
             } else {
                 switch (floatType.length()) {
+                case 16:
+                    return Instr::Kind::ReadFlFloat16Be;
+
                 case 32:
                     return Instr::Kind::ReadFlFloat32Be;
 
