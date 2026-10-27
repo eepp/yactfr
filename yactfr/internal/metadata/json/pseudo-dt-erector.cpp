@@ -334,10 +334,13 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
         }
     }
 
-    return PseudoDataLoc {
-        scope ? PseudoDataLoc::Kind::Abs : PseudoDataLoc::Kind::Rel2,
-        scope, std::move(pathElems), jsonLocVal.loc()
-    };
+    PseudoDataLoc::Kind kind = PseudoDataLoc::Rel2 {};
+
+    if (scope) {
+        kind = PseudoDataLoc::Abs {*scope};
+    }
+
+    return PseudoDataLoc {std::move(kind), std::move(pathElems), jsonLocVal.loc()};
 }
 
 PseudoDt::Up pseudoDtFromDlStrType(const JsonObjVal& jsonDt, MapItem::Up attrs)

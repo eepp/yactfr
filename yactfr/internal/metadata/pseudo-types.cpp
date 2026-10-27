@@ -30,16 +30,11 @@
 
 namespace yactfr::internal {
 
-PseudoDataLoc::PseudoDataLoc(Kind kind, std::optional<Scope> scope, PathElems pathElems,
-                             TextLocation loc, std::optional<Index> baseStructTypeLexId) :
-    _kind {kind},
-    _scope {std::move(scope)},
+PseudoDataLoc::PseudoDataLoc(Kind kind, PathElems pathElems, TextLocation loc) :
+    _kind {std::move(kind)},
     _pathElems {std::move(pathElems)},
-    _loc {std::move(loc)},
-    _baseStructTypeLexId {std::move(baseStructTypeLexId)}
+    _loc {std::move(loc)}
 {
-    assert(_scope || _kind != Kind::Abs);
-    assert(_kind != Kind::Rel1 || _baseStructTypeLexId);
 }
 
 PseudoDt::PseudoDt(TextLocation loc) :

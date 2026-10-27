@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <optional>
+#include <variant>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/aliases.hpp>
@@ -41,42 +42,42 @@ namespace yactfr::internal {
  * possibly not yet converted to an absolute data location (as
  * yactfr requires).
  *
- * The kinds of pseudo data locations are:
+ * The kinds of pseudo data locations (alternatives of
+ * `PseudoDataLoc::Kind`) are:
  *
- * `Kind::Env`:
+ * `Env`:
  *     The parsed data location (TSDL) was `env.SOMETHING`, where
  *     `SOMETHING` must be an existing environment key (for
  *     static-length array types). The first element of `pathElems` is
  *     `SOMETHING` in this case.
  *
- * `Kind::Abs`:
- *     Absolute (has a scope).
+ * `Abs`:
+ *     Absolute.
  *
- *     `scope` indicates the root scope, and `pathElems` contains
+ *     `Abs::scope` indicates the root scope, and `pathElems` contains
  *     everything else (`stream.packet.context` and so forth are
  *     stripped for TSDL).
  *
- * `Kind::Rel1`::
+ * `Rel1`:
  *     Relative from CTF 1.8.
  *
  *     All path elements have values.
  *
- *     `baseStructTypeLexId` is the lexical ID (see
+ *     `Rel1::baseStructTypeLexId` is the lexical ID (see
  *     PseudoStructType::lexId()) of the structure type which contains
  *     the member type named after the first path element. This is the
  *     structure type in which the TSDL parser found such a member type
  *     when it parsed the data location, which might be outside the data
  *     type alias containing the data location.
  *
- * `Kind::Rel2`::
+ * `Rel2`:
  *     Relative from CTF 2.
  *
  *     A path element may be `std::nullopt` to indicate "parent".
  *
- * The distinction between `Kind::Rel1` and `Kind::Rel2` is important
- * because `Kind::Rel2` allows no-value path elements (`std::nullopt`) to
- * explicitly indicate "parent", whereas `Kind::Rel1` indicates
- * "parent" implicitly.
+ * The distinction between `Rel1` and `Rel2` is important because `Rel2`
+ * allows no-value path elements (`std::nullopt`) to explicitly indicate
+ * "parent", whereas `Rel1` indicates "parent" implicitly.
  */
 class PseudoDataLoc final
 {
@@ -84,31 +85,46 @@ public:
     // `std::nullopt` explicitly means "parent" here (CTF 2)
     using PathElems = std::vector<std::optional<std::string>>;
 
-    enum class Kind {
-        Env,    // environment (CTF 1.8)
-        Abs,    // absolute
-        Rel1,   // relative from CTF 1.8
-        Rel2,   // relative from CTF 2
+    // environment (CTF 1.8)
+    struct Env final
+    {
     };
 
+    // absolute
+    struct Abs final
+    {
+        Scope scope;
+    };
+
+    // relative from CTF 1.8
+    struct Rel1 final
+    {
+        Index baseStructTypeLexId;
+    };
+
+    // relative from CTF 2
+    struct Rel2 final
+    {
+    };
+
+    using Kind = std::variant<Env, Abs, Rel1, Rel2>;
+
 public:
-    explicit PseudoDataLoc(Kind kind, std::optional<Scope> scope, PathElems pathElems,
-                           TextLocation loc,
-                           std::optional<Index> baseStructTypeLexId = std::nullopt);
+    explicit PseudoDataLoc(Kind kind, PathElems pathElems, TextLocation loc);
 
     PseudoDataLoc(const PseudoDataLoc&) = default;
     PseudoDataLoc(PseudoDataLoc&&) = default;
     PseudoDataLoc& operator=(const PseudoDataLoc&) = default;
     PseudoDataLoc& operator=(PseudoDataLoc&&) = default;
 
-    Kind kind() const noexcept
+    const Kind& kind() const noexcept
     {
         return _kind;
     }
 
-    const std::optional<Scope>& scope() const noexcept
+    bool isEnv() const noexcept
     {
-        return _scope;
+        return std::holds_alternative<Env>(_kind);
     }
 
     const PathElems& pathElems() const noexcept
@@ -121,17 +137,10 @@ public:
         return _loc;
     }
 
-    const std::optional<Index>& baseStructTypeLexId() const noexcept
-    {
-        return _baseStructTypeLexId;
-    }
-
 private:
     Kind _kind;
-    std::optional<Scope> _scope;
     PathElems _pathElems;
     TextLocation _loc;
-    std::optional<Index> _baseStructTypeLexId;
 };
 
 class PseudoDt;

@@ -464,16 +464,14 @@ std::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& st
 
 struct PseudoDataLocBase
 {
-    explicit PseudoDataLocBase(const PseudoDataLoc::Kind kind, std::optional<Scope> scope,
+    explicit PseudoDataLocBase(PseudoDataLoc::Kind kind,
                                const PseudoDataLoc::PathElems::const_iterator restPos) :
-        kind {kind},
-        scope {std::move(scope)},
+        kind {std::move(kind)},
         restPos {restPos}
     {
     }
 
     PseudoDataLoc::Kind kind;
-    std::optional<Scope> scope;
     PseudoDataLoc::PathElems::const_iterator restPos;
 };
 
@@ -489,7 +487,7 @@ std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElem
             if (*allPathElems[1] == "packet") {
                 if (*allPathElems[2] == "header") {
                     return PseudoDataLocBase {
-                        PseudoDataLoc::Kind::Abs, Scope::PacketHeader, beginPos + 3
+                        PseudoDataLoc::Abs {Scope::PacketHeader}, beginPos + 3
                     };
                 }
             }
@@ -499,17 +497,17 @@ std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElem
             if (*allPathElems[1] == "packet") {
                 if (*allPathElems[2] == "context") {
                     return PseudoDataLocBase {
-                        PseudoDataLoc::Kind::Abs, Scope::PacketContext, beginPos + 3
+                        PseudoDataLoc::Abs {Scope::PacketContext}, beginPos + 3
                     };
                 }
             } else if (*allPathElems[1] == "event") {
                 if (*allPathElems[2] == "header") {
                     return PseudoDataLocBase {
-                        PseudoDataLoc::Kind::Abs, Scope::EventRecordHeader, beginPos + 3
+                        PseudoDataLoc::Abs {Scope::EventRecordHeader}, beginPos + 3
                     };
                 } else if (*allPathElems[2] == "context") {
                     return PseudoDataLocBase {
-                        PseudoDataLoc::Kind::Abs, Scope::EventRecordCommonContext, beginPos + 3
+                        PseudoDataLoc::Abs {Scope::EventRecordCommonContext}, beginPos + 3
                     };
                 }
             }
@@ -523,11 +521,11 @@ std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElem
         if (*allPathElems[0] == "event") {
             if (*allPathElems[1] == "context") {
                 return PseudoDataLocBase {
-                    PseudoDataLoc::Kind::Abs, Scope::EventRecordSpecificContext, beginPos + 2
+                    PseudoDataLoc::Abs {Scope::EventRecordSpecificContext}, beginPos + 2
                 };
             } else if (*allPathElems[1] == "fields") {
                 return PseudoDataLocBase {
-                    PseudoDataLoc::Kind::Abs, Scope::EventRecordPayload, beginPos + 2
+                    PseudoDataLoc::Abs {Scope::EventRecordPayload}, beginPos + 2
                 };
             }
 
@@ -537,7 +535,7 @@ std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElem
 
     if (allPathElems.size() >= 1 && *allPathElems[0] == "env") {
         return PseudoDataLocBase {
-            PseudoDataLoc::Kind::Env, std::nullopt, beginPos + 1
+            PseudoDataLoc::Env {}, beginPos + 1
         };
     }
 
@@ -551,8 +549,7 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const
 {
     const auto psDataLocBase = pseudoDataLocBase(allPathElems, loc);
 
-    if (!psDataLocBase || (psDataLocBase->kind != PseudoDataLoc::Kind::Abs &&
-                           psDataLocBase->kind != PseudoDataLoc::Kind::Env)) {
+    if (!psDataLocBase) {
         return std::nullopt;
     }
 
@@ -564,9 +561,7 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const
 
     std::copy(psDataLocBase->restPos, allPathElems.end(), std::back_inserter(pathElems));
 
-    return PseudoDataLoc {
-        psDataLocBase->kind, psDataLocBase->scope, std::move(pathElems), loc
-    };
+    return PseudoDataLoc {psDataLocBase->kind, std::move(pathElems), loc};
 }
 
 std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
@@ -622,7 +617,7 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const
             if (std::find(frameIdents.begin(), frameIdents.end(), firstPathElem) != frameIdents.end()) {
                 // identifier found in this frame: win!
                 return PseudoDataLoc {
-                    PseudoDataLoc::Kind::Rel1, std::nullopt, allPathElems, loc, stackIt->lexId
+                    PseudoDataLoc::Rel1 {stackIt->lexId}, allPathElems, loc
                 };
             }
         }
@@ -1731,7 +1726,7 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
                 pseudoDataLoc = this->_expectDataLoc();
                 assert(pseudoDataLoc);
 
-                if (pseudoDataLoc->kind() == PseudoDataLoc::Kind::Env) {
+                if (pseudoDataLoc->isEnv()) {
                     throwTextParseError("Selector location of variant type "
                                         "cannot start with `env.`.",
                                         selLoc);
@@ -2749,7 +2744,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
                     const auto selLoc = _ss.loc();
                     auto pseudoSelLoc = this->_expectDataLoc();
 
-                    if (pseudoSelLoc.kind() == PseudoDataLoc::Kind::Env) {
+                    if (pseudoSelLoc.isEnv()) {
                         throwTextParseError("Selector location of variant type cannot start with `env.`.",
                                             selLoc);
                     }
@@ -2960,7 +2955,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
 
             assert(pseudoDataLoc);
 
-            if (pseudoDataLoc->kind() == PseudoDataLoc::Kind::Env) {
+            if (pseudoDataLoc->isEnv()) {
                 // only the `env.KEY` format is accepted
                 if (pseudoDataLoc->pathElems().size() != 1) {
                     throwTextParseError("Invalid environment location: expecting `env.KEY`, "

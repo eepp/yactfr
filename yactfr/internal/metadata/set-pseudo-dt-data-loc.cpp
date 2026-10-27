@@ -91,9 +91,7 @@ private:
     _tGetPathElemsSuffixRelRet _getPathElemsSuffixRel1(const PseudoDataLoc& pseudoDataLoc,
                                                        _tMemberNames::const_iterator searchEntryIt) const
     {
-        assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel1);
-
-        assert(pseudoDataLoc.baseStructTypeLexId());
+        const auto baseStructTypeLexId = std::get<PseudoDataLoc::Rel1>(pseudoDataLoc.kind()).baseStructTypeLexId;
 
         /*
          * Find the closest ancestor structure type having the lexical
@@ -112,7 +110,7 @@ private:
          * data location is a descendant of (a clone of) the structure
          * type having such a lexical ID.
          */
-        while (searchEntryIt->structTypeLexId != pseudoDataLoc.baseStructTypeLexId()) {
+        while (searchEntryIt->structTypeLexId != baseStructTypeLexId) {
             assert(searchEntryIt != _memberNames.begin());
             --searchEntryIt;
         }
@@ -131,7 +129,7 @@ private:
     _tGetPathElemsSuffixRelRet _getPathElemsSuffixRel2(const PseudoDataLoc& pseudoDataLoc,
                                                        _tMemberNames::const_iterator searchEntryIt) const
     {
-        assert(pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel2);
+        assert(std::holds_alternative<PseudoDataLoc::Rel2>(pseudoDataLoc.kind()));
 
         // normalize the path (remove any unnecessary "parent" item)
         PseudoDataLoc::PathElems normPathElems;
@@ -183,21 +181,20 @@ private:
     DataLocation _dataLocFromPseudoDataLoc(const PseudoDataLoc& pseudoDataLoc) const
     {
         /*
-         * The `PseudoDataLoc::Kind::Env` is a temporary kind, which the
-         * TSDL parser uses, leading to a `PseudoSlArrayType` instance
+         * `PseudoDataLoc::Env` is a temporary kind, which the TSDL
+         * parser uses, leading to a `PseudoSlArrayType` instance
          * in TsdlParser::_parseArraySubscripts().
          *
          * Therefore it mustn't exist at this point.
          */
-        assert(pseudoDataLoc.kind() != PseudoDataLoc::Kind::Env);
+        assert(!pseudoDataLoc.isEnv());
 
-        if (pseudoDataLoc.kind() == PseudoDataLoc::Kind::Abs) {
+        if (const auto abs = std::get_if<PseudoDataLoc::Abs>(&pseudoDataLoc.kind())) {
             // already absolute
             DataLocation::PathElements pathElems;
 
             pseudoDataLocPathElemsToPathElems(pseudoDataLoc.pathElems(), pathElems);
-            assert(pseudoDataLoc.scope());
-            return DataLocation {*pseudoDataLoc.scope(), std::move(pathElems)};
+            return DataLocation {abs->scope, std::move(pathElems)};
         }
 
         /*
@@ -209,7 +206,7 @@ private:
         // relative data location path elements to append at the end
         DataLocation::PathElements pathElemsSuffix;
 
-        if (pseudoDataLoc.kind() == PseudoDataLoc::Kind::Rel1) {
+        if (std::holds_alternative<PseudoDataLoc::Rel1>(pseudoDataLoc.kind())) {
             std::tie(pathElemsSuffix, searchEntryIt) = this->_getPathElemsSuffixRel1(pseudoDataLoc,
                                                                                      searchEntryIt);
         } else {
