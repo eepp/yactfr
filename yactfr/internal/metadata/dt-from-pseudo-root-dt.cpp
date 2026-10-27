@@ -908,9 +908,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
     assert(_pseudoTraceType->majorVersion() == 2);
 
     auto& pseudoVarType = static_cast<const PseudoVarWithIntRangesType&>(pseudoDt);
-    auto selLocPseudoDtsPair = this->_pseudoDtIntSels(pseudoVarType, "variant");
-    auto& selLoc = selLocPseudoDtsPair.first;
-    const auto& pseudoSelDts = selLocPseudoDtsPair.second;
+    auto [selLoc, pseudoSelDts] = this->_pseudoDtIntSels(pseudoVarType, "variant");
 
     assert(!pseudoSelDts.empty());
 
@@ -931,9 +929,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarType(const PseudoDt& p
     assert(_pseudoTraceType->majorVersion() == 1);
 
     auto& pseudoVarType = static_cast<const PseudoVarType&>(pseudoDt);
-    const auto selLocPseudoDtsPair = this->_pseudoDtSels(pseudoVarType);
-    auto& selLoc = selLocPseudoDtsPair.first;
-    auto& pseudoSelDts = selLocPseudoDtsPair.second;
+    const auto [selLoc, pseudoSelDts] = this->_pseudoDtSels(pseudoVarType);
     const PseudoDt *pseudoSelDt = nullptr;
     bool selIsFlUIntType;
     bool hasAtLeastOneMapping;
@@ -1002,13 +998,13 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
     assert(_pseudoTraceType->majorVersion() == 2);
 
     auto& pseudoOptType = static_cast<const PseudoOptType&>(pseudoDt);
-    auto selLocPseudoDtsPair = this->_pseudoDtSels(pseudoOptType);
+    auto [selLoc, pseudoSelDts] = this->_pseudoDtSels(pseudoOptType);
 
-    for (const auto pseudoSelDt : selLocPseudoDtsPair.second) {
+    for (const auto pseudoSelDt : pseudoSelDts) {
         if (pseudoSelDt->kind() != PseudoDt::Kind::ScalarDtWrapper ||
                 !static_cast<const PseudoScalarDtWrapper&>(*pseudoSelDt).dt().isFixedLengthBooleanType()) {
             this->_throwInvalDataLoc("Selector type of optional type isn't a boolean type.",
-                                     pseudoSelDt->loc(), selLocPseudoDtsPair.first, pseudoDt.loc());
+                                     pseudoSelDt->loc(), selLoc, pseudoDt.loc());
         }
     }
 
@@ -1017,7 +1013,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
     });
 
     return OptionalWithBooleanSelectorType::create(1, std::move(containedDt),
-                                                   std::move(selLocPseudoDtsPair.first),
+                                                   std::move(selLoc),
                                                    tryCloneAttrs(pseudoOptType.attrs()));
 }
 
@@ -1043,9 +1039,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
     assert(_pseudoTraceType->majorVersion() == 2);
 
     auto& pseudoOptType = static_cast<const PseudoOptWithIntSelType&>(pseudoDt);
-    auto selLocPseudoDtsPair = this->_pseudoDtIntSels(pseudoOptType, "optional");
-    auto& selLoc = selLocPseudoDtsPair.first;
-    const auto& pseudoSelDts = selLocPseudoDtsPair.second;
+    auto [selLoc, pseudoSelDts] = this->_pseudoDtIntSels(pseudoOptType, "optional");
 
     auto containedDt = this->_whileVisitingPseudoDt(pseudoOptType, [this](auto& pseudoOptType) {
         return this->_dtFromPseudoDt(pseudoOptType.pseudoDt());

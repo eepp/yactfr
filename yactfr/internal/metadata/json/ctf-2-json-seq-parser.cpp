@@ -201,16 +201,16 @@ void Ctf2JsonSeqParser::_handleTraceTypeFrag(const JsonObjVal& jsonFrag)
     const auto jsonEnv = jsonFrag[strs::env];
 
     if (jsonEnv) {
-        for (auto& keyJsonValPair : jsonEnv->asObj()) {
-            auto& jsonEntryVal = *keyJsonValPair.second;
+        for (auto& [key, jsonVal] : jsonEnv->asObj()) {
+            auto& jsonEntryVal = *jsonVal;
 
             if (jsonEntryVal.isStr()) {
-                envEntries.emplace(std::make_pair(keyJsonValPair.first, *jsonEntryVal.asStr()));
+                envEntries.emplace(std::make_pair(key, *jsonEntryVal.asStr()));
             } else if (jsonEntryVal.isSInt()) {
-                envEntries.emplace(std::make_pair(keyJsonValPair.first, *jsonEntryVal.asSInt()));
+                envEntries.emplace(std::make_pair(key, *jsonEntryVal.asSInt()));
             } else {
                 assert(jsonEntryVal.isUInt());
-                envEntries.emplace(std::make_pair(keyJsonValPair.first,
+                envEntries.emplace(std::make_pair(key,
                                                   static_cast<long long>(*jsonEntryVal.asUInt())));
             }
         }

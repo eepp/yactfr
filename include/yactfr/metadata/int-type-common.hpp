@@ -134,8 +134,8 @@ public:
     */
     bool valueIsMapped(const MappingValueT value) const
     {
-        for (const auto& nameRangeSetPair : _mappings) {
-            if (nameRangeSetPair.second.contains(value)) {
+        for (const auto& [name, rangeSet] : _mappings) {
+            if (rangeSet.contains(value)) {
                 return true;
             }
         }
@@ -160,9 +160,9 @@ public:
     void mappingNamesForValue(const MappingValueT value,
                               std::unordered_set<const std::string *>& names) const
     {
-        for (auto& nameRangesPair : _mappings) {
-            if (nameRangesPair.second.contains(value)) {
-                names.insert(&nameRangesPair.first);
+        for (auto& [name, ranges] : _mappings) {
+            if (ranges.contains(value)) {
+                names.insert(&name);
             }
         }
     }
@@ -177,8 +177,8 @@ protected:
 private:
     bool _mappingsAreValid() noexcept
     {
-        for (const auto& nameRangeSetPair : _mappings) {
-            if (nameRangeSetPair.second.ranges().empty()) {
+        for (const auto& [name, rangeSet] : _mappings) {
+            if (rangeSet.ranges().empty()) {
                 return false;
             }
         }

@@ -1532,8 +1532,8 @@ std::string DsPktProc::toStr(const Size indent) const
             }
         }
 
-        for (const auto& idErProcUpPair : _erProcsMap) {
-            ss << idErProcUpPair.second->toStr(indent + 2);
+        for (const auto& [id, erProcUp] : _erProcsMap) {
+            ss << erProcUp->toStr(indent + 2);
         }
     }
 
@@ -1549,8 +1549,8 @@ void PktProc::buildRawProcFromShared()
 {
     _preambleProc.buildRawProcFromShared();
 
-    for (const auto& idDsPktProcPair : _dsPktProcs) {
-        idDsPktProcPair.second->buildRawProcFromShared();
+    for (const auto& [id, dsPktProc] : _dsPktProcs) {
+        dsPktProc->buildRawProcFromShared();
     }
 }
 
@@ -1611,8 +1611,8 @@ std::string PktProc::toStr(const Size indent) const
     if (!_dsPktProcs.empty()) {
         ss << internal::indent(indent + 1) << "<DS pkt procs>" << std::endl;
 
-        for (const auto& idDsPktProcPair : _dsPktProcs) {
-            ss << idDsPktProcPair.second->toStr(indent + 2);
+        for (const auto& [id, dsPktProc] : _dsPktProcs) {
+            ss << dsPktProc->toStr(indent + 2);
         }
     }
 

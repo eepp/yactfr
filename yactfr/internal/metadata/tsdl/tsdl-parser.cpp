@@ -76,9 +76,7 @@ void TsdlParser::_setImplicitMappedClkTypeId(PseudoDt& basePseudoDt,
 
 void TsdlParser::_setImplicitMappedClkTypeId()
 {
-   for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
-        auto& pseudoDst = idPseudoDstPair.second;
-
+    for (auto& [id, pseudoDst] : _pseudoTraceType->pseudoDsts()) {
         if (pseudoDst->pseudoErHeaderType()) {
             this->_setImplicitMappedClkTypeId(*pseudoDst->pseudoErHeaderType(), "timestamp");
         }
@@ -206,9 +204,7 @@ void TsdlParser::_addPseudoDtRoles()
                                                           "uuid");
     }
 
-    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
-        auto& pseudoDst = idPseudoDstPair.second;
-
+    for (auto& [id, pseudoDst] : _pseudoTraceType->pseudoDsts()) {
         if (pseudoDst->pseudoPktCtxType()) {
             this->_addPseudoFlUIntTypeRoles(*pseudoDst->pseudoPktCtxType(), "packet_size",
                                             UnsignedIntegerTypeRole::PacketTotalLength);
@@ -233,9 +229,7 @@ void TsdlParser::_addPseudoDtRoles()
     // add "default clock timestamp" role
     DefClkTsRoleAdder visitor;
 
-    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
-        auto& pseudoDst = idPseudoDstPair.second;
-
+    for (auto& [id, pseudoDst] : _pseudoTraceType->pseudoDsts()) {
         if (pseudoDst->pseudoPktCtxType()) {
             pseudoDst->pseudoPktCtxType()->accept(visitor);
         }
@@ -364,8 +358,8 @@ void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
 
 void TsdlParser::_setPseudoDstDefClkType()
 {
-    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
-        this->_setPseudoDstDefClkType(*idPseudoDstPair.second);
+    for (auto& [id, pseudoDst] : _pseudoTraceType->pseudoDsts()) {
+        this->_setPseudoDstDefClkType(*pseudoDst);
     }
 }
 

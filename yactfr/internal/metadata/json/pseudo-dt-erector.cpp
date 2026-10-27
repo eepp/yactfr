@@ -73,9 +73,9 @@ MappingsOrFlagsT intTypeMappingsOrFlagsOfDt(const JsonObjVal& jsonDt, const char
     MappingsOrFlagsT mappingsOrFlags;
 
     if (const auto jsonMappingsOrFlags = jsonDt[propName]) {
-        for (auto& keyJsonIntRangesPair : jsonMappingsOrFlags->asObj()) {
-            mappingsOrFlags.insert(std::make_pair(keyJsonIntRangesPair.first,
-                                                  intRangesFromArray<RangeValueT>(keyJsonIntRangesPair.second->asArray())));
+        for (auto& [key, jsonIntRanges] : jsonMappingsOrFlags->asObj()) {
+            mappingsOrFlags.insert(std::make_pair(key,
+                                                  intRangesFromArray<RangeValueT>(jsonIntRanges->asArray())));
         }
     }
 

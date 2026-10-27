@@ -39,8 +39,8 @@ TraceType::Up TraceTypeFromPseudoTraceTypeConverter::_traceTypeFromPseudoTraceTy
 
     DataStreamTypeSet dstSet;
 
-    for (auto& idPseudoDstPair : _pseudoTraceType->pseudoDsts()) {
-        dstSet.insert(this->_dstFromPseudoDst(*idPseudoDstPair.second));
+    for (auto& [id, pseudoDst] : _pseudoTraceType->pseudoDsts()) {
+        dstSet.insert(this->_dstFromPseudoDst(*pseudoDst));
     }
 
     // create yactfr trace type
@@ -72,8 +72,8 @@ std::unique_ptr<const DataStreamType> TraceTypeFromPseudoTraceTypeConverter::_ds
     const auto it = _pseudoTraceType->pseudoOrphanErts().find(pseudoDst.id());
 
     if (it != _pseudoTraceType->pseudoOrphanErts().end()) {
-        for (auto& ertIdPseudoOrphanErtPair : it->second) {
-            pseudoErts.insert(&ertIdPseudoOrphanErtPair.second.pseudoErt());
+        for (auto& [ertId, pseudoOrphanErt] : it->second) {
+            pseudoErts.insert(&pseudoOrphanErt.pseudoErt());
         }
     }
 

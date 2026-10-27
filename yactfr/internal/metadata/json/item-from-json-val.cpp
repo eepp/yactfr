@@ -62,9 +62,9 @@ public:
     {
         MapItem::Container items;
 
-        for (auto& keyJsonValPair : jsonVal) {
-            keyJsonValPair.second->accept(*this);
-            items.insert(std::make_pair(keyJsonValPair.first, std::move(_item)));
+        for (auto& [key, childJsonVal] : jsonVal) {
+            childJsonVal->accept(*this);
+            items.insert(std::make_pair(key, std::move(_item)));
         }
 
         _item = createItem(std::move(items));

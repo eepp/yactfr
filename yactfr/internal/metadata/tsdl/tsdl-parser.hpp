@@ -1231,9 +1231,9 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
 
     typename FlIntTypeT::Mappings mappings;
 
-    for (const auto& nameRangesPair : pseudoMappings) {
-        mappings[nameRangesPair.first] = typename FlIntTypeT::MappingRangeSet {
-            std::move(nameRangesPair.second)
+    for (const auto& [name, ranges] : pseudoMappings) {
+        mappings[name] = typename FlIntTypeT::MappingRangeSet {
+            std::move(ranges)
         };
     }
 
@@ -1316,9 +1316,8 @@ void TsdlParser::_validateFlIntTypeMappings(const Size len, const TextLocation& 
         throwTextParseError("Fixed-length enumeration type has no mappings.", loc);
     }
 
-    for (const auto& nameRangesPair : mappings) {
-        this->_validateFlIntTypeMapping<FlIntTypeT>(len, loc, nameRangesPair.first,
-                                                      nameRangesPair.second);
+    for (const auto& [name, ranges] : mappings) {
+        this->_validateFlIntTypeMapping<FlIntTypeT>(len, loc, name, ranges);
     }
 }
 

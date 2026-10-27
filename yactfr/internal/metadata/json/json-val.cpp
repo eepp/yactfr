@@ -142,8 +142,8 @@ JsonVal::Up JsonObjVal::_clone() const
 {
     Container items;
 
-    for (const auto& keyItemPair : this->_theItems) {
-        items.insert(std::make_pair(keyItemPair.first, keyItemPair.second->clone()));
+    for (const auto& [key, item] : this->_theItems) {
+        items.insert(std::make_pair(key, item->clone()));
     }
 
     return std::make_unique<const JsonObjVal>(std::move(items), this->loc());

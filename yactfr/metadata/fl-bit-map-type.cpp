@@ -56,8 +56,8 @@ std::vector<FixedLengthBitMapType::_tFlagMask> FixedLengthBitMapType::_flagMasks
 {
     std::vector<_tFlagMask> flagMasks;
 
-    for (auto& flag : flags) {
-        flagMasks.emplace_back(flag.first, flag.second);
+    for (auto& [name, rangeSet] : flags) {
+        flagMasks.emplace_back(name, rangeSet);
     }
 
     return flagMasks;
@@ -76,8 +76,8 @@ const FixedLengthBitMapType::FlagRangeSet *FixedLengthBitMapType::operator[](con
 
 bool FixedLengthBitMapType::bitHasActiveFlag(const Index index) const noexcept
 {
-    for (auto& nameRangeSetPair : _flags) {
-        if (nameRangeSetPair.second.contains(index)) {
+    for (auto& [name, rangeSet] : _flags) {
+        if (rangeSet.contains(index)) {
             return true;
         }
     }

@@ -104,8 +104,8 @@ PktProcBuilder::PktProcBuilder(const TraceType& traceType) :
     this->_buildPktProc();
     _pktProc->buildRawProcFromShared();
 
-    for (auto& idDsPktProcPair : _pktProc->dsPktProcs()) {
-        idDsPktProcPair.second->setErAlign();
+    for (auto& [id, dsPktProc] : _pktProc->dsPktProcs()) {
+        dsPktProc->setErAlign();
     }
 }
 
@@ -348,8 +348,8 @@ void PktProcBuilder::_insertSpecialInstrs()
 {
     this->_insertSpecialPktProcPreambleProcInstrs();
 
-    for (auto& idDsPktProcPair : _pktProc->dsPktProcs()) {
-        this->_insertSpecialDsPktProcInstrs(*idDsPktProcPair.second);
+    for (auto& [id, dsPktProc] : _pktProc->dsPktProcs()) {
+        this->_insertSpecialDsPktProcInstrs(*dsPktProc);
     }
 }
 
@@ -636,13 +636,11 @@ PktProcBuilder::_tDtReadLenSelInstrMap PktProcBuilder::_createDtReadLenSelInstrM
 
     DtReadLenSelInstrMapCreator {_pktProc->preambleProc(), insertFunc};
 
-    for (auto& dsPktProcPair : _pktProc->dsPktProcs()) {
-        auto& dsPktProc = dsPktProcPair.second;
-
+    for (auto& [id, dsPktProc] : _pktProc->dsPktProcs()) {
         DtReadLenSelInstrMapCreator {dsPktProc->pktPreambleProc(), insertFunc};
         DtReadLenSelInstrMapCreator {dsPktProc->erPreambleProc(), insertFunc};
 
-        dsPktProcPair.second->forEachErProc([&insertFunc](ErProc& erProc) {
+        dsPktProc->forEachErProc([&insertFunc](ErProc& erProc) {
             DtReadLenSelInstrMapCreator {erProc.proc(), insertFunc};
         });
     }
@@ -796,13 +794,11 @@ void PktProcBuilder::_setSavedValPoss()
 
     SaveValInstrInserterVisitor {_pktProc->preambleProc(), getPosFunc};
 
-    for (auto& dsPktProcPair : _pktProc->dsPktProcs()) {
-        auto& dsPktProc = dsPktProcPair.second;
-
+    for (auto& [id, dsPktProc] : _pktProc->dsPktProcs()) {
         SaveValInstrInserterVisitor {dsPktProc->pktPreambleProc(), getPosFunc};
         SaveValInstrInserterVisitor {dsPktProc->erPreambleProc(), getPosFunc};
 
-        dsPktProcPair.second->forEachErProc([&getPosFunc](ErProc& erProc) {
+        dsPktProc->forEachErProc([&getPosFunc](ErProc& erProc) {
             SaveValInstrInserterVisitor {erProc.proc(), getPosFunc};
         });
     }
@@ -820,9 +816,7 @@ void PktProcBuilder::_insertEndInstrs()
 {
     insertEndInstr<EndPktPreambleProcInstr>(_pktProc->preambleProc());
 
-    for (auto& dsPktProcPair : _pktProc->dsPktProcs()) {
-        auto& dsPktProc = dsPktProcPair.second;
-
+    for (auto& [id, dsPktProc] : _pktProc->dsPktProcs()) {
         insertEndInstr<EndDsPktPreambleProcInstr>(dsPktProc->pktPreambleProc());
         insertEndInstr<EndDsErPreambleProcInstr>(dsPktProc->erPreambleProc());
 

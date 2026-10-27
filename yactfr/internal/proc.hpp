@@ -2299,8 +2299,8 @@ public:
             }
         }
 
-        for (auto& idErProcUpPair : _erProcsMap) {
-            func(*idErProcUpPair.second);
+        for (auto& [id, erProcUp] : _erProcsMap) {
+            func(*erProcUp);
         }
     }
 

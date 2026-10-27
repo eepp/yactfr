@@ -201,13 +201,13 @@ protected:
             return false;
         }
 
-        for (const auto& keyItemPair : this->_theItems) {
-            if (!other._hasItem(keyItemPair.first)) {
+        for (const auto& [key, itemUp] : this->_theItems) {
+            if (!other._hasItem(key)) {
                 return false;
             }
 
-            const auto otherItem = other._at(keyItemPair.first);
-            const auto item = this->_at(keyItemPair.first);
+            const auto otherItem = other._at(key);
+            const auto item = itemUp.get();
 
             if (static_cast<bool>(item) != static_cast<bool>(otherItem)) {
                 return false;

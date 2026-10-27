@@ -656,13 +656,13 @@ private:
                 throwTextParseError(ss.str(), jsonVal.loc());
             }
 
-            for (auto& keyJsonValPair : jsonVal.asObj()) {
+            for (auto& [key, jsonRangeSetValUp] : jsonVal.asObj()) {
                 try {
-                    _rangeSetReq.validate(*keyJsonValPair.second);
+                    _rangeSetReq.validate(*jsonRangeSetValUp);
                 } catch (TextParseError& exc) {
                     std::ostringstream ss;
 
-                    ss << "In " << _propName << " `" << keyJsonValPair.first << "`:";
+                    ss << "In " << _propName << " `" << key << "`:";
                     appendMsgToTextParseError(exc, ss.str(), jsonVal.loc());
                     throw;
                 }
@@ -2179,8 +2179,8 @@ private:
             JsonObjValReq::_validate(jsonVal);
 
             // validate each entry
-            for (auto& keyJsonValPair : jsonVal.asObj()) {
-                auto& jsonEntryVal = *keyJsonValPair.second;
+            for (auto& [key, jsonEntryValUp] : jsonVal.asObj()) {
+                auto& jsonEntryVal = *jsonEntryValUp;
 
                 try {
                     if (!jsonEntryVal.isUInt() && !jsonEntryVal.isSInt() && !jsonEntryVal.isStr()) {
@@ -2191,7 +2191,7 @@ private:
                 } catch (TextParseError& exc) {
                     std::ostringstream ss;
 
-                    ss << "Invalid trace environment entry `" << keyJsonValPair.first << "`:";
+                    ss << "Invalid trace environment entry `" << key << "`:";
                     appendMsgToTextParseError(exc, ss.str(), jsonEntryVal.loc());
                     throw;
                 }

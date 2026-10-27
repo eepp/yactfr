@@ -249,10 +249,8 @@ void JsonObjValReq::_validate(const JsonVal& jsonVal) const
 {
     auto& jsonObjVal = jsonVal.asObj();
 
-    for (auto& keyPropReqPair : _propReqs) {
-        auto& key = keyPropReqPair.first;
-
-        if (keyPropReqPair.second.isRequired() && !jsonObjVal.hasVal(key)) {
+    for (auto& [key, propReq] : _propReqs) {
+        if (propReq.isRequired() && !jsonObjVal.hasVal(key)) {
             std::ostringstream ss;
 
             ss << "Missing mandatory object property `" << key << "`.";
@@ -260,8 +258,7 @@ void JsonObjValReq::_validate(const JsonVal& jsonVal) const
         }
     }
 
-    for (auto& keyJsonValPair : jsonObjVal) {
-        auto& key = keyJsonValPair.first;
+    for (auto& [key, propJsonValUp] : jsonObjVal) {
         const auto keyPropReqPairIt = _propReqs.find(key);
 
         if (keyPropReqPairIt == _propReqs.end()) {
@@ -272,11 +269,11 @@ void JsonObjValReq::_validate(const JsonVal& jsonVal) const
                 std::ostringstream ss;
 
                 ss << "Unknown object property `" << key << "`.";
-                throwTextParseError(ss.str(), keyJsonValPair.second->loc());
+                throwTextParseError(ss.str(), propJsonValUp->loc());
             }
         }
 
-        auto& propJsonVal = *keyJsonValPair.second;
+        auto& propJsonVal = *propJsonValUp;
 
         try {
             keyPropReqPairIt->second.validate(propJsonVal);

@@ -1063,14 +1063,14 @@ Size flUIntTypeLen(const PseudoDt& pseudoDt) noexcept
 void PseudoTraceType::validate() const
 {
     // validate that all orphan ERTs match the real ERTs
-    for (const auto& dstIdPseudoOrphanErtsPair : _pseudoOrphanErts) {
-        if (_pseudoDsts.find(dstIdPseudoOrphanErtsPair.first) == _pseudoDsts.end()) {
+    for (const auto& [dstId, pseudoOrphanErts] : _pseudoOrphanErts) {
+        if (_pseudoDsts.find(dstId) == _pseudoDsts.end()) {
             std::ostringstream ss;
 
             ss << "Event record type needs a data stream type " <<
-                  "(with ID " << dstIdPseudoOrphanErtsPair.first << ") which doesn't exist.";
-            assert(!dstIdPseudoOrphanErtsPair.second.empty());
-            throwTextParseError(ss.str(), dstIdPseudoOrphanErtsPair.second.begin()->second.loc());
+                  "(with ID " << dstId << ") which doesn't exist.";
+            assert(!pseudoOrphanErts.empty());
+            throwTextParseError(ss.str(), pseudoOrphanErts.begin()->second.loc());
         }
     }
 
