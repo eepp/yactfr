@@ -22,14 +22,14 @@
 namespace yactfr {
 namespace internal {
 
-boost::optional<ByteOrder> TsdlAttr::_toBo() const
+std::optional<ByteOrder> TsdlAttr::_toBo() const
 {
     if (strVal == "be" || strVal == "network") {
         return ByteOrder::Big;
     } else if (strVal == "le") {
         return ByteOrder::Little;
     } else if (strVal == "native") {
-        return boost::none;
+        return std::nullopt;
     }
 
     std::ostringstream ss;
@@ -134,7 +134,7 @@ unsigned int TsdlAttr::align() const
     return uintVal;
 }
 
-boost::optional<ByteOrder> TsdlAttr::bo() const
+std::optional<ByteOrder> TsdlAttr::bo() const
 {
     this->checkKind(Kind::Ident);
     return this->_toBo();

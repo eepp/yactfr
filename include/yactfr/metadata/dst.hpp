@@ -129,9 +129,9 @@ public:
           UnsignedIntegerTypeRole::DefaultClockTimestamp
         @endparblock
     */
-    explicit DataStreamType(TypeId id, boost::optional<std::string> nameSpace,
-                            boost::optional<std::string> name,
-                            boost::optional<std::string> uid,
+    explicit DataStreamType(TypeId id, std::optional<std::string> nameSpace,
+                            std::optional<std::string> name,
+                            std::optional<std::string> uid,
                             EventRecordTypeSet&& eventRecordTypes,
                             StructureType::Up packetContextType,
                             StructureType::Up eventRecordHeaderType,
@@ -240,19 +240,19 @@ public:
     }
 
     /// Namespace of data streams described by this type.
-    const boost::optional<std::string>& nameSpace() const noexcept
+    const std::optional<std::string>& nameSpace() const noexcept
     {
         return _ns;
     }
 
     /// Name of data streams described by this type.
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
     /// Unique ID of data streams described by this type.
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
@@ -384,9 +384,9 @@ private:
 
 private:
     const TypeId _id;
-    const boost::optional<std::string> _ns;
-    const boost::optional<std::string> _name;
-    const boost::optional<std::string> _uid;
+    const std::optional<std::string> _ns;
+    const std::optional<std::string> _name;
+    const std::optional<std::string> _uid;
     const EventRecordTypeSet _erts;
     std::unordered_map<TypeId, const EventRecordType *> _idsToErts;
     StructureType::Up _pktCtxType;

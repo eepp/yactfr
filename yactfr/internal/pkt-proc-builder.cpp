@@ -6,7 +6,7 @@
  */
 
 #include <functional>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
@@ -291,7 +291,7 @@ private:
     }
 
 private:
-    const boost::optional<UnsignedIntegerTypeRole> _uIntTypeRole;
+    const std::optional<UnsignedIntegerTypeRole> _uIntTypeRole;
     const bool _findWithMetadataStreamUuidRole = false;
     const Func _func;
 };

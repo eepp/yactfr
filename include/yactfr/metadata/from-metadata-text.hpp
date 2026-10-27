@@ -27,7 +27,7 @@ Pair of:
 -# \link TraceType Trace type\endlink
 -# Optional metadata stream UUID
 */
-using FromMetadataTextReturn = std::pair<TraceType::Up, boost::optional<boost::uuids::uuid>>;
+using FromMetadataTextReturn = std::pair<TraceType::Up, std::optional<boost::uuids::uuid>>;
 
 /*!
 @brief
@@ -67,23 +67,23 @@ and \p end is a CTF&nbsp;1.8 or CTF&nbsp;2 metadata text.
       <dt>Original UUID</dt>
       <dd>
         Equivalent UUID of the value of the \c uuid attribute of \em CC,
-        or \c boost::none if missing.
+        or \c std::nullopt if missing.
       </dd>
 
       <dt>Origin</dt>
       <dd>
         Unix epoch if the \c absolute attribute of \em CC is true,
-        or \c boost::none if missing.
+        or \c std::nullopt if missing.
       </dd>
 
       <dt>Precision</dt>
       <dd>
         Value of the \c precision attribute of \em CC,
-        or \c boost::none if missing.
+        or \c std::nullopt if missing.
       </dd>
 
       <dt>Accuracy</dt>
-      <dd>\c boost::none.
+      <dd>\c std::nullopt.
     </dl>
     @endparblock
 

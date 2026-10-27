@@ -13,7 +13,7 @@ namespace yactfr {
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int align,
                                                            const unsigned int len,
                                                            const ByteOrder bo,
-                                                           const boost::optional<BitOrder>& bio,
+                                                           const std::optional<BitOrder>& bio,
                                                            const DisplayBase prefDispBase,
                                                            Mappings mappings,
                                                            MapItem::Up attrs) :
@@ -25,7 +25,7 @@ FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int al
 
 FixedLengthSignedIntegerType::FixedLengthSignedIntegerType(const unsigned int len,
                                                            const ByteOrder bo,
-                                                           const boost::optional<BitOrder>& bio,
+                                                           const std::optional<BitOrder>& bio,
                                                            const DisplayBase prefDispBase,
                                                            Mappings mappings,
                                                            MapItem::Up attrs) :
@@ -46,7 +46,7 @@ DataType::Up FixedLengthSignedIntegerType::_clone() const
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int align,
                                                                const unsigned int len,
                                                                const ByteOrder bo,
-                                                               const boost::optional<BitOrder>& bio,
+                                                               const std::optional<BitOrder>& bio,
                                                                const DisplayBase prefDispBase,
                                                                Mappings mappings,
                                                                MapItem::Up attrs,
@@ -61,7 +61,7 @@ FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned in
 
 FixedLengthUnsignedIntegerType::FixedLengthUnsignedIntegerType(const unsigned int len,
                                                                const ByteOrder bo,
-                                                               const boost::optional<BitOrder>& bio,
+                                                               const std::optional<BitOrder>& bio,
                                                                const DisplayBase prefDispBase,
                                                                Mappings mappings,
                                                                MapItem::Up attrs,

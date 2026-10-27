@@ -1479,8 +1479,8 @@ Vm::_tExecReaction Vm::_execSetDsInfo(const Instr&)
 
 Vm::_tExecReaction Vm::_execSetPktInfo(const Instr&)
 {
-    _pos.elems.pktInfo._expectedTotalLen = boost::none;
-    _pos.elems.pktInfo._expectedContentLen = boost::none;
+    _pos.elems.pktInfo._expectedTotalLen = std::nullopt;
+    _pos.elems.pktInfo._expectedContentLen = std::nullopt;
 
     if (_pos.curExpectedPktTotalLenBits != std::numeric_limits<Size>::max()) {
         _pos.elems.pktInfo._expectedTotalLen = _pos.curExpectedPktTotalLenBits;

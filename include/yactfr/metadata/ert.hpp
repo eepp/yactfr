@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include "aliases.hpp"
 #include "item.hpp"
@@ -90,10 +90,10 @@ public:
         If set, no data type in \p payloadType, recursively, has a role
         (UnsignedIntegerTypeRole or "metadata stream UUID" role).
     */
-    explicit EventRecordType(TypeId id, boost::optional<std::string> nameSpace,
-                             boost::optional<std::string> name, boost::optional<std::string> uid,
-                             boost::optional<LogLevel> logLevel,
-                             boost::optional<std::string> emfUri,
+    explicit EventRecordType(TypeId id, std::optional<std::string> nameSpace,
+                             std::optional<std::string> name, std::optional<std::string> uid,
+                             std::optional<LogLevel> logLevel,
+                             std::optional<std::string> emfUri,
                              std::unique_ptr<const StructureType> specificContextType,
                              std::unique_ptr<const StructureType> payloadType,
                              MapItem::Up attributes = nullptr);
@@ -133,31 +133,31 @@ public:
     }
 
     /// Namespace of event records described by this type.
-    const boost::optional<std::string>& nameSpace() const noexcept
+    const std::optional<std::string>& nameSpace() const noexcept
     {
         return _ns;
     }
 
     /// Name of event records described by this type.
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
     /// Unique ID of event records described by this type.
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
 
     /// Log level of event records described by this type.
-    const boost::optional<LogLevel>& logLevel() const noexcept
+    const std::optional<LogLevel>& logLevel() const noexcept
     {
         return _logLevel;
     }
 
     /// EMF URI of event records described by this type.
-    const boost::optional<std::string>& emfUri() const noexcept
+    const std::optional<std::string>& emfUri() const noexcept
     {
         return _emfUri;
     }
@@ -214,11 +214,11 @@ private:
 
 private:
     const TypeId _id;
-    const boost::optional<std::string> _ns;
-    const boost::optional<std::string> _name;
-    const boost::optional<std::string> _uid;
-    const boost::optional<LogLevel> _logLevel;
-    const boost::optional<std::string> _emfUri;
+    const std::optional<std::string> _ns;
+    const std::optional<std::string> _name;
+    const std::optional<std::string> _uid;
+    const std::optional<LogLevel> _logLevel;
+    const std::optional<std::string> _emfUri;
     std::unique_ptr<const StructureType> _specCtxType;
     std::unique_ptr<const StructureType> _payloadType;
     const MapItem::Up _attrs;

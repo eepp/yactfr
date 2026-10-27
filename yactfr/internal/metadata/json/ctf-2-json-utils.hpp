@@ -8,7 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_UTILS_HPP
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 
 #include <yactfr/metadata/item.hpp>
@@ -42,7 +42,7 @@ ValT rawIntValFromJsonIntVal(const JsonVal& jsonIntVal) noexcept
  * Returns the optional raw string value from the property named
  * `propName` within `jsonObjVal`.
  */
-inline boost::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
+inline std::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
                                                 const std::string& propName)
 {
     const auto jsonVal = jsonObjVal[propName];
@@ -51,14 +51,14 @@ inline boost::optional<std::string> optStrOfObj(const JsonObjVal& jsonObjVal,
         return *jsonVal->asStr();
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 /*
  * Returns the optional unsigned integer value from the property named
  * `propName` within `jsonObjVal`.
  */
-inline boost::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjVal,
+inline std::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonObjVal,
                                                         const std::string& propName)
 {
     const auto jsonVal = jsonObjVal[propName];
@@ -67,7 +67,7 @@ inline boost::optional<unsigned long long> optUIntOfObj(const JsonObjVal& jsonOb
         return *jsonVal->asUInt();
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 } // namespace internal

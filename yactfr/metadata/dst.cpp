@@ -14,8 +14,8 @@
 
 namespace yactfr {
 
-DataStreamType::DataStreamType(const TypeId id, boost::optional<std::string> ns,
-                               boost::optional<std::string> name, boost::optional<std::string> uid,
+DataStreamType::DataStreamType(const TypeId id, std::optional<std::string> ns,
+                               std::optional<std::string> name, std::optional<std::string> uid,
                                EventRecordTypeSet&& erts, StructureType::Up pktCtxType,
                                StructureType::Up erHeaderType, StructureType::Up erCommonCtxType,
                                const ClockType * const defClkType, MapItem::Up attrs) :
@@ -39,7 +39,7 @@ DataStreamType::DataStreamType(const TypeId id, EventRecordTypeSet&& erts,
                                StructureType::Up erCommonCtxType,
                                const ClockType * const defClkType, MapItem::Up attrs) :
     DataStreamType {
-        id, boost::none, boost::none, boost::none, std::move(erts),
+        id, std::nullopt, std::nullopt, std::nullopt, std::move(erts),
         std::move(pktCtxType), std::move(erHeaderType), std::move(erCommonCtxType),
         defClkType, std::move(attrs)
     }

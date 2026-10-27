@@ -71,7 +71,7 @@ private:
     struct _tMemberNamesEntry final
     {
         // lexical ID of the structure type (CTF 1.8 only)
-        boost::optional<Index> structTypeLexId;
+        std::optional<Index> structTypeLexId;
 
         // member type names of the structure type visited so far
         std::vector<const std::string *> names;
@@ -149,7 +149,7 @@ private:
                      * Empty path or only "parent" elements so far:
                      * add parent.
                      */
-                    normPathElems.push_back(boost::none);
+                    normPathElems.push_back(std::nullopt);
                 } else {
                     normPathElems.pop_back();
                 }

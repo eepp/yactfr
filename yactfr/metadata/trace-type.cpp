@@ -24,8 +24,8 @@
 namespace yactfr {
 
 TraceType::TraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                     boost::optional<std::string> ns, boost::optional<std::string> name,
-                     boost::optional<std::string> uid, TraceEnvironment env,
+                     std::optional<std::string> ns, std::optional<std::string> name,
+                     std::optional<std::string> uid, TraceEnvironment env,
                      StructureType::Up pktHeaderType, ClockTypeSet&& clkTypes,
                      DataStreamTypeSet&& dsts, MapItem::Up attrs) :
     _pimpl {
@@ -59,17 +59,17 @@ unsigned int TraceType::minorVersion() const noexcept
     return _pimpl->minorVersion();
 }
 
-const boost::optional<std::string>& TraceType::nameSpace() const noexcept
+const std::optional<std::string>& TraceType::nameSpace() const noexcept
 {
     return _pimpl->ns();
 }
 
-const boost::optional<std::string>& TraceType::name() const noexcept
+const std::optional<std::string>& TraceType::name() const noexcept
 {
     return _pimpl->name();
 }
 
-const boost::optional<std::string>& TraceType::uid() const noexcept
+const std::optional<std::string>& TraceType::uid() const noexcept
 {
     return _pimpl->uid();
 }

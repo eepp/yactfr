@@ -14,7 +14,7 @@ namespace yactfr {
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const _tKind kind, const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
-                                                 const boost::optional<BitOrder>& bio,
+                                                 const std::optional<BitOrder>& bio,
                                                  MapItem::Up attrs) :
     ScalarDataType {kind, align, std::move(attrs)},
     _len {len},
@@ -27,14 +27,14 @@ FixedLengthBitArrayType::FixedLengthBitArrayType(const _tKind kind, const unsign
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int align,
                                                  const unsigned int len, const ByteOrder bo,
-                                                 const boost::optional<BitOrder>& bio,
+                                                 const std::optional<BitOrder>& bio,
                                                  MapItem::Up attrs) :
     FixedLengthBitArrayType {_kindFlBitArray, align, len, bo, bio, std::move(attrs)}
 {
 }
 
 FixedLengthBitArrayType::FixedLengthBitArrayType(const unsigned int len, const ByteOrder bo,
-                                                 const boost::optional<BitOrder>& bio,
+                                                 const std::optional<BitOrder>& bio,
                                                  MapItem::Up attrs) :
     FixedLengthBitArrayType {1, len, bo, bio, std::move(attrs)}
 {

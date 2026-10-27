@@ -6,7 +6,7 @@
  */
 
 #include <cassert>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/clk-orig.hpp>
@@ -36,7 +36,7 @@ ClockOrigin::ClockOrigin() :
 {
 }
 
-ClockOrigin::ClockOrigin(boost::optional<std::string> ns, std::string name, std::string uid) :
+ClockOrigin::ClockOrigin(std::optional<std::string> ns, std::string name, std::string uid) :
     _ns {std::move(ns)},
     _name {std::move(name)},
     _uid {std::move(uid)}
@@ -49,11 +49,11 @@ ClockOrigin::ClockOrigin(std::string name, std::string uid) :
 {
 }
 
-ClockType::ClockType(boost::optional<std::string> id, boost::optional<std::string> ns,
-                     boost::optional<std::string> name, boost::optional<std::string> uid,
-                     boost::optional<boost::uuids::uuid> origUuid, unsigned long long freq,
-                     boost::optional<std::string> descr, boost::optional<ClockOrigin> orig,
-                     boost::optional<Cycles> prec, boost::optional<Cycles> accuracy,
+ClockType::ClockType(std::optional<std::string> id, std::optional<std::string> ns,
+                     std::optional<std::string> name, std::optional<std::string> uid,
+                     std::optional<boost::uuids::uuid> origUuid, unsigned long long freq,
+                     std::optional<std::string> descr, std::optional<ClockOrigin> orig,
+                     std::optional<Cycles> prec, std::optional<Cycles> accuracy,
                      const ClockOffset& offsetFromOrig, MapItem::Up attrs) :
     _id {std::move(id)},
     _ns {std::move(ns)},

@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <cassert>
+
 #include <yactfr/data-src.hpp>
 
 namespace yactfr {
@@ -13,7 +15,7 @@ DataSource::~DataSource()
 {
 }
 
-boost::optional<DataBlock> DataSource::data(const Index offset, const Size minSize)
+std::optional<DataBlock> DataSource::data(const Index offset, const Size minSize)
 {
     assert(minSize <= 9);
 

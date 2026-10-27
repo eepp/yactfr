@@ -9,7 +9,8 @@
 #define YACTFR_INTERNAL_UTILS_HPP
 
 #include <string>
-#include <boost/optional.hpp>
+#include <functional>
+#include <optional>
 
 #include <yactfr/aliases.hpp>
 

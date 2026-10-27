@@ -293,7 +293,7 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
 {
     auto& jsonLocVal = jsonDt[propName]->asObj();
 
-    const auto scope = call([&jsonLocVal]() -> boost::optional<Scope> {
+    const auto scope = call([&jsonLocVal]() -> std::optional<Scope> {
         if (const auto jsonOrigVal = jsonLocVal[strs::orig]) {
             // absolute
             return call([jsonOrigVal] {
@@ -317,7 +317,7 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
         }
 
         // relative
-        return boost::none;
+        return std::nullopt;
     });
 
     PseudoDataLoc::PathElems pathElems;
@@ -327,7 +327,7 @@ PseudoDataLoc pseudoDataLocOfDynDt(const JsonObjVal& jsonDt, const std::string& 
 
         for (auto& jsonPathElem : jsonPathVal) {
             if (jsonPathElem->isNull()) {
-                pathElems.emplace_back(boost::none);
+                pathElems.emplace_back(std::nullopt);
             } else {
                 pathElems.emplace_back(*jsonPathElem->asStr());
             }

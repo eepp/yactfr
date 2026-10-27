@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <utility>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include "bo.hpp"
 #include "scalar-dt.hpp"
@@ -37,7 +37,7 @@ public:
 
 protected:
     explicit FixedLengthBitArrayType(_tKind kind, unsigned int align, unsigned int len,
-                                     ByteOrder bo, const boost::optional<BitOrder>& bio,
+                                     ByteOrder bo, const std::optional<BitOrder>& bio,
                                      MapItem::Up attrs);
 
 public:
@@ -59,7 +59,7 @@ public:
         Bit order of data stream fixed-length bit arrays described by
         this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -87,7 +87,7 @@ public:
     */
     explicit FixedLengthBitArrayType(unsigned int alignment, unsigned int length,
                                      ByteOrder byteOrder,
-                                     const boost::optional<BitOrder>& bitOrder = boost::none,
+                                     const std::optional<BitOrder>& bitOrder = std::nullopt,
                                      MapItem::Up attributes = nullptr);
 
     /*!
@@ -106,7 +106,7 @@ public:
         Bit order of data stream fixed-length bit arrays described by
         this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -129,7 +129,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBitArrayType(unsigned int length, ByteOrder byteOrder,
-                                     const boost::optional<BitOrder>& bitOrder = boost::none,
+                                     const std::optional<BitOrder>& bitOrder = std::nullopt,
                                      MapItem::Up attributes = nullptr);
 
     /*!

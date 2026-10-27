@@ -12,7 +12,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/variant.hpp>
 
 #include <yactfr/aliases.hpp>
@@ -73,18 +73,18 @@ namespace internal {
  * `Kind::Rel2`::
  *     Relative from CTF 2.
  *
- *     A path element may be `boost::none` to indicate "parent".
+ *     A path element may be `std::nullopt` to indicate "parent".
  *
  * The distinction between `Kind::Rel1` and `Kind::Rel2` is important
- * because `Kind::Rel2` allows no-value path elements (`boost::none`) to
+ * because `Kind::Rel2` allows no-value path elements (`std::nullopt`) to
  * explicitly indicate "parent", whereas `Kind::Rel1` indicates
  * "parent" implicitly.
  */
 class PseudoDataLoc final
 {
 public:
-    // `boost::none` explicitly means "parent" here (CTF 2)
-    using PathElems = std::vector<boost::optional<std::string>>;
+    // `std::nullopt` explicitly means "parent" here (CTF 2)
+    using PathElems = std::vector<std::optional<std::string>>;
 
     enum class Kind {
         Env,    // environment (CTF 1.8)
@@ -94,9 +94,9 @@ public:
     };
 
 public:
-    explicit PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems pathElems,
+    explicit PseudoDataLoc(Kind kind, std::optional<Scope> scope, PathElems pathElems,
                            TextLocation loc,
-                           boost::optional<Index> baseStructTypeLexId = boost::none);
+                           std::optional<Index> baseStructTypeLexId = std::nullopt);
 
     PseudoDataLoc(const PseudoDataLoc&) = default;
     PseudoDataLoc(PseudoDataLoc&&) = default;
@@ -108,7 +108,7 @@ public:
         return _kind;
     }
 
-    const boost::optional<Scope>& scope() const noexcept
+    const std::optional<Scope>& scope() const noexcept
     {
         return _scope;
     }
@@ -123,17 +123,17 @@ public:
         return _loc;
     }
 
-    const boost::optional<Index>& baseStructTypeLexId() const noexcept
+    const std::optional<Index>& baseStructTypeLexId() const noexcept
     {
         return _baseStructTypeLexId;
     }
 
 private:
     Kind _kind;
-    boost::optional<Scope> _scope;
+    std::optional<Scope> _scope;
     PathElems _pathElems;
     TextLocation _loc;
-    boost::optional<Index> _baseStructTypeLexId;
+    std::optional<Index> _baseStructTypeLexId;
 };
 
 class PseudoDt;
@@ -195,7 +195,7 @@ public:
         _loc = std::move(loc);
     }
 
-    const boost::optional<Index>& posInScope() const noexcept
+    const std::optional<Index>& posInScope() const noexcept
     {
         return _posInScope;
     }
@@ -216,7 +216,7 @@ private:
      *
      * Set by setPseudoDtPosInScope().
      */
-    boost::optional<Index> _posInScope;
+    std::optional<Index> _posInScope;
 };
 
 using PseudoDtSet = std::unordered_set<PseudoDt *>;
@@ -237,7 +237,7 @@ class PseudoScalarDtWrapper :
 {
 public:
     explicit PseudoScalarDtWrapper(DataType::Up dt,
-                                   boost::optional<StringEncoding> encoding = boost::none,
+                                   std::optional<StringEncoding> encoding = std::nullopt,
                                    TextLocation loc = TextLocation {});
 
     explicit PseudoScalarDtWrapper(DataType::Up dt, TextLocation loc = TextLocation {});
@@ -260,14 +260,14 @@ public:
         return *_dt;
     }
 
-    const boost::optional<StringEncoding>& encoding() const noexcept
+    const std::optional<StringEncoding>& encoding() const noexcept
     {
         return _encoding;
     }
 
 private:
     DataType::Up _dt;
-    boost::optional<StringEncoding> _encoding;
+    std::optional<StringEncoding> _encoding;
 };
 
 /*
@@ -315,8 +315,8 @@ public:
     explicit PseudoFlUIntType(unsigned int align, unsigned int len, ByteOrder bo,
                               const BitOrder bio, DisplayBase prefDispBase,
                               FixedLengthUnsignedIntegerType::Mappings mappings,
-                              boost::optional<StringEncoding> encoding = boost::none,
-                              boost::optional<std::string> mappedClkTypeId = boost::none,
+                              std::optional<StringEncoding> encoding = std::nullopt,
+                              std::optional<std::string> mappedClkTypeId = std::nullopt,
                               MapItem::Up attrs = nullptr, UnsignedIntegerTypeRoleSet roles = {},
                               TextLocation loc = TextLocation {});
 
@@ -357,12 +357,12 @@ public:
         return _prefDispBase;
     }
 
-    const boost::optional<StringEncoding>& encoding() const noexcept
+    const std::optional<StringEncoding>& encoding() const noexcept
     {
         return _encoding;
     }
 
-    const boost::optional<std::string>& mappedClkTypeId() const noexcept
+    const std::optional<std::string>& mappedClkTypeId() const noexcept
     {
         return _mappedClkTypeId;
     }
@@ -399,8 +399,8 @@ private:
     BitOrder _bio;
     DisplayBase _prefDispBase;
     FixedLengthUnsignedIntegerType::Mappings _mappings;
-    boost::optional<StringEncoding> _encoding;
-    boost::optional<std::string> _mappedClkTypeId;
+    std::optional<StringEncoding> _encoding;
+    std::optional<std::string> _mappedClkTypeId;
     UnsignedIntegerTypeRoleSet _roles;
 };
 
@@ -436,7 +436,7 @@ public:
         return _pseudoLenLoc;
     }
 
-    const boost::optional<DataLocation>& lenLoc() const noexcept
+    const std::optional<DataLocation>& lenLoc() const noexcept
     {
         return _lenLoc;
     }
@@ -450,7 +450,7 @@ protected:
     PseudoDataLoc _pseudoLenLoc;
 
     // set by setPseudoDtDataLoc() from `_pseudoLenLoc`
-    boost::optional<DataLocation> _lenLoc;
+    std::optional<DataLocation> _lenLoc;
 };
 
 /*
@@ -559,17 +559,17 @@ struct PseudoBlobType :
     public WithAttrsMixin
 {
 protected:
-    explicit PseudoBlobType(boost::optional<std::string> mediaType,
+    explicit PseudoBlobType(std::optional<std::string> mediaType,
                             MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
 public:
-    const boost::optional<std::string>& mediaType() const noexcept
+    const std::optional<std::string>& mediaType() const noexcept
     {
         return _mediaType;
     }
 
 private:
-    boost::optional<std::string> _mediaType;
+    std::optional<std::string> _mediaType;
     PseudoDt::Up _pseudoElemType;
 };
 
@@ -583,7 +583,7 @@ class PseudoDlBlobType final :
     public PseudoDlDtMixin
 {
 public:
-    explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, boost::optional<std::string> mediaType,
+    explicit PseudoDlBlobType(PseudoDataLoc pseudoLenLoc, std::optional<std::string> mediaType,
                               MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
     PseudoDt::Kind kind() const noexcept override
@@ -608,10 +608,10 @@ public:
 public:
     explicit PseudoNamedDt() = default;
 
-    explicit PseudoNamedDt(boost::optional<std::string> name, PseudoDt::Up pseudoDt,
+    explicit PseudoNamedDt(std::optional<std::string> name, PseudoDt::Up pseudoDt,
                            MapItem::Up attrs = nullptr);
 
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
@@ -627,7 +627,7 @@ public:
     }
 
 private:
-    boost::optional<std::string> _name;
+    std::optional<std::string> _name;
     PseudoDt::Up _pseudoDt;
 };
 
@@ -652,7 +652,7 @@ class PseudoStructType final :
 public:
     explicit PseudoStructType(unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
                               MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {},
-                              boost::optional<Index> lexId = boost::none);
+                              std::optional<Index> lexId = std::nullopt);
 
     PseudoDt::Kind kind() const noexcept override
     {
@@ -684,7 +684,7 @@ public:
         return _pseudoMemberTypes;
     }
 
-    const boost::optional<Index>& lexId() const noexcept
+    const std::optional<Index>& lexId() const noexcept
     {
         return _lexId;
     }
@@ -692,7 +692,7 @@ public:
 private:
     unsigned int _minAlign;
     PseudoNamedDts _pseudoMemberTypes;
-    boost::optional<Index> _lexId;
+    std::optional<Index> _lexId;
 };
 
 /*
@@ -705,7 +705,7 @@ class PseudoVarType :
     public WithAttrsMixin
 {
 public:
-    explicit PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+    explicit PseudoVarType(std::optional<PseudoDataLoc> pseudoSelLoc,
                            PseudoNamedDts&& pseudoOpts, MapItem::Up attrs = nullptr,
                            TextLocation loc = TextLocation {});
 
@@ -719,7 +719,7 @@ public:
     void accept(PseudoDtVisitor& visitor) override;
     void accept(ConstPseudoDtVisitor& visitor) const override;
 
-    const boost::optional<PseudoDataLoc>& pseudoSelLoc() const noexcept
+    const std::optional<PseudoDataLoc>& pseudoSelLoc() const noexcept
     {
         return _pseudoSelLoc;
     }
@@ -729,7 +729,7 @@ public:
         _pseudoSelLoc = std::move(loc);
     }
 
-    const boost::optional<DataLocation>& selLoc() const noexcept
+    const std::optional<DataLocation>& selLoc() const noexcept
     {
         return _selLoc;
     }
@@ -754,10 +754,10 @@ protected:
 
 private:
     PseudoNamedDts _pseudoOpts;
-    boost::optional<PseudoDataLoc> _pseudoSelLoc;
+    std::optional<PseudoDataLoc> _pseudoSelLoc;
 
     // set by setPseudoDtDataLoc() from `_pseudoSelLoc`
-    boost::optional<DataLocation> _selLoc;
+    std::optional<DataLocation> _selLoc;
 };
 
 /*
@@ -785,7 +785,7 @@ public:
      * `ranges` matches `pseudoOpts`, that is, `ranges[i]` is the
      * corresponding integer range set of the option `pseudoOpts[i]`.
      */
-    explicit PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+    explicit PseudoVarWithIntRangesType(std::optional<PseudoDataLoc> pseudoSelLoc,
                                         PseudoNamedDts&& pseudoOpts, RangeSets&& rangeSets,
                                         MapItem::Up attrs = nullptr,
                                         TextLocation loc = TextLocation {});
@@ -839,7 +839,7 @@ public:
         return _pseudoSelLoc;
     }
 
-    const boost::optional<DataLocation>& selLoc() const noexcept
+    const std::optional<DataLocation>& selLoc() const noexcept
     {
         return _selLoc;
     }
@@ -854,7 +854,7 @@ private:
     PseudoDataLoc _pseudoSelLoc;
 
     // set by setPseudoDtDataLoc() from `_pseudoSelLoc`
-    boost::optional<DataLocation> _selLoc;
+    std::optional<DataLocation> _selLoc;
 };
 
 /*
@@ -932,9 +932,9 @@ class PseudoErt final :
     public WithAttrsMixin
 {
 public:
-    explicit PseudoErt(TypeId id, boost::optional<std::string> ns,
-                       boost::optional<std::string> name, boost::optional<std::string> uid,
-                       boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
+    explicit PseudoErt(TypeId id, std::optional<std::string> ns,
+                       std::optional<std::string> name, std::optional<std::string> uid,
+                       std::optional<LogLevel> logLevel, std::optional<std::string> emfUri,
                        PseudoDt::Up pseudoSpecCtxType, PseudoDt::Up pseudoPayloadType,
                        MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
 
@@ -954,27 +954,27 @@ public:
         return _id;
     }
 
-    const boost::optional<std::string>& ns() const noexcept
+    const std::optional<std::string>& ns() const noexcept
     {
         return _ns;
     }
 
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
 
-    const boost::optional<LogLevel>& logLevel() const noexcept
+    const std::optional<LogLevel>& logLevel() const noexcept
     {
         return _logLevel;
     }
 
-    const boost::optional<std::string>& emfUri() const noexcept
+    const std::optional<std::string>& emfUri() const noexcept
     {
         return _emfUri;
     }
@@ -1010,11 +1010,11 @@ private:
 
 private:
     TypeId _id = 0;
-    boost::optional<std::string> _ns;
-    boost::optional<std::string> _name;
-    boost::optional<std::string> _uid;
-    boost::optional<LogLevel> _logLevel;
-    boost::optional<std::string> _emfUri;
+    std::optional<std::string> _ns;
+    std::optional<std::string> _name;
+    std::optional<std::string> _uid;
+    std::optional<LogLevel> _logLevel;
+    std::optional<std::string> _emfUri;
     PseudoDt::Up _pseudoSpecCtxType;
     PseudoDt::Up _pseudoPayloadType;
     TextLocation _loc;
@@ -1033,8 +1033,8 @@ class PseudoDst final :
 {
 public:
     explicit PseudoDst() = default;
-    explicit PseudoDst(TypeId id, boost::optional<std::string> ns,
-                       boost::optional<std::string> name, boost::optional<std::string> uid,
+    explicit PseudoDst(TypeId id, std::optional<std::string> ns,
+                       std::optional<std::string> name, std::optional<std::string> uid,
                        PseudoDt::Up pseudoPktCtxType, PseudoDt::Up pseudoErHeaderType,
                        PseudoDt::Up pseudoErCommonCtxType, const ClockType *defClkType = nullptr,
                        MapItem::Up attrs = nullptr, TextLocation loc = TextLocation {});
@@ -1056,17 +1056,17 @@ public:
         return _id;
     }
 
-    const boost::optional<std::string>& ns() const noexcept
+    const std::optional<std::string>& ns() const noexcept
     {
         return _ns;
     }
 
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
@@ -1124,9 +1124,9 @@ private:
 
 private:
     TypeId _id = 0;
-    boost::optional<std::string> _ns;
-    boost::optional<std::string> _name;
-    boost::optional<std::string> _uid;
+    std::optional<std::string> _ns;
+    std::optional<std::string> _name;
+    std::optional<std::string> _uid;
     PseudoDt::Up _pseudoPktCtxType;
     PseudoDt::Up _pseudoErHeaderType;
     PseudoDt::Up _pseudoErCommonCtxType;
@@ -1178,9 +1178,9 @@ public:
 
 public:
     explicit PseudoTraceType(unsigned int majorVersion, unsigned int minorVersion,
-                             boost::optional<std::string> ns = boost::none,
-                             boost::optional<std::string> name = boost::none,
-                             boost::optional<std::string> uid = boost::none,
+                             std::optional<std::string> ns = std::nullopt,
+                             std::optional<std::string> name = std::nullopt,
+                             std::optional<std::string> uid = std::nullopt,
                              TraceEnvironment env = TraceEnvironment {},
                              PseudoDt::Up pseudoPktHeaderType = nullptr,
                              MapItem::Up attrs = nullptr);
@@ -1201,17 +1201,17 @@ public:
         return _minorVersion;
     }
 
-    const boost::optional<std::string>& ns() const noexcept
+    const std::optional<std::string>& ns() const noexcept
     {
         return _ns;
     }
 
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
@@ -1276,9 +1276,9 @@ public:
 private:
     unsigned int _majorVersion;
     unsigned int _minorVersion;
-    boost::optional<std::string> _ns;
-    boost::optional<std::string> _name;
-    boost::optional<std::string> _uid;
+    std::optional<std::string> _ns;
+    std::optional<std::string> _name;
+    std::optional<std::string> _uid;
     TraceEnvironment _env;
     PseudoDt::Up _pseudoPktHeaderType;
     ClockTypeSet _clkTypes;

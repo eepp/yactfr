@@ -12,14 +12,14 @@ namespace yactfr {
 
 FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int align, const unsigned int len,
                                                const ByteOrder bo,
-                                               const boost::optional<BitOrder>& bio,
+                                               const std::optional<BitOrder>& bio,
                                                MapItem::Up attrs) :
     FixedLengthBitArrayType {_kindFlBool, align, len, bo, bio, std::move(attrs)}
 {
 }
 
 FixedLengthBooleanType::FixedLengthBooleanType(const unsigned int len, const ByteOrder bo,
-                                               const boost::optional<BitOrder>& bio,
+                                               const std::optional<BitOrder>& bio,
                                                MapItem::Up attrs) :
     FixedLengthBooleanType {1, len, bo, bio, std::move(attrs)}
 {

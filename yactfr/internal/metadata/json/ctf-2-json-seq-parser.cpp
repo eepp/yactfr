@@ -98,9 +98,9 @@ namespace buuids = boost::uuids;
 
 /*
  * Returns the UUID of the JSON object value `jsonObjVal`, or
- * `boost::none` if there's no such property.
+ * `std::nullopt` if there's no such property.
  */
-boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
+std::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
 {
     if (const auto jsonUuidVal = jsonObjVal[strs::uuid]) {
         buuids::uuid uuid;
@@ -113,7 +113,7 @@ boost::optional<buuids::uuid> uuidOfObj(const JsonObjVal& jsonObjVal)
         return uuid;
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 } // namespace
@@ -259,7 +259,7 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
     const auto offsetFromOrigCycles = jsonOffsetFromOrigVal.getRawVal(strs::cycles, 0ULL);
 
     // origin
-    boost::optional<ClockOrigin> orig;
+    std::optional<ClockOrigin> orig;
     const auto jsonOrigVal = jsonFrag[strs::orig];
 
     if (jsonOrigVal) {
@@ -282,7 +282,7 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
     // create corresponding clock type
     auto clkType = ClockType::create(std::move(id), optStrOfObj(jsonFrag, strs::ns),
                                      optStrOfObj(jsonFrag, strs::name),
-                                     optStrOfObj(jsonFrag, strs::uid), boost::none,
+                                     optStrOfObj(jsonFrag, strs::uid), std::nullopt,
                                      jsonFrag.getRawUIntVal(strs::freq),
                                      optStrOfObj(jsonFrag, strs::descr), std::move(orig),
                                      optUIntOfObj(jsonFrag, strs::prec),
@@ -296,14 +296,14 @@ void Ctf2JsonSeqParser::_handleClkTypeFrag(const JsonObjVal& jsonFrag)
 
 namespace {
 
-boost::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const JsonObjVal& jsonObjVal,
+std::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const JsonObjVal& jsonObjVal,
                                                                          const std::string& propName)
 {
     if (const auto jsonVal = jsonObjVal[propName]) {
         return std::make_pair(*jsonVal->asStr(), jsonVal->loc());
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 } // namespace
@@ -388,7 +388,7 @@ void Ctf2JsonSeqParser::_handleErtFrag(const JsonObjVal& jsonFrag)
             PseudoErt {
                 id, optStrOfObj(jsonFrag, strs::ns), optStrOfObj(jsonFrag, strs::name),
                 optStrOfObj(jsonFrag, strs::uid),
-                boost::none, boost::none,
+                std::nullopt, std::nullopt,
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::specCtxFc),
                 this->_pseudoScopeDtOfJsonObj(jsonFrag, strs::payloadFc),
                 attrsOfObj(jsonFrag), jsonFrag.loc()

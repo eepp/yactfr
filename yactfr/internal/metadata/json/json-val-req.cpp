@@ -11,13 +11,13 @@
 namespace yactfr {
 namespace internal {
 
-JsonValReq::JsonValReq(boost::optional<JsonVal::Kind> kind, const bool allowNull) :
+JsonValReq::JsonValReq(std::optional<JsonVal::Kind> kind, const bool allowNull) :
     _kind {std::move(kind)},
     _allowNull {(_kind && *_kind == JsonVal::Kind::Null) ? false : allowNull}
 {
 }
 
-JsonValReq::Sp JsonValReq::shared(boost::optional<JsonVal::Kind> kind, const bool allowNull)
+JsonValReq::Sp JsonValReq::shared(std::optional<JsonVal::Kind> kind, const bool allowNull)
 {
     return std::make_shared<JsonValReq>(std::move(kind), allowNull);
 }
@@ -137,8 +137,8 @@ void JsonStrValMatchesRegexReq::_validate(const JsonVal& jsonVal) const
     }
 }
 
-JsonArrayValReq::JsonArrayValReq(const boost::optional<Size>& minSize,
-                                 const boost::optional<Size>& maxSize,
+JsonArrayValReq::JsonArrayValReq(const std::optional<Size>& minSize,
+                                 const std::optional<Size>& maxSize,
                                  JsonValReq::Sp elemValReq) :
     JsonValReq {JsonVal::Kind::Array},
     _minSize {minSize ? *minSize : std::numeric_limits<Size>::min()},
@@ -153,12 +153,12 @@ JsonArrayValReq::JsonArrayValReq(const Size exactSize, JsonValReq::Sp elemValReq
 }
 
 JsonArrayValReq::JsonArrayValReq(JsonValReq::Sp elemValReq) :
-    JsonArrayValReq {boost::none, boost::none, std::move(elemValReq)}
+    JsonArrayValReq {std::nullopt, std::nullopt, std::move(elemValReq)}
 {
 }
 
-JsonValReq::Sp JsonArrayValReq::shared(const boost::optional<Size>& minSize,
-                                       const boost::optional<Size>& maxSize,
+JsonValReq::Sp JsonArrayValReq::shared(const std::optional<Size>& minSize,
+                                       const std::optional<Size>& maxSize,
                                        JsonValReq::Sp elemValReq)
 {
     return std::make_shared<JsonArrayValReq>(minSize, maxSize, std::move(elemValReq));

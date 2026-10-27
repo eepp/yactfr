@@ -30,8 +30,8 @@
 namespace yactfr {
 namespace internal {
 
-PseudoDataLoc::PseudoDataLoc(Kind kind, boost::optional<Scope> scope, PathElems pathElems,
-                             TextLocation loc, boost::optional<Index> baseStructTypeLexId) :
+PseudoDataLoc::PseudoDataLoc(Kind kind, std::optional<Scope> scope, PathElems pathElems,
+                             TextLocation loc, std::optional<Index> baseStructTypeLexId) :
     _kind {kind},
     _scope {std::move(scope)},
     _pathElems {std::move(pathElems)},
@@ -68,7 +68,7 @@ bool PseudoDt::isFlUInt() const noexcept
 }
 
 PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::Up dt,
-                                             boost::optional<StringEncoding> encoding,
+                                             std::optional<StringEncoding> encoding,
                                              TextLocation loc) :
     PseudoDt {std::move(loc)},
     _dt {std::move(dt)},
@@ -77,7 +77,7 @@ PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::Up dt,
 }
 
 PseudoScalarDtWrapper::PseudoScalarDtWrapper(DataType::Up dt, TextLocation loc) :
-    PseudoScalarDtWrapper {std::move(dt), boost::none, std::move(loc)}
+    PseudoScalarDtWrapper {std::move(dt), std::nullopt, std::move(loc)}
 {
 }
 
@@ -125,8 +125,8 @@ PseudoFlUIntType::PseudoFlUIntType(const unsigned int align, const unsigned int 
                                    const ByteOrder bo, const BitOrder bio,
                                    const DisplayBase prefDispBase,
                                    FixedLengthUnsignedIntegerType::Mappings mappings,
-                                   boost::optional<StringEncoding> encoding,
-                                   boost::optional<std::string> mappedClkTypeId, MapItem::Up attrs,
+                                   std::optional<StringEncoding> encoding,
+                                   std::optional<std::string> mappedClkTypeId, MapItem::Up attrs,
                                    UnsignedIntegerTypeRoleSet roles, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
@@ -276,7 +276,7 @@ void PseudoDlArrayType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::Up attrs,
+PseudoBlobType::PseudoBlobType(std::optional<std::string> mediaType, MapItem::Up attrs,
                                TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
@@ -285,7 +285,7 @@ PseudoBlobType::PseudoBlobType(boost::optional<std::string> mediaType, MapItem::
 }
 
 PseudoDlBlobType::PseudoDlBlobType(PseudoDataLoc pseudoLenLoc,
-                                   boost::optional<std::string> mediaType, MapItem::Up attrs,
+                                   std::optional<std::string> mediaType, MapItem::Up attrs,
                                    TextLocation loc) :
     PseudoBlobType {std::move(mediaType), std::move(attrs), std::move(loc)},
     PseudoDlDtMixin {std::move(pseudoLenLoc)}
@@ -308,7 +308,7 @@ void PseudoDlBlobType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::Up pseudoDt,
+PseudoNamedDt::PseudoNamedDt(std::optional<std::string> name, PseudoDt::Up pseudoDt,
                              MapItem::Up attrs) :
     WithAttrsMixin {std::move(attrs)},
     _name {std::move(name)},
@@ -318,7 +318,7 @@ PseudoNamedDt::PseudoNamedDt(boost::optional<std::string> name, PseudoDt::Up pse
 
 PseudoStructType::PseudoStructType(const unsigned int minAlign, PseudoNamedDts&& pseudoMemberTypes,
                                    MapItem::Up attrs, TextLocation loc,
-                                   boost::optional<Index> lexId) :
+                                   std::optional<Index> lexId) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
     _minAlign {minAlign},
@@ -383,7 +383,7 @@ const PseudoNamedDt *PseudoStructType::operator[](const std::string& name) const
     return it->get();
 }
 
-PseudoVarType::PseudoVarType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+PseudoVarType::PseudoVarType(std::optional<PseudoDataLoc> pseudoSelLoc,
                              PseudoNamedDts&& pseudoOpts, MapItem::Up attrs, TextLocation loc) :
     PseudoDt {std::move(loc)},
     WithAttrsMixin {std::move(attrs)},
@@ -434,7 +434,7 @@ void PseudoVarType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(boost::optional<PseudoDataLoc> pseudoSelLoc,
+PseudoVarWithIntRangesType::PseudoVarWithIntRangesType(std::optional<PseudoDataLoc> pseudoSelLoc,
                                                        PseudoNamedDts&& pseudoOpts,
                                                        RangeSets&& rangeSets,
                                                        MapItem::Up attrs, TextLocation loc) :
@@ -536,9 +536,9 @@ void PseudoOptWithIntSelType::accept(ConstPseudoDtVisitor& visitor) const
     visitor.visit(*this);
 }
 
-PseudoErt::PseudoErt(const TypeId id, boost::optional<std::string> ns,
-                     boost::optional<std::string> name, boost::optional<std::string> uid,
-                     boost::optional<LogLevel> logLevel, boost::optional<std::string> emfUri,
+PseudoErt::PseudoErt(const TypeId id, std::optional<std::string> ns,
+                     std::optional<std::string> name, std::optional<std::string> uid,
+                     std::optional<LogLevel> logLevel, std::optional<std::string> emfUri,
                      PseudoDt::Up pseudoSpecCtxType, PseudoDt::Up pseudoPayloadType,
                      MapItem::Up attrs, TextLocation loc) :
     WithAttrsMixin {std::move(attrs)},
@@ -847,8 +847,8 @@ PseudoOrphanErt::PseudoOrphanErt(PseudoErt pseudoErt, TextLocation loc) :
 {
 }
 
-PseudoDst::PseudoDst(const TypeId id, boost::optional<std::string> ns,
-                     boost::optional<std::string> name, boost::optional<std::string> uid,
+PseudoDst::PseudoDst(const TypeId id, std::optional<std::string> ns,
+                     std::optional<std::string> name, std::optional<std::string> uid,
                      PseudoDt::Up pseudoPktCtxType, PseudoDt::Up pseudoErHeaderType,
                      PseudoDt::Up pseudoErCommonCtxType, const ClockType * const defClkType,
                      MapItem::Up attrs, TextLocation loc) :
@@ -988,9 +988,9 @@ void PseudoDst::validate(const PseudoErtSet& pseudoErts) const
 }
 
 PseudoTraceType::PseudoTraceType(const unsigned int majorVersion, const unsigned int minorVersion,
-                                 boost::optional<std::string> ns,
-                                 boost::optional<std::string> name,
-                                 boost::optional<std::string> uid, TraceEnvironment env,
+                                 std::optional<std::string> ns,
+                                 std::optional<std::string> name,
+                                 std::optional<std::string> uid, TraceEnvironment env,
                                  PseudoDt::Up pseudoPktHeaderType, MapItem::Up attrs) :
     WithAttrsMixin {std::move(attrs)},
     _majorVersion {majorVersion},

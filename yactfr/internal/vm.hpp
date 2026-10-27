@@ -271,7 +271,7 @@ public:
     {
         headOffsetInCurPktBits = 0;
         theState = VmState::BeginPkt;
-        lastFlBitArrayBo = boost::none;
+        lastFlBitArrayBo = std::nullopt;
         curDsPktProc = nullptr;
         curErProc = nullptr;
         curExpectedPktTotalLenBits = sizeUnset;
@@ -375,7 +375,7 @@ public:
     VmState nextState;
 
     // last fixed-length bit array byte order
-    boost::optional<ByteOrder> lastFlBitArrayBo;
+    std::optional<ByteOrder> lastFlBitArrayBo;
 
     // remaining padding bits to skip for alignment
     Size remBitsToSkip = 0;

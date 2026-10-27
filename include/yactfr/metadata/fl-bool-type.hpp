@@ -54,7 +54,7 @@ public:
         Bit order of data stream fixed-length booleans described by
         this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -81,7 +81,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBooleanType(unsigned int alignment, unsigned int length,
-                                    ByteOrder byteOrder, const boost::optional<BitOrder>& bitOrder = boost::none,
+                                    ByteOrder byteOrder, const std::optional<BitOrder>& bitOrder = std::nullopt,
                                     MapItem::Up attributes = nullptr);
 
     /*!
@@ -100,7 +100,7 @@ public:
         Bit order of data stream fixed-length booleans described by
         this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -123,7 +123,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthBooleanType(unsigned int length, ByteOrder byteOrder,
-                                    const boost::optional<BitOrder>& bitOrder = boost::none,
+                                    const std::optional<BitOrder>& bitOrder = std::nullopt,
                                     MapItem::Up attributes = nullptr);
 
     /*!

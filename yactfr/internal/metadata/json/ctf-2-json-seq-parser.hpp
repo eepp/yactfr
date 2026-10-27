@@ -8,7 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_CTF_2_JSON_SEQ_PARSER_HPP
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 
 #include <yactfr/aliases.hpp>
@@ -58,7 +58,7 @@ public:
     /*
      * Returns the UUID of the metadata stream.
      */
-    const boost::optional<boost::uuids::uuid>& metadataStreamUuid() const noexcept
+    const std::optional<boost::uuids::uuid>& metadataStreamUuid() const noexcept
     {
         return _metadataStreamUuid;
     }
@@ -156,10 +156,10 @@ private:
     TraceType::Up _traceType;
 
     // metadata stream UUID
-    boost::optional<boost::uuids::uuid> _metadataStreamUuid;
+    std::optional<boost::uuids::uuid> _metadataStreamUuid;
 
     // current pseudo trace type
-    boost::optional<PseudoTraceType> _pseudoTraceType;
+    std::optional<PseudoTraceType> _pseudoTraceType;
 
     /*
      * Whether or not the parser handled a trace type fragment

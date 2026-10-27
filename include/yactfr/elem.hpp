@@ -11,8 +11,8 @@
 #include <cstdint>
 #include <string>
 #include <unordered_set>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
-#include <boost/optional/optional.hpp>
 
 #include "metadata/fwd.hpp"
 #include "metadata/dt.hpp"
@@ -1729,7 +1729,7 @@ public:
         Not to be confused with the \em type ID of the data stream of
         the current packet: use type() and then DataStreamType::id().
     */
-    const boost::optional<unsigned long long>& id() const noexcept
+    const std::optional<unsigned long long>& id() const noexcept
     {
         return _id;
     }
@@ -1738,12 +1738,12 @@ private:
     void _reset() noexcept
     {
         _dst = nullptr;
-        _id = boost::none;
+        _id = std::nullopt;
     }
 
 private:
     const DataStreamType *_dst = nullptr;
-    boost::optional<unsigned long long> _id;
+    std::optional<unsigned long long> _id;
 };
 
 /*!
@@ -1831,7 +1831,7 @@ public:
         within its <em>data stream</em> (\em not within its element
         sequence).
     */
-    const boost::optional<Index>& sequenceNumber() const noexcept
+    const std::optional<Index>& sequenceNumber() const noexcept
     {
         return _seqNum;
     }
@@ -1842,7 +1842,7 @@ public:
         packet since the beginning of its <em>data stream</em> (\em not
         its element sequence).
     */
-    const boost::optional<Size>& discardedEventRecordCounterSnapshot() const noexcept
+    const std::optional<Size>& discardedEventRecordCounterSnapshot() const noexcept
     {
         return _discErCounterSnap;
     }
@@ -1854,7 +1854,7 @@ public:
     This length \em includes the packet padding bits before the end of
     the packet, if any.
     */
-    const boost::optional<Size>& expectedTotalLength() const noexcept
+    const std::optional<Size>& expectedTotalLength() const noexcept
     {
         return _expectedTotalLen;
     }
@@ -1867,7 +1867,7 @@ public:
     the packet, if any: the total length of the packet minus its content
     length provides its padding length.
     */
-    const boost::optional<Size>& expectedContentLength() const noexcept
+    const std::optional<Size>& expectedContentLength() const noexcept
     {
         return _expectedContentLen;
     }
@@ -1882,7 +1882,7 @@ public:
 
     @sa DefaultClockValueElement
     */
-    const boost::optional<Cycles>& endDefaultClockValue() const noexcept
+    const std::optional<Cycles>& endDefaultClockValue() const noexcept
     {
         return _endDefClkVal;
     }
@@ -1890,19 +1890,19 @@ public:
 private:
     void _reset() noexcept
     {
-        _seqNum = boost::none;
-        _discErCounterSnap = boost::none;
-        _expectedTotalLen = boost::none;
-        _expectedContentLen = boost::none;
-        _endDefClkVal = boost::none;
+        _seqNum = std::nullopt;
+        _discErCounterSnap = std::nullopt;
+        _expectedTotalLen = std::nullopt;
+        _expectedContentLen = std::nullopt;
+        _endDefClkVal = std::nullopt;
     }
 
 private:
-    boost::optional<Index> _seqNum;
-    boost::optional<Size> _discErCounterSnap;
-    boost::optional<Size> _expectedTotalLen;
-    boost::optional<Size> _expectedContentLen;
-    boost::optional<Cycles> _endDefClkVal;
+    std::optional<Index> _seqNum;
+    std::optional<Size> _discErCounterSnap;
+    std::optional<Size> _expectedTotalLen;
+    std::optional<Size> _expectedContentLen;
+    std::optional<Cycles> _endDefClkVal;
 };
 
 /*!

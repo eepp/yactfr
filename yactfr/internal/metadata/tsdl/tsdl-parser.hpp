@@ -15,12 +15,12 @@
 #include <utility>
 #include <sstream>
 #include <unordered_map>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 
 #include <yactfr/aliases.hpp>
@@ -86,7 +86,7 @@ public:
      * Returns the UUID of the metadata stream which, for CTF 1.8, is
      * the trace UID as a UUID canonical textual representation.
      */
-    const boost::optional<boost::uuids::uuid> metadataStreamUuid() const noexcept;
+    const std::optional<boost::uuids::uuid> metadataStreamUuid() const noexcept;
 
 private:
     /*
@@ -945,17 +945,17 @@ private:
     /*
      * Tries to return a pseudo data location from from the absolute
      * data location path elements `allPathElems`, returning
-     * `boost::none` if it can't.
+     * `std::nullopt` if it can't.
      */
-    boost::optional<PseudoDataLoc> _pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+    std::optional<PseudoDataLoc> _pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                      const TextLocation& loc);
 
     /*
      * Tries to return a pseudo data location from the relative data
-     * location path elements `allPathElems`, returning `boost::none` if
+     * location path elements `allPathElems`, returning `std::nullopt` if
      * it can't.
      */
-    boost::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+    std::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                      const TextLocation& loc);
 
     /*
@@ -1038,9 +1038,9 @@ private:
 
     /*
      * Returns a UUID object from the canonical textual representation
-     * `str`, or `boost::none` if the conversion fails for any reason.
+     * `str`, or `std::nullopt` if the conversion fails for any reason.
      */
-    static boost::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
+    static std::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
 
     template <typename FlIntTypeT>
     void _validateFlIntTypeMapping(Size len, const TextLocation& loc, const std::string& name,
@@ -1110,7 +1110,7 @@ private:
     TraceType::Up _traceType;
 
     // current native byte order
-    boost::optional<ByteOrder> _nativeBo;
+    std::optional<ByteOrder> _nativeBo;
 
     /*
      * Current pseudo trace type.
@@ -1119,7 +1119,7 @@ private:
      * placeholder until the parser reaches the `trace` block so that
      * root blocks may precede the `trace` block.
      */
-    boost::optional<PseudoTraceType> _pseudoTraceType;
+    std::optional<PseudoTraceType> _pseudoTraceType;
 
     // whether or not the second pass parsed the `trace` block
     bool _traceTypeBlockParsed = false;
@@ -1148,7 +1148,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
 
         _ss.skipCommentsAndWhitespaces();
 
-        boost::optional<TextLocation> loc {_ss.loc()};
+        std::optional<TextLocation> loc {_ss.loc()};
 
         if (const auto ident = _ss.tryScanIdent()) {
             name = *ident;

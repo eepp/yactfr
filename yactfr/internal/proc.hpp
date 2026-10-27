@@ -64,7 +64,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/dt.hpp>
@@ -1867,10 +1867,10 @@ class SetTypeInstr :
     public Instr
 {
 protected:
-    explicit SetTypeInstr(Kind kind, boost::optional<TypeId> fixedId);
+    explicit SetTypeInstr(Kind kind, std::optional<TypeId> fixedId);
 
 public:
-    const boost::optional<TypeId>& fixedId() const noexcept
+    const std::optional<TypeId>& fixedId() const noexcept
     {
         return _fixedId;
     }
@@ -1879,7 +1879,7 @@ private:
     std::string _toStr(Size indent = 0) const override;
 
 private:
-    const boost::optional<TypeId> _fixedId;
+    const std::optional<TypeId> _fixedId;
 };
 
 /*
@@ -1889,7 +1889,7 @@ class SetDstInstr final :
     public SetTypeInstr
 {
 public:
-    explicit SetDstInstr(boost::optional<TypeId> fixedId = boost::none);
+    explicit SetDstInstr(std::optional<TypeId> fixedId = std::nullopt);
 
     void accept(InstrVisitor& visitor) override
     {
@@ -1904,7 +1904,7 @@ class SetErtInstr final :
     public SetTypeInstr
 {
 public:
-    explicit SetErtInstr(boost::optional<TypeId> fixedId = boost::none);
+    explicit SetErtInstr(std::optional<TypeId> fixedId = std::nullopt);
 
     void accept(InstrVisitor& visitor) override
     {

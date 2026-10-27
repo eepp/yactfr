@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 
 #include "aliases.hpp"
@@ -63,13 +63,13 @@ public:
         Description.
     @param[in] origin
         Origin of data stream clocks described by this type, or
-        \c boost::none if the origin is unknown.
+        \c std::nullopt if the origin is unknown.
     @param[in] precision
         Precision (cycles) of data stream clocks described by this type,
-        or \c boost::none if the precision is unknown.
+        or \c std::nullopt if the precision is unknown.
     @param[in] accuracy
         Accuracy (cycles) of data stream clocks described by this type,
-        or \c boost::none if the accuracy is unknown.
+        or \c std::nullopt if the accuracy is unknown.
     @param[in] offsetFromOrigin
         Offset from origin of data stream clocks described by this type.
     @param[in] attributes
@@ -84,14 +84,14 @@ public:
     @pre
         <code>offset.cycles()</code> is less than \p frequency.
     */
-    explicit ClockType(boost::optional<std::string> internalId,
-                       boost::optional<std::string> nameSpace,
-                       boost::optional<std::string> name,
-                       boost::optional<std::string> uid,
-                       boost::optional<boost::uuids::uuid> originalUuid,
-                       unsigned long long frequency, boost::optional<std::string> description,
-                       boost::optional<ClockOrigin> origin, boost::optional<Cycles> precision,
-                       boost::optional<Cycles> accuracy, const ClockOffset& offsetFromOrigin,
+    explicit ClockType(std::optional<std::string> internalId,
+                       std::optional<std::string> nameSpace,
+                       std::optional<std::string> name,
+                       std::optional<std::string> uid,
+                       std::optional<boost::uuids::uuid> originalUuid,
+                       unsigned long long frequency, std::optional<std::string> description,
+                       std::optional<ClockOrigin> origin, std::optional<Cycles> precision,
+                       std::optional<Cycles> accuracy, const ClockOffset& offsetFromOrigin,
                        MapItem::Up attributes = nullptr);
 
     ClockType(const ClockType&) = delete;
@@ -118,25 +118,25 @@ public:
     }
 
     /// ID internal to the trace type containing this type.
-    const boost::optional<std::string>& internalId() const noexcept
+    const std::optional<std::string>& internalId() const noexcept
     {
         return _id;
     }
 
     /// Namespace of data stream clocks described by this type.
-    const boost::optional<std::string>& nameSpace() const noexcept
+    const std::optional<std::string>& nameSpace() const noexcept
     {
         return _ns;
     }
 
     /// Name of data stream clocks described by this type.
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
     /// Unique ID of data stream clocks described by this type.
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
@@ -148,7 +148,7 @@ public:
     This is only relevant when the TraceType::majorVersion() method for
     the trace type containing this clock type returns&nbsp;1.
     */
-    const boost::optional<boost::uuids::uuid>& originalUuid() const noexcept
+    const std::optional<boost::uuids::uuid>& originalUuid() const noexcept
     {
         return _origUuid;
     }
@@ -162,15 +162,15 @@ public:
     /*!
     @brief
         Origin of data stream clocks described by this type, or
-        \c boost::none if the origin is unknown.
+        \c std::nullopt if the origin is unknown.
     */
-    const boost::optional<ClockOrigin>& origin() const noexcept
+    const std::optional<ClockOrigin>& origin() const noexcept
     {
         return _orig;
     }
 
     /// Description.
-    const boost::optional<std::string>& description() const noexcept
+    const std::optional<std::string>& description() const noexcept
     {
         return _descr;
     }
@@ -178,9 +178,9 @@ public:
     /*!
     @brief
         Precision (cycles) of data stream clocks described by this type
-        (\c boost::none means unknown).
+        (\c std::nullopt means unknown).
     */
-    const boost::optional<Cycles>& precision() const noexcept
+    const std::optional<Cycles>& precision() const noexcept
     {
         return _prec;
     }
@@ -188,9 +188,9 @@ public:
     /*!
     @brief
         Accuracy (cycles) of data stream clocks described by this type
-        (\c boost::none means unknown).
+        (\c std::nullopt means unknown).
     */
-    const boost::optional<Cycles>& accuracy() const noexcept
+    const std::optional<Cycles>& accuracy() const noexcept
     {
         return _accuracy;
     }
@@ -267,16 +267,16 @@ public:
     }
 
 private:
-    const boost::optional<std::string> _id;
-    const boost::optional<std::string> _ns;
-    const boost::optional<std::string> _name;
-    const boost::optional<std::string> _uid;
-    boost::optional<boost::uuids::uuid> _origUuid;
+    const std::optional<std::string> _id;
+    const std::optional<std::string> _ns;
+    const std::optional<std::string> _name;
+    const std::optional<std::string> _uid;
+    std::optional<boost::uuids::uuid> _origUuid;
     const unsigned long long _freq;
-    const boost::optional<std::string> _descr;
-    const boost::optional<ClockOrigin> _orig;
-    const boost::optional<Cycles> _prec;
-    const boost::optional<Cycles> _accuracy;
+    const std::optional<std::string> _descr;
+    const std::optional<ClockOrigin> _orig;
+    const std::optional<Cycles> _prec;
+    const std::optional<Cycles> _accuracy;
     const ClockOffset _offsetFromOrig;
     const MapItem::Up _attrs;
 };

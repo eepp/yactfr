@@ -33,7 +33,7 @@ private:
     {
     }
 
-    boost::optional<yactfr::DataBlock> _data(const yactfr::Index offset,
+    std::optional<yactfr::DataBlock> _data(const yactfr::Index offset,
                                              const yactfr::Size minSize) override
     {
         if (_dataNotAvail) {
@@ -47,7 +47,7 @@ private:
 
         if (offset + minSize > _size) {
             // not enough data
-            return boost::none;
+            return std::nullopt;
         }
 
         const auto blockSize = std::max(minSize, static_cast<yactfr::Size>(_maxDataBlkSize));

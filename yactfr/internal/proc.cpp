@@ -1266,7 +1266,7 @@ SetCurIdInstr::SetCurIdInstr() :
 {
 }
 
-SetTypeInstr::SetTypeInstr(const Kind kind, boost::optional<TypeId> fixedId) :
+SetTypeInstr::SetTypeInstr(const Kind kind, std::optional<TypeId> fixedId) :
     Instr {kind},
     _fixedId {std::move(fixedId)}
 {
@@ -1284,12 +1284,12 @@ std::string SetTypeInstr::_toStr(Size) const
     return ss.str();
 }
 
-SetDstInstr::SetDstInstr(boost::optional<TypeId> fixedId) :
+SetDstInstr::SetDstInstr(std::optional<TypeId> fixedId) :
     SetTypeInstr {Kind::SetDst, std::move(fixedId)}
 {
 }
 
-SetErtInstr::SetErtInstr(boost::optional<TypeId> fixedId) :
+SetErtInstr::SetErtInstr(std::optional<TypeId> fixedId) :
     SetTypeInstr {Kind::SetErt, std::move(fixedId)}
 {
 }

@@ -8,7 +8,7 @@
 #ifndef YACTFR_METADATA_CLK_VALUE_INTERVAL_HPP
 #define YACTFR_METADATA_CLK_VALUE_INTERVAL_HPP
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 
 #include "aliases.hpp"

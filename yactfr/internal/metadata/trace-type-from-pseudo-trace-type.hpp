@@ -9,7 +9,7 @@
 #define YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
 
 #include <memory>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/trace-type.hpp>

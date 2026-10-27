@@ -122,7 +122,7 @@ public:
                 strs::erPayload,
             })}},
             {strs::path, {
-                JsonArrayValReq::shared(1, boost::none,
+                JsonArrayValReq::shared(1, std::nullopt,
                                         JsonValReq::shared(JsonVal::Kind::Str, true)),
                 true
             }},
@@ -427,7 +427,7 @@ class JsonIntRangeSetValReqBase final :
 {
 public:
     explicit JsonIntRangeSetValReqBase() :
-        JsonArrayValReq {1, boost::none, JsonIntRangeValReqBase<JsonIntValReqT>::shared()}
+        JsonArrayValReq {1, std::nullopt, JsonIntRangeValReqBase<JsonIntValReqT>::shared()}
     {
     }
 
@@ -1689,7 +1689,7 @@ public:
     explicit JsonVarTypeValReq(const JsonAnyFullDtValReq& anyFullDtValReq) :
         JsonDtValReq {this->typeStr(), {
             {strs::opts, {
-                JsonArrayValReq::shared(1, boost::none,
+                JsonArrayValReq::shared(1, std::nullopt,
                                         JsonVarTypeOptValReq::shared(anyFullDtValReq)),
                 true
             }},
@@ -2103,7 +2103,7 @@ public:
             nsPropReqEntry(),
             namePropReqEntry(false),
             uidPropReqEntry(false),
-            {strs::freq, {JsonUIntValInRangeReq::shared(1, boost::none), true}},
+            {strs::freq, {JsonUIntValInRangeReq::shared(1, std::nullopt), true}},
             {strs::descr, {JsonValReq::shared(JsonVal::Kind::Str)}},
             {strs::orig, {JsonClkTypeOrigPropValReq::shared()}},
             {strs::offsetFromOrig, {JsonClkOffsetValReq::shared()}},

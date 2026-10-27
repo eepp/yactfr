@@ -31,7 +31,7 @@ class MmapFileViewFactoryImpl final
 {
 public:
     explicit MmapFileViewFactoryImpl(std::string path,
-                                     const boost::optional<Size>& preferredMmapSize,
+                                     const std::optional<Size>& preferredMmapSize,
                                      MemoryMappedFileViewFactory::AccessPattern accessPattern);
     ~MmapFileViewFactoryImpl();
 

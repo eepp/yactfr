@@ -25,8 +25,8 @@ class TraceTypeImpl final
 {
 public:
     explicit TraceTypeImpl(unsigned int majorVersion, unsigned int minorVersion,
-                           boost::optional<std::string>&& ns, boost::optional<std::string>&& name,
-                           boost::optional<std::string>&& uid, TraceEnvironment&& env,
+                           std::optional<std::string>&& ns, std::optional<std::string>&& name,
+                           std::optional<std::string>&& uid, TraceEnvironment&& env,
                            StructureType::Up pktHeaderType, ClockTypeSet&& clkTypes,
                            DataStreamTypeSet&& dsts, MapItem::Up attrs,
                            const TraceType& traceType);
@@ -41,17 +41,17 @@ public:
         return _minorVersion;
     }
 
-    const boost::optional<std::string>& ns() const noexcept
+    const std::optional<std::string>& ns() const noexcept
     {
         return _ns;
     }
 
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
-    const boost::optional<std::string>& uid() const noexcept
+    const std::optional<std::string>& uid() const noexcept
     {
         return _uid;
     }
@@ -136,9 +136,9 @@ private:
 private:
     const unsigned int _majorVersion;
     const unsigned int _minorVersion;
-    const boost::optional<std::string> _ns;
-    const boost::optional<std::string> _name;
-    const boost::optional<std::string> _uid;
+    const std::optional<std::string> _ns;
+    const std::optional<std::string> _name;
+    const std::optional<std::string> _uid;
     const TraceEnvironment _env;
     const StructureType::Up _pktHeaderType;
     const ClockTypeSet _clkTypes;

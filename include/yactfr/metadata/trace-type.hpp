@@ -11,7 +11,7 @@
 #include <memory>
 #include <utility>
 #include <string>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <yactfr/metadata/aliases.hpp>
 
@@ -172,11 +172,11 @@ public:
         - All contained \link EventRecordType event record types\endlink
           (in \p dataStreamTypes) have \em no log level
           (EventRecordType::logLevel() returns
-          <code>boost::none</code>).
+          <code>std::nullopt</code>).
 
         - All contained \link EventRecordType event record types\endlink
           (in \p dataStreamTypes) have \em no EMF URI
-          (EventRecordType::emfUri() returns <code>boost::none</code>).
+          (EventRecordType::emfUri() returns <code>std::nullopt</code>).
 
         - If set, any
           \link StaticLengthArrayType static-length array type\endlink
@@ -187,8 +187,8 @@ public:
         @endparblock
     */
     explicit TraceType(unsigned int majorVersion, unsigned int minorVersion,
-                       boost::optional<std::string> nameSpace, boost::optional<std::string> name,
-                       boost::optional<std::string> uid, TraceEnvironment environment,
+                       std::optional<std::string> nameSpace, std::optional<std::string> name,
+                       std::optional<std::string> uid, TraceEnvironment environment,
                        StructureType::Up packetHeaderType, ClockTypeSet&& clockTypes,
                        DataStreamTypeSet&& dataStreamTypes, MapItem::Up attributes = nullptr);
 
@@ -228,13 +228,13 @@ public:
     unsigned int minorVersion() const noexcept;
 
     /// Trace namespace.
-    const boost::optional<std::string>& nameSpace() const noexcept;
+    const std::optional<std::string>& nameSpace() const noexcept;
 
     /// Trace name.
-    const boost::optional<std::string>& name() const noexcept;
+    const std::optional<std::string>& name() const noexcept;
 
     /// Trace unique ID.
-    const boost::optional<std::string>& uid() const noexcept;
+    const std::optional<std::string>& uid() const noexcept;
 
     /// Trace environment.
     const TraceEnvironment& environment() const noexcept;

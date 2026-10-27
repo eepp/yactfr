@@ -15,7 +15,7 @@
 #include <regex>
 #include <cmath>
 #include <array>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
@@ -249,19 +249,19 @@ public:
      * optional `0`, `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
      * true, and possibly negative if `ValT` is signed.
      *
-     * Returns `boost::none` if it could not scan a constant integer.
+     * Returns `std::nullopt` if it could not scan a constant integer.
      *
      * The current character pointer is placed after this constant
      * integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV = true>
-    boost::optional<ValT> tryScanConstInt();
+    std::optional<ValT> tryScanConstInt();
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
     template <typename ValT, bool AllowPrefixV = true>
-    boost::optional<ValT> tryScanConstInt()
+    std::optional<ValT> tryScanConstInt()
     {
         return this->tryScanConstInt<true, true, ValT, AllowPrefixV>();
     }
@@ -271,14 +271,14 @@ public:
      * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV`
      * is true.
      *
-     * Returns `boost::none` if it could not scan a constant
+     * Returns `std::nullopt` if it could not scan a constant
      * unsigned integer.
      *
      * The current character pointer is placed after this constant
      * unsigned integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
-    boost::optional<unsigned long long> tryScanConstUInt()
+    std::optional<unsigned long long> tryScanConstUInt()
     {
         return this->tryScanConstInt<SkipWsV, SkipCommentsV,
                                      unsigned long long, AllowPrefixV>();
@@ -288,7 +288,7 @@ public:
      * Alternative version which skips whitespaces and comments.
      */
     template <bool AllowPrefixV = true>
-    boost::optional<unsigned long long> tryScanConstUInt()
+    std::optional<unsigned long long> tryScanConstUInt()
     {
         return this->tryScanConstUInt<true, true, AllowPrefixV>();
     }
@@ -298,14 +298,14 @@ public:
      * an optional `0x`/`0X`, or `0b`/`0B` prefix if `AllowPrefixV` is
      * true, and possibly negative.
      *
-     * Returns `boost::none` if it could not scan a constant
+     * Returns `std::nullopt` if it could not scan a constant
      * signed integer.
      *
      * The current character pointer is placed after this constant
      * signed integer string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV, bool AllowPrefixV = true>
-    boost::optional<long long> tryScanConstSInt()
+    std::optional<long long> tryScanConstSInt()
     {
         return this->tryScanConstInt<SkipWsV, SkipCommentsV,
                                      long long, AllowPrefixV>();
@@ -315,31 +315,31 @@ public:
      * Alternative version which skips whitespaces and comments.
      */
     template <bool AllowPrefixV = true>
-    boost::optional<long long> tryScanConstSInt()
+    std::optional<long long> tryScanConstSInt()
     {
         return this->tryScanConstSInt<true, true, AllowPrefixV>();
     }
 
     /*
      * Tries to scan and decode a constant real number string, returning
-     * `boost::none` if not possible.
+     * `std::nullopt` if not possible.
      *
      * The format of the real number string to scan is the JSON
      * (<https://www.json.org/>) number one, _with_ a fraction or an
      * exponent part. Without a fraction/exponent part, this method
-     * returns `boost::none`: use tryScanConstInt() to try scanning a
+     * returns `std::nullopt`: use tryScanConstInt() to try scanning a
      * constant integer instead.
      *
      * The current character pointer is placed after this constant real
      * number string on success.
      */
     template <bool SkipWsV, bool SkipCommentsV>
-    boost::optional<double> tryScanConstReal();
+    std::optional<double> tryScanConstReal();
 
     /*
      * Alternative version which skips whitespaces and comments.
      */
-    boost::optional<double> tryScanConstReal()
+    std::optional<double> tryScanConstReal()
     {
         return this->tryScanConstReal<true, true>();
     }
@@ -444,13 +444,13 @@ private:
 
 private:
     template <typename ValT>
-    static boost::optional<ValT> _tryNegateConstInt(unsigned long long ullVal, bool negate);
+    static std::optional<ValT> _tryNegateConstInt(unsigned long long ullVal, bool negate);
 
     template <typename ValT>
-    boost::optional<ValT> _tryScanConstBinInt(bool negate);
+    std::optional<ValT> _tryScanConstBinInt(bool negate);
 
     template <typename ValT, int BaseV>
-    boost::optional<ValT> _tryScanConstInt(bool negate);
+    std::optional<ValT> _tryScanConstInt(bool negate);
 
     static bool _isIdentFirstChar(const char ch) noexcept
     {
@@ -691,7 +691,7 @@ bool StrScanner::tryScanToken(const char * const token)
 }
 
 template <typename ValT>
-boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullVal,
+std::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullVal,
                                                      const bool negate)
 {
     static constexpr auto llMaxAsUll = static_cast<unsigned long long>(std::numeric_limits<long long>::max());
@@ -700,11 +700,11 @@ boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ul
     if (std::is_signed<ValT>::value) {
         if (negate) {
             if (ullVal > llMaxAsUll + 1) {
-                return boost::none;
+                return std::nullopt;
             }
         } else {
             if (ullVal > llMaxAsUll) {
-                return boost::none;
+                return std::nullopt;
             }
         }
     }
@@ -731,7 +731,7 @@ boost::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ul
 }
 
 template <typename ValT>
-boost::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
+std::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
 {
     const auto at = _at;
 
@@ -751,14 +751,14 @@ boost::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
         if (convBufIt - _convBuf.begin() > 64) {
             // too many bits!
             _at = at;
-            return boost::none;
+            return std::nullopt;
         }
     }
 
     if (convBufIt == _convBuf.begin()) {
         // `0b`/`0B` followed by something else than `0` or `1`
         _at = at;
-        return boost::none;
+        return std::nullopt;
     }
 
     // convert to unsigned integer value
@@ -792,7 +792,7 @@ boost::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
 }
 
 template <typename ValT, int BaseV>
-boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
+std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 {
     /*
      * Only accept hex characters for the first two characters at this
@@ -802,12 +802,12 @@ boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
     if (this->charsLeft() >= 2 && _at[0] == '0') {
         if (_at[1] == 'x' || _at[1] == 'X') {
             // we already scanned any prefix, if allowed
-            return boost::none;
+            return std::nullopt;
         }
     }
 
     if (this->charsLeft() >= 1 && !std::isxdigit(*_at)) {
-        return boost::none;
+        return std::nullopt;
     }
 
     char *strEnd = nullptr;
@@ -816,7 +816,7 @@ boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
     if ((ullVal == 0 && &(*_at) == strEnd) || errno == ERANGE) {
         // could not parse
         errno = 0;
-        return boost::none;
+        return std::nullopt;
     }
 
     {
@@ -832,7 +832,7 @@ boost::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 }
 
 template <bool SkipWsV, bool SkipCommentsV, typename ValT, bool AllowPrefixV>
-boost::optional<ValT> StrScanner::tryScanConstInt()
+std::optional<ValT> StrScanner::tryScanConstInt()
 {
     static_assert(std::is_same<ValT, long long>::value ||
                   std::is_same<ValT, unsigned long long>::value,
@@ -845,7 +845,7 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
 
     if (c < 0) {
         // nothing left
-        return boost::none;
+        return std::nullopt;
     }
 
     // check for negation
@@ -853,7 +853,7 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
 
     if (negate && !std::is_signed<ValT>::value) {
         _at = at;
-        return boost::none;
+        return std::nullopt;
     }
 
     if (!negate) {
@@ -865,7 +865,7 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
     }
 
     // check for radix prefix
-    boost::optional<ValT> val;
+    std::optional<ValT> val;
 
     if (AllowPrefixV && *_at == '0' && this->charsLeft() >= 2) {
         if (_at[1] == 'b' || _at[1] == 'B' ||
@@ -887,7 +887,7 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
 
             if (!val) {
                 _at = at;
-                return boost::none;
+                return std::nullopt;
             }
 
             return val;
@@ -906,7 +906,7 @@ boost::optional<ValT> StrScanner::tryScanConstInt()
 }
 
 template <bool SkipWsV, bool SkipCommentsV>
-boost::optional<double> StrScanner::tryScanConstReal()
+std::optional<double> StrScanner::tryScanConstReal()
 {
     this->skipCommentsAndWhitespaces<SkipWsV, SkipCommentsV>();
 
@@ -917,7 +917,7 @@ boost::optional<double> StrScanner::tryScanConstReal()
      * JSON doesn't support.
      */
     if (!std::regex_search(_at, _end, StrScanner::_realRegex)) {
-        return boost::none;
+        return std::nullopt;
     }
 
     // parse
@@ -927,7 +927,7 @@ boost::optional<double> StrScanner::tryScanConstReal()
     if (val == HUGE_VAL || (val == 0 && &(*_at) == strEnd) || errno == ERANGE) {
         // could not parse
         errno = 0;
-        return boost::none;
+        return std::nullopt;
     }
 
     // success: update position and return value

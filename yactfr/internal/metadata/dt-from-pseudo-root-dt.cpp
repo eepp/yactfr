@@ -12,7 +12,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -318,7 +318,7 @@ DataType::Up DtFromPseudoRootDtConverter::_tryNonNtStrTypeFromPseudoArrayType(co
                                                                               LenT&& len)
 {
     if (pseudoElemType.isInt()) {
-        boost::optional<StringEncoding> encoding;
+        std::optional<StringEncoding> encoding;
         unsigned int align;
         unsigned int elemLen;
 

@@ -37,7 +37,7 @@ FixedLengthBitMapType::_tFlagMask::_tFlagMask(const std::string& name, const Fla
 
 FixedLengthBitMapType::FixedLengthBitMapType(const unsigned int align, const unsigned int len,
                                              const ByteOrder bo, Flags flags,
-                                             const boost::optional<BitOrder>& bio,
+                                             const std::optional<BitOrder>& bio,
                                              MapItem::Up attrs) :
     FixedLengthBitArrayType {_kindFlBitMap, align, len, bo, bio, std::move(attrs)},
     _flags {std::move(flags)},
@@ -46,7 +46,7 @@ FixedLengthBitMapType::FixedLengthBitMapType(const unsigned int align, const uns
 }
 
 FixedLengthBitMapType::FixedLengthBitMapType(const unsigned int len, const ByteOrder bo,
-                                             Flags flags, const boost::optional<BitOrder>& bio,
+                                             Flags flags, const std::optional<BitOrder>& bio,
                                              MapItem::Up attrs) :
     FixedLengthBitMapType {1, len, bo, std::move(flags), bio, std::move(attrs)}
 {

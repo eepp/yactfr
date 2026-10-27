@@ -15,7 +15,7 @@
 #include <set>
 #include <limits>
 #include <sstream>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <yactfr/text-parse-error.hpp>
 
@@ -43,7 +43,7 @@ public:
      * Builds a JSON value requirement: if `kind` is set, then
      * validate() validates that the kind of the JSON value is `*kind`.
      */
-    explicit JsonValReq(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
+    explicit JsonValReq(std::optional<JsonVal::Kind> kind = std::nullopt, bool allowNull = false);
 
     JsonValReq(const JsonValReq&) = delete;
     JsonValReq& operator=(const JsonValReq&) = delete;
@@ -59,7 +59,7 @@ public:
      * Returns a shared pointer to JSON value requirement, forwarding
      * the parameter to the constructor.
      */
-    static Sp shared(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
+    static Sp shared(std::optional<JsonVal::Kind> kind = std::nullopt, bool allowNull = false);
 
 protected:
     /*
@@ -69,7 +69,7 @@ protected:
 
 private:
     // required JSON value kind
-    boost::optional<JsonVal::Kind> _kind;
+    std::optional<JsonVal::Kind> _kind;
 
     // allow `null` too
     bool _allowNull = false;
@@ -100,8 +100,8 @@ public:
      * • If `minVal` is set: greater than or equal to `*minVal`.
      * • If `maxVal` is set: less than or equal to `*maxVal`.
      */
-    explicit JsonIntValInRangeReq(const boost::optional<_tVal>& minVal,
-                                  const boost::optional<_tVal>& maxVal) :
+    explicit JsonIntValInRangeReq(const std::optional<_tVal>& minVal,
+                                  const std::optional<_tVal>& maxVal) :
         JsonValReq {KindV},
         _minVal {minVal ? *minVal : std::numeric_limits<_tVal>::min()},
         _maxVal {maxVal ? *maxVal : std::numeric_limits<_tVal>::max()}
@@ -122,7 +122,7 @@ public:
      * Returns a shared pointer to JSON integer value in range
      * requirement, forwarding the parameters to the constructor.
      */
-    static Sp shared(const boost::optional<_tVal>& minVal, const boost::optional<_tVal>& maxVal)
+    static Sp shared(const std::optional<_tVal>& minVal, const std::optional<_tVal>& maxVal)
     {
         return std::make_shared<JsonIntValInRangeReq>(minVal, maxVal);
     }
@@ -432,8 +432,8 @@ public:
      * • If `elemValReq` is not `nullptr`: all the elements of V
      *   satisfy `*elemValReq`.
      */
-    explicit JsonArrayValReq(const boost::optional<Size>& minSize,
-                             const boost::optional<Size>& maxSize,
+    explicit JsonArrayValReq(const std::optional<Size>& minSize,
+                             const std::optional<Size>& maxSize,
                              JsonValReq::Sp elemValReq = nullptr);
 
     /*
@@ -458,7 +458,7 @@ public:
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameters to the constructor.
      */
-    static Sp shared(const boost::optional<Size>& minSize, const boost::optional<Size>& maxSize,
+    static Sp shared(const std::optional<Size>& minSize, const std::optional<Size>& maxSize,
                      JsonValReq::Sp elemValReq = nullptr);
 
     /*

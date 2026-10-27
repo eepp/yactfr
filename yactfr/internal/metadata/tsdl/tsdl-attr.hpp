@@ -9,7 +9,7 @@
 #define YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
 
 #include <cassert>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -77,10 +77,10 @@ public:
     unsigned int align() const;
 
     /*
-     * Returns a byte order (or `boost::none` if native/default) from
+     * Returns a byte order (or `std::nullopt` if native/default) from
      * this attribute, throwing an error if it cannot.
      */
-    boost::optional<ByteOrder> bo() const;
+    std::optional<ByteOrder> bo() const;
 
     /*
      * Returns whether or not this attribute value is an encoding,
@@ -129,10 +129,10 @@ public:
     long long intVal = 0;
 
     // text location of the beginning of the parsed attribute name
-    boost::optional<TextLocation> nameLoc;
+    std::optional<TextLocation> nameLoc;
 
     // text location of the beginning of the parsed attribute value
-    boost::optional<TextLocation> valLoc;
+    std::optional<TextLocation> valLoc;
 
     // true if this attribute can represent a boolean value
     bool hasEquivBool = false;
@@ -142,11 +142,11 @@ public:
 
 private:
     /*
-     * String attribute to byte order (`boost::none` if native/default).
+     * String attribute to byte order (`std::nullopt` if native/default).
      *
      * Throws if the string is an unknown byte order.
      */
-    boost::optional<ByteOrder> _toBo() const;
+    std::optional<ByteOrder> _toBo() const;
 };
 
 } // namespace internal

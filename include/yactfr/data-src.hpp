@@ -9,7 +9,7 @@
 #define YACTFR_DATA_SRC_HPP
 
 #include <memory>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include "data-blk.hpp"
 #include "aliases.hpp"
@@ -58,7 +58,7 @@ public:
     This method, on success, <strong>invalidates the last returned
     \link DataBlock data block\endlink</strong>, if any.
 
-    This method returns \c boost::none to indicate that there's no data
+    This method returns \c std::nullopt to indicate that there's no data
     at offset \p offset.
 
     This method can throw DataNotAvailable if data is not available
@@ -66,7 +66,7 @@ public:
     become available later. In this case, you should call this method
     again later with the same parameter values. You can also try to call
     it immediately with a smaller \p minimumSize value. It is possible
-    that, when you call this method again, it returns \c boost::none (no
+    that, when you call this method again, it returns \c std::nullopt (no
     more data).
 
     @param[in] offset
@@ -78,7 +78,7 @@ public:
     @returns
         Data block, which remains valid until this method is
         called again or until this source is destroyed, or
-        \c boost::none if there's no data at offset \p offset.
+        \c std::nullopt if there's no data at offset \p offset.
 
     @pre
         \p minimumSize ≤ 9.
@@ -92,7 +92,7 @@ public:
         requested offset (\p offset) is not available now: try again
         later.
     */
-    boost::optional<DataBlock> data(Index offset, Size minimumSize);
+    std::optional<DataBlock> data(Index offset, Size minimumSize);
 
 private:
     /*!
@@ -119,7 +119,7 @@ private:
                                             =====================
     </pre>
 
-    This method can return \c boost::none to indicate that there's no
+    This method can return \c std::nullopt to indicate that there's no
     data at offset \p offset.
 
     @param[in] offset
@@ -131,7 +131,7 @@ private:
     @returns
         Data block, which \em must remain valid until this method is
         called again and until this source is destroyed, or \c
-        boost::none to indicate that there's no data at offset \p
+        std::nullopt to indicate that there's no data at offset \p
         offset.
 
     @pre
@@ -147,7 +147,7 @@ private:
         requested offset (\p offset) is not available now: try again
         later.
     */
-    virtual boost::optional<DataBlock> _data(Index offset, Size minimumSize) = 0;
+    virtual std::optional<DataBlock> _data(Index offset, Size minimumSize) = 0;
 };
 
 } // namespace yactfr

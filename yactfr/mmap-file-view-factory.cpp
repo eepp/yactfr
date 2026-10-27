@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <sstream>
 #include <array>
+#include <cassert>
 #include <sys/mman.h>
 
 #include <yactfr/mmap-file-view-factory.hpp>
@@ -28,7 +29,7 @@ public:
     ~MemoryMappedFileView();
 
 private:
-    boost::optional<DataBlock> _data(Index offset, Size minSize) override;
+    std::optional<DataBlock> _data(Index offset, Size minSize) override;
     void _doMmap(Index offset);
     void _doMunmap();
 
@@ -50,11 +51,11 @@ MemoryMappedFileView::~MemoryMappedFileView()
     this->_doMunmap();
 }
 
-boost::optional<DataBlock> MemoryMappedFileView::_data(const Index offset, const Size minSize)
+std::optional<DataBlock> MemoryMappedFileView::_data(const Index offset, const Size minSize)
 {
     if ((offset + minSize) > _mmapFileViewFactoryImpl->fileSize()) {
         // no more data
-        return boost::none;
+        return std::nullopt;
     }
 
     if (!_mmapAddr) {
@@ -139,7 +140,7 @@ void MemoryMappedFileView::_doMmap(const Index offset)
 } // namespace internal
 
 MemoryMappedFileViewFactory::MemoryMappedFileViewFactory(std::string path,
-                                                         const boost::optional<Size>& preferredMmapSize,
+                                                         const std::optional<Size>& preferredMmapSize,
                                                          const MemoryMappedFileViewFactory::AccessPattern accessPattern) :
     _pimpl {
         std::make_shared<internal::MmapFileViewFactoryImpl>(std::move(path), preferredMmapSize,

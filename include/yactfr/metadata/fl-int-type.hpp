@@ -8,7 +8,7 @@
 #ifndef YACTFR_METADATA_FL_INT_TYPE_HPP
 #define YACTFR_METADATA_FL_INT_TYPE_HPP
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <memory>
 #include <utility>
@@ -53,7 +53,7 @@ public:
 
 protected:
     explicit FixedLengthIntegerType(_tKind kind, unsigned int align, unsigned int len, ByteOrder bo,
-                                    const boost::optional<BitOrder>& bio, DisplayBase prefDispBase,
+                                    const std::optional<BitOrder>& bio, DisplayBase prefDispBase,
                                     Mappings&& mappings, MapItem::Up attrs) :
         FixedLengthBitArrayType {kind, align, len, bo, bio, std::move(attrs)},
         IntegerTypeCommon<MappingValueT> {prefDispBase, std::move(mappings)}
@@ -139,7 +139,7 @@ public:
         Bit order of data stream fixed-length signed integers described
         by this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -172,7 +172,7 @@ public:
     */
     explicit FixedLengthSignedIntegerType(unsigned int alignment, unsigned int length,
                                           ByteOrder byteOrder,
-                                          const boost::optional<BitOrder>& bitOrder = boost::none,
+                                          const std::optional<BitOrder>& bitOrder = std::nullopt,
                                           DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                           Mappings mappings = Mappings {},
                                           MapItem::Up attributes = nullptr);
@@ -193,7 +193,7 @@ public:
         Bit order of data stream fixed-length signed integers described
         by this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -221,7 +221,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthSignedIntegerType(unsigned int length, ByteOrder byteOrder,
-                                          const boost::optional<BitOrder>& bitOrder = boost::none,
+                                          const std::optional<BitOrder>& bitOrder = std::nullopt,
                                           DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                           Mappings mappings = Mappings {},
                                           MapItem::Up attributes = nullptr);
@@ -312,7 +312,7 @@ public:
         Bit order of data stream fixed-length unsigned integers
         described by this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -347,7 +347,7 @@ public:
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int alignment, unsigned int length,
                                             ByteOrder byteOrder,
-                                            const boost::optional<BitOrder>& bitOrder = boost::none,
+                                            const std::optional<BitOrder>& bitOrder = std::nullopt,
                                             DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                             Mappings mappings = Mappings {},
                                             MapItem::Up attributes = nullptr,
@@ -369,7 +369,7 @@ public:
         Bit order of data stream fixed-length unsigned integers
         described by this type.
 
-        If <code>boost::none</code>, then the value is, depending
+        If <code>std::nullopt</code>, then the value is, depending
         on \p byteOrder:
 
         <dl>
@@ -399,7 +399,7 @@ public:
         \p length > 0.
     */
     explicit FixedLengthUnsignedIntegerType(unsigned int length, ByteOrder byteOrder,
-                                            const boost::optional<BitOrder>& bitOrder = boost::none,
+                                            const std::optional<BitOrder>& bitOrder = std::nullopt,
                                             DisplayBase preferredDisplayBase = DisplayBase::Decimal,
                                             Mappings mappings = Mappings {},
                                             MapItem::Up attributes = nullptr,

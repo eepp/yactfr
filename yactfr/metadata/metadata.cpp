@@ -12,10 +12,10 @@
 #include <cassert>
 #include <cstdint>
 #include <array>
+#include <optional>
 #include <boost/endian/conversion.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/optional.hpp>
 
 #include <yactfr/io-error.hpp>
 #include <yactfr/metadata/metadata-stream.hpp>
@@ -121,7 +121,7 @@ private:
     };
 
 private:
-    boost::optional<_tPktHeader> _readPktHeader(const bool readMagic);
+    std::optional<_tPktHeader> _readPktHeader(const bool readMagic);
     void _readPacketized();
     void _readText();
 
@@ -306,7 +306,7 @@ void MetadataStreamDecoder::_expectItem(T& item)
     }
 }
 
-boost::optional<MetadataStreamDecoder::_tPktHeader> MetadataStreamDecoder::_readPktHeader(const bool readMagic)
+std::optional<MetadataStreamDecoder::_tPktHeader> MetadataStreamDecoder::_readPktHeader(const bool readMagic)
 {
     _tPktHeader header;
 
@@ -319,7 +319,7 @@ boost::optional<MetadataStreamDecoder::_tPktHeader> MetadataStreamDecoder::_read
         if (!this->_readItem(header.magic)) {
             if (_stream->gcount() == 0) {
                 // end of stream
-                return boost::none;
+                return std::nullopt;
             } else {
                 this->_throwEndsPrematurely(sizeof header.magic);
             }

@@ -15,7 +15,7 @@ namespace yactfr {
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int align,
                                                                        const unsigned int len,
                                                                        const ByteOrder bo,
-                                                                       const boost::optional<BitOrder>& bio,
+                                                                       const std::optional<BitOrder>& bio,
                                                                        MapItem::Up attrs) :
     FixedLengthBitArrayType {_kindFlFloat, align, len, bo, bio, std::move(attrs)}
 {
@@ -24,7 +24,7 @@ FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const uns
 
 FixedLengthFloatingPointNumberType::FixedLengthFloatingPointNumberType(const unsigned int len,
                                                                        const ByteOrder bo,
-                                                                       const boost::optional<BitOrder>& bio,
+                                                                       const std::optional<BitOrder>& bio,
                                                                        MapItem::Up attrs) :
     FixedLengthFloatingPointNumberType {1, len, bo, bio, std::move(attrs)}
 {

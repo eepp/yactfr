@@ -54,11 +54,11 @@ void TsdlParser::_setImplicitMappedClkTypeId(PseudoDt& basePseudoDt,
             // create implicit 1-GHz clock type
             static const std::string defStr {"default"};
 
-            _pseudoTraceType->clkTypes().insert(ClockType::create(defStr, boost::none, boost::none,
-                                                                  boost::none, boost::none,
+            _pseudoTraceType->clkTypes().insert(ClockType::create(defStr, std::nullopt, std::nullopt,
+                                                                  std::nullopt, std::nullopt,
                                                                   1'000'000'000ULL,
-                                                                  boost::none, boost::none,
-                                                                  boost::none, boost::none,
+                                                                  std::nullopt, std::nullopt,
+                                                                  std::nullopt, std::nullopt,
                                                                   ClockOffset {}));
         }
 
@@ -463,18 +463,18 @@ void TsdlParser::_throwMissingAttr(const std::string& name, const TextLocation& 
     throwTextParseError(ss.str(), loc);
 }
 
-boost::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& str)
+std::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& str)
 {
     try {
         return boost::uuids::string_generator {}(str);
     } catch (const std::runtime_error&) {
-        return boost::none;
+        return std::nullopt;
     }
 }
 
 struct PseudoDataLocBase
 {
-    explicit PseudoDataLocBase(const PseudoDataLoc::Kind kind, boost::optional<Scope> scope,
+    explicit PseudoDataLocBase(const PseudoDataLoc::Kind kind, std::optional<Scope> scope,
                                const PseudoDataLoc::PathElems::const_iterator restPos) :
         kind {kind},
         scope {std::move(scope)},
@@ -483,13 +483,13 @@ struct PseudoDataLocBase
     }
 
     PseudoDataLoc::Kind kind;
-    boost::optional<Scope> scope;
+    std::optional<Scope> scope;
     PseudoDataLoc::PathElems::const_iterator restPos;
 };
 
 namespace {
 
-boost::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
+std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
                                                      const TextLocation& loc)
 {
     const auto beginPos = allPathElems.begin();
@@ -547,23 +547,23 @@ boost::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathEl
 
     if (allPathElems.size() >= 1 && *allPathElems[0] == "env") {
         return PseudoDataLocBase {
-            PseudoDataLoc::Kind::Env, boost::none, beginPos + 1
+            PseudoDataLoc::Kind::Env, std::nullopt, beginPos + 1
         };
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 } // namespace
 
-boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                              const TextLocation& loc)
 {
     const auto psDataLocBase = pseudoDataLocBase(allPathElems, loc);
 
     if (!psDataLocBase || (psDataLocBase->kind != PseudoDataLoc::Kind::Abs &&
                            psDataLocBase->kind != PseudoDataLoc::Kind::Env)) {
-        return boost::none;
+        return std::nullopt;
     }
 
     /*
@@ -579,7 +579,7 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(con
     };
 }
 
-boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                              const TextLocation& loc)
 {
     /*
@@ -632,7 +632,7 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
             if (std::find(frameIdents.begin(), frameIdents.end(), firstPathElem) != frameIdents.end()) {
                 // identifier found in this frame: win!
                 return PseudoDataLoc {
-                    PseudoDataLoc::Kind::Rel1, boost::none, allPathElems, loc, stackIt->lexId
+                    PseudoDataLoc::Kind::Rel1, std::nullopt, allPathElems, loc, stackIt->lexId
                 };
             }
         }
@@ -659,7 +659,7 @@ boost::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(con
         --stackIt;
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
@@ -737,12 +737,12 @@ TsdlParser::TsdlParser(const char * const begin, const char * const end) :
     this->_parseMetadata();
 }
 
-const boost::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const noexcept
+const std::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const noexcept
 {
     assert(_pseudoTraceType);
 
     if (!_pseudoTraceType->uid()) {
-        return boost::none;
+        return std::nullopt;
     }
 
     return TsdlParser::_uuidFromStr(*_pseudoTraceType->uid());
@@ -1237,9 +1237,9 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
     auto bo = this->_absNativeBo();
     auto dispBase = DisplayBase::Decimal;
     auto isSigned = false;
-    boost::optional<StringEncoding> encoding;
-    boost::optional<std::string> mappedClkTypeId;
-    boost::optional<TextLocation> mapAttrLoc;
+    std::optional<StringEncoding> encoding;
+    std::optional<std::string> mappedClkTypeId;
+    std::optional<TextLocation> mapAttrLoc;
 
     // check attributes
     for (const auto& attr : attrs) {
@@ -1733,7 +1733,7 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
             _tLexScope varTypeLexScope {*this, _tStackFrame::Kind::VarType};
 
             // try to parse `<`
-            boost::optional<PseudoDataLoc> pseudoDataLoc;
+            std::optional<PseudoDataLoc> pseudoDataLoc;
 
             if (_ss.tryScanToken("<")) {
                 _ss.skipCommentsAndWhitespaces();
@@ -1959,11 +1959,11 @@ bool TsdlParser::_tryParseClkTypeBlock()
     TsdlParser::_checkDupAttr(attrs);
 
     std::string name;
-    boost::optional<std::string> descr;
-    boost::optional<std::string> uuidStr;
-    boost::optional<boost::uuids::uuid> uuid;
+    std::optional<std::string> descr;
+    std::optional<std::string> uuidStr;
+    std::optional<boost::uuids::uuid> uuid;
     auto freq = 1'000'000'000ULL;
-    boost::optional<Cycles> prec;
+    std::optional<Cycles> prec;
     auto offsetSecs = 0LL;
     Cycles offsetCycles = 0;
     auto isAbs = false;
@@ -2065,7 +2065,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     }
 
     // create origin
-    auto origin = call([&isAbs, this]() -> boost::optional<ClockOrigin> {
+    auto origin = call([&isAbs, this]() -> std::optional<ClockOrigin> {
         if (isAbs) {
             /*
              * CTF 1.8 says:
@@ -2103,13 +2103,13 @@ bool TsdlParser::_tryParseClkTypeBlock()
             }
         }
 
-        return boost::none;
+        return std::nullopt;
     });
 
-    _pseudoTraceType->clkTypes().insert(ClockType::create(name, boost::none, name, std::move(uuidStr),
+    _pseudoTraceType->clkTypes().insert(ClockType::create(name, std::nullopt, name, std::move(uuidStr),
                                                           std::move(uuid), freq, descr,
                                                           std::move(origin), std::move(prec),
-                                                          boost::none,
+                                                          std::nullopt,
                                                           ClockOffset {offsetSecs, offsetCycles}));
     return true;
 }
@@ -2176,10 +2176,10 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     // check for duplicate attributes
     TsdlParser::_checkDupAttr(attrs);
 
-    boost::optional<unsigned int> majorVersion;
-    boost::optional<unsigned int> minorVersion;
-    boost::optional<ByteOrder> nativeBo;
-    boost::optional<std::string> uuidStr;
+    std::optional<unsigned int> majorVersion;
+    std::optional<unsigned int> minorVersion;
+    std::optional<ByteOrder> nativeBo;
+    std::optional<std::string> uuidStr;
 
     // check attributes
     for (const auto& attr : attrs) {
@@ -2258,7 +2258,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     if (_nativeBo) {
         // second time we parse this: create pseudo trace type
         PseudoTraceType pseudoTraceType {
-            *majorVersion, *minorVersion, boost::none, boost::none, std::move(uuidStr),
+            *majorVersion, *minorVersion, std::nullopt, std::nullopt, std::move(uuidStr),
             TraceEnvironment {}, std::move(pseudoPktHeaderType)
         };
 
@@ -2408,7 +2408,7 @@ bool TsdlParser::_tryParseDstBlock()
     // create and initialize pseudo data stream type
     _pseudoTraceType->pseudoDsts().insert(std::make_pair(
         id,
-        std::make_unique<PseudoDst>(id, boost::none, boost::none, boost::none,
+        std::make_unique<PseudoDst>(id, std::nullopt, std::nullopt, std::nullopt,
                                     std::move(pseudoPktCtxType), std::move(pseudoErHeaderType),
                                     std::move(pseudoErCommonCtxType), nullptr, nullptr,
                                     beginLoc)
@@ -2494,9 +2494,9 @@ bool TsdlParser::_tryParseErtBlock()
     // default event and stream IDs are 0
     TypeId id = 0;
     TypeId dstId = 0;
-    boost::optional<LogLevel> logLevel;
-    boost::optional<std::string> emfUri;
-    boost::optional<std::string> name;
+    std::optional<LogLevel> logLevel;
+    std::optional<std::string> emfUri;
+    std::optional<std::string> name;
 
     // check for attributes
     for (const auto& attr : attrs) {
@@ -2556,7 +2556,7 @@ bool TsdlParser::_tryParseErtBlock()
     // build event record type object
     dstPseudoOrphanErts.insert(std::make_pair(id, PseudoOrphanErt {
         PseudoErt {
-            id, boost::none, std::move(name), boost::none, std::move(logLevel),
+            id, std::nullopt, std::move(name), std::nullopt, std::move(logLevel),
             std::move(emfUri), std::move(pseudoSpecCtxType),
             std::move(pseudoPayloadType), nullptr, beginLoc
         },
@@ -2976,7 +2976,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
     struct LenDescr final
     {
         bool isStatic;
-        boost::optional<PseudoDataLoc> dlArrayLenLoc;
+        std::optional<PseudoDataLoc> dlArrayLenLoc;
         Size arrayLen;
         TextLocation loc;
     };
@@ -3000,9 +3000,9 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                 throwTextParseError(ss.str(), subscriptLoc);
             }
 
-            lenDescrs.push_back({true, boost::none, static_cast<Size>(*val), subscriptLoc});
+            lenDescrs.push_back({true, std::nullopt, static_cast<Size>(*val), subscriptLoc});
         } else {
-            boost::optional<PseudoDataLoc> pseudoDataLoc;
+            std::optional<PseudoDataLoc> pseudoDataLoc;
 
             try {
                 pseudoDataLoc = this->_expectDataLoc();
@@ -3053,7 +3053,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                         throwTextParseError(ss.str(), subscriptLoc);
                     }
 
-                    lenDescrs.push_back({true, boost::none, static_cast<Size>(*entryVal),
+                    lenDescrs.push_back({true, std::nullopt, static_cast<Size>(*entryVal),
                                         subscriptLoc});
                 } else {
                     std::ostringstream ss;

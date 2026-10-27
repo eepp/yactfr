@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <yactfr/internal/metadata/utils.hpp>
 
@@ -71,7 +71,7 @@ public:
     @pre
         \p selectorRanges is not empty.
     */
-    explicit VariantTypeOption(boost::optional<std::string> name, DataType::Up dataType,
+    explicit VariantTypeOption(std::optional<std::string> name, DataType::Up dataType,
                                SelectorRangeSet selectorRanges,
                                MapItem::Up attributes = nullptr) :
         _name {std::move(name)},
@@ -105,7 +105,7 @@ public:
     explicit VariantTypeOption(DataType::Up dataType, SelectorRangeSet selectorRanges,
                                MapItem::Up attributes = nullptr) :
         VariantTypeOption {
-            boost::none, std::move(dataType), std::move(selectorRanges), std::move(attributes)
+            std::nullopt, std::move(dataType), std::move(selectorRanges), std::move(attributes)
         }
     {
     }
@@ -134,14 +134,14 @@ public:
     }
 
     /// Name of this variant type option.
-    const boost::optional<std::string>& name() const noexcept
+    const std::optional<std::string>& name() const noexcept
     {
         return _name;
     }
 
     /*!
      * @brief
-     *     Display name, or \c boost::none if missing or if this type is
+     *     Display name, or \c std::nullopt if missing or if this type is
      *     not part of a \link TraceType trace type\endlink yet.
      *
      * When the returned value is set, it's, depending on the
@@ -156,7 +156,7 @@ public:
      *   <dd>name()
      * </dl>
      */
-    const boost::optional<std::string>& displayName() const noexcept
+    const std::optional<std::string>& displayName() const noexcept
     {
         return _dispName;
     }
@@ -226,8 +226,8 @@ public:
     }
 
 private:
-    const boost::optional<std::string> _name;
-    mutable boost::optional<std::string> _dispName;
+    const std::optional<std::string> _name;
+    mutable std::optional<std::string> _dispName;
     const DataType::Up _dt;
     const SelectorRangeSet _selRanges;
     const MapItem::Up _attrs;

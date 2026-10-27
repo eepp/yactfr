@@ -9,7 +9,7 @@
 #define YACTFR_METADATA_CLK_ORIG_HPP
 
 #include <string>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/uuid/uuid.hpp>
 
 namespace yactfr {
@@ -48,7 +48,7 @@ public:
     @param[in] uid
         Unique ID of the clock origin.
     */
-    explicit ClockOrigin(boost::optional<std::string> nameSpace, std::string name, std::string uid);
+    explicit ClockOrigin(std::optional<std::string> nameSpace, std::string name, std::string uid);
 
     /*!
     @brief
@@ -104,7 +104,7 @@ public:
     }
 
     /// Namespace.
-    const boost::optional<std::string>& nameSpace() const noexcept
+    const std::optional<std::string>& nameSpace() const noexcept
     {
         return _ns;
     }
@@ -135,7 +135,7 @@ private:
     static const char * const _unixEpochUid;
 
 private:
-    boost::optional<std::string> _ns;
+    std::optional<std::string> _ns;
     std::string _name;
     std::string _uid;
 };

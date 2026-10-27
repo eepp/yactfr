@@ -79,7 +79,7 @@ public:
         Path of the file on which to create memory mapped file views.
     @param[in] preferredMmapSize
         Preferred maximum size (bytes) of each memory map operation, or
-        \c boost::none to let the implementation decide.
+        \c std::nullopt to let the implementation decide.
     @param[in] expectedAccessPattern
         Expected access pattern of the memory mapped file views created
         by this factory.
@@ -88,7 +88,7 @@ public:
         An I/O error occurred (file not found, permission denied, etc.).
     */
     explicit MemoryMappedFileViewFactory(std::string path,
-                                         const boost::optional<Size>& preferredMmapSize = boost::none,
+                                         const std::optional<Size>& preferredMmapSize = std::nullopt,
                                          AccessPattern expectedAccessPattern = AccessPattern::Normal);
 
     MemoryMappedFileViewFactory(const MemoryMappedFileViewFactory&) = delete;

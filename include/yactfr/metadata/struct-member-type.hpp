@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include "dt.hpp"
 #include "item.hpp"
@@ -96,7 +96,7 @@ public:
 
     /*!
      * @brief
-     *     Display name, or \c boost::none if this type is
+     *     Display name, or \c std::nullopt if this type is
      *     not part of a \link TraceType trace type\endlink yet.
      *
      * When the returned value is set, it's, depending on the
@@ -111,7 +111,7 @@ public:
      *   <dd>name()
      * </dl>
      */
-    const boost::optional<std::string>& displayName() const noexcept
+    const std::optional<std::string>& displayName() const noexcept
     {
         return _dispName;
     }
@@ -178,7 +178,7 @@ public:
     }
 
 private:
-    mutable boost::optional<std::string> _dispName;
+    mutable std::optional<std::string> _dispName;
     const std::string _name;
     const DataType::Up _dt;
     const MapItem::Up _attrs;

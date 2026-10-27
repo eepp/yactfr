@@ -21,7 +21,7 @@ namespace yactfr {
 namespace internal {
 
 MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
-                                                 const boost::optional<Size>& preferredMmapSize,
+                                                 const std::optional<Size>& preferredMmapSize,
                                                  const MemoryMappedFileViewFactory::AccessPattern accessPattern) :
     _path {std::move(path)},
     _accessPattern {accessPattern}
