@@ -18,7 +18,7 @@ namespace yactfr::internal {
  * Converts the JSON value `jsonVal` to an equivalent yactfr item and
  * returns it.
  */
-Item::Up itemFromJsonVal(const JsonVal& jsonVal);
+[[ nodiscard ]] Item::Up itemFromJsonVal(const JsonVal& jsonVal);
 
 } // namespace yactfr::internal
 

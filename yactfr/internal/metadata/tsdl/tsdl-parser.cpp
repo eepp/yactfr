@@ -1167,7 +1167,7 @@ PseudoDt::Up TsdlParser::_fastPseudoFlIntType(TextLocation loc)
 
 namespace {
 
-BitOrder bioFromBo(const ByteOrder bo) noexcept
+[[ nodiscard ]] BitOrder bioFromBo(const ByteOrder bo) noexcept
 {
     return bo == ByteOrder::Big ? BitOrder::LastToFirst : BitOrder::FirstToLast;
 }

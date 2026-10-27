@@ -24,7 +24,7 @@
 
 namespace yactfr::internal {
 
-TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
+[[ nodiscard ]] TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
 
 /*
  * Converter of root pseudo data type to yactfr data type.
@@ -42,7 +42,7 @@ private:
     /*
      * Releases and returns the resulting yactfr trace type.
      */
-    TraceType::Up releaseTraceType()
+    [[ nodiscard ]] TraceType::Up releaseTraceType()
     {
         return std::move(_traceType);
     }
@@ -51,19 +51,19 @@ private:
      * Converts the pseudo trace type `*_pseudoTraceType` to a yactr
      * trace type.
      */
-    TraceType::Up _traceTypeFromPseudoTraceType();
+    [[ nodiscard ]] TraceType::Up _traceTypeFromPseudoTraceType();
 
     /*
      * Converts the pseudo data stream type `pseudoDst` to a yactfr data
      * stream type.
      */
-    std::unique_ptr<const DataStreamType> _dstFromPseudoDst(PseudoDst& pseudoDst);
+    [[ nodiscard ]] std::unique_ptr<const DataStreamType> _dstFromPseudoDst(PseudoDst& pseudoDst);
 
     /*
      * Converts the pseudo event record type `pseudoErt` to a yactfr
      * event record type.
      */
-    std::unique_ptr<const EventRecordType> _ertFromPseudoErt(PseudoErt& pseudoErt,
+    [[ nodiscard ]] std::unique_ptr<const EventRecordType> _ertFromPseudoErt(PseudoErt& pseudoErt,
                                                              const PseudoDst& curPseudoDst);
 
     /*
@@ -73,7 +73,7 @@ private:
      * If `pseudoDt` is `nullptr`, then this method returns an empty
      * pointer immediately.
      */
-    StructureType::Up _scopeStructTypeFromPseudoDt(PseudoDt *pseudoDt, Scope scope,
+    [[ nodiscard ]] StructureType::Up _scopeStructTypeFromPseudoDt(PseudoDt *pseudoDt, Scope scope,
                                                    const PseudoDst *curPseudoDst = nullptr,
                                                    const PseudoErt *curPseudoErt = nullptr) const;
 

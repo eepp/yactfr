@@ -197,7 +197,7 @@ SetPktEndDefClkValInstr::SetPktEndDefClkValInstr() :
 
 namespace {
 
-Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromFlBitArrayType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitArrayType());
 
@@ -333,7 +333,7 @@ std::string ReadFlBitArrayInstr::_commonToStr() const
 
 namespace {
 
-Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromFlBitMapType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBitMapType());
 
@@ -444,7 +444,7 @@ ReadFlBitMapInstr::ReadFlBitMapInstr(const StructureMemberType * const member, c
 
 namespace {
 
-Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromFlBoolType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthBooleanType());
 
@@ -562,7 +562,7 @@ ReadFlIntInstr::ReadFlIntInstr(const Kind kind, const StructureMemberType * cons
 
 namespace {
 
-Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromFlIntType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthIntegerType());
 
@@ -799,7 +799,7 @@ std::string ReadFlUIntInstr::_toStr(Size) const
 
 namespace {
 
-Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromFlFloatType(const DataType& dt) noexcept
 {
     assert(dt.isFixedLengthFloatingPointNumberType());
 
@@ -942,7 +942,7 @@ ReadFlFloatInstr::ReadFlFloatInstr(const StructureMemberType * const member, con
 
 namespace {
 
-Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromVlIntType(const DataType& dt) noexcept
 {
     assert(dt.isVariableLengthIntegerType());
 
@@ -972,7 +972,7 @@ std::string ReadVlIntInstr::_toStr(Size) const
 
 namespace {
 
-Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) noexcept
+[[ nodiscard ]] Instr::Kind kindFromNtStrType(const NullTerminatedStringType& dt) noexcept
 {
     switch (dt.encoding()) {
     case StringEncoding::Utf8:

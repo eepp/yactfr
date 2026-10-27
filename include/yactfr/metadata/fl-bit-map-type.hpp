@@ -192,7 +192,7 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static Up create(ArgTs&&... args)
+    [[ nodiscard ]] static Up create(ArgTs&&... args)
     {
         return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
@@ -266,7 +266,7 @@ public:
 
 private:
     DataType::Up _clone() const override;
-    static std::vector<_tFlagMask> _flagMasksFromFlags(const Flags& flags);
+    [[ nodiscard ]] static std::vector<_tFlagMask> _flagMasksFromFlags(const Flags& flags);
 
     void _accept(DataTypeVisitor& visitor) const override
     {

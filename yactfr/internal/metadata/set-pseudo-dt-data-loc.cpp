@@ -178,7 +178,7 @@ private:
      * Creates and returns a yactfr data location from the pseudo data
      * location `pseudoDataLoc` within the root scope `_scope`.
      */
-    DataLocation _dataLocFromPseudoDataLoc(const PseudoDataLoc& pseudoDataLoc) const
+    [[ nodiscard ]] DataLocation _dataLocFromPseudoDataLoc(const PseudoDataLoc& pseudoDataLoc) const
     {
         /*
          * `PseudoDataLoc::Env` is a temporary kind, which the TSDL

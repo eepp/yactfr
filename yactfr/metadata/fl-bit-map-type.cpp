@@ -13,7 +13,7 @@
 namespace yactfr {
 namespace {
 
-unsigned long long maskFromBitRanges(const FixedLengthBitMapType::FlagRangeSet& bitRanges) noexcept
+[[ nodiscard ]] unsigned long long maskFromBitRanges(const FixedLengthBitMapType::FlagRangeSet& bitRanges) noexcept
 {
     auto mask = 0ULL;
 

@@ -49,7 +49,7 @@ public:
     /*
      * Releases and returns the parsed trace type.
      */
-    TraceType::Up releaseTraceType()
+    [[ nodiscard ]] TraceType::Up releaseTraceType()
     {
         return std::move(_traceType);
     }
@@ -127,7 +127,7 @@ private:
      * Calls `_pseudoDtErector.pseudoDtOfJsonObj()`, also validating
      * that the returned value is a pseudo structure type.
      */
-    PseudoDt::Up _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
+    [[ nodiscard ]] PseudoDt::Up _pseudoScopeDtOfJsonObj(const JsonObjVal& jsonObjVal, const std::string& propName);
 
     /*
      * Returns the default clock type for the JSON data stream type

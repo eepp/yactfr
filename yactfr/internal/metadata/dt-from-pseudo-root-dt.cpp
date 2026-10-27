@@ -66,7 +66,7 @@ private:
     /*
      * Releases and returns the resulting yactfr data type.
      */
-    StructureType::Up _releaseDt()
+    [[ nodiscard ]] StructureType::Up _releaseDt()
     {
         return std::move(_dt);
     }
@@ -102,25 +102,25 @@ private:
      * Converts the pseudo data type `pseudoDt` to a yactfr data type,
      * throwing if any error occurs.
      */
-    DataType::Up _dtFromPseudoDt(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoDt(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo structure type `pseudoDt` to a yactfr
      * structure type.
      */
-    StructureType::Up _structTypeFromPseudoDt(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] StructureType::Up _structTypeFromPseudoDt(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo scalar data type wrapper `pseudoDt` to a
      * yactfr data type.
      */
-    DataType::Up _dtFromPseudoScalarDtWrapper(const PseudoDt& pseudoDt) const;
+    [[ nodiscard ]] DataType::Up _dtFromPseudoScalarDtWrapper(const PseudoDt& pseudoDt) const;
 
     /*
      * Converts the pseudo unsigned integer type wrapper `pseudoDt` to a
      * yactfr data type.
      */
-    DataType::Up _dtFromPseudoFlUIntType(const PseudoDt& pseudoDt) const;
+    [[ nodiscard ]] DataType::Up _dtFromPseudoFlUIntType(const PseudoDt& pseudoDt) const;
 
     /*
      * Tries to convert the pseudo array type `pseudoArrayType` to a
@@ -142,43 +142,43 @@ private:
     const DataLocation& _getLenLoc(const PseudoDtT& pseudoDt) const;
 
     template <typename PseudoDtT, typename FuncT>
-    DataType::Up _whileVisitingPseudoDt(const PseudoDtT& pseudoDt, FuncT&& func);
+    [[ nodiscard ]] DataType::Up _whileVisitingPseudoDt(const PseudoDtT& pseudoDt, FuncT&& func);
 
     /*
      * Converts the pseudo static-length array type `pseudoDt` to a
      * yactfr static-length array type.
      */
-    DataType::Up _dtFromPseudoSlArrayType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoSlArrayType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo dynamic-length array type `pseudoDt` to a
      * yactfr dynamic-length array type.
      */
-    DataType::Up _dtFromPseudoDlArrayType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoDlArrayType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo dynamic-length BLOB type `pseudoDt` to a
      * yactfr dynamic BLOB type.
      */
-    DataType::Up _dtFromPseudoDlBlobType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoDlBlobType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo structure type `pseudoDt` to a yactfr
      * structure type.
      */
-    DataType::Up _dtFromPseudoStructType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoStructType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo variant type `pseudoDt` to a yactfr
      * variant type.
      */
-    DataType::Up _dtFromPseudoVarType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoVarType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo variant (with integer ranges) type `pseudoDt`
      * to a yactfr variant type.
      */
-    DataType::Up _dtFromPseudoVarWithIntRangesType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoVarWithIntRangesType(const PseudoDt& pseudoDt);
 
     /*
      * Returns the yactfr data location and all the pseudo selector
@@ -202,7 +202,7 @@ private:
      * mappings `selTypeMappings` being `MappingsT`.
      */
     template <typename VarTypeT, typename MappingsT>
-    DataType::Up _dtFromPseudoVarType(const PseudoVarType& pseudoVarType,
+    [[ nodiscard ]] DataType::Up _dtFromPseudoVarType(const PseudoVarType& pseudoVarType,
                                       const MappingsT& selTypeMappings, const DataLocation& selLoc);
 
     /*
@@ -212,20 +212,20 @@ private:
      * being `IntRangeValueT`.
      */
     template <typename VarTypeT, typename IntRangeValueT>
-    DataType::Up _dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
+    [[ nodiscard ]] DataType::Up _dtFromPseudoVarWithIntRangesType(const PseudoVarWithIntRangesType& pseudoVarType,
                                                    DataLocation&& selLoc);
 
     /*
      * Converts the pseudo optional (with boolean selector) type
      * `pseudoDt` to a yactfr optional type.
      */
-    DataType::Up _dtFromPseudoOptWithBoolSelType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoOptWithBoolSelType(const PseudoDt& pseudoDt);
 
     /*
      * Converts the pseudo optional (with integer selector) type
      * `pseudoDt` to a yactfr optional type.
      */
-    DataType::Up _dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt);
+    [[ nodiscard ]] DataType::Up _dtFromPseudoOptWithIntSelType(const PseudoDt& pseudoDt);
 
     [[ noreturn ]] void _throwInvalDataLoc(const std::string& initMsg, const TextLocation& initLoc,
                                            const DataLocation& dataLoc, const TextLocation& loc) const;
@@ -1017,7 +1017,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoOptWithBoolSelType(const 
 
 namespace {
 
-IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(const IntegerRangeSet<unsigned long long, false>& ranges)
+[[ nodiscard ]] IntegerRangeSet<unsigned long long> uIntRangeSetFromUIntRangeSetWithoutPrecondsCheck(const IntegerRangeSet<unsigned long long, false>& ranges)
 {
     using Ranges = IntegerRangeSet<unsigned long long>;
 

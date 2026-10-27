@@ -92,7 +92,7 @@ public:
         requested offset (\p offset) is not available now: try again
         later.
     */
-    std::optional<DataBlock> data(Index offset, Size minimumSize);
+    [[ nodiscard ]] std::optional<DataBlock> data(Index offset, Size minimumSize);
 
 private:
     /*!

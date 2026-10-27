@@ -21,14 +21,14 @@ namespace yactfr::internal {
  * Returns the attributes of the JSON object value `jsonObjVal`, or an
  * empty map item there's no such property.
  */
-MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal);
+[[ nodiscard ]] MapItem::Up attrsOfObj(const JsonObjVal& jsonObjVal);
 
 /*
  * Returns the raw integer value from the JSON unsigned or signed
  * integer value `jsonIntVal`, casted as `ValT`.
  */
 template <typename ValT>
-ValT rawIntValFromJsonIntVal(const JsonVal& jsonIntVal) noexcept
+[[ nodiscard ]] ValT rawIntValFromJsonIntVal(const JsonVal& jsonIntVal) noexcept
 {
     if (jsonIntVal.isUInt()) {
         return static_cast<ValT>(*jsonIntVal.asUInt());

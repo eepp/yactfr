@@ -22,7 +22,7 @@ namespace yactfr::internal {
  * • If not `nullptr`: the pseudo data stream type `curPseudoDst`.
  * • The pseudo trace type `pseudoTraceType`.
  */
-StructureType::Up dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
+[[ nodiscard ]] StructureType::Up dtFromPseudoRootDt(PseudoDt& pseudoDt, Scope scope,
                                      const PseudoTraceType& pseudoTraceType,
                                      const PseudoDst *curPseudoDst = nullptr,
                                      const PseudoErt *curPseudoErt = nullptr);

@@ -403,14 +403,14 @@ private:
     bool _isEqual(const JsonVal& other) const noexcept override;
 };
 
-JsonNullVal::Up createJsonVal(TextLocation loc);
-JsonBoolVal::Up createJsonVal(bool val, TextLocation loc);
-JsonSIntVal::Up createJsonVal(long long val, TextLocation loc);
-JsonUIntVal::Up createJsonVal(unsigned long long val, TextLocation loc);
-JsonRealVal::Up createJsonVal(double val, TextLocation loc);
-JsonStrVal::Up createJsonVal(std::string val, TextLocation loc);
-JsonArrayVal::Up createJsonVal(JsonArrayVal::Container&& items, TextLocation loc);
-JsonObjVal::Up createJsonVal(JsonObjVal::Container&& items, TextLocation loc);
+[[ nodiscard ]] JsonNullVal::Up createJsonVal(TextLocation loc);
+[[ nodiscard ]] JsonBoolVal::Up createJsonVal(bool val, TextLocation loc);
+[[ nodiscard ]] JsonSIntVal::Up createJsonVal(long long val, TextLocation loc);
+[[ nodiscard ]] JsonUIntVal::Up createJsonVal(unsigned long long val, TextLocation loc);
+[[ nodiscard ]] JsonRealVal::Up createJsonVal(double val, TextLocation loc);
+[[ nodiscard ]] JsonStrVal::Up createJsonVal(std::string val, TextLocation loc);
+[[ nodiscard ]] JsonArrayVal::Up createJsonVal(JsonArrayVal::Container&& items, TextLocation loc);
+[[ nodiscard ]] JsonObjVal::Up createJsonVal(JsonObjVal::Container&& items, TextLocation loc);
 
 } // namespace yactfr::internal
 

@@ -68,7 +68,7 @@ metadata stream. This function doesn't seek within \p stream.
 @throws InvalidMetadataStream
     The content of the metadata stream is invalid.
 */
-std::unique_ptr<const MetadataStream> createMetadataStream(std::istream& stream);
+[[ nodiscard ]] std::unique_ptr<const MetadataStream> createMetadataStream(std::istream& stream);
 
 } // namespace yactfr
 

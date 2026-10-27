@@ -17,7 +17,7 @@
 namespace yactfr::internal {
 namespace {
 
-JsonObjVal::Up createDefClkOffsetJsonObjVal()
+[[ nodiscard ]] JsonObjVal::Up createDefClkOffsetJsonObjVal()
 {
     JsonObjVal::Container entries;
 

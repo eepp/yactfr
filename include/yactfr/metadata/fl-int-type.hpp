@@ -243,7 +243,7 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static Up create(ArgTs&&... args)
+    [[ nodiscard ]] static Up create(ArgTs&&... args)
     {
         return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }
@@ -422,7 +422,7 @@ public:
         See the preconditions of the constructor.
     */
     template <typename... ArgTs>
-    static Up create(ArgTs&&... args)
+    [[ nodiscard ]] static Up create(ArgTs&&... args)
     {
         return std::make_unique<Up::element_type>(std::forward<ArgTs>(args)...);
     }

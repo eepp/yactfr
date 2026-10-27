@@ -59,7 +59,7 @@ public:
      * Returns a shared pointer to JSON value requirement, forwarding
      * the parameter to the constructor.
      */
-    static Sp shared(std::optional<JsonVal::Kind> kind = std::nullopt, bool allowNull = false);
+    [[ nodiscard ]] static Sp shared(std::optional<JsonVal::Kind> kind = std::nullopt, bool allowNull = false);
 
 protected:
     /*
@@ -122,7 +122,7 @@ public:
      * Returns a shared pointer to JSON integer value in range
      * requirement, forwarding the parameters to the constructor.
      */
-    static Sp shared(const std::optional<_tVal>& minVal, const std::optional<_tVal>& maxVal)
+    [[ nodiscard ]] static Sp shared(const std::optional<_tVal>& minVal, const std::optional<_tVal>& maxVal)
     {
         return std::make_shared<JsonIntValInRangeReq>(minVal, maxVal);
     }
@@ -131,7 +131,7 @@ public:
      * Returns a shared pointer to JSON integer value in range
      * requirement, forwarding the parameter to the constructor.
      */
-    static Sp shared(const _tVal exactVal)
+    [[ nodiscard ]] static Sp shared(const _tVal exactVal)
     {
         return std::make_shared<JsonIntValInRangeReq>(exactVal);
     }
@@ -234,7 +234,7 @@ public:
      * Returns a shared pointer to JSON scalar value in set requirement,
      * forwarding the parameter to the constructor.
      */
-    static Sp shared(Set set)
+    [[ nodiscard ]] static Sp shared(Set set)
     {
         return std::make_shared<JsonScalarValInSetReq>(std::move(set));
     }
@@ -243,7 +243,7 @@ public:
      * Returns a shared pointer to JSON scalar value in set requirement,
      * forwarding the parameter to the constructor.
      */
-    static Sp shared(_tVal val)
+    [[ nodiscard ]] static Sp shared(_tVal val)
     {
         return std::make_shared<JsonScalarValInSetReq>(std::move(val));
     }
@@ -346,7 +346,7 @@ public:
      * Returns a shared pointer to JSON unsigned integer value alignment
      * requirement.
      */
-    static Sp shared();
+    [[ nodiscard ]] static Sp shared();
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -384,14 +384,14 @@ public:
      * expression requirement, forwarding the parameter to
      * the constructor.
      */
-    static Sp shared(std::regex regex);
+    [[ nodiscard ]] static Sp shared(std::regex regex);
 
     /*
      * Returns a shared pointer to JSON string value matches regular
      * expression requirement, forwarding the parameter to
      * the constructor.
      */
-    static Sp shared(const char *regex);
+    [[ nodiscard ]] static Sp shared(const char *regex);
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -452,20 +452,20 @@ public:
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameters to the constructor.
      */
-    static Sp shared(const std::optional<Size>& minSize, const std::optional<Size>& maxSize,
+    [[ nodiscard ]] static Sp shared(const std::optional<Size>& minSize, const std::optional<Size>& maxSize,
                      JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameters to the constructor.
      */
-    static Sp shared(Size exactSize, JsonValReq::Sp elemValReq = nullptr);
+    [[ nodiscard ]] static Sp shared(Size exactSize, JsonValReq::Sp elemValReq = nullptr);
 
     /*
      * Returns a shared pointer to JSON array value requirement,
      * forwarding the parameter to the constructor.
      */
-    static Sp shared(JsonValReq::Sp elemValReq = nullptr);
+    [[ nodiscard ]] static Sp shared(JsonValReq::Sp elemValReq = nullptr);
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;
@@ -565,7 +565,7 @@ public:
      * Returns a shared pointer to JSON object value requirement,
      * forwarding the parameters to the constructor.
      */
-    static Sp shared(PropReqs propReqs, bool allowUnknownProps = false);
+    [[ nodiscard ]] static Sp shared(PropReqs propReqs, bool allowUnknownProps = false);
 
 protected:
     void _validate(const JsonVal& jsonVal) const override;

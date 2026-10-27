@@ -69,7 +69,7 @@ public:
         _item = createItem(std::move(items));
     }
 
-    Item::Up releaseItem() noexcept
+    [[ nodiscard ]] Item::Up releaseItem() noexcept
     {
         return std::move(_item);
     }

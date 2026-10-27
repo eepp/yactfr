@@ -23,7 +23,7 @@ namespace {
 std::string parseErrorMsg(const char * const begin, const char * const end)
 {
     try {
-        yactfr::fromMetadataText(begin, end);
+        static_cast<void>(yactfr::fromMetadataText(begin, end));
     } catch (const yactfr::TextParseError& exc) {
         return exc.what();
     }

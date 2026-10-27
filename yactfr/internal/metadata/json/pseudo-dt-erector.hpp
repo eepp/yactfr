@@ -32,7 +32,7 @@ public:
      * The value of the property named `propName` may be a JSON object
      * (full data type) or a JSON string (data type alias name).
      */
-    PseudoDt::Up pseudoDtOfJsonObj(const JsonObjVal& jsonDt, const std::string& propName);
+    [[ nodiscard ]] PseudoDt::Up pseudoDtOfJsonObj(const JsonObjVal& jsonDt, const std::string& propName);
 
     /*
      * Adds the data type alias `pseudoDt` named `name`.
@@ -43,20 +43,20 @@ public:
     void addAlias(const std::string& name, PseudoDt::Up pseudoDt, const TextLocation& nameLoc);
 
 private:
-    PseudoDt::Up _aliasedPseudoDt(const std::string& name, const TextLocation& textLoc);
+    [[ nodiscard ]] PseudoDt::Up _aliasedPseudoDt(const std::string& name, const TextLocation& textLoc);
 
-    PseudoDt::Up _pseudoDtFromDlArrayType(const JsonObjVal& jsonDt, MapItem::Up attrs,
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromDlArrayType(const JsonObjVal& jsonDt, MapItem::Up attrs,
                                           unsigned int minAlign);
 
-    PseudoDt::Up _pseudoDtFromSlArrayType(const JsonObjVal& jsonDt, MapItem::Up attrs,
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromSlArrayType(const JsonObjVal& jsonDt, MapItem::Up attrs,
                                           unsigned int minAlign);
 
-    PseudoDt::Up _pseudoDtFromArrayType(const JsonObjVal& jsonDt, const std::string& type,
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromArrayType(const JsonObjVal& jsonDt, const std::string& type,
                                         MapItem::Up attrs);
 
-    PseudoDt::Up _pseudoDtFromStructType(const JsonObjVal& jsonDt, MapItem::Up attrs);
-    PseudoDt::Up _pseudoDtFromOptType(const JsonObjVal& jsonDt, MapItem::Up attrs);
-    PseudoDt::Up _pseudoDtFromVarType(const JsonObjVal& jsonDt, MapItem::Up attrs);
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromStructType(const JsonObjVal& jsonDt, MapItem::Up attrs);
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromOptType(const JsonObjVal& jsonDt, MapItem::Up attrs);
+    [[ nodiscard ]] PseudoDt::Up _pseudoDtFromVarType(const JsonObjVal& jsonDt, MapItem::Up attrs);
 
 private:
     std::unordered_map<std::string, PseudoDt::Up> _aliases;

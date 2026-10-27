@@ -76,7 +76,7 @@ public:
     /*
      * Releases and returns the parsed trace type.
      */
-    TraceType::Up releaseTraceType()
+    [[ nodiscard ]] TraceType::Up releaseTraceType()
     {
         return std::move(_traceType);
     }
@@ -489,7 +489,7 @@ private:
      *
      *     [event.context.some.location][23][len];
      */
-    PseudoDt::Up _parseArraySubscripts(PseudoDt::Up innerType);
+    [[ nodiscard ]] PseudoDt::Up _parseArraySubscripts(PseudoDt::Up innerType);
 
     /*
      * Parses a data type alias name, without parsing an identifier name
@@ -685,7 +685,7 @@ private:
     [[ nodiscard ]] PseudoDt::Up _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
 
     template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
-    PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt, bool addDtAlias,
+    [[ nodiscard ]] PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt, bool addDtAlias,
                                         std::string&& potDtAliasName,
                                         CreatePseudoDtFuncT&& createPseudoDtFunc);
 
@@ -848,7 +848,7 @@ private:
      * fast pseudo fixed-length integer type cache, or `nullptr` if
      * not found.
      */
-    PseudoDt::Up _fastPseudoFlIntType(TextLocation loc);
+    [[ nodiscard ]] PseudoDt::Up _fastPseudoFlIntType(TextLocation loc);
 
     /*
      * Inserts a clone of the pseudo fixed-length integer type
@@ -866,7 +866,7 @@ private:
      * Returns the keyword which the identifier `ident` is, or
      * `_tKw::None` if it's not a keyword.
      */
-    static _tKw _kwFromIdent(const std::string& ident) noexcept;
+    [[ nodiscard ]] static _tKw _kwFromIdent(const std::string& ident) noexcept;
 
     /*
      * Skips whitespaces and comments, and then returns the keyword at
@@ -875,7 +875,7 @@ private:
      *
      * Use this to only try parsing what can start with this keyword.
      */
-    _tKw _peekKw();
+    [[ nodiscard ]] _tKw _peekKw();
 
     /*
      * Returns whether or not the keyword `kw` can start a data type
@@ -948,7 +948,7 @@ private:
      * data location path elements `allPathElems`, returning
      * `std::nullopt` if it can't.
      */
-    std::optional<PseudoDataLoc> _pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+    [[ nodiscard ]] std::optional<PseudoDataLoc> _pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                      const TextLocation& loc);
 
     /*
@@ -956,14 +956,14 @@ private:
      * location path elements `allPathElems`, returning `std::nullopt` if
      * it can't.
      */
-    std::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+    [[ nodiscard ]] std::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                                      const TextLocation& loc);
 
     /*
      * Returns a pseudo data location from the absolute or relative data
      * location path elements `allPathElems`, thowing on error.
      */
-    PseudoDataLoc _pseudoDataLocFromAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+    [[ nodiscard ]] PseudoDataLoc _pseudoDataLocFromAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
                                                  const TextLocation& loc);
 
     /*
@@ -980,7 +980,7 @@ private:
      * Returns a _cloned_ pseudo data type corresponding to a data type
      * alias name within the context of the current frame.
      */
-    PseudoDt::Up _aliasedPseudoDt(const std::string& name, TextLocation loc) const;
+    [[ nodiscard ]] PseudoDt::Up _aliasedPseudoDt(const std::string& name, TextLocation loc) const;
 
     /*
      * Calls the other _addDtAlias() with the current frame.
@@ -1041,7 +1041,7 @@ private:
      * Returns a UUID object from the canonical textual representation
      * `str`, or `std::nullopt` if the conversion fails for any reason.
      */
-    static std::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
+    [[ nodiscard ]] static std::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
 
     template <typename FlIntTypeT>
     void _validateFlIntTypeMapping(Size len, const TextLocation& loc, const std::string& name,

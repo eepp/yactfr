@@ -69,7 +69,7 @@ public:
         this->_handleVal(loc, std::move(objValCont));
     }
 
-    JsonVal::Up releaseVal() noexcept
+    [[ nodiscard ]] JsonVal::Up releaseVal() noexcept
     {
         return std::move(_jsonVal);
     }

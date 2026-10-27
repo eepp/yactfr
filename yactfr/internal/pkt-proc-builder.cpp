@@ -409,7 +409,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
     auto readScopeInstrIt = firstBeginReadScopeInstr(dsPktProc.pktPreambleProc(),
                                                      Scope::PacketContext);
 
-    const auto insertUpdateDefClkValInstr = [&dsPktProc](auto& instrLoc) {
+    const auto insertUpdateDefClkValInstr = [&](auto& instrLoc) {
         assert(dsPktProc.dst().defaultClockType());
 
         const auto& readUIntInstr = **instrLoc.it;
@@ -471,7 +471,7 @@ void PktProcBuilder::_insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc)
         InstrFinder {
             readScopeInstr.proc(),
             UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp,
-            [&dsPktProc](auto& instrLoc) {
+            [&](auto& instrLoc) {
                 assert(dsPktProc.dst().defaultClockType());
                 instrLoc.proc->insert(std::next(instrLoc.it),
                                       std::make_shared<SetPktEndDefClkValInstr>());

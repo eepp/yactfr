@@ -33,7 +33,7 @@ public:
     @returns
         Unique pointer to new data source.
     */
-    DataSource::Up createDataSource();
+    [[ nodiscard ]] DataSource::Up createDataSource();
 
 protected:
     /*!

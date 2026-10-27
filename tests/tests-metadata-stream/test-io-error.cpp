@@ -91,7 +91,7 @@ const std::string text {"/* CTF 1.8 */\n\ntrace { major = 1; minor = 8; byte_ord
 bool checkIoError(const char * const name, std::istream& stream, const std::string& expectedMsg)
 {
     try {
-        yactfr::createMetadataStream(stream);
+        static_cast<void>(yactfr::createMetadataStream(stream));
     } catch (const yactfr::IOError& exc) {
         if (exc.what() != expectedMsg) {
             std::cerr << name << ": unexpected message: `" << exc.what() << "` (expecting `" <<
@@ -178,7 +178,7 @@ int main()
         stream.exceptions(std::ios_base::failbit | std::ios_base::eofbit);
 
         try {
-            yactfr::createMetadataStream(stream);
+            static_cast<void>(yactfr::createMetadataStream(stream));
 
             if (stream.exceptions() != (std::ios_base::failbit | std::ios_base::eofbit)) {
                 std::cerr << "exc-mask-fail-eof: exception mask isn't restored\n";

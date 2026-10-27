@@ -542,7 +542,7 @@ private:
 @returns
     Created boolean item.
 */
-BooleanItem::Up createItem(bool value);
+[[ nodiscard ]] BooleanItem::Up createItem(bool value);
 
 /*!
 @brief
@@ -556,7 +556,7 @@ BooleanItem::Up createItem(bool value);
 @returns
     Created signed integer item.
 */
-SignedIntegerItem::Up createItem(long long value);
+[[ nodiscard ]] SignedIntegerItem::Up createItem(long long value);
 
 /*!
 @brief
@@ -571,7 +571,7 @@ SignedIntegerItem::Up createItem(long long value);
 @returns
     Created unsigned integer item.
 */
-UnsignedIntegerItem::Up createItem(unsigned long long value);
+[[ nodiscard ]] UnsignedIntegerItem::Up createItem(unsigned long long value);
 
 /*!
 @brief
@@ -585,7 +585,7 @@ UnsignedIntegerItem::Up createItem(unsigned long long value);
 @returns
     Created real item.
 */
-RealItem::Up createItem(double value);
+[[ nodiscard ]] RealItem::Up createItem(double value);
 
 /*!
 @brief
@@ -599,7 +599,7 @@ RealItem::Up createItem(double value);
 @returns
     Created string item.
 */
-StringItem::Up createItem(std::string value);
+[[ nodiscard ]] StringItem::Up createItem(std::string value);
 
 /*!
 @brief
@@ -613,7 +613,7 @@ StringItem::Up createItem(std::string value);
 @returns
     Created array item.
 */
-ArrayItem::Up createItem(ArrayItem::Container&& items);
+[[ nodiscard ]] ArrayItem::Up createItem(ArrayItem::Container&& items);
 
 /*!
 @brief
@@ -627,7 +627,7 @@ ArrayItem::Up createItem(ArrayItem::Container&& items);
 @returns
     Created map item.
 */
-MapItem::Up createItem(MapItem::Container&& items);
+[[ nodiscard ]] MapItem::Up createItem(MapItem::Container&& items);
 
 } // namespace yactfr
 

@@ -103,7 +103,7 @@ and \p end is a CTF&nbsp;1.8 or CTF&nbsp;2 metadata text.
 @throws TextParseError
     An error occurred while parsing the document.
 */
-FromMetadataTextReturn fromMetadataText(const char *begin, const char *end);
+[[ nodiscard ]] FromMetadataTextReturn fromMetadataText(const char *begin, const char *end);
 
 /*!
 @brief
@@ -125,7 +125,7 @@ documentation.
 @throws TextParseError
     An error occurred while parsing the document.
 */
-inline FromMetadataTextReturn fromMetadataText(const std::string& text)
+[[ nodiscard ]] inline FromMetadataTextReturn fromMetadataText(const std::string& text)
 {
     return fromMetadataText(text.data(), text.data() + text.size());
 }

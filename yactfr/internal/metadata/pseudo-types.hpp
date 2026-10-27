@@ -757,7 +757,7 @@ public:
     }
 
 protected:
-    PseudoNamedDts _clonePseudoOpts() const;
+    [[ nodiscard ]] PseudoNamedDts _clonePseudoOpts() const;
 
 private:
     PseudoNamedDts _pseudoOpts;

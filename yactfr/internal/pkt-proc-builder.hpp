@@ -39,7 +39,7 @@ public:
     PktProcBuilder(const PktProcBuilder&) = delete;
     PktProcBuilder& operator=(const PktProcBuilder&) = delete;
 
-    std::unique_ptr<PktProc> releasePktProc()
+    [[ nodiscard ]] std::unique_ptr<PktProc> releasePktProc()
     {
         return std::move(_pktProc);
     }
@@ -55,11 +55,11 @@ private:
     void _insertSpecialPktProcPreambleProcInstrs();
     void _insertSpecialDsPktProcInstrs(DsPktProc& dsPktProc);
     void _insertUpdateDefClkValInstrs();
-    _tDtReadLenSelInstrMap _createDtReadLenSelInstrMap() const;
+    [[ nodiscard ]] _tDtReadLenSelInstrMap _createDtReadLenSelInstrMap() const;
     void _setSavedValPoss();
     void _insertEndInstrs();
-    std::unique_ptr<DsPktProc> _buildDsPktProc(const DataStreamType& dst);
-    std::unique_ptr<ErProc> _buildErProc(const EventRecordType& ert);
+    [[ nodiscard ]] std::unique_ptr<DsPktProc> _buildDsPktProc(const DataStreamType& dst);
+    [[ nodiscard ]] std::unique_ptr<ErProc> _buildErProc(const EventRecordType& ert);
     void _buildReadScopeInstr(Scope scope, const DataType *dt, Proc& baseProc);
     void _buildReadInstr(const StructureMemberType *memberType, const DataType& dt, Proc& baseProc);
 

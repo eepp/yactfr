@@ -21,7 +21,7 @@ namespace yactfr::internal {
  *
  * Throws `TextParseError` on error.
  */
-JsonVal::Up parseJson(const char *begin, const char *end, Size baseOffset = 0);
+[[ nodiscard ]] JsonVal::Up parseJson(const char *begin, const char *end, Size baseOffset = 0);
 
 /*
  * Parses the JSON string `str` and returns the resulting JSON value,
@@ -30,7 +30,7 @@ JsonVal::Up parseJson(const char *begin, const char *end, Size baseOffset = 0);
  *
  * Throws `TextParseError` on error.
  */
-inline JsonVal::Up parseJson(const std::string& str, const Size baseOffset = 0)
+[[ nodiscard ]] inline JsonVal::Up parseJson(const std::string& str, const Size baseOffset = 0)
 {
     return parseJson(str.data(), str.data() + str.size(), baseOffset);
 }

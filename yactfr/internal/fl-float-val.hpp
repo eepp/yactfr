@@ -25,7 +25,7 @@ namespace yactfr::internal {
  * binary64).
  */
 template <typename FloatT>
-FloatT nativeFlFloatValFromBits(const std::uint64_t bits) noexcept
+[[ nodiscard ]] FloatT nativeFlFloatValFromBits(const std::uint64_t bits) noexcept
 {
     using UIntT = std::conditional_t<sizeof(FloatT) == sizeof(std::uint32_t),
                                      std::uint32_t, std::uint64_t>;
@@ -58,7 +58,7 @@ FloatT nativeFlFloatValFromBits(const std::uint64_t bits) noexcept
  * equivalent IEEE 754 binary64 number, which can represent any binary16
  * value exactly.
  */
-inline double binary16FlFloatValFromBits(const std::uint64_t bits) noexcept
+[[ nodiscard ]] inline double binary16FlFloatValFromBits(const std::uint64_t bits) noexcept
 {
     const auto sign = (bits >> 15) & 1;
     const auto exp = (bits >> 10) & 0x1f;
@@ -88,7 +88,7 @@ inline double binary16FlFloatValFromBits(const std::uint64_t bits) noexcept
  * a `double`.
  */
 template <Size LenBitsV>
-double flFloatValFromBits(const std::uint64_t bits) noexcept
+[[ nodiscard ]] double flFloatValFromBits(const std::uint64_t bits) noexcept
 {
     static_assert(LenBitsV == 16 || LenBitsV == 32 || LenBitsV == 64,
                   "`LenBitsV` is 16, 32, or 64.");
