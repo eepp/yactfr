@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <algorithm>
+#include <limits>
 #include <sstream>
 #include <cassert>
 #include <unistd.h>
@@ -70,8 +72,16 @@ MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
     assert(_mmapOffsetGranularity >= 1);
 
     if (preferredMmapSize) {
-        _mmapSize = (*preferredMmapSize + _mmapOffsetGranularity - 1) &
-                    ~(_mmapOffsetGranularity - 1);
+        /*
+         * Round up to a whole number of pages, with at least one page,
+         * without overflowing.
+         */
+        const auto granularity = _mmapOffsetGranularity;
+        const auto pageCount = std::max<Size>(*preferredMmapSize / granularity +
+                                              (*preferredMmapSize % granularity != 0), 1);
+
+        _mmapSize = std::min(pageCount, std::numeric_limits<Size>::max() / granularity) *
+                    granularity;
 
         // the VM can request a minimum size of at most 9 bytes
         assert(_mmapSize >= 9);
