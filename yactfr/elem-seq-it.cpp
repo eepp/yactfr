@@ -14,8 +14,6 @@
 
 namespace yactfr {
 
-constexpr Index ElementSequenceIterator::_endOffset;
-
 ElementSequenceIterator::ElementSequenceIterator(DataSourceFactory& dataSrcFactory,
                                                  const TraceType& traceType) :
     _dataSrcFactory {&dataSrcFactory},

@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <cstdint>
+#include <limits>
 #include <array>
 #include <functional>
 
@@ -45,8 +46,8 @@
 namespace yactfr {
 namespace internal {
 
-extern const Size sizeUnset;
-extern const std::uint64_t savedValUnset;
+inline constexpr auto sizeUnset = std::numeric_limits<Size>::max();
+inline constexpr auto savedValUnset = std::numeric_limits<std::uint64_t>::max();
 
 // possible VM states
 enum class VmState {

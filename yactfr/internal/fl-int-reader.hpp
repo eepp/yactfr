@@ -121,10 +121,6 @@ struct YACTFR_INTERNAL_HIDDEN FlIntReadFuncsImpl<RetT, BoV, std::index_sequence<
     };
 };
 
-// definition of the ODR-used static member (C++14)
-template <typename RetT, ByteOrder BoV, std::size_t... IndexesV>
-constexpr RetT (*FlIntReadFuncsImpl<RetT, BoV, std::index_sequence<IndexesV...>>::funcs[])(const std::uint8_t *);
-
 /*
  * `FlIntReadFuncs<RetT, BoV>::funcs` is a table of functions which read
  * a fixed-length integer having the byte order `BoV`.

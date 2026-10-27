@@ -13,9 +13,6 @@
 namespace yactfr {
 namespace internal {
 
-constexpr Size sizeUnset = std::numeric_limits<Size>::max();
-constexpr std::uint64_t savedValUnset = std::numeric_limits<std::uint64_t>::max();
-
 VmPos::VmPos(const PktProc& pktProc) :
     pktProc {&pktProc}
 {

@@ -1097,7 +1097,7 @@ private:
     void _setPseudoDstDefClkType();
 
 private:
-    static const Size _maxFastFlIntTypeStrSize;
+    static constexpr Size _maxFastFlIntTypeStrSize = 256;
 
 private:
     // underlying string scanner

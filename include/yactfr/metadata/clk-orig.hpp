@@ -130,9 +130,9 @@ public:
     }
 
 private:
-    static const char * const _unixEpochNs;
-    static const char * const _unixEpochName;
-    static const char * const _unixEpochUid;
+    static constexpr auto _unixEpochNs = "github.com/eepp/yactfr";
+    static constexpr auto _unixEpochName = "unix-epoch";
+    static constexpr auto _unixEpochUid = "";
 
 private:
     std::optional<std::string> _ns;
