@@ -30,8 +30,11 @@ MmapFileViewFactoryImpl::MmapFileViewFactoryImpl(std::string path,
      * `O_NONBLOCK` so that opening a FIFO doesn't block until a writer
      * opens it: the check below rejects it anyway. This flag has no
      * effect on a regular file.
+     *
+     * `O_CLOEXEC` so that a child process which the user executes
+     * doesn't inherit the file descriptor.
      */
-    _fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
+    _fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK | O_CLOEXEC);
 
     if (_fd < 0) {
         const auto error = internal::strError();
