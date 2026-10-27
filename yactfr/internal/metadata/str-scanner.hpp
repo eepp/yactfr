@@ -12,7 +12,6 @@
 #include <vector>
 #include <limits>
 #include <regex>
-#include <array>
 #include <optional>
 #include <charconv>
 #include <system_error>
@@ -445,9 +444,6 @@ private:
     template <typename ValT>
     [[ nodiscard ]] static std::optional<ValT> _tryNegateConstInt(unsigned long long ullVal, bool negate);
 
-    template <typename ValT>
-    [[ nodiscard ]] std::optional<ValT> _tryScanConstBinInt(bool negate);
-
     template <typename ValT, int BaseV>
     [[ nodiscard ]] std::optional<ValT> _tryScanConstInt(bool negate);
 
@@ -562,9 +558,6 @@ private:
 
     // character pointer stack
     std::vector<_tStackFrame> _stack;
-
-    // conversion buffer used to scan constant integers
-    std::array<char, 72> _convBuf;
 
     // string buffer
     std::string _strBuf;
@@ -729,67 +722,6 @@ std::optional<ValT> StrScanner::_tryNegateConstInt(const unsigned long long ullV
     }
 }
 
-template <typename ValT>
-std::optional<ValT> StrScanner::_tryScanConstBinInt(const bool negate)
-{
-    const auto at = _at;
-
-    // accumulate `0` and `1` characters into conversion buffer
-    auto convBufIt = _convBuf.begin();
-
-    while (!this->isDone()) {
-        if (*_at != '0' && *_at != '1') {
-            // no more
-            break;
-        }
-
-        *convBufIt = *_at;
-        ++_at;
-        ++convBufIt;
-
-        if (convBufIt - _convBuf.begin() > 64) {
-            // too many bits!
-            _at = at;
-            return std::nullopt;
-        }
-    }
-
-    if (convBufIt == _convBuf.begin()) {
-        // `0b`/`0B` followed by something else than `0` or `1`
-        _at = at;
-        return std::nullopt;
-    }
-
-    // convert to unsigned integer value
-    auto ullVal = 0ULL;
-    auto curMul = 1ULL;
-    auto it = convBufIt - 1;
-
-    while (true) {
-        if (*it == '1') {
-            ullVal += curMul;
-        }
-
-        curMul *= 2;
-
-        if (it == _convBuf.begin()) {
-            break;
-        }
-
-        --it;
-    }
-
-    {
-        const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
-
-        if (!val) {
-            _at = at;
-        }
-
-        return val;
-    }
-}
-
 template <typename ValT, int BaseV>
 std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
 {
@@ -872,7 +804,7 @@ std::optional<ValT> StrScanner::tryScanConstInt()
             if (_at[1] == 'b' || _at[1] == 'B') {
                 // binary
                 _at += 2;
-                val = this->_tryScanConstBinInt<ValT>(negate);
+                val = this->_tryScanConstInt<ValT, 2>(negate);
             } else if (_at[1] == 'x' || _at[1] == 'X') {
                 // hexadecimal
                 _at += 2;
