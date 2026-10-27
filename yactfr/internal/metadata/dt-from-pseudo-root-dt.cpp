@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <boost/optional.hpp>
-#include <boost/utility.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>

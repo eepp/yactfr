@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <boost/optional.hpp>
-#include <boost/utility.hpp>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/trace-type.hpp>

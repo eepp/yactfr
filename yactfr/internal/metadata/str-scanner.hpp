@@ -15,7 +15,6 @@
 #include <regex>
 #include <cmath>
 #include <array>
-#include <boost/utility.hpp>
 #include <boost/optional.hpp>
 
 #include <yactfr/aliases.hpp>
