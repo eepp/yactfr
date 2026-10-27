@@ -24,7 +24,6 @@
 import pytest
 import os
 import subprocess
-import sys
 import pathlib
 
 
@@ -40,5 +39,7 @@ def executor():
     return _exec
 
 
-# hackish, but works very well to make some utils available anywhere
-sys.path.append(str(pathlib.Path(__file__).parent / 'common'))
+def pytest_configure(config):
+    if not os.environ.get('YACTFR_BINARY_DIR'):
+        pytest.exit('`YACTFR_BINARY_DIR` environment variable must be set to the build directory',
+                    returncode=pytest.ExitCode.USAGE_ERROR)
