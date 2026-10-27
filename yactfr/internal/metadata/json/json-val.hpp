@@ -8,7 +8,9 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_HPP
 
+#include <functional>
 #include <string>
+#include <string_view>
 #include <memory>
 
 #include <yactfr/aliases.hpp>
@@ -281,7 +283,7 @@ private:
 
 class JsonObjVal final :
     public JsonVal,
-    public MapItemMixin<JsonVal>
+    public MapItemMixin<JsonVal, std::less<>>
 {
 public:
     using Container = _tContainer;
@@ -310,49 +312,49 @@ public:
         return this->_isEmpty();
     }
 
-    bool hasVal(const std::string& key) const noexcept
+    bool hasVal(const std::string_view key) const noexcept
     {
         return this->_hasItem(key);
     }
 
-    const JsonVal *operator[](const std::string& key) const noexcept
+    const JsonVal *operator[](const std::string_view key) const noexcept
     {
         return this->_tryAt(key);
     }
 
     template <typename JsonValT>
-    const JsonValT& getVal(const std::string& key) const noexcept
+    const JsonValT& getVal(const std::string_view key) const noexcept
     {
         return static_cast<const JsonValT&>(*this->_tryAt(key));
     }
 
-    bool getRawBoolVal(const std::string& key) const noexcept
+    bool getRawBoolVal(const std::string_view key) const noexcept
     {
         return *this->getVal<JsonBoolVal>(key);
     }
 
-    unsigned long long getRawUIntVal(const std::string& key) const noexcept
+    unsigned long long getRawUIntVal(const std::string_view key) const noexcept
     {
         return *this->getVal<JsonUIntVal>(key);
     }
 
-    long long getRawSIntVal(const std::string& key) const noexcept
+    long long getRawSIntVal(const std::string_view key) const noexcept
     {
         return *this->getVal<JsonSIntVal>(key);
     }
 
-    double getRawRealVal(const std::string& key) const noexcept
+    double getRawRealVal(const std::string_view key) const noexcept
     {
         return *this->getVal<JsonRealVal>(key);
     }
 
-    const std::string& getRawStrVal(const std::string& key) const noexcept
+    const std::string& getRawStrVal(const std::string_view key) const noexcept
     {
         return *this->getVal<JsonStrVal>(key);
     }
 
     template <typename JsonValT>
-    const JsonValT& getVal(const std::string& key, const JsonValT& defJsonVal) const noexcept
+    const JsonValT& getVal(const std::string_view key, const JsonValT& defJsonVal) const noexcept
     {
         const auto jsonVal = this->_tryAt(key);
 
@@ -360,7 +362,7 @@ public:
     }
 
     template <typename JsonValT>
-    typename JsonValT::Val getRawVal(const std::string& key,
+    typename JsonValT::Val getRawVal(const std::string_view key,
                                      const typename JsonValT::Val defVal) const noexcept
     {
         const auto jsonVal = this->_tryAt(key);
@@ -368,28 +370,28 @@ public:
         return jsonVal ? *static_cast<const JsonValT&>(*jsonVal) : defVal;
     }
 
-    bool getRawVal(const std::string& key, const bool defVal) const noexcept
+    bool getRawVal(const std::string_view key, const bool defVal) const noexcept
     {
         return this->getRawVal<JsonBoolVal>(key, defVal);
     }
 
-    unsigned long long getRawVal(const std::string& key,
+    unsigned long long getRawVal(const std::string_view key,
                                  const unsigned long long defVal) const noexcept
     {
         return this->getRawVal<JsonUIntVal>(key, defVal);
     }
 
-    long long getRawVal(const std::string& key, const long long defVal) const noexcept
+    long long getRawVal(const std::string_view key, const long long defVal) const noexcept
     {
         return this->getRawVal<JsonSIntVal>(key, defVal);
     }
 
-    double getRawVal(const std::string& key, const double defVal) const noexcept
+    double getRawVal(const std::string_view key, const double defVal) const noexcept
     {
         return this->getRawVal<JsonRealVal>(key, defVal);
     }
 
-    const char *getRawVal(const std::string& key, const char * const defVal) const noexcept
+    const char *getRawVal(const std::string_view key, const char * const defVal) const noexcept
     {
         const auto jsonVal = this->_tryAt(key);
 

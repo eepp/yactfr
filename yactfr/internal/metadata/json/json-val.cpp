@@ -134,7 +134,7 @@ bool JsonArrayVal::_isEqual(const JsonVal& other) const noexcept
 
 JsonObjVal::JsonObjVal(Container&& items, TextLocation loc) :
     JsonVal {Kind::Obj, std::move(loc)},
-    internal::MapItemMixin<JsonVal> {std::move(items)}
+    internal::MapItemMixin<JsonVal, std::less<>> {std::move(items)}
 {
 }
 
@@ -156,7 +156,7 @@ void JsonObjVal::_accept(JsonValVisitor& visitor) const
 
 bool JsonObjVal::_isEqual(const JsonVal& other) const noexcept
 {
-    return internal::MapItemMixin<JsonVal>::_isEqual(other.asObj());
+    return internal::MapItemMixin<JsonVal, std::less<>>::_isEqual(other.asObj());
 }
 
 JsonNullVal::Up createJsonVal(TextLocation loc)

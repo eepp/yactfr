@@ -9,6 +9,7 @@
 #define YACTFR_INTERNAL_METADATA_ITEM_MIXIN_HPP
 
 #include <cassert>
+#include <functional>
 #include <string>
 #include <vector>
 #include <map>
@@ -146,20 +147,29 @@ protected:
     }
 };
 
-template <typename ItemT>
+/*
+ * `CompT` is the key comparator of the underlying `std::map`.
+ *
+ * With a transparent comparator such as `std::less<>`, the lookup
+ * methods below accept any key type comparable with `std::string`, for
+ * example `std::string_view`, without constructing a
+ * temporary `std::string`.
+ */
+template <typename ItemT, typename CompT = std::less<std::string>>
 class MapItemMixin :
-    public CompoundItemMixin<std::map<std::string, typename ItemT::Up>>
+    public CompoundItemMixin<std::map<std::string, typename ItemT::Up, CompT>>
 {
 protected:
-    using typename CompoundItemMixin<std::map<std::string, typename ItemT::Up>>::_tContainer;
+    using typename CompoundItemMixin<std::map<std::string, typename ItemT::Up, CompT>>::_tContainer;
 
 protected:
     explicit MapItemMixin(_tContainer&& items) :
-        CompoundItemMixin<std::map<std::string, typename ItemT::Up>> {std::move(items)}
+        CompoundItemMixin<std::map<std::string, typename ItemT::Up, CompT>> {std::move(items)}
     {
     }
 
-    const ItemT *_tryAt(const std::string& key) const noexcept
+    template <typename KeyT>
+    const ItemT *_tryAt(const KeyT& key) const noexcept
     {
         const auto it = this->_theItems.find(key);
 
@@ -170,7 +180,8 @@ protected:
         return it->second.get();
     }
 
-    const ItemT *_at(const std::string& key) const noexcept
+    template <typename KeyT>
+    const ItemT *_at(const KeyT& key) const noexcept
     {
         const auto it = this->_theItems.find(key);
 
@@ -178,7 +189,8 @@ protected:
         return it->second.get();
     }
 
-    bool _hasItem(const std::string& key) const noexcept
+    template <typename KeyT>
+    bool _hasItem(const KeyT& key) const noexcept
     {
         return this->_theItems.find(key) != this->_theItems.end();
     }
