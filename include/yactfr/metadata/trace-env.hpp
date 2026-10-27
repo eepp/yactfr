@@ -10,7 +10,7 @@
 
 #include <map>
 #include <string>
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace yactfr {
 
@@ -24,7 +24,7 @@ class TraceEnvironment final
 {
 public:
     /// A trace environment entry.
-    using Entry = boost::variant<std::string, long long>;
+    using Entry = std::variant<std::string, long long>;
 
     /// A collection of trace environment entries.
     using Entries = std::map<std::string, Entry>;

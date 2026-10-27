@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <optional>
-#include <boost/variant.hpp>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/aliases.hpp>

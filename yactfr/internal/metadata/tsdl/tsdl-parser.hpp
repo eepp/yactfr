@@ -20,7 +20,6 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/variant.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 
 #include <yactfr/aliases.hpp>

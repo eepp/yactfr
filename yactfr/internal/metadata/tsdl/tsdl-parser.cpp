@@ -2095,7 +2095,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
             const auto entry = _pseudoTraceType->env()["tracer_name"];
 
             if (entry) {
-                if (const auto entryVal = boost::get<std::string>(entry)) {
+                if (const auto entryVal = std::get_if<std::string>(entry)) {
                     if (boost::algorithm::starts_with(*entryVal, "lttng-")) {
                         return ClockOrigin {};
                     }
@@ -2971,7 +2971,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
      * If `isStatic` is true, then use `arrayLen` to build a
      * static-length array type. Otherwise use `dlArrayLenLoc`.
      *
-     * TODO: Use `boost::variant`.
+     * TODO: Use `std::variant`.
      */
     struct LenDescr final
     {
@@ -3045,7 +3045,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                     throwTextParseError(ss.str(), subscriptLoc);
                 }
 
-                if (const auto entryVal = boost::get<long long>(entry)) {
+                if (const auto entryVal = std::get_if<long long>(entry)) {
                     if (*entryVal < 0) {
                         std::ostringstream ss;
 

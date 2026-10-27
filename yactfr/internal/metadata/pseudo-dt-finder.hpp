@@ -8,6 +8,7 @@
 #ifndef YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
 #define YACTFR_INTERNAL_METADATA_PSEUDO_DT_FINDER_HPP
 
+#include <functional>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
