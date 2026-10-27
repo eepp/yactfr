@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <type_traits>
 #include <cstdint>
+#include <cstring>
+#include <limits>
 #include <array>
 #include <functional>
 
@@ -1768,22 +1770,35 @@ private:
     template <typename FloatT>
     void _execReadFlFloatPost(const std::uint64_t val, const Instr& instr) noexcept
     {
-        // is there a better way to do this?
         using UIntT = std::conditional_t<sizeof(FloatT) == sizeof(std::uint32_t),
                                          std::uint32_t, std::uint64_t>;
 
+        static_assert(std::is_same<FloatT, float>::value || std::is_same<FloatT, double>::value,
+                      "`FloatT` is `float` or `double`.");
+        static_assert(std::numeric_limits<FloatT>::is_iec559,
+                      "`FloatT` is an IEEE 754 floating point number type.");
+        static_assert(std::numeric_limits<FloatT>::radix == 2,
+                      "`FloatT` is a binary floating point number type.");
+        static_assert(std::numeric_limits<FloatT>::digits == (sizeof(FloatT) == 4 ? 24 : 53),
+                      "`FloatT` has the significand length of IEEE 754 binary32/binary64.");
+        static_assert(std::numeric_limits<FloatT>::max_exponent == (sizeof(FloatT) == 4 ? 128 : 1024),
+                      "`FloatT` has the exponent range of IEEE 754 binary32/binary64.");
         static_assert(sizeof(FloatT) == sizeof(UIntT),
-                      "Floating point number and integer sizes match in union.");
-        static_assert(std::alignment_of<FloatT>::value == std::alignment_of<UIntT>::value,
-                      "Floating point number and integer alignments match in union.");
+                      "Floating point number and integer sizes match.");
 
-        union {
-            FloatT flFloat;
-            UIntT flUInt;
-        } u;
+        // `double` (element value) can represent any `FloatT` value exactly
+        static_assert(std::numeric_limits<double>::digits >= std::numeric_limits<FloatT>::digits &&
+                      std::numeric_limits<double>::max_exponent >=
+                      std::numeric_limits<FloatT>::max_exponent &&
+                      std::numeric_limits<double>::min_exponent <=
+                      std::numeric_limits<FloatT>::min_exponent,
+                      "`double` can represent any `FloatT` value exactly.");
 
-        u.flUInt = static_cast<UIntT>(val);
-        this->_setFlFloatVal(u.flFloat, static_cast<const ReadDataInstr&>(instr));
+        const auto flUInt = static_cast<UIntT>(val);
+        FloatT flFloat;
+
+        std::memcpy(&flFloat, &flUInt, sizeof(flFloat));
+        this->_setFlFloatVal(flFloat, static_cast<const ReadDataInstr&>(instr));
         this->_consumeExistingBits(sizeof(FloatT) * 8);
     }
 
