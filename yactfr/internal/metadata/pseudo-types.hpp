@@ -143,8 +143,7 @@ class ConstPseudoDtVisitor;
 /*
  * Base pseudo data type.
  */
-class PseudoDt :
-    boost::noncopyable
+class PseudoDt
 {
 public:
     using Up = std::unique_ptr<PseudoDt>;
@@ -168,6 +167,9 @@ protected:
     explicit PseudoDt(TextLocation loc);
 
 public:
+    PseudoDt(const PseudoDt&) = delete;
+    PseudoDt& operator=(const PseudoDt&) = delete;
+
     virtual ~PseudoDt() = default;
     virtual Kind kind() const noexcept = 0;
     virtual bool isEmpty() const;

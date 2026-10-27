@@ -10,7 +10,6 @@
 
 #include <string>
 #include <memory>
-#include <boost/noncopyable.hpp>
 
 #include "../internal/metadata/item-mixin.hpp"
 
@@ -103,8 +102,7 @@ class MapItem;
 An item holds some raw value or other items.
 */
 class Item :
-    public internal::ItemMixin<ItemKind>,
-    boost::noncopyable
+    public internal::ItemMixin<ItemKind>
 {
 public:
     /// Unique pointer to constant item.
@@ -117,6 +115,9 @@ protected:
     explicit Item(Kind kind);
 
 public:
+    Item(const Item&) = delete;
+    Item& operator=(const Item&) = delete;
+
     virtual ~Item() = default;
 
     /// Kind of this item.

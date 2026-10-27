@@ -12,7 +12,6 @@
 #include <utility>
 #include <unordered_map>
 #include <set>
-#include <boost/noncopyable.hpp>
 
 #include "dt.hpp"
 #include "aliases.hpp"
@@ -56,8 +55,7 @@ using EventRecordTypeSet = std::set<std::unique_ptr<const EventRecordType>, inte
 
 A data stream type describes data streams.
 */
-class DataStreamType final :
-    boost::noncopyable
+class DataStreamType final
 {
     friend class internal::TraceTypeImpl;
 
@@ -207,6 +205,9 @@ public:
                             StructureType::Up eventRecordCommonContextType,
                             const ClockType *defaultClockType = nullptr,
                             MapItem::Up attributes = nullptr);
+
+    DataStreamType(const DataStreamType&) = delete;
+    DataStreamType& operator=(const DataStreamType&) = delete;
 
     /*!
     @brief

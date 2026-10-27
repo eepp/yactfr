@@ -11,7 +11,6 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 
 #include "dt.hpp"
@@ -33,8 +32,7 @@ decribed by \link StructureType structure types\endlink).
 
 @ingroup metadata_dt
 */
-class StructureMemberType final :
-    boost::noncopyable
+class StructureMemberType final
 {
     friend class internal::TraceTypeImpl;
 
@@ -65,6 +63,9 @@ public:
     */
     explicit StructureMemberType(std::string name, DataType::Up dataType,
                                  MapItem::Up attributes = nullptr);
+
+    StructureMemberType(const StructureMemberType&) = delete;
+    StructureMemberType& operator=(const StructureMemberType&) = delete;
 
     /// Name of data stream structure members described by this type.
     const std::string& name() const noexcept

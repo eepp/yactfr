@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <unordered_set>
-#include <boost/noncopyable.hpp>
 
 #include "fwd.hpp"
 #include "item.hpp"
@@ -27,8 +26,7 @@ class DataTypeVisitor;
 
 A data type is the type of a data stream datum.
 */
-class DataType :
-    boost::noncopyable
+class DataType
 {
 public:
     /// Unique pointer to constant data type.
@@ -90,6 +88,9 @@ protected:
     explicit DataType(_tKind kind, unsigned int align, MapItem::Up attrs);
 
 public:
+    DataType(const DataType&) = delete;
+    DataType& operator=(const DataType&) = delete;
+
     virtual ~DataType() = default;
 
     /// Alignment of the first data stream bit described by this type.

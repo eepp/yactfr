@@ -9,7 +9,6 @@
 #define YACTFR_INTERNAL_PKT_PROC_BUILDER_HPP
 
 #include <memory>
-#include <boost/noncopyable.hpp>
 
 #include <yactfr/metadata/trace-type.hpp>
 
@@ -26,8 +25,7 @@ namespace internal {
  * A packet procedure builder does NOT set the packet procedure of the
  * trace type.
  */
-class PktProcBuilder final :
-    private boost::noncopyable
+class PktProcBuilder final
 {
     friend class BuilderDtInstrVisitor;
 
@@ -38,6 +36,9 @@ public:
      * Call releasePktProc() to steal the resulting packet procedure.
      */
     explicit PktProcBuilder(const TraceType& traceType);
+
+    PktProcBuilder(const PktProcBuilder&) = delete;
+    PktProcBuilder& operator=(const PktProcBuilder&) = delete;
 
     std::unique_ptr<PktProc> releasePktProc()
     {

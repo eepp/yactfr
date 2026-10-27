@@ -50,8 +50,7 @@ namespace internal {
 /*
  * Converter of root pseudo data type to yactfr data type.
  */
-class DtFromPseudoRootDtConverter :
-    boost::noncopyable
+class DtFromPseudoRootDtConverter
 {
     friend StructureType::Up dtFromPseudoRootDt(PseudoDt&, Scope, const PseudoTraceType&,
                                                 const PseudoDst *, const PseudoErt *);
@@ -61,6 +60,9 @@ private:
                                          const PseudoTraceType& pseudoTraceType,
                                          const PseudoDst *curPseudoDst,
                                          const PseudoErt *curPseudoErt);
+
+    DtFromPseudoRootDtConverter(const DtFromPseudoRootDtConverter&) = delete;
+    DtFromPseudoRootDtConverter& operator=(const DtFromPseudoRootDtConverter&) = delete;
 
     /*
      * Releases and returns the resulting yactfr data type.

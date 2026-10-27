@@ -52,8 +52,7 @@ namespace internal {
  * accept(), and reject() manually (see StrScannerRejecter)
  * when possible.
  */
-class StrScanner final :
-    private boost::noncopyable
+class StrScanner final
 {
 public:
     /*
@@ -67,6 +66,9 @@ public:
      * └───────────────────────────────────────────────────────────┘
      */
     explicit StrScanner(const char *begin, const char *end);
+
+    StrScanner(const StrScanner&) = delete;
+    StrScanner& operator=(const StrScanner&) = delete;
 
     /*
      * Returns the current character pointer.
@@ -945,8 +947,7 @@ boost::optional<double> StrScanner::tryScanConstReal()
  * or StrScanner::reject() once a rejecter is built, as the rejecter is
  * NOT notified and WILL reject on destruction.
  */
-class StrScannerRejecter final :
-    private boost::noncopyable
+class StrScannerRejecter final
 {
 public:
     /*
@@ -960,6 +961,9 @@ public:
     {
         _ss->save();
     }
+
+    StrScannerRejecter(const StrScannerRejecter&) = delete;
+    StrScannerRejecter& operator=(const StrScannerRejecter&) = delete;
 
     /*
      * Destroys the string scanner rejecter.

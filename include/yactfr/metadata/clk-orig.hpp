@@ -9,7 +9,6 @@
 #define YACTFR_METADATA_CLK_ORIG_HPP
 
 #include <string>
-#include <boost/core/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
 

@@ -183,8 +183,7 @@ private:
      * parser reference. The RAII object automatically calls
      * _stackPush() and _stackPop() on said parser.
      */
-    class _tLexScope final :
-        private boost::noncopyable
+    class _tLexScope final
     {
     public:
         _tLexScope() noexcept :
@@ -199,6 +198,8 @@ private:
         {
             _parser->_stackPush(frameKind);
         }
+
+        _tLexScope(const _tLexScope&) = delete;
 
         ~_tLexScope()
         {

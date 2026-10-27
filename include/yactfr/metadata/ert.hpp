@@ -11,7 +11,6 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 
 #include "aliases.hpp"
@@ -45,8 +44,7 @@ using LogLevel = long long;
 
 An event record type describes data stream event records.
 */
-class EventRecordType final :
-    boost::noncopyable
+class EventRecordType final
 {
     friend class internal::TraceTypeImpl;
 
@@ -99,6 +97,9 @@ public:
                              std::unique_ptr<const StructureType> specificContextType,
                              std::unique_ptr<const StructureType> payloadType,
                              MapItem::Up attributes = nullptr);
+
+    EventRecordType(const EventRecordType&) = delete;
+    EventRecordType& operator=(const EventRecordType&) = delete;
 
     /*!
     @brief

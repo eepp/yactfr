@@ -52,8 +52,7 @@ void pseudoDataLocPathElemsToPathElems(const PseudoDataLoc::PathElems& pseudoDat
  *
  * Helper class for setPseudoDtDataLoc().
  */
-class DataLocSetter :
-    boost::noncopyable
+class DataLocSetter
 {
 public:
     explicit DataLocSetter(PseudoDt& pseudoDt, const Scope scope) :
@@ -61,6 +60,9 @@ public:
     {
         this->_set(pseudoDt);
     }
+
+    DataLocSetter(const DataLocSetter&) = delete;
+    DataLocSetter& operator=(const DataLocSetter&) = delete;
 
 private:
     /*

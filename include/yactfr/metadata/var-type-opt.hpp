@@ -12,7 +12,6 @@
 #include <memory>
 #include <utility>
 #include <boost/optional.hpp>
-#include <boost/noncopyable.hpp>
 
 #include <yactfr/internal/metadata/utils.hpp>
 
@@ -34,8 +33,7 @@ class TraceTypeImpl;
 @ingroup metadata_dt
 */
 template <typename SelectorValueT>
-class VariantTypeOption final :
-    boost::noncopyable
+class VariantTypeOption final
 {
     friend class internal::TraceTypeImpl;
 
@@ -111,6 +109,9 @@ public:
         }
     {
     }
+
+    VariantTypeOption(const VariantTypeOption&) = delete;
+    VariantTypeOption& operator=(const VariantTypeOption&) = delete;
 
     /*!
     @brief

@@ -31,13 +31,15 @@ TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType& pseudoTraceType);
 /*
  * Converter of root pseudo data type to yactfr data type.
  */
-class TraceTypeFromPseudoTraceTypeConverter :
-    boost::noncopyable
+class TraceTypeFromPseudoTraceTypeConverter
 {
     friend TraceType::Up traceTypeFromPseudoTraceType(PseudoTraceType&);
 
 private:
     explicit TraceTypeFromPseudoTraceTypeConverter(PseudoTraceType& pseudoTraceType);
+
+    TraceTypeFromPseudoTraceTypeConverter(const TraceTypeFromPseudoTraceTypeConverter&) = delete;
+    TraceTypeFromPseudoTraceTypeConverter& operator=(const TraceTypeFromPseudoTraceTypeConverter&) = delete;
 
     /*
      * Releases and returns the resulting yactfr trace type.

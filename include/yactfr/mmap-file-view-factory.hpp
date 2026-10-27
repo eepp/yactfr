@@ -9,7 +9,6 @@
 #define YACTFR_MMAP_FILE_VIEW_FACTORY_HPP
 
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include <string>
 
 #include "data-src-factory.hpp"
@@ -35,8 +34,7 @@ All the memory mapped file views that such a factory creates operate on
 the same file handle/descriptor.
 */
 class MemoryMappedFileViewFactory final :
-    public DataSourceFactory,
-    boost::noncopyable
+    public DataSourceFactory
 {
 public:
     /*!
@@ -92,6 +90,9 @@ public:
     explicit MemoryMappedFileViewFactory(std::string path,
                                          const boost::optional<Size>& preferredMmapSize = boost::none,
                                          AccessPattern expectedAccessPattern = AccessPattern::Normal);
+
+    MemoryMappedFileViewFactory(const MemoryMappedFileViewFactory&) = delete;
+    MemoryMappedFileViewFactory& operator=(const MemoryMappedFileViewFactory&) = delete;
 
     /// Current expected access pattern for future memory maps.
     AccessPattern expectedAccessPattern() const noexcept;

@@ -70,8 +70,7 @@ using DataStreamTypeSet = std::set<std::unique_ptr<const DataStreamType>, intern
 
 A trace type describes traces.
 */
-class TraceType final :
-    boost::noncopyable
+class TraceType final
 {
     friend class internal::TraceTypeImpl;
     friend class ElementSequenceIterator;
@@ -192,6 +191,9 @@ public:
                        boost::optional<std::string> uid, TraceEnvironment environment,
                        StructureType::Up packetHeaderType, ClockTypeSet&& clockTypes,
                        DataStreamTypeSet&& dataStreamTypes, MapItem::Up attributes = nullptr);
+
+    TraceType(const TraceType&) = delete;
+    TraceType& operator=(const TraceType&) = delete;
 
     /*!
     @brief

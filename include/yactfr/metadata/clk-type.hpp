@@ -11,7 +11,6 @@
 #include <string>
 #include <memory>
 #include <utility>
-#include <boost/core/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/uuid/uuid.hpp>
 
@@ -31,8 +30,7 @@ namespace yactfr {
 
 A clock type describes data stream clocks.
 */
-class ClockType final :
-    boost::noncopyable
+class ClockType final
 {
 public:
     /// Unique pointer to constant clock type.
@@ -95,6 +93,9 @@ public:
                        boost::optional<ClockOrigin> origin, boost::optional<Cycles> precision,
                        boost::optional<Cycles> accuracy, const ClockOffset& offsetFromOrigin,
                        MapItem::Up attributes = nullptr);
+
+    ClockType(const ClockType&) = delete;
+    ClockType& operator=(const ClockType&) = delete;
 
     /*!
     @brief

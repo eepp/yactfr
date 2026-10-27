@@ -10,7 +10,6 @@
 
 #include <string>
 #include <memory>
-#include <boost/noncopyable.hpp>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/text-loc.hpp>
@@ -89,8 +88,7 @@ public:
 };
 
 class JsonVal :
-    public ItemMixin<JsonValKind>,
-    boost::noncopyable
+    public ItemMixin<JsonValKind>
 {
 public:
     using Up = std::unique_ptr<const JsonVal>;
@@ -100,6 +98,9 @@ protected:
     explicit JsonVal(Kind kind, TextLocation&& loc);
 
 public:
+    JsonVal(const JsonVal&) = delete;
+    JsonVal& operator=(const JsonVal&) = delete;
+
     virtual ~JsonVal() = default;
 
     Kind kind() const noexcept

@@ -15,7 +15,6 @@
 #include <set>
 #include <limits>
 #include <sstream>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 
 #include <yactfr/text-parse-error.hpp>
@@ -33,8 +32,7 @@ namespace internal {
  * An instance of this class validates that a JSON value has a
  * given type.
  */
-class JsonValReq :
-    boost::noncopyable
+class JsonValReq
 {
 public:
     // shared pointer to constant JSON value requirement
@@ -46,6 +44,9 @@ public:
      * validate() validates that the kind of the JSON value is `*kind`.
      */
     explicit JsonValReq(boost::optional<JsonVal::Kind> kind = boost::none, bool allowNull = false);
+
+    JsonValReq(const JsonValReq&) = delete;
+    JsonValReq& operator=(const JsonValReq&) = delete;
 
     virtual ~JsonValReq() = default;
 
