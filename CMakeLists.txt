@@ -15,9 +15,9 @@ add_custom_target (
         -a source-highlighter=coderay -D ${CMAKE_BINARY_DIR}
 )
 
-# require C++14
+# require C++17
 set (CMAKE_CXX_EXTENSIONS OFF)
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # current Git hash
