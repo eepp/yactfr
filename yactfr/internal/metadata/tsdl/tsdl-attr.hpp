@@ -10,6 +10,8 @@
 
 #include <cassert>
 #include <optional>
+#include <string>
+#include <variant>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -36,16 +38,74 @@ namespace yactfr::internal {
 class TsdlAttr final
 {
 public:
-    enum class Kind {
-        Unset,
-        Str,
-        SInt,
-        UInt,
-        Ident,
-        ClkNameValue,
+    // identifier value
+    struct Ident final
+    {
+        std::string name;
     };
 
+    // `clock.NAME.value` value
+    struct ClkNameVal final
+    {
+        // `NAME` part
+        std::string clkName;
+    };
+
+    /*
+     * Value of a TSDL attribute, one of:
+     *
+     * `std::monostate`::
+     *     Unset.
+     *
+     * `std::string`::
+     *     Literal string.
+     *
+     * `Ident`::
+     *     Identifier.
+     *
+     * `ClkNameVal`::
+     *     `clock.NAME.value`.
+     *
+     * `unsigned long long`::
+     *     Constant unsigned integer.
+     *
+     * `long long`::
+     *     Constant signed integer.
+     */
+    using Val = std::variant<std::monostate, std::string, Ident, ClkNameVal,
+                             unsigned long long, long long>;
+
 public:
+    /*
+     * Returns the literal string value of this attribute, throwing an
+     * error if it's not a literal string.
+     */
+    const std::string& strVal() const;
+
+    /*
+     * Returns the identifier value of this attribute, throwing an error
+     * if it's not an identifier.
+     */
+    const std::string& identVal() const;
+
+    /*
+     * Returns the literal string or identifier value of this attribute,
+     * throwing an error if it's neither.
+     */
+    const std::string& strOrIdentVal() const;
+
+    /*
+     * Returns the clock type name of the `clock.NAME.value` value of
+     * this attribute, throwing an error if it's not such a value.
+     */
+    const std::string& clkNameVal() const;
+
+    /*
+     * Returns the constant unsigned integer value of this attribute,
+     * throwing an error if it's not a constant unsigned integer.
+     */
+    unsigned long long uintVal() const;
+
     /*
      * Returns a display base from this attribute, throwing an error if
      * it cannot.
@@ -53,24 +113,13 @@ public:
     DisplayBase dispBase() const;
 
     /*
-     * Ensures that the kind of this attribute is `expectedKind`,
-     * throwing an error otherwise.
-     */
-    void checkKind(const Kind expectedKind) const;
-
-    /*
      * Throws that this attribute is an unknown attribute.
      */
     void throwUnknown() const;
 
     /*
-     * Throws that this attribute must be a boolean attribute.
-     */
-    void throwExpectingBool() const;
-
-    /*
      * Returns an alignment from this attribute, throwing an error if
-     * it's a wrong alignment or if the kind of this attribute
+     * it's a wrong alignment or if the value type of this attribute
      * isn't expected.
      */
     unsigned int align() const;
@@ -112,20 +161,11 @@ public:
     }
 
 public:
-    // kind of attribute
-    Kind kind = Kind::Unset;
-
     // name of attribute
     std::string name;
 
-    // string value (for `STR`, `IDENT`, and `CLK_NAME_VALUE` kinds)
-    std::string strVal;
-
-    // unsigned integer value (for `UINT` kind)
-    unsigned long long uintVal = 0;
-
-    // signed integer value (for `SINT` kind)
-    long long intVal = 0;
+    // value of attribute
+    Val val;
 
     // text location of the beginning of the parsed attribute name
     std::optional<TextLocation> nameLoc;
@@ -133,19 +173,18 @@ public:
     // text location of the beginning of the parsed attribute value
     std::optional<TextLocation> valLoc;
 
-    // true if this attribute can represent a boolean value
-    bool hasEquivBool = false;
-
-    // equivalent boolean value of attribute if `hasEquivBool` is true
-    bool equivBool = false;
-
 private:
     /*
-     * String attribute to byte order (`std::nullopt` if native/default).
-     *
-     * Throws if the string is an unknown byte order.
+     * Returns the value of this attribute as `ValT`, throwing an error
+     * mentioning `expectedDescr` if it's not a `ValT` value.
      */
-    std::optional<ByteOrder> _toBo() const;
+    template <typename ValT>
+    const ValT& _expectVal(const char *expectedDescr) const;
+
+    /*
+     * Throws that this attribute expects `expectedDescr`.
+     */
+    [[ noreturn ]] void _throwExpecting(const char *expectedDescr) const;
 };
 
 } // namespace yactfr::internal

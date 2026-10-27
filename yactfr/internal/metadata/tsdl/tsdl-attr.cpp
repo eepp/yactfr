@@ -21,94 +21,90 @@
 
 namespace yactfr::internal {
 
-std::optional<ByteOrder> TsdlAttr::_toBo() const
+void TsdlAttr::_throwExpecting(const char * const expectedDescr) const
 {
-    if (strVal == "be" || strVal == "network") {
-        return ByteOrder::Big;
-    } else if (strVal == "le") {
-        return ByteOrder::Little;
-    } else if (strVal == "native") {
-        return std::nullopt;
-    }
-
     std::ostringstream ss;
 
-    ss << "Invalid byte order `" << strVal << "`.";
+    ss << "Attribute `" << name << "`: expecting " << expectedDescr;
     throwTextParseError(ss.str(), this->valTextLoc());
+}
+
+template <typename ValT>
+const ValT& TsdlAttr::_expectVal(const char * const expectedDescr) const
+{
+    if (const auto typedVal = std::get_if<ValT>(&val)) {
+        return *typedVal;
+    }
+
+    this->_throwExpecting(expectedDescr);
+}
+
+const std::string& TsdlAttr::strVal() const
+{
+    return this->_expectVal<std::string>("literal string");
+}
+
+const std::string& TsdlAttr::identVal() const
+{
+    return this->_expectVal<Ident>("identifier.").name;
+}
+
+const std::string& TsdlAttr::strOrIdentVal() const
+{
+    if (const auto ident = std::get_if<Ident>(&val)) {
+        return ident->name;
+    } else if (const auto str = std::get_if<std::string>(&val)) {
+        return *str;
+    }
+
+    this->_throwExpecting("identifier or literal string.");
+}
+
+const std::string& TsdlAttr::clkNameVal() const
+{
+    return this->_expectVal<ClkNameVal>("`clock.NAME.value`.").clkName;
+}
+
+unsigned long long TsdlAttr::uintVal() const
+{
+    return this->_expectVal<unsigned long long>("constant unsigned integer.");
 }
 
 DisplayBase TsdlAttr::dispBase() const
 {
-    if (kind != Kind::UInt && kind != Kind::Ident) {
-        std::ostringstream ss;
-
-        ss << "Attribute `" << name <<
-              "`: expecting constant unsigned integer or identifier.";
-        throwTextParseError(ss.str(), this->valTextLoc());
-    }
-
-    if (kind == Kind::UInt) {
-        if (uintVal != 2 && uintVal != 8 && uintVal != 10 && uintVal != 16) {
+    if (const auto uintVal = std::get_if<unsigned long long>(&val)) {
+        if (*uintVal != 2 && *uintVal != 8 && *uintVal != 10 && *uintVal != 16) {
             std::ostringstream ss;
 
-            ss << "Invalid `base` attribute: " << uintVal << ".";
+            ss << "Invalid `base` attribute: " << *uintVal << ".";
             throwTextParseError(ss.str(), this->valTextLoc());
         }
 
-        return static_cast<DisplayBase>(uintVal);
+        return static_cast<DisplayBase>(*uintVal);
     }
 
-    if (strVal == "decimal" || strVal == "dec" || strVal == "d" || strVal == "i" || strVal == "u") {
+    const auto ident = std::get_if<Ident>(&val);
+
+    if (!ident) {
+        this->_throwExpecting("constant unsigned integer or identifier.");
+    }
+
+    const auto& str = ident->name;
+
+    if (str == "decimal" || str == "dec" || str == "d" || str == "i" || str == "u") {
         return DisplayBase::Decimal;
-    } else if (strVal == "hexadecimal" || strVal == "hex" ||
-            strVal == "x" || strVal == "X" || strVal == "p") {
+    } else if (str == "hexadecimal" || str == "hex" || str == "x" || str == "X" || str == "p") {
         return DisplayBase::Hexadecimal;
-    } else if (strVal == "octal" || strVal == "oct" || strVal == "o") {
+    } else if (str == "octal" || str == "oct" || str == "o") {
         return DisplayBase::Octal;
-    } else if (strVal == "binary" || strVal == "bin" || strVal == "b") {
+    } else if (str == "binary" || str == "bin" || str == "b") {
         return DisplayBase::Binary;
     }
 
     std::ostringstream ss;
 
-    ss << "Invalid `base` attribute: `" << strVal << "`.";
+    ss << "Invalid `base` attribute: `" << str << "`.";
     throwTextParseError(ss.str(), this->valTextLoc());
-}
-
-void TsdlAttr::checkKind(const Kind expectedKind) const
-{
-    if (kind != expectedKind) {
-        std::ostringstream ss;
-
-        ss << "Attribute `" << name << "`: expecting ";
-
-        switch (expectedKind) {
-        case Kind::Str:
-            ss << "literal string";
-            break;
-
-        case Kind::UInt:
-            ss << "constant unsigned integer.";
-            break;
-
-        case Kind::SInt:
-            ss << "constant signed integer.";
-            break;
-
-        case Kind::Ident:
-            ss << "identifier.";
-            break;
-
-        case Kind::ClkNameValue:
-            ss << "`clock.NAME.value`.";
-            break;
-
-        default:
-            std::abort();
-        }
-
-        throwTextParseError(ss.str(), this->valTextLoc());
-    }
 }
 
 void TsdlAttr::throwUnknown() const
@@ -121,7 +117,7 @@ void TsdlAttr::throwUnknown() const
 
 unsigned int TsdlAttr::align() const
 {
-    this->checkKind(Kind::UInt);
+    const auto uintVal = this->uintVal();
 
     if (!isPowOfTwo(uintVal)) {
         std::ostringstream ss;
@@ -135,46 +131,52 @@ unsigned int TsdlAttr::align() const
 
 std::optional<ByteOrder> TsdlAttr::bo() const
 {
-    this->checkKind(Kind::Ident);
-    return this->_toBo();
+    const auto& ident = this->identVal();
+
+    if (ident == "be" || ident == "network") {
+        return ByteOrder::Big;
+    } else if (ident == "le") {
+        return ByteOrder::Little;
+    } else if (ident == "native") {
+        return std::nullopt;
+    }
+
+    std::ostringstream ss;
+
+    ss << "Invalid byte order `" << ident << "`.";
+    throwTextParseError(ss.str(), this->valTextLoc());
 }
 
 bool TsdlAttr::hasEncoding() const
 {
-    this->checkKind(Kind::Ident);
+    const auto& ident = this->identVal();
 
-    if (strVal == "NONE" || strVal == "none") {
+    if (ident == "NONE" || ident == "none") {
         return false;
-    } else if (strVal == "UTF8" || strVal == "utf8" || strVal == "ASCII" || strVal == "ascii") {
+    } else if (ident == "UTF8" || ident == "utf8" || ident == "ASCII" || ident == "ascii") {
         return true;
     }
 
     std::ostringstream ss;
 
-    ss << "Invalid encoding `" << strVal << "`.";
+    ss << "Invalid encoding `" << ident << "`.";
     throwTextParseError(ss.str(), this->valTextLoc());
 }
 
 bool TsdlAttr::boolEquiv() const
 {
-    switch (kind) {
-    case Kind::UInt:
-        if (uintVal == 1) {
+    if (const auto uintVal = std::get_if<unsigned long long>(&val)) {
+        if (*uintVal == 1) {
             return true;
-        } else if (uintVal == 0) {
+        } else if (*uintVal == 0) {
             return false;
         }
-        break;
-
-    case Kind::Ident:
-        if (strVal == "true" || strVal == "TRUE") {
+    } else if (const auto ident = std::get_if<Ident>(&val)) {
+        if (ident->name == "true" || ident->name == "TRUE") {
             return true;
-        } else if (strVal == "false" || strVal == "FALSE") {
+        } else if (ident->name == "false" || ident->name == "FALSE") {
             return false;
         }
-
-    default:
-        break;
     }
 
     std::ostringstream ss;

@@ -1236,25 +1236,25 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
         if (attr.name == "base") {
             dispBase = attr.dispBase();
         } else if (attr.name == "size") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
+            const auto attrSize = attr.uintVal();
 
-            if (attr.uintVal == 0) {
+            if (attrSize == 0) {
                 std::ostringstream ss;
 
                 ss << "Invalid `size` attribute (must be greater than 0): " <<
-                      attr.uintVal << ".";
+                      attrSize << ".";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            if (attr.uintVal > 64) {
+            if (attrSize > 64) {
                 std::ostringstream ss;
 
                 ss << "`size` attribute is greater than 64 (unsupported): " <<
-                      attr.uintVal << ".";
+                      attrSize << ".";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            size = attr.uintVal;
+            size = attrSize;
         } else if (attr.name == "align") {
             align = attr.align();
         } else if (attr.name == "byte_order") {
@@ -1269,7 +1269,7 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
         } else if (attr.name == "signed") {
             isSigned = attr.boolEquiv();
         } else if (attr.name == "map") {
-            mappedClkTypeId = std::move(attr.strVal);
+            mappedClkTypeId = attr.clkNameVal();
             mapAttrLoc = attr.nameTextLoc();
         } else {
             attr.throwUnknown();
@@ -1362,11 +1362,9 @@ PseudoDt::Up TsdlParser::_tryParseFlFloatType()
     // check attributes
     for (const auto& attr : attrs) {
         if (attr.name == "exp_dig") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            expDig = attr.uintVal;
+            expDig = attr.uintVal();
         } else if (attr.name == "mant_dig") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            mantDig = attr.uintVal;
+            mantDig = attr.uintVal();
         } else if (attr.name == "align") {
             align = attr.align();
         } else if (attr.name == "byte_order") {
@@ -1841,32 +1839,29 @@ bool TsdlParser::_tryParseEnvBlock()
 
     // check attributes
     for (const auto& attr : attrs) {
-        if (attr.kind != TsdlAttr::Kind::SInt && attr.kind != TsdlAttr::Kind::UInt
-                && attr.kind != TsdlAttr::Kind::Str) {
+        TraceEnvironment::Entry entry;
+
+        if (const auto sIntVal = std::get_if<long long>(&attr.val)) {
+            entry = *sIntVal;
+        } else if (const auto uIntVal = std::get_if<unsigned long long>(&attr.val)) {
+            if (*uIntVal >= (1ULL << 63)) {
+                std::ostringstream ss;
+
+                ss << "Trace environment entry `" << attr.name <<
+                      "`: value " << *uIntVal << " is too large " <<
+                      "(expecting a 64-bit signed integer).";
+                throwTextParseError(ss.str(), attr.valTextLoc());
+            }
+
+            entry = static_cast<long long>(*uIntVal);
+        } else if (const auto strVal = std::get_if<std::string>(&attr.val)) {
+            entry = *strVal;
+        } else {
             std::ostringstream ss;
 
             ss << "Trace environment entry `" << attr.name <<
                   "`: expecting constant integer or literal string.";
             throwTextParseError(ss.str(), attr.valTextLoc());
-        }
-
-        TraceEnvironment::Entry entry;
-
-        if (attr.kind == TsdlAttr::Kind::SInt) {
-            entry = attr.intVal;
-        } else if (attr.kind == TsdlAttr::Kind::UInt) {
-            if (attr.uintVal >= (1ULL << 63)) {
-                std::ostringstream ss;
-
-                ss << "Trace environment entry `" << attr.name <<
-                      "`: value " << attr.uintVal << " is too large " <<
-                      "(expecting a 64-bit signed integer).";
-                throwTextParseError(ss.str(), attr.valTextLoc());
-            }
-
-            entry = static_cast<long long>(attr.uintVal);
-        } else if (attr.kind == TsdlAttr::Kind::Str) {
-            entry = attr.strVal;
         }
 
         entries[attr.name] = std::move(entry);
@@ -1961,65 +1956,54 @@ bool TsdlParser::_tryParseClkTypeBlock()
     // check attributes
     for (const auto& attr : attrs) {
         if (attr.name == "name") {
-            if (attr.kind != TsdlAttr::Kind::Ident && attr.kind != TsdlAttr::Kind::Str) {
-                std::ostringstream ss;
-
-                ss << "Attribute `name`: expecting identifier or literal string.";
-                throwTextParseError(ss.str(), attr.valTextLoc());
-            }
-
-            name = attr.strVal;
+            name = attr.strOrIdentVal();
         } else if (attr.name == "description") {
-            attr.checkKind(TsdlAttr::Kind::Str);
-            descr = attr.strVal;
+            descr = attr.strVal();
         } else if (attr.name == "uuid") {
-            attr.checkKind(TsdlAttr::Kind::Str);
-            uuid = TsdlParser::_uuidFromStr(attr.strVal);
+            const auto& attrUuidStr = attr.strVal();
+
+            uuid = TsdlParser::_uuidFromStr(attrUuidStr);
 
             if (!uuid) {
                 std::ostringstream ss;
 
-                ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
+                ss << "Malformed `uuid` attribute: `" << attrUuidStr << "`.";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            uuidStr = attr.strVal;
+            uuidStr = attrUuidStr;
         } else if (attr.name == "freq") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
+            const auto attrFreq = attr.uintVal();
 
-            if (attr.uintVal == 0) {
+            if (attrFreq == 0) {
                 std::ostringstream ss;
 
                 ss << "Invalid `freq` attribute (must be greater than 0): " <<
-                      attr.uintVal << ".";
+                      attrFreq << ".";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            freq = static_cast<unsigned long long>(attr.uintVal);
+            freq = attrFreq;
         } else if (attr.name == "precision") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            prec = attr.uintVal;
+            prec = attr.uintVal();
         } else if (attr.name == "offset_s") {
-            if (attr.kind != TsdlAttr::Kind::SInt && attr.kind != TsdlAttr::Kind::UInt) {
-                throwTextParseError("Attribute `offset_s`: expecting constant signed integer.",
-                                    attr.valTextLoc());
-            }
-
-            if (attr.kind == TsdlAttr::Kind::UInt) {
-                if (attr.uintVal > static_cast<decltype(attr.uintVal)>(std::numeric_limits<long long>::max())) {
+            if (const auto uIntVal = std::get_if<unsigned long long>(&attr.val)) {
+                if (*uIntVal > static_cast<unsigned long long>(std::numeric_limits<long long>::max())) {
                     std::ostringstream ss;
 
-                    ss << "Attribute `offset_s`: value is too large: " << attr.uintVal << ".";
+                    ss << "Attribute `offset_s`: value is too large: " << *uIntVal << ".";
                     throwTextParseError(ss.str(), attr.valTextLoc());
                 }
 
-                offsetSecs = static_cast<long long>(attr.uintVal);
+                offsetSecs = static_cast<long long>(*uIntVal);
+            } else if (const auto sIntVal = std::get_if<long long>(&attr.val)) {
+                offsetSecs = *sIntVal;
             } else {
-                offsetSecs = attr.intVal;
+                throwTextParseError("Attribute `offset_s`: expecting constant signed integer.",
+                                    attr.valTextLoc());
             }
         } else if (attr.name == "offset") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            offsetCycles = static_cast<Cycles>(attr.uintVal);
+            offsetCycles = static_cast<Cycles>(attr.uintVal());
         } else if (attr.name == "absolute") {
             isAbs = attr.boolEquiv();
         } else {
@@ -2174,30 +2158,30 @@ bool TsdlParser::_tryParseTraceTypeBlock()
     // check attributes
     for (const auto& attr : attrs) {
         if (attr.name == "major" || attr.name == "minor") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
+            const auto version = attr.uintVal();
 
             if (attr.name == "major") {
-                if (attr.uintVal != 1) {
+                if (version != 1) {
                     std::ostringstream ss;
 
                     ss << "Invalid `major` attribute: " <<
                           "unsupported major version (expecting 1): " <<
-                          attr.uintVal << ".";
+                          version << ".";
                     throwTextParseError(ss.str(), attr.valTextLoc());
                 }
 
-                majorVersion = attr.uintVal;
+                majorVersion = version;
             } else if (attr.name == "minor") {
-                if (attr.uintVal != 8) {
+                if (version != 8) {
                     std::ostringstream ss;
 
                     ss << "Invalid `minor` attribute: " <<
                           "unsupported minor version (expecting 8): " <<
-                          attr.uintVal << ".";
+                          version << ".";
                     throwTextParseError(ss.str(), attr.valTextLoc());
                 }
 
-                minorVersion = attr.uintVal;
+                minorVersion = version;
             }
         } else if (attr.name == "byte_order") {
             nativeBo = attr.bo();
@@ -2207,23 +2191,16 @@ bool TsdlParser::_tryParseTraceTypeBlock()
                                     attr.valTextLoc());
             }
         } else if (attr.name == "uuid") {
-            attr.checkKind(TsdlAttr::Kind::Str);
+            const auto& attrUuidStr = attr.strVal();
 
-            if (attr.strVal.size() != 36) {
+            if (attrUuidStr.size() != 36 || !TsdlParser::_uuidFromStr(attrUuidStr)) {
                 std::ostringstream ss;
 
-                ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
+                ss << "Malformed `uuid` attribute: `" << attrUuidStr << "`.";
                 throwTextParseError(ss.str(), attr.valTextLoc());
             }
 
-            if (!TsdlParser::_uuidFromStr(attr.strVal)) {
-                std::ostringstream ss;
-
-                ss << "Malformed `uuid` attribute: `" << attr.strVal << "`.";
-                throwTextParseError(ss.str(), attr.valTextLoc());
-            }
-
-            uuidStr = attr.strVal;
+            uuidStr = attrUuidStr;
         } else {
             attr.throwUnknown();
         }
@@ -2380,8 +2357,7 @@ bool TsdlParser::_tryParseDstBlock()
     // check for attributes
     for (const auto& attr : attrs) {
         if (attr.name == "id") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            id = attr.uintVal;
+            id = attr.uintVal();
         } else {
             attr.throwUnknown();
         }
@@ -2491,41 +2467,29 @@ bool TsdlParser::_tryParseErtBlock()
     // check for attributes
     for (const auto& attr : attrs) {
         if (attr.name == "id") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            id = attr.uintVal;
+            id = attr.uintVal();
         } else if (attr.name == "stream_id") {
-            attr.checkKind(TsdlAttr::Kind::UInt);
-            dstId = attr.uintVal;
+            dstId = attr.uintVal();
         } else if (attr.name == "loglevel") {
-            if (attr.kind != TsdlAttr::Kind::SInt && attr.kind != TsdlAttr::Kind::UInt) {
-                throwTextParseError("Attribute `loglevel`: expecting constant signed integer.",
-                                    attr.valTextLoc());
-            }
-
-            if (attr.kind == TsdlAttr::Kind::UInt) {
-                if (attr.uintVal > static_cast<decltype(attr.uintVal)>(std::numeric_limits<LogLevel>::max())) {
+            if (const auto uIntVal = std::get_if<unsigned long long>(&attr.val)) {
+                if (*uIntVal > static_cast<unsigned long long>(std::numeric_limits<LogLevel>::max())) {
                     std::ostringstream ss;
 
-                    ss << "Attribute `loglevel`: value is too large: " << attr.uintVal << ".";
+                    ss << "Attribute `loglevel`: value is too large: " << *uIntVal << ".";
                     throwTextParseError(ss.str(), attr.valTextLoc());
                 }
 
-                logLevel = static_cast<LogLevel>(attr.uintVal);
+                logLevel = static_cast<LogLevel>(*uIntVal);
+            } else if (const auto sIntVal = std::get_if<long long>(&attr.val)) {
+                logLevel = static_cast<LogLevel>(*sIntVal);
             } else {
-                logLevel = static_cast<LogLevel>(attr.intVal);
+                throwTextParseError("Attribute `loglevel`: expecting constant signed integer.",
+                                    attr.valTextLoc());
             }
         } else if (attr.name == "model.emf.uri") {
-            attr.checkKind(TsdlAttr::Kind::Str);
-            emfUri = attr.strVal;
+            emfUri = attr.strVal();
         } else if (attr.name == "name") {
-            if (attr.kind != TsdlAttr::Kind::Ident && attr.kind != TsdlAttr::Kind::Str) {
-                std::ostringstream ss;
-
-                ss << "Attribute `name`: expecting identifier or literal string.";
-                throwTextParseError(ss.str(), attr.valTextLoc());
-            }
-
-            name = attr.strVal;
+            name = attr.strOrIdentVal();
         } else {
             attr.throwUnknown();
         }
@@ -2677,8 +2641,6 @@ TsdlAttr TsdlParser::_expectAttr()
 
     // special case for the `map` attribute
     if (attr.name == "map") {
-        attr.kind = TsdlAttr::Kind::ClkNameValue;
-
         // parse `clock`
         this->_expectToken("clock");
 
@@ -2687,7 +2649,7 @@ TsdlAttr TsdlParser::_expectAttr()
 
         // parse internal ID (name) of clock type
         if (const auto ident = _ss.tryScanIdent()) {
-            attr.strVal = *ident;
+            attr.val = TsdlAttr::ClkNameVal {*ident};
         } else {
             throwTextParseError("Expecting identifier (clock type internal ID).", _ss.loc());
         }
@@ -2705,21 +2667,17 @@ TsdlAttr TsdlParser::_expectAttr()
 
     if (const auto escapedStr = this->_tryScanLitStr()) {
         // literal string
-        attr.strVal = *escapedStr;
-        attr.kind = TsdlAttr::Kind::Str;
+        attr.val = *escapedStr;
     } else if (const auto ident = _ss.tryScanIdent()) {
         // identifier
-        attr.strVal = *ident;
-        attr.kind = TsdlAttr::Kind::Ident;
+        attr.val = TsdlAttr::Ident {*ident};
     } else if (const auto val = _ss.tryScanConstUInt()) {
         // constant unsigned integer
-        attr.uintVal = *val;
-        attr.kind = TsdlAttr::Kind::UInt;
+        attr.val = *val;
     } else if (const auto val = _ss.tryScanConstSInt()) {
         // constant signed integer
-        attr.intVal = *val;
-        attr.kind = TsdlAttr::Kind::SInt;
-        assert(attr.intVal != 0 && attr.intVal != 1);
+        assert(*val != 0 && *val != 1);
+        attr.val = *val;
     } else {
         throwTextParseError("Expecting valid constant integer, literal string, or identifier.",
                             *attr.valLoc);
