@@ -109,7 +109,7 @@ data stream strings and BLOBs have an 8-bit alignment requirement.
 ** The next event record type to use.
 ** The data stream (instance) ID.
 
-* "`Seek packet`" iterator method to seek the beginning of an element
+* "`Seek packet`" iterator method to seek the beginning of a packet
   known to be located at a specific offset, in bytes, within the same
   element sequence.
 +
