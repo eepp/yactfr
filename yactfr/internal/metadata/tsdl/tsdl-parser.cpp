@@ -817,23 +817,25 @@ void TsdlParser::_expectToken(const std::string_view token)
 
 bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
 {
-    PseudoDt::Up pseudoDt;
-    std::string dtAliasName;
-
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
     const auto loc = _ss.loc();
 
+    const auto tryParse = [&loc](auto&& parseFunc, const char * const name) {
+        try {
+            return parseFunc();
+        } catch (TextParseError& error) {
+            appendMsgToTextParseError(error, std::string {"In `"} + name + "` block:", loc);
+            throw;
+        }
+    };
+
     // try fixed-length enumeration type alias
     {
         StrScannerRejecter ssRej {_ss};
-
-        try {
-            pseudoDt = this->_tryParseFlEnumType(false, &dtAliasName);
-        } catch (TextParseError& error) {
-            appendMsgToTextParseError(error, "In `enum` block:", loc);
-            throw;
-        }
+        auto [pseudoDt, dtAliasName] = tryParse([this] {
+            return this->_tryParseFlEnumType(false);
+        }, "enum");
 
         if (pseudoDt) {
             // parse `;` to make sure it's not a member type/option
@@ -857,13 +859,9 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
     // try structure type alias
     {
         StrScannerRejecter ssRej {_ss};
-
-        try {
-            pseudoDt = this->_tryParseStructType(false, &dtAliasName);
-        } catch (TextParseError& error) {
-            appendMsgToTextParseError(error, "In `struct` block:", loc);
-            throw;
-        }
+        auto [pseudoDt, dtAliasName] = tryParse([this] {
+            return this->_tryParseStructType(false);
+        }, "struct");
 
         if (pseudoDt) {
             // parse `;` to make sure it's not a member type/option
@@ -887,13 +885,9 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
     // try variant type alias
     {
         StrScannerRejecter ssRej {_ss};
-
-        try {
-            pseudoDt = this->_tryParseVarType(false, &dtAliasName);
-        } catch (TextParseError& error) {
-            appendMsgToTextParseError(error, "In `variant` block:", loc);
-            throw;
-        }
+        auto [pseudoDt, dtAliasName] = tryParse([this] {
+            return this->_tryParseVarType(false);
+        }, "variant");
 
         if (pseudoDt) {
             // parse `;` to make sure it's not a field/option
@@ -942,7 +936,7 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
     }
 
     PseudoDt::Up pseudoDt;
-    std::string dtAliasName;
+    std::optional<std::string> dtAliasName;
 
     {
         _tLexScope lexScope {*this, _tStackFrame::Kind::DtAlias};
@@ -956,9 +950,9 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
          * type alias frame which `lexScope` manages: the latter only
          * exists while parsing this block.
          */
-        std::string innerDtAliasName;
+        auto [fullPseudoDt, innerDtAliasName, isCompound] = this->_tryParseFullDt(false);
 
-        pseudoDt = this->_tryParseFullDt(false, &innerDtAliasName);
+        pseudoDt = std::move(fullPseudoDt);
 
         if (pseudoDt && !innerDtAliasName.empty()) {
             assert(_stack.size() >= 2);
@@ -996,7 +990,8 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
         }
 
         // parse name
-        this->_parseDtAliasName(dtAliasName, true);
+        dtAliasName = this->_parseDtAliasName(true);
+        assert(dtAliasName);
         pseudoDt = this->_parseArraySubscripts(std::move(pseudoDt));
 
         // parse `;`
@@ -1004,7 +999,7 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
     }
 
     // add parsed type alias to parent frame
-    this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
+    this->_addDtAlias(std::move(*dtAliasName), *pseudoDt);
     return true;
 }
 
@@ -1023,39 +1018,22 @@ bool TsdlParser::_tryParseDtAlias()
     return false;
 }
 
-PseudoDt::Up TsdlParser::_tryParseDt(const bool addDtAlias, std::string * const dtAliasName)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseDt(const bool addDtAlias)
 {
     if (auto pseudoDt = this->_tryParseDtAliasRef()) {
-        if (dtAliasName) {
-            dtAliasName->clear();
-        }
-
-        return pseudoDt;
+        return {std::move(pseudoDt), std::string {}};
     }
 
-    if (auto pseudoDt = this->_tryParseFullDt(addDtAlias, dtAliasName)) {
-        return pseudoDt;
-    }
+    auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt(addDtAlias);
 
-    return nullptr;
+    return {std::move(pseudoDt), std::move(dtAliasName)};
 }
 
-PseudoDt::Up TsdlParser::_tryParseFullDt(const bool addDtAlias, std::string * const dtAliasName,
-                                         bool * const isCompound)
+std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt(const bool addDtAlias)
 {
     _ss.skipCommentsAndWhitespaces();
 
     const auto loc = _ss.loc();
-
-    /*
-     * A failed attempt below may set `*dtAliasName` (for example,
-     * `enum foo` without `:` or `{`), so always start from an
-     * empty name.
-     */
-    if (dtAliasName) {
-        dtAliasName->clear();
-    }
-
     const auto tryParse = [&loc](auto&& parseFunc, const char * const name) {
         try {
             return parseFunc();
@@ -1065,67 +1043,53 @@ PseudoDt::Up TsdlParser::_tryParseFullDt(const bool addDtAlias, std::string * co
         }
     };
 
-    PseudoDt::Up pseudoDt;
-    auto parsedCompound = false;
-
     // only try what can start with the keyword at the current position
     switch (this->_peekKw()) {
     case _tKw::Integer:
-        pseudoDt = tryParse([this] {
+        return {tryParse([this] {
             return this->_tryParseFlIntType();
-        }, "integer");
-        break;
+        }, "integer"), std::string {}, false};
 
     case _tKw::String:
-        pseudoDt = tryParse([this] {
+        return {tryParse([this] {
             return this->_tryParseNtStrType();
-        }, "string");
-        break;
+        }, "string"), std::string {}, false};
 
     case _tKw::Enum:
-        pseudoDt = tryParse([this, addDtAlias, dtAliasName] {
-            return this->_tryParseFlEnumType(addDtAlias, dtAliasName);
+    {
+        auto [pseudoDt, dtAliasName] = tryParse([this, addDtAlias] {
+            return this->_tryParseFlEnumType(addDtAlias);
         }, "enum");
-        parsedCompound = true;
-        break;
+
+        return {std::move(pseudoDt), std::move(dtAliasName), true};
+    }
 
     case _tKw::FloatingPoint:
-        pseudoDt = tryParse([this] {
+        return {tryParse([this] {
             return this->_tryParseFlFloatType();
-        }, "floating_point");
-        break;
+        }, "floating_point"), std::string {}, false};
 
     case _tKw::Struct:
-        pseudoDt = tryParse([this, addDtAlias, dtAliasName] {
-            return this->_tryParseStructType(addDtAlias, dtAliasName);
+    {
+        auto [pseudoDt, dtAliasName] = tryParse([this, addDtAlias] {
+            return this->_tryParseStructType(addDtAlias);
         }, "struct");
-        parsedCompound = true;
-        break;
+
+        return {std::move(pseudoDt), std::move(dtAliasName), true};
+    }
 
     case _tKw::Variant:
-        pseudoDt = tryParse([this, addDtAlias, dtAliasName] {
-            return this->_tryParseVarType(addDtAlias, dtAliasName);
+    {
+        auto [pseudoDt, dtAliasName] = tryParse([this, addDtAlias] {
+            return this->_tryParseVarType(addDtAlias);
         }, "variant");
-        parsedCompound = true;
-        break;
+
+        return {std::move(pseudoDt), std::move(dtAliasName), true};
+    }
 
     default:
-        break;
+        return {};
     }
-
-    if (!pseudoDt) {
-        if (dtAliasName) {
-            dtAliasName->clear();
-        }
-
-        return nullptr;
-    }
-
-    if (isCompound) {
-        *isCompound = parsedCompound;
-    }
-
-    return pseudoDt;
 }
 
 void TsdlParser::_insertFastPseudoFlIntType(const std::string_view str,
@@ -1435,8 +1399,7 @@ PseudoDt::Up TsdlParser::_tryParseNtStrType()
                                                    beginLoc);
 }
 
-PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
-                                             std::string * const dtAliasName)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType(const bool addDtAlias)
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -1446,7 +1409,7 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
 
     // parse `enum`
     if (!_ss.tryScanToken("enum")) {
-        return nullptr;
+        return {};
     }
 
     // try to parse name
@@ -1455,17 +1418,13 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
     if (const auto ident = _ss.tryScanIdent()) {
         potDtAliasName = "enum ";
         potDtAliasName += *ident;
-
-        if (dtAliasName) {
-            *dtAliasName = potDtAliasName;
-        }
     }
 
     {
         StrScannerRejecter ssRejOp {_ss};
 
         if (!_ss.tryScanToken(":") && !_ss.tryScanToken("{")) {
-            return nullptr;
+            return {};
         }
     }
 
@@ -1483,23 +1442,21 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
         const auto loc = _ss.loc();
 
         // check for a data type alias name first
-        std::string dtAliasName;
-
-        if (this->_parseDtAliasName(dtAliasName, false)) {
+        if (const auto dtAliasName = this->_parseDtAliasName(false)) {
             // find data type alias
-            pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc);
+            pseudoDt = this->_aliasedPseudoDt(*dtAliasName, beginLoc);
 
             if (!pseudoDt) {
                 std::ostringstream ss;
 
-                ss << "Cannot find data type alias `" << dtAliasName << "`.";
+                ss << "Cannot find data type alias `" << *dtAliasName << "`.";
                 throwTextParseError(ss.str(), loc);
             }
 
             if (!pseudoDt->isInt()) {
                 std::ostringstream ss;
 
-                ss << "Data type alias `" << dtAliasName << "` isn't an integer type.";
+                ss << "Data type alias `" << *dtAliasName << "` isn't an integer type.";
                 throwTextParseError(ss.str(), loc);
             }
         } else {
@@ -1534,12 +1491,14 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
     // parse mappings
     assert(pseudoDt->isInt());
 
+    PseudoDt::Up pseudoEnumType;
+
     if (pseudoDt->isUInt()) {
-        return this->_finishParseFlEnumType<FixedLengthUnsignedIntegerType>(std::move(pseudoDt),
-                                                                            addDtAlias,
-                                                                            std::move(potDtAliasName),
-                                                                            [](const auto& pseudoDt,
-                                                                               const auto& mappings) {
+        pseudoEnumType = this->_finishParseFlEnumType<FixedLengthUnsignedIntegerType>(std::move(pseudoDt),
+                                                                                      addDtAlias,
+                                                                                      potDtAliasName,
+                                                                                      [](const auto& pseudoDt,
+                                                                                         const auto& mappings) {
             const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoDt);
 
             return std::make_unique<PseudoFlUIntType>(pseudoUIntType.align(), pseudoUIntType.len(),
@@ -1551,10 +1510,11 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
                                                       pseudoDt.loc());
         });
     } else {
-        return this->_finishParseFlEnumType<FixedLengthSignedIntegerType>(std::move(pseudoDt), addDtAlias,
-                                                                          std::move(potDtAliasName),
-                                                                          [](const auto& pseudoDt,
-                                                                             const auto& mappings) {
+        pseudoEnumType = this->_finishParseFlEnumType<FixedLengthSignedIntegerType>(std::move(pseudoDt),
+                                                                                    addDtAlias,
+                                                                                    potDtAliasName,
+                                                                                    [](const auto& pseudoDt,
+                                                                                       const auto& mappings) {
             auto& baseIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthSignedIntegerType();
 
             return std::make_unique<PseudoScalarDtWrapper>(
@@ -1566,10 +1526,11 @@ PseudoDt::Up TsdlParser::_tryParseFlEnumType(const bool addDtAlias,
             );
         });
     }
+
+    return {std::move(pseudoEnumType), std::move(potDtAliasName)};
 }
 
-PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
-                                             std::string * const dtAliasName)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType(const bool addDtAlias)
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -1579,7 +1540,7 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
 
     // parse `struct`
     if (!_ss.tryScanToken("struct")) {
-        return nullptr;
+        return {};
     }
 
     // try to parse name
@@ -1592,11 +1553,7 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "struct ";
             potDtAliasName += *ident;
-
-            if (dtAliasName) {
-                dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
-                *dtAliasName = potDtAliasName;
-            }
+            dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
         }
 
         {
@@ -1605,7 +1562,7 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
 
             // parse `{`
             if (!_ss.tryScanToken("{")) {
-                return nullptr;
+                return {};
             }
 
             // parse data type aliases and member types
@@ -1668,13 +1625,13 @@ PseudoDt::Up TsdlParser::_tryParseStructType(const bool addDtAlias,
     }
 
     if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::move(potDtAliasName), *pseudoDt);
+        this->_addDtAlias(std::string {potDtAliasName}, *pseudoDt);
     }
 
-    return pseudoDt;
+    return {std::move(pseudoDt), std::move(potDtAliasName)};
 }
 
-PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * const dtAliasName)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType(const bool addDtAlias)
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -1684,7 +1641,7 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
 
     // parse `variant`
     if (!_ss.tryScanToken("variant")) {
-        return nullptr;
+        return {};
     }
 
     // try to parse name
@@ -1697,11 +1654,7 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "variant ";
             potDtAliasName += *ident;
-
-            if (dtAliasName) {
-                dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
-                *dtAliasName = potDtAliasName;
-            }
+            dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
         }
 
         {
@@ -1729,7 +1682,7 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
 
             // parse `{`
             if (!_ss.tryScanToken("{")) {
-                return nullptr;
+                return {};
             }
 
             // parse data type aliases and options
@@ -1772,10 +1725,10 @@ PseudoDt::Up TsdlParser::_tryParseVarType(const bool addDtAlias, std::string * c
     }
 
     if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::move(potDtAliasName), *pseudoDt);
+        this->_addDtAlias(std::string {potDtAliasName}, *pseudoDt);
     }
 
-    return pseudoDt;
+    return {std::move(pseudoDt), std::move(potDtAliasName)};
 }
 
 bool TsdlParser::_tryParseEnvBlock()
@@ -2545,10 +2498,7 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         const auto dtLoc = _ss.loc();
 
         // parse data type
-        PseudoDt::Up pseudoDt;
-        std::string dtAliasName;
-
-        {
+        auto [pseudoDt, dtAliasName] = std::invoke([this, scopeDtStackFrameKind] {
             _tLexScope lexScope {*this, scopeDtStackFrameKind};
 
             /*
@@ -2559,8 +2509,8 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
              *
              * Add it to the current frame below instead.
              */
-            pseudoDt = this->_tryParseDt(false, &dtAliasName);
-        }
+            return this->_tryParseDt(false);
+        });
 
         if (!pseudoDt) {
             throwTextParseError("Expecting data type or data type alias name.", dtLoc);
@@ -2578,7 +2528,7 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         // parse `;`
         this->_expectToken(";");
         ssRej.accept();
-        return pseudoDt;
+        return std::move(pseudoDt);
     } catch (TextParseError& exc) {
         appendMsgToTextParseError(exc, std::invoke([&firstName, &secondName] {
             std::string line {"In the `"};
@@ -2763,10 +2713,9 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
     // try data type alias name
     {
         StrScannerRejecter ssRej {_ss};
-        std::string dtAliasName;
 
-        if (this->_parseDtAliasName(dtAliasName, false)) {
-            if (auto pseudoDt = this->_aliasedPseudoDt(dtAliasName, beginLoc)) {
+        if (const auto dtAliasName = this->_parseDtAliasName(false)) {
+            if (auto pseudoDt = this->_aliasedPseudoDt(*dtAliasName, beginLoc)) {
                 ssRej.accept();
                 return pseudoDt;
             }
@@ -2776,7 +2725,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
     return nullptr;
 }
 
-bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
+std::optional<std::string> TsdlParser::_parseDtAliasName(const bool expect)
 {
     auto isMulti = false;
     std::vector<std::string> parts;
@@ -2815,7 +2764,7 @@ bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
                 ss << "Invalid keyword `" << *ident << "` in type alias name.";
                 throwTextParseError(ss.str(), loc);
             } else {
-                return false;
+                return std::nullopt;
             }
 
         default:
@@ -2844,11 +2793,11 @@ bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
         if (expect) {
             throwTextParseError("Expecting data type alias name.", _ss.loc());
         } else {
-            return false;
+            return std::nullopt;
         }
     }
 
-    dtAliasName.clear();
+    std::string dtAliasName;
 
     for (auto it = parts.begin(); it != parts.end(); ++it) {
         dtAliasName += *it;
@@ -2858,7 +2807,7 @@ bool TsdlParser::_parseDtAliasName(std::string& dtAliasName, const bool expect)
         }
     }
 
-    return true;
+    return dtAliasName;
 }
 
 PseudoDataLoc TsdlParser::_expectDataLoc()
@@ -2887,16 +2836,14 @@ PseudoDataLoc TsdlParser::_expectDataLoc()
     return this->_pseudoDataLocFromAllPathElems(allPathElems, beginLoc);
 }
 
-PseudoDt::Up TsdlParser::_tryParseIdentArraySubscripts(std::string& ident,
-                                                       PseudoDt::Up innerPseudoDt)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseIdentArraySubscripts(PseudoDt::Up innerPseudoDt)
 {
     // parse identifier
-    if (const auto identRes = _ss.tryScanIdent()) {
-        ident = *identRes;
-        return this->_parseArraySubscripts(std::move(innerPseudoDt));
+    if (const auto ident = _ss.tryScanIdent()) {
+        return {this->_parseArraySubscripts(std::move(innerPseudoDt)), std::string {*ident}};
     }
 
-    return nullptr;
+    return {};
 }
 
 PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
@@ -3114,11 +3061,9 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
         const auto dtLoc = _ss.loc();
 
         if (auto pseudoDt = this->_tryParseDtAliasRef()) {
-            std::string ident;
-
             // let's try parsing an identifier + array subscripts
-            if (auto effectivePseudoDt = this->_tryParseIdentArraySubscripts(ident,
-                                                                             std::move(pseudoDt))) {
+            if (auto [effectivePseudoDt, ident] = this->_tryParseIdentArraySubscripts(std::move(pseudoDt));
+                    effectivePseudoDt) {
                 /*
                  * We have a winner: variant type must have a selector
                  * location at this point.
@@ -3161,10 +3106,8 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
      */
     {
         StrScannerRejecter ssRej {_ss};
-        std::string dtAliasName;
-        auto isCompound = false;
 
-        if (auto pseudoDt = this->_tryParseFullDt(false, &dtAliasName, &isCompound)) {
+        if (auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt(false); pseudoDt) {
             const auto afterDtLoc = _ss.loc();
 
             if (isCompound && _ss.tryScanToken(";")) {
@@ -3184,10 +3127,8 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
             }
 
             // let's try parsing an identifier + array subscripts
-            std::string ident;
-
-            if (auto effectivePseudoDt = this->_tryParseIdentArraySubscripts(ident,
-                                                                             std::move(pseudoDt))) {
+            if (auto [effectivePseudoDt, ident] = this->_tryParseIdentArraySubscripts(std::move(pseudoDt));
+                    effectivePseudoDt) {
                 /*
                  * We have a winner: variant type must have a selector
                  * location at this point.

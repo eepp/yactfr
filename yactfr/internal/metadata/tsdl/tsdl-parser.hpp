@@ -19,6 +19,7 @@
 #include <limits>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -461,7 +462,8 @@ private:
      * Tries to parse an identifier followed by zero or more
      * array subscripts.
      *
-     * This method sets `ident` to the parsed identifier.
+     * Returns the effective pseudo data type and the parsed identifier,
+     * or `nullptr` and an empty string if it can't.
      *
      * `innerPseudoDt` is the most nested pseudo data type to wrap. This
      * method returns it as is if there's only an identifier not
@@ -475,7 +477,7 @@ private:
      *
      *     my_field[event.context.some.location][23][len]
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseIdentArraySubscripts(std::string& ident, PseudoDt::Up innerPseudoDt);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseIdentArraySubscripts(PseudoDt::Up innerPseudoDt);
 
     /*
      * Like _tryParseIdentArraySubscripts(), but without the
@@ -495,11 +497,11 @@ private:
      * Parses a data type alias name, without parsing an identifier name
      * that would follow.
      *
-     * On success, `dtAliasName` contains the name of the alias.
+     * Returns the name of the alias on success.
      *
      * If `expect` is true, then the method throws `TextParseError` if
      * it fails to parse a data type alias name. Otherwise, returns
-     * whether or not a data type alias name was parsed.
+     * `std::nullopt` if it can't parse a data type alias name.
      *
      * Examples:
      *
@@ -509,7 +511,7 @@ private:
      *
      *     signed long long
      */
-    bool _parseDtAliasName(std::string& dtAliasName, bool expect);
+    [[ nodiscard ]] std::optional<std::string> _parseDtAliasName(bool expect);
 
     /*
      * Expects a data location, returning a corresponding pseudo data
@@ -587,34 +589,37 @@ private:
      * Tries to parse a data type, which also includes a data type
      * alias reference.
      *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     * Returns the parsed pseudo data type and its data type alias name,
+     * or `nullptr` and an empty string if it can't.
      *
-     * `addDtAlias` and `dtAliasName` have the same meaning as with
-     * _tryParseFullDt(). On success, if `dtAliasName` isn't `nullptr`
-     * and the data type isn't a named fixed-length enumeration,
-     * structure, or variant type block, then this method sets
-     * `*dtAliasName` to an empty string.
+     * `addDtAlias` and the returned data type alias name have the same
+     * meaning as with _tryParseFullDt(). The returned data type alias
+     * name is empty if the data type isn't a named fixed-length
+     * enumeration, structure, or variant type block.
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseDt(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseDt(bool addDtAlias = true);
 
     /*
      * Tries to parse a data type block (excludes data type
      * alias references).
      *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     * Returns, in this order:
      *
-     * `addDtAlias` and `dtAliasName` have the same meaning as with
-     * _tryParseFlEnumType(), _tryParseStructType(), and
-     * _tryParseVarType(). On success, if `dtAliasName` isn't `nullptr`
-     * and the data type isn't named, then this method sets
-     * `*dtAliasName` to an empty string.
+     * 1. The parsed pseudo data type, or `nullptr` if it can't.
      *
-     * On success, if `isCompound` isn't `nullptr`, then this method
-     * sets `*isCompound` to whether or not the parsed data type is a
-     * fixed-length enumeration, structure, or variant type.
+     * 2. The data type alias name, with the same meaning as with
+     *    _tryParseFlEnumType(), _tryParseStructType(), and
+     *    _tryParseVarType(), or an empty string if the data type
+     *    isn't named.
+     *
+     * 3. Whether or not the parsed data type is a fixed-length
+     *    enumeration, structure, or variant type (only meaningful
+     *    on success).
+     *
+     * `addDtAlias` has the same meaning as with _tryParseFlEnumType(),
+     * _tryParseStructType(), and _tryParseVarType().
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseFullDt(bool addDtAlias = true, std::string *dtAliasName = nullptr,
-                                 bool *isCompound = nullptr);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string, bool> _tryParseFullDt(bool addDtAlias = true);
 
     /*
      * Tries to parse a fixed-length integer type block.
@@ -665,13 +670,14 @@ private:
     /*
      * Tries to parse a fixed-length enumeration type block.
      *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     * Returns the parsed pseudo data type and its data type alias name,
+     * or `nullptr` and an empty string if it can't.
      *
      * If the parser makes it to the `:` or `{` token and the
      * fixed-length enumeration type is named, this method adds a data
      * type alias to the map of aliased data types of the current frame
-     * if `addDtAlias` is true, and sets `*dtAliasName` to the name of
-     * the data type alias.
+     * if `addDtAlias` is true, and returns the name of the data type
+     * alias (empty if the fixed-length enumeration type isn't named).
      *
      * Example:
      *
@@ -682,22 +688,24 @@ private:
      *         "HAR TENVAR" = -17 ... 28,
      *     }
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseFlEnumType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseFlEnumType(bool addDtAlias = true);
 
     template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
     [[ nodiscard ]] PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt, bool addDtAlias,
-                                        std::string&& potDtAliasName,
-                                        CreatePseudoDtFuncT&& createPseudoDtFunc);
+                                                        const std::string& potDtAliasName,
+                                                        CreatePseudoDtFuncT&& createPseudoDtFunc);
 
     /*
      * Tries to parse a structure type block.
      *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     * Returns the parsed pseudo data type and its data type alias name,
+     * or `nullptr` and an empty string if it can't.
      *
      * If the parser makes it to the opening `{` and the structure type
      * is named, this method adds a data type alias to the map of
      * aliased data types of the current frame if `addDtAlias` is true,
-     * and sets `*dtAliasName` to the name of the data type alias.
+     * and returns the name of the data type alias (empty if the
+     * structure type isn't named).
      *
      * Example:
      *
@@ -714,17 +722,19 @@ private:
      *         } c;
      *     } align(64)
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseStructType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseStructType(bool addDtAlias = true);
 
     /*
      * Tries to parse a variant type block.
      *
-     * Returns the parsed pseudo data type, or `nullptr` if it can't.
+     * Returns the parsed pseudo data type and its data type alias name,
+     * or `nullptr` and an empty string if it can't.
      *
      * If the parser makes it to the opening `{` and the variant type is
      * named, this method adds a data type alias to the map of aliased
-     * data types of the current frame if `addDtAlias` is true, and sets
-     * `*dtAliasName` to the name of the data type alias.
+     * data types of the current frame if `addDtAlias` is true, and
+     * returns the name of the data type alias (empty if the variant
+     * type isn't named).
      *
      * Example:
      *
@@ -733,7 +743,7 @@ private:
      *         integer { size = 32; align = 32; } i;
      *     }
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseVarType(bool addDtAlias = true, std::string *dtAliasName = nullptr);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseVarType(bool addDtAlias = true);
 
     /*
      * Tries to parse a trace environment block and sets the trace
@@ -1135,7 +1145,7 @@ private:
 
 template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
 PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const bool addDtAlias,
-                                                std::string&& potDtAliasName,
+                                                const std::string& potDtAliasName,
                                                 CreatePseudoDtFuncT&& createPseudoDtFunc)
 {
     // parse mappings (we're after `{`)
@@ -1252,7 +1262,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
 
     // add data type alias if this fixed-length integer type has a name
     if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::move(potDtAliasName), *pseudoIntType);
+        this->_addDtAlias(std::string {potDtAliasName}, *pseudoIntType);
     }
 
     return pseudoIntType;
