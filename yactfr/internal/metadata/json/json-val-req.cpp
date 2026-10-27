@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <limits>
+
 #include "json-val-req.hpp"
 #include "../../../internal/utils.hpp"
 

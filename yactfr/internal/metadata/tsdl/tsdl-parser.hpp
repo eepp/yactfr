@@ -16,6 +16,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <optional>
+#include <limits>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>

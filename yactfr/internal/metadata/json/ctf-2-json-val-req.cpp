@@ -8,6 +8,7 @@
 #include <cassert>
 #include <unordered_set>
 #include <string>
+#include <limits>
 
 #include <yactfr/text-parse-error.hpp>
 
