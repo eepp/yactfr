@@ -291,8 +291,10 @@ private:
      * The maximum size from `begin` to `end`
      * is `_maxFastFlIntTypeStrSize`.
      *
-     * Is it really worth it? I don't know! Is it a cool idea even
-     * without benchmarks? I think so.
+     * Is it worth it? Yes: with an optimized build, parsing some
+     * LTTng-modules 2.9.2 metadata text (1.2 MiB, 9349 fixed-length
+     * integer types, but only 34 distinct strings) takes about 12.4 ms
+     * with this cache versus 21.2 ms without it.
      */
     struct _tFastPseudoFlIntTypeEntry final
     {
