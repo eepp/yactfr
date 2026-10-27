@@ -1149,7 +1149,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
 
         _ss.skipCommentsAndWhitespaces();
 
-        std::optional<TextLocation> loc {_ss.loc()};
+        std::optional loc {_ss.loc()};
 
         if (const auto ident = _ss.tryScanIdent()) {
             name = *ident;

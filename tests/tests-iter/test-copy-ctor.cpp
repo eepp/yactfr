@@ -29,7 +29,7 @@ int main()
     stringStreams.push_back(std::make_unique<std::ostringstream>());
     printers.push_back(std::make_unique<ElemPrinter>(*stringStreams.back(), 0));
 
-    std::vector<yactfr::ElementSequenceIterator> esIts {seq.begin()};
+    std::vector esIts {seq.begin()};
 
     while (true) {
         auto printersIt = printers.begin();

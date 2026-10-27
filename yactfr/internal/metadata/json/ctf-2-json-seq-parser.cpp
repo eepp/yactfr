@@ -295,7 +295,7 @@ std::optional<std::pair<std::string, TextLocation>> optStrOfObjWithLoc(const Jso
                                                                          const std::string& propName)
 {
     if (const auto jsonVal = jsonObjVal[propName]) {
-        return std::make_pair(*jsonVal->asStr(), jsonVal->loc());
+        return std::pair {*jsonVal->asStr(), jsonVal->loc()};
     }
 
     return std::nullopt;

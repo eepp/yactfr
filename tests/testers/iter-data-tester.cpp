@@ -94,7 +94,7 @@ int main(const int argc, const char * const argv[])
 
     if (argc >= 3) {
         std::ifstream dsFile {dsPath, std::ios::binary};
-        const std::vector<std::uint8_t> data {std::istreambuf_iterator<char> {dsFile}, {}};
+        const std::vector<std::uint8_t> data {std::istreambuf_iterator {dsFile}, {}};
         MemDataSrcFactory factory {
             data.data(), data.size(), std::strtoull(argv[2], nullptr, 10),
             argc >= 4 && std::strcmp(argv[3], "data-not-avail") == 0

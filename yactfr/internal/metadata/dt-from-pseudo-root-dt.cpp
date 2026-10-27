@@ -429,7 +429,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoVarWithIntRangesType(cons
         std::set<IntegerRange<IntRangeValueT>> ranges;
 
         for (auto& range : pseudoRangeSet) {
-            ranges.insert(IntegerRange<IntRangeValueT> {
+            ranges.insert(IntegerRange {
                 static_cast<IntRangeValueT>(range.lower()),
                 static_cast<IntRangeValueT>(range.upper())
             });
@@ -1056,7 +1056,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
         std::set<IntegerRange<SInt>> ranges;
 
         for (auto& range : pseudoOptType.selRanges()) {
-            ranges.insert(IntegerRange<SInt> {
+            ranges.insert(IntegerRange {
                 static_cast<SInt>(range.lower()),
                 static_cast<SInt>(range.upper())
             });
@@ -1064,7 +1064,7 @@ DataType::Up DtFromPseudoRootDtConverter::_dtFromPseudoOptWithIntSelType(const P
 
         return OptionalWithSignedIntegerSelectorType::create(1, std::move(containedDt),
                                                              std::move(selLoc),
-                                                             IntegerRangeSet<SInt> {std::move(ranges)},
+                                                             IntegerRangeSet {std::move(ranges)},
                                                              tryCloneAttrs(pseudoOptType.attrs()));
     }
 
