@@ -11,9 +11,9 @@ if (NOT DOXYGEN_FOUND)
 endif ()
 
 message (STATUS "API documentation will be built")
-file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/doc/api)
+file (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/doc/api)
 
-if (GIT_COMMIT_HASH)
+if (YACTFR_GIT_COMMIT_HASH)
     set (YACTFR_DOC_VERSION "${PROJECT_VERSION} (${YACTFR_GIT_COMMIT_HASH})")
 else ()
     set (YACTFR_DOC_VERSION "${PROJECT_VERSION}")
@@ -21,16 +21,16 @@ endif ()
 
 configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/api/Doxyfile.in
-    ${CMAKE_BINARY_DIR}/doc/api/Doxyfile
+    ${PROJECT_BINARY_DIR}/doc/api/Doxyfile
     @ONLY
 )
-set (YACTFR_DOC_WORKDIR "${CMAKE_BINARY_DIR}/doc/api")
+set (YACTFR_DOC_WORKDIR "${PROJECT_BINARY_DIR}/doc/api")
 set (YACTFR_DOC_CMD "${DOXYGEN_EXECUTABLE}" Doxyfile)
-set (YACTFR_DOC_INDEX_HTML "${CMAKE_BINARY_DIR}/doc/api/output/html/index.html")
+set (YACTFR_DOC_INDEX_HTML "${PROJECT_BINARY_DIR}/doc/api/output/html/index.html")
 file (
     GLOB_RECURSE YACTFR_DOC_DEPS
-    "${CMAKE_SOURCE_DIR}/include/*.hpp"
-    "${CMAKE_SOURCE_DIR}/doc/api/*.dox"
+    "${PROJECT_SOURCE_DIR}/include/*.hpp"
+    "${PROJECT_SOURCE_DIR}/doc/api/*.dox"
 )
 add_custom_command (
     OUTPUT "${YACTFR_DOC_INDEX_HTML}"

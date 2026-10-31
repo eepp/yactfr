@@ -8,9 +8,15 @@ if (NOT UNIX)
     message (FATAL_ERROR "The yactfr library needs a Unix environment")
 endif ()
 
-# yactfr shared library
+# yactfr library
+if (YACTFR_BUILD_SHARED)
+    set (YACTFR_LIB_TYPE SHARED)
+else ()
+    set (YACTFR_LIB_TYPE STATIC)
+endif ()
+
 add_library (
-    yactfr SHARED
+    yactfr ${YACTFR_LIB_TYPE}
     data-blk.cpp
     data-src-factory.cpp
     data-src.cpp
@@ -87,12 +93,19 @@ set_target_properties (
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
+add_library (yactfr::yactfr ALIAS yactfr)
 target_include_directories (
-    yactfr PRIVATE
-    .
-    ${CMAKE_SOURCE_DIR}/include
-    ${Boost_INCLUDE_DIRS}
+    yactfr
+    PUBLIC
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}"
 )
+
+# public headers require C++17 and include Boost headers
+target_compile_features (yactfr PUBLIC cxx_std_17)
+target_link_libraries (yactfr PUBLIC Boost::boost)
 
 # include-what-you-use
 option (
@@ -107,8 +120,11 @@ if (OPT_ENABLE_IWYU)
 endif ()
 
 # library installation rules
-install (
-    TARGETS yactfr
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-)
+if (YACTFR_INSTALL)
+    install (
+        TARGETS yactfr
+        EXPORT yactfr-targets
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+endif ()

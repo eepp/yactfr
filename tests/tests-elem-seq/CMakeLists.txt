@@ -13,9 +13,7 @@ add_executable (test-elem-seq-at EXCLUDE_FROM_ALL test-at.cpp)
 target_link_libraries (test-elem-seq-at yactfr)
 
 include_directories (
-    "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../common"
-    ${Boost_INCLUDE_DIRS}
 )
 
 add_custom_target (

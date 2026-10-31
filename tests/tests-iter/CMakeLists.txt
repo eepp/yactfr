@@ -22,9 +22,7 @@ add_executable (test-iter-cmp EXCLUDE_FROM_ALL test-cmp.cpp)
 target_link_libraries (test-iter-cmp yactfr)
 
 include_directories (
-    "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../common"
-    ${Boost_INCLUDE_DIRS}
 )
 
 add_custom_target (

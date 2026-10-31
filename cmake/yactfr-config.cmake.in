@@ -1,0 +1,14 @@
+# Copyright (C) 2026 Philippe Proulx <eepp.ca>
+#
+# This software may be modified and distributed under the terms
+# of the MIT license. See the LICENSE file for details.
+
+@PACKAGE_INIT@
+
+include (CMakeFindDependencyMacro)
+
+# public yactfr headers include Boost headers
+find_dependency (Boost 1.58)
+
+include ("${CMAKE_CURRENT_LIST_DIR}/yactfr-targets.cmake")
+check_required_components (yactfr)

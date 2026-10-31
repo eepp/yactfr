@@ -224,7 +224,7 @@ streams with more, smaller fields produce more elements per byte.
 Make sure you have the build time requirements:
 
 * Linux/Unix platform
-* https://cmake.org/[CMake] ≥ 3.10.0
+* https://cmake.org/[CMake] ≥ 3.11.0
 * pass:[C++17] compiler
 * http://www.boost.org/[Boost] ≥ 1.58
 * **If you build the API documentation**: https://www.doxygen.nl/[Doxygen]
@@ -266,6 +266,54 @@ For production, you should make a release build:
 $ CC=clang CXX=clang++ \
   cmake .. -DCMAKE_BUILD_TYPE=Release -DOPT_BUILD_DOC=ON
 ----
+
+Other `cmake` options:
+
+`YACTFR_BUILD_SHARED`::
+    Build yactfr as a shared library instead of a static one.
++
+Default: `ON` when yactfr is the top-level project, `OFF` otherwise.
+
+`YACTFR_INSTALL`::
+    Generate the installation rules (library, headers, and CMake
+    package).
++
+Default: `ON` when yactfr is the top-level project, `OFF` otherwise.
+
+`YACTFR_BUILD_TESTS`::
+    Add the test targets (`tests` and `check`).
++
+Default: `ON` when yactfr is the top-level project, `OFF` otherwise.
+
+[[cmake]]
+== Use yactfr in a CMake project
+
+Both methods below give you the `yactfr::yactfr` target which carries
+the include directory and the other usage requirements.
+
+.Use an installed yactfr.
+----
+find_package (yactfr REQUIRED)
+target_link_libraries (my-program yactfr::yactfr)
+----
+
+If yactfr isn't installed in a standard location, set
+`CMAKE_PREFIX_PATH` to its installation prefix when you run `cmake`.
+
+.Fetch and build yactfr as part of your project.
+----
+include (FetchContent)
+FetchContent_Declare (
+    yactfr
+    GIT_REPOSITORY https://github.com/eepp/yactfr.git
+    GIT_TAG COMMITID
+)
+FetchContent_MakeAvailable (yactfr)
+target_link_libraries (my-program yactfr::yactfr)
+----
+
+As a subproject, yactfr builds a static library by default, without
+tests or installation rules: see the options above.
 
 == Run the tests
 

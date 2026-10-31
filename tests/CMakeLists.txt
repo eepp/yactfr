@@ -24,7 +24,7 @@ add_custom_target (
     check
     COMMAND
         ${CMAKE_COMMAND} -E env
-            "YACTFR_BINARY_DIR=${CMAKE_BINARY_DIR}"
+            "YACTFR_BINARY_DIR=${PROJECT_BINARY_DIR}"
             py.test -v
     DEPENDS
         tests

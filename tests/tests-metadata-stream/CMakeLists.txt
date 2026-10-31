@@ -6,11 +6,6 @@
 add_executable (test-metadata-stream-io-error EXCLUDE_FROM_ALL test-io-error.cpp)
 target_link_libraries (test-metadata-stream-io-error yactfr)
 
-include_directories (
-    "${CMAKE_SOURCE_DIR}/include"
-    ${Boost_INCLUDE_DIRS}
-)
-
 add_custom_target (
     tests-metadata-stream
     DEPENDS

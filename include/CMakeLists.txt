@@ -3,7 +3,9 @@
 # This software may be modified and distributed under the terms
 # of the MIT license. See the LICENSE file for details.
 
-install (
-    DIRECTORY yactfr
-    DESTINATION include
-)
+if (YACTFR_INSTALL)
+    install (
+        DIRECTORY yactfr
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+endif ()

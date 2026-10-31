@@ -6,11 +6,6 @@
 add_executable (test-metadata-text-num EXCLUDE_FROM_ALL test-num.cpp)
 target_link_libraries (test-metadata-text-num yactfr)
 
-include_directories (
-    "${CMAKE_SOURCE_DIR}/include"
-    ${Boost_INCLUDE_DIRS}
-)
-
 add_custom_target (
     tests-metadata-text
     DEPENDS

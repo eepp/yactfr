@@ -12,7 +12,7 @@ REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = YES
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = "@CMAKE_SOURCE_DIR@/include"
+STRIP_FROM_PATH        = "@PROJECT_SOURCE_DIR@/include"
 STRIP_FROM_INC_PATH    =
 SHORT_NAMES            = NO
 MULTILINE_CPP_IS_BRIEF = NO
@@ -81,15 +81,15 @@ WARN_NO_PARAMDOC       = NO
 WARN_AS_ERROR          = NO
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           =
-INPUT                  = "@CMAKE_SOURCE_DIR@/include/yactfr" \
-                         "@CMAKE_SOURCE_DIR@/doc/api/groups.dox" \
-                         "@CMAKE_SOURCE_DIR@/doc/api/main.dox" \
-                         "@CMAKE_SOURCE_DIR@/doc/api/examples.dox"
+INPUT                  = "@PROJECT_SOURCE_DIR@/include/yactfr" \
+                         "@PROJECT_SOURCE_DIR@/doc/api/groups.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/api/main.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/api/examples.dox"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.hpp
 RECURSIVE              = YES
-EXCLUDE                = "@CMAKE_SOURCE_DIR@/include/yactfr/metadata/internal"
+EXCLUDE                = "@PROJECT_SOURCE_DIR@/include/yactfr/metadata/internal"
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */internal/*
 EXCLUDE_SYMBOLS        =

@@ -25,9 +25,7 @@ add_executable (test-iter-pos-bool EXCLUDE_FROM_ALL test-bool.cpp)
 target_link_libraries (test-iter-pos-bool yactfr)
 
 include_directories (
-    "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../common"
-    ${Boost_INCLUDE_DIRS}
 )
 
 add_custom_target (
