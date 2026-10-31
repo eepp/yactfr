@@ -224,9 +224,9 @@ streams with more, smaller fields produce more elements per byte.
 Make sure you have the build time requirements:
 
 * Linux/Unix platform
-* https://cmake.org/[CMake] ≥ 3.11.0
+* https://cmake.org/[CMake] ≥ 3.30.0
 * pass:[C++17] compiler
-* http://www.boost.org/[Boost] ≥ 1.58
+* http://www.boost.org/[Boost] ≥ 1.70
 * **If you build the API documentation**: https://www.doxygen.nl/[Doxygen]
 
 .Build and install yactfr from source

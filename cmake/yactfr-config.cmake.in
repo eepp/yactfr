@@ -8,7 +8,7 @@
 include (CMakeFindDependencyMacro)
 
 # public yactfr headers include Boost headers
-find_dependency (Boost 1.58)
+find_dependency (Boost 1.70)
 
 include ("${CMAKE_CURRENT_LIST_DIR}/yactfr-targets.cmake")
 check_required_components (yactfr)

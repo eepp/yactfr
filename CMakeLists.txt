@@ -3,7 +3,7 @@
 # This software may be modified and distributed under the terms
 # of the MIT license. See the LICENSE file for details.
 
-cmake_minimum_required (VERSION 3.11.0 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.30.0 FATAL_ERROR)
 
 # project and version
 project (yactfr VERSION 0.2.0)
@@ -66,7 +66,7 @@ if (EXISTS "${PROJECT_SOURCE_DIR}/.git")
 endif()
 
 # check for Boost (common to the library and to tests)
-find_package (Boost 1.58 REQUIRED)
+find_package (Boost 1.70 REQUIRED)
 
 # standard installation directories
 include (GNUInstallDirs)
