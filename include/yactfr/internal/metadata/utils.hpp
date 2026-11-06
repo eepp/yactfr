@@ -21,6 +21,20 @@ namespace yactfr::internal {
     return MapItem::Up {static_cast<const MapItem *>(attrs->clone().release())};
 }
 
+/*
+ * Returns whether or not the optional attributes `attrsA` and `attrsB`
+ * are equal (both missing or both present and equal).
+ */
+[[ nodiscard ]] inline bool attrsAreEqual(const MapItem * const attrsA,
+                                          const MapItem * const attrsB) noexcept
+{
+    if (!attrsA || !attrsB) {
+        return attrsA == attrsB;
+    }
+
+    return *attrsA == *attrsB;
+}
+
 } // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_UTILS_HPP

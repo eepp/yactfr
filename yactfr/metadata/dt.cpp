@@ -24,6 +24,7 @@
 #include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/opt-type.hpp>
+#include <yactfr/internal/metadata/utils.hpp>
 
 namespace yactfr {
 
@@ -37,7 +38,7 @@ DataType::DataType(const _tKind kind, const unsigned int align, MapItem::Up attr
 bool DataType::operator==(const DataType& other) const noexcept
 {
     return _theKind == other._theKind && _align == other._align &&
-           _attrs == other._attrs && this->_isEqual(other);
+           internal::attrsAreEqual(_attrs.get(), other._attrs.get()) && this->_isEqual(other);
 }
 
 bool DataType::operator!=(const DataType& other) const noexcept
