@@ -20,7 +20,7 @@ CompoundDataType::CompoundDataType(const _tKind kind, const unsigned int minAlig
 
 bool CompoundDataType::_isEqual(const DataType& other) const noexcept
 {
-    return _minAlign != static_cast<const CompoundDataType&>(other)._minAlign;
+    return _minAlign == static_cast<const CompoundDataType&>(other)._minAlign;
 }
 
 } // namespace yactfr
