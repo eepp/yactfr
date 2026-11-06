@@ -7,13 +7,6 @@
 
 #include <sstream>
 
-#include <yactfr/text-loc.hpp>
-#include <yactfr/metadata/sl-array-type.hpp>
-#include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/dl-array-type.hpp>
-#include <yactfr/metadata/dl-str-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/var-type.hpp>
 #include <yactfr/text-parse-error.hpp>
 
 #include "tsdl-attr.hpp"

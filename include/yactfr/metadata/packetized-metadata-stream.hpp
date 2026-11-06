@@ -8,11 +8,14 @@
 #ifndef YACTFR_METADATA_PACKETIZED_METADATA_STREAM_HPP
 #define YACTFR_METADATA_PACKETIZED_METADATA_STREAM_HPP
 
+#include <istream>
+#include <memory>
 #include <string>
 #include <boost/uuid/uuid.hpp>
 
 #include "../aliases.hpp"
 #include "bo.hpp"
+#include "metadata-stream.hpp"
 
 namespace yactfr {
 

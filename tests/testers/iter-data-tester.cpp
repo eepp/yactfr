@@ -16,7 +16,6 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <yactfr/yactfr.hpp>
 #include <elem-printer.hpp>

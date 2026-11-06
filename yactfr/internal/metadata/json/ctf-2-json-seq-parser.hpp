@@ -15,9 +15,6 @@
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/dst.hpp>
-#include <yactfr/metadata/ert.hpp>
-#include <yactfr/text-parse-error.hpp>
-#include <yactfr/metadata/aliases.hpp>
 
 #include "ctf-2-json-val-req.hpp"
 #include "json-val.hpp"

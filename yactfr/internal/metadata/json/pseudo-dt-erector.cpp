@@ -16,23 +16,14 @@
 #include <yactfr/metadata/fl-float-type.hpp>
 #include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
-#include <yactfr/metadata/sl-array-type.hpp>
-#include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/sl-blob-type.hpp>
-#include <yactfr/metadata/dl-blob-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/var-type.hpp>
-#include <yactfr/metadata/opt-type.hpp>
 #include <yactfr/text-parse-error.hpp>
-#include <yactfr/metadata/aliases.hpp>
 
 #include "json-val.hpp"
 #include "pseudo-dt-erector.hpp"
 #include "ctf-2-json-strs.hpp"
 #include "ctf-2-json-utils.hpp"
-#include "../../utils.hpp"
 
 namespace yactfr::internal {
 

@@ -13,15 +13,10 @@
 #include <string>
 #include <string_view>
 #include <variant>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
-#include <yactfr/aliases.hpp>
 #include <yactfr/metadata/int-type-common.hpp>
-#include <yactfr/metadata/aliases.hpp>
-#include <yactfr/text-parse-error.hpp>
+#include <yactfr/metadata/bo.hpp>
+#include <yactfr/text-loc.hpp>
 
 namespace yactfr::internal {
 

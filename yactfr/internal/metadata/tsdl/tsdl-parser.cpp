@@ -11,9 +11,12 @@
 #include <limits>
 #include <variant>
 #include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/string_generator.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/range/adaptor/reversed.hpp>
+
+#include <yactfr/metadata/fl-float-type.hpp>
+#include <yactfr/metadata/nt-str-type.hpp>
 
 #include "tsdl-parser.hpp"
 #include "../trace-type-from-pseudo-trace-type.hpp"

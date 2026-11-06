@@ -8,7 +8,6 @@
 #include <clocale>
 #include <initializer_list>
 #include <iostream>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 

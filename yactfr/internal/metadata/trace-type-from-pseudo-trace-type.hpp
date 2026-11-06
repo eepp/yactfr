@@ -9,16 +9,10 @@
 #define YACTFR_INTERNAL_METADATA_TRACE_TYPE_FROM_PSEUDO_TRACE_TYPE_HPP
 
 #include <memory>
-#include <optional>
 
-#include <yactfr/aliases.hpp>
 #include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/ert.hpp>
-#include <yactfr/metadata/int-range.hpp>
-#include <yactfr/metadata/aliases.hpp>
-#include <yactfr/text-parse-error.hpp>
 
 #include "pseudo-types.hpp"
 

@@ -11,18 +11,12 @@
 #include <cassert>
 #include <sstream>
 #include <unordered_map>
-#include <unordered_set>
 #include <optional>
 #include <functional>
 #include <string_view>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/internal/metadata/utils.hpp>
-#include <yactfr/metadata/aliases.hpp>
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/dl-array-type.hpp>
 #include <yactfr/metadata/dl-blob-type.hpp>
@@ -33,9 +27,7 @@
 #include <yactfr/metadata/item.hpp>
 #include <yactfr/metadata/opt-type.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
-#include <yactfr/metadata/sl-blob-type.hpp>
 #include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/text-parse-error.hpp>
 
@@ -43,7 +35,6 @@
 #include "set-pseudo-dt-data-loc.hpp"
 #include "set-pseudo-dt-pos-in-scope.hpp"
 #include "pseudo-types.hpp"
-#include "../utils.hpp"
 
 namespace yactfr::internal {
 

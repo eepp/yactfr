@@ -62,7 +62,6 @@
 #include <sstream>
 #include <list>
 #include <vector>
-#include <utility>
 #include <functional>
 #include <optional>
 #include <string>
@@ -75,7 +74,6 @@
 #include <yactfr/metadata/fl-bool-type.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
 #include <yactfr/metadata/fl-float-type.hpp>
-#include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/nt-str-type.hpp>
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/sl-array-type.hpp>
@@ -86,7 +84,6 @@
 #include <yactfr/metadata/dl-blob-type.hpp>
 #include <yactfr/metadata/var-type.hpp>
 #include <yactfr/metadata/opt-type.hpp>
-#include <yactfr/metadata/clk-type.hpp>
 #include <yactfr/metadata/ert.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/trace-type.hpp>

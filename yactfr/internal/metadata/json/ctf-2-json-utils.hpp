@@ -11,7 +11,6 @@
 #include <optional>
 #include <string>
 #include <string_view>
-#include <boost/uuid/uuid.hpp>
 
 #include <yactfr/metadata/item.hpp>
 

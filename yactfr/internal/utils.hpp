@@ -9,7 +9,6 @@
 #define YACTFR_INTERNAL_UTILS_HPP
 
 #include <string>
-#include <optional>
 
 #include <yactfr/aliases.hpp>
 

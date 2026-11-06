@@ -17,7 +17,6 @@
 #include "trace-type-impl.hpp"
 #include "../proc.hpp"
 #include "../pkt-proc-builder.hpp"
-#include "../utils.hpp"
 
 namespace yactfr::internal {
 

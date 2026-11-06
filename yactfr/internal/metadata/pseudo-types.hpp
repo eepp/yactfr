@@ -22,7 +22,6 @@
 #include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/metadata/int-range-set.hpp>
 #include <yactfr/metadata/fl-int-type.hpp>
-#include <yactfr/metadata/vl-int-type.hpp>
 #include <yactfr/metadata/str-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 #include <yactfr/metadata/trace-env.hpp>

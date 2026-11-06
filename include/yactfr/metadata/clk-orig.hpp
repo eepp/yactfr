@@ -10,7 +10,6 @@
 
 #include <string>
 #include <optional>
-#include <boost/uuid/uuid.hpp>
 
 namespace yactfr {
 

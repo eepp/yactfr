@@ -14,7 +14,6 @@
 #include <string>
 #include <unordered_set>
 #include <type_traits>
-#include <optional>
 
 #include "int-range-set.hpp"
 

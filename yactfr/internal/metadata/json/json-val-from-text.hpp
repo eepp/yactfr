@@ -8,7 +8,6 @@
 #ifndef YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_FROM_TEXT_HPP
 #define YACTFR_INTERNAL_METADATA_JSON_JSON_VAL_FROM_TEXT_HPP
 
-#include <string>
 #include <string_view>
 
 #include "json-val.hpp"

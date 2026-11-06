@@ -11,24 +11,14 @@
 #include <utility>
 
 #include <yactfr/aliases.hpp>
-#include <yactfr/metadata/aliases.hpp>
 #include <yactfr/metadata/data-loc.hpp>
-#include <yactfr/metadata/dl-array-type.hpp>
-#include <yactfr/metadata/dl-str-type.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/ert.hpp>
-#include <yactfr/metadata/int-range.hpp>
-#include <yactfr/metadata/sl-array-type.hpp>
-#include <yactfr/metadata/sl-str-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/var-type.hpp>
 #include <yactfr/text-loc.hpp>
 #include <yactfr/text-parse-error.hpp>
 
 #include "pseudo-types.hpp"
 #include "set-pseudo-dt-data-loc.hpp"
-#include "../utils.hpp"
 
 namespace yactfr::internal {
 namespace {

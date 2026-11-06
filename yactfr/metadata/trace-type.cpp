@@ -15,7 +15,6 @@
 
 #include <yactfr/metadata/struct-type.hpp>
 #include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/data-loc.hpp>
 #include <yactfr/aliases.hpp>
 
 #include "../internal/metadata/trace-type-impl.hpp"

@@ -21,26 +21,10 @@
 #include <string_view>
 #include <tuple>
 #include <boost/uuid/uuid.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/range/adaptor/reversed.hpp>
 
 #include <yactfr/aliases.hpp>
 #include <yactfr/metadata/trace-type.hpp>
-#include <yactfr/metadata/fl-int-type.hpp>
-#include <yactfr/metadata/fl-float-type.hpp>
-#include <yactfr/metadata/nt-str-type.hpp>
-#include <yactfr/metadata/sl-array-type.hpp>
-#include <yactfr/metadata/sl-str-type.hpp>
 #include <yactfr/metadata/dl-array-type.hpp>
-#include <yactfr/metadata/dl-str-type.hpp>
-#include <yactfr/metadata/struct-type.hpp>
-#include <yactfr/metadata/struct-member-type.hpp>
-#include <yactfr/metadata/var-type.hpp>
-#include <yactfr/metadata/var-type-opt.hpp>
-#include <yactfr/metadata/data-loc.hpp>
-#include <yactfr/metadata/trace-env.hpp>
 #include <yactfr/metadata/aliases.hpp>
 #include <yactfr/text-parse-error.hpp>
 

@@ -5,10 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <limits>
 #include <sstream>
 #include <iostream>
-#include <vector>
 
 #include <yactfr/yactfr.hpp>
 

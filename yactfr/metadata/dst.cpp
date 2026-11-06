@@ -7,8 +7,6 @@
 
 #include <string>
 
-#include <yactfr/metadata/data-loc.hpp>
-#include <yactfr/metadata/dt.hpp>
 #include <yactfr/metadata/dst.hpp>
 #include <yactfr/metadata/trace-type.hpp>
 

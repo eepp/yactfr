@@ -8,9 +8,6 @@
 #ifndef YACTFR_METADATA_CLK_OFFSET_HPP
 #define YACTFR_METADATA_CLK_OFFSET_HPP
 
-#include <optional>
-#include <boost/uuid/uuid.hpp>
-
 #include "aliases.hpp"
 
 namespace yactfr {
