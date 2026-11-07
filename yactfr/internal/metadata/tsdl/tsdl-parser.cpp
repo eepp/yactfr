@@ -10,6 +10,7 @@
 #include <functional>
 #include <limits>
 #include <variant>
+#include <type_traits>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -23,6 +24,32 @@
 #include "../../utils.hpp"
 
 namespace yactfr::internal {
+namespace {
+
+/*
+ * Calls `func()` and returns its result, appending an error context
+ * message at the text location `loc` to any thrown `TextParseError`.
+ *
+ * `msg` is either the message or a function which returns it: use the
+ * latter to only build the message on error.
+ */
+template <typename MsgT, typename FuncT>
+auto withErrCtx(const TextLocation& loc, MsgT&& msg, FuncT&& func) -> decltype(func())
+{
+    try {
+        return func();
+    } catch (TextParseError& exc) {
+        if constexpr (std::is_invocable_v<MsgT>) {
+            appendMsgToTextParseError(exc, msg(), loc);
+        } else {
+            appendMsgToTextParseError(exc, std::string {msg}, loc);
+        }
+
+        throw;
+    }
+}
+
+} // namespace
 
 TsdlParser::_tStackFrame::_tStackFrame(const Kind kind, const Index lexId) :
     kind {kind},
@@ -326,33 +353,24 @@ void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
 {
     PseudoDstDefClkTypeSetter visitor {*_pseudoTraceType, pseudoDst};
 
-    try {
-        if (pseudoDst.pseudoPktCtxType()) {
-            try {
-                pseudoDst.pseudoPktCtxType()->accept(visitor);
-            } catch (TextParseError& exc) {
-                appendMsgToTextParseError(exc, "In the packet context type:",
-                                          pseudoDst.pseudoPktCtxType()->loc());
-                throw;
-            }
-        }
-
-        if (pseudoDst.pseudoErHeaderType()) {
-            try {
-                pseudoDst.pseudoErHeaderType()->accept(visitor);
-            } catch (TextParseError& exc) {
-                appendMsgToTextParseError(exc, "In the event record header type:",
-                                          pseudoDst.pseudoErHeaderType()->loc());
-                throw;
-            }
-        }
-    } catch (TextParseError& exc) {
+    withErrCtx(pseudoDst.loc(), [&pseudoDst] {
         std::ostringstream ss;
 
         ss << "In the data stream type with ID " << pseudoDst.id() << ":";
-        appendMsgToTextParseError(exc, ss.str(), pseudoDst.loc());
-        throw;
-    }
+        return ss.str();
+    }, [&pseudoDst, &visitor] {
+        if (const auto pseudoPktCtxType = pseudoDst.pseudoPktCtxType()) {
+            withErrCtx(pseudoPktCtxType->loc(), "In the packet context type:", [&] {
+                pseudoPktCtxType->accept(visitor);
+            });
+        }
+
+        if (const auto pseudoErHeaderType = pseudoDst.pseudoErHeaderType()) {
+            withErrCtx(pseudoErHeaderType->loc(), "In the event record header type:", [&] {
+                pseudoErHeaderType->accept(visitor);
+            });
+        }
+    });
 }
 
 void TsdlParser::_setPseudoDstDefClkType()
@@ -821,12 +839,11 @@ bool TsdlParser::_tryParseRootBlock()
         return false;
     }
 
-    try {
+    withErrCtx(loc, [name] {
+        return std::string {"In `"} + name + "` root block:";
+    }, [this, parseFunc] {
         (this->*parseFunc)();
-    } catch (TextParseError& error) {
-        appendMsgToTextParseError(error, std::string {"In `"} + name + "` root block:", loc);
-        throw;
-    }
+    });
 
     return true;
 }
@@ -867,12 +884,9 @@ bool TsdlParser::_tryParseGenericDtAlias()
 
     const auto loc = _ss.loc();
 
-    try {
+    return withErrCtx(loc, "In data type alias:", [this] {
         return this->_tryParseGenericDtAliasNoErrCtx();
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, "In data type alias:", loc);
-        throw;
-    }
+    });
 }
 
 bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
@@ -966,55 +980,47 @@ std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt()
     _ss.skipCommentsAndWhitespaces();
 
     const auto loc = _ss.loc();
-    const auto tryParse = [&loc](auto&& parseFunc, const char * const name) {
-        try {
-            return parseFunc();
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc, std::string {"In `"} + name + "` block:", loc);
-            throw;
-        }
-    };
 
     // only try what can start with the keyword at the current position
     switch (this->_peekKw()) {
     case _tKw::Integer:
-        return {tryParse([this] {
+        return {withErrCtx(loc, "In `integer` block:", [this] {
             return this->_tryParseFlIntType();
-        }, "integer"), std::string {}, false};
+        }), std::string {}, false};
 
     case _tKw::String:
-        return {tryParse([this] {
+        return {withErrCtx(loc, "In `string` block:", [this] {
             return this->_tryParseNtStrType();
-        }, "string"), std::string {}, false};
+        }), std::string {}, false};
 
     case _tKw::Enum:
     {
-        auto [pseudoDt, dtAliasName] = tryParse([this] {
+        auto [pseudoDt, dtAliasName] = withErrCtx(loc, "In `enum` block:", [this] {
             return this->_tryParseFlEnumType();
-        }, "enum");
+        });
 
         return {std::move(pseudoDt), std::move(dtAliasName), true};
     }
 
     case _tKw::FloatingPoint:
-        return {tryParse([this] {
+        return {withErrCtx(loc, "In `floating_point` block:", [this] {
             return this->_tryParseFlFloatType();
-        }, "floating_point"), std::string {}, false};
+        }), std::string {}, false};
 
     case _tKw::Struct:
     {
-        auto [pseudoDt, dtAliasName] = tryParse([this] {
+        auto [pseudoDt, dtAliasName] = withErrCtx(loc, "In `struct` block:", [this] {
             return this->_tryParseStructType();
-        }, "struct");
+        });
 
         return {std::move(pseudoDt), std::move(dtAliasName), true};
     }
 
     case _tKw::Variant:
     {
-        auto [pseudoDt, dtAliasName] = tryParse([this] {
+        auto [pseudoDt, dtAliasName] = withErrCtx(loc, "In `variant` block:", [this] {
             return this->_tryParseVarType();
-        }, "variant");
+        });
 
         return {std::move(pseudoDt), std::move(dtAliasName), true};
     }
@@ -1498,17 +1504,11 @@ PseudoNamedDts TsdlParser::_parseStructVarTypeBody(const char * const blockName,
             return pseudoNamedDts;
         }
 
-        const auto loc = _ss.loc();
-        bool success;
-
-        try {
-            success = this->_tryParseNamedDtOrDtAlias(pseudoNamedDts);
-        } catch (TextParseError& exc) {
-            appendMsgToTextParseError(exc,
-                                      std::string {"While parsing body of `"} + blockName +
-                                      "` block:", loc);
-            throw;
-        }
+        const auto success = withErrCtx(_ss.loc(), [blockName] {
+            return std::string {"While parsing body of `"} + blockName + "` block:";
+        }, [this, &pseudoNamedDts] {
+            return this->_tryParseNamedDtOrDtAlias(pseudoNamedDts);
+        });
 
         if (!success) {
             throwTextParseError(expectingMsg, _ss.loc());
@@ -2237,7 +2237,18 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         return nullptr;
     }
 
-    try {
+    return withErrCtx(beginLoc, [&firstName, &secondName] {
+        std::string line {"In the `"};
+
+        line += firstName;
+
+        if (!secondName.empty()) {
+            line += ".";
+            line += secondName;
+        }
+
+        return line + "` scope:";
+    }, [&]() -> PseudoDt::Up {
         if (!secondName.empty()) {
             this->_expectToken(".");
 
@@ -2289,22 +2300,7 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         this->_expectToken(";");
         ssRej.accept();
         return std::move(pseudoDt);
-    } catch (TextParseError& exc) {
-        appendMsgToTextParseError(exc, std::invoke([&firstName, &secondName] {
-            std::string line {"In the `"};
-
-            line += firstName;
-
-            if (!secondName.empty()) {
-                line += ".";
-                line += secondName;
-            }
-
-            return line + "` scope:";
-        }), beginLoc);
-
-        throw;
-    }
+    });
 }
 
 TsdlParser::_tAttrs TsdlParser::_expectAttrBlock()
@@ -2667,28 +2663,21 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
 
             lenDescrs.push_back({static_cast<Size>(*val), subscriptLoc});
         } else {
-            std::optional<PseudoDataLoc> pseudoDataLoc;
+            const auto pseudoDataLoc = withErrCtx(subscriptLoc,
+                                                  "Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):",
+                                                  [this] {
+                return this->_expectDataLoc();
+            });
 
-            try {
-                pseudoDataLoc = this->_expectDataLoc();
-            } catch (TextParseError& exc) {
-                appendMsgToTextParseError(exc,
-                                          "Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):",
-                                          subscriptLoc);
-                throw;
-            }
-
-            assert(pseudoDataLoc);
-
-            if (pseudoDataLoc->isEnv()) {
+            if (pseudoDataLoc.isEnv()) {
                 // only the `env.KEY` format is accepted
-                if (pseudoDataLoc->pathElems().size() != 1) {
+                if (pseudoDataLoc.pathElems().size() != 1) {
                     throwTextParseError("Invalid environment location: expecting `env.KEY`, "
                                         "where KEY is the key of an existing environment entry.",
                                         subscriptLoc);
                 }
 
-                const auto& envKey = *pseudoDataLoc->pathElems()[0];
+                const auto& envKey = *pseudoDataLoc.pathElems()[0];
 
                 if (this->_isFirstPass()) {
                     /*
@@ -2737,7 +2726,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
                     }
                 }
             } else {
-                lenDescrs.push_back({*pseudoDataLoc, subscriptLoc});
+                lenDescrs.push_back({pseudoDataLoc, subscriptLoc});
             }
         }
 
