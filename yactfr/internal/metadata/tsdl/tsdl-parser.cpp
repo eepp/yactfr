@@ -2499,7 +2499,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
 std::optional<std::string> TsdlParser::_parseDtAliasName(const bool expect)
 {
     auto isMulti = false;
-    std::vector<std::string> parts;
+    std::string dtAliasName;
 
     while (true) {
         StrScannerRejecter ssRej {_ss};
@@ -2552,7 +2552,12 @@ std::optional<std::string> TsdlParser::_parseDtAliasName(const bool expect)
         }
 
         ssRej.accept();
-        parts.emplace_back(*ident);
+
+        if (!dtAliasName.empty()) {
+            dtAliasName += ' ';
+        }
+
+        dtAliasName += *ident;
 
         if (!isMulti) {
             // single word data type alias name: break now
@@ -2560,21 +2565,11 @@ std::optional<std::string> TsdlParser::_parseDtAliasName(const bool expect)
         }
     }
 
-    if (parts.empty()) {
+    if (dtAliasName.empty()) {
         if (expect) {
             throwTextParseError("Expecting data type alias name.", _ss.loc());
         } else {
             return std::nullopt;
-        }
-    }
-
-    std::string dtAliasName;
-
-    for (auto it = parts.begin(); it != parts.end(); ++it) {
-        dtAliasName += *it;
-
-        if (std::distance(it, parts.end()) > 1) {
-            dtAliasName += ' ';
         }
     }
 
