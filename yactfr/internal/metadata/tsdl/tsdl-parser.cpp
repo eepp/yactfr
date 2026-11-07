@@ -1625,7 +1625,7 @@ bool TsdlParser::_tryParseEnvBlock()
     // parse `;`
     this->_expectToken(";");
 
-    if (!_pseudoTraceType) {
+    if (this->_isFirstPass()) {
         // first pass: skip
         return true;
     }
@@ -1693,7 +1693,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     // parse `;`
     this->_expectToken(";");
 
-    if (!_pseudoTraceType) {
+    if (this->_isFirstPass()) {
         return true;
     }
 
@@ -1981,25 +1981,7 @@ bool TsdlParser::_tryParseTraceTypeBlock()
         TsdlParser::_throwMissingAttr("byte_order", beginLoc);
     }
 
-    if (_nativeBo) {
-        // second time we parse this: create pseudo trace type
-        PseudoTraceType pseudoTraceType {
-            *majorVersion, *minorVersion, std::nullopt, std::nullopt, std::move(uuidStr),
-            TraceEnvironment {}, std::move(pseudoPktHeaderType)
-        };
-
-        /*
-         * Keep what the root blocks preceding this `trace` block added
-         * to the placeholder pseudo trace type.
-         */
-        assert(_pseudoTraceType);
-        pseudoTraceType.env(_pseudoTraceType->env());
-        pseudoTraceType.clkTypes() = std::move(_pseudoTraceType->clkTypes());
-        pseudoTraceType.pseudoDsts() = std::move(_pseudoTraceType->pseudoDsts());
-        pseudoTraceType.pseudoOrphanErts() = std::move(_pseudoTraceType->pseudoOrphanErts());
-        _pseudoTraceType = std::move(pseudoTraceType);
-        _traceTypeBlockParsed = true;
-    } else {
+    if (this->_isFirstPass()) {
         /*
          * Alright, we have the REAL native byte order now, so restart
          * the whooooole process. Luckily the `trace` block is early in
@@ -2019,6 +2001,24 @@ bool TsdlParser::_tryParseTraceTypeBlock()
          * precede the `trace` block during the second pass.
          */
         _pseudoTraceType = PseudoTraceType {*majorVersion, *minorVersion};
+    } else {
+        // second pass: create pseudo trace type
+        PseudoTraceType pseudoTraceType {
+            *majorVersion, *minorVersion, std::nullopt, std::nullopt, std::move(uuidStr),
+            TraceEnvironment {}, std::move(pseudoPktHeaderType)
+        };
+
+        /*
+         * Keep what the root blocks preceding this `trace` block added
+         * to the placeholder pseudo trace type.
+         */
+        assert(_pseudoTraceType);
+        pseudoTraceType.env(_pseudoTraceType->env());
+        pseudoTraceType.clkTypes() = std::move(_pseudoTraceType->clkTypes());
+        pseudoTraceType.pseudoDsts() = std::move(_pseudoTraceType->pseudoDsts());
+        pseudoTraceType.pseudoOrphanErts() = std::move(_pseudoTraceType->pseudoOrphanErts());
+        _pseudoTraceType = std::move(pseudoTraceType);
+        _traceTypeBlockParsed = true;
     }
 
     return true;
@@ -2103,7 +2103,7 @@ bool TsdlParser::_tryParseDstBlock()
     // parse `;`
     this->_expectToken(";");
 
-    if (!_pseudoTraceType) {
+    if (this->_isFirstPass()) {
         return true;
     }
 
@@ -2209,7 +2209,7 @@ bool TsdlParser::_tryParseErtBlock()
     // parse `;`
     this->_expectToken(";");
 
-    if (!_pseudoTraceType) {
+    if (this->_isFirstPass()) {
         return true;
     }
 
@@ -2733,7 +2733,7 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
 
                 const auto& envKey = *pseudoDataLoc->pathElems()[0];
 
-                if (!_pseudoTraceType) {
+                if (this->_isFirstPass()) {
                     /*
                      * First pass: the parser skips the `env` block, but
                      * also discards this data type once it parses the

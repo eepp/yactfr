@@ -973,6 +973,16 @@ private:
                      _tStackFrame& frame);
 
     /*
+     * Returns whether or not this parser is in its first pass, that is,
+     * it didn't parse the `trace` block yet to know the native
+     * byte order.
+     */
+    bool _isFirstPass() const noexcept
+    {
+        return !_nativeBo;
+    }
+
+    /*
      * Returns the current native byte order, or a random one if
      * not available.
      *
