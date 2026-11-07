@@ -722,6 +722,17 @@ private:
     [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseVarType();
 
     /*
+     * Parses the body of a structure or variant type block, after `{`
+     * and up to `}`, returning the parsed member types or options.
+     *
+     * `blockName` is the name of the block (`struct` or `variant`) for
+     * the error context, and `expectingMsg` is the error message when
+     * there's neither a member type/option nor a data type alias.
+     */
+    [[ nodiscard ]] PseudoNamedDts _parseStructVarTypeBody(const char *blockName,
+                                                           const char *expectingMsg);
+
+    /*
      * Parses a trace environment block and sets the trace environment
      * of the current pseudo trace type accordingly.
      *

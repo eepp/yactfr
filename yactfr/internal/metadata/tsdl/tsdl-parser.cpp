@@ -1454,31 +1454,9 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType()
             }
 
             // parse data type aliases and member types
-            PseudoNamedDts pseudoMemberTypes;
-
-            while (true) {
-                this->_skipCommentsAndWhitespacesAndSemicolons();
-
-                if (_ss.tryScanToken("}")) {
-                    break;
-                }
-
-                const auto loc = _ss.loc();
-                bool success;
-
-                try {
-                    success = this->_tryParseNamedDtOrDtAlias(pseudoMemberTypes);
-                } catch (TextParseError& exc) {
-                    appendMsgToTextParseError(exc, "While parsing body of `struct` block:", loc);
-                    throw;
-                }
-
-                if (!success) {
-                    throwTextParseError("Expecting member type with known data type "
-                                        "or data type alias.",
-                                        _ss.loc());
-                }
-            }
+            auto pseudoMemberTypes = this->_parseStructVarTypeBody("struct",
+                                                                   "Expecting member type with known data type "
+                                                                   "or data type alias.");
 
             ssRej.accept();
 
@@ -1521,6 +1499,36 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType()
     }
 
     return {std::move(pseudoDt), std::move(potDtAliasName)};
+}
+
+PseudoNamedDts TsdlParser::_parseStructVarTypeBody(const char * const blockName,
+                                                   const char * const expectingMsg)
+{
+    PseudoNamedDts pseudoNamedDts;
+
+    while (true) {
+        this->_skipCommentsAndWhitespacesAndSemicolons();
+
+        if (_ss.tryScanToken("}")) {
+            return pseudoNamedDts;
+        }
+
+        const auto loc = _ss.loc();
+        bool success;
+
+        try {
+            success = this->_tryParseNamedDtOrDtAlias(pseudoNamedDts);
+        } catch (TextParseError& exc) {
+            appendMsgToTextParseError(exc,
+                                      std::string {"While parsing body of `"} + blockName +
+                                      "` block:", loc);
+            throw;
+        }
+
+        if (!success) {
+            throwTextParseError(expectingMsg, _ss.loc());
+        }
+    }
 }
 
 std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType()
@@ -1578,29 +1586,8 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType()
             }
 
             // parse data type aliases and options
-            PseudoNamedDts opts;
-
-            while (true) {
-                this->_skipCommentsAndWhitespacesAndSemicolons();
-
-                if (_ss.tryScanToken("}")) {
-                    break;
-                }
-
-                const auto loc = _ss.loc();
-                bool success;
-
-                try {
-                    success = this->_tryParseNamedDtOrDtAlias(opts);
-                } catch (TextParseError& exc) {
-                    appendMsgToTextParseError(exc, "While parsing body of `variant` block:", loc);
-                    throw;
-                }
-
-                if (!success) {
-                    throwTextParseError("Expecting option or data type alias.", _ss.loc());
-                }
-            }
+            auto opts = this->_parseStructVarTypeBody("variant",
+                                                      "Expecting option or data type alias.");
 
             ssRej.accept();
 
