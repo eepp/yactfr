@@ -1469,23 +1469,8 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType()
                 this->_expectToken("(");
 
                 if (const auto optAlign = _ss.tryScanConstUInt()) {
-                    if (!isPowOfTwo(*optAlign)) {
-                        std::ostringstream ss;
-
-                        ss << "Invalid minimum alignment for `struct` block " <<
-                              "(must be a power of two): " << *optAlign << ".";
-                        throwTextParseError(ss.str(), _ss.loc());
-                    }
-
-                    if (*optAlign > std::numeric_limits<unsigned int>::max()) {
-                        std::ostringstream ss;
-
-                        ss << "Minimum alignment for `struct` block is too large " <<
-                              "(unsupported): " << *optAlign << ".";
-                        throwTextParseError(ss.str(), _ss.loc());
-                    }
-
-                    align = static_cast<unsigned int>(*optAlign);
+                    align = tsdlAlign(*optAlign, "minimum alignment for `struct` block",
+                                      _ss.loc());
                     this->_expectToken(")");
                 } else {
                     throwTextParseError("Expecting valid constant unsigned integer.",

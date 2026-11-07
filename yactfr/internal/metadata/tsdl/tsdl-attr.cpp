@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+#include <cctype>
 #include <sstream>
 #include <limits>
 
@@ -131,25 +132,32 @@ void TsdlAttr::throwUnknown() const
     throwTextParseError(ss.str(), this->nameTextLoc());
 }
 
+unsigned int tsdlAlign(const unsigned long long val, const std::string_view descr,
+                       const TextLocation& loc)
+{
+    assert(!descr.empty());
+
+    if (!isPowOfTwo(val)) {
+        std::ostringstream ss;
+
+        ss << "Invalid " << descr << " (must be a power of two): " << val << ".";
+        throwTextParseError(ss.str(), loc);
+    }
+
+    if (val > std::numeric_limits<unsigned int>::max()) {
+        std::ostringstream ss;
+
+        ss << static_cast<char>(std::toupper(static_cast<unsigned char>(descr.front()))) <<
+              descr.substr(1) << " is too large (unsupported): " << val << ".";
+        throwTextParseError(ss.str(), loc);
+    }
+
+    return static_cast<unsigned int>(val);
+}
+
 unsigned int TsdlAttr::align() const
 {
-    const auto uintVal = this->uintVal();
-
-    if (!isPowOfTwo(uintVal)) {
-        std::ostringstream ss;
-
-        ss << "Invalid `align` attribute (must be a power of two): " << uintVal << ".";
-        throwTextParseError(ss.str(), this->valTextLoc());
-    }
-
-    if (uintVal > std::numeric_limits<unsigned int>::max()) {
-        std::ostringstream ss;
-
-        ss << "`align` attribute is too large (unsupported): " << uintVal << ".";
-        throwTextParseError(ss.str(), this->valTextLoc());
-    }
-
-    return static_cast<unsigned int>(uintVal);
+    return tsdlAlign(this->uintVal(), "`align` attribute", this->valTextLoc());
 }
 
 std::optional<ByteOrder> TsdlAttr::bo() const

@@ -190,6 +190,15 @@ private:
     [[ noreturn ]] void _throwExpecting(std::string_view expectedDescr) const;
 };
 
+/*
+ * Returns `val` as an alignment, throwing an error at `loc` if it's not
+ * a power of two or if it doesn't fit `unsigned int`.
+ *
+ * `descr` describes `val` within an error message, for example
+ * "`align` attribute".
+ */
+unsigned int tsdlAlign(unsigned long long val, std::string_view descr, const TextLocation& loc);
+
 } // namespace yactfr::internal
 
 #endif // YACTFR_INTERNAL_METADATA_TSDL_TSDL_ATTR_HPP
