@@ -1278,7 +1278,7 @@ void TsdlParser::_validateFlIntTypeMapping(const Size len, const TextLocation& l
         Value minLower, maxUpper;
 
         if constexpr (std::is_signed_v<Value>) {
-            if (len < 63) {
+            if (len < 64) {
                 minLower = -(1LL << (len - 1));
                 maxUpper = (1LL << (len - 1)) - 1;
             } else {
