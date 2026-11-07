@@ -2319,23 +2319,15 @@ TsdlAttr TsdlParser::_expectAttr()
     TsdlAttr attr;
 
     // parse name
-    {
-        auto nameIsFound = false;
+    _ss.skipCommentsAndWhitespaces();
+    attr.nameLoc = _ss.loc();
 
-        _ss.skipCommentsAndWhitespaces();
-        attr.nameLoc = _ss.loc();
-
-        if (_ss.tryScanToken("model.emf.uri")) {
-            nameIsFound = true;
-            attr.name = "model.emf.uri";
-        } else if (const auto ident = _ss.tryScanIdent()) {
-            nameIsFound = true;
-            attr.name = *ident;
-        }
-
-        if (!nameIsFound) {
-            throwTextParseError("Expecting attribute name.", *attr.nameLoc);
-        }
+    if (_ss.tryScanToken("model.emf.uri")) {
+        attr.name = "model.emf.uri";
+    } else if (const auto ident = _ss.tryScanIdent()) {
+        attr.name = *ident;
+    } else {
+        throwTextParseError("Expecting attribute name.", *attr.nameLoc);
     }
 
     // parse `=`
