@@ -1467,12 +1467,12 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType()
     PseudoDt::Up pseudoDt;
 
     {
-        _tLexScope dtAliasLexScope;
+        std::optional<_tLexScope> dtAliasLexScope;
 
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "struct ";
             potDtAliasName += *ident;
-            dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
+            dtAliasLexScope.emplace(*this, _tStackFrame::Kind::DtAlias);
         }
 
         {
@@ -1572,12 +1572,12 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType()
     PseudoDt::Up pseudoDt;
 
     {
-        _tLexScope dtAliasLexScope;
+        std::optional<_tLexScope> dtAliasLexScope;
 
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "variant ";
             potDtAliasName += *ident;
-            dtAliasLexScope = _tLexScope {*this, _tStackFrame::Kind::DtAlias};
+            dtAliasLexScope.emplace(*this, _tStackFrame::Kind::DtAlias);
         }
 
         {

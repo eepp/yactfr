@@ -171,46 +171,22 @@ private:
     class _tLexScope final
     {
     public:
-        _tLexScope() noexcept :
-            _parser {nullptr},
-            _frameKind {_tStackFrame::Kind::Root}
-        {
-        }
-
         explicit _tLexScope(TsdlParser& mp, const _tStackFrame::Kind frameKind) :
-            _parser {&mp},
-            _frameKind {frameKind}
+            _parser {&mp}
         {
             _parser->_stackPush(frameKind);
         }
 
         _tLexScope(const _tLexScope&) = delete;
+        _tLexScope& operator=(const _tLexScope&) = delete;
 
         ~_tLexScope()
         {
-            this->exit();
-        }
-
-        void operator=(const _tLexScope& lexicalScope)
-        {
-            this->exit();
-            _parser = lexicalScope._parser;
-            _frameKind = lexicalScope._frameKind;
-            _parser->_stackPush(_frameKind);
-        }
-
-        void exit()
-        {
-            if (_parser) {
-                _parser->_stackPop();
-            }
-
-            _parser = nullptr;
+            _parser->_stackPop();
         }
 
     private:
-        TsdlParser *_parser;
-        TsdlParser::_tStackFrame::Kind _frameKind;
+        TsdlParser * const _parser;
     };
 
     using _tAttrs = std::vector<TsdlAttr>;
