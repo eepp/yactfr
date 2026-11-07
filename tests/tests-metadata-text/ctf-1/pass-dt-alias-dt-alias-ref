@@ -1,0 +1,49 @@
+/* CTF 1.8 */
+
+typealias integer { size = 8; align = 8; signed = false; } := uint8_t;
+typealias integer { size = 64; align = 8; signed = false; } := unsigned long;
+
+/*
+ * The data type of a `typealias` or `typedef` block may be a reference
+ * to an existing data type alias, like the data type of a member type.
+ */
+enum my_enum : uint8_t {
+  A,
+  B,
+};
+
+struct my_struct {
+  uint8_t a;
+  string b;
+};
+
+variant my_var {
+  uint8_t A;
+  string B;
+};
+
+typedef enum my_enum my_enum_t;
+typedef struct my_struct my_struct_t;
+typedef unsigned long ulong_t;
+typealias unsigned long := ulong_t2;
+typedef uint8_t byte_t[4];
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    my_enum_t tag;
+    my_struct_t s;
+    ulong_t ul;
+    ulong_t2 ul2;
+    byte_t bytes;
+    typedef variant my_var <event.fields.tag> my_var_t;
+    my_var_t v;
+  };
+};

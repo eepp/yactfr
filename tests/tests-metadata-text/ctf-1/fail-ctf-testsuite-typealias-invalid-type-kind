@@ -16,4 +16,4 @@ trace {
 };
 ---
 [6:1] In data type alias:
-[6:17] Expecting explicit data type block (`integer`, `floating_point`, `enum`, `string`, `struct`, or `variant`) or existing data type alias name.
+[6:11] Expecting explicit data type block (`integer`, `floating_point`, `enum`, `string`, `struct`, or `variant`) or existing data type alias name.

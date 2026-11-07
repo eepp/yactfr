@@ -884,47 +884,29 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
     {
         _tLexScope lexScope {*this, _tStackFrame::Kind::DtAlias};
 
+        // parse data type or data type alias reference
+        auto [parsedPseudoDt, innerDtAliasName] = this->_tryParseDt();
+
+        pseudoDt = std::move(parsedPseudoDt);
+
+        if (!pseudoDt) {
+            throwTextParseError("Expecting explicit data type block (`integer`, `floating_point`, "
+                                "`enum`, `string`, `struct`, or `variant`) or "
+                                "existing data type alias name.",
+                                _ss.loc());
+        }
+
         /*
-         * Parse full data type.
-         *
          * If it's a named fixed-length enumeration, structure, or
          * variant type, then add a data type alias for its name (for
          * example, `struct foo`) to the parent frame, not to the data
          * type alias frame which `lexScope` manages: the latter only
          * exists while parsing this block.
          */
-        auto [fullPseudoDt, innerDtAliasName, isCompound] = this->_tryParseFullDt();
-
-        pseudoDt = std::move(fullPseudoDt);
-
-        if (pseudoDt && !innerDtAliasName.empty()) {
+        if (!innerDtAliasName.empty()) {
             assert(_stack.size() >= 2);
             this->_addDtAlias(std::move(innerDtAliasName), *pseudoDt, _ss.loc(),
                               _stack[_stack.size() - 2]);
-        }
-
-        if (!pseudoDt) {
-            /*
-             * Cannot parse a full data type: try an existing data type
-             * alias name.
-             */
-            const auto loc = _ss.loc();
-
-            if (const auto ident = _ss.tryScanIdent()) {
-                pseudoDt = this->_aliasedPseudoDt(std::string {*ident}, loc);
-
-                if (!pseudoDt) {
-                    throwTextParseError("Expecting explicit data type block (`integer`, `floating_point`, "
-                                        "`enum`, `string`, `struct`, or `variant`) or "
-                                        "existing data type alias name.",
-                                        _ss.loc());
-                }
-            } else {
-                throwTextParseError("Expecting explicit data type block (`integer`, `floating_point`, "
-                                    "`enum`, `string`, `struct`, or `variant`) or "
-                                    "existing data type alias name.",
-                                    _ss.loc());
-            }
         }
 
         // parse `:=` if `typealias` block
