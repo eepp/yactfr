@@ -74,9 +74,10 @@ public:
         return *_dt;
     }
 
-private:
+protected:
     bool _isEqual(const DataType& other) const noexcept override;
 
+private:
     DataTypeSet& _selTypes() const noexcept
     {
         return _theSelTypes;
@@ -232,6 +233,13 @@ public:
     const SelectorRangeSet& selectorRanges() const noexcept
     {
         return _selRanges;
+    }
+
+private:
+    bool _isEqual(const DataType& other) const noexcept override
+    {
+        return OptionalType::_isEqual(other) &&
+               _selRanges == static_cast<const OptionalWithIntegerSelectorType&>(other)._selRanges;
     }
 
 private:

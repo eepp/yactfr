@@ -266,6 +266,7 @@ public:
 
 private:
     DataType::Up _clone() const override;
+    bool _isEqual(const DataType& other) const noexcept override;
     [[ nodiscard ]] static std::vector<_tFlagMask> _flagMasksFromFlags(const Flags& flags);
 
     void _accept(DataTypeVisitor& visitor) const override

@@ -102,4 +102,10 @@ DataType::Up FixedLengthBitMapType::_clone() const
                                          internal::tryCloneAttrs(this->attributes()));
 }
 
+bool FixedLengthBitMapType::_isEqual(const DataType& other) const noexcept
+{
+    return FixedLengthBitArrayType::_isEqual(other) &&
+           _flags == other.asFixedLengthBitMapType()._flags;
+}
+
 } // namespace yactfr
