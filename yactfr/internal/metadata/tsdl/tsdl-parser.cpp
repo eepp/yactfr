@@ -853,7 +853,7 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
     {
         StrScannerRejecter ssRej {_ss};
         auto [pseudoDt, dtAliasName] = tryParse([this] {
-            return this->_tryParseFlEnumType(false);
+            return this->_tryParseFlEnumType();
         }, "enum");
 
         if (pseudoDt) {
@@ -879,7 +879,7 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
     {
         StrScannerRejecter ssRej {_ss};
         auto [pseudoDt, dtAliasName] = tryParse([this] {
-            return this->_tryParseStructType(false);
+            return this->_tryParseStructType();
         }, "struct");
 
         if (pseudoDt) {
@@ -905,7 +905,7 @@ bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
     {
         StrScannerRejecter ssRej {_ss};
         auto [pseudoDt, dtAliasName] = tryParse([this] {
-            return this->_tryParseVarType(false);
+            return this->_tryParseVarType();
         }, "variant");
 
         if (pseudoDt) {
@@ -969,7 +969,7 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
          * type alias frame which `lexScope` manages: the latter only
          * exists while parsing this block.
          */
-        auto [fullPseudoDt, innerDtAliasName, isCompound] = this->_tryParseFullDt(false);
+        auto [fullPseudoDt, innerDtAliasName, isCompound] = this->_tryParseFullDt();
 
         pseudoDt = std::move(fullPseudoDt);
 
@@ -1037,18 +1037,18 @@ bool TsdlParser::_tryParseDtAlias()
     return false;
 }
 
-std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseDt(const bool addDtAlias)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseDt()
 {
     if (auto pseudoDt = this->_tryParseDtAliasRef()) {
         return {std::move(pseudoDt), std::string {}};
     }
 
-    auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt(addDtAlias);
+    auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt();
 
     return {std::move(pseudoDt), std::move(dtAliasName)};
 }
 
-std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt(const bool addDtAlias)
+std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt()
 {
     _ss.skipCommentsAndWhitespaces();
 
@@ -1076,8 +1076,8 @@ std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt(const bo
 
     case _tKw::Enum:
     {
-        auto [pseudoDt, dtAliasName] = tryParse([this, addDtAlias] {
-            return this->_tryParseFlEnumType(addDtAlias);
+        auto [pseudoDt, dtAliasName] = tryParse([this] {
+            return this->_tryParseFlEnumType();
         }, "enum");
 
         return {std::move(pseudoDt), std::move(dtAliasName), true};
@@ -1090,8 +1090,8 @@ std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt(const bo
 
     case _tKw::Struct:
     {
-        auto [pseudoDt, dtAliasName] = tryParse([this, addDtAlias] {
-            return this->_tryParseStructType(addDtAlias);
+        auto [pseudoDt, dtAliasName] = tryParse([this] {
+            return this->_tryParseStructType();
         }, "struct");
 
         return {std::move(pseudoDt), std::move(dtAliasName), true};
@@ -1099,8 +1099,8 @@ std::tuple<PseudoDt::Up, std::string, bool> TsdlParser::_tryParseFullDt(const bo
 
     case _tKw::Variant:
     {
-        auto [pseudoDt, dtAliasName] = tryParse([this, addDtAlias] {
-            return this->_tryParseVarType(addDtAlias);
+        auto [pseudoDt, dtAliasName] = tryParse([this] {
+            return this->_tryParseVarType();
         }, "variant");
 
         return {std::move(pseudoDt), std::move(dtAliasName), true};
@@ -1420,7 +1420,7 @@ PseudoDt::Up TsdlParser::_tryParseNtStrType()
                                                    beginLoc);
 }
 
-std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType(const bool addDtAlias)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType()
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -1516,8 +1516,6 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType(const bool
 
     if (pseudoDt->isUInt()) {
         pseudoEnumType = this->_finishParseFlEnumType<FixedLengthUnsignedIntegerType>(std::move(pseudoDt),
-                                                                                      addDtAlias,
-                                                                                      potDtAliasName,
                                                                                       [](const auto& pseudoDt,
                                                                                          const auto& mappings) {
             const auto& pseudoUIntType = static_cast<const PseudoFlUIntType&>(pseudoDt);
@@ -1532,8 +1530,6 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType(const bool
         });
     } else {
         pseudoEnumType = this->_finishParseFlEnumType<FixedLengthSignedIntegerType>(std::move(pseudoDt),
-                                                                                    addDtAlias,
-                                                                                    potDtAliasName,
                                                                                     [](const auto& pseudoDt,
                                                                                        const auto& mappings) {
             auto& baseIntType = static_cast<const PseudoScalarDtWrapper&>(pseudoDt).dt().asFixedLengthSignedIntegerType();
@@ -1551,7 +1547,7 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType(const bool
     return {std::move(pseudoEnumType), std::move(potDtAliasName)};
 }
 
-std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType(const bool addDtAlias)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType()
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -1653,14 +1649,10 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType(const bool
         }
     }
 
-    if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::string {potDtAliasName}, *pseudoDt);
-    }
-
     return {std::move(pseudoDt), std::move(potDtAliasName)};
 }
 
-std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType(const bool addDtAlias)
+std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType()
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -1751,10 +1743,6 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType(const bool ad
             pseudoDt = std::make_unique<PseudoVarType>(pseudoDataLoc, std::move(opts), nullptr,
                                                        beginLoc);
         }
-    }
-
-    if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::string {potDtAliasName}, *pseudoDt);
     }
 
     return {std::move(pseudoDt), std::move(potDtAliasName)};
@@ -2551,14 +2539,12 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
             _tLexScope lexScope {*this, scopeDtStackFrameKind};
 
             /*
-             * Don't let the structure type parser add a data type alias
-             * for a named structure type: it would add it to the frame
-             * which `lexScope` manages, which only exists while parsing
-             * this scope data type.
-             *
-             * Add it to the current frame below instead.
+             * For a named structure type, add the data type alias below
+             * to the current frame, not to the frame which `lexScope`
+             * manages: the latter only exists while parsing this scope
+             * data type.
              */
-            return this->_tryParseDt(false);
+            return this->_tryParseDt();
         });
 
         if (!pseudoDt) {
@@ -3172,7 +3158,7 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
     {
         StrScannerRejecter ssRej {_ss};
 
-        if (auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt(false); pseudoDt) {
+        if (auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt(); pseudoDt) {
             const auto afterDtLoc = _ss.loc();
 
             if (isCompound && _ss.tryScanToken(";")) {

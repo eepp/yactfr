@@ -576,12 +576,11 @@ private:
      * Returns the parsed pseudo data type and its data type alias name,
      * or `nullptr` and an empty string if it can't.
      *
-     * `addDtAlias` and the returned data type alias name have the same
-     * meaning as with _tryParseFullDt(). The returned data type alias
-     * name is empty if the data type isn't a named fixed-length
-     * enumeration, structure, or variant type block.
+     * The returned data type alias name has the same meaning as with
+     * _tryParseFullDt(): it's empty if the data type isn't a named
+     * fixed-length enumeration, structure, or variant type block.
      */
-    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseDt(bool addDtAlias = true);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseDt();
 
     /*
      * Tries to parse a data type block (excludes data type
@@ -599,11 +598,8 @@ private:
      * 3. Whether or not the parsed data type is a fixed-length
      *    enumeration, structure, or variant type (only meaningful
      *    on success).
-     *
-     * `addDtAlias` has the same meaning as with _tryParseFlEnumType(),
-     * _tryParseStructType(), and _tryParseVarType().
      */
-    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string, bool> _tryParseFullDt(bool addDtAlias = true);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string, bool> _tryParseFullDt();
 
     /*
      * Tries to parse a fixed-length integer type block.
@@ -657,11 +653,9 @@ private:
      * Returns the parsed pseudo data type and its data type alias name,
      * or `nullptr` and an empty string if it can't.
      *
-     * If the parser makes it to the `:` or `{` token and the
-     * fixed-length enumeration type is named, this method adds a data
-     * type alias to the map of aliased data types of the current frame
-     * if `addDtAlias` is true, and returns the name of the data type
-     * alias (empty if the fixed-length enumeration type isn't named).
+     * The returned data type alias name is empty if the fixed-length
+     * enumeration type isn't named. This method doesn't add a data
+     * type alias: the caller does.
      *
      * Example:
      *
@@ -672,11 +666,10 @@ private:
      *         "HAR TENVAR" = -17 ... 28,
      *     }
      */
-    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseFlEnumType(bool addDtAlias = true);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseFlEnumType();
 
     template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
-    [[ nodiscard ]] PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt, bool addDtAlias,
-                                                        const std::string& potDtAliasName,
+    [[ nodiscard ]] PseudoDt::Up _finishParseFlEnumType(PseudoDt::Up pseudoDt,
                                                         CreatePseudoDtFuncT&& createPseudoDtFunc);
 
     /*
@@ -685,11 +678,9 @@ private:
      * Returns the parsed pseudo data type and its data type alias name,
      * or `nullptr` and an empty string if it can't.
      *
-     * If the parser makes it to the opening `{` and the structure type
-     * is named, this method adds a data type alias to the map of
-     * aliased data types of the current frame if `addDtAlias` is true,
-     * and returns the name of the data type alias (empty if the
-     * structure type isn't named).
+     * The returned data type alias name is empty if the structure type
+     * isn't named. This method doesn't add a data type alias: the
+     * caller does.
      *
      * Example:
      *
@@ -706,7 +697,7 @@ private:
      *         } c;
      *     } align(64)
      */
-    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseStructType(bool addDtAlias = true);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseStructType();
 
     /*
      * Tries to parse a variant type block.
@@ -714,11 +705,9 @@ private:
      * Returns the parsed pseudo data type and its data type alias name,
      * or `nullptr` and an empty string if it can't.
      *
-     * If the parser makes it to the opening `{` and the variant type is
-     * named, this method adds a data type alias to the map of aliased
-     * data types of the current frame if `addDtAlias` is true, and
-     * returns the name of the data type alias (empty if the variant
-     * type isn't named).
+     * The returned data type alias name is empty if the variant type
+     * isn't named. This method doesn't add a data type alias: the
+     * caller does.
      *
      * Example:
      *
@@ -727,7 +716,7 @@ private:
      *         integer { size = 32; align = 32; } i;
      *     }
      */
-    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseVarType(bool addDtAlias = true);
+    [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseVarType();
 
     /*
      * Tries to parse a trace environment block and sets the trace
@@ -1128,8 +1117,7 @@ private:
 };
 
 template <typename FlIntTypeT, typename CreatePseudoDtFuncT>
-PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const bool addDtAlias,
-                                                const std::string& potDtAliasName,
+PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
                                                 CreatePseudoDtFuncT&& createPseudoDtFunc)
 {
     // parse mappings (we're after `{`)
@@ -1256,14 +1244,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
     this->_validateFlIntTypeMappings<FlIntTypeT>(len, pseudoDt->loc(), mappings);
 
     // create pseudo fixed-length integer type
-    auto pseudoIntType = createPseudoDtFunc(*pseudoDt, mappings);
-
-    // add data type alias if this fixed-length integer type has a name
-    if (addDtAlias && !potDtAliasName.empty()) {
-        this->_addDtAlias(std::string {potDtAliasName}, *pseudoIntType);
-    }
-
-    return pseudoIntType;
+    return createPseudoDtFunc(*pseudoDt, mappings);
 }
 
 template <typename FlIntTypeT>
