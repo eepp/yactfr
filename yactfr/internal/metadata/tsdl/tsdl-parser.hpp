@@ -198,7 +198,6 @@ private:
     enum class _tKw
     {
         None,
-        Align,
         Callsite,
         Clock,
         Context,

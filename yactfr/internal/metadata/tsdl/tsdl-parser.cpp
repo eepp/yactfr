@@ -3040,13 +3040,6 @@ TsdlParser::_tKw TsdlParser::_kwFromIdent(const std::string_view ident) noexcept
 
         break;
 
-    case 'a':
-        if (ident == "align") {
-            return _tKw::Align;
-        }
-
-        break;
-
     case 'c':
         if (ident == "callsite") {
             return _tKw::Callsite;
