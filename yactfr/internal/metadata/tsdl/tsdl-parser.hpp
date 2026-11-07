@@ -1134,7 +1134,10 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
 {
     // parse mappings (we're after `{`)
     std::unordered_map<std::string, std::set<typename FlIntTypeT::MappingRangeSet::Range>> pseudoMappings;
-    typename FlIntTypeT::MappingValue curVal = 0;
+    using Val = typename FlIntTypeT::MappingValue;
+
+    // next implicit value (none if the previous upper value is the maximum)
+    std::optional<Val> curVal {0};
 
     while (true) {
         std::string name;
@@ -1151,19 +1154,15 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
             throwTextParseError("Expecting mapping name (identifier or literal string).", *loc);
         }
 
-        auto lower = curVal;
-        auto upper = curVal;
+        Val lower, upper;
 
         if (_ss.tryScanToken("=")) {
-            using Val = decltype(curVal);
-
             _ss.skipCommentsAndWhitespaces();
             loc = _ss.loc();
 
             if (auto val = _ss.template tryScanConstInt<Val>()) {
                 lower = *val;
                 upper = lower;
-                curVal = lower;
 
                 if (_ss.tryScanToken("...")) {
                     val = _ss.template tryScanConstInt<Val>();
@@ -1173,7 +1172,6 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
                     }
 
                     upper = *val;
-                    curVal = upper;
                 }
             } else {
                 if constexpr (std::is_signed_v<Val>) {
@@ -1184,9 +1182,25 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt, const boo
                                         _ss.loc());
                 }
             }
+        } else {
+            if (!curVal) {
+                std::ostringstream ss;
+
+                ss << "Implicit value of mapping `" << name << "` is too large: "
+                      "previous value is the maximum (" << std::numeric_limits<Val>::max() <<
+                      ").";
+                throwTextParseError(ss.str(), *loc);
+            }
+
+            lower = *curVal;
+            upper = lower;
         }
 
-        ++curVal;
+        if (upper == std::numeric_limits<Val>::max()) {
+            curVal = std::nullopt;
+        } else {
+            curVal = upper + 1;
+        }
 
         if (lower > upper) {
             std::ostringstream ss;
