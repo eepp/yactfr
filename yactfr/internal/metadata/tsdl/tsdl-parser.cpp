@@ -2469,14 +2469,12 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
 
                     if (!_ss.tryScanToken("{")) {
                         /*
-                         * Create new pseudo variant type with this
-                         * selector location.
+                         * Set the selector location of the pseudo
+                         * variant type (already a clone).
                          */
-                        auto pseudoDtClone = pseudoDt->clone();
-
-                        static_cast<PseudoVarType&>(*pseudoDtClone).pseudoSelLoc(std::move(pseudoSelLoc));
+                        static_cast<PseudoVarType&>(*pseudoDt).pseudoSelLoc(std::move(pseudoSelLoc));
                         ssRej.accept();
-                        return pseudoDtClone;
+                        return pseudoDt;
                     }
                 }
             }
