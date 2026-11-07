@@ -9,7 +9,9 @@
 #define YACTFR_METADATA_ITEM_HPP
 
 #include <string>
+#include <string_view>
 #include <memory>
+#include <type_traits>
 
 #include "../internal/metadata/item-mixin.hpp"
 
@@ -575,6 +577,38 @@ private:
 
 /*!
 @brief
+    Creates and returns a signed or unsigned integer item having
+    \p value as its raw value.
+
+@ingroup item
+
+This overload makes it possible to call createItem() with any integer
+value, for example <code>createItem(42)</code>, without any ambiguity.
+
+@tparam ValueT
+    Integral type of \p value, excluding \c bool.
+
+@param[in] value
+    Raw value of the integer item to create.
+
+@returns
+    Created signed integer item if \p ValueT is signed, or created
+    unsigned integer item otherwise.
+*/
+template <typename ValueT,
+          typename = std::enable_if_t<std::is_integral_v<ValueT> &&
+                                      !std::is_same_v<ValueT, bool>>>
+[[ nodiscard ]] auto createItem(const ValueT value)
+{
+    if constexpr (std::is_signed_v<ValueT>) {
+        return createItem(static_cast<long long>(value));
+    } else {
+        return createItem(static_cast<unsigned long long>(value));
+    }
+}
+
+/*!
+@brief
     Creates and returns a real item having \p value as its raw value.
 
 @ingroup item
@@ -600,6 +634,40 @@ private:
     Created string item.
 */
 [[ nodiscard ]] StringItem::Up createItem(std::string value);
+
+/*!
+@brief
+    Creates and returns a string item having \p value as its raw value.
+
+@ingroup item
+
+Without this overload, <code>createItem("hello")</code> would create a
+boolean item.
+
+@param[in] value
+    Raw value of the string item to create.
+
+@returns
+    Created string item.
+
+@pre
+    \p value is not \c nullptr.
+*/
+[[ nodiscard ]] StringItem::Up createItem(const char *value);
+
+/*!
+@brief
+    Creates and returns a string item having \p value as its raw value.
+
+@ingroup item
+
+@param[in] value
+    Raw value of the string item to create.
+
+@returns
+    Created string item.
+*/
+[[ nodiscard ]] StringItem::Up createItem(std::string_view value);
 
 /*!
 @brief

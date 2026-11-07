@@ -153,6 +153,17 @@ StringItem::Up createItem(std::string value)
     return std::make_unique<const StringItem>(std::move(value));
 }
 
+StringItem::Up createItem(const char * const value)
+{
+    assert(value);
+    return createItem(std::string {value});
+}
+
+StringItem::Up createItem(const std::string_view value)
+{
+    return createItem(std::string {value});
+}
+
 ArrayItem::Up createItem(ArrayItem::Container&& items)
 {
     return std::make_unique<const ArrayItem>(std::move(items));
