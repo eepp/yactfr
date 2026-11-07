@@ -1,0 +1,26 @@
+version = 1
+
+# Test fixtures (metadata streams and data streams), which can't contain
+# a comment
+[[annotations]]
+path = [
+    "tests/tests-metadata-text/ctf-1/**",
+    "tests/tests-metadata-text/ctf-2/**",
+    "tests/tests-iter-data/**.streams",
+]
+SPDX-FileCopyrightText = "2022-2026 Philippe Proulx <eepp.ca>"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = [
+    "tests/tests-metadata-stream/fail-*",
+    "tests/tests-metadata-stream/pass-*",
+]
+SPDX-FileCopyrightText = "2018-2026 Philippe Proulx <eepp.ca>"
+SPDX-License-Identifier = "MIT"
+
+# Vendored wise_enum <https://github.com/quicknir/wise_enum>
+[[annotations]]
+path = "yactfr/internal/vendor/wise-enum/**"
+SPDX-FileCopyrightText = "wise_enum contributors <https://github.com/quicknir/wise_enum>"
+SPDX-License-Identifier = "BSL-1.0"

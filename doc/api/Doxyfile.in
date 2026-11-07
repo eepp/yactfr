@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2026 Philippe Proulx <eepp.ca>
+# SPDX-License-Identifier: MIT
+
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "@PROJECT_NAME@"
 PROJECT_NUMBER         = "@YACTFR_DOC_VERSION@"

@@ -1,8 +1,6 @@
 /*
- * Copyright (C) 2018-2024 Philippe Proulx <eepp.ca>
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * SPDX-FileCopyrightText: 2018-2024 Philippe Proulx <eepp.ca>
+ * SPDX-License-Identifier: MIT
  */
 
 #ifndef YACTFR_TESTS_ELEM_PRINTER_HPP

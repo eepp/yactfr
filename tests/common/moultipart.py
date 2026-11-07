@@ -1,6 +1,5 @@
+# SPDX-FileCopyrightText: 2023 EfficiOS Inc.
 # SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2023 EfficiOS Inc.
 #
 # pyright: strict, reportTypeCommentUsage=false
 

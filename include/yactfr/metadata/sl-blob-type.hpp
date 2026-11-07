@@ -1,8 +1,6 @@
 /*
- * Copyright (C) 2022 Philippe Proulx <eepp.ca>
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * SPDX-FileCopyrightText: 2022 Philippe Proulx <eepp.ca>
+ * SPDX-License-Identifier: MIT
  */
 
 #ifndef YACTFR_METADATA_SL_BLOB_TYPE_HPP

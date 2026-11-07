@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 Philippe Proulx <pproulx@efficios.com>
+# SPDX-License-Identifier: MIT
+
 import pytest
 import functools
 

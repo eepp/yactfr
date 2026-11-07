@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2022 Philippe Proulx <eepp.ca>
+# SPDX-License-Identifier: CC0-1.0
+
 build*/
 *.html
 *.sublime*

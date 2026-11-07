@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2026 Philippe Proulx <pproulx@efficios.com>
+# SPDX-License-Identifier: MIT
+
 import os
 import pytest
 import subprocess

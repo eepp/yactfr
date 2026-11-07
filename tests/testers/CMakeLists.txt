@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2018-2026 Philippe Proulx <eepp.ca>
+# SPDX-License-Identifier: MIT
+
 add_executable (metadata-text-tester EXCLUDE_FROM_ALL metadata-text-tester.cpp)
 add_executable (metadata-stream-tester EXCLUDE_FROM_ALL metadata-stream-tester.cpp)
 add_executable (iter-data-tester EXCLUDE_FROM_ALL iter-data-tester.cpp)
