@@ -80,8 +80,8 @@ private:
      *
      * Each frame has:
      *
-     * • A kind, which indicates what kind of frame/scope
-     *   this represents.
+     * • A kind, which indicates whether or not this frame is the one
+     *   of a structure type.
      *
      * • A lexical ID, unique amongst all the frames of a parser.
      *
@@ -93,10 +93,10 @@ private:
      *   to the frame. Frames which are higher in the stack have access
      *   to the aliased data types of the frames below them.
      *
-     * • A vector of the current member/option names, when the kind of
-     *   this frame is `StructType` or `VarType`. This is used to find
-     *   the structure type which contains the target of a relative
-     *   data location.
+     * • A vector of the current member/option names, when this is the
+     *   frame of a structure or variant type. The names of a
+     *   `StructType` frame are used to find the structure type which
+     *   contains the target of a relative data location.
      *
      * You can use _stackPush() and _stackPop() manually, but it's
      * recommended to use an RAII `_tLexScope` instead to
@@ -106,44 +106,11 @@ private:
     {
         enum class Kind
         {
-            // root
-            Root,
-
-            // trace type
-            TraceType,
-
-            // packet header type
-            PktHeaderType,
-
-            // data stream type
-            Dst,
-
-            // packet context type
-            PktCtxType,
-
-            // event record header type
-            ErHeaderType,
-
-            // event record common context type
-            ErCommonCtxType,
-
-            // event record type
-            Ert,
-
-            // event record specific context type
-            ErSpecCtxType,
-
-            // event record payload type
-            ErPayloadType,
-
-            // data type alias
-            DtAlias,
-
             // structure type
             StructType,
 
-            // variant type
-            VarType,
+            // anything else
+            Other,
         };
 
         explicit _tStackFrame(Kind kind, Index lexId);
@@ -171,7 +138,8 @@ private:
     class _tLexScope final
     {
     public:
-        explicit _tLexScope(TsdlParser& mp, const _tStackFrame::Kind frameKind) :
+        explicit _tLexScope(TsdlParser& mp,
+                            const _tStackFrame::Kind frameKind = _tStackFrame::Kind::Other) :
             _parser {&mp}
         {
             _parser->_stackPush(frameKind);
@@ -403,9 +371,6 @@ private:
      * Tries to parse a scope data type with a terminating `;` and
      * returns it.
      *
-     * `scopeDtStackFrameKind` is the kind of stack frame to push for
-     * this scope data type.
-     *
      * `firstName` and optional `secondName` (empty if none) are the one
      * or two words naming the scope, e.g., `event` and `header`, or
      * just `context`.
@@ -428,9 +393,9 @@ private:
      *
      *     event.header := struct my_event_header;
      */
-    [[ nodiscard ]] PseudoDt::Up _tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
-                                  std::string_view firstName, std::string_view secondName = {},
-                                  bool expect = true);
+    [[ nodiscard ]] PseudoDt::Up _tryParseScopeDt(std::string_view firstName,
+                                                  std::string_view secondName = {},
+                                                  bool expect = true);
 
     /*
      * Tries to parse an identifier followed by zero or more

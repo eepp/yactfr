@@ -763,7 +763,7 @@ const std::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const n
 
 void TsdlParser::_parseMetadata()
 {
-    _tLexScope lexScope {*this, _tStackFrame::Kind::Root};
+    _tLexScope lexScope {*this};
 
     while (this->_tryParseRootBlock());
 
@@ -903,7 +903,7 @@ bool TsdlParser::_tryParseGenericDtAliasNoErrCtx()
     std::optional<std::string> dtAliasName;
 
     {
-        _tLexScope lexScope {*this, _tStackFrame::Kind::DtAlias};
+        _tLexScope lexScope {*this};
 
         // parse data type or data type alias reference
         auto [parsedPseudoDt, innerDtAliasName] = this->_tryParseDt();
@@ -1447,7 +1447,7 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType()
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "struct ";
             potDtAliasName += *ident;
-            dtAliasLexScope.emplace(*this, _tStackFrame::Kind::DtAlias);
+            dtAliasLexScope.emplace(*this);
         }
 
         {
@@ -1539,11 +1539,11 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType()
         if (const auto ident = _ss.tryScanIdent()) {
             potDtAliasName = "variant ";
             potDtAliasName += *ident;
-            dtAliasLexScope.emplace(*this, _tStackFrame::Kind::DtAlias);
+            dtAliasLexScope.emplace(*this);
         }
 
         {
-            _tLexScope varTypeLexScope {*this, _tStackFrame::Kind::VarType};
+            _tLexScope varTypeLexScope {*this};
 
             // try to parse `<`
             std::optional<PseudoDataLoc> pseudoDataLoc;
@@ -1823,7 +1823,7 @@ void TsdlParser::_parseClkTypeBlock()
 
 void TsdlParser::_parseTraceTypeBlock()
 {
-    _tLexScope lexScope {*this, _tStackFrame::Kind::TraceType};
+    _tLexScope lexScope {*this};
 
     const auto beginLoc = _ss.loc();
 
@@ -1853,8 +1853,7 @@ void TsdlParser::_parseTraceTypeBlock()
 
         // try to parse packet header type
         if (kw == _tKw::Packet) {
-            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktHeaderType,
-                                                       "packet", "header")) {
+            if (auto pseudoDt = this->_tryParseScopeDt("packet", "header")) {
                 if (pseudoPktHeaderType) {
                     throwTextParseError("Duplicate `packet.header` scope.", _ss.loc());
                 }
@@ -1994,7 +1993,7 @@ void TsdlParser::_parseTraceTypeBlock()
 
 void TsdlParser::_parseDstBlock()
 {
-    _tLexScope lexScope {*this, _tStackFrame::Kind::Dst};
+    _tLexScope lexScope {*this};
 
     const auto beginLoc = _ss.loc();
 
@@ -2022,8 +2021,7 @@ void TsdlParser::_parseDstBlock()
 
         if (kw == _tKw::Packet) {
             // try to parse packet context type
-            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::PktCtxType,
-                                                       "packet", "context")) {
+            if (auto pseudoDt = this->_tryParseScopeDt("packet", "context")) {
                 if (pseudoPktCtxType) {
                     throwTextParseError("Duplicate `packet.context` scope.", _ss.loc());
                 }
@@ -2033,8 +2031,7 @@ void TsdlParser::_parseDstBlock()
             }
         } else if (kw == _tKw::Event) {
             // try to parse event record header type
-            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErHeaderType,
-                                                       "event", "header", false)) {
+            if (auto pseudoDt = this->_tryParseScopeDt("event", "header", false)) {
                 if (pseudoErHeaderType) {
                     throwTextParseError("Duplicate `event.header` scope.", _ss.loc());
                 }
@@ -2044,8 +2041,7 @@ void TsdlParser::_parseDstBlock()
             }
 
             // try to parse event record common context type
-            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErCommonCtxType,
-                                                       "event", "context", false)) {
+            if (auto pseudoDt = this->_tryParseScopeDt("event", "context", false)) {
                 if (pseudoErCommonCtxType) {
                     throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
                 }
@@ -2107,7 +2103,7 @@ void TsdlParser::_parseDstBlock()
 
 void TsdlParser::_parseErtBlock()
 {
-    _tLexScope lexScope {*this, _tStackFrame::Kind::Ert};
+    _tLexScope lexScope {*this};
 
     const auto beginLoc = _ss.loc();
 
@@ -2134,8 +2130,7 @@ void TsdlParser::_parseErtBlock()
 
         if (kw == _tKw::Context) {
             // try to parse specific context type
-            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErSpecCtxType,
-                                                       "context")) {
+            if (auto pseudoDt = this->_tryParseScopeDt("context")) {
                 if (pseudoSpecCtxType) {
                     throwTextParseError("Duplicate `event.context` scope.", _ss.loc());
                 }
@@ -2145,8 +2140,7 @@ void TsdlParser::_parseErtBlock()
             }
         } else if (kw == _tKw::Fields) {
             // try to parse payload type
-            if (auto pseudoDt = this->_tryParseScopeDt(_tStackFrame::Kind::ErPayloadType,
-                                                       "fields")) {
+            if (auto pseudoDt = this->_tryParseScopeDt("fields")) {
                 if (pseudoPayloadType) {
                     throwTextParseError("Duplicate `event.fields` scope.", _ss.loc());
                 }
@@ -2222,9 +2216,8 @@ void TsdlParser::_parseErtBlock()
     });
 }
 
-PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
-                                                  const std::string_view firstName,
-                                                  const std::string_view secondName, const bool expect)
+PseudoDt::Up TsdlParser::_tryParseScopeDt(const std::string_view firstName,
+                                          const std::string_view secondName, const bool expect)
 {
     StrScannerRejecter ssRej {_ss};
 
@@ -2271,8 +2264,8 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         const auto dtLoc = _ss.loc();
 
         // parse data type
-        auto [pseudoDt, dtAliasName] = std::invoke([this, scopeDtStackFrameKind] {
-            _tLexScope lexScope {*this, scopeDtStackFrameKind};
+        auto [pseudoDt, dtAliasName] = std::invoke([this] {
+            _tLexScope lexScope {*this};
 
             /*
              * For a named structure type, add the data type alias below
