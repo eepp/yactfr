@@ -836,98 +836,22 @@ void TsdlParser::_expectToken(const std::string_view token)
 
 bool TsdlParser::_tryParseFlEnumStructVarDtAlias()
 {
-    this->_skipCommentsAndWhitespacesAndSemicolons();
+    StrScannerRejecter ssRej {_ss};
+    auto [pseudoDt, dtAliasName, isCompound] = this->_tryParseFullDt();
 
-    const auto loc = _ss.loc();
-
-    const auto tryParse = [&loc](auto&& parseFunc, const char * const name) {
-        try {
-            return parseFunc();
-        } catch (TextParseError& error) {
-            appendMsgToTextParseError(error, std::string {"In `"} + name + "` block:", loc);
-            throw;
-        }
-    };
-
-    // try fixed-length enumeration type alias
-    {
-        StrScannerRejecter ssRej {_ss};
-        auto [pseudoDt, dtAliasName] = tryParse([this] {
-            return this->_tryParseFlEnumType();
-        }, "enum");
-
-        if (pseudoDt) {
-            // parse `;` to make sure it's not a member type/option
-            if (_ss.tryScanToken(";")) {
-                // we have a winner
-                ssRej.accept();
-
-                /*
-                 * Add data type alias if a data type alias name was
-                 * found (safe to move here).
-                 */
-                if (!dtAliasName.empty()) {
-                    this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
-                }
-
-                return true;
-            }
-        }
+    // parse `;` to make sure it's not a member type/option
+    if (!pseudoDt || !isCompound || !_ss.tryScanToken(";")) {
+        return false;
     }
 
-    // try structure type alias
-    {
-        StrScannerRejecter ssRej {_ss};
-        auto [pseudoDt, dtAliasName] = tryParse([this] {
-            return this->_tryParseStructType();
-        }, "struct");
+    // we have a winner
+    ssRej.accept();
 
-        if (pseudoDt) {
-            // parse `;` to make sure it's not a member type/option
-            if (_ss.tryScanToken(";")) {
-                // we have a winner
-                ssRej.accept();
-
-                /*
-                 * Add data type alias if a data type alias name was
-                 * found (safe to move here).
-                 */
-                if (!dtAliasName.empty()) {
-                    this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
-                }
-
-                return true;
-            }
-        }
+    if (!dtAliasName.empty()) {
+        this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
     }
 
-    // try variant type alias
-    {
-        StrScannerRejecter ssRej {_ss};
-        auto [pseudoDt, dtAliasName] = tryParse([this] {
-            return this->_tryParseVarType();
-        }, "variant");
-
-        if (pseudoDt) {
-            // parse `;` to make sure it's not a field/option
-            if (_ss.tryScanToken(";")) {
-                // we have a winner
-                ssRej.accept();
-
-                /*
-                 * Add data type alias if a data type alias name was
-                 * found (safe to move here).
-                 */
-                if (!dtAliasName.empty()) {
-                    this->_addDtAlias(std::move(dtAliasName), *pseudoDt);
-                }
-
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return true;
 }
 
 bool TsdlParser::_tryParseGenericDtAlias()
