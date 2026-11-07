@@ -2665,9 +2665,15 @@ TsdlAttr TsdlParser::_expectAttr()
         // constant unsigned integer
         attr.val = *val;
     } else if (const auto val = _ss.tryScanConstSInt()) {
-        // constant signed integer
-        assert(*val != 0 && *val != 1);
-        attr.val = *val;
+        // constant signed integer (starts with `-`)
+        assert(*val <= 0);
+
+        if (*val == 0) {
+            // `-0`
+            attr.val = 0ULL;
+        } else {
+            attr.val = *val;
+        }
     } else {
         throwTextParseError("Expecting valid constant integer, literal string, or identifier.",
                             *attr.valLoc);
