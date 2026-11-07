@@ -487,12 +487,9 @@ private:
      *
      *     variant my_variant
      *
-     *     variant my_variant <stream.packet.context.my.tag>;
+     *     variant my_variant <stream.packet.context.my.tag>
      *
-     * Not supported (named variant type with relative
-     * selector location):
-     *
-     *     variant my_variant <my.tag>;
+     *     variant my_variant <my.tag>
      */
     [[ nodiscard ]] PseudoDt::Up _tryParseDtAliasRef();
 
@@ -868,7 +865,6 @@ private:
             return false;
         }
     }
-    void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt);
 
     Index _at() const
     {
@@ -938,6 +934,11 @@ private:
     [[ nodiscard ]] PseudoDt::Up _aliasedPseudoDt(const std::string& name, TextLocation loc) const;
 
     /*
+     * Calls the other _addDtAlias() with the current text location.
+     */
+    void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt);
+
+    /*
      * Calls the other _addDtAlias() with the current frame.
      */
     void _addDtAlias(std::string&& name, const PseudoDt& pseudoDt, const TextLocation& curLoc);
@@ -960,13 +961,13 @@ private:
     }
 
     /*
-     * Returns the current native byte order, or a random one if
+     * Returns the current native byte order, or little-endian if
      * not available.
      *
-     * Returning a random one only happens when we didn't reach the
-     * `trace` block yet, which means all the data types we create will
-     * blow up anyway because we'll call PseudoTraceType::clear() when
-     * reaching said block.
+     * The native byte order is only unavailable during the first pass,
+     * which means all the data types we create will blow up anyway
+     * because the parser restarts from the beginning when reaching the
+     * `trace` block (see _parseTraceTypeBlock()).
      *
      * We just need at least something because
      * FixedLengthIntegerType::FixedLengthIntegerType() expects a
