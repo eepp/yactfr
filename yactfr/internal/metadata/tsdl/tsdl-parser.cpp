@@ -749,7 +749,7 @@ TsdlParser::TsdlParser(const std::string_view str) :
     this->_parseMetadata();
 }
 
-const std::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const noexcept
+std::optional<boost::uuids::uuid> TsdlParser::metadataStreamUuid() const noexcept
 {
     assert(_pseudoTraceType);
 

@@ -72,7 +72,7 @@ public:
      * Returns the UUID of the metadata stream which, for CTF 1.8, is
      * the trace UID as a UUID canonical textual representation.
      */
-    const std::optional<boost::uuids::uuid> metadataStreamUuid() const noexcept;
+    std::optional<boost::uuids::uuid> metadataStreamUuid() const noexcept;
 
 private:
     /*
