@@ -743,19 +743,19 @@ public:
     /// \c true if this element is an optional with an integer selector beginning/end element.
     bool isOptionalWithIntegerSelectorElement() const noexcept
     {
-        return this->_isKind(_kindOpt | _kindSigned | _kindUnsigned);
+        return this->_isKind(_kindOpt | _kindIntSel);
     }
 
     /// \c true if this element is an optional with an integer selector beginning element.
     bool isOptionalWithIntegerSelectorBeginningElement() const noexcept
     {
-        return this->_isKind(_kindOpt | _kindSigned | _kindUnsigned | _kindBeg);
+        return this->_isKind(_kindOpt | _kindIntSel | _kindBeg);
     }
 
     /// \c true if this element is an optional with an integer selector end element.
     bool isOptionalWithIntegerSelectorEndElement() const noexcept
     {
-        return this->_isKind(_kindOpt | _kindSigned | _kindUnsigned | _kindEnd);
+        return this->_isKind(_kindOpt | _kindIntSel | _kindEnd);
     }
 
     /// \c true if this element is an optional with a signed integer selector beginning/end element.
