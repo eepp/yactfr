@@ -23,7 +23,9 @@ variant my_var {
 };
 
 typedef enum my_enum my_enum_t;
+typealias enum my_enum := my_enum_t2;
 typedef struct my_struct my_struct_t;
+typealias struct my_struct := my_struct_t2;
 typedef unsigned long ulong_t;
 typealias unsigned long := ulong_t2;
 typedef uint8_t byte_t[4];
@@ -39,7 +41,9 @@ event {
 
   fields := struct {
     my_enum_t tag;
+    my_enum_t2 tag2;
     my_struct_t s;
+    my_struct_t2 s2;
     ulong_t ul;
     ulong_t2 ul2;
     byte_t bytes;

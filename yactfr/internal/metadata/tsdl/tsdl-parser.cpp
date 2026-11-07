@@ -1347,12 +1347,8 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseFlEnumType()
         potDtAliasName += *ident;
     }
 
-    {
-        StrScannerRejecter ssRejOp {_ss};
-
-        if (!_ss.tryScanToken(":") && !_ss.tryScanToken("{")) {
-            return {};
-        }
+    if (!this->_peekDtBlockBodyStart()) {
+        return {};
     }
 
     // accept the fixed-length enumeration type so far
@@ -2589,7 +2585,7 @@ PseudoDt::Up TsdlParser::_tryParseDtAliasRef()
 
             if (kw == _tKw::Enum || kw == _tKw::Struct) {
                 if ((ident = _ss.tryScanIdent())) {
-                    if (!_ss.tryScanToken("{") && !_ss.tryScanToken(":")) {
+                    if (!this->_peekDtBlockBodyStart()) {
                         std::string dtAliasName {kw == _tKw::Enum ? "enum " : "struct "};
 
                         dtAliasName += *ident;
@@ -3287,6 +3283,13 @@ TsdlParser::_tKw TsdlParser::_peekKw()
     const auto ident = _ss.peekIdent();
 
     return ident ? TsdlParser::_kwFromIdent(*ident) : _tKw::None;
+}
+
+bool TsdlParser::_peekDtBlockBodyStart()
+{
+    StrScannerRejecter ssRej {_ss};
+
+    return _ss.tryScanToken("{") || (!_ss.tryScanToken(":=") && _ss.tryScanToken(":"));
 }
 
 void TsdlParser::_skipCommentsAndWhitespacesAndSemicolons()

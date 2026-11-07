@@ -859,6 +859,14 @@ private:
     [[ nodiscard ]] _tKw _peekKw();
 
     /*
+     * Skips whitespaces and comments, and then returns whether or not
+     * the next token, which this method doesn't consume, is `{` or `:`
+     * (but not `:=`), that is, whether or not what follows `enum NAME`
+     * or `struct NAME` is a data type block body.
+     */
+    [[ nodiscard ]] bool _peekDtBlockBodyStart();
+
+    /*
      * Returns whether or not the keyword `kw` can start a data type
      * alias (see _tryParseDtAlias()).
      */
