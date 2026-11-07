@@ -1214,10 +1214,6 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
         }
     }
 
-    if (pseudoMappings.empty()) {
-        throwTextParseError("Expecting at least one mapping.", pseudoDt->loc());
-    }
-
     typename FlIntTypeT::Mappings mappings;
 
     for (const auto& [name, ranges] : pseudoMappings) {
@@ -1294,9 +1290,8 @@ void TsdlParser::_validateFlIntTypeMappings(const Size len, const TextLocation& 
     assert(len > 0);
     assert(len <= 64);
 
-    if (mappings.empty()) {
-        throwTextParseError("Fixed-length enumeration type has no mappings.", loc);
-    }
+    // the parser requires at least one mapping name before `}`
+    assert(!mappings.empty());
 
     for (const auto& [name, ranges] : mappings) {
         this->_validateFlIntTypeMapping<FlIntTypeT>(len, loc, name, ranges);
