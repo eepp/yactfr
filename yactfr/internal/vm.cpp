@@ -119,11 +119,16 @@ ElementSequenceIteratorPosition::ElementSequenceIteratorPosition(ElementSequence
 
 ElementSequenceIteratorPosition& ElementSequenceIteratorPosition::operator=(const ElementSequenceIteratorPosition& other)
 {
+    if (this == &other) {
+        return *this;
+    }
+
     if (other._vmPos) {
         // use copy constructor
         _vmPos = std::make_unique<internal::VmPos>(*other._vmPos);
     } else {
         _vmPos = nullptr;
+        *_itInfos = internal::ItInfos {};
         return *this;
     }
 

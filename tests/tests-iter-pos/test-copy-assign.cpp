@@ -19,6 +19,7 @@ namespace {
 
 constexpr auto expected =
     "FLUI:142\n"
+    "PMN:3254525889\n"
     "PMN:3254525889\n";
 
 } // namespace
@@ -46,6 +47,21 @@ int main()
     it.restorePosition(pos2);
     it->accept(printer);
 
+    // self copy-assign position
+    std::advance(it, 5);
+
+    auto& pos2Ref = pos2;
+
+    pos2 = pos2Ref;
+
+    if (pos2 != pos) {
+        std::cerr << "Self-assigned position isn't equal to its source.\n";
+        return 1;
+    }
+
+    it.restorePosition(pos2);
+    it->accept(printer);
+
     if (ss.str() != expected) {
         std::cerr << "Expected:\n\n" << expected << "\n" <<
                      "Got:\n\n" << ss.str();
@@ -59,6 +75,11 @@ int main()
 
     if (pos) {
         std::cerr << "Position is true.\n";
+        return 1;
+    }
+
+    if (pos != pos3) {
+        std::cerr << "Copy-assigned uninitialized position isn't equal to its source.\n";
         return 1;
     }
 
