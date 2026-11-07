@@ -559,6 +559,24 @@ std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElem
     return std::nullopt;
 }
 
+/*
+ * Returns the data location path elements `pathElems` joined with `.`.
+ */
+std::string pathElemsStr(const PseudoDataLoc::PathElems& pathElems)
+{
+    std::string str;
+
+    for (const auto& pathElem : pathElems) {
+        if (!str.empty()) {
+            str += '.';
+        }
+
+        str += *pathElem;
+    }
+
+    return str;
+}
+
 } // namespace
 
 std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
@@ -574,17 +592,7 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const
             psDataLocBase->restPos == allPathElems.end()) {
         std::ostringstream ss;
 
-        ss << "Expecting a field name after `";
-
-        for (auto it = allPathElems.begin(); it != allPathElems.end(); ++it) {
-            if (it != allPathElems.begin()) {
-                ss << '.';
-            }
-
-            ss << **it;
-        }
-
-        ss << "`.";
+        ss << "Expecting a field name after `" << pathElemsStr(allPathElems) << "`.";
         throwTextParseError(ss.str(), loc);
     }
 
@@ -662,17 +670,8 @@ PseudoDataLoc TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc:
             // no more frames: not found
             std::ostringstream ss;
 
-            ss << "Invalid relative data location (`";
-
-            for (auto it = allPathElems.begin(); it != allPathElems.end(); ++it) {
-                ss << **it;
-
-                if (it != allPathElems.end() - 1) {
-                    ss << ".";
-                }
-            }
-
-            ss << "`): cannot find `" << firstPathElem << "` (first element).";
+            ss << "Invalid relative data location (`" << pathElemsStr(allPathElems) <<
+                  "`): cannot find `" << firstPathElem << "` (first element).";
             throwTextParseError(ss.str(), loc);
         }
 
