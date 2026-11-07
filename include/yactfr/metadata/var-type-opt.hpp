@@ -207,7 +207,8 @@ public:
     */
     bool operator==(const VariantTypeOption<SelectorValueT>& other) const
     {
-        return _name == other._name && *_dt == *other._dt && _selRanges == other._selRanges;
+        return _name == other._name && *_dt == *other._dt && _selRanges == other._selRanges &&
+               internal::attrsAreEqual(_attrs.get(), other._attrs.get());
     }
 
     /*!

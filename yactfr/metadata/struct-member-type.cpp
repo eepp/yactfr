@@ -27,7 +27,8 @@ std::unique_ptr<const StructureMemberType> StructureMemberType::clone() const
 
 bool StructureMemberType::operator==(const StructureMemberType& other) const noexcept
 {
-    return _name == other._name && *_dt == *other._dt;
+    return _name == other._name && *_dt == *other._dt &&
+           internal::attrsAreEqual(_attrs.get(), other._attrs.get());
 }
 
 } // namespace yactfr
