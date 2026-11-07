@@ -288,12 +288,8 @@ std::string DtFromPseudoRootDtConverter::_dataLocStr(const Scope scope, const It
         std::abort();
     }
 
-    str += ": `";
-    str += *begin;
-    str += '`';
-
-    for (auto it = begin + 1; it != end; ++it) {
-        str += "/`";
+    for (auto it = begin; it != end; ++it) {
+        str += (it == begin) ? ": `" : "/`";
         str += *it;
         str += '`';
     }

@@ -1,0 +1,28 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+
+  packet.header := struct {
+    integer {size = 8;} len;
+  };
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    integer {size = 8;} len;
+    string s[event.fields];
+  };
+};
+---
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[18:5] While parsing body of `struct` block:
+[18:14] Expecting valid constant integer (static-length array type) or valid data location (dynamic-length array type):
+[18:14] Expecting a field name after `event.fields`.

@@ -556,6 +556,24 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const
         return std::nullopt;
     }
 
+    if (!std::holds_alternative<PseudoDataLoc::Env>(psDataLocBase->kind) &&
+            psDataLocBase->restPos == allPathElems.end()) {
+        std::ostringstream ss;
+
+        ss << "Expecting a field name after `";
+
+        for (auto it = allPathElems.begin(); it != allPathElems.end(); ++it) {
+            if (it != allPathElems.begin()) {
+                ss << '.';
+            }
+
+            ss << **it;
+        }
+
+        ss << "`.";
+        throwTextParseError(ss.str(), loc);
+    }
+
     /*
      * Data location is already absolute: skip the root scope part (or
      * `env`) to create the path elements.
