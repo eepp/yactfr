@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-#include <vector>
-#include <string.h>
+#include <system_error>
 #include <errno.h>
 
 #include "utils.hpp"
@@ -28,11 +27,7 @@ std::string indent(const Size indent)
 
 std::string strError()
 {
-        std::vector<char> buf;
-
-        buf.reserve(1024);
-        strerror_r(errno, buf.data(), buf.capacity());
-        return buf.data();
+    return std::generic_category().message(errno);
 }
 
 } // namespace yactfr::internal
