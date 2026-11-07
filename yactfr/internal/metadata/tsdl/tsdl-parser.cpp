@@ -2956,41 +2956,51 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
 
                 const auto& envKey = *pseudoDataLoc->pathElems()[0];
 
-                // find the value in the current environment
-                if (!_envParsed) {
-                    std::ostringstream ss;
-
-                    ss << "Static-length array type refers to the environment entry `" <<
-                          envKey << "`, but no environment exists at this point.";
-                    throwTextParseError(ss.str(), subscriptLoc);
-                }
-
-                assert(_pseudoTraceType);
-
-                const auto entry = _pseudoTraceType->env()[envKey];
-
-                if (!entry) {
-                    std::ostringstream ss;
-
-                    ss << "Cannot find environment entry `" << envKey << "`.";
-                    throwTextParseError(ss.str(), subscriptLoc);
-                }
-
-                if (const auto entryVal = std::get_if<long long>(entry)) {
-                    if (*entryVal < 0) {
+                if (!_pseudoTraceType) {
+                    /*
+                     * First pass: the parser skips the `env` block, but
+                     * also discards this data type once it parses the
+                     * `trace` block: use a placeholder length.
+                     */
+                    lenDescrs.push_back({Size {0}, subscriptLoc});
+                } else {
+                    // find the value in the current environment
+                    if (!_envParsed) {
                         std::ostringstream ss;
 
-                        ss << "Static-length array type cannot have a negative size: " << *entryVal << ".";
+                        ss << "Static-length array type refers to the environment entry `" <<
+                              envKey << "`, but no environment exists at this point.";
                         throwTextParseError(ss.str(), subscriptLoc);
                     }
 
-                    lenDescrs.push_back({static_cast<Size>(*entryVal), subscriptLoc});
-                } else {
-                    std::ostringstream ss;
+                    assert(_pseudoTraceType);
 
-                    ss << "Environment entry `" << envKey <<
-                          "` isn't a valid static-length array type size.";
-                    throwTextParseError(ss.str(), subscriptLoc);
+                    const auto entry = _pseudoTraceType->env()[envKey];
+
+                    if (!entry) {
+                        std::ostringstream ss;
+
+                        ss << "Cannot find environment entry `" << envKey << "`.";
+                        throwTextParseError(ss.str(), subscriptLoc);
+                    }
+
+                    if (const auto entryVal = std::get_if<long long>(entry)) {
+                        if (*entryVal < 0) {
+                            std::ostringstream ss;
+
+                            ss << "Static-length array type cannot have a negative size: " <<
+                                  *entryVal << ".";
+                            throwTextParseError(ss.str(), subscriptLoc);
+                        }
+
+                        lenDescrs.push_back({static_cast<Size>(*entryVal), subscriptLoc});
+                    } else {
+                        std::ostringstream ss;
+
+                        ss << "Environment entry `" << envKey <<
+                              "` isn't a valid static-length array type size.";
+                        throwTextParseError(ss.str(), subscriptLoc);
+                    }
                 }
             } else {
                 lenDescrs.push_back({*pseudoDataLoc, subscriptLoc});
