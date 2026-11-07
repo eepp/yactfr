@@ -494,66 +494,132 @@ struct PseudoDataLocBase
     PseudoDataLoc::PathElems::const_iterator restPos;
 };
 
-std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
-                                                     const TextLocation& loc)
+/*
+ * Root scope prefix of an absolute data location.
+ */
+struct RootScopePrefix final
 {
+    // first path element
+    std::string_view firstElem;
+
+    // remaining path elements (`thirdElem` is empty if none)
+    std::string_view secondElem;
+    std::string_view thirdElem;
+
+    // corresponding scope
+    Scope scope;
+};
+
+constexpr RootScopePrefix rootScopePrefixes[] = {
+    {"trace",  "packet",  "header",  Scope::PacketHeader},
+    {"stream", "packet",  "context", Scope::PacketContext},
+    {"stream", "event",   "header",  Scope::EventRecordHeader},
+    {"stream", "event",   "context", Scope::EventRecordCommonContext},
+    {"event",  "context", {},        Scope::EventRecordSpecificContext},
+    {"event",  "fields",  {},        Scope::EventRecordPayload},
+};
+
+/*
+ * Throws that the root scope prefix of the data location at `loc`,
+ * which starts with `firstElem`, is invalid.
+ */
+[[ noreturn ]] void throwInvalidRootScopePrefix(const std::string_view firstElem,
+                                                const TextLocation& loc)
+{
+    std::vector<std::string> expected;
+
+    for (auto& prefix : rootScopePrefixes) {
+        if (prefix.firstElem != firstElem) {
+            continue;
+        }
+
+        std::string str {"`"};
+
+        str += prefix.secondElem;
+
+        if (!prefix.thirdElem.empty()) {
+            str += '.';
+            str += prefix.thirdElem;
+        }
+
+        expected.push_back(str + '`');
+    }
+
+    assert(!expected.empty());
+
+    std::ostringstream ss;
+
+    ss << "Expecting ";
+
+    for (auto i = 0U; i < expected.size(); ++i) {
+        if (i > 0) {
+            if (expected.size() > 2) {
+                ss << ',';
+            }
+
+            ss << ' ';
+
+            if (i == expected.size() - 1) {
+                ss << "or ";
+            }
+        }
+
+        ss << expected[i];
+    }
+
+    ss << " after `" << firstElem << ".`.";
+    throwTextParseError(ss.str(), loc);
+}
+
+/*
+ * Returns the base (kind and position of the remaining path elements)
+ * of the data location `allPathElems`, or `std::nullopt` if it's a
+ * relative data location.
+ *
+ * Throws if the data location starts with `trace.`, `stream.`, or
+ * `event.`, but not with a valid root scope prefix.
+ */
+std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
+                                                   const TextLocation& loc)
+{
+    assert(!allPathElems.empty());
+
     const auto beginPos = allPathElems.begin();
+    const auto& firstElem = *allPathElems[0];
 
-    if (allPathElems.size() >= 3) {
-        if (*allPathElems[0] == "trace") {
-            if (*allPathElems[1] == "packet") {
-                if (*allPathElems[2] == "header") {
-                    return PseudoDataLocBase {
-                        PseudoDataLoc::Abs {Scope::PacketHeader}, beginPos + 3
-                    };
-                }
-            }
+    if (firstElem == "env") {
+        return PseudoDataLocBase {PseudoDataLoc::Env {}, beginPos + 1};
+    }
 
-            throwTextParseError("Expecting `packet.header` after `trace.`.", loc);
-        } else if (*allPathElems[0] == "stream") {
-            if (*allPathElems[1] == "packet") {
-                if (*allPathElems[2] == "context") {
-                    return PseudoDataLocBase {
-                        PseudoDataLoc::Abs {Scope::PacketContext}, beginPos + 3
-                    };
-                }
-            } else if (*allPathElems[1] == "event") {
-                if (*allPathElems[2] == "header") {
-                    return PseudoDataLocBase {
-                        PseudoDataLoc::Abs {Scope::EventRecordHeader}, beginPos + 3
-                    };
-                } else if (*allPathElems[2] == "context") {
-                    return PseudoDataLocBase {
-                        PseudoDataLoc::Abs {Scope::EventRecordCommonContext}, beginPos + 3
-                    };
-                }
-            }
+    if (allPathElems.size() < 2) {
+        // single identifier: relative data location
+        return std::nullopt;
+    }
 
-            throwTextParseError("Expecting `packet.context`, `event.header`, or "
-                                "`event.context` after `stream.`.", loc);
+    auto firstElemIsRootScopeName = false;
+
+    for (const auto& prefix : rootScopePrefixes) {
+        if (prefix.firstElem != firstElem) {
+            continue;
+        }
+
+        firstElemIsRootScopeName = true;
+
+        if (*allPathElems[1] != prefix.secondElem) {
+            continue;
+        }
+
+        if (prefix.thirdElem.empty()) {
+            return PseudoDataLocBase {PseudoDataLoc::Abs {prefix.scope}, beginPos + 2};
+        }
+
+        if (allPathElems.size() >= 3 && *allPathElems[2] == prefix.thirdElem) {
+            return PseudoDataLocBase {PseudoDataLoc::Abs {prefix.scope}, beginPos + 3};
         }
     }
 
-    if (allPathElems.size() >= 2) {
-        if (*allPathElems[0] == "event") {
-            if (*allPathElems[1] == "context") {
-                return PseudoDataLocBase {
-                    PseudoDataLoc::Abs {Scope::EventRecordSpecificContext}, beginPos + 2
-                };
-            } else if (*allPathElems[1] == "fields") {
-                return PseudoDataLocBase {
-                    PseudoDataLoc::Abs {Scope::EventRecordPayload}, beginPos + 2
-                };
-            }
-
-            throwTextParseError("Expecting `context` or `fields` after `event.`.", loc);
-        }
-    }
-
-    if (allPathElems.size() >= 1 && *allPathElems[0] == "env") {
-        return PseudoDataLocBase {
-            PseudoDataLoc::Env {}, beginPos + 1
-        };
+    if (firstElemIsRootScopeName) {
+        throwInvalidRootScopePrefix(firstElem, loc);
     }
 
     return std::nullopt;
