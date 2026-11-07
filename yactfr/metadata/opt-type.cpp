@@ -31,7 +31,7 @@ OptionalWithBooleanSelectorType::OptionalWithBooleanSelectorType(const unsigned 
                                                                  DataLocation selLoc,
                                                                  MapItem::Up attrs) :
     OptionalType {
-        _kindOptUIntSel, minAlign, std::move(dt),
+        _kindOptBoolSel, minAlign, std::move(dt),
         std::move(selLoc), std::move(attrs)
     }
 {
