@@ -932,12 +932,11 @@ private:
                                                                      const TextLocation& loc);
 
     /*
-     * Tries to return a pseudo data location from the relative data
-     * location path elements `allPathElems`, returning `std::nullopt` if
-     * it can't.
+     * Returns a pseudo data location from the relative data location
+     * path elements `allPathElems`, throwing on error.
      */
-    [[ nodiscard ]] std::optional<PseudoDataLoc> _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
-                                                                     const TextLocation& loc);
+    [[ nodiscard ]] PseudoDataLoc _pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+                                                                    const TextLocation& loc);
 
     /*
      * Returns a pseudo data location from the absolute or relative data

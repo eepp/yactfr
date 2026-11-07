@@ -581,8 +581,8 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromAbsAllPathElems(const
     return PseudoDataLoc {psDataLocBase->kind, std::move(pathElems), loc};
 }
 
-std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
-                                                                             const TextLocation& loc)
+PseudoDataLoc TsdlParser::_pseudoDataLocFromRelAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
+                                                             const TextLocation& loc)
 {
     /*
      * A CTF 1.8 relative data location is relative to where the TSDL
@@ -660,8 +660,6 @@ std::optional<PseudoDataLoc> TsdlParser::_pseudoDataLocFromRelAllPathElems(const
 
         --stackIt;
     }
-
-    return std::nullopt;
 }
 
 PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const PseudoDataLoc::PathElems& allPathElems,
@@ -673,11 +671,7 @@ PseudoDataLoc TsdlParser::_pseudoDataLocFromAllPathElems(const PseudoDataLoc::Pa
         return *pseudoDataLoc;
     }
 
-    if (const auto pseudoDataLoc = this->_pseudoDataLocFromRelAllPathElems(allPathElems, loc)) {
-        return *pseudoDataLoc;
-    }
-
-    throwTextParseError("Invalid data location.", loc);
+    return this->_pseudoDataLocFromRelAllPathElems(allPathElems, loc);
 }
 
 void TsdlParser::_addDtAlias(std::string&& name, const PseudoDt& pseudoDt,
