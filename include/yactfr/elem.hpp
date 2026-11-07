@@ -58,42 +58,42 @@ class VmPos;
 class Element
 {
 private:
-    enum _tKind
-    {
-        _kindEnd                = 1 << 0,
-        _kindBeg                = 1 << 1,
-        _kindPkt                = 1 << 2,
-        _kindScope              = 1 << 3,
-        _kindPktContent         = 1 << 4,
-        _kindEr                 = 1 << 5,
-        _kindPktMagicNumber     = 1 << 6,
-        _kindMetadataStreamUuid = 1 << 7,
-        _kindDs                 = 1 << 8,
-        _kindINFO               = 1 << 9,
-        _kindDefClkVal          = 1 << 10,
-        _kindFlBitArray         = 1 << 11,
-        _kindBitMapData         = 1 << 12,
-        _kindBoolData           = 1 << 13,
-        _kindIntData            = 1 << 14,
-        _kindSigned             = 1 << 15,
-        _kindUnsigned           = 1 << 16,
-        _kindFloatData          = 1 << 17,
-        _kindVlInt              = _kindIntData | (1 << 19),
-        _kindNtStr              = 1 << 20,
-        _kindRawData            = 1 << 21,
-        _kindStruct             = 1 << 22,
-        _kindSlData             = 1 << 23,
-        _kindDlData             = 1 << 24,
-        _kindArray              = 1 << 25,
-        _kindNonNtStr           = 1 << 26,
-        _kindBlob               = 1 << 27,
-        _kindVar                = 1 << 28,
-        _kindIntSel             = 1 << 29,
-        _kindBoolSel            = 1 << 30,
-        _kindOpt                = 1 << 31,
-    };
-
     using _tU = unsigned long long;
+
+    enum _tKind : _tU
+    {
+        _kindEnd                = 1ULL << 0,
+        _kindBeg                = 1ULL << 1,
+        _kindPkt                = 1ULL << 2,
+        _kindScope              = 1ULL << 3,
+        _kindPktContent         = 1ULL << 4,
+        _kindEr                 = 1ULL << 5,
+        _kindPktMagicNumber     = 1ULL << 6,
+        _kindMetadataStreamUuid = 1ULL << 7,
+        _kindDs                 = 1ULL << 8,
+        _kindINFO               = 1ULL << 9,
+        _kindDefClkVal          = 1ULL << 10,
+        _kindFlBitArray         = 1ULL << 11,
+        _kindBitMapData         = 1ULL << 12,
+        _kindBoolData           = 1ULL << 13,
+        _kindIntData            = 1ULL << 14,
+        _kindSigned             = 1ULL << 15,
+        _kindUnsigned           = 1ULL << 16,
+        _kindFloatData          = 1ULL << 17,
+        _kindVlInt              = _kindIntData | (1ULL << 19),
+        _kindNtStr              = 1ULL << 20,
+        _kindRawData            = 1ULL << 21,
+        _kindStruct             = 1ULL << 22,
+        _kindSlData             = 1ULL << 23,
+        _kindDlData             = 1ULL << 24,
+        _kindArray              = 1ULL << 25,
+        _kindNonNtStr           = 1ULL << 26,
+        _kindBlob               = 1ULL << 27,
+        _kindVar                = 1ULL << 28,
+        _kindIntSel             = 1ULL << 29,
+        _kindBoolSel            = 1ULL << 30,
+        _kindOpt                = 1ULL << 31,
+    };
 
 public:
     /// %Kind of element.
