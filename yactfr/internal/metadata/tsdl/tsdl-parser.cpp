@@ -135,6 +135,8 @@ void TsdlParser::_setPseudoSlArrayTypeMetadataStreamUuidRole(PseudoDt& basePseud
     }
 }
 
+namespace {
+
 class DefClkTsRoleAdder :
     public PseudoDtVisitor
 {
@@ -179,6 +181,8 @@ private:
         pseudoDt.pseudoElemType().accept(*this);
     }
 };
+
+} // namespace
 
 void TsdlParser::_addPseudoDtRoles()
 {
@@ -240,6 +244,8 @@ void TsdlParser::_addPseudoDtRoles()
         }
     }
 }
+
+namespace {
 
 class PseudoDstDefClkTypeSetter :
     public PseudoDtVisitor
@@ -323,6 +329,8 @@ private:
     PseudoDst * const _pseudoDst;
     const std::string *_clkTypeId = nullptr;
 };
+
+} // namespace
 
 void TsdlParser::_setPseudoDstDefClkType(PseudoDst& pseudoDst)
 {
@@ -463,6 +471,8 @@ std::optional<boost::uuids::uuid> TsdlParser::_uuidFromStr(const std::string& st
     }
 }
 
+namespace {
+
 struct PseudoDataLocBase
 {
     explicit PseudoDataLocBase(PseudoDataLoc::Kind kind,
@@ -475,8 +485,6 @@ struct PseudoDataLocBase
     PseudoDataLoc::Kind kind;
     PseudoDataLoc::PathElems::const_iterator restPos;
 };
-
-namespace {
 
 std::optional<PseudoDataLocBase> pseudoDataLocBase(const PseudoDataLoc::PathElems& allPathElems,
                                                      const TextLocation& loc)
