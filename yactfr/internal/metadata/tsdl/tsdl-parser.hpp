@@ -1009,10 +1009,6 @@ private:
     [[ nodiscard ]] static std::optional<boost::uuids::uuid> _uuidFromStr(const std::string& str);
 
     template <typename FlIntTypeT>
-    void _validateFlIntTypeMapping(Size len, const TextLocation& loc, const std::string& name,
-                                   const typename FlIntTypeT::MappingRangeSet& ranges) const;
-
-    template <typename FlIntTypeT>
     void _validateFlIntTypeMappings(Size len, const TextLocation& loc,
                                     const typename FlIntTypeT::Mappings& mappings) const;
 
@@ -1226,50 +1222,8 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
 }
 
 template <typename FlIntTypeT>
-void TsdlParser::_validateFlIntTypeMapping(const Size len, const TextLocation& loc,
-                                           const std::string& name,
-                                           const typename FlIntTypeT::MappingRangeSet& ranges) const
-{
-    using Value = typename FlIntTypeT::MappingValue;
-
-    for (auto& range : ranges) {
-        // validate range storage length
-        Value minLower, maxUpper;
-
-        if constexpr (std::is_signed_v<Value>) {
-            if (len < 64) {
-                minLower = -(1LL << (len - 1));
-                maxUpper = (1LL << (len - 1)) - 1;
-            } else {
-                minLower = std::numeric_limits<Value>::min();
-                maxUpper = std::numeric_limits<Value>::max();
-            }
-        } else {
-            minLower = std::numeric_limits<Value>::min();
-
-            if (len < 64) {
-                maxUpper = (1ULL << len) - 1;
-            } else {
-                maxUpper = std::numeric_limits<Value>::max();
-            }
-        }
-
-        if (range.lower() < minLower || range.upper() > maxUpper) {
-            std::ostringstream ss;
-
-            ss << "In mapping `" << name << "` of enumeration type: "
-                  "at least one value of the range [" << range.lower() <<
-                  ", " << range.upper() <<
-                  "] doesn't fit the range [" << minLower << ", " << maxUpper << "] "
-                  "(with a length of " << len << " bit" << ((len == 1) ? "" : "s") << ").";
-            throwTextParseError(ss.str(), loc);
-        }
-    }
-}
-
-template <typename FlIntTypeT>
 void TsdlParser::_validateFlIntTypeMappings(const Size len, const TextLocation& loc,
-                                             const typename FlIntTypeT::Mappings& mappings) const
+                                            const typename FlIntTypeT::Mappings& mappings) const
 {
     assert(len > 0);
     assert(len <= 64);
@@ -1277,8 +1231,42 @@ void TsdlParser::_validateFlIntTypeMappings(const Size len, const TextLocation& 
     // the parser requires at least one mapping name before `}`
     assert(!mappings.empty());
 
+    // valid range for a length of `len` bits
+    using Value = typename FlIntTypeT::MappingValue;
+
+    Value minLower, maxUpper;
+
+    if constexpr (std::is_signed_v<Value>) {
+        if (len < 64) {
+            minLower = -(1LL << (len - 1));
+            maxUpper = (1LL << (len - 1)) - 1;
+        } else {
+            minLower = std::numeric_limits<Value>::min();
+            maxUpper = std::numeric_limits<Value>::max();
+        }
+    } else {
+        minLower = std::numeric_limits<Value>::min();
+
+        if (len < 64) {
+            maxUpper = (1ULL << len) - 1;
+        } else {
+            maxUpper = std::numeric_limits<Value>::max();
+        }
+    }
+
     for (const auto& [name, ranges] : mappings) {
-        this->_validateFlIntTypeMapping<FlIntTypeT>(len, loc, name, ranges);
+        for (auto& range : ranges) {
+            if (range.lower() < minLower || range.upper() > maxUpper) {
+                std::ostringstream ss;
+
+                ss << "In mapping `" << name << "` of enumeration type: "
+                      "at least one value of the range [" << range.lower() <<
+                      ", " << range.upper() <<
+                      "] doesn't fit the range [" << minLower << ", " << maxUpper << "] "
+                      "(with a length of " << len << " bit" << ((len == 1) ? "" : "s") << ").";
+                throwTextParseError(ss.str(), loc);
+            }
+        }
     }
 }
 
