@@ -20,7 +20,7 @@ void TsdlAttr::_throwExpecting(const std::string_view expectedDescr) const
 {
     std::ostringstream ss;
 
-    ss << "Attribute `" << name << "`: expecting " << expectedDescr;
+    ss << "Attribute `" << name << "`: expecting " << expectedDescr << ".";
     throwTextParseError(ss.str(), this->valTextLoc());
 }
 
@@ -41,7 +41,7 @@ const std::string& TsdlAttr::strVal() const
 
 const std::string& TsdlAttr::identVal() const
 {
-    return this->_expectVal<Ident>("identifier.").name;
+    return this->_expectVal<Ident>("identifier").name;
 }
 
 const std::string& TsdlAttr::strOrIdentVal() const
@@ -52,17 +52,17 @@ const std::string& TsdlAttr::strOrIdentVal() const
         return *str;
     }
 
-    this->_throwExpecting("identifier or literal string.");
+    this->_throwExpecting("identifier or literal string");
 }
 
 const std::string& TsdlAttr::clkNameVal() const
 {
-    return this->_expectVal<ClkNameVal>("`clock.NAME.value`.").clkName;
+    return this->_expectVal<ClkNameVal>("`clock.NAME.value`").clkName;
 }
 
 unsigned long long TsdlAttr::uintVal() const
 {
-    return this->_expectVal<unsigned long long>("constant unsigned integer.");
+    return this->_expectVal<unsigned long long>("constant unsigned integer");
 }
 
 long long TsdlAttr::sIntVal() const
@@ -74,7 +74,7 @@ long long TsdlAttr::sIntVal() const
     const auto uIntVal = std::get_if<unsigned long long>(&val);
 
     if (!uIntVal) {
-        this->_throwExpecting("constant signed integer.");
+        this->_throwExpecting("constant signed integer");
     }
 
     if (*uIntVal > static_cast<unsigned long long>(std::numeric_limits<long long>::max())) {
@@ -103,7 +103,7 @@ DisplayBase TsdlAttr::dispBase() const
     const auto ident = std::get_if<Ident>(&val);
 
     if (!ident) {
-        this->_throwExpecting("constant unsigned integer or identifier.");
+        this->_throwExpecting("constant unsigned integer or identifier");
     }
 
     const auto& str = ident->name;

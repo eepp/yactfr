@@ -19,4 +19,4 @@ event {
 };
 ---
 [12:1] In `event` root block:
-[13:19] Attribute `model.emf.uri`: expecting literal string
+[13:19] Attribute `model.emf.uri`: expecting literal string.
