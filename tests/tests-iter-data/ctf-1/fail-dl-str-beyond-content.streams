@@ -19,7 +19,7 @@ event {
     };
 };
 ---
-$55                                       # packet content size
+$56                                       # packet content size
 
 [after_str - before_str : 8]              # `len`
 <before_str> "restez techno!" <after_str> # `text`
@@ -29,14 +29,14 @@ $55                                       # packet content size
      0     DSI:T0
      0     SC:1 {
      0       ST {
-     0         FLUI:content_size:55
+     0         FLUI:content_size:56
      8       }
      8     }
-     8     PI:C55
+     8     PI:C56
      8     ER {
      8       ERI:T0:#test
      8       SC:5 {
      8         ST {
      8           FLUI:len:14
     16           DLS:text {
-    16 Cannot read 112 bits at this point: would move beyond the content of the current packet (39 bits remaining).
+    16 Cannot read 112 bits at this point: would move beyond the content of the current packet (40 bits remaining).

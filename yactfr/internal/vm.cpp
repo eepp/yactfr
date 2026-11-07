@@ -1543,6 +1543,20 @@ Vm::_tExecReaction Vm::_execSetDsInfo(const Instr&)
 
 Vm::_tExecReaction Vm::_execSetPktInfo(const Instr&)
 {
+    /*
+     * Without a total length, the next packet begins at the end of the
+     * content of this one: like the total length, the content length
+     * must then be a multiple of 8.
+     */
+    if (_pos.curExpectedPktTotalLenBits == sizeUnset &&
+            _pos.curExpectedPktContentLenBits != sizeUnset &&
+            (_pos.curExpectedPktContentLenBits & 7) != 0) {
+        throw ExpectedPacketTotalLengthNotMultipleOf8DecodingError {
+            _pos.headOffsetInElemSeqBits(),
+            _pos.curExpectedPktContentLenBits
+        };
+    }
+
     _pos.elems.pktInfo._expectedTotalLen = std::nullopt;
     _pos.elems.pktInfo._expectedContentLen = std::nullopt;
 
