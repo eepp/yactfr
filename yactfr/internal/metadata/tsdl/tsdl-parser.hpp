@@ -386,6 +386,21 @@ private:
     TsdlAttr _expectAttr();
 
     /*
+     * Expects a block of attributes, from `{` to `}`.
+     *
+     * Returns the parsed attributes, without checking for
+     * duplicate ones.
+     *
+     * Example:
+     *
+     *     {
+     *         size = 23;
+     *         byte_order = be;
+     *     }
+     */
+    _tAttrs _expectAttrBlock();
+
+    /*
      * Tries to parse a scope data type with a terminating `;` and
      * returns it.
      *

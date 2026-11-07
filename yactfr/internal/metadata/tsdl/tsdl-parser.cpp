@@ -1075,23 +1075,8 @@ PseudoDt::Up TsdlParser::_tryParseFlIntType()
     const auto beginLoc = _ss.loc();
     const auto beginAt = _ss.at();
 
-    // parse `{`
-    this->_expectToken("{");
-
     // parse attributes
-    _tAttrs attrs;
-
-    while (true) {
-        this->_skipCommentsAndWhitespacesAndSemicolons();
-
-        // end of block?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        // parse attribute
-        attrs.push_back(this->_expectAttr());
-    }
+    const auto attrs = this->_expectAttrBlock();
 
     const auto endAt = _ss.at();
 
@@ -1209,23 +1194,8 @@ PseudoDt::Up TsdlParser::_tryParseFlFloatType()
         return nullptr;
     }
 
-    // parse `{`
-    this->_expectToken("{");
-
     // parse attributes
-    _tAttrs attrs;
-
-    while (true) {
-        this->_skipCommentsAndWhitespacesAndSemicolons();
-
-        // end of block?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        // parse attribute
-        attrs.push_back(this->_expectAttr());
-    }
+    const auto attrs = this->_expectAttrBlock();
 
     // check for duplicate attributes
     TsdlParser::_checkDupAttr(attrs);
@@ -1288,26 +1258,18 @@ PseudoDt::Up TsdlParser::_tryParseNtStrType()
         return nullptr;
     }
 
-    // try to parse `{`
-    if (!_ss.tryScanToken("{")) {
-        return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
-                                                       beginLoc);
+    // `string` without attributes?
+    {
+        StrScannerRejecter ssRej {_ss};
+
+        if (!_ss.tryScanToken("{")) {
+            return std::make_unique<PseudoScalarDtWrapper>(std::make_unique<const NullTerminatedStringType>(8),
+                                                           beginLoc);
+        }
     }
 
     // parse attributes
-    _tAttrs attrs;
-
-    while (true) {
-        this->_skipCommentsAndWhitespacesAndSemicolons();
-
-        // end of block?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        // parse attribute
-        attrs.push_back(this->_expectAttr());
-    }
+    const auto attrs = this->_expectAttrBlock();
 
     // check for duplicate attributes
     TsdlParser::_checkDupAttr(attrs);
@@ -1665,23 +1627,8 @@ bool TsdlParser::_tryParseEnvBlock()
         throwTextParseError("Duplicate `env` block.", loc);
     }
 
-    // parse `{`
-    this->_expectToken("{");
-
     // parse attributes
-    _tAttrs attrs;
-
-    while (true) {
-        this->_skipCommentsAndWhitespacesAndSemicolons();
-
-        // end of block?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        // parse attribute
-        attrs.push_back(this->_expectAttr());
-    }
+    const auto attrs = this->_expectAttrBlock();
 
     // parse `;`
     this->_expectToken(";");
@@ -1739,24 +1686,8 @@ bool TsdlParser::_tryParseCallsiteBlock()
         return false;
     }
 
-    // parse `{`
-    this->_expectToken("{");
-
-    // parse attributes
-    _tAttrs attrs;
-
-    // pretty loose: we accept everything, even duplicates
-    while (true) {
-        this->_skipCommentsAndWhitespacesAndSemicolons();
-
-        // end of block?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        // parse attribute
-        attrs.push_back(this->_expectAttr());
-    }
+    // parse attributes (pretty loose: we accept everything, even duplicates)
+    this->_expectAttrBlock();
 
     // parse `;`
     this->_expectToken(";");
@@ -1774,23 +1705,8 @@ bool TsdlParser::_tryParseClkTypeBlock()
         return false;
     }
 
-    // parse `{`
-    this->_expectToken("{");
-
     // parse attributes
-    _tAttrs attrs;
-
-    while (true) {
-        this->_skipCommentsAndWhitespacesAndSemicolons();
-
-        // end of block?
-        if (_ss.tryScanToken("}")) {
-            break;
-        }
-
-        // parse attribute
-        attrs.push_back(this->_expectAttr());
-    }
+    const auto attrs = this->_expectAttrBlock();
 
     // parse `;`
     this->_expectToken(";");
@@ -2481,6 +2397,25 @@ PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackF
         }), beginLoc);
 
         throw;
+    }
+}
+
+TsdlParser::_tAttrs TsdlParser::_expectAttrBlock()
+{
+    this->_expectToken("{");
+
+    _tAttrs attrs;
+
+    while (true) {
+        this->_skipCommentsAndWhitespacesAndSemicolons();
+
+        // end of block?
+        if (_ss.tryScanToken("}")) {
+            return attrs;
+        }
+
+        // parse attribute
+        attrs.push_back(this->_expectAttr());
     }
 }
 
