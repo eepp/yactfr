@@ -737,6 +737,16 @@ std::optional<ValT> StrScanner::_tryScanConstInt(const bool negate)
         return std::nullopt;
     }
 
+    /*
+     * Reject a constant integer followed with a decimal digit, which
+     * isn't a digit of the binary or octal base, such as `08`.
+     *
+     * Without this, std::from_chars() would scan the `0` of `08`.
+     */
+    if (res.ptr != rest.data() + rest.size() && *res.ptr >= '0' && *res.ptr <= '9') {
+        return std::nullopt;
+    }
+
     {
         const auto val = this->_tryNegateConstInt<ValT>(ullVal, negate);
 
