@@ -1309,8 +1309,8 @@ PseudoDt::Up TsdlParser::_tryParseFlFloatType()
     TsdlParser::_checkDupAttr(attrs);
 
     auto align = 8U;
-    auto expDig = 0U;
-    auto mantDig = 0U;
+    auto expDig = 0ULL;
+    auto mantDig = 0ULL;
     auto bo = this->_absNativeBo();
 
     // check attributes
@@ -1348,7 +1348,9 @@ PseudoDt::Up TsdlParser::_tryParseFlFloatType()
     }
 
     return std::make_unique<PseudoScalarDtWrapper>(
-        FixedLengthFloatingPointNumberType::create(align, expDig + mantDig, bo, bioFromBo(bo)),
+        FixedLengthFloatingPointNumberType::create(align,
+                                                   static_cast<unsigned int>(expDig + mantDig),
+                                                   bo, bioFromBo(bo)),
         beginLoc
     );
 }
@@ -1600,7 +1602,7 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType(const bool
             // check for duplicate member type
             TsdlParser::_checkDupPseudoNamedDt(pseudoMemberTypes, beginLoc);
 
-            auto align = 1ULL;
+            auto align = 1U;
 
             if (_ss.tryScanToken("align")) {
                 this->_expectToken("(");
@@ -1614,7 +1616,15 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseStructType(const bool
                         throwTextParseError(ss.str(), _ss.loc());
                     }
 
-                    align = *optAlign;
+                    if (*optAlign > std::numeric_limits<unsigned int>::max()) {
+                        std::ostringstream ss;
+
+                        ss << "Minimum alignment for `struct` block is too large " <<
+                              "(unsupported): " << *optAlign << ".";
+                        throwTextParseError(ss.str(), _ss.loc());
+                    }
+
+                    align = static_cast<unsigned int>(*optAlign);
                     this->_expectToken(")");
                 } else {
                     throwTextParseError("Expecting valid constant unsigned integer.",

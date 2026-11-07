@@ -6,6 +6,7 @@
  */
 
 #include <sstream>
+#include <limits>
 
 #include <yactfr/text-parse-error.hpp>
 
@@ -119,7 +120,14 @@ unsigned int TsdlAttr::align() const
         throwTextParseError(ss.str(), this->valTextLoc());
     }
 
-    return uintVal;
+    if (uintVal > std::numeric_limits<unsigned int>::max()) {
+        std::ostringstream ss;
+
+        ss << "`align` attribute is too large (unsupported): " << uintVal << ".";
+        throwTextParseError(ss.str(), this->valTextLoc());
+    }
+
+    return static_cast<unsigned int>(uintVal);
 }
 
 std::optional<ByteOrder> TsdlAttr::bo() const

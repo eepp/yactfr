@@ -1,0 +1,30 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    struct {
+      string a;
+      string b;
+    } align(4294967296) a;
+  };
+};
+---
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[17:5] While parsing body of `struct` block:
+[17:5] In `struct` block:
+[20:23] Minimum alignment for `struct` block is too large (unsupported): 4294967296.

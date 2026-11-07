@@ -1,0 +1,30 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+stream {
+
+};
+
+event {
+  name = event;
+
+  fields := struct {
+    integer {
+      size = 8;
+      align = 4294967296;
+    } a;
+  };
+};
+---
+[13:1] In `event` root block:
+[16:3] In the `fields` scope:
+[16:13] In `struct` block:
+[17:5] While parsing body of `struct` block:
+[17:5] In `integer` block:
+[19:15] `align` attribute is too large (unsupported): 4294967296.
