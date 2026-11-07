@@ -137,20 +137,21 @@ void TsdlParser::_setPseudoSlArrayTypeMetadataStreamUuidRole(PseudoDt& basePseud
 
 namespace {
 
-class DefClkTsRoleAdder :
+/*
+ * Pseudo data type visitor which recursively visits the elements of
+ * array types, the member types of structure types, and the options of
+ * variant types.
+ *
+ * Override visit(PseudoFlUIntType&) to visit the pseudo fixed-length
+ * unsigned integer types.
+ */
+class RecPseudoDtVisitor :
     public PseudoDtVisitor
 {
+protected:
+    explicit RecPseudoDtVisitor() = default;
+
 public:
-    explicit DefClkTsRoleAdder() = default;
-
-    void visit(PseudoFlUIntType& pseudoDt) override
-    {
-        if (pseudoDt.mappedClkTypeId() &&
-                !pseudoDt.hasRole(UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp)) {
-            pseudoDt.addRole(UnsignedIntegerTypeRole::DefaultClockTimestamp);
-        }
-    }
-
     void visit(PseudoSlArrayType& pseudoDt) override
     {
         this->_visit(pseudoDt);
@@ -179,6 +180,23 @@ private:
     void _visit(PseudoArrayType& pseudoDt)
     {
         pseudoDt.pseudoElemType().accept(*this);
+    }
+};
+
+class DefClkTsRoleAdder final :
+    public RecPseudoDtVisitor
+{
+public:
+    explicit DefClkTsRoleAdder() = default;
+
+    using RecPseudoDtVisitor::visit;
+
+    void visit(PseudoFlUIntType& pseudoDt) override
+    {
+        if (pseudoDt.mappedClkTypeId() &&
+                !pseudoDt.hasRole(UnsignedIntegerTypeRole::PacketEndDefaultClockTimestamp)) {
+            pseudoDt.addRole(UnsignedIntegerTypeRole::DefaultClockTimestamp);
+        }
     }
 };
 
@@ -247,8 +265,8 @@ void TsdlParser::_addPseudoDtRoles()
 
 namespace {
 
-class PseudoDstDefClkTypeSetter :
-    public PseudoDtVisitor
+class PseudoDstDefClkTypeSetter final :
+    public RecPseudoDtVisitor
 {
 public:
     explicit PseudoDstDefClkTypeSetter(PseudoTraceType& pseudoTraceType, PseudoDst& pseudoDst) :
@@ -256,6 +274,8 @@ public:
         _pseudoDst {&pseudoDst}
     {
     }
+
+    using RecPseudoDtVisitor::visit;
 
     void visit(PseudoFlUIntType& pseudoDt) override
     {
@@ -292,36 +312,6 @@ public:
                 }
             }
         }
-    }
-
-    void visit(PseudoSlArrayType& pseudoDt) override
-    {
-        this->_visit(pseudoDt);
-    }
-
-    void visit(PseudoDlArrayType& pseudoDt) override
-    {
-        this->_visit(pseudoDt);
-    }
-
-    void visit(PseudoStructType& pseudoDt) override
-    {
-        for (const auto& pseudoMemberType : pseudoDt.pseudoMemberTypes()) {
-            pseudoMemberType->pseudoDt().accept(*this);
-        }
-    }
-
-    void visit(PseudoVarType& pseudoDt) override
-    {
-        for (const auto& pseudoOpt : pseudoDt.pseudoOpts()) {
-            pseudoOpt->pseudoDt().accept(*this);
-        }
-    }
-
-private:
-    void _visit(PseudoArrayType& pseudoDt)
-    {
-        pseudoDt.pseudoElemType().accept(*this);
     }
 
 private:
