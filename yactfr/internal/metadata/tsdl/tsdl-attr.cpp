@@ -64,6 +64,28 @@ unsigned long long TsdlAttr::uintVal() const
     return this->_expectVal<unsigned long long>("constant unsigned integer.");
 }
 
+long long TsdlAttr::sIntVal() const
+{
+    if (const auto sIntVal = std::get_if<long long>(&val)) {
+        return *sIntVal;
+    }
+
+    const auto uIntVal = std::get_if<unsigned long long>(&val);
+
+    if (!uIntVal) {
+        this->_throwExpecting("constant signed integer.");
+    }
+
+    if (*uIntVal > static_cast<unsigned long long>(std::numeric_limits<long long>::max())) {
+        std::ostringstream ss;
+
+        ss << "Attribute `" << name << "`: value is too large: " << *uIntVal << ".";
+        throwTextParseError(ss.str(), this->valTextLoc());
+    }
+
+    return static_cast<long long>(*uIntVal);
+}
+
 DisplayBase TsdlAttr::dispBase() const
 {
     if (const auto uintVal = std::get_if<unsigned long long>(&val)) {

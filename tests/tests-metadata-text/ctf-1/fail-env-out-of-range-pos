@@ -24,4 +24,4 @@ event {
 };
 ---
 [9:1] In `env` root block:
-[10:10] Trace environment entry `allo`: value 9223372036854775808 is too large (expecting a 64-bit signed integer).
+[10:10] Attribute `allo`: value is too large: 9223372036854775808.

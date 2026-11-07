@@ -103,6 +103,13 @@ public:
     unsigned long long uintVal() const;
 
     /*
+     * Returns the constant integer value of this attribute as a signed
+     * 64-bit integer, throwing an error if it's not a constant integer
+     * or if it doesn't fit.
+     */
+    long long sIntVal() const;
+
+    /*
      * Returns a display base from this attribute, throwing an error if
      * it cannot.
      */

@@ -1647,19 +1647,9 @@ bool TsdlParser::_tryParseEnvBlock()
     for (const auto& attr : attrs) {
         TraceEnvironment::Entry entry;
 
-        if (const auto sIntVal = std::get_if<long long>(&attr.val)) {
-            entry = *sIntVal;
-        } else if (const auto uIntVal = std::get_if<unsigned long long>(&attr.val)) {
-            if (*uIntVal >= (1ULL << 63)) {
-                std::ostringstream ss;
-
-                ss << "Trace environment entry `" << attr.name <<
-                      "`: value " << *uIntVal << " is too large " <<
-                      "(expecting a 64-bit signed integer).";
-                throwTextParseError(ss.str(), attr.valTextLoc());
-            }
-
-            entry = static_cast<long long>(*uIntVal);
+        if (std::holds_alternative<long long>(attr.val) ||
+                std::holds_alternative<unsigned long long>(attr.val)) {
+            entry = attr.sIntVal();
         } else if (const auto strVal = std::get_if<std::string>(&attr.val)) {
             entry = *strVal;
         } else {
@@ -1763,21 +1753,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
         } else if (attr.name == "precision") {
             prec = attr.uintVal();
         } else if (attr.name == "offset_s") {
-            if (const auto uIntVal = std::get_if<unsigned long long>(&attr.val)) {
-                if (*uIntVal > static_cast<unsigned long long>(std::numeric_limits<long long>::max())) {
-                    std::ostringstream ss;
-
-                    ss << "Attribute `offset_s`: value is too large: " << *uIntVal << ".";
-                    throwTextParseError(ss.str(), attr.valTextLoc());
-                }
-
-                offsetSecs = static_cast<long long>(*uIntVal);
-            } else if (const auto sIntVal = std::get_if<long long>(&attr.val)) {
-                offsetSecs = *sIntVal;
-            } else {
-                throwTextParseError("Attribute `offset_s`: expecting constant signed integer.",
-                                    attr.valTextLoc());
-            }
+            offsetSecs = attr.sIntVal();
         } else if (attr.name == "offset") {
             offsetCycles = static_cast<Cycles>(attr.uintVal());
             offsetCyclesLoc = attr.valTextLoc();
@@ -2266,21 +2242,7 @@ bool TsdlParser::_tryParseErtBlock()
         } else if (attr.name == "stream_id") {
             dstId = attr.uintVal();
         } else if (attr.name == "loglevel") {
-            if (const auto uIntVal = std::get_if<unsigned long long>(&attr.val)) {
-                if (*uIntVal > static_cast<unsigned long long>(std::numeric_limits<LogLevel>::max())) {
-                    std::ostringstream ss;
-
-                    ss << "Attribute `loglevel`: value is too large: " << *uIntVal << ".";
-                    throwTextParseError(ss.str(), attr.valTextLoc());
-                }
-
-                logLevel = static_cast<LogLevel>(*uIntVal);
-            } else if (const auto sIntVal = std::get_if<long long>(&attr.val)) {
-                logLevel = static_cast<LogLevel>(*sIntVal);
-            } else {
-                throwTextParseError("Attribute `loglevel`: expecting constant signed integer.",
-                                    attr.valTextLoc());
-            }
+            logLevel = attr.sIntVal();
         } else if (attr.name == "model.emf.uri") {
             emfUri = attr.strVal();
         } else if (attr.name == "name") {
