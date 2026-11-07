@@ -1116,14 +1116,14 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
 
         _ss.skipCommentsAndWhitespaces();
 
-        std::optional loc {_ss.loc()};
+        auto loc = _ss.loc();
 
         if (const auto ident = _ss.tryScanIdent()) {
             name = *ident;
         } else if (const auto escapedStr = this->_tryScanLitStr()) {
             name = *escapedStr;
         } else {
-            throwTextParseError("Expecting mapping name (identifier or literal string).", *loc);
+            throwTextParseError("Expecting mapping name (identifier or literal string).", loc);
         }
 
         Val lower, upper;
@@ -1161,7 +1161,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
                 ss << "Implicit value of mapping `" << name << "` is too large: "
                       "previous value is the maximum (" << std::numeric_limits<Val>::max() <<
                       ").";
-                throwTextParseError(ss.str(), *loc);
+                throwTextParseError(ss.str(), loc);
             }
 
             lower = *curVal;
@@ -1179,7 +1179,7 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
 
             ss << "Lower value of range (" << lower << ") is greater than upper value (" <<
                   upper << ").";
-            throwTextParseError(ss.str(), *loc);
+            throwTextParseError(ss.str(), loc);
         }
 
         /*
@@ -1202,10 +1202,8 @@ PseudoDt::Up TsdlParser::_finishParseFlEnumType(PseudoDt::Up pseudoDt,
 
     typename FlIntTypeT::Mappings mappings;
 
-    for (const auto& [name, ranges] : pseudoMappings) {
-        mappings[name] = typename FlIntTypeT::MappingRangeSet {
-            std::move(ranges)
-        };
+    for (auto& [name, ranges] : pseudoMappings) {
+        mappings[name] = typename FlIntTypeT::MappingRangeSet {std::move(ranges)};
     }
 
     // validate mappings
