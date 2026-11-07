@@ -1904,6 +1904,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     std::optional<Cycles> prec;
     auto offsetSecs = 0LL;
     Cycles offsetCycles = 0;
+    std::optional<TextLocation> offsetCyclesLoc;
     auto isAbs = false;
 
     // check attributes
@@ -1957,6 +1958,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
             }
         } else if (attr.name == "offset") {
             offsetCycles = static_cast<Cycles>(attr.uintVal());
+            offsetCyclesLoc = attr.valTextLoc();
         } else if (attr.name == "absolute") {
             isAbs = attr.boolEquiv();
         } else {
@@ -1987,8 +1989,26 @@ bool TsdlParser::_tryParseClkTypeBlock()
 
         offsetCycles -= completeSecsInOffsetCycles * freq;
 
-        // TODO: throw if this would cause a `long long` overflow
-        offsetSecs += completeSecsInOffsetCycles;
+        /*
+         * Maximum number of seconds to add to `offsetSecs`:
+         * `LLONG_MAX - offsetSecs` doesn't fit a `long long` when
+         * `offsetSecs` is negative, but always fits
+         * an `unsigned long long`.
+         */
+        const auto maxSecsToAdd =
+            static_cast<unsigned long long>(std::numeric_limits<long long>::max()) -
+            static_cast<unsigned long long>(offsetSecs);
+
+        if (completeSecsInOffsetCycles > maxSecsToAdd) {
+            std::ostringstream ss;
+
+            ss << "Attribute `offset`: complete seconds (" << completeSecsInOffsetCycles <<
+                  ") added to `offset_s` (" << offsetSecs << ") don't fit a signed 64-bit integer.";
+            throwTextParseError(ss.str(), *offsetCyclesLoc);
+        }
+
+        offsetSecs = static_cast<long long>(static_cast<unsigned long long>(offsetSecs) +
+                                            completeSecsInOffsetCycles);
     }
 
     // create origin

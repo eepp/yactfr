@@ -1,0 +1,18 @@
+---
+/* CTF 1.8 */
+
+trace {
+  major = 1;
+  minor = 8;
+  byte_order = le;
+};
+
+clock {
+  name = a;
+  offset_s = 9223372036854775807;
+  offset = 10;
+  freq = 1;
+};
+---
+[9:1] In `clock` root block:
+[12:12] Attribute `offset`: complete seconds (10) added to `offset_s` (9223372036854775807) don't fit a signed 64-bit integer.
