@@ -987,13 +987,18 @@ private:
             /*
              * Check the whole remaining data so that the decoding error
              * doesn't depend on the size of the data blocks.
+             *
+             * Compare bytes because the length in bits may overflow.
              */
-            const auto remLenBits = _pos.stackTop().rem * 8;
+            const auto remLen = _pos.stackTop().rem;
 
-            if (remLenBits > _pos.remContentBitsInPkt()) {
+            if (remLen > _pos.remContentBitsInPkt() / 8) {
+                constexpr auto maxSize = std::numeric_limits<Size>::max();
+
                 throw CannotDecodeDataBeyondPacketContentDecodingError {
                     _pos.headOffsetInElemSeqBits(),
-                    remLenBits, _pos.remContentBitsInPkt()
+                    remLen > maxSize / 8 ? maxSize : remLen * 8,
+                    _pos.remContentBitsInPkt()
                 };
             }
         }
