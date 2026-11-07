@@ -560,6 +560,19 @@ private:
     [[ nodiscard ]] bool _tryParseNamedDtOrDtAlias(PseudoNamedDts& entries);
 
     /*
+     * Tries to parse an identifier followed by zero or more array
+     * subscripts and a terminating `;`, appending a named data type
+     * with the parsed identifier and the effective pseudo data type,
+     * of which `pseudoDt` is the most nested, to `pseudoNamedDts`.
+     *
+     * `dtLoc` is the text location of the data type.
+     *
+     * Returns whether or not an identifier was parsed.
+     */
+    [[ nodiscard ]] bool _tryParseNamedDt(PseudoDt::Up pseudoDt, const TextLocation& dtLoc,
+                                          PseudoNamedDts& pseudoNamedDts);
+
+    /*
      * Tries to parse a data type, which also includes a data type
      * alias reference.
      *

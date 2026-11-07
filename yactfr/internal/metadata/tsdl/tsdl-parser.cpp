@@ -2799,6 +2799,27 @@ PseudoDt::Up TsdlParser::_parseArraySubscripts(PseudoDt::Up innerPseudoDt)
     return innerPseudoDt;
 }
 
+bool TsdlParser::_tryParseNamedDt(PseudoDt::Up pseudoDt, const TextLocation& dtLoc,
+                                  PseudoNamedDts& pseudoNamedDts)
+{
+    // try parsing an identifier + array subscripts
+    auto [effectivePseudoDt, ident] = this->_tryParseIdentArraySubscripts(std::move(pseudoDt));
+
+    if (!effectivePseudoDt) {
+        return false;
+    }
+
+    // variant type must have a selector location at this point
+    if (TsdlParser::_isPseudoVarTypeWithoutSelLocRec(*effectivePseudoDt)) {
+        throwTextParseError("Variant type needs a selector location here.", dtLoc);
+    }
+
+    pseudoNamedDts.push_back(std::make_unique<PseudoNamedDt>(ident, std::move(effectivePseudoDt)));
+    this->_expectToken(";");
+    this->_stackTop().idents.push_back(std::move(ident));
+    return true;
+}
+
 bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
 {
     /*
@@ -2879,27 +2900,15 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
     // try cases 5, 6, 7, and 9 first
     this->_skipCommentsAndWhitespacesAndSemicolons();
 
+    const auto dtLoc = _ss.loc();
+
     {
         StrScannerRejecter ssRej {_ss};
-        const auto dtLoc = _ss.loc();
 
         if (auto pseudoDt = this->_tryParseDtAliasRef()) {
-            // let's try parsing an identifier + array subscripts
-            if (auto [effectivePseudoDt, ident] = this->_tryParseIdentArraySubscripts(std::move(pseudoDt));
-                    effectivePseudoDt) {
-                /*
-                 * We have a winner: variant type must have a selector
-                 * location at this point.
-                 */
-                if (TsdlParser::_isPseudoVarTypeWithoutSelLocRec(*effectivePseudoDt)) {
-                    throwTextParseError("Variant type needs a selector location here.", dtLoc);
-                }
-
-                pseudoNamedDts.push_back(std::make_unique<PseudoNamedDt>(ident,
-                                                                         std::move(effectivePseudoDt)));
-                this->_expectToken(";");
+            if (this->_tryParseNamedDt(std::move(pseudoDt), dtLoc, pseudoNamedDts)) {
+                // we have a winner
                 ssRej.accept();
-                this->_stackTop().idents.push_back(ident);
                 return true;
             }
         }
@@ -2949,33 +2958,19 @@ bool TsdlParser::_tryParseNamedDtOrDtAlias(PseudoNamedDts& pseudoNamedDts)
                 this->_addDtAlias(std::move(dtAliasName), *pseudoDt, afterDtLoc);
             }
 
-            // let's try parsing an identifier + array subscripts
-            if (auto [effectivePseudoDt, ident] = this->_tryParseIdentArraySubscripts(std::move(pseudoDt));
-                    effectivePseudoDt) {
-                /*
-                 * We have a winner: variant type must have a selector
-                 * location at this point.
-                 */
-                if (TsdlParser::_isPseudoVarTypeWithoutSelLocRec(*effectivePseudoDt)) {
-                    throwTextParseError("Variant type needs a selector here.", _ss.loc());
-                }
-
-                pseudoNamedDts.push_back(std::make_unique<PseudoNamedDt>(ident,
-                                                                         std::move(effectivePseudoDt)));
-                this->_expectToken(";");
+            if (this->_tryParseNamedDt(std::move(pseudoDt), dtLoc, pseudoNamedDts)) {
+                // we have a winner
                 ssRej.accept();
-                this->_stackTop().idents.push_back(ident);
                 return true;
-            } else {
-                /*
-                 * If there's a type, but no identifier, and we know
-                 * that it's not a data type alias, then we expect an
-                 * identifier at this point.
-                 */
-                _ss.skipCommentsAndWhitespaces();
-                throwTextParseError("Expecting identifier (member type/option name).",
-                                    _ss.loc());
             }
+
+            /*
+             * If there's a type, but no identifier, and we know that
+             * it's not a data type alias, then we expect an identifier
+             * at this point.
+             */
+            _ss.skipCommentsAndWhitespaces();
+            throwTextParseError("Expecting identifier (member type/option name).", _ss.loc());
         }
     }
 
