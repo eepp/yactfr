@@ -709,10 +709,8 @@ private:
     [[ nodiscard ]] std::tuple<PseudoDt::Up, std::string> _tryParseVarType();
 
     /*
-     * Tries to parse a trace environment block and sets the trace
-     * environment of the current pseudo trace type accordingly.
-     *
-     * Returns whether or not a trace environment block was parsed.
+     * Parses a trace environment block and sets the trace environment
+     * of the current pseudo trace type accordingly.
      *
      * Example:
      *
@@ -721,13 +719,11 @@ private:
      *         some_str = "some string";
      *     };
      */
-    [[ nodiscard ]] bool _tryParseEnvBlock();
+    void _parseEnvBlock();
 
     /*
-     * Tries to parse a clock type block and appends it to the current
-     * pseudo trace type data.
-     *
-     * Returns whether or not a clock type block was parsed.
+     * Parses a clock type block and appends it to the current pseudo
+     * trace type data.
      *
      * Example:
      *
@@ -739,12 +735,10 @@ private:
      *         offset = 1446222697389173303;
      *     };
      */
-    [[ nodiscard ]] bool _tryParseClkTypeBlock();
+    void _parseClkTypeBlock();
 
     /*
-     * Tries to parse a callsite block and ignores it.
-     *
-     * Returns whether or not a callsite block was parsed.
+     * Parses a callsite block and ignores it.
      *
      * Example:
      *
@@ -756,13 +750,11 @@ private:
      *         ip = 0x40096c;
      *     };
      */
-    [[ nodiscard ]] bool _tryParseCallsiteBlock();
+    void _parseCallsiteBlock();
 
     /*
-     * Tries to parse a trace type block and sets its properties in the
-     * current pseudo trace type data.
-     *
-     * Returns whether or not a trace type block was parsed.
+     * Parses a trace type block and sets its properties in the current
+     * pseudo trace type data.
      *
      * Example:
      *
@@ -778,13 +770,11 @@ private:
      *         };
      *     };
      */
-    [[ nodiscard ]] bool _tryParseTraceTypeBlock();
+    void _parseTraceTypeBlock();
 
     /*
-     * Tries to parse a data stream type block and initializes a pseudo
-     * stream type.
-     *
-     * Returns whether or not a data stream type block was parsed.
+     * Parses a data stream type block and initializes a pseudo stream
+     * type.
      *
      * Example:
      *
@@ -795,13 +785,11 @@ private:
      *         event.context := ...;
      *     };
      */
-    [[ nodiscard ]] bool _tryParseDstBlock();
+    void _parseDstBlock();
 
     /*
-     * Tries to parse an event record type block and inserts a resulting
-     * pseudo event record type into its pseudo data stream type.
-     *
-     * Returns whether or not an event record type block was parsed.
+     * Parses an event record type block and inserts a resulting pseudo
+     * event record type into its pseudo data stream type.
      *
      * Example:
      *
@@ -814,7 +802,7 @@ private:
      *         event.fields := ...;
      *     };
      */
-    [[ nodiscard ]] bool _tryParseErtBlock();
+    void _parseErtBlock();
 
     /*
      * Returns a fast pseudo fixed-length integer type clone from the

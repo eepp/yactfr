@@ -781,39 +781,54 @@ bool TsdlParser::_tryParseRootBlock()
         return this->_tryParseDtAlias();
     }
 
-    const auto tryParseBlock = [this, &loc](bool (TsdlParser::*parseFunc)(),
-                                            const char * const name) {
-        try {
-            return (this->*parseFunc)();
-        } catch (TextParseError& error) {
-            appendMsgToTextParseError(error, std::string {"In `"} + name + "` root block:", loc);
-            throw;
-        }
-    };
+    // parse block which starts with the keyword `kw`
+    void (TsdlParser::*parseFunc)();
+    const char *name;
 
     switch (kw) {
     case _tKw::Event:
-        return tryParseBlock(&TsdlParser::_tryParseErtBlock, "event");
+        parseFunc = &TsdlParser::_parseErtBlock;
+        name = "event";
+        break;
 
     case _tKw::Stream:
-        return tryParseBlock(&TsdlParser::_tryParseDstBlock, "stream");
+        parseFunc = &TsdlParser::_parseDstBlock;
+        name = "stream";
+        break;
 
     case _tKw::Trace:
-        return tryParseBlock(&TsdlParser::_tryParseTraceTypeBlock, "trace");
+        parseFunc = &TsdlParser::_parseTraceTypeBlock;
+        name = "trace";
+        break;
 
     case _tKw::Env:
-        return tryParseBlock(&TsdlParser::_tryParseEnvBlock, "env");
+        parseFunc = &TsdlParser::_parseEnvBlock;
+        name = "env";
+        break;
 
     case _tKw::Clock:
-        return tryParseBlock(&TsdlParser::_tryParseClkTypeBlock, "clock");
+        parseFunc = &TsdlParser::_parseClkTypeBlock;
+        name = "clock";
+        break;
 
     case _tKw::Callsite:
         // parse callsite, even if we don't care about it
-        return tryParseBlock(&TsdlParser::_tryParseCallsiteBlock, "callsite");
+        parseFunc = &TsdlParser::_parseCallsiteBlock;
+        name = "callsite";
+        break;
 
     default:
         return false;
     }
+
+    try {
+        (this->*parseFunc)();
+    } catch (TextParseError& error) {
+        appendMsgToTextParseError(error, std::string {"In `"} + name + "` root block:", loc);
+        throw;
+    }
+
+    return true;
 }
 
 void TsdlParser::_expectToken(const std::string_view token)
@@ -1604,16 +1619,12 @@ std::tuple<PseudoDt::Up, std::string> TsdlParser::_tryParseVarType()
     return {std::move(pseudoDt), std::move(potDtAliasName)};
 }
 
-bool TsdlParser::_tryParseEnvBlock()
+void TsdlParser::_parseEnvBlock()
 {
-    _ss.skipCommentsAndWhitespaces();
-
     const auto loc = _ss.loc();
 
-    // parse `env`
-    if (!_ss.tryScanToken("env")) {
-        return false;
-    }
+    // parse `env` (the caller peeked it)
+    this->_expectToken("env");
 
     if (_envParsed) {
         throwTextParseError("Duplicate `env` block.", loc);
@@ -1627,7 +1638,7 @@ bool TsdlParser::_tryParseEnvBlock()
 
     if (this->_isFirstPass()) {
         // first pass: skip
-        return true;
+        return;
     }
 
     // check for duplicate attributes
@@ -1658,34 +1669,26 @@ bool TsdlParser::_tryParseEnvBlock()
     assert(_pseudoTraceType);
     _pseudoTraceType->env(TraceEnvironment {std::move(entries)});
     _envParsed = true;
-    return true;
 }
 
-bool TsdlParser::_tryParseCallsiteBlock()
+void TsdlParser::_parseCallsiteBlock()
 {
-    // parse `callsite`
-    if (!_ss.tryScanToken("callsite")) {
-        return false;
-    }
+    // parse `callsite` (the caller peeked it)
+    this->_expectToken("callsite");
 
     // parse attributes (pretty loose: we accept everything, even duplicates)
     this->_expectAttrBlock();
 
     // parse `;`
     this->_expectToken(";");
-    return true;
 }
 
-bool TsdlParser::_tryParseClkTypeBlock()
+void TsdlParser::_parseClkTypeBlock()
 {
-    this->_skipCommentsAndWhitespacesAndSemicolons();
-
     const auto beginLoc = _ss.loc();
 
-    // parse `clock`
-    if (!_ss.tryScanToken("clock")) {
-        return false;
-    }
+    // parse `clock` (the caller peeked it)
+    this->_expectToken("clock");
 
     // parse attributes
     const auto attrs = this->_expectAttrBlock();
@@ -1694,7 +1697,7 @@ bool TsdlParser::_tryParseClkTypeBlock()
     this->_expectToken(";");
 
     if (this->_isFirstPass()) {
-        return true;
+        return;
     }
 
     // check for duplicate attributes
@@ -1844,21 +1847,16 @@ bool TsdlParser::_tryParseClkTypeBlock()
                                                           std::move(origin), std::move(prec),
                                                           std::nullopt,
                                                           ClockOffset {offsetSecs, offsetCycles}));
-    return true;
 }
 
-bool TsdlParser::_tryParseTraceTypeBlock()
+void TsdlParser::_parseTraceTypeBlock()
 {
     _tLexScope lexScope {*this, _tStackFrame::Kind::TraceType};
 
-    this->_skipCommentsAndWhitespacesAndSemicolons();
-
     const auto beginLoc = _ss.loc();
 
-    // parse `trace`
-    if (!_ss.tryScanToken("trace")) {
-        return false;
-    }
+    // parse `trace` (the caller peeked it)
+    this->_expectToken("trace");
 
     if (_traceTypeBlockParsed) {
         throwTextParseError("Duplicate `trace` block.", _ss.loc());
@@ -2020,22 +2018,16 @@ bool TsdlParser::_tryParseTraceTypeBlock()
         _pseudoTraceType = std::move(pseudoTraceType);
         _traceTypeBlockParsed = true;
     }
-
-    return true;
 }
 
-bool TsdlParser::_tryParseDstBlock()
+void TsdlParser::_parseDstBlock()
 {
     _tLexScope lexScope {*this, _tStackFrame::Kind::Dst};
 
-    this->_skipCommentsAndWhitespacesAndSemicolons();
-
     const auto beginLoc = _ss.loc();
 
-    // parse `stream`
-    if (!_ss.tryScanToken("stream")) {
-        return false;
-    }
+    // parse `stream` (the caller peeked it)
+    this->_expectToken("stream");
 
     // parse `{`
     this->_expectToken("{");
@@ -2104,7 +2096,7 @@ bool TsdlParser::_tryParseDstBlock()
     this->_expectToken(";");
 
     if (this->_isFirstPass()) {
-        return true;
+        return;
     }
 
     // check for duplicate attributes
@@ -2139,21 +2131,16 @@ bool TsdlParser::_tryParseDstBlock()
                                     beginLoc)
     );
     _pseudoTraceType->pseudoOrphanErts()[id];
-    return true;
 }
 
-bool TsdlParser::_tryParseErtBlock()
+void TsdlParser::_parseErtBlock()
 {
     _tLexScope lexScope {*this, _tStackFrame::Kind::Ert};
 
-    this->_skipCommentsAndWhitespacesAndSemicolons();
-
     const auto beginLoc = _ss.loc();
 
-    // parse `event`
-    if (!_ss.tryScanToken("event")) {
-        return false;
-    }
+    // parse `event` (the caller peeked it)
+    this->_expectToken("event");
 
     // parse `{`
     this->_expectToken("{");
@@ -2210,7 +2197,7 @@ bool TsdlParser::_tryParseErtBlock()
     this->_expectToken(";");
 
     if (this->_isFirstPass()) {
-        return true;
+        return;
     }
 
     // check for duplicate attributes
@@ -2261,8 +2248,6 @@ bool TsdlParser::_tryParseErtBlock()
         },
         beginLoc
     });
-
-    return true;
 }
 
 PseudoDt::Up TsdlParser::_tryParseScopeDt(const _tStackFrame::Kind scopeDtStackFrameKind,
