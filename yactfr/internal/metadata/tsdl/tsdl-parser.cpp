@@ -1761,10 +1761,6 @@ bool TsdlParser::_tryParseClkTypeBlock()
         TsdlParser::_throwMissingAttr("name", beginLoc);
     }
 
-    if (!_pseudoTraceType) {
-        return true;
-    }
-
     // make sure clock type doesn't exist
     if (_pseudoTraceType->hasClkType(name)) {
         std::ostringstream ss;
